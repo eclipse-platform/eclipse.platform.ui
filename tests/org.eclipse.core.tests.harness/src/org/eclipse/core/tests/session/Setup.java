@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.session.ProcessController.TimeOutException;
@@ -70,12 +75,13 @@ public class Setup implements Cloneable {
 
 	public static String getDefaultInstallLocation() {
 		String currentInstall = System.getProperty(InternalPlatform.PROP_INSTALL_AREA);
-		if (currentInstall != null)
+		if (currentInstall != null) {
 			try {
 				return new URI(currentInstall).getPath();
 			} catch (URISyntaxException e) {
 				// nothing to be done
 			}
+		}
 		return null;
 	}
 
@@ -108,42 +114,54 @@ public class Setup implements Cloneable {
 		// see bug 93343
 		defaultSetup.setSystemProperty(PROP_BOOT_DELEGATION, System.getProperty(PROP_BOOT_DELEGATION));
 		defaultSetup.setSystemProperty(InternalPlatform.PROP_CONSOLE_LOG, System.getProperty(InternalPlatform.PROP_CONSOLE_LOG, "true"));
-		if (Setup.getDefaultVMLocation() != null)
+		if (Setup.getDefaultVMLocation() != null) {
 			defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
-		if (Setup.getDefaultConfiguration() != null)
+		}
+		if (Setup.getDefaultConfiguration() != null) {
 			defaultSetup.setEclipseArgument(CONFIGURATION, Setup.getDefaultConfiguration());
-		if (Setup.getDefaultDebugOption() != null)
+		}
+		if (Setup.getDefaultDebugOption() != null) {
 			defaultSetup.setSystemProperty(InternalPlatform.PROP_DEBUG, Setup.getDefaultDebugOption());
-		if (Setup.getDefaultDevOption() != null)
+		}
+		if (Setup.getDefaultDevOption() != null) {
 			defaultSetup.setEclipseArgument(DEV, Setup.getDefaultDevOption());
-		if (Setup.getDefaultInstallLocation() != null)
+		}
+		if (Setup.getDefaultInstallLocation() != null) {
 			defaultSetup.setEclipseArgument(INSTALL, Setup.getDefaultInstallLocation());
-		if (Setup.getDefaultInstanceLocation() != null)
+		}
+		if (Setup.getDefaultInstanceLocation() != null) {
 			defaultSetup.setEclipseArgument(DATA, Setup.getDefaultInstanceLocation());
-		if (Setup.getDefaultArchOption() != null)
+		}
+		if (Setup.getDefaultArchOption() != null) {
 			defaultSetup.setEclipseArgument(ARCH, Setup.getDefaultArchOption());
+		}
 		String defaultOS = Setup.getDefaultOSOption();
 		if (defaultOS != null) {
 			defaultSetup.setEclipseArgument(OS, defaultOS);
-			if (Platform.OS_MACOSX.equals(defaultOS))
+			if (Platform.OS_MACOSX.equals(defaultOS)) {
 				// see bug 98508
 				defaultSetup.setVMArgument("XstartOnFirstThread", "");
+			}
 		}
-		if (Setup.getDefaultWSOption() != null)
+		if (Setup.getDefaultWSOption() != null) {
 			defaultSetup.setEclipseArgument(WS, Setup.getDefaultWSOption());
-		if (Setup.getDefaultNLOption() != null)
+		}
+		if (Setup.getDefaultNLOption() != null) {
 			defaultSetup.setEclipseArgument(NL, Setup.getDefaultNLOption());
+		}
 		defaultSetup.setTimeout(DEFAULT_TIMEOUT);
 		return defaultSetup;
 	}
 
 	public static String getDefaultVMLocation() {
 		String javaVM = System.getProperty("eclipse.vm");
-		if (javaVM != null)
+		if (javaVM != null) {
 			return javaVM;
+		}
 		javaVM = System.getProperty("java.home");
-		if (javaVM == null)
+		if (javaVM == null) {
 			return null;
+		}
 		// XXX: this is a hack and will not work with some VMs...
 		return new File(new File(javaVM, "bin"), "java").toString();
 	}
@@ -154,7 +172,7 @@ public class Setup implements Cloneable {
 
 	private String[] baseSetups;
 
-	private HashMap eclipseArguments = new HashMap();
+	private HashMap<String, String> eclipseArguments = new HashMap<>();
 
 	private String id;
 
@@ -164,11 +182,11 @@ public class Setup implements Cloneable {
 
 	private String[] requiredSets;
 
-	private HashMap systemProperties = new HashMap();
+	private HashMap<String, String> systemProperties = new HashMap<>();
 
 	private int timeout;
 
-	private HashMap vmArguments = new HashMap();
+	private HashMap<String, String> vmArguments = new HashMap<>();
 
 	public Setup(SetupManager manager) {
 		this.manager = manager;
@@ -179,39 +197,43 @@ public class Setup implements Cloneable {
 	 *
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		Setup clone = null;
 		try {
 			clone = (Setup) super.clone();
 			// ensure we don't end up sharing references to mutable objects
-			clone.eclipseArguments = (HashMap) eclipseArguments.clone();
-			clone.vmArguments = (HashMap) vmArguments.clone();
-			clone.systemProperties = (HashMap) systemProperties.clone();
+			clone.eclipseArguments = new HashMap<>(eclipseArguments);
+			clone.vmArguments = new HashMap<>(vmArguments);
+			clone.systemProperties = new HashMap<>(systemProperties);
 		} catch (CloneNotSupportedException e) {
 			// just does not happen: we do implement Cloneable
 		}
 		return clone;
 	}
 
-	private void fillClassPath(List params) {
-		if (vmArguments.containsKey("cp") || vmArguments.containsKey("classpath"))
+	private void fillClassPath(List<String> params) {
+		if (vmArguments.containsKey("cp") || vmArguments.containsKey("classpath")) {
 			// classpath was specified as VM argument
 			return;
+		}
 		String inheritedClassPath = System.getProperty("java.class.path");
 		if (inheritedClassPath == null) {
 			String installLocation = getEclipseArgument(INSTALL);
-			if (installLocation == null)
+			if (installLocation == null) {
 				throw new IllegalStateException("Classpath could not be computed");
+			}
 			inheritedClassPath = new File(installLocation, "startup.jar").toString();
 		}
 		params.add("-classpath");
 		params.add(inheritedClassPath);
 	}
 
-	public void fillCommandLine(List commandLine) {
+	public void fillCommandLine(List<String> commandLine) {
 		String vmLocation = getEclipseArgument(VM);
-		if (vmLocation == null)
+		if (vmLocation == null) {
 			throw new IllegalStateException("VM location not set");
+		}
 		commandLine.add(vmLocation);
 		fillClassPath(commandLine);
 		fillVMArgs(commandLine);
@@ -220,24 +242,26 @@ public class Setup implements Cloneable {
 		fillEclipseArgs(commandLine);
 	}
 
-	private void fillEclipseArgs(List params) {
-		for (Iterator i = eclipseArguments.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			params.add('-' + (String) entry.getKey());
-			if (entry.getValue() != null && ((String) entry.getValue()).length() > 0)
+	private void fillEclipseArgs(List<String> params) {
+		for (Iterator<Entry<String, String>> i = eclipseArguments.entrySet().iterator(); i.hasNext();) {
+			Entry<String, String> entry = i.next();
+			params.add('-' + entry.getKey());
+			if (entry.getValue() != null && entry.getValue().length() > 0) {
 				params.add(entry.getValue());
+			}
 		}
 	}
 
-	private void fillSystemProperties(List command) {
-		for (Iterator iter = systemProperties.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
+	private void fillSystemProperties(List<String> command) {
+		for (Iterator<Entry<String, String>> iter = systemProperties.entrySet().iterator(); iter.hasNext();) {
+			Entry<String, String> entry = iter.next();
 			// null-valued properties are ignored
-			if (entry.getValue() == null)
+			if (entry.getValue() == null) {
 				continue;
+			}
 			StringBuffer property = new StringBuffer("-D");
 			property.append(entry.getKey());
-			if (((String) entry.getValue()).length() > 0) {
+			if (entry.getValue().length() > 0) {
 				property.append('=');
 				property.append(entry.getValue());
 			}
@@ -245,12 +269,13 @@ public class Setup implements Cloneable {
 		}
 	}
 
-	private void fillVMArgs(List params) {
-		for (Iterator i = vmArguments.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			params.add('-' + (String) entry.getKey());
-			if (entry.getValue() != null && ((String) entry.getValue()).length() > 0)
+	private void fillVMArgs(List<String> params) {
+		for (Iterator<Entry<String, String>> i = vmArguments.entrySet().iterator(); i.hasNext();) {
+			Entry<String, String> entry = i.next();
+			params.add('-' + entry.getKey());
+			if (entry.getValue() != null && entry.getValue().length() > 0) {
 				params.add(entry.getValue());
+			}
 		}
 	}
 
@@ -259,16 +284,16 @@ public class Setup implements Cloneable {
 	}
 
 	public String[] getCommandLine() {
-		List commandLine = new ArrayList();
+		List<String> commandLine = new ArrayList<>();
 		fillCommandLine(commandLine);
-		return (String[]) commandLine.toArray(new String[commandLine.size()]);
+		return commandLine.toArray(new String[commandLine.size()]);
 	}
 
 	public String getEclipseArgsLine() {
-		List eclipseArgs = new ArrayList();
+		List<String> eclipseArgs = new ArrayList<>();
 		fillEclipseArgs(eclipseArgs);
 		StringBuffer result = new StringBuffer();
-		for (Iterator i = eclipseArgs.iterator(); i.hasNext();) {
+		for (Iterator<String> i = eclipseArgs.iterator(); i.hasNext();) {
 			result.append(i.next());
 			result.append(' ');
 		}
@@ -276,11 +301,11 @@ public class Setup implements Cloneable {
 	}
 
 	public String getEclipseArgument(String key) {
-		return (String) eclipseArguments.get(key);
+		return eclipseArguments.get(key);
 	}
 
-	public Map getEclipseArguments() {
-		return (Map) eclipseArguments.clone();
+	public Map<String, String> getEclipseArguments() {
+		return new HashMap<>(eclipseArguments);
 	}
 
 	public String getId() {
@@ -295,15 +320,15 @@ public class Setup implements Cloneable {
 		return requiredSets;
 	}
 
-	public Map getSystemProperties() {
-		return (Map) systemProperties.clone();
+	public Map<String, String> getSystemProperties() {
+		return new HashMap<>(systemProperties);
 	}
 
 	public String getSystemPropertiesLine() {
-		List sysProperties = new ArrayList();
+		List<String> sysProperties = new ArrayList<>();
 		fillSystemProperties(sysProperties);
 		StringBuffer result = new StringBuffer();
-		for (Iterator i = sysProperties.iterator(); i.hasNext();) {
+		for (Iterator<String> i = sysProperties.iterator(); i.hasNext();) {
 			result.append(i.next());
 			result.append(' ');
 		}
@@ -315,10 +340,10 @@ public class Setup implements Cloneable {
 	}
 
 	public String getVMArgsLine() {
-		List vmArgs = new ArrayList();
+		List<String> vmArgs = new ArrayList<>();
 		fillVMArgs(vmArgs);
 		StringBuffer result = new StringBuffer();
-		for (Iterator i = vmArgs.iterator(); i.hasNext();) {
+		for (Iterator<String> i = vmArgs.iterator(); i.hasNext();) {
 			result.append(i.next());
 			result.append(' ');
 		}
@@ -326,22 +351,25 @@ public class Setup implements Cloneable {
 	}
 
 	public String getVMArgument(String key) {
-		return (String) vmArguments.get(key);
+		return vmArguments.get(key);
 	}
 
-	public Map getVMArguments() {
-		return (Map) vmArguments.clone();
+	public Map<String, String> getVMArguments() {
+		return new HashMap<>(vmArguments);
 	}
 
 	public boolean isA(String baseOptionSet) {
-		if (baseOptionSet.equals(id))
+		if (baseOptionSet.equals(id)) {
 			return true;
-		if (baseSetups == null)
+		}
+		if (baseSetups == null) {
 			return false;
+		}
 		for (int i = 0; i < baseSetups.length; i++) {
 			Setup base = manager.getSetup(baseSetups[i]);
-			if (base != null && base.isA(baseOptionSet))
+			if (base != null && base.isA(baseOptionSet)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -351,11 +379,13 @@ public class Setup implements Cloneable {
 			boolean satisfied = false;
 			for (int j = 0; !satisfied && j < availableSets.length; j++) {
 				Setup available = manager.getSetup(availableSets[j]);
-				if (available != null && available.isA(requiredSets[i]))
+				if (available != null && available.isA(requiredSets[i])) {
 					satisfied = true;
+				}
 			}
-			if (!satisfied)
+			if (!satisfied) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -385,17 +415,19 @@ public class Setup implements Cloneable {
 	}
 
 	public void setEclipseArgument(String key, String value) {
-		if (value == null)
+		if (value == null) {
 			eclipseArguments.remove(key);
-		else
+		} else {
 			eclipseArguments.put(key, value);
+		}
 	}
 
-	public void setEclipseArguments(Map newArguments) {
-		if (newArguments == null)
+	public void setEclipseArguments(Map<String, String> newArguments) {
+		if (newArguments == null) {
 			eclipseArguments.clear();
-		else
+		} else {
 			eclipseArguments.putAll(newArguments);
+		}
 	}
 
 	public void setId(String id) {
@@ -410,18 +442,20 @@ public class Setup implements Cloneable {
 		this.requiredSets = requiredSets;
 	}
 
-	public void setSystemProperties(Map newProperties) {
-		if (newProperties == null)
+	public void setSystemProperties(Map<String, String> newProperties) {
+		if (newProperties == null) {
 			systemProperties.clear();
-		else
+		} else {
 			systemProperties.putAll(newProperties);
+		}
 	}
 
 	public void setSystemProperty(String key, String value) {
-		if (value == null)
+		if (value == null) {
 			systemProperties.remove(key);
-		else
+		} else {
 			systemProperties.put(key, value);
+		}
 	}
 
 	public void setTimeout(int timeout) {
@@ -429,17 +463,19 @@ public class Setup implements Cloneable {
 	}
 
 	public void setVMArgument(String key, String value) {
-		if (value == null)
+		if (value == null) {
 			vmArguments.remove(key);
-		else
+		} else {
 			vmArguments.put(key, value);
+		}
 	}
 
-	public void setVMArguments(Map newArguments) {
-		if (newArguments == null)
+	public void setVMArguments(Map<String, String> newArguments) {
+		if (newArguments == null) {
 			vmArguments.clear();
-		else
+		} else {
 			vmArguments.putAll(newArguments);
+		}
 	}
 
 	public String toCommandLineString() {
@@ -455,6 +491,7 @@ public class Setup implements Cloneable {
 		return result.toString();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		if (id != null || name != null) {

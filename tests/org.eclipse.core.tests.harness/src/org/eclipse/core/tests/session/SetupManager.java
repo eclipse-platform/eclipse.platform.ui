@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,23 @@ package org.eclipse.core.tests.session;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.runtime.Platform;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class SetupManager {
@@ -42,19 +55,22 @@ public class SetupManager {
 	private static final String SETUP_OVERRIDE_SYSTEMPROPERTIES = "setup.override.systemProperties";
 	private static final String SETUP_OVERRIDE_VMARGS = "setup.override.vmArgs";
 	private String defaultOptionSetIds = "";
-	private Map setupById;
-	private Collection setups;
+	private Map<String, Setup> setupById;
+	private Collection<Setup> setups;
 
 	private static boolean contains(Object[] set, Object element) {
-		for (int i = 0; i < set.length; i++)
-			if (element.equals(set[i]))
+		for (int i = 0; i < set.length; i++) {
+			if (element.equals(set[i])) {
 				return true;
+			}
+		}
 		return false;
 	}
 
 	public synchronized static SetupManager getInstance() throws SetupException {
-		if (instance != null)
+		if (instance != null) {
 			return instance;
+		}
 		instance = new SetupManager();
 		return instance;
 	}
@@ -69,25 +85,28 @@ public class SetupManager {
 	}
 
 	static String[] parseItems(String string) {
-		if (string == null)
+		if (string == null) {
 			return new String[0];
+		}
 		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
-		if (!tokenizer.hasMoreTokens())
+		if (!tokenizer.hasMoreTokens()) {
 			return new String[0];
+		}
 		String first = tokenizer.nextToken().trim();
-		if (!tokenizer.hasMoreTokens())
+		if (!tokenizer.hasMoreTokens()) {
 			return new String[] {first};
-		ArrayList items = new ArrayList();
+		}
+		ArrayList<String> items = new ArrayList<>();
 		items.add(first);
 		do {
 			items.add(tokenizer.nextToken().trim());
 		} while (tokenizer.hasMoreTokens());
-		return (String[]) items.toArray(new String[items.size()]);
+		return items.toArray(new String[items.size()]);
 	}
 
 	protected SetupManager() throws SetupException {
-		setups = new ArrayList();
-		setupById = new HashMap();
+		setups = new ArrayList<>();
+		setupById = new HashMap<>();
 		try {
 			loadSetups();
 		} catch (SetupException e) {
@@ -99,10 +118,11 @@ public class SetupManager {
 
 	public Setup buildSetup(String[] optionSets) {
 		Setup defaultSetup = Setup.getDefaultSetup(this);
-		for (Iterator i = setups.iterator(); i.hasNext();) {
-			Setup customSetup = (Setup) i.next();
-			if ((customSetup.getId() == null || contains(optionSets, customSetup.getId())) && customSetup.isSatisfied(optionSets))
+		for (Iterator<Setup> i = setups.iterator(); i.hasNext();) {
+			Setup customSetup = i.next();
+			if ((customSetup.getId() == null || contains(optionSets, customSetup.getId())) && customSetup.isSatisfied(optionSets)) {
 				defaultSetup.merge(customSetup);
+			}
 		}
 		defaultSetup.setEclipseArguments(parseOptions(System.getProperty(SETUP_OVERRIDE_ECLIPSEARGS)));
 		defaultSetup.setVMArguments(parseOptions(System.getProperty(SETUP_OVERRIDE_VMARGS)));
@@ -130,7 +150,7 @@ public class SetupManager {
 	}
 
 	public Setup getSetup(String id) {
-		return (Setup) setupById.get(id);
+		return setupById.get(id);
 	}
 
 	private void loadEclipseArgument(Setup newSetup, Element toParse) {
@@ -143,8 +163,9 @@ public class SetupManager {
 
 	private void loadSetup(Element markup) {
 		NamedNodeMap attributes = markup.getAttributes();
-		if (attributes == null)
+		if (attributes == null) {
 			return;
+		}
 		Setup newSetup = new Setup(this);
 		newSetup.setId(getAttribute(attributes, "id"));
 		newSetup.setName(getAttribute(attributes, "name"));
@@ -152,24 +173,28 @@ public class SetupManager {
 		newSetup.setBaseSetups(parseItems(getAttribute(attributes, "base")));
 		newSetup.setRequiredSets(parseItems(getAttribute(attributes, "with")));
 
-		if (timeout != null)
+		if (timeout != null) {
 			newSetup.setTimeout(Integer.parseInt(timeout));
+		}
 		NodeList children = markup.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node next = children.item(i);
-			if (!(next instanceof Element))
+			if (!(next instanceof Element)) {
 				continue;
+			}
 			Element toParse = (Element) next;
-			if (toParse.getTagName().equals("eclipseArg"))
+			if (toParse.getTagName().equals("eclipseArg")) {
 				loadEclipseArgument(newSetup, toParse);
-			else if (toParse.getTagName().equals("vmArg"))
+			} else if (toParse.getTagName().equals("vmArg")) {
 				loadVMArgument(newSetup, toParse);
-			else if (toParse.getTagName().equals("systemProperty"))
+			} else if (toParse.getTagName().equals("systemProperty")) {
 				loadProperty(newSetup, toParse);
+			}
 		}
 		setups.add(newSetup);
-		if (newSetup.getId() != null)
+		if (newSetup.getId() != null) {
 			setupById.put(newSetup.getId(), newSetup);
+		}
 	}
 
 	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException, SetupException {
@@ -185,9 +210,10 @@ public class SetupManager {
 		for (int i = 0; i < setupFiles.length; i++) {
 			setupFiles[found] = new File(setupFileNames[i]);
 			if (!setupFiles[found].isFile()) {
-				if (!defaultLocation)
+				if (!defaultLocation) {
 					// warn if user-provided location does not exist
 					System.out.println("No setup files found at '" + setupFiles[i].getAbsolutePath() + "'. ");
+				}
 				continue;
 			}
 			found++;
@@ -205,16 +231,19 @@ public class SetupManager {
 			Document doc = docBuilder.parse(setupFiles[fileIndex]);
 			Element root = doc.getDocumentElement();
 			String setupDefaultOptionSets = root.getAttribute("default");
-			if (setupDefaultOptionSets != null)
+			if (setupDefaultOptionSets != null) {
 				defaultOptionSetIds = defaultOptionSetIds == null ? setupDefaultOptionSets : (defaultOptionSetIds + ',' + setupDefaultOptionSets);
+			}
 			NodeList optionSets = root.getChildNodes();
 			for (int i = 0; i < optionSets.getLength(); i++) {
 				Node next = optionSets.item(i);
-				if (!(next instanceof Element))
+				if (!(next instanceof Element)) {
 					continue;
+				}
 				Element toParse = (Element) next;
-				if (!toParse.getTagName().equals("optionSet"))
+				if (!toParse.getTagName().equals("optionSet")) {
 					continue;
+				}
 				loadSetup(toParse);
 			}
 		}
@@ -228,10 +257,11 @@ public class SetupManager {
 	 * Use a double equal sign to escape and equal to treat it from becoming
 	 * a key/value pair
 	 */
-	private static Map parseOptions(String options) {
-		if (options == null)
+	private static Map<String, String> parseOptions(String options) {
+		if (options == null) {
 			return Collections.EMPTY_MAP;
-		Map result = new HashMap();
+		}
+		Map<String, String> result = new HashMap<>();
 		StringTokenizer tokenizer = new StringTokenizer(options.trim(), ";");
 		while (tokenizer.hasMoreTokens()) {
 			String option = tokenizer.nextToken();
@@ -259,8 +289,9 @@ public class SetupManager {
 					continue;
 				}
 				i++;
-				if (i >= option.length())
+				if (i >= option.length()) {
 					break;
+				}
 				char next = option.charAt(i);
 				if (next == '=') {
 					key.append('=');
@@ -272,8 +303,9 @@ public class SetupManager {
 			}
 			String value = "";
 			// now get the value. replace == by =
-			if (valueStart > -1)
+			if (valueStart > -1) {
 				value = option.substring(valueStart).replaceAll("==", "=");
+			}
 			result.put(key.toString(), value);
 		}
 		return result;

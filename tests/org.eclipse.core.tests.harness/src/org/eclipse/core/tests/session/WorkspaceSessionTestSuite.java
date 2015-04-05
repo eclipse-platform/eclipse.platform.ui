@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.session;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.FileSystemHelper;
@@ -26,12 +27,12 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 		super(pluginId);
 	}
 
-	public WorkspaceSessionTestSuite(String pluginId, Class theClass) {
+	public WorkspaceSessionTestSuite(String pluginId, Class<?> theClass) {
 		super(pluginId, theClass);
 		this.shouldSort = true;
 	}
 
-	public WorkspaceSessionTestSuite(String pluginId, Class theClass, String name) {
+	public WorkspaceSessionTestSuite(String pluginId, Class<? extends TestCase> theClass, String name) {
 		super(pluginId, theClass, name);
 		this.shouldSort = true;
 	}
@@ -44,6 +45,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 	 * Ensures setup uses this suite's instance location.
 	 * @throws SetupException
 	 */
+	@Override
 	protected Setup newSetup() throws SetupException {
 		Setup base = super.newSetup();
 		base.setEclipseArgument(Setup.DATA, instanceLocation.toOSString());
@@ -55,6 +57,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 	 * running the last test. Also sorts the test cases to be run if this suite was
 	 * created by reifying a test case class.
 	 */
+	@Override
 	public void run(TestResult result) {
 		try {
 			if (!shouldSort) {
@@ -64,8 +67,9 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 			// we have to sort the tests cases
 			Test[] allTests = getTests(true);
 			// now run the tests in order
-			for (int i = 0; i < allTests.length && !result.shouldStop(); i++)
+			for (int i = 0; i < allTests.length && !result.shouldStop(); i++) {
 				runTest(allTests[i], result);
+			}
 		} finally {
 			FileSystemHelper.clear(instanceLocation.toFile());
 		}

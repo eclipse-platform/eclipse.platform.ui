@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.util.*;
-import junit.framework.*;
-
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 
@@ -20,8 +26,8 @@ public class SessionTestSuite extends TestSuite {
 	public static final String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	protected String applicationId = CORE_TEST_APPLICATION;
-	private Set crashTests = new HashSet();
-	private Set localTests = new HashSet();
+	private Set<TestCase> crashTests = new HashSet<>();
+	private Set<TestCase> localTests = new HashSet<>();
 	// the id for the plug-in whose classloader ought to be used to load the test case class
 	protected String pluginId;
 	private Setup setup;
@@ -34,12 +40,12 @@ public class SessionTestSuite extends TestSuite {
 		this.pluginId = pluginId;
 	}
 
-	public SessionTestSuite(String pluginId, Class theClass) {
+	public SessionTestSuite(String pluginId, Class<?> theClass) {
 		super(theClass);
 		this.pluginId = pluginId;
 	}
 
-	public SessionTestSuite(String pluginId, Class theClass, String name) {
+	public SessionTestSuite(String pluginId, Class<? extends TestCase> theClass, String name) {
 		super(theClass, name);
 		this.pluginId = pluginId;
 	}
@@ -66,14 +72,18 @@ public class SessionTestSuite extends TestSuite {
 	}
 
 	protected void fillTestDescriptor(TestDescriptor test) throws SetupException {
-		if (test.getApplicationId() == null)
+		if (test.getApplicationId() == null) {
 			test.setApplicationId(applicationId);
-		if (test.getPluginId() == null)
+		}
+		if (test.getPluginId() == null) {
 			test.setPluginId(pluginId);
-		if (test.getSetup() == null)
+		}
+		if (test.getSetup() == null) {
 			test.setSetup(getSetup());
-		if (!test.isCrashTest() && crashTests.contains(test.getTest()))
+		}
+		if (!test.isCrashTest() && crashTests.contains(test.getTest())) {
 			test.setCrashTest(true);
+		}
 		test.setTestRunner(getTestRunner());
 	}
 
@@ -82,28 +92,33 @@ public class SessionTestSuite extends TestSuite {
 	}
 
 	public Setup getSetup() throws SetupException {
-		if (setup == null)
+		if (setup == null) {
 			setup = newSetup();
+		}
 		return setup;
 	}
 
 	protected SessionTestRunner getTestRunner() {
-		if (testRunner == null)
+		if (testRunner == null) {
 			testRunner = new SessionTestRunner();
+		}
 		return testRunner;
 	}
 
 	protected Test[] getTests(boolean sort) {
 		Test[] allTests = new Test[testCount()];
-		Enumeration e = tests();
-		for (int i = 0; i < allTests.length; i++)
-			allTests[i] = (Test) e.nextElement();
-		if (sort)
-			Arrays.sort(allTests, new Comparator() {
-				public int compare(Object o1, Object o2) {
+		Enumeration<Test> e = tests();
+		for (int i = 0; i < allTests.length; i++) {
+			allTests[i] = e.nextElement();
+		}
+		if (sort) {
+			Arrays.sort(allTests, new Comparator<Test>() {
+				@Override
+				public int compare(Test o1, Test o2) {
 					return ((TestCase) o1).getName().compareTo(((TestCase) o2).getName());
 				}
 			});
+		}
 		return allTests;
 	}
 
@@ -124,15 +139,16 @@ public class SessionTestSuite extends TestSuite {
 	/**
 	 * Runs this session test suite.
 	 */
+	@Override
 	public void run(TestResult result) {
 		if (!sharedSession) {
 			super.run(result);
 			return;
 		}
 		// running this session test suite in shared mode
-		Enumeration tests = tests();
+		Enumeration<Test> tests = tests();
 		Assert.isTrue(tests.hasMoreElements(), "A single test suite must be provided");
-		Test onlyTest = (Test) tests.nextElement();
+		Test onlyTest = tests.nextElement();
 		Assert.isTrue(!tests.hasMoreElements(), "Only a single test suite can be run");
 		Assert.isTrue(onlyTest instanceof TestSuite, "Only test suites can be run in shared session mode");
 		TestSuite nested = (TestSuite) onlyTest;
@@ -159,36 +175,41 @@ public class SessionTestSuite extends TestSuite {
 		}
 	}
 
+	@Override
 	public final void runTest(Test test, TestResult result) {
-		if (sharedSession)
+		if (sharedSession) {
 			// just for safety, prevent anybody from calling this API - we don't run individual tests when in shared mode
 			throw new UnsupportedOperationException();
+		}
 
-		if (test instanceof TestDescriptor)
+		if (test instanceof TestDescriptor) {
 			runSessionTest((TestDescriptor) test, result);
-		else if (test instanceof TestCase) {
-			if (isLocalTest(test))
+		} else if (test instanceof TestCase) {
+			if (isLocalTest(test)) {
 				// local, ordinary test - just run it
 				test.run(result);
-			else
+			} else {
 				runSessionTest(new TestDescriptor((TestCase) test), result);
-		} else if (test instanceof TestSuite)
+			}
+		} else if (test instanceof TestSuite) {
 			// find and run the test cases that make up the suite
 			runTestSuite((TestSuite) test, result);
-		else
+		} else {
 			// we don't support session tests for things that are not TestCases
 			// or TestSuites (e.g. TestDecorators)
 			test.run(result);
+		}
 	}
 
 	/*
 	 * Traverses the test suite to find individual test cases to be run with the SessionTestRunner.
 	 */
 	protected void runTestSuite(TestSuite suite, TestResult result) {
-		for (Enumeration e = suite.tests(); e.hasMoreElements();) {
-			if (result.shouldStop())
+		for (Enumeration<Test> e = suite.tests(); e.hasMoreElements();) {
+			if (result.shouldStop()) {
 				break;
-			Test test = (Test) e.nextElement();
+			}
+			Test test = e.nextElement();
 			runTest(test, result);
 		}
 	}

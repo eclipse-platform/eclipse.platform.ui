@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,9 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
 import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -59,7 +57,7 @@ public class SessionTestRunner {
 	class ResultCollector implements Runnable {
 		private boolean finished;
 		private Result newResult;
-		private Map results = new HashMap();
+		private Map<String, Result> results = new HashMap<>();
 		ServerSocket serverSocket;
 		private boolean shouldRun = true;
 		private StringBuffer stack;
@@ -83,8 +81,9 @@ public class SessionTestRunner {
 
 		private void initResults(Test test) {
 			if (test instanceof TestSuite) {
-				for (Enumeration e = ((TestSuite) test).tests(); e.hasMoreElements();)
-					initResults((Test) e.nextElement());
+				for (Enumeration<Test> e = ((TestSuite) test).tests(); e.hasMoreElements();) {
+					initResults(e.nextElement());
+				}
 				return;
 			}
 			results.put(test.toString(), new Result(test));
@@ -100,14 +99,17 @@ public class SessionTestRunner {
 		}
 
 		private String parseTestId(String message) {
-			if (message.length() == 0 || message.charAt(0) != '%')
+			if (message.length() == 0 || message.charAt(0) != '%') {
 				return null;
+			}
 			int firstComma = message.indexOf(',');
-			if (firstComma == -1)
+			if (firstComma == -1) {
 				return null;
+			}
 			int secondComma = message.indexOf(',', firstComma + 1);
-			if (secondComma == -1)
+			if (secondComma == -1) {
 				secondComma = message.length();
+			}
 			return message.substring(firstComma + 1, secondComma);
 		}
 
@@ -121,17 +123,19 @@ public class SessionTestRunner {
 		private void processMessage(String message) {
 			if (message.startsWith("%TESTS")) {
 				String testId = parseTestId(message);
-				if (!results.containsKey(testId))
+				if (!results.containsKey(testId)) {
 					throw new IllegalStateException("Unknown test id: " + testId);
-				newResult = (Result) results.get(testId);
+				}
+				newResult = results.get(testId);
 				testResult.startTest(newResult.test);
 				return;
 			}
 			if (message.startsWith("%TESTE")) {
-				if (newResult.type == Result.FAILURE)
+				if (newResult.type == Result.FAILURE) {
 					testResult.addFailure(newResult.test, new RemoteAssertionFailedError(newResult.message, newResult.stackTrace));
-				else if (newResult.type == Result.ERROR)
+				} else if (newResult.type == Result.ERROR) {
 					testResult.addError(newResult.test, new RemoteTestException(newResult.message, newResult.stackTrace));
+				}
 				testResult.endTest(newResult.test);
 				testsRun++;
 				newResult = null;
@@ -158,9 +162,10 @@ public class SessionTestRunner {
 				stack = null;
 				return;
 			}
-			if (message.startsWith("%"))
+			if (message.startsWith("%")) {
 				// ignore any other messages
 				return;
+			}
 			if (stack != null) {
 				// build the stack trace line by line
 				stack.append(message);
@@ -169,19 +174,22 @@ public class SessionTestRunner {
 			}
 		}
 
+		@Override
 		public void run() {
 			Socket connection = null;
 			try {
 				// someone asked us to stop before we could do anything
-				if (!shouldRun())
+				if (!shouldRun()) {
 					return;
+				}
 				try {
 					connection = serverSocket.accept();
 				} catch (SocketException se) {
-					if (!shouldRun())
+					if (!shouldRun()) {
 						// we have been finished without ever getting any connections
 						// no need to throw exception
 						return;
+					}
 					// something else stopped us
 					throw se;
 				}
@@ -191,8 +199,9 @@ public class SessionTestRunner {
 					while (true) {
 						synchronized (this) {
 							processAvailableMessages(messageReader);
-							if (!shouldRun())
+							if (!shouldRun()) {
 								return;
+							}
 							this.wait(150);
 						}
 					}
@@ -206,14 +215,16 @@ public class SessionTestRunner {
 				markAsFinished();
 				// cleanup
 				try {
-					if (connection != null && !connection.isClosed())
+					if (connection != null && !connection.isClosed()) {
 						connection.close();
+					}
 				} catch (IOException e) {
 					CoreTest.log(CoreTest.PI_HARNESS, e);
 				}
 				try {
-					if (serverSocket != null && !serverSocket.isClosed())
+					if (serverSocket != null && !serverSocket.isClosed()) {
 						serverSocket.close();
+					}
 				} catch (IOException e) {
 					CoreTest.log(CoreTest.PI_HARNESS, e);
 				}
@@ -230,8 +241,9 @@ public class SessionTestRunner {
 		public void shutdown() {
 			// ask the collector to stop
 			synchronized (this) {
-				if (isFinished())
+				if (isFinished()) {
 					return;
+				}
 				shouldRun = false;
 				try {
 					serverSocket.close();
@@ -242,12 +254,13 @@ public class SessionTestRunner {
 			}
 			// wait until the collector is done
 			synchronized (this) {
-				while (!isFinished())
+				while (!isFinished()) {
 					try {
 						wait(100);
 					} catch (InterruptedException e) {
 						// we don't care
 					}
+				}
 			}
 		}
 
@@ -274,8 +287,9 @@ public class SessionTestRunner {
 				// This can happen for tests that update framework extensions which requires a restart.
 				returnCode = setup.run();
 			}
-			if (returnCode != 0)
+			if (returnCode != 0) {
 				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " + setup, null);
+			}
 		} catch (Exception e) {
 			outcome = new Status(IStatus.ERROR, Platform.PI_RUNTIME, -1, "Error running process\n\tCommand: " + setup, e);
 		}
@@ -306,12 +320,14 @@ public class SessionTestRunner {
 			}
 		}
 		if (collector.getTestsRun() == 0) {
-			if (crashTest)
+			if (crashTest) {
 				// explicitly end test since process crashed before test could finish
 				result.endTest(test);
-			else
+			} else {
 				result.addError(test, new Exception("Test did not run: " + test.toString()));
-		} else if (crashTest)
+			}
+		} else if (crashTest) {
 			result.addError(test, new Exception("Should have caused crash"));
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session.samples;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 import org.eclipse.core.tests.harness.CoreTest;
-import org.eclipse.core.tests.session.*;
-import org.eclipse.test.performance.*;
+import org.eclipse.core.tests.session.SessionTestRunner;
+import org.eclipse.core.tests.session.SessionTestSuite;
+import org.eclipse.core.tests.session.SetupManager;
+import org.eclipse.core.tests.session.TestDescriptor;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 
 public class MultipleRunsTest extends TestCase {
 	public void testMultipleRuns() throws SetupManager.SetupException {
@@ -31,11 +37,11 @@ public class MultipleRunsTest extends TestCase {
 		for (int i = 0; i < 5; i++) {
 			test.run(result);
 			if (result.failureCount() > 0) {
-				((TestFailure) result.failures().nextElement()).thrownException().printStackTrace();
+				result.failures().nextElement().thrownException().printStackTrace();
 				return;
 			}
 			if (result.errorCount() > 0) {
-				((TestFailure) result.errors().nextElement()).thrownException().printStackTrace();
+				result.errors().nextElement().thrownException().printStackTrace();
 				return;
 			}
 		}

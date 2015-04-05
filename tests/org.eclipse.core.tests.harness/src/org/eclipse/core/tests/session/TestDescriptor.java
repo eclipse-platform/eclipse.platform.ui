@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 
 /**
  * A test descriptor represents a test case. It is used by the session
@@ -39,6 +41,7 @@ public class TestDescriptor extends TestCase {
 		this.test = test;
 	}
 
+	@Override
 	public int countTestCases() {
 		return 1;
 	}
@@ -47,6 +50,7 @@ public class TestDescriptor extends TestCase {
 		return applicationId;
 	}
 
+	@Override
 	public String getName() {
 		return getTestMethod();
 	}
@@ -79,6 +83,7 @@ public class TestDescriptor extends TestCase {
 		return crashTest;
 	}
 
+	@Override
 	public void run(TestResult result) {
 		Setup localSetup = (Setup) setup.clone();
 		localSetup.setEclipseArgument(Setup.APPLICATION, applicationId);
@@ -107,6 +112,7 @@ public class TestDescriptor extends TestCase {
 		this.testRunner = testRunner;
 	}
 
+	@Override
 	public String toString() {
 		return getName() + "(" + getTestClass() + ")";
 	}

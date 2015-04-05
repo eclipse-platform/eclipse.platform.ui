@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 */
 	public static final int NO_EVENT = -1;
 
-	private List events = new LinkedList();
-	private List simpleEvents = new LinkedList();
+	private List<IRegistryChangeEvent> events = new LinkedList<>();
+	private List<Integer> simpleEvents = new LinkedList<>();
 	private String xpNamespace;
 	private String xpId;
 	private String extNamespace;
@@ -39,12 +39,15 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 * namespaces/ids.
 	 */
 	public TestRegistryChangeListener(String xpNamespace, String xpId, String extNamespace, String extId) {
-		if (xpId != null && xpNamespace == null)
+		if (xpId != null && xpNamespace == null) {
 			throw new IllegalArgumentException();
-		if (extId != null && extNamespace == null)
+		}
+		if (extId != null && extNamespace == null) {
 			throw new IllegalArgumentException();
-		if (xpId == null && extId != null)
+		}
+		if (xpId == null && extId != null) {
 			throw new IllegalArgumentException();
+		}
 		this.xpNamespace = xpNamespace;
 		this.xpId = xpId;
 		this.extNamespace = extNamespace;
@@ -54,6 +57,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	/**
 	 * @see IRegistryChangeListener#registryChanged
 	 */
+	@Override
 	public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
 		IExtensionDelta delta = null;
 		if (xpId != null) {
@@ -61,12 +65,14 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 				delta = newEvent.getExtensionDelta(xpNamespace, xpId, extNamespace + '.' + extId);
 			} else {
 				IExtensionDelta[] deltas = newEvent.getExtensionDeltas(xpNamespace, xpId);
-				if (deltas.length != 0)
+				if (deltas.length != 0) {
 					delta = deltas[0];
+				}
 			}
 		}
-		if (delta == null)
+		if (delta == null) {
 			return; // this is not the event we are interested in
+		}
 		events.add(newEvent);
 		simpleEvents.add(new Integer(delta.getKind()));
 		notifyAll();
@@ -88,8 +94,9 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 * @deprecated use {@link #eventTypeReceived(long)} instead
 	 */
 	public synchronized IRegistryChangeEvent getEvent(long timeout) {
-		if (!events.isEmpty())
-			return (IRegistryChangeEvent) events.remove(0);
+		if (!events.isEmpty()) {
+			return events.remove(0);
+		}
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
@@ -117,14 +124,15 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 		while (simpleEvents.isEmpty()) {
 			try {
 				long sleepTime = timeout - (System.currentTimeMillis()-start);
-				if (sleepTime <= 0)
+				if (sleepTime <= 0) {
 					break;
+				}
 				wait(sleepTime);
 			} catch (InterruptedException e) {
 				// who cares?
 			}
 		}
-		return simpleEvents.isEmpty() ? NO_EVENT : ((Integer) simpleEvents.remove(0)).intValue();
+		return simpleEvents.isEmpty() ? NO_EVENT : simpleEvents.remove(0).intValue();
 	}
 
 	/**

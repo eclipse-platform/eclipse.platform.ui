@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Executes an external process synchronously, allowing the client to define
@@ -60,8 +62,9 @@ public class ProcessController {
 
 	private void controlProcess() {
 		new Thread("Process controller") {
+			@Override
 			public void run() {
-				while (!isFinished() && !timedOut())
+				while (!isFinished() && !timedOut()) {
 					synchronized (this) {
 						try {
 							wait(100);
@@ -69,6 +72,7 @@ public class ProcessController {
 							break;
 						}
 					}
+				}
 				kill();
 			}
 		}.start();
@@ -91,21 +95,26 @@ public class ProcessController {
 		this.startupTime = System.currentTimeMillis();
 		// starts the process
 		process = Runtime.getRuntime().exec(params);
-		if (forwardStdErr != null)
+		if (forwardStdErr != null) {
 			forwardStream("stderr", process.getErrorStream(), forwardStdErr);
-		if (forwardStdOut != null)
+		}
+		if (forwardStdOut != null) {
 			forwardStream("stdout", process.getInputStream(), forwardStdOut);
-		if (forwardStdIn != null)
+		}
+		if (forwardStdIn != null) {
 			forwardStream("stdin", forwardStdIn, process.getOutputStream());
-		if (timeLimit > 0)
+		}
+		if (timeLimit > 0) {
 			// ensures process execution time does not exceed the time limit
 			controlProcess();
+		}
 		try {
 			return process.waitFor();
 		} finally {
 			markFinished();
-			if (wasKilled())
+			if (wasKilled()) {
 				throw new TimeOutException();
+			}
 		}
 	}
 
@@ -133,11 +142,13 @@ public class ProcessController {
 
 	private void forwardStream(final String name, final InputStream in, final OutputStream out) {
 		new Thread("Stream forwarder [" + name + "]") {
+			@Override
 			public void run() {
 				try {
 					while (!isFinished()) {
-						while (in.available() > 0)
+						while (in.available() > 0) {
 							out.write(in.read());
+						}
 						synchronized (this) {
 							this.wait(100);
 						}
@@ -173,8 +184,9 @@ public class ProcessController {
 	 */
 	public void kill() {
 		synchronized (this) {
-			if (isFinished())
+			if (isFinished()) {
 				return;
+			}
 			killed = true;
 		}
 		process.destroy();

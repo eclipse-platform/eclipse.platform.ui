@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 
 /**
@@ -35,35 +38,44 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 			this.timesToRun = timesToRun;
 		}
 
+		@Override
 		public synchronized void addError(Test test, Throwable t) {
 			failed = true;
 			target.addError(test, t);
 		}
 
+		@Override
 		public synchronized void addFailure(Test test, AssertionFailedError t) {
 			failed = true;
 			target.addFailure(test, t);
 		}
 
+		@Override
 		public void endTest(Test test) {
 			runs++;
-			if (!failed && runs < timesToRun)
+			if (!failed && runs < timesToRun) {
 				return;
+			}
 			target.endTest(test);
 		}
 
+		@Override
 		public synchronized boolean shouldStop() {
-			if (failed)
+			if (failed) {
 				return true;
+			}
 			return target.shouldStop();
 		}
 
+		@Override
 		public void startTest(Test test) {
 			// should not try to start again ater failing once
-			if (failed)
+			if (failed) {
 				throw new IllegalStateException();
-			if (started)
+			}
+			if (started) {
 				return;
+			}
 			started = true;
 			target.startTest(test);
 		}
@@ -78,12 +90,13 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		this.timesToRun = timesToRun;
 	}
 
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass) {
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class<?> theClass) {
 		super(pluginId, theClass);
 		this.timesToRun = timesToRun;
 	}
 
-	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class theClass, String name) {
+	public PerformanceSessionTestSuite(String pluginId, int timesToRun, Class<? extends TestCase> theClass,
+			String name) {
 		super(pluginId, theClass, name);
 		this.timesToRun = timesToRun;
 	}
@@ -93,6 +106,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		this.timesToRun = timesToRun;
 	}
 
+	@Override
 	protected void runSessionTest(TestDescriptor descriptor, TestResult result) {
 		try {
 			fillTestDescriptor(descriptor);
@@ -105,10 +119,12 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		descriptor.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));
 		// run test cases n-1 times
 		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result, timesToRun);
-		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
+		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++) {
 			descriptor.run(consolidated);
-		if (consolidated.shouldStop())
+		}
+		if (consolidated.shouldStop()) {
 			return;
+		}
 		// for the n-th run, enable assertions
 		descriptor.getSetup().setSystemProperty("eclipse.perf.assertAgainst", System.getProperty("eclipse.perf.assertAgainst"));
 		descriptor.run(consolidated);

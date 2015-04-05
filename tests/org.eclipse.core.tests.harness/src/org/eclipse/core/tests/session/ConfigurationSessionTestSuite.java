@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,21 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.*;
-import junit.framework.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -47,7 +58,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	private static final String PROP_CONFIG_AREA_READ_ONLY = InternalPlatform.PROP_CONFIG_AREA + ".readOnly";
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded";
 	private static final String PROP_SHARED_CONFIG_AREA = "osgi.sharedConfiguration.area";
-	private Collection bundles = new ArrayList();
+	private Collection<String> bundles = new ArrayList<>();
 	private boolean cascaded;
 
 	// by default we clean-up after ourselves
@@ -63,12 +74,12 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		super(pluginId);
 	}
 
-	public ConfigurationSessionTestSuite(String pluginId, Class theClass) {
+	public ConfigurationSessionTestSuite(String pluginId, Class<?> theClass) {
 		super(pluginId, theClass);
 		this.shouldSort = true;
 	}
 
-	public ConfigurationSessionTestSuite(String pluginId, Class theClass, String name) {
+	public ConfigurationSessionTestSuite(String pluginId, Class<? extends TestCase> theClass, String name) {
 		super(pluginId, theClass, name);
 		this.shouldSort = true;
 	}
@@ -85,19 +96,20 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		Assert.assertTrue("1.0", !bundles.isEmpty());
 		Properties contents = new Properties();
 		StringBuffer osgiBundles = new StringBuffer();
-		for (Iterator i = this.bundles.iterator(); i.hasNext();) {
+		for (Iterator<String> i = this.bundles.iterator(); i.hasNext();) {
 			osgiBundles.append(i.next());
 			osgiBundles.append(',');
 		}
 		osgiBundles.deleteCharAt(osgiBundles.length() - 1);
 		contents.put("osgi.bundles", osgiBundles.toString());
-		String osgiFramework = (String) getURLs("org.eclipse.osgi").get(0);
+		String osgiFramework = getURLs("org.eclipse.osgi").get(0);
 		contents.put("osgi.framework", osgiFramework);
 		contents.put("osgi.bundles.defaultStartLevel", "4");
 		contents.put("osgi.install.area", Platform.getInstallLocation().getURL().toExternalForm());
 		contents.put(PROP_CONFIG_CASCADED, Boolean.toString(cascaded));
-		if (cascaded)
+		if (cascaded) {
 			contents.put(PROP_SHARED_CONFIG_AREA, Platform.getConfigurationLocation().getURL().toExternalForm());
+		}
 		contents.put(PROP_CONFIG_AREA_READ_ONLY, Boolean.toString(readOnly));
 		// save the properties
 		File configINI = configurationPath.append("config.ini").toFile();
@@ -106,11 +118,13 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			out = new BufferedOutputStream(new FileOutputStream(configINI));
 			contents.store(out, null);
 		} finally {
-			if (out != null)
+			if (out != null) {
 				out.close();
+			}
 		}
 	}
 
+	@Override
 	protected void fillTestDescriptor(TestDescriptor test) throws SetupException {
 		super.fillTestDescriptor(test);
 		if (prime) {
@@ -123,8 +137,8 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		return configurationPath;
 	}
 
-	private List getURLs(String id) {
-		List result = new ArrayList();
+	private List<String> getURLs(String id) {
+		List<String> result = new ArrayList<>();
 		String suffix = "";
 		int atIndex = id.indexOf("@");
 		if (atIndex >= 0) {
@@ -149,8 +163,9 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 				String path = url.getPath();
 				// change it to be file:/path/file.jar
 				externalForm = path.substring(0, path.length() - 2);
-			} else
+			} else {
 				externalForm = url.toExternalForm();
+			}
 			// workaround for bug 88070
 			externalForm = "reference:" + externalForm;
 			result.add(externalForm + suffix);
@@ -170,6 +185,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	 * Ensures setup uses this suite's instance location.
 	 * @throws SetupException
 	 */
+	@Override
 	protected Setup newSetup() throws SetupException {
 		Setup base = super.newSetup();
 		// the base implementation will have set this to the host configuration
@@ -183,15 +199,17 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	 * running the last test. Also sorts the test cases to be run if this suite was
 	 * created by reifying a test case class.
 	 */
+	@Override
 	public void run(TestResult result) {
 		configurationPath.toFile().mkdirs();
 		try {
-			if (prime)
+			if (prime) {
 				try {
 					createConfigINI();
 				} catch (IOException e) {
 					CoreTest.fail("0.1", e);
 				}
+			}
 			if (!shouldSort || isSharedSession()) {
 				// for shared sessions, we don't control the execution of test cases
 				super.run(result);
@@ -207,18 +225,21 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 				// that behavior and update.configurator is close to be being retired,
 				// the kludge here is to generate new config.ini for every test run.
 				if (cascaded)
+				 {
 					try {
 						createConfigINI();
 					} catch (IOException e) {
 						CoreTest.fail("0.1", e);
 					}
 				// end of KLUDGE
+				}
 
 				runTest(allTests[i], result);
 			}
 		} finally {
-			if (cleanUp)
+			if (cleanUp) {
 				FileSystemHelper.clear(configurationPath.toFile());
+			}
 		}
 
 	}
@@ -246,9 +267,10 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	public static File getConfigurationDir() {
 		Location configurationLocation = Platform.getConfigurationLocation();
 		URL configurationURL = configurationLocation.getURL();
-		if (!"file".equals(configurationURL.getProtocol()))
+		if (!"file".equals(configurationURL.getProtocol())) {
 			// only works if configuration is file: based
 			throw new IllegalStateException();
+		}
 		File configurationDir = new File(configurationURL.getFile());
 		return configurationDir;
 	}
