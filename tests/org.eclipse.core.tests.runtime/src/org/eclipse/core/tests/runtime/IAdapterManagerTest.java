@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2012 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class IAdapterManagerTest extends TestCase {
 		super("");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		manager = Platform.getAdapterManager();
 	}
@@ -87,13 +88,16 @@ public class IAdapterManagerTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};
@@ -126,13 +130,16 @@ public class IAdapterManagerTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};
@@ -151,7 +158,7 @@ public class IAdapterManagerTest extends TestCase {
 	public void testGetAdapterNullArgs() {
 		TestAdaptable adaptable = new TestAdaptable();
 		try {
-			manager.getAdapter(adaptable, (Class) null);
+			manager.getAdapter(adaptable, (Class<?>) null);
 			fail("1.0");
 		} catch (RuntimeException e) {
 			//expected
@@ -182,13 +189,16 @@ public class IAdapterManagerTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};
@@ -224,8 +234,9 @@ public class IAdapterManagerTest extends TestCase {
 			assertNotNull(result);
 			assertTrue(TEST_ADAPTER_CL.equals(result.getClass().getName()));
 		} finally {
-			if (bundle != null)
+			if (bundle != null) {
 				bundle.uninstall();
+			}
 		}
 	}
 
@@ -233,8 +244,9 @@ public class IAdapterManagerTest extends TestCase {
 	 * Tests for {@link IAdapterManager#computeClassOrder(Class)}.
 	 */
 	public void testComputeClassOrder() {
-		Class[] expected = new Class[] {X.class, Y.class, Object.class, A.class, B.class, M.class, N.class, O.class, C.class, D.class};
-		Class[] actual = manager.computeClassOrder(X.class);
+		Class<?>[] expected = new Class[] { X.class, Y.class, Object.class, A.class, B.class, M.class, N.class, O.class,
+				C.class, D.class };
+		Class<?>[] actual = manager.computeClassOrder(X.class);
 		assertEquals("1.0", expected.length, actual.length);
 		for (int i = 0; i < actual.length; i++) {
 			assertEquals("1.1." + i, expected[i], actual[i]);

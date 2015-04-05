@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,18 +31,22 @@ class TestBlockingMonitor extends TestProgressMonitor implements IProgressMonito
 		this.barrier = barrier;
 	}
 
+	@Override
 	public void clearBlocked() {
 		//leave empty for now
 	}
 
+	@Override
 	public boolean isCanceled() {
 		return cancelled;
 	}
 
+	@Override
 	public void setBlocked(IStatus reason) {
 		barrier.setStatus(TestBarrier.STATUS_BLOCKED);
 	}
 
+	@Override
 	public void setCanceled(boolean b) {
 		cancelled = true;
 	}

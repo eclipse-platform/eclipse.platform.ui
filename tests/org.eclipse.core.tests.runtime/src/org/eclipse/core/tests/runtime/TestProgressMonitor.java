@@ -206,16 +206,19 @@ public class TestProgressMonitor implements IProgressMonitor {
 		return totalWork;
 	}
 
+	@Override
 	public void beginTask(String name, int workToDo) {
 		beginTaskCalls++;
 		this.expectedWork = workToDo;
 		this.beginTaskName = name;
 	}
 
+	@Override
 	public void done() {
 		doneCalls++;
 	}
 
+	@Override
 	public void internalWorked(double work) {
 		workCalls++;
 		doubleWorkedCalls++;
@@ -224,15 +227,18 @@ public class TestProgressMonitor implements IProgressMonitor {
 		totalWork += work;
 	}
 
+	@Override
 	public boolean isCanceled() {
 		isCanceledCalls++;
 		return cancelled;
 	}
 
+	@Override
 	public void setCanceled(boolean value) {
 		this.cancelled = value;
 	}
 
+	@Override
 	public void setTaskName(String name) {
 		taskNameCalls++;
 		if (equals(name, taskName))
@@ -240,6 +246,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 		taskName = name;
 	}
 
+	@Override
 	public void subTask(String name) {
 		subTaskCalls++;
 		if (equals(name, subTaskName))
@@ -247,6 +254,7 @@ public class TestProgressMonitor implements IProgressMonitor {
 		subTaskName = name;
 	}
 
+	@Override
 	public void worked(int work) {
 		workCalls++;
 		intWorkedCalls++;

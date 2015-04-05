@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class PreferencesTest extends RuntimeTest {
 			return null;
 		}
 
+		@Override
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			log.append("[");
 			log.append(event.getProperty());
@@ -77,16 +78,12 @@ public class PreferencesTest extends RuntimeTest {
 		//		return suite;
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() {
 		// do nothing
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() {
 		// do nothing
 	}
@@ -577,6 +574,7 @@ public class PreferencesTest extends RuntimeTest {
 
 		// adds 2 and removes 1 during during callback!
 		class Trouble implements Preferences.IPropertyChangeListener {
+			@Override
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				ps.removePropertyChangeListener(tracer1);
 				ps.addPropertyChangeListener(tracer2);

@@ -24,6 +24,7 @@ public class SimpleRegistryListener implements IRegistryChangeListener {
 
 	private List<IRegistryChangeEvent> events = new LinkedList<IRegistryChangeEvent>();
 
+	@Override
 	public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
 		events.add(newEvent);
 		notify();

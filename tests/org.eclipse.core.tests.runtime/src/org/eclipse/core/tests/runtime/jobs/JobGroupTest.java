@@ -24,6 +24,7 @@ public class JobGroupTest extends AbstractJobTest {
 	private IJobManager manager;
 	private FussyProgressProvider progressProvider;
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		manager = Job.getJobManager();
@@ -31,6 +32,7 @@ public class JobGroupTest extends AbstractJobTest {
 		manager.setProgressProvider(progressProvider);
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 		progressProvider.sanityCheck();
@@ -56,6 +58,7 @@ public class JobGroupTest extends AbstractJobTest {
 		// Use a thread to record the maximum number of running jobs and
 		// cancel the running jobs so that the waiting jobs will be scheduled.
 		final Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				while (jobGroup.getState() != JobGroup.NONE) {
@@ -127,6 +130,7 @@ public class JobGroupTest extends AbstractJobTest {
 			// An example usage would be a directory digger that starts
 			// with a set of root directories.
 			Job job = new Job("SeedJob") {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					for (int j = 0; j < NUM_CHILD_JOBS; j++) {
 						TestJob childJob = new TestJob("ChildTestJob", 1000000, 10);
@@ -421,6 +425,7 @@ public class JobGroupTest extends AbstractJobTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -497,6 +502,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final long duration[] = {-1};
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -565,6 +571,7 @@ public class JobGroupTest extends AbstractJobTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -637,6 +644,7 @@ public class JobGroupTest extends AbstractJobTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -789,6 +797,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final TestJob running = new TestJob("RunningJob", 200, 10);
 		running.setJobGroup(jobGroup);
 		Job job = new Job("MainJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_START);
 				try {
@@ -851,6 +860,7 @@ public class JobGroupTest extends AbstractJobTest {
 		running.setJobGroup(jobGroup);
 
 		final Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
@@ -864,6 +874,7 @@ public class JobGroupTest extends AbstractJobTest {
 			}
 		});
 		Job job = new Job("MainJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_START);
 				try {
@@ -927,6 +938,7 @@ public class JobGroupTest extends AbstractJobTest {
 		running.setJobGroup(jobGroup);
 
 		final Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
@@ -940,6 +952,7 @@ public class JobGroupTest extends AbstractJobTest {
 			}
 		});
 		Job job = new Job("MainJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_START);
 
@@ -1070,6 +1083,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final int NUM_JOBS = 10;
 		final int numShouldCancelCalled[] = {0};
 		final JobGroup jobGroup = new JobGroup("JobGroup", 1, NUM_JOBS) {
+			@Override
 			protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 				numShouldCancelCalled[0]++;
 				return super.shouldCancel(lastCompletedJobResult, numberOfFailedJobs, numberOfCanceledJobs);
@@ -1104,6 +1118,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final TestBarrier barrier = new TestBarrier();
 
 		final JobGroup jobGroup = new JobGroup("JobGroup", 1, status.length) {
+			@Override
 			protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 				numShouldCancelCalled[0]++;
 				failedJobsCount[0] = numberOfFailedJobs;
@@ -1118,6 +1133,7 @@ public class JobGroupTest extends AbstractJobTest {
 			final int jobNumber = i;
 			final IStatus returnedStatus[] = new IStatus[1];
 			Job job = new TestJob("TestJob", 10, 10) {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					super.run(monitor);
 					returnedStatus[0] = new Status(status[jobNumber], "org.eclipse.core.jobs", "Job " + jobNumber);
@@ -1164,6 +1180,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final int numShouldCancelCalled[] = {0};
 		final TestBarrier barrier = new TestBarrier();
 		final JobGroup jobGroup = new JobGroup("JobGroup", 10, NUM_JOBS) {
+			@Override
 			protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 				numShouldCancelCalled[0]++;
 				if (numShouldCancelCalled[0] == NUM_JOBS_LIMIT)
@@ -1174,6 +1191,7 @@ public class JobGroupTest extends AbstractJobTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			final int jobNumber = i;
 			Job job = new TestJob("TestJob", 10, 10) {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					barrier.waitForStatus(TestBarrier.STATUS_START);
 					super.run(monitor);
@@ -1195,6 +1213,7 @@ public class JobGroupTest extends AbstractJobTest {
 	public void testDefaultComputeGroupResult() {
 		final int status[] = {IStatus.OK, IStatus.INFO, IStatus.WARNING, IStatus.ERROR, IStatus.CANCEL};
 		final JobGroup jobGroup = new JobGroup("JobGroup", 1, status.length) {
+			@Override
 			protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 				// Return false always so that the group will not be canceled due to failed jobs.
 				return false;
@@ -1204,6 +1223,7 @@ public class JobGroupTest extends AbstractJobTest {
 		for (int i = 0; i < status.length; i++) {
 			final int jobNumber = i;
 			Job job = new TestJob("TestJob", 10, 10) {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					super.run(monitor);
 					return new Status(status[jobNumber], "org.eclipse.core.jobs", "Job " + jobNumber);
@@ -1225,10 +1245,12 @@ public class JobGroupTest extends AbstractJobTest {
 		final IStatus originalJobResults[][] = {new IStatus[0]};
 		final int status[] = {IStatus.OK, IStatus.INFO, IStatus.WARNING, IStatus.ERROR, IStatus.CANCEL};
 		final JobGroup jobGroup = new JobGroup("group", 1, status.length) {
+			@Override
 			protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
 				return false;
 			}
 
+			@Override
 			protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 				// Record the original job results and return a dummy groupresult.
 				originalJobResults[0] = jobResults.toArray(new IStatus[jobResults.size()]);
@@ -1240,6 +1262,7 @@ public class JobGroupTest extends AbstractJobTest {
 		for (int i = 0; i < status.length; i++) {
 			final int jobNumber = i;
 			Job job = new TestJob("TestJob", 10, 10) {
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					super.run(monitor);
 					return new Status(status[jobNumber], "org.eclipse.core.jobs", "Job " + jobNumber);
@@ -1260,6 +1283,7 @@ public class JobGroupTest extends AbstractJobTest {
 	// https://bugs.eclipse.org/461621
 	public void testSlowComputeGroupResult() throws Exception {
 		final JobGroup jobGroup = new JobGroup("group", 1, 1) {
+			@Override
 			protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
 				sleep(500);
 				return new MultiStatus("org.eclipse.core.jobs", 0, new IStatus[0], "custom result", null);
@@ -1267,6 +1291,7 @@ public class JobGroupTest extends AbstractJobTest {
 		};
 
 		Job job = new Job("TestJob") {
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}

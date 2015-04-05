@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,22 +109,23 @@ public class LogSerializationTest extends RuntimeTest {
 		char lastChar = 0;
 		for (int i = 0; i < sb.length();) {
 			// only \n is used as line separator, with no consecutive occurrences
-			if (LINE_SEPARATORS.indexOf(sb.charAt(i)) != -1)
+			if (LINE_SEPARATORS.indexOf(sb.charAt(i)) != -1) {
 				if (LINE_SEPARATORS.indexOf(lastChar) != -1) {
 					sb.deleteCharAt(i);
 					continue;
-				} else
-					sb.setCharAt(i, NEW_LINE);
-			// each line (except the first one) starts with a tab
-			else if (lastChar == NEW_LINE)
+				}
+				sb.setCharAt(i, NEW_LINE);
+			} else if (lastChar == NEW_LINE) {
+				// each line (except the first one) starts with a tab
 				sb.insert(i, TAB);
-			// only ' ' is used as space, with no consecutive occurrences
-			else if (SPACES.indexOf(sb.charAt(i)) != -1)
+			} else if (SPACES.indexOf(sb.charAt(i)) != -1) {
+				// only ' ' is used as space, with no consecutive occurrences
 				if (SPACES.indexOf(lastChar) != -1) {
 					sb.deleteCharAt(i);
 					continue;
-				} else
-					sb.setCharAt(i, SPACE);
+				}
+				sb.setCharAt(i, SPACE);
+			}
 			lastChar = sb.charAt(i);
 			i++;
 		}
@@ -168,6 +169,7 @@ public class LogSerializationTest extends RuntimeTest {
 		return reader.readLogFile(logFile.getAbsolutePath());
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		//setup the log file
@@ -176,6 +178,7 @@ public class LogSerializationTest extends RuntimeTest {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		logFile.delete();
@@ -228,8 +231,9 @@ public class LogSerializationTest extends RuntimeTest {
 	}
 
 	protected void writeLog(IStatus[] statuses) {
-		if (logFile.exists())
+		if (logFile.exists()) {
 			logFile.delete();
+		}
 		for (int i = 0; i < statuses.length; i++) {
 			RuntimeLog.log(statuses[i]);
 		}

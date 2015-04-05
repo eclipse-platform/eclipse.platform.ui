@@ -55,11 +55,13 @@ public class SubMonitorTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		startTime = System.currentTimeMillis();
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		long endTime = System.currentTimeMillis();
 		reportPerformance(getClass().getName(), getName(), startTime, endTime);

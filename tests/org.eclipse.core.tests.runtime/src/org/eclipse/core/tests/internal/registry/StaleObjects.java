@@ -27,6 +27,7 @@ public class StaleObjects extends TestCase {
 			Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		}
 
+		@Override
 		public void registryChanged(IRegistryChangeEvent event) {
 			boolean gotException = false;
 			try {

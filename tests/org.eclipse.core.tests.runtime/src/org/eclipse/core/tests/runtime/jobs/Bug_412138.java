@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class Bug_412138 extends TestCase {
 		new File(FILE_NAME).delete();
 		final int[] status = {-1};
 		final Job fakeBuild = new Job("Fake AutoBuildJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					// synchronize on the job object
@@ -59,6 +60,7 @@ public class Bug_412138 extends TestCase {
 			}
 		};
 		Job job = new Job("Some job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
 				try {

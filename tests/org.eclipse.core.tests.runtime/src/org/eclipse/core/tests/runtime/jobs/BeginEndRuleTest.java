@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			this.status = status;
 		}
 
+		@Override
 		public void run() {
 			try {
 				status[0] = TestBarrier.STATUS_RUNNING;
@@ -344,6 +345,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		final ISchedulingRule rule2 = new PathRule("/testFailedNestRuleInJob/B/");
 		final Exception[] exception = new Exception[1];
 		Job job = new Job("testFailedNestRuleInJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					try {
@@ -600,6 +602,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void testIgnoreScheduleThreadJob() throws Exception {
 		final int[] count = new int[1];
 		JobChangeAdapter a = new JobChangeAdapter() {
+			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				count[0]++;
 			}
@@ -620,6 +623,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 	public void testRunThreadJobIsNotRescheduled() throws Exception {
 		final int[] count = new int[1];
 		JobChangeAdapter a = new JobChangeAdapter() {
+			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				count[0]++;
 			}
@@ -643,6 +647,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		final int[] count = new int[1];
 
 		final Job job = new Job(getName() + "acquire") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					Job.getJobManager().beginRule(subRule, null);
@@ -655,6 +660,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		job.setRule(rule);
 
 		JobChangeAdapter a = new JobChangeAdapter() {
+			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				if (event.getJob() == job)
 					return;

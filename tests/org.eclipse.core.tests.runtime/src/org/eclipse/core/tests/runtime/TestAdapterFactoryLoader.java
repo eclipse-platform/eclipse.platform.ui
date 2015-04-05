@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,11 @@ import org.osgi.framework.Bundle;
  */
 public class TestAdapterFactoryLoader extends Assert implements IAdapterFactory {
 
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		try {
-			Class[] targets = getAdapterList();
-			return targets[0].newInstance();
+			Class<?>[] targets = getAdapterList();
+			return adapterType.cast(targets[0].newInstance());
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			fail("Unable to load target class");
@@ -39,12 +40,14 @@ public class TestAdapterFactoryLoader extends Assert implements IAdapterFactory 
 		}
 	}
 
-	public Class[] getAdapterList() {
+	@Override
+	public Class<?>[] getAdapterList() {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.core.tests.runtime.factoryLoaderTest");
 		IExtension[] extensions = extPoint.getExtensions();
-		if (extensions.length == 0)
+		if (extensions.length == 0) {
 			return new Class[0];
+		}
 		IExtension extension = extensions[0];
 		IConfigurationElement[] confElements = extension.getConfigurationElements();
 		String className = confElements[0].getAttribute("name");

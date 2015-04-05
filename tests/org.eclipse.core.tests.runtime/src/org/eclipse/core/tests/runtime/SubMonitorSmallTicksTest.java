@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class SubMonitorSmallTicksTest extends TestCase {
 
 	private static int TOTAL_WORK = 1000;
 
+	@Override
 	protected void setUp() throws Exception {
 		topmostMonitor = new TestProgressMonitor();
 		smallTicksChild = SubMonitor.convert(topmostMonitor, 10);
@@ -48,6 +49,7 @@ public class SubMonitorSmallTicksTest extends TestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		smallTicksChild.done();
 		topmostMonitor.done();

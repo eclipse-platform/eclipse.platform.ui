@@ -26,6 +26,7 @@ public class ExeExtensionStrategy extends RegistryStrategy {
 		super(theStorageDir, cacheReadOnly);
 	}
 
+	@Override
 	public Object createExecutableExtension(RegistryContributor defaultContributor, String className, String requestedContributorName) {
 		Class<?> classInstance = null;
 		try {

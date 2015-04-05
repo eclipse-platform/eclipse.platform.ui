@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class PlatformTest extends RuntimeTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		//ensure platform locations are initialized
@@ -51,6 +52,7 @@ public class PlatformTest extends RuntimeTest {
 		originalLocation = logService.getFile();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		//undo any damage done by log location test
 		super.tearDown();
@@ -117,6 +119,7 @@ public class PlatformTest extends RuntimeTest {
 
 		// add a log listener to ensure that we report using the right plug-in id
 		ILogListener logListener = new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				collected.add(status);
 			}
@@ -125,10 +128,12 @@ public class PlatformTest extends RuntimeTest {
 
 		final Exception exception = new Exception("PlatformTest.testRunnable: this exception is thrown on purpose as part of the test.");
 		ISafeRunnable runnable = new ISafeRunnable() {
-			public void handleException(Throwable exception) {
-				exceptions.addElement(exception);
+			@Override
+			public void handleException(Throwable t) {
+				exceptions.addElement(t);
 			}
 
+			@Override
 			public void run() throws Exception {
 				throw exception;
 			}

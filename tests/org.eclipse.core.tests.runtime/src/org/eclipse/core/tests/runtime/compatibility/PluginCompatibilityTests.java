@@ -27,6 +27,7 @@ public class PluginCompatibilityTests extends TestCase {
 	public void testPluginWithNoRuntimeLibrary() {
 		assertNull("0.0", BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0"));
 		BundleTestingHelper.runWithBundles("0.1", new Runnable() {
+			@Override
 			public void run() {
 				Bundle[] installed = BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0");
 				assertEquals("1.0", 1, installed.length);

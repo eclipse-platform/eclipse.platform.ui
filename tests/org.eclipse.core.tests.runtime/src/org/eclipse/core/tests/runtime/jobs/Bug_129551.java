@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class Bug_129551 extends AbstractJobManagerTest {
 			super("Bug_129551", 1, 1);
 		}
 
+		@Override
 		public boolean shouldRun() {
 			//skip everything if the test is already done
 			if (!shouldSleep[0])
@@ -60,6 +61,7 @@ public class Bug_129551 extends AbstractJobManagerTest {
 	public Bug_129551(String name) {
 		super(name);
 	}
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		//don't use fussy progress monitor, because in this case we kill

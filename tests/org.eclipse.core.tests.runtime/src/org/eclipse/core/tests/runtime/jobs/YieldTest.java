@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			}
 		}
 
+		@Override
 		public void done(IJobChangeEvent event) {
 			synchronized (YieldTest.this) {
 				if (scheduled.remove(event.getJob())) {
@@ -43,6 +44,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			}
 		}
 
+		@Override
 		public void scheduled(IJobChangeEvent event) {
 			Job job = event.getJob();
 			synchronized (YieldTest.this) {
@@ -73,9 +75,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		completedJobs = 0;
@@ -87,9 +87,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		for (int i = 0; i < jobListeners.length; i++)
 			if (jobListeners[i] instanceof TestJobListener)
@@ -107,6 +105,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final TestBarrier barrier2 = new TestBarrier(location, 1);
 
 		final Job yielding = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier2.setStatus(TestBarrier.STATUS_START);
 				barrier1.waitForStatus(TestBarrier.STATUS_START);
@@ -114,6 +113,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			}
 		};
 		Job otherJob = new Job(getName() + " ShouldFault") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier2.waitForStatus(TestBarrier.STATUS_START);
 				try {
@@ -137,6 +137,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 	public void testExceptionWhenYieldingNotRunning() {
 		final Job yielding = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -155,6 +156,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertNull("Conflicting job result is not null: " + jobs[1].getResult(), jobs[1].getResult());
 				Thread before = getThread();
@@ -173,6 +175,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldJob.setRule(rule);
 
 		Job conflictingJob = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertTrue(jobs[0].getState() == WAITING);
 				assertTrue(jobs[0].getResult() == null);
@@ -195,6 +198,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertTrue(jobs[1].getResult() == null);
 				while (yieldRule(null) == null) {
@@ -210,6 +214,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldJob.setRule(rule);
 
 		Job conflictingJob = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertEquals(WAITING, jobs[0].getState());
 				assertTrue(jobs[0].getResult() == null);
@@ -281,6 +286,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final TestBarrier barrier1 = new TestBarrier(location, 0);
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier1.waitForStatus(TestBarrier.STATUS_START);
 				barrier1.setStatus(TestBarrier.STATUS_RUNNING);
@@ -295,6 +301,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldJob.setRule(rule);
 
 		final Job conflictingJob1 = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier1.setStatus(TestBarrier.STATUS_DONE);
 				return Status.OK_STATUS;
@@ -303,6 +310,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		conflictingJob1.setRule(rule);
 
 		Job nonConflict = new Job(getName() + " Non-conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -329,6 +337,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier barrier = new TestBarrier();
 		final Job yielding = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_START);
 				while (yieldRule(null) == null) {
@@ -341,6 +350,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		};
 		yielding.setRule(rule);
 		Thread t = new Thread(getName() + " Conflicting") {
+			@Override
 			public void run() {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -363,6 +373,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier barrier = new TestBarrier();
 		final Job yielding = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -380,6 +391,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		};
 
 		Thread t = new Thread(getName() + " Conflicting") {
+			@Override
 			public void run() {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -403,6 +415,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier barrier = new TestBarrier();
 		final Thread t = new Thread() {
+			@Override
 			public void run() {
 				IJobManager m = Job.getJobManager();
 				try {
@@ -423,6 +436,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		};
 
 		final Job conflictingJob = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_DONE);
 				return Status.OK_STATUS;
@@ -443,6 +457,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier barrier = new TestBarrier();
 		Thread t = new Thread(getName() + " Yielding") {
+			@Override
 			public void run() {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -461,6 +476,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		};
 
 		final Job conflicting = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -503,6 +519,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 
 		final Thread A = new Thread() {
+			@Override
 			public void run() {
 				try {
 					Job.getJobManager().beginRule(rule, null);
@@ -518,6 +535,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		};
 
 		Thread B = new Thread() {
+			@Override
 			public void run() {
 				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
 
@@ -550,6 +568,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final Thread[] t = new Thread[1];
 		final Job A = new Job(getName() + "A") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				t[0] = getThread();
 				try {
@@ -567,6 +586,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		};
 		Job B = new Job(getName() + "B") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
 
@@ -598,6 +618,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job(getName() + " Yielding") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertTrue(jobs[1].getResult() == null);
 				while (yieldRule(null) == null) {
@@ -611,6 +632,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldJob.setRule(rule);
 
 		Job conflictingJob = new Job(getName() + " ConflictingJob1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				assertEquals(WAITING, jobs[0].getState());
 				while (yieldRule(null) == null) {
@@ -646,6 +668,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final List<Job> jobs = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob" + i) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC) {
 						started[0] = new Integer(started[0].intValue() + 1);
@@ -715,6 +738,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final List<Job> jobs_A = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_A_" + i) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC_A) {
 						started_A[0] = new Integer(started_A[0].intValue() + 1);
@@ -770,6 +794,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final List<Job> jobs_B = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_B_" + i) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC_B) {
 						started_B[0] = new Integer(started_B[0].intValue() + 1);
@@ -839,6 +864,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final int count = 50;
 		Job yieldA = new Job(getName() + " YieldingA") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.waitForStatus(TestBarrier.STATUS_START);
 				int yields = 0;
@@ -854,6 +880,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldA.schedule();
 
 		Job yieldB = new Job(getName() + " YieldingB") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.waitForStatus(TestBarrier.STATUS_START);
 				int yields = 0;
@@ -891,6 +918,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
 		final Job yieldA = new Job(getName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
 				try {
@@ -907,6 +935,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			}
 		};
 		Job conflicting = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -933,6 +962,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
 		final Job yieldA = new Job(getName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
 				try {
@@ -951,6 +981,7 @@ public class YieldTest extends AbstractJobManagerTest {
 			}
 		};
 		final Job conflicting = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -959,6 +990,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final int[] count = new int[1];
 		JobChangeAdapter a = new JobChangeAdapter() {
+			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				if (event.getJob() == yieldA)
 					count[0]++;
@@ -990,6 +1022,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final TestBarrier b = new TestBarrier(TestBarrier.STATUS_START);
 		final Job yieldA = new Job(getName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 
 				b.setStatus(TestBarrier.STATUS_RUNNING);
@@ -1009,6 +1042,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		yieldA.setRule(rule);
 
 		final Job conflicting = new Job(getName() + " Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -1017,6 +1051,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		final int[] count = new int[1];
 		JobChangeAdapter a = new JobChangeAdapter() {
+			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 				if (event.getJob() == conflicting)
 					count[0]++;

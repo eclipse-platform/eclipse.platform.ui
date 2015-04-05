@@ -20,10 +20,12 @@ import org.junit.Assert;
 public class TestLockListener extends LockListener {
 	private boolean waiting;
 
+	@Override
 	public synchronized void aboutToRelease() {
 		waiting = false;
 	}
 
+	@Override
 	public synchronized boolean aboutToWait(Thread lockOwner) {
 		waiting = true;
 		return false;

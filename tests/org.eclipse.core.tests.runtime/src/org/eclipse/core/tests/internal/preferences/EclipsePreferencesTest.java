@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	class NodeTracer implements IEclipsePreferences.INodeChangeListener {
 		StringBuffer log = new StringBuffer();
 
+		@Override
 		public void added(IEclipsePreferences.NodeChangeEvent event) {
 			log.append("[A:");
 			log.append(event.getParent().absolutePath());
@@ -42,6 +43,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			log.append(']');
 		}
 
+		@Override
 		public void removed(IEclipsePreferences.NodeChangeEvent event) {
 			log.append("[R:");
 			log.append(event.getParent().absolutePath());
@@ -75,6 +77,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			return null;
 		}
 
+		@Override
 		public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
 			log.append("[");
 			log.append(event.getKey());
@@ -918,6 +921,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		final ArrayList<String> actual = new ArrayList<String>();
 
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			@Override
 			public boolean visit(IEclipsePreferences node) {
 				actual.add(node.absolutePath());
 				return true;
@@ -1027,9 +1031,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertEquals("3.0", "", tracer.log.toString());
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		Preferences node = getScopeRoot();
 		node.removeNode();

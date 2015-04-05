@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,46 +37,56 @@ public class BadTestScope extends EclipsePreferences implements IScopeContext {
 		// cache the segment count
 		IPath path = new Path(absolutePath());
 		segmentCount = path.segmentCount();
-		if (segmentCount < 2)
+		if (segmentCount < 2) {
 			return;
+		}
 
 		// cache the qualifier
 		String scope = path.segment(0);
-		if (BadTestScope.SCOPE.equals(scope))
+		if (BadTestScope.SCOPE.equals(scope)) {
 			qualifier = path.segment(1);
+		}
 
 		// cache the location
-		if (qualifier == null)
+		if (qualifier == null) {
 			return;
+		}
 	}
 
+	@Override
 	protected IEclipsePreferences getLoadLevel() {
 		if (loadLevel == null) {
-			if (qualifier == null)
+			if (qualifier == null) {
 				return null;
+			}
 			// Make it relative to this node rather than navigating to it from the root.
 			// Walk backwards up the tree starting at this node.
 			// This is important to avoid a chicken/egg thing on startup.
 			IEclipsePreferences node = this;
-			for (int i = 2; i < segmentCount; i++)
+			for (int i = 2; i < segmentCount; i++) {
 				node = (IEclipsePreferences) node.parent();
+			}
 			loadLevel = node;
 		}
 		return loadLevel;
 	}
 
+	@Override
 	public IPath getLocation() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return SCOPE;
 	}
 
-	public IEclipsePreferences getNode(String qualifier) {
+	@Override
+	public IEclipsePreferences getNode(String qualifier1) {
 		throw new RuntimeException("BadTestScope throws this on purpose.");
 	}
 
+	@Override
 	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Object context) {
 		return new BadTestScope(nodeParent, nodeName);
 	}

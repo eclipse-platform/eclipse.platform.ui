@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2014 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 			return null;
 		}
 
+		@Override
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
 			log.append('[');
 			log.append(event.getProperty());
@@ -78,16 +79,12 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		//				return suite;
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() {
 		// do nothing
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() {
 		// do nothing
 	}
@@ -623,6 +620,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 		// adds 2 and removes 1 during during callback!
 		class Trouble implements Preferences.IPropertyChangeListener {
+			@Override
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				ps.removePropertyChangeListener(tracer1);
 				ps.addPropertyChangeListener(tracer2);
@@ -832,6 +830,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 	public void testListenerOnRemove() {
 		// create a new log listener that will fail if anything is written
 		ILogListener logListener = new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				CoreException ex = new CoreException(status);
 				fail("0.99", ex);
@@ -846,6 +845,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		// add a property change listener which will cause one to be
 		// added at the preference node level
 		IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 			}
 		};

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class BenchPath extends RuntimeTest {
 			map.put(paths[i], "");
 		final int numPaths = paths.length;
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				for (int p = 0; p < numPaths; p++)
 					map.get(paths[p]);
@@ -59,6 +60,7 @@ public class BenchPath extends RuntimeTest {
 	public void testPathCreation() {
 		final int REPEAT = 50000;
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				//folders (5)
 				new Path("/");
@@ -94,6 +96,7 @@ public class BenchPath extends RuntimeTest {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toOSString();
@@ -108,6 +111,7 @@ public class BenchPath extends RuntimeTest {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toString();

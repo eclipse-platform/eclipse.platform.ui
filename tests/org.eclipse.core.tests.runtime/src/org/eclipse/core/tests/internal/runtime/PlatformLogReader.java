@@ -50,8 +50,9 @@ public class PlatformLogReader {
 	}
 
 	protected Throwable readException(String message) throws IOException {
-		if (currentLine == null || getLineType() != STACK)
+		if (currentLine == null || getLineType() != STACK) {
 			return null;
+		}
 		StringTokenizer tokenizer = new StringTokenizer(currentLine);
 		tokenizer.nextToken();
 		// FIXME: handle the code to read status objects which were
@@ -77,8 +78,9 @@ public class PlatformLogReader {
 				switch (getLineType()) {
 					case ENTRY :
 						IStatus status = readEntry();
-						if (status != null)
+						if (status != null) {
 							list.add(status);
+						}
 						break;
 					case SESSION :
 						readSession();
@@ -95,8 +97,9 @@ public class PlatformLogReader {
 			log(e);
 		} finally {
 			try {
-				if (input != null)
+				if (input != null) {
 					input.close();
+				}
 			} catch (IOException e) {
 				log(e);
 			}
@@ -105,21 +108,27 @@ public class PlatformLogReader {
 	}
 
 	protected int getLineType() {
-		if (currentLine == null)
+		if (currentLine == null) {
 			return NULL;
+		}
 		StringTokenizer tokenizer = new StringTokenizer(currentLine);
 		if (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.equals(KEYWORD_SESSION))
+			if (token.equals(KEYWORD_SESSION)) {
 				return SESSION;
-			if (token.equals(KEYWORD_ENTRY))
+			}
+			if (token.equals(KEYWORD_ENTRY)) {
 				return ENTRY;
-			if (token.equals(KEYWORD_SUBENTRY))
+			}
+			if (token.equals(KEYWORD_SUBENTRY)) {
 				return SUBENTRY;
-			if (token.equals(KEYWORD_MESSAGE))
+			}
+			if (token.equals(KEYWORD_MESSAGE)) {
 				return MESSAGE;
-			if (token.equals(KEYWORD_STACK))
+			}
+			if (token.equals(KEYWORD_STACK)) {
 				return STACK;
+			}
 		}
 		return UNKNOWN;
 	}
@@ -140,26 +149,31 @@ public class PlatformLogReader {
 			this.stackTrace = stack;
 		}
 
+		@Override
 		public String getMessage() {
 			return message;
 		}
 
+		@Override
 		public void printStackTrace() {
 			printStackTrace(System.out);
 		}
 
+		@Override
 		public void printStackTrace(PrintWriter writer) {
 			writer.println(stackTrace);
 		}
 
+		@Override
 		public void printStackTrace(PrintStream stream) {
 			stream.println(stackTrace);
 		}
 	}
 
 	protected IStatus readEntry() throws IOException {
-		if (currentLine == null || getLineType() != ENTRY)
+		if (currentLine == null || getLineType() != ENTRY) {
 			return null;
+		}
 		StringTokenizer tokens = new StringTokenizer(currentLine);
 		// skip over the ENTRY keyword
 		tokens.nextToken();
@@ -170,8 +184,9 @@ public class PlatformLogReader {
 		currentLine = reader.readLine();
 		String message = readMessage();
 		Throwable exception = readException(message);
-		if (currentLine == null || getLineType() != SUBENTRY)
+		if (currentLine == null || getLineType() != SUBENTRY) {
 			return new Status(severity, pluginID, code, message, exception);
+		}
 		MultiStatus parent = new MultiStatus(pluginID, code, message, exception);
 		readSubEntries(parent);
 		return parent;
@@ -223,8 +238,9 @@ public class PlatformLogReader {
 	}
 
 	protected String readMessage() throws IOException {
-		if (currentLine == null || getLineType() != MESSAGE)
+		if (currentLine == null || getLineType() != MESSAGE) {
 			return "";
+		}
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(currentLine.substring(KEYWORD_MESSAGE.length() + 1, currentLine.length()));
 		currentLine = reader.readLine();
@@ -233,18 +249,19 @@ public class PlatformLogReader {
 	}
 
 	protected String readSession() throws IOException {
-		if (currentLine == null || getLineType() != SESSION)
+		if (currentLine == null || getLineType() != SESSION) {
 			return "";
+		}
 		currentLine = reader.readLine();
 		return readText();
 	}
 
 	protected String readText() throws IOException {
 		StringBuffer buffer = new StringBuffer();
-		if (currentLine == null || getLineType() != UNKNOWN)
+		if (currentLine == null || getLineType() != UNKNOWN) {
 			return "";
-		else
-			buffer.append(currentLine);
+		}
+		buffer.append(currentLine);
 		boolean done = false;
 		while (!done) {
 			currentLine = reader.readLine();
@@ -256,8 +273,9 @@ public class PlatformLogReader {
 				// preserves line terminators between lines
 				buffer.append('\n');
 				buffer.append(currentLine);
-			} else
+			} else {
 				done = true;
+			}
 		}
 		return buffer.toString();
 	}

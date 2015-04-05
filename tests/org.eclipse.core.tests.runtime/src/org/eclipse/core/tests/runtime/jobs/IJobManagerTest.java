@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		}
 
+		@Override
 		public void done(IJobChangeEvent event) {
 			synchronized (IJobManagerTest.this) {
 				if (scheduled.remove(event.getJob())) {
@@ -40,6 +41,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		}
 
+		@Override
 		public void scheduled(IJobChangeEvent event) {
 			Job job = event.getJob();
 			synchronized (IJobManagerTest.this) {
@@ -108,9 +110,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		return "UNKNOWN";
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		completedJobs = 0;
@@ -122,9 +122,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		for (int i = 0; i < jobListeners.length; i++)
 			if (jobListeners[i] instanceof TestJobListener)
@@ -188,10 +186,12 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testBeginInvalidNestedRules() {
 		final ISchedulingRule root = new PathRule("/");
 		final ISchedulingRule invalid = new ISchedulingRule() {
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return this == rule;
 			}
 
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return this == rule || root.contains(rule);
 			}
@@ -217,6 +217,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testBeginRuleNoEnd() {
 		final PathRule rule = new PathRule("testBeginRuleNoEnd");
 		Job job = new Job("testBeginRuleNoEnd") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask(getName(), 1);
 				try {
@@ -297,6 +298,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final boolean[] success = new boolean[] {false};
 		//create a job that will complete asynchronously
 		final Job job = new Job("Test Job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				setThread(thread[0]);
 				done[0] = true;
@@ -305,6 +307,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		};
 		//create and run a thread that will run and finish the asynchronous job
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				job.schedule();
 				//wait for job to start running
@@ -341,6 +344,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//next test in a job with no rule of its own
 		final List<AssertionFailedError> errors = new ArrayList<AssertionFailedError>();
 		Job sequenceJob = new Job("testCurrentRule") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					runRuleSequence();
@@ -730,6 +734,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -802,6 +807,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -874,6 +880,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -992,6 +999,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		Object family = new Object();
 		final int count = 1;
 		RepeatingJob job = new RepeatingJob("testJobFamilyJoinShouldSchedule", count) {
+			@Override
 			public boolean shouldSchedule() {
 				return shouldRun();
 			}
@@ -1039,6 +1047,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -1099,17 +1108,20 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Job waiting = new FamilyTestJob("waiting job", 1000000, 10, TestJobFamily.TYPE_ONE);
 		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
 		final IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 			}
 
+			@Override
 			public void running(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			}
 		};
 		Job job = new Job("main job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					manager.addJobChangeListener(listener);
@@ -1119,6 +1131,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					manager.setLockListener(new LockListener() {
 						private boolean scheduled = false;
 
+						@Override
 						public boolean aboutToWait(Thread lockOwner) {
 							// aboutToWait will be called when main job will start joining the running job
 							if (!scheduled) {
@@ -1180,17 +1193,20 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Job waiting = new FamilyTestJob("waiting job", 1000000, 10, TestJobFamily.TYPE_ONE);
 		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
 		final IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 			}
 
+			@Override
 			public void running(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			}
 		};
 		Job job = new Job("main job") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					manager.addJobChangeListener(listener);
@@ -1200,6 +1216,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					manager.setLockListener(new LockListener() {
 						private boolean scheduled = false;
 
+						@Override
 						public boolean aboutToWait(Thread lockOwner) {
 							// aboutToWait will be called when main job will start joining the running job
 							if (!scheduled) {
@@ -1261,11 +1278,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Job waiting = new FamilyTestJob("waiting job", 400, 10, TestJobFamily.TYPE_ONE);
 		final Job running = new FamilyTestJob("running job", 200, 10, TestJobFamily.TYPE_ONE);
 		final IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 			}
 
+			@Override
 			public void running(IJobChangeEvent event) {
 				if (event.getJob() == running)
 					barrier.setStatus(TestBarrier.STATUS_RUNNING);
@@ -1281,6 +1300,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.setLockListener(new LockListener() {
 				private boolean scheduled = false;
 
+				@Override
 				public boolean aboutToWait(Thread lockOwner) {
 					// aboutToWait will be called when main thread will start joining the running job
 					if (!scheduled) {
@@ -1582,6 +1602,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//ensure jobs are run in order from lowest to highest sleep time.
 		final List<Job> done = Collections.synchronizedList(new ArrayList<Job>());
 		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() instanceof TestJob)
 					done.add(event.getJob());
@@ -1614,6 +1635,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//ensure jobs are run in order from lowest to highest sleep time.
 		final List<Job> done = Collections.synchronizedList(new ArrayList<Job>());
 		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getJob() instanceof TestJob)
 					//add at start of list to get reverse order
@@ -1651,6 +1673,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final boolean[] running = new boolean[] {false};
 		final boolean[] failure = new boolean[] {false};
 		final Job testJob = new Job("testScheduleRace") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					synchronized (running) {
@@ -1673,6 +1696,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		};
 		testJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void scheduled(IJobChangeEvent event) {
 				while (count[0]++ < 2) {
 					testJob.schedule();
@@ -1702,10 +1726,12 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 */
 	public void testSetInvalidRule() {
 		class InvalidRule implements ISchedulingRule {
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return false;
 			}
 
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return false;
 			}
@@ -1716,6 +1742,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		ISchedulingRule multi = MultiRule.combine(rule1, rule2);
 
 		Job job = new Job("job with invalid rule") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -1857,6 +1884,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//should not be able to run a job that uses the rule
 		Job job = new Job("TestSuspend") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return Status.OK_STATUS;
 			}
@@ -1974,6 +2002,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final TestBarrier barrier = new TestBarrier();
 		final Thread[] sourceThread = new Thread[1];
 		final Job destination = new Job("testTransferJobToJob.destination") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
@@ -1981,6 +2010,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			}
 		};
 		final Job source = new Job("testTransferJobToJob.source") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				sourceThread[0] = Thread.currentThread();
 				//schedule the destination job and wait until it is running
@@ -2035,6 +2065,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				this.rule = rule;
 			}
 
+			@Override
 			public void run() {
 				try {
 					manager.endRule(rule);
@@ -2069,6 +2100,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Thread testThread = Thread.currentThread();
 		//create a job that the rule will be transferred to
 		Job job = new Job("testTransferSimple") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
@@ -2123,6 +2155,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Thread testThread = Thread.currentThread();
 		//create a job that the rule will be transferred to
 		Job job = new Job("testTransferToJobWaitingOnChildRule") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				//this will block until the rule is transferred
@@ -2180,6 +2213,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final Thread testThread = Thread.currentThread();
 		//create a job that the rule will be transferred to
 		Job job = new Job("testTransferToWaitingJob") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				//this will block until the rule is transferred

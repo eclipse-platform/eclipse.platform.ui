@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		super(name);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
@@ -117,6 +118,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
 		Preferences prefs = testPlugin.getPluginPreferences();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
+			@Override
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
 				assertSame("1.0", event.getProperty(), key);
 			}

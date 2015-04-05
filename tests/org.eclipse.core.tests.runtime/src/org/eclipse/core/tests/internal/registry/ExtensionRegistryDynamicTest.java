@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,10 +107,12 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 
 			tracker.registerHandler(new IExtensionChangeHandler() {
 
+				@Override
 				public void addExtension(IExtensionTracker currentTracker, IExtension extension) {
 					additionCalled = true;
 				}
 
+				@Override
 				public void removeExtension(IExtension extension, Object[] objects) {
 					removalCalled = true;
 				}

@@ -116,6 +116,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtension[])
 	 */
+	@Override
 	synchronized public void added(IExtension[] extensions) {
 		extensionsToString(extensions);
 		added = true;
@@ -123,9 +124,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 		notify();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtension[])
-	 */
+	@Override
 	synchronized public void removed(IExtension[] extensions) {
 		extensionsToString(extensions);
 		removed = true;
@@ -133,9 +132,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 		notify();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtensionPoint[])
-	 */
+	@Override
 	synchronized public void added(IExtensionPoint[] extensionPoints) {
 		extPointsToString(extensionPoints);
 		added = true;
@@ -143,9 +140,7 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 		notify();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtensionPoint[])
-	 */
+	@Override
 	synchronized public void removed(IExtensionPoint[] extensionPoints) {
 		extPointsToString(extensionPoints);
 		removed = true;

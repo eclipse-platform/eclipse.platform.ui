@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,6 +95,7 @@ public class OrderedLockTest extends TestCase {
 		final ILock lock = manager.newLock();
 		final boolean[] wasInterupted = new boolean[] {false};
 		Thread t = new Thread() {
+			@Override
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
@@ -134,6 +135,7 @@ public class OrderedLockTest extends TestCase {
 
 		//first runnable which is going to hold the created lock
 		Runnable getLock = new Runnable() {
+			@Override
 			public void run() {
 				lock.acquire();
 				status[0] = TestBarrier.STATUS_RUNNING;
@@ -150,6 +152,7 @@ public class OrderedLockTest extends TestCase {
 
 		//second runnable which is going to try and acquire the given lock and then time out
 		Runnable tryForLock = new Runnable() {
+			@Override
 			public void run() {
 				boolean success = false;
 				try {
@@ -191,6 +194,7 @@ public class OrderedLockTest extends TestCase {
 
 		//first runnable which is going to hold the created lock
 		Runnable getLock = new Runnable() {
+			@Override
 			public void run() {
 				lock.acquire();
 				status[0] = TestBarrier.STATUS_START;
@@ -202,6 +206,7 @@ public class OrderedLockTest extends TestCase {
 
 		//second runnable which is going to submit a request for this lock and wait until it is available
 		Runnable waitForLock = new Runnable() {
+			@Override
 			public void run() {
 				status[1] = TestBarrier.STATUS_START;
 				lock.acquire();
@@ -215,6 +220,7 @@ public class OrderedLockTest extends TestCase {
 		//third runnable which is going to submit a request for this lock but not wait
 		//because the hook is going to force it to be given the lock (implicitly)
 		Runnable forceGetLock = new Runnable() {
+			@Override
 			public void run() {
 				lock.acquire();
 				lock.release();
@@ -224,6 +230,7 @@ public class OrderedLockTest extends TestCase {
 
 		//a locklistener to force lock manager to give the lock to the third runnable (implicitly)
 		LockListener listener = new LockListener() {
+			@Override
 			public boolean aboutToWait(Thread lockOwner) {
 				return true;
 			}

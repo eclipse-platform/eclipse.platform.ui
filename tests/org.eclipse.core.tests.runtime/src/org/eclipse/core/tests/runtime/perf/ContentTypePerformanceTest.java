@@ -258,6 +258,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		loadDescribers();
 		loadChildren();
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				try {
 					for (int i = 0; i < TOTAL_NUMBER_OF_ELEMENTS; i++) {
@@ -273,9 +274,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 2);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		if (getName().equals("testDoSetUp") || getName().equals("testDoTearDown"))
@@ -308,6 +307,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		final IContentType root = manager.getContentType(getContentTypeId(0));
 		assertNotNull("2.0", root);
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				for (int i = 0; i < TOTAL_NUMBER_OF_ELEMENTS; i++) {
 					IContentType type = manager.getContentType(getContentTypeId(i));
@@ -325,6 +325,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		// warm up preference service
 		loadPreferences();
 		PerformanceTestRunner runner = new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				// any interation that will cause the registry to be loaded
 				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
@@ -344,6 +345,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		loadDescribers();
 		loadChildren();
 		new PerformanceTestRunner() {
+			@Override
 			protected void test() {
 				IContentType[] associated = manager.findContentTypesFor("foo.txt");
 				// we know at least the etxt content type should be here

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class PathRule implements ISchedulingRule {
 		this.path = new Path(pathString);
 	}
 
+	@Override
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -38,6 +39,7 @@ public class PathRule implements ISchedulingRule {
 		return path.isPrefixOf(((PathRule) rule).getFullPath());
 	}
 
+	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (!(rule instanceof PathRule))
 			return false;
@@ -48,9 +50,8 @@ public class PathRule implements ISchedulingRule {
 	public IPath getFullPath() {
 		return path;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+	@Override
 	public String toString() {
 		return "PathRule(" + path + ")";
 	}

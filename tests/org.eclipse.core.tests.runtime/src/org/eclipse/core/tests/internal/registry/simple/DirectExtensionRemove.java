@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class DirectExtensionRemove extends BaseExtensionRegistryRun {
 		// remove extension1
 		// listener to verify that valid CEs are included in the notification
 		IRegistryChangeListener listener = new IRegistryChangeListener() {
+			@Override
 			public void registryChanged(IRegistryChangeEvent event) {
 				IExtensionDelta[] deltas = event.getExtensionDeltas();
 				assertTrue(deltas.length == 1);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Oracle Corporation and others.
+ * Copyright (c) 2010, 2015 Oracle Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class Bug_316839 extends AbstractJobManagerTest {
 		interruptingJob = new TestJob("job with root rule"); //$NON-NLS-1$		job.setRule(new Root());
 		interruptingJob.setRule(new PathRule("/"));
 		interruptingJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				//at the moment we are done, the lock graph should be empty
 				lockGraphWasEmpty = ((JobManager) Job.getJobManager()).getLockManager().isEmpty();

@@ -86,9 +86,7 @@ public class JobTest extends AbstractJobTest {
 			jobs[i].cancel();
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		shortJob = new TestJob("Short Test Job", 100, 10);
@@ -97,9 +95,7 @@ public class JobTest extends AbstractJobTest {
 		Job.getJobManager().setProgressProvider(progressProvider);
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Job.getJobManager().setProgressProvider(null);
@@ -366,14 +362,17 @@ public class JobTest extends AbstractJobTest {
 		final int[] runningCount = new int[] {0};
 		TestJob job = new TestJob("testCancelFromAboutToRun", 0, 0);
 		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void aboutToRun(IJobChangeEvent event) {
 				event.getJob().cancel();
 			}
 
+			@Override
 			public void done(IJobChangeEvent event) {
 				doneCount[0]++;
 			}
 
+			@Override
 			public void running(IJobChangeEvent event) {
 				runningCount[0]++;
 			}
@@ -401,11 +400,13 @@ public class JobTest extends AbstractJobTest {
 
 			int runCount = 0;
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				++runCount;
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean shouldRun() {
 				return false;
 			}
@@ -434,11 +435,13 @@ public class JobTest extends AbstractJobTest {
 
 			int runCount = 0;
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				++runCount;
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean shouldRun() {
 				throw new RuntimeException("Exception thrown on purpose as part of a test");
 			}
@@ -461,6 +464,7 @@ public class JobTest extends AbstractJobTest {
 			volatile int runningCount = 0;
 			boolean cancelled;
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (++runningCount > 1)
 					failure[0] = "Multiple running at once!";
@@ -475,10 +479,12 @@ public class JobTest extends AbstractJobTest {
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean belongsTo(Object family) {
 				return JobTest.this == family;
 			}
 
+			@Override
 			public boolean shouldRun() {
 				if (!cancelled) {
 					cancelled = true;
@@ -514,10 +520,12 @@ public class JobTest extends AbstractJobTest {
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		final int[] canceling = new int[] {0};
 		Job job = new Job("Testing#testCanceling") {
+			@Override
 			protected void canceling() {
 				canceling[0]++;
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
 				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
@@ -546,10 +554,12 @@ public class JobTest extends AbstractJobTest {
 		final int[] canceling = new int[] {0};
 		final IProgressMonitor[] jobmonitor = new IProgressMonitor[1];
 		Job job = new Job("Testing#testCancelingByMonitor") {
+			@Override
 			protected void canceling() {
 				canceling[0]++;
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				jobmonitor[0] = monitor;
 				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
@@ -579,6 +589,7 @@ public class JobTest extends AbstractJobTest {
 		final Job j = new Job("testCancelAboutToSchedule") {
 			volatile int runningCount = 0;
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				if (++runningCount > 1)
 					failure[0] = true;
@@ -593,6 +604,7 @@ public class JobTest extends AbstractJobTest {
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean belongsTo(Object family) {
 				return JobTest.this == family;
 			}
@@ -600,6 +612,7 @@ public class JobTest extends AbstractJobTest {
 		JobChangeAdapter listener = new JobChangeAdapter() {
 			boolean canceled = false;
 
+			@Override
 			public void scheduled(IJobChangeEvent event) {
 				if (event.getJob().belongsTo(JobTest.this) && !canceled) {
 					canceled = true;
@@ -831,6 +844,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -867,6 +881,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -910,6 +925,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -939,6 +955,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -969,6 +986,7 @@ public class JobTest extends AbstractJobTest {
 	public void testJoinInterruptNonUIThread() throws InterruptedException {
 		final Job job = new TestJob("job", 1000, 100);
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				job.schedule();
 				try {
@@ -989,6 +1007,7 @@ public class JobTest extends AbstractJobTest {
 	public void testJoinInterruptUIThread() throws InterruptedException {
 		final Job job = new TestJob("job", 1000, 100);
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				job.schedule();
 				try {
@@ -1000,6 +1019,7 @@ public class JobTest extends AbstractJobTest {
 		});
 		try {
 			Job.getJobManager().setLockListener(new LockListener() {
+				@Override
 				public boolean canBlock() {
 					// pretend to be the UI thread
 					return false;
@@ -1045,6 +1065,7 @@ public class JobTest extends AbstractJobTest {
 	 */
 	public void testJoinFailingListener() {
 		shortJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				throw new RuntimeException("This exception thrown on purpose as part of a test");
 			}
@@ -1052,6 +1073,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		//create a thread that will join the job
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -1075,6 +1097,7 @@ public class JobTest extends AbstractJobTest {
 	public void testJoinSelf() {
 		final Exception[] failure = new Exception[1];
 		Job selfJoiner = new Job("testJoinSelf") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					this.join();
@@ -1102,6 +1125,7 @@ public class JobTest extends AbstractJobTest {
 	 */
 	public void testJoinRemoveListener() {
 		final IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				shortJob.removeJobChangeListener(this);
 			}
@@ -1110,6 +1134,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = new int[1];
 		//create a thread that will join the job
 		Thread t = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				status[0] = TestBarrier.STATUS_START;
 				try {
@@ -1133,6 +1158,7 @@ public class JobTest extends AbstractJobTest {
 	public void testRescheduleCancel() {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		Job job = new Job("Testing") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1167,6 +1193,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final int[] runCount = new int[] {0};
 		Job job = new Job("Testing") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1205,6 +1232,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final int[] runCount = new int[] {0};
 		Job job = new Job("Testing") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1246,12 +1274,14 @@ public class JobTest extends AbstractJobTest {
 		final int[] count = new int[] {0};
 		final int REPEATS = 10;
 		Job job = new Job("testRescheduleRepeat") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				count[0]++;
 				schedule();
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean shouldSchedule() {
 				return count[0] < REPEATS;
 			}
@@ -1275,12 +1305,14 @@ public class JobTest extends AbstractJobTest {
 		final int[] count = new int[] {0};
 		final int REPEATS = 10;
 		Job job = new Job("testRescheduleRepeat") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				count[0]++;
 				schedule(10);
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public boolean shouldSchedule() {
 				return count[0] < REPEATS;
 			}
@@ -1304,6 +1336,7 @@ public class JobTest extends AbstractJobTest {
 	public void testRescheduleSimple() {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		Job job = new Job("testRescheduleSimple") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1349,6 +1382,7 @@ public class JobTest extends AbstractJobTest {
 		final int[] runCount = new int[] {0};
 		final ISchedulingRule rule = new IdentityRule();
 		Job first = new Job("Testing1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1362,6 +1396,7 @@ public class JobTest extends AbstractJobTest {
 			}
 		};
 		Job second = new Job("Testing2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1420,6 +1455,7 @@ public class JobTest extends AbstractJobTest {
 	public void testSetProgressGroup() {
 		final TestBarrier barrier = new TestBarrier();
 		Job job = new Job("testSetProgressGroup") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
@@ -1543,6 +1579,7 @@ public class JobTest extends AbstractJobTest {
 		//when the state is changed to RUNNING, the thread should not be null
 		final Thread[] thread = new Thread[1];
 		IJobChangeListener listener = new JobChangeAdapter() {
+			@Override
 			public void running(IJobChangeEvent event) {
 				thread[0] = event.getJob().getThread();
 			}

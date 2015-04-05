@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -478,6 +478,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE).removeNode();
@@ -860,12 +861,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// don't match this filter
 		IPreferenceFilter filter = new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}
@@ -912,10 +915,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		// try matching on the root node for a filter which matches all nodes in the scope
 		filter = new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				return null;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}
@@ -947,12 +952,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 		// setup - create a child node with a key/value pair
 		InstanceScope.INSTANCE.getNode(QUALIFIER).node("child").put("key", "value");
 		IPreferenceFilter[] filters = new IPreferenceFilter[] {new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}
@@ -968,12 +975,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		final String VALID_QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(VALID_QUALIFIER, null);
 				return result;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}
@@ -1007,10 +1016,12 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public void testExportWithTransfers2() {
 		final String VALID_QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				return null;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {TestScope.SCOPE};
 			}
@@ -1026,6 +1037,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		testNode.put(VALID_KEY_2, "value2");
 
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			@Override
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				String[] keys = node.keys();
 				for (int i = 0; i < keys.length; i++)
@@ -1057,12 +1069,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 		final String QUALIFIER = getUniqueString();
 		IPreferenceFilter transfer = new IPreferenceFilter() {
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}
@@ -1100,6 +1114,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter transfer = new IPreferenceFilter() {
 			Map<String, PreferenceFilterEntry[]> result;
 
+			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				if (result == null) {
 					result = new HashMap<String, PreferenceFilterEntry[]>();
@@ -1108,6 +1123,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 				return result;
 			}
 
+			@Override
 			public String[] getScopes() {
 				return new String[] {InstanceScope.SCOPE};
 			}

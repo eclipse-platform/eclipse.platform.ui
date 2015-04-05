@@ -33,12 +33,13 @@ public class MultiLanguageTest extends TestCase {
 	class LocaleProviderTest implements LocaleProvider {
 		public Locale currentLocale;
 
+		@Override
 		public Locale getLocale() {
 			return currentLocale;
 		}
 	}
 
-	private ServiceTracker bundleTracker = null;
+	private ServiceTracker<?, PackageAdmin> bundleTracker;
 
 	private static String helloWorld = "Hello World";
 	private static String helloWorldGerman = "Hallo Welt";
@@ -64,6 +65,7 @@ public class MultiLanguageTest extends TestCase {
 	private IPath tmpPath;
 	private File registryLocation;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -82,6 +84,7 @@ public class MultiLanguageTest extends TestCase {
 		System.setProperty(IRegistryConstants.PROP_MULTI_LANGUAGE, "true");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// delete registry cache
 		FileSystemHelper.clear(tmpPath.toFile());
@@ -92,10 +95,11 @@ public class MultiLanguageTest extends TestCase {
 		refreshPackages(new Bundle[] {bundle});
 
 		// restore system environment
-		if (oldMultiLangValue == null)
+		if (oldMultiLangValue == null) {
 			System.clearProperty(IRegistryConstants.PROP_MULTI_LANGUAGE);
-		else
+		} else {
 			System.setProperty(IRegistryConstants.PROP_MULTI_LANGUAGE, oldMultiLangValue);
+		}
 
 		if (bundleTracker != null) {
 			bundleTracker.close();
@@ -109,12 +113,14 @@ public class MultiLanguageTest extends TestCase {
 
 		final boolean[] flag = new boolean[] {false};
 		FrameworkListener listener = new FrameworkListener() {
+			@Override
 			public void frameworkEvent(FrameworkEvent event) {
-				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)
+				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED) {
 					synchronized (flag) {
 						flag[0] = true;
 						flag.notifyAll();
 					}
+				}
 			}
 		};
 		context.addFrameworkListener(listener);
@@ -249,8 +255,9 @@ public class MultiLanguageTest extends TestCase {
 			assertEquals(eclipse, subdivisionElements[0].getAttribute("division"));
 			assertEquals(catsAndDogs, elementValue.getValue());
 		} finally {
-			if (registration != null)
+			if (registration != null) {
 				registration.unregister();
+			}
 		}
 	}
 
@@ -315,8 +322,9 @@ public class MultiLanguageTest extends TestCase {
 		assertEquals(proverbLatin, elementFrag.getAttribute("name", "la_LA")); // check internal cache
 		assertEquals(proverb, elementFrag.getAttribute("name", "some_OtherABC"));
 
-		if (!extended)
+		if (!extended) {
 			return;
+		}
 
 		assertEquals(helloWorldFinnish, extPoint.getLabel("fi_FI"));
 		assertEquals(catsAndDogsFinnish, extension.getLabel("fi_FI"));
@@ -336,9 +344,9 @@ public class MultiLanguageTest extends TestCase {
 	 */
 	private PackageAdmin getBundleAdmin() {
 		if (bundleTracker == null) {
-			bundleTracker = new ServiceTracker(RuntimeTestsPlugin.getContext(), PackageAdmin.class.getName(), null);
+			bundleTracker = new ServiceTracker<>(RuntimeTestsPlugin.getContext(), PackageAdmin.class, null);
 			bundleTracker.open();
 		}
-		return (PackageAdmin) bundleTracker.getService();
+		return bundleTracker.getService();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,6 +179,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 
 		Thread first = new Thread("Test1") {
+			@Override
 			public void run() {
 				lock.acquire();
 				status[0] = TestBarrier.STATUS_START;
@@ -193,6 +194,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		Thread second = new Thread("Test2") {
+			@Override
 			public void run() {
 				manager.beginRule(rule, null);
 				status[1] = TestBarrier.STATUS_START;
@@ -236,6 +238,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final ILock lock = manager.newLock();
 
 		Job first = new Job("Test1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					assertTrue("1.0", getLockManager().isLockOwner());
@@ -255,6 +258,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		Job second = new Job("Test2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					assertTrue("1.0", getLockManager().isLockOwner());
@@ -309,6 +313,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -325,6 +330,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[1] = new Job("Test 1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -346,6 +352,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[2] = new Job("Test 2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -416,6 +423,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -432,6 +440,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[1] = new Job("Test 1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -451,6 +460,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[2] = new Job("Test 2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -519,6 +529,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -535,6 +546,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[1] = new Job("Test 1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -551,6 +563,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[2] = new Job("Test 2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -608,6 +621,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final IProgressMonitor canceller = new FussyProgressMonitor();
 
 		Job ruleOwner = new Job("Test1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					status[0] = TestBarrier.STATUS_START;
@@ -624,6 +638,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		Job ruleWait = new Job("Test2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					status[1] = TestBarrier.STATUS_RUNNING;
@@ -672,6 +687,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -688,6 +704,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[1] = new Job("Test 1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -704,6 +721,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[2] = new Job("Test 2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -721,6 +739,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[3] = new Job("Test 3") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -798,6 +817,7 @@ public class DeadlockDetectionTest extends TestCase {
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -814,6 +834,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[1] = new Job("Test 1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -831,6 +852,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[2] = new Job("Test 2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -848,6 +870,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[3] = new Job("Test 3") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -865,6 +888,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		jobs[4] = new Job("Test 4") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
@@ -1020,6 +1044,7 @@ public class DeadlockDetectionTest extends TestCase {
 
 		for (int i = 0; i < jobs.length; i++) {
 			jobs[i] = new Job("Test" + i) {
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						monitor.beginTask("Testing", IProgressMonitor.UNKNOWN);
@@ -1094,6 +1119,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 
 		Job first = new Job("Test1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					assertTrue("1.0", getLockManager().isLockOwner());
@@ -1109,6 +1135,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		Job second = new Job("Test2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					assertTrue("2.0", getLockManager().isLockOwner());
@@ -1151,6 +1178,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 
 		Job first = new Job("Test1") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					manager.beginRule(rule, null);
@@ -1168,6 +1196,7 @@ public class DeadlockDetectionTest extends TestCase {
 		};
 
 		Job second = new Job("Test2") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					lock.acquire();

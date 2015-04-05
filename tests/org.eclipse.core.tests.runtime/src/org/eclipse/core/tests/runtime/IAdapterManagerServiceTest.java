@@ -27,7 +27,7 @@ public class IAdapterManagerServiceTest extends TestCase {
 	private static final String NON_EXISTING = "com.does.not.Exist";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
 
-	private ServiceTracker<IAdapterManager, ?> adapterManagerTracker = null;
+	private ServiceTracker<IAdapterManager, IAdapterManager> adapterManagerTracker;
 
 	public IAdapterManagerServiceTest(String name) {
 		super(name);
@@ -47,12 +47,13 @@ public class IAdapterManagerServiceTest extends TestCase {
 	public IAdapterManager getAdapterManager() {
 		if (adapterManagerTracker == null) {
 			BundleContext context = RuntimeTestsPlugin.getContext();
-			adapterManagerTracker = new ServiceTracker(context, IAdapterManager.class, null);
+			adapterManagerTracker = new ServiceTracker<>(context, IAdapterManager.class, null);
 			adapterManagerTracker.open();
 		}
-		return (IAdapterManager) adapterManagerTracker.getService();
+		return adapterManagerTracker.getService();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (adapterManagerTracker != null) {
 			adapterManagerTracker.close();
@@ -79,13 +80,16 @@ public class IAdapterManagerServiceTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};
@@ -120,13 +124,16 @@ public class IAdapterManagerServiceTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};
@@ -161,13 +168,16 @@ public class IAdapterManagerServiceTest extends TestCase {
 
 		//register an adapter factory that maps adaptables to strings
 		IAdapterFactory fac = new IAdapterFactory() {
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == String.class)
-					return adaptableObject.toString();
+			@Override
+			public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
+				if (adapterType == String.class) {
+					return adapterType.cast(adaptableObject.toString());
+				}
 				return null;
 			}
 
-			public Class[] getAdapterList() {
+			@Override
+			public Class<?>[] getAdapterList() {
 				return new Class[] {String.class};
 			}
 		};

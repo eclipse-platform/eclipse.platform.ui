@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2015 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class Bug_307282 extends AbstractJobManagerTest {
 		final int RELEASE_LOCK = 10001;
 
 		Thread t = new Thread() {
+			@Override
 			public void run() {
 				lock1.acquire();
 
@@ -60,6 +61,7 @@ public class Bug_307282 extends AbstractJobManagerTest {
 		};
 
 		Thread t2 = new Thread() {
+			@Override
 			public void run() {
 				lock2.acquire();
 

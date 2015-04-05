@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class Bug_311756 extends AbstractJobManagerTest {
 		final TestBarrier barrier = new TestBarrier(TestBarrier.STATUS_START);
 		IdentityRule rule = new IdentityRule();
 		Job conflicting = new Job("Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
@@ -92,6 +93,7 @@ public class Bug_311756 extends AbstractJobManagerTest {
 		final IdentityRule rule = new IdentityRule();
 		final Thread[] destinationThread = new Thread[1];
 		Job conflicting = new Job("Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				barrier.waitForStatus(TestBarrier.STATUS_BLOCKED);
@@ -105,6 +107,7 @@ public class Bug_311756 extends AbstractJobManagerTest {
 			}
 		};
 		Job transferTo = new Job("TransferTo") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				destinationThread[0] = getThread();
 				barrier.setStatus(TestBarrier.STATUS_BLOCKED);
@@ -145,6 +148,7 @@ public class Bug_311756 extends AbstractJobManagerTest {
 		final TestBarrier barrier = new TestBarrier(TestBarrier.STATUS_START);
 		IdentityRule rule = new IdentityRule();
 		Job conflicting = new Job("Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {
@@ -199,6 +203,7 @@ public class Bug_311756 extends AbstractJobManagerTest {
 		final TestBarrier barrier = new TestBarrier(TestBarrier.STATUS_START);
 		IdentityRule rule = new IdentityRule();
 		Job conflicting = new Job("Conflicting") {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				try {

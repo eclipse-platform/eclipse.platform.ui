@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -112,6 +112,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			Preferences prefs;
 
 			// set the values outside the timed loop
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
@@ -119,6 +120,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			//  clean-up
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -128,6 +130,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// test retrieval
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
@@ -154,6 +157,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			Preferences prefs;
 
 			// set the values outside the timed loop
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
@@ -161,6 +165,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// clean-up
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -170,6 +175,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// how long to get the values?
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(missingKeys[i], null);
@@ -193,6 +199,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			Preferences prefs;
 
 			// set the values outside the timed loop
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
@@ -200,6 +207,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// clean-up
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -209,6 +217,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// how long to get the values?
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
@@ -231,6 +240,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			Preferences prefs;
 
 			// set the values outside the timed loop
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
@@ -238,6 +248,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// clean-up
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -247,6 +258,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// how long to get the values?
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
@@ -274,11 +286,13 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		new PerformanceTestRunner() {
 			Preferences prefs;
 
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 			}
 
 			// clean-up
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -288,6 +302,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// how long to set the values?
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.put(keys[i], values[i]);
@@ -316,6 +331,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			Preferences prefs;
 
 			// fill the node with values each run
+			@Override
 			protected void setUp() {
 				prefs = getScopeRoot().node(qualifier);
 				for (int i = 0; i < keys.length; i++)
@@ -323,6 +339,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			}
 
 			// clean-up at the end of each run
+			@Override
 			protected void tearDown() {
 				try {
 					prefs.removeNode();
@@ -334,6 +351,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 			// can only run this once because there is only so many keys you can remove
 
 			// the test is how long it takes to remove all the values
+			@Override
 			protected void test() {
 				for (int i = 0; i < keys.length; i++)
 					prefs.remove(keys[i]);

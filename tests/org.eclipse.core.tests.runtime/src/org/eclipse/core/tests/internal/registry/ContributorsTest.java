@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class ContributorsTest extends TestCase {
 		String fullPath = RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/elementsByContributor/" + fileName + "/plugin.xml";
 		URL urlA = RuntimeTestsPlugin.getContext().getBundle().getEntry(fullPath);
 		InputStream is = urlA.openStream();
-		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName); //$NON-NLS-1$
+		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName); 
 		return registry.addContribution(is, nonBundleContributor, false, urlA.getFile(), null, null);
 	}
 
