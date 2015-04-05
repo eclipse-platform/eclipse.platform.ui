@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 - 2014 fhv.at and others.
+ * Copyright (c) 2013 - 2015 fhv.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public abstract class AbstractIdDialog<ContributionClass, ElementClass extends MApplicationElement> extends
-SaveDialogBoundsSettingsDialog {
+	SaveDialogBoundsSettingsDialog {
 
 	protected EModelService modelService;
 
@@ -89,19 +89,19 @@ SaveDialogBoundsSettingsDialog {
 
 			@Override
 			public void update(ViewerCell cell) {
+				@SuppressWarnings("unchecked")
 				final ElementClass el = (ElementClass) cell.getElement();
 				final String elementId = el.getElementId() != null && el.getElementId().trim().length() > 0 ? el
 					.getElementId() : "(Id missing)"; //$NON-NLS-1$
-					final StyledString str = new StyledString(elementId);
+				final StyledString str = new StyledString(elementId);
 
-					final String infoString = getListItemInformation(el);
-					if (infoString != null && infoString.trim().length() > 0)
-					{
-						str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-					}
+				final String infoString = getListItemInformation(el);
+				if (infoString != null && infoString.trim().length() > 0) {
+					str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				}
 
-					cell.setText(str.getString());
-					cell.setStyleRanges(str.getStyleRanges());
+				cell.setText(str.getString());
+				cell.setStyleRanges(str.getStyleRanges());
 			}
 		};
 	}
@@ -152,6 +152,7 @@ SaveDialogBoundsSettingsDialog {
 	@Override
 	protected void okPressed() {
 		if (!viewer.getSelection().isEmpty()) {
+			@SuppressWarnings("unchecked")
 			final ElementClass el = (ElementClass) ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 			final Command cmd = SetCommand.create(domain, contribution, getFeatureLiteral(), el.getElementId());
 			if (cmd.canExecute()) {

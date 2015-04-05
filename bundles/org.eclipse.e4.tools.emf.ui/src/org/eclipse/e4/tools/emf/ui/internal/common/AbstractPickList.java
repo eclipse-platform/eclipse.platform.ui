@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2015 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,7 @@
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -66,7 +63,6 @@ public abstract class AbstractPickList extends Composite {
 	private final Button tiDown;
 	private final Button tiAdd;
 	// private final AutoCompleteField autoCompleteField;
-	private Map<String, Object> proposals;
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
 		AbstractComponentEditor componentEditor) {
@@ -218,29 +214,6 @@ public abstract class AbstractPickList extends Composite {
 
 	public void setSelection(ISelection selection) {
 		getPicker().setSelection(selection);
-	}
-
-	private Map<String, Object> toProposals(Object inputElement) {
-
-		final Map<String, Object> props = new TreeMap<String, Object>();
-
-		if (inputElement instanceof Object[]) {
-			for (final Object value : (Object[]) inputElement) {
-				props.put(getTextualValue(value), value);
-			}
-		}
-		if (inputElement instanceof Collection) {
-			for (final Object value : (Collection<Object>) inputElement) {
-				props.put(getTextualValue(value), value);
-			}
-
-		}
-
-		return props;
-	}
-
-	private String getTextualValue(Object value) {
-		return ((ILabelProvider) getPicker().getLabelProvider()).getText(value);
 	}
 
 	public void setContentProvider(IContentProvider contentProvider) {

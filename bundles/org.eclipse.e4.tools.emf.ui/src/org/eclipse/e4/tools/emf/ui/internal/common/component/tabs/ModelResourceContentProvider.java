@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2015 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import java.util.ArrayList;
+
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAttribute;
@@ -23,7 +24,6 @@ import org.eclipse.jface.viewers.Viewer;
 public class ModelResourceContentProvider implements IStructuredContentProvider {
 
 	private Object[] items = new Object[0];
-	private Viewer viewer;
 
 	public ModelResourceContentProvider() {
 		// adapter = new EContentAdapter() {
@@ -73,7 +73,6 @@ public class ModelResourceContentProvider implements IStructuredContentProvider 
 
 	@Override
 	public void inputChanged(final Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = viewer;
 		ArrayList<EObject> list = new ArrayList<EObject>();
 		IModelResource modelProvider = (IModelResource) newInput;
 		if (newInput != oldInput && newInput != null) {
