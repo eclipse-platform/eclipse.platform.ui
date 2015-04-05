@@ -28,30 +28,32 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @since 3.3
  */
 public class SelectionAdapterFactory implements IAdapterFactory {
+
 	private static final ICountable ICOUNT_0 = new ICountable() {
 		@Override
 		public int count() {
 			return 0;
 		}
 	};
+
 	private static final ICountable ICOUNT_1 = new ICountable() {
 		@Override
 		public int count() {
 			return 1;
 		}
 	};
-	private static final IIterable ITERATE_EMPTY = new IIterable() {
+
+	private static final IIterable<?> ITERATE_EMPTY = new IIterable<Object>() {
 		@Override
-		public Iterator<?> iterator() {
-			return Collections.EMPTY_LIST.iterator();
+		public Iterator<Object> iterator() {
+			return Collections.emptyList().iterator();
 		}
 	};
 
 	/**
 	 * The classes we can adapt to.
 	 */
-	private static final Class<?>[] CLASSES = new Class[] { IIterable.class,
-			ICountable.class };
+	private static final Class<?>[] CLASSES = new Class[] { IIterable.class, ICountable.class };
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -65,29 +67,29 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	private Object iterable(final ISelection sel) {
+	private IIterable<?> iterable(final ISelection sel) {
 		if (sel.isEmpty()) {
 			return ITERATE_EMPTY;
 		}
 		if (sel instanceof IStructuredSelection) {
-			return new IIterable() {
+			return new IIterable<Object>() {
 				@Override
-				public Iterator<?> iterator() {
+				public Iterator<Object> iterator() {
 					return ((IStructuredSelection) sel).iterator();
 				}
 			};
 		}
-		final List<?> list = Arrays.asList(new Object[] { sel });
-		return new IIterable() {
+		final List<Object> list = Arrays.asList(new Object[] { sel });
+		return new IIterable<Object>() {
 
 			@Override
-			public Iterator<?> iterator() {
+			public Iterator<Object> iterator() {
 				return list.iterator();
 			}
 		};
 	}
 
-	private Object countable(final ISelection sel) {
+	private ICountable countable(final ISelection sel) {
 		if (sel.isEmpty()) {
 			return ICOUNT_0;
 		}

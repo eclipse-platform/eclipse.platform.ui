@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class ShellActivationListener implements Listener {
 	private void processWindow(Event event, Shell shell, MWindow window) {
 		switch (event.type) {
 		case SWT.Activate:
-			final IEclipseContext local = ((MWindow) window).getContext();
+			final IEclipseContext local = window.getContext();
 			WorkbenchSWTActivator.trace("/trace/workbench",
 					"setting mwindow context " + local, null);
 			// record this shell's context

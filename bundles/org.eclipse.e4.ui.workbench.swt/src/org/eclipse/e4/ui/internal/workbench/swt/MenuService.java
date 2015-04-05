@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,19 +47,16 @@ public class MenuService implements EMenuService {
 		return false;
 	}
 
-	public static Menu registerMenu(final Control parentControl,
-			final MPopupMenu mmenu, IEclipseContext context) {
+	public static Menu registerMenu(final Control parentControl, final MPopupMenu mmenu, IEclipseContext context) {
 		if (mmenu.getWidget() != null) {
 			return (Menu) mmenu.getWidget();
 		}
 		// we need to delegate to the renderer so that it "processes" the
 		// MenuManager correctly
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
-		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu,
-				parentControl);
+		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu, parentControl);
 
-		IEclipseContext popupContext = context.createChild("popup:"
-				+ mmenu.getElementId());
+		IEclipseContext popupContext = context.createChild("popup:" + mmenu.getElementId());
 		mmenu.setContext(popupContext);
 		Object widget = renderer.createWidget(mmenu, parentControl);
 		if (!(widget instanceof Menu)) {
@@ -71,18 +68,20 @@ public class MenuService implements EMenuService {
 		// Process its internal structure through the renderer that created
 		// it
 		Object castObject = mmenu;
-		renderer.processContents((MElementContainer<MUIElement>) castObject);
+		@SuppressWarnings("unchecked")
+		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) castObject;
+		renderer.processContents(container);
 
 		// Allow a final chance to set up
 		renderer.postProcess(mmenu);
 
 		// Now that we have a widget let the parent (if any) know
-		if (mmenu.getParent() instanceof MUIElement) {
-			MElementContainer<MUIElement> parentElement = mmenu.getParent();
-			AbstractPartRenderer parentRenderer = rendererFactory.getRenderer(
-					parentElement, null);
-			if (parentRenderer != null)
+		MElementContainer<MUIElement> parentElement = mmenu.getParent();
+		if (parentElement != null) {
+			AbstractPartRenderer parentRenderer = rendererFactory.getRenderer(parentElement, null);
+			if (parentRenderer != null) {
 				parentRenderer.childRendered(parentElement, mmenu);
+			}
 		}
 
 		return (Menu) widget;

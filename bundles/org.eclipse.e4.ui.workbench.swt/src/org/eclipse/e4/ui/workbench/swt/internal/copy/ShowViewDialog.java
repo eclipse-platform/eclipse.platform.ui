@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -378,12 +378,12 @@ public class ShowViewDialog extends Dialog implements
 	 * Update the selection object.
 	 */
 	protected void updateSelection(SelectionChangedEvent event) {
-		ArrayList descs = new ArrayList();
+		ArrayList<MPartDescriptor> descs = new ArrayList<>();
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-		for (Iterator i = sel.iterator(); i.hasNext();) {
+		for (Iterator<?> i = sel.iterator(); i.hasNext();) {
 			Object o = i.next();
 			if (o instanceof MPartDescriptor) {
-				descs.add(o);
+				descs.add((MPartDescriptor) o);
 			}
 		}
 
