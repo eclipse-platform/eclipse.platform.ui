@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 	 * change occurred. If the active contexts did not changed, then this value
 	 * is <code>null</code>.
 	 */
-	private final Set previouslyActiveContextIds;
+	private final Set<String> previouslyActiveContextIds;
 
 	/**
 	 * Creates a new instance of this class.
@@ -75,10 +75,11 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
 	 *            <code>false</code> and must not be null if
 	 *            activeContextChanged is <code>true</code>.
 	 */
+	@SuppressWarnings("unchecked")
 	public ContextManagerEvent(final ContextManager contextManager,
 			final String contextId, final boolean contextIdAdded,
 			final boolean activeContextsChanged,
-			final Set previouslyActiveContextIds) {
+			@SuppressWarnings("rawtypes") final Set previouslyActiveContextIds) {
 		if (contextManager == null) {
 			throw new NullPointerException();
 		}
@@ -127,6 +128,7 @@ public final class ContextManagerEvent extends AbstractBitSetEvent {
      *         guaranteed to not be <code>null</code> if
      *         haveActiveContextsChanged() is <code>true</code>.
      */
+	@SuppressWarnings("rawtypes")
 	public final Set getPreviouslyActiveContextIds() {
 		return previouslyActiveContextIds;
 	}

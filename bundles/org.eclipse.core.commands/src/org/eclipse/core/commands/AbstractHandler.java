@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	/**
 	 * @see IHandler#addHandlerListener(IHandlerListener)
 	 */
+	@Override
 	public void addHandlerListener(final IHandlerListener handlerListener) {
 		addListenerObject(handlerListener);
 	}
@@ -47,6 +48,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 *
 	 * @see org.eclipse.core.commands.IHandler#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Do nothing.
 	}
@@ -89,6 +91,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * @see #setEnabled(Object)
 	 * @see #setBaseEnabled(boolean)
 	 */
+	@Override
 	public boolean isEnabled() {
 		return baseEnabled;
 	}
@@ -122,6 +125,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 * @since 3.4
 	 * @see #setBaseEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(Object evaluationContext) {
 	}
 
@@ -131,6 +135,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	 *
 	 * @return <code>true</code>
 	 */
+	@Override
 	public boolean isHandled() {
 		return true;
 	}
@@ -159,6 +164,7 @@ public abstract class AbstractHandler extends EventManager implements IHandler2 
 	/**
 	 * @see IHandler#removeHandlerListener(IHandlerListener)
 	 */
+	@Override
 	public void removeHandlerListener(final IHandlerListener handlerListener) {
 		removeListenerObject(handlerListener);
 	}

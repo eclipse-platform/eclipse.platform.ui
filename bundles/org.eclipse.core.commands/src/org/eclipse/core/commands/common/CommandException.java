@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,8 @@ public abstract class CommandException extends Exception {
      *
      * @return the cause or <code>null</code>
      */
-    public Throwable getCause() {
+    @Override
+	public Throwable getCause() {
         return cause;
     }
 

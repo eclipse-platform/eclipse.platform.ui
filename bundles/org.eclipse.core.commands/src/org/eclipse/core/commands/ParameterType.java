@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * @see ITypedParameter#getParameterType()
  * @since 3.2
  */
+@SuppressWarnings("rawtypes")
 public final class ParameterType extends HandleObject implements Comparable {
 
 	/**
@@ -78,15 +79,15 @@ public final class ParameterType extends HandleObject implements Comparable {
 	 * @return <code>true</code> if the <code>element</code> is an instance
 	 *         of <code>type</code>; <code>false</code> otherwise.
 	 */
-	private static final boolean isSubtype(final Class clazz, final String type) {
+	private static final boolean isSubtype(final Class<?> clazz, final String type) {
 		if (clazz.getName().equals(type)) {
 			return true;
 		}
-		final Class superClass = clazz.getSuperclass();
+		final Class<?> superClass = clazz.getSuperclass();
 		if (superClass != null && isSubtype(superClass, type)) {
 			return true;
 		}
-		final Class[] interfaces = clazz.getInterfaces();
+		final Class<?>[] interfaces = clazz.getInterfaces();
 		for (int i = 0; i < interfaces.length; i++) {
 			if (isSubtype(interfaces[i], type)) {
 				return true;
@@ -144,6 +145,7 @@ public final class ParameterType extends HandleObject implements Comparable {
 	 * @return A negative integer, zero or a positive integer, if the object is
 	 *         greater than, equal to or less than this parameter type.
 	 */
+	@Override
 	public final int compareTo(final Object object) {
 		final ParameterType castedObject = (ParameterType) object;
 		int compareTo = Util.compare(defined, castedObject.defined);
@@ -266,6 +268,7 @@ public final class ParameterType extends HandleObject implements Comparable {
 	 *
 	 * @return The string representation; never <code>null</code>.
 	 */
+	@Override
 	public final String toString() {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
@@ -283,6 +286,7 @@ public final class ParameterType extends HandleObject implements Comparable {
 	 * Makes this parameter type become undefined. Notification is sent to all
 	 * listeners.
 	 */
+	@Override
 	public final void undefine() {
 		string = null;
 

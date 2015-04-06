@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 	 * The map of states currently held by this command. If this command has no
 	 * state, then this will be <code>null</code>.
 	 */
-	private Map states = null;
+	private Map<String, State> states;
 
 	/**
 	 * Constructs a new instance of <code>NamedHandleObject<WithState/code>.
@@ -54,17 +54,19 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 		super(id);
 	}
 
+	@Override
 	public void addState(final String stateId, final State state) {
 		if (state == null) {
 			throw new NullPointerException("Cannot add a null state"); //$NON-NLS-1$
 		}
 
 		if (states == null) {
-			states = new HashMap(3);
+			states = new HashMap<>(3);
 		}
 		states.put(stateId, state);
 	}
 
+	@Override
 	public final String getDescription() throws NotDefinedException {
 		final String description = super.getDescription(); // Trigger a NDE.
 
@@ -79,6 +81,7 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 		return description;
 	}
 
+	@Override
 	public final String getName() throws NotDefinedException {
 		final String name = super.getName(); // Trigger a NDE, if necessary.
 
@@ -93,23 +96,26 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 		return name;
 	}
 
+	@Override
 	public final State getState(final String stateId) {
 		if ((states == null) || (states.isEmpty())) {
 			return null;
 		}
 
-		return (State) states.get(stateId);
+		return states.get(stateId);
 	}
 
+	@Override
 	public final String[] getStateIds() {
 		if ((states == null) || (states.isEmpty())) {
 			return NO_STATE;
 		}
 
-		final Set stateIds = states.keySet();
-		return (String[]) stateIds.toArray(new String[stateIds.size()]);
+		final Set<String> stateIds = states.keySet();
+		return stateIds.toArray(new String[stateIds.size()]);
 	}
 
+	@Override
 	public void removeState(final String id) {
 		if (id == null) {
 			throw new NullPointerException("Cannot remove a null id"); //$NON-NLS-1$

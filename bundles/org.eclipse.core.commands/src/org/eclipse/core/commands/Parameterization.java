@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.commands;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.internal.commands.util.Util;
 
@@ -41,8 +42,7 @@ public final class Parameterization {
 	/**
 	 * The seed for the hash code for all parameterized commands.
 	 */
-	private static final int HASH_INITIAL = Parameterization.class.getName()
-			.hashCode();
+	private static final int HASH_INITIAL = Parameterization.class.getName().hashCode();
 
 	/**
 	 * The hash code for this object. This value is computed lazily, and marked
@@ -73,14 +73,14 @@ public final class Parameterization {
 	 */
 	public Parameterization(final IParameter parameter, final String value) {
 		if (parameter == null) {
-			throw new NullPointerException(
-					"You cannot parameterize a null parameter"); //$NON-NLS-1$
+			throw new NullPointerException("You cannot parameterize a null parameter"); //$NON-NLS-1$
 		}
 
 		this.parameter = parameter;
 		this.value = value;
 	}
 
+	@Override
 	public final boolean equals(final Object object) {
 		if (this == object) {
 			return true;
@@ -91,8 +91,7 @@ public final class Parameterization {
 		}
 
 		final Parameterization parameterization = (Parameterization) object;
-		if (!(Util.equals(this.parameter.getId(), parameterization.parameter
-				.getId()))) {
+		if (!(Util.equals(this.parameter.getId(), parameterization.parameter.getId()))) {
 			return false;
 		}
 
@@ -127,12 +126,11 @@ public final class Parameterization {
 	 *             If the parameter needed to be initialized, but couldn't be.
 	 */
 	public final String getValueName() throws ParameterValuesException {
-		final Map parameterValues = parameter.getValues().getParameterValues();
-		final Iterator parameterValueItr = parameterValues.entrySet()
-				.iterator();
+		final Map<?, ?> parameterValues = parameter.getValues().getParameterValues();
+		final Iterator<?> parameterValueItr = parameterValues.entrySet().iterator();
 		String returnValue = null;
 		while (parameterValueItr.hasNext()) {
-			final Map.Entry entry = (Map.Entry) parameterValueItr.next();
+			final Entry<?, ?> entry = (Entry<?, ?>) parameterValueItr.next();
 			final String currentValue = (String) entry.getValue();
 			if (Util.equals(value, currentValue)) {
 				returnValue = (String) entry.getKey();
@@ -147,6 +145,7 @@ public final class Parameterization {
 		return returnValue;
 	}
 
+	@Override
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(parameter);

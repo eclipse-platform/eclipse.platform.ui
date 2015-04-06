@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,7 @@ public abstract class HandleObject extends EventManager implements
      * @return <code>true</code> if the objects are equal; <code>false</code>
      *         otherwise.
      */
+	@Override
 	public boolean equals(final Object object) {
 		// Check if they're the same.
 		if (object == this) {
@@ -124,7 +125,8 @@ public abstract class HandleObject extends EventManager implements
 				&& (this.getClass() == handle.getClass());
 	}
 
-    public final String getId() {
+    @Override
+	public final String getId() {
         return id;
     }
 
@@ -133,7 +135,8 @@ public abstract class HandleObject extends EventManager implements
      *
      * @return The hash code for this object.
      */
-    public final int hashCode() {
+    @Override
+	public final int hashCode() {
         if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
@@ -161,7 +164,8 @@ public abstract class HandleObject extends EventManager implements
      *
      * @return The string representation; never <code>null</code>.
      */
-    public abstract String toString();
+    @Override
+	public abstract String toString();
 
     /**
      * Makes this object becomes undefined. This method should make any defined

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public final class ExecutionEvent {
 	 * prompt for additional information, these can be used to avoid prompting.
 	 * This value may be empty, but it is never <code>null</code>.
 	 */
-	private final Map parameters;
+	private final Map<String, String> parameters;
 
 	/**
 	 * The object that triggered the execution. In an event-driven architecture,
@@ -86,7 +86,7 @@ public final class ExecutionEvent {
 	 * @deprecated use
 	 *             {@link ExecutionEvent#ExecutionEvent(Command, Map, Object, Object)}
 	 */
-	public ExecutionEvent(final Map parameters, final Object trigger,
+	public ExecutionEvent(@SuppressWarnings("rawtypes") final Map parameters, final Object trigger,
 			final Object applicationContext) {
 		this(null, parameters, trigger, applicationContext);
 	}
@@ -108,11 +108,11 @@ public final class ExecutionEvent {
 	 *            triggered; may be <code>null</code>.
 	 * @since 3.2
 	 */
-	public ExecutionEvent(final Command command, final Map parameters,
+	@SuppressWarnings("unchecked")
+	public ExecutionEvent(final Command command, @SuppressWarnings("rawtypes") final Map parameters,
 			final Object trigger, final Object applicationContext) {
 		if (parameters == null) {
-			throw new NullPointerException(
-					"An execution event must have a non-null map of parameters"); //$NON-NLS-1$
+			throw new NullPointerException("An execution event must have a non-null map of parameters"); //$NON-NLS-1$
 		}
 
 		this.command = command;
@@ -158,35 +158,27 @@ public final class ExecutionEvent {
 	 *             reason
 	 * @since 3.2
 	 */
-	public final Object getObjectParameterForExecution(final String parameterId)
-			throws ExecutionException {
+	public final Object getObjectParameterForExecution(final String parameterId) throws ExecutionException {
 		if (command == null) {
-			throw new ExecutionException(
-					"No command is associated with this execution event"); //$NON-NLS-1$
+			throw new ExecutionException("No command is associated with this execution event"); //$NON-NLS-1$
 		}
 
 		try {
-			final ParameterType parameterType = command
-					.getParameterType(parameterId);
+			final ParameterType parameterType = command.getParameterType(parameterId);
 			if (parameterType == null) {
-				throw new ExecutionException(
-						"Command does not have a parameter type for the given parameter"); //$NON-NLS-1$
+				throw new ExecutionException("Command does not have a parameter type for the given parameter"); //$NON-NLS-1$
 			}
-			final AbstractParameterValueConverter valueConverter = parameterType
-					.getValueConverter();
+			final AbstractParameterValueConverter valueConverter = parameterType.getValueConverter();
 			if (valueConverter == null) {
-				throw new ExecutionException(
-						"Command does not have a value converter"); //$NON-NLS-1$
+				throw new ExecutionException("Command does not have a value converter"); //$NON-NLS-1$
 			}
 			final String stringValue = getParameter(parameterId);
-			final Object objectValue = valueConverter
-					.convertToObject(stringValue);
+			final Object objectValue = valueConverter.convertToObject(stringValue);
 			return objectValue;
 		} catch (final NotDefinedException e) {
 			throw new ExecutionException("Command is not defined", e); //$NON-NLS-1$
 		} catch (final ParameterValueConversionException e) {
-			throw new ExecutionException(
-					"The parameter string could not be converted to an object", e); //$NON-NLS-1$
+			throw new ExecutionException("The parameter string could not be converted to an object", e); //$NON-NLS-1$
 		}
 	}
 
@@ -199,7 +191,7 @@ public final class ExecutionEvent {
 	 *         be found.
 	 */
 	public final String getParameter(final String parameterId) {
-		return (String) parameters.get(parameterId);
+		return parameters.get(parameterId);
 	}
 
 	/**
@@ -207,6 +199,7 @@ public final class ExecutionEvent {
 	 *
 	 * @return The parameters; never <code>null</code>, but may be empty.
 	 */
+	@SuppressWarnings("rawtypes")
 	public final Map getParameters() {
 		return parameters;
 	}
@@ -226,6 +219,7 @@ public final class ExecutionEvent {
 	 *
 	 * @return The string representation; never <code>null</code>.
 	 */
+	@Override
 	public final String toString() {
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("ExecutionEvent("); //$NON-NLS-1$

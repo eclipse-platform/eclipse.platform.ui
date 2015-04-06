@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class UndoContext implements IUndoContext {
 	 *
 	 * @return the label for the context.
 	 */
+	@Override
 	public String getLabel() {
 		return ""; //$NON-NLS-1$
 	}
@@ -49,6 +50,7 @@ public class UndoContext implements IUndoContext {
 	 *         match for the specified context, and <code>false</code> if it
 	 *         cannot.
 	 */
+	@Override
 	public boolean matches(IUndoContext context) {
 		return context == this;
 	}

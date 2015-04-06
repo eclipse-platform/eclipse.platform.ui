@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public final class ObjectUndoContext extends UndoContext {
 
 	private String label;
 
-	private List children = new ArrayList();
+	private List<IUndoContext> children = new ArrayList<>();
 
 	/**
 	 * Construct an operation context that represents the given object.
@@ -60,6 +60,7 @@ public final class ObjectUndoContext extends UndoContext {
 	 *
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		if (label != null) {
 			return label;
@@ -114,6 +115,7 @@ public final class ObjectUndoContext extends UndoContext {
 	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext
 	 *      context)
 	 */
+	@Override
 	public boolean matches(IUndoContext context) {
 		// Check first for explicit matches that have been assigned.
 		if (children.contains(context)) {
@@ -133,6 +135,7 @@ public final class ObjectUndoContext extends UndoContext {
 	 *
 	 * @return The string representation.
 	 */
+	@Override
 	public String toString() {
 		return getLabel();
 	}
