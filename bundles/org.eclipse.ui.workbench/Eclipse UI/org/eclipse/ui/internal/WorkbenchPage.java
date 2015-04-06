@@ -1289,7 +1289,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				MUIElement activePartParent = activePlaceholder == null ? activePart
 						.getParent() : activePlaceholder.getParent();
 				partService.showPart(part, PartState.CREATE);
-				if (part.getCurSharedRef().getParent() != activePartParent) {
+				if (part.getCurSharedRef() == null || part.getCurSharedRef().getParent() != activePartParent) {
 					partService.bringToTop(part);
 				}
 			}
