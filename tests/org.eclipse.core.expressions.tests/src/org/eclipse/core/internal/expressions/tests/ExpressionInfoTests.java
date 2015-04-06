@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.AdaptExpression;
 import org.eclipse.core.internal.expressions.AndExpression;
@@ -30,6 +26,10 @@ import org.eclipse.core.internal.expressions.ResolveExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 public class ExpressionInfoTests extends TestCase {
@@ -277,7 +277,7 @@ public class ExpressionInfoTests extends TestCase {
 	private void assertVariableAccess(ExpressionInfo info, String[] variables) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
-		Set accessedVariableNames= new HashSet(Arrays.asList(info.getAccessedVariableNames()));
+		Set<String> accessedVariableNames= new HashSet<>(Arrays.asList(info.getAccessedVariableNames()));
 		assertEquals("All variable accessed", variables.length, accessedVariableNames.size());
 		for (int i= 0; i < variables.length; i++) {
 			assertTrue("Variable accessed", accessedVariableNames.contains(variables[i]));
@@ -299,7 +299,7 @@ public class ExpressionInfoTests extends TestCase {
 	private void assertPropertyAccess(ExpressionInfo info, String[] properties, boolean defaultVariable) {
 		assertEquals("Accesses default variable", defaultVariable, info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
-		Set accessedPropertyNames= new HashSet(Arrays.asList(info.getAccessedPropertyNames()));
+		Set<String> accessedPropertyNames= new HashSet<>(Arrays.asList(info.getAccessedPropertyNames()));
 		assertEquals("All properties accessed", properties.length, accessedPropertyNames.size());
 		for (int i= 0; i < properties.length; i++) {
 			assertTrue("Property accessed", accessedPropertyNames.contains(properties[i]));
@@ -308,12 +308,12 @@ public class ExpressionInfoTests extends TestCase {
 		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
 	}
 
-	private void assertMisbehavedExpressionTypes(ExpressionInfo info, Class[] types) {
+	private void assertMisbehavedExpressionTypes(ExpressionInfo info, Class<?>[] types) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		assertTrue("No variable accesses", info.getAccessedVariableNames().length == 0);
 		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
-		Set misbehavedTypes= new HashSet(Arrays.asList(info.getMisbehavingExpressionTypes()));
+		Set<?> misbehavedTypes = new HashSet<>(Arrays.asList(info.getMisbehavingExpressionTypes()));
 		assertEquals("All types accessed", types.length, misbehavedTypes.size());
 		for (int i= 0; i < types.length; i++) {
 			assertTrue("Type collected", misbehavedTypes.contains(types[i]));

@@ -5,6 +5,7 @@ package com.ibm.icu.text;
  * test.
  */
 public class DecimalFormat implements Runnable {
+	@Override
 	public void run() {
 	}
 }

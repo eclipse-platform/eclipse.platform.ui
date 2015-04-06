@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.core.internal.expressions.ExpressionPlugin;
 import org.eclipse.core.internal.expressions.Expressions;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
@@ -37,15 +37,16 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	public static Test suite() {
 		TestSuite suite= new TestSuite(ExpressionTestsPluginUnloading.class);
 		// ensure lexicographical ordering:
-		ArrayList tests= Collections.list(suite.tests());
-		Collections.sort(tests, new Comparator() {
-			public int compare(Object o1, Object o2) {
+		ArrayList<Test> tests = Collections.list(suite.tests());
+		Collections.sort(tests, new Comparator<Test>() {
+			@Override
+			public int compare(Test o1, Test o2) {
 				return ((TestCase)o1).getName().compareTo(((TestCase)o2).getName());
 			}
 		});
 		TestSuite result= new TestSuite();
-		for (Iterator iter= tests.iterator(); iter.hasNext();) {
-			result.addTest((TestCase) iter.next());
+		for (Iterator<Test> iter = tests.iterator(); iter.hasNext();) {
+			result.addTest(iter.next());
 		}
 		return result;
 	}
@@ -76,8 +77,8 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 		Bundle expr= getBundle("org.eclipse.core.expressions.tests");
 		Bundle icu= getBundle("com.ibm.icu");
 
-		Class exprClass= expr.loadClass("com.ibm.icu.text.DecimalFormat");
-		Class icuClass= icu.loadClass("com.ibm.icu.text.DecimalFormat");
+		Class<?> exprClass = expr.loadClass("com.ibm.icu.text.DecimalFormat");
+		Class<?> icuClass = icu.loadClass("com.ibm.icu.text.DecimalFormat");
 		assertNotSame(exprClass, icuClass);
 
 		Object exprObj= exprClass.newInstance();
@@ -91,7 +92,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	}
 
 	private void assertInstanceOf(Object obj, String isInstance, String isNotInstance) throws Exception {
-		Class clazz= obj.getClass();
+		Class<?> clazz = obj.getClass();
 
 		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - " + clazz.getName() + ": " + clazz.hashCode());
 		System.out.println("ExpressionTestsPluginUnloading#" + getName() + "() - ClassLoader: " + clazz.getClassLoader().hashCode());
@@ -103,7 +104,7 @@ public class ExpressionTestsPluginUnloading extends TestCase {
 	}
 
 	private void doTestInstanceofICUDecimalFormat(Bundle bundle) throws Exception {
-		Class clazz= bundle.loadClass("com.ibm.icu.text.DecimalFormat");
+		Class<?> clazz = bundle.loadClass("com.ibm.icu.text.DecimalFormat");
 		Object decimalFormat= clazz.newInstance();
 		assertInstanceOf(decimalFormat, "com.ibm.icu.text.DecimalFormat", "java.text.NumberFormat");
 	}

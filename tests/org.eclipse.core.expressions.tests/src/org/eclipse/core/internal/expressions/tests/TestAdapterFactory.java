@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,15 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 public class TestAdapterFactory implements IAdapterFactory {
 
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@Override
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (Adapter.class.equals(adapterType))
-			return new Adapter();
+			return adapterType.cast(new Adapter());
 		return null;
 	}
 
-	public Class[] getAdapterList() {
+	@Override
+	public Class<?>[] getAdapterList() {
 		return new Class[] { Adapter.class };
 	}
 }

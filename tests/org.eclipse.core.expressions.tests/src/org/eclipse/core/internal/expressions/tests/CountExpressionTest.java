@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class CountExpressionTest extends TestCase {
 	}
 
 	private static EvaluationContext evaluationContext(int size) {
-		List variable = new ArrayList(size + 1);
+		List<Integer> variable = new ArrayList<>(size + 1);
 		for (int i = 0; i < size; ++i)
 			variable.add(new Integer(i));
 		return new EvaluationContext(null, variable);
