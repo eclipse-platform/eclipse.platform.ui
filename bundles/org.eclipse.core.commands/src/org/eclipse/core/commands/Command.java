@@ -13,6 +13,7 @@ package org.eclipse.core.commands;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
@@ -1060,7 +1061,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 				buffer.write(',');
 				buffer.newLine();
 				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(parameters==null?"":parameters.toString()); //$NON-NLS-1$
+				buffer.write(parameters == null ? "" : Arrays.toString(parameters)); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.write(returnType==null?"":returnType.toString()); //$NON-NLS-1$
 				buffer.write(',');

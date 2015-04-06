@@ -1050,7 +1050,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	private void notifyChanged(IUndoableOperation operation) {
 		if (DEBUG_OPERATION_HISTORY_NOTIFICATION) {
 			Tracing.printTrace("OPERATIONHISTORY", "OPERATION_CHANGED " + operation); //$NON-NLS-1$//$NON-NLS-2$
-					
 		}
 
 		notifyListeners(new OperationHistoryEvent(OperationHistoryEvent.OPERATION_CHANGED, this, operation));

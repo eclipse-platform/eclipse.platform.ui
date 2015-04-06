@@ -13,6 +13,7 @@
 package org.eclipse.core.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -695,7 +696,7 @@ public final class ParameterizedCommand implements Comparable {
 		buffer.append("ParameterizedCommand("); //$NON-NLS-1$
 		buffer.append(command);
 		buffer.append(',');
-		buffer.append(parameterizations);
+		buffer.append(Arrays.toString(parameterizations));
 		buffer.append(')');
 		return buffer.toString();
 	}
