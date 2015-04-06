@@ -15,9 +15,8 @@ Export-Package: org.eclipse.ui.internal.navigator;x-friends:="org.eclipse.ui.nav
  org.eclipse.ui.internal.navigator.sorters;x-internal:=true,
  org.eclipse.ui.internal.navigator.wizards;x-internal:=true,
  org.eclipse.ui.navigator
-Require-Bundle: 
- org.eclipse.core.runtime;bundle-version="[3.6.0,4.0.0)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

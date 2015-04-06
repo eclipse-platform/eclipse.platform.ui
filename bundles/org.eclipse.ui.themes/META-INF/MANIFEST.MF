@@ -6,5 +6,5 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.e4.ui.css.swt.theme
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BundleShape: dir
