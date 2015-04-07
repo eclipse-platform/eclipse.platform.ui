@@ -95,42 +95,42 @@
     </iu>
     <iu id='org.eclipse.e4.tools.css.spy.feature.feature.group' name='E4 CSS Spy (Incubation)' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.tools.css.spy.feature.source.feature.group' name='E4 CSS Spy (Incubation) Developer Resources' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.tools.event.spy.feature.feature.group' name='E4 Event Spy (Incubation)' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.tools.event.spy.feature.source.feature.group' name='E4 Event Spy (Incubation) Developer Resources' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.tools.orion.css.editor.feature.feature.group' name='E4 Orion CSS Preference editor (Incubation)' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.tools.orion.css.editor.feature.source.feature.group' name='E4 Orion CSS Preference editor (Incubation) Developer Resources' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.core.tools.feature.feature.group' name='Eclipse e4 Tools (Incubation)' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.e4.core.tools.feature.source.feature.group' name='Eclipse e4 Tools Source (Incubation)' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.16'/>
+        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.egit.feature.group' name='Eclipse Git Team Provider' >
