@@ -81,13 +81,15 @@ public class WebBrowserUtil {
 	 * @param message
 	 *            java.lang.String
 	 */
-	public static void openError(String message) {
+	public static void openError(final String message) {
 		Display d = Display.getCurrent();
 		if (d == null)
 			d = Display.getDefault();
-
-		Shell shell = d.getActiveShell();
-		MessageDialog.openError(shell, Messages.errorDialogTitle, message);
+		d.asyncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openError(null, Messages.errorDialogTitle, message);
+			}
+		});
 	}
 
 	/**
@@ -96,14 +98,16 @@ public class WebBrowserUtil {
 	 * @param message
 	 *            java.lang.String
 	 */
-	public static void openMessage(String message) {
+	public static void openMessage(final String message) {
 		Display d = Display.getCurrent();
 		if (d == null)
 			d = Display.getDefault();
 
-		Shell shell = d.getActiveShell();
-		MessageDialog.openInformation(shell, Messages.searchingTaskName,
-				message);
+		d.asyncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(null, Messages.searchingTaskName, message);
+			}
+		});
 	}
 
 	/**
