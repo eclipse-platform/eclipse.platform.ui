@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.ui.workbench.swt;bundle-version="0.9.1",
  org.junit,
  org.eclipse.emf.ecore;bundle-version="2.7.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"

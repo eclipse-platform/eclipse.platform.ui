@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.css.swt,
  org.w3c.css.sac
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BundleShape: dir
 Export-Package: org.eclipse.e4.ui.tests.css.core;x-internal:=true,
  org.eclipse.e4.ui.tests.css.core.parser;x-internal:=true,

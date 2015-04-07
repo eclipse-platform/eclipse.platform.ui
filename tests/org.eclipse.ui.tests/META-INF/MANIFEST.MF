@@ -47,4 +47,4 @@ Require-Bundle: org.eclipse.core.resources,
 Eclipse-AutoStart: true
 Export-Package: org.eclipse.ui.tests.api,
  org.eclipse.ui.tests.menus
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

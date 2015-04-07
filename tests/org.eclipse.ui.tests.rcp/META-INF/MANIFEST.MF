@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.test.performance,
  org.eclipse.ui.tests.harness
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.ui.tests.rcp,
  org.eclipse.ui.tests.rcp.performance,
  org.eclipse.ui.tests.rcp.util

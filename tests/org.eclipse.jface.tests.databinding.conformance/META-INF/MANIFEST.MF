@@ -10,7 +10,7 @@ Require-Bundle: org.junit,
  org.eclipse.swt,
  org.eclipse.core.runtime
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.databinding.conformance;uses:="org.eclipse.core.databinding.observable,org.eclipse.jface.databinding.conformance.delegate,junit.framework",
  org.eclipse.jface.databinding.conformance.delegate,

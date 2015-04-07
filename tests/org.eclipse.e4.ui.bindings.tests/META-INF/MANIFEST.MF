@@ -4,7 +4,7 @@ Bundle-Name: UI Bindings Tests
 Bundle-SymbolicName: org.eclipse.e4.ui.bindings.tests
 Bundle-Version: 0.9.200.qualifier
 Bundle-Activator: org.eclipse.e4.ui.bindings.tests.Activator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",
  org.eclipse.e4.core.commands,

@@ -13,4 +13,4 @@ Export-Package: org.eclipse.ui.tests.harness,
  org.eclipse.ui.tests.harness.tests,
  org.eclipse.ui.tests.harness.util,
  org.eclipse.ui.tests.internal.util;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

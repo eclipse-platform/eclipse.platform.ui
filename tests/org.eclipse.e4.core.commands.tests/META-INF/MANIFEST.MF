@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core commands Tests (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.core.commands.tests;singleton:=true
 Bundle-Version: 0.10.100.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.core.commands,
  org.eclipse.e4.core.commands,
  org.eclipse.core.runtime,
