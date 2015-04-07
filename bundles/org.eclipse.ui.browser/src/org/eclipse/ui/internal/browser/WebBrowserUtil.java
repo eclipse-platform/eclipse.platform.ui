@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
- * Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
+ *     Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
+ *     Tomasz Zarna (Tasktop Technologies) - [429546] External Browser with parameters
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -15,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -353,7 +355,7 @@ public class WebBrowserUtil {
 		return encodedId;
 	}
 
-	public static String createParameterString(String parameters, String urlText) {
+	public static String[] createParameterArray(String parameters, String urlText) {
 		String params = parameters;
 		String url = urlText;
 		if (url == null) {
@@ -364,16 +366,20 @@ public class WebBrowserUtil {
 
 		int urlIndex = params.indexOf(IBrowserDescriptor.URL_PARAMETER);
 		if (urlIndex >= 0)
-			params = params.substring(0, urlIndex)
-					+ url
-					+ params.substring(urlIndex
-							+ IBrowserDescriptor.URL_PARAMETER.length());
+			params = params.replaceAll(IBrowserDescriptor.URL_PARAMETER, url);
 		else {
 			if (params.length() != 0 && !params.endsWith(" ")) //$NON-NLS-1$
 				params += " "; //$NON-NLS-1$
 			params += url;
 		}
-		return params;
+		return tokenize(params);
+	}
 
+	private static String[] tokenize(String string) {
+		StringTokenizer tokenizer = new StringTokenizer(string);
+		String[] tokens = new String[tokenizer.countTokens()];
+		for (int i = 0; tokenizer.hasMoreTokens(); i++)
+			tokens[i] = tokenizer.nextToken();
+		return tokens;
 	}
 }
