@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
+ *     Sergey Prigogin (Google) - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -842,7 +843,8 @@ public class IFileTest extends ResourceTest {
 			}
 			fail("1.0");
 		} catch (CoreException e) {
-			// expected
+			// Ok, the file is out is sync.
+			assertEquals("1.1", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
 		}
 
 		try {
@@ -865,7 +867,8 @@ public class IFileTest extends ResourceTest {
 			}
 			fail("3.0");
 		} catch (CoreException e) {
-			// expected
+			// Ok, the file is out is sync.
+			assertEquals("3.1", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
 		}
 		content = new InputStream() {
 			@Override
@@ -881,7 +884,6 @@ public class IFileTest extends ResourceTest {
 		}
 		assertExistsInWorkspace("4.2", target);
 		assertExistsInFileSystem("4.3", target);
-
 	}
 
 	/**
