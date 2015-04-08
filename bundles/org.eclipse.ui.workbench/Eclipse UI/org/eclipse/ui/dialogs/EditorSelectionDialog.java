@@ -572,6 +572,7 @@ public class EditorSelectionDialog extends Dialog {
 		}
 		updateFileMappings(reg, false);
 		reg.setDefaultEditor("*." + getFileType(), editorId); //$NON-NLS-1$
+		reg.saveAssociations();
 	}
 
 	/**
