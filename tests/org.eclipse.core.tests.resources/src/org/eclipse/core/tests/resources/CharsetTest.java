@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - [464072] Refresh on Access ignored during text search
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -15,11 +16,11 @@ import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.resources.PreferenceInitializer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -242,6 +243,10 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
+	private static IEclipsePreferences getResourcesPreferences() {
+		return InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -253,6 +258,8 @@ public class CharsetTest extends ResourceTest {
 	protected void tearDown() throws Exception {
 		// restore the workspace charset 
 		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, savedWorkspaceCharset);
+		// Reset the PREF_LIGHTWEIGHT_AUTO_REFRESH preference to its default value.
+		getResourcesPreferences().remove(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
 		super.tearDown();
 	}
 
@@ -323,8 +330,9 @@ public class CharsetTest extends ResourceTest {
 		try {
 			description = file.getContentDescription();
 			fail("1.2 - should have failed");
-		} catch (CoreException ce) {
-			// ok, the resource does not exist
+		} catch (CoreException e) {
+			// Ok, the resource does not exist.
+			assertEquals("1.3", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 		}
 	}
 
@@ -376,8 +384,7 @@ public class CharsetTest extends ResourceTest {
 	 * @throws Exception
 	 */
 	public void testBug186984() throws Exception {
-		final boolean current_lightweight_refresh = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, PreferenceInitializer.PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT);
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
+		getResourcesPreferences().putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject(getUniqueString());
 		IFile file = project.getFile("file.xml");
@@ -386,21 +393,21 @@ public class CharsetTest extends ResourceTest {
 		String ascii = "<?xml version=\"1.0\" encoding=\"ascii\"?>";
 		String utf = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
-		// test if we can get the charset, when the file doesn't exist in a file system
+		// test that we can get the charset, when the file doesn't exist in a file system
 		try {
 			file.getCharset(true);
 		} catch (CoreException ex) {
 			fail("1.0");
 		}
 
-		// test if we can get the charset, when the file is out-of-sync
+		// test that we can get the charset, when the file is out-of-sync
 		ensureExistsInWorkspace(file, true);
 		try {
 			if (!file.getLocation().toFile().delete())
 				fail("2.0");
 			file.getCharset(true);
-			fail("2.1");
 		} catch (CoreException ex) {
+			fail("2.1");
 		}
 
 		ensureExistsInFileSystem(file);
@@ -427,18 +434,19 @@ public class CharsetTest extends ResourceTest {
 			file.getContentDescription().getCharset().equals("ascii");
 			assertTrue("4.3", false);
 		} catch (CoreException e) {
-			// expected
+			// Ok, the file is out of sync.
+			assertEquals("4.4", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
 		}
 
 		// As we now know that #getContentDescription correctly checks sync state, just enable LIGHTWEIGHT refresh
 		// for the rest of the test.
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
-		assertTrue("4.4", file.getContentDescription().getCharset().equals("ascii"));
+		getResourcesPreferences().putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+		assertTrue("4.5", file.getContentDescription().getCharset().equals("ascii"));
 
 		// getContentDescription will have noticed out-of-sync
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
 		// Prime the cache...
-		assertTrue("4.5", file.getCharset().equals("ascii"));
+		assertTrue("4.6", file.getCharset().equals("ascii"));
 
 		// 3) Change the content type of the file under eclipse's feet
 		FileWriter writer = new FileWriter(file.getLocation().toFile());
@@ -466,9 +474,6 @@ public class CharsetTest extends ResourceTest {
 		// getContentDescription will have noticed out-of-sync
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
 		assertTrue("6.9", file.getCharset().equals("ascii"));
-
-		// Restore the lightweight refresh preference before we leave
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, current_lightweight_refresh);
 	}
 
 	public void testBug207510() {
@@ -1507,6 +1512,22 @@ public class CharsetTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("99.9", e);
 			}
+		}
+	}
+
+	public void testBug464072() throws CoreException {
+		getResourcesPreferences().putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		IFile file = project.getFile("file.txt");
+		ensureExistsInWorkspace(file, true);
+		file.getLocation().toFile().delete();
+		try {
+			file.getContentDescription();
+			fail("1.2 - should have failed");
+		} catch (CoreException e) {
+			// Ok, the resource does not exist.
+			assertEquals("1.3", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 		}
 	}
 }
