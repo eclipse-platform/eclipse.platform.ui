@@ -20,23 +20,23 @@ public class TestParameterSubstitution extends TestCase {
 	private static final String URL = "http://127.0.0.1:3873/help/index.jsp";
 
 	public void testNullParameters() {
-		assertEquals(URL, WebBrowserUtil.createParameterString(null, URL));
+		assertEquals(URL, WebBrowserUtil.createParameterArray(null, URL));
 	}
 
 	public void testEmptyParameters() {
-		assertEquals(URL, WebBrowserUtil.createParameterString("", URL));
+		assertEquals(URL, WebBrowserUtil.createParameterArray("", URL));
 	}
 	
 	public void testNullURL() {
-		assertEquals("", WebBrowserUtil.createParameterString("", null));
+		assertEquals("", WebBrowserUtil.createParameterArray("", null));
 	}
 
 	public void testNoSubstitution() {
-		assertEquals("-console " + URL, WebBrowserUtil.createParameterString("-console", URL));
+		assertEquals("-console " + URL, WebBrowserUtil.createParameterArray("-console", URL));
 	}
 	
 	public void testSubstitution() {
-		assertEquals("-url " + URL + " -console", WebBrowserUtil.createParameterString("-url %URL% -console", URL));
+		assertEquals("-url " + URL + " -console", WebBrowserUtil.createParameterArray("-url %URL% -console", URL));
 	}
 
 }
