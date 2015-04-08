@@ -359,7 +359,11 @@ public class WebBrowserUtil {
 		return encodedId;
 	}
 
-	public static String[] createParameterArray(String parameters, String urlText) {
+	/**
+	 * @deprecated Please use {@link #createParameterArray(String, String)}
+	 *             instead.
+	 */
+	public static String createParameterString(String parameters, String urlText) {
 		String params = parameters;
 		String url = urlText;
 		if (url == null) {
@@ -377,7 +381,11 @@ public class WebBrowserUtil {
 				params += " "; //$NON-NLS-1$
 			params += url;
 		}
-		return tokenize(params);
+		return params;
+	}
+
+	public static String[] createParameterArray(String parameters, String urlText) {
+		return tokenize(createParameterString(parameters, urlText));
 	}
 
 	private static String[] tokenize(String string) {
