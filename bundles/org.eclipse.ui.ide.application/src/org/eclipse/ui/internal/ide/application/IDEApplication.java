@@ -248,6 +248,16 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                 .getDefault());
 
         boolean force = false;
+
+		boolean parentShellVisible = false;
+		if (isValidShell(shell)) {
+			parentShellVisible = shell.getVisible();
+			// bug 455162, bug 427393: hide the splash if the workspace
+			// prompt dialog should be opened
+			if (parentShellVisible && launchData.getShowDialog()) {
+				shell.setVisible(false);
+			}
+		}
         while (true) {
             URL workspaceUrl = promptForWorkspace(shell, launchData, force);
             if (workspaceUrl == null) {
@@ -264,6 +274,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                 if (instanceLoc.set(workspaceUrl, true)) {
                     launchData.writePersistedData();
                     writeWorkspaceVersion();
+
+					// bug 455162, bug 427393: unhide the splash after the
+					// workspace was selected to show the progress bar
+					if (parentShellVisible && isValidShell(shell)) {
+						shell.setVisible(true);
+					}
                     return null;
                 }
             } catch (IllegalStateException e) {
@@ -313,26 +329,18 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 	private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData,
 			boolean force) {
         URL url = null;
+
         do {
-			// workaround for bug 455162 and bug 427393 (on Linux KDE splash is
-			// still visible *over* the prompt)
-			if (isValidShell(shell)) {
-				shell.setAlpha(0);
-			}
-			try {
-				new ChooseWorkspaceDialog(shell, launchData, false, true) {
-					@Override
-					protected Shell getParentShell() {
-						// Bug 429308: Make workspace selection dialog visible
-						// in the task manager of the OS
-						return null;
-					}
-				}.prompt(force);
-			} finally {
-				if (isValidShell(shell)) {
-					shell.setAlpha(255);
+			new ChooseWorkspaceDialog(shell, launchData, false, true) {
+				@Override
+				protected Shell getParentShell() {
+					// Bug 429308: Make workspace selection dialog visible
+					// in the task manager of the OS
+					return null;
 				}
-			}
+
+			}.prompt(force);
+
             String instancePath = launchData.getSelection();
             if (instancePath == null) {
 				return null;
