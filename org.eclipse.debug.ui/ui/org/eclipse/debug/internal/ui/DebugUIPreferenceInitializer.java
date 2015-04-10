@@ -20,6 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -203,22 +204,33 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		}
 	}
 
-	public static void setThemeBasedPreferences(IPreferenceStore store, boolean fireEvent) {
-		ColorRegistry registry= null;
-		if (PlatformUI.isWorkbenchRunning())
-			registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
-		
-		setDefault(store,
-				IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR,
-				findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_BACKGROUND, new RGB(255, 255, 255)), fireEvent);
-		setDefault(store,
-				IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR,
-				findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_OUT, new RGB(0, 0, 0)), fireEvent);
-		setDefault(store,
-				IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR,
-				findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_IN, new RGB(0, 200, 125)), fireEvent);
-		setDefault(store,
-				IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR,
-				findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_ERR, new RGB(255, 0, 0)), fireEvent);
+	public static void setThemeBasedPreferences(final IPreferenceStore store, final boolean fireEvent) {
+		Display display= PlatformUI.getWorkbench().getDisplay();
+		Runnable runnable= new Runnable() {
+			@Override
+			public void run() {
+				ColorRegistry registry= null;
+				if (PlatformUI.isWorkbenchRunning()) {
+					registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+				}
+				setDefault(store,
+						IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR,
+						findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_BACKGROUND, new RGB(255, 255, 255)), fireEvent);
+				setDefault(store,
+						IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR,
+						findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_OUT, new RGB(0, 0, 0)), fireEvent);
+				setDefault(store,
+						IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR,
+						findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_IN, new RGB(0, 200, 125)), fireEvent);
+				setDefault(store,
+						IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR,
+						findRGB(registry, IInternalDebugUIConstants.THEME_CONSOLE_COLOR_STD_ERR, new RGB(255, 0, 0)), fireEvent);
+			}
+		};
+		if (display.getThread() == Thread.currentThread()) {
+			runnable.run();
+		} else {
+			display.asyncExec(runnable);
+		}
 	}
 }
