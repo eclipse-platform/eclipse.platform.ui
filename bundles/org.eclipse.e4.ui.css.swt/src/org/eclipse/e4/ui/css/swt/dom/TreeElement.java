@@ -13,16 +13,20 @@ package org.eclipse.e4.ui.css.swt.dom;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.internal.css.swt.dom.AbstractControlSelectionEraseListener;
+import org.eclipse.e4.ui.internal.css.swt.dom.ControlSelectedColorCustomization;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-public class TreeElement extends ControlElement {
+public class TreeElement extends ControlElement implements ISelectionBackgroundCustomizationElement {
+
 	private static boolean showedUnsupportedWarning = false;
 
 	private final static String TREE_ARROWS_FOREGROUND_COLOR = "org.eclipse.e4.ui.css.swt.treeArrowsForegroundColor"; //$NON-NLS-1$
@@ -53,7 +57,18 @@ public class TreeElement extends ControlElement {
 			}
 
 			Color foreground = (Color) data;
-			Color background = parent.getBackground();
+			Color background = null;
+			// The arrow drawing needs to consider the selected/hot background.
+			if ((event.detail & SWT.SELECTED) != 0) {
+				background = ControlSelectedColorCustomization.getSelectionBackgroundColor(parent);
+
+			} else if ((event.detail & SWT.HOT) != 0) {
+				background = ControlSelectedColorCustomization.getHotBackgroundColor(parent);
+
+			}
+			if(background == null){
+				background = parent.getBackground();
+			}
 
 			GC gc = event.gc;
 
@@ -153,8 +168,28 @@ public class TreeElement extends ControlElement {
 		}
 	};
 
-	public TreeElement(Tree composite, CSSEngine engine) {
-		super(composite, engine);
+	private static class TreeControlSelectionEraseListener extends AbstractControlSelectionEraseListener {
+
+		@Override
+		protected void fixEventDetail(Control control, Event event) {
+			event.detail &= ~SWT.SELECTED;
+		}
+
+		@Override
+		protected int getNumberOfColumns(Control control) {
+			return ((Tree) control).getColumnCount();
+		}
+
+	}
+
+	// Helper to delegate methods related to the control background
+	// customization
+	private final ControlSelectedColorCustomization fControlSelectedColorCustomization;
+
+	public TreeElement(Tree tree, CSSEngine engine) {
+		super(tree, engine);
+		fControlSelectedColorCustomization = new ControlSelectedColorCustomization(tree,
+				new TreeControlSelectionEraseListener());
 	}
 
 	public Tree getTree() {
@@ -259,4 +294,57 @@ public class TreeElement extends ControlElement {
 		// Default is arrows
 		return TREE_ARROWS_MODE_TRIANGLE;
 	}
+
+	@Override
+	public void setSelectionBackgroundColor(Color color) {
+		this.fControlSelectedColorCustomization.setSelectionBackgroundColor(color);
+	}
+
+	@Override
+	public Color getSelectionBackgroundColor() {
+		return this.fControlSelectedColorCustomization.getSelectionBackgroundColor();
+	}
+
+	@Override
+	public void setSelectionBorderColor(Color color) {
+		this.fControlSelectedColorCustomization.setSelectionBorderColor(color);
+
+	}
+
+	@Override
+	public Color getSelectionBorderColor() {
+		return this.fControlSelectedColorCustomization.getSelectionBorderColor();
+	}
+
+	@Override
+	public void setHotBackgroundColor(Color color) {
+		this.fControlSelectedColorCustomization.setHotBackgroundColor(color);
+
+	}
+
+	@Override
+	public Color getHotBackgroundColor() {
+		return this.fControlSelectedColorCustomization.getHotBackgroundColor();
+	}
+
+	@Override
+	public void setHotBorderColor(Color color) {
+		this.fControlSelectedColorCustomization.setHotBorderColor(color);
+	}
+
+	@Override
+	public Color getHotBorderColor() {
+		return this.fControlSelectedColorCustomization.getHotBorderColor();
+	}
+
+	@Override
+	public Color getSelectionForegroundColor() {
+		return this.fControlSelectedColorCustomization.getSelectionForegroundColor();
+	}
+
+	@Override
+	public void setSelectionForegroundColor(Color color) {
+		this.fControlSelectedColorCustomization.setSelectionForegroundColor(color);
+	}
+
 }

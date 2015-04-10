@@ -9,7 +9,7 @@
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 431845
- *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201, 434309
  *******************************************************************************/
 
 /*******************************************************************************
@@ -24,9 +24,41 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
 
 Tree {
+	/**
+	 * See Bug 434201: Dark theme: tree must respect the foreground color for items arrows
+	 */
 	swt-tree-arrows-color:#cccccc;
 	swt-tree-arrows-mode: triangle;  /* triangle or square */
+
+	/* See Bug 434309: Customize the tree/table selection to work properly
+	 * with the dark theme.
+	 *
+	 * Note that the selection foreground is a bit lighter than the regular
+	 * foreground because our background is also a bit lighter in this case.
+	 */
+	swt-selection-foreground-color: #fcfcf9;
+	swt-selection-background-color: #494949;
+	swt-hot-background-color: #2F2F2F;
+	swt-selection-border-color: #7F7D68;
+	swt-hot-border-color: #545454;
 }
+
+
+Table {
+	/* See Bug 434309: Customize the tree/table selection to work properly
+	 * with the dark theme.
+	 *
+	 * Note that the selection foreground is a bit lighter than the regular
+	 * foreground because our background is also a bit lighter in this case.
+	 */
+	swt-selection-foreground-color: #fcfcf9;
+
+	swt-selection-background-color: #494949;
+	swt-hot-background-color: #2F2F2F;
+	swt-selection-border-color: #7F7D68;
+	swt-hot-border-color: #545454;
+}
+
 
 .MTrimmedWindow.topLevel {
     margin-top: 3px;

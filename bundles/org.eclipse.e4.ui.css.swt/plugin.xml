@@ -488,6 +488,44 @@
                name="swt-tree-arrows-mode"> <!--triangle/square -->
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.TreeElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectionBackgroundHandler">
+         <property-name
+               name="swt-selection-foreground-color">
+         </property-name>
+         <property-name
+               name="swt-selection-background-color">
+         </property-name>
+         <property-name
+               name="swt-selection-border-color">
+         </property-name>
+         <property-name
+               name="swt-hot-background-color">
+         </property-name>
+         <property-name
+               name="swt-hot-border-color">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.TableElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectionBackgroundHandler">
+         <property-name
+               name="swt-selection-foreground-color">
+         </property-name>
+         <property-name
+               name="swt-selection-background-color">
+         </property-name>
+         <property-name
+               name="swt-selection-border-color">
+         </property-name>
+         <property-name
+               name="swt-hot-background-color">
+         </property-name>
+         <property-name
+               name="swt-hot-border-color">
+         </property-name>
+      </handler>
 
 
       <!-- Theme element definitions -->
