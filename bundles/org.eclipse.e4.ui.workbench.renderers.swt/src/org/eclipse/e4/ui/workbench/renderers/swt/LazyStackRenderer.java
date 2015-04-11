@@ -170,9 +170,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;
 			element = ph.getRef();
-			if (element != null && element.getCurSharedRef() == ph) {
-				element.setCurSharedRef(null);
-			}
 		}
 
 		// Hide any floating windows

@@ -850,13 +850,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 			parentRenderer.hideChild(element.getParent(), element);
 		}
 
-		if (element instanceof MPlaceholder) {
-			MPlaceholder ph = (MPlaceholder) element;
-			if (ph.getRef() != null && ph.getRef().getCurSharedRef() == ph) {
-				ph.getRef().setCurSharedRef(null);
-			}
-		}
-
 		AbstractPartRenderer renderer = getRendererFor(element);
 
 		// If the element hasn't been rendered then this is a NO-OP
@@ -937,6 +930,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// dispose the context
 			if (element instanceof MContext) {
 				clearContext((MContext) element);
+			}
+		}
+
+		if (element instanceof MPlaceholder) {
+			MPlaceholder ph = (MPlaceholder) element;
+			if (ph.getRef() != null && ph.getRef().getCurSharedRef() == ph) {
+				ph.getRef().setCurSharedRef(null);
 			}
 		}
 

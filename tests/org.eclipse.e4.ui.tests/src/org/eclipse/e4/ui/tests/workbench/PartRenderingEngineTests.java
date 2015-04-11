@@ -56,6 +56,7 @@ public class PartRenderingEngineTests extends TestCase {
 	protected E4Workbench wb;
 
 	private LogListener listener = new LogListener() {
+		@Override
 		public void logged(LogEntry entry) {
 			if (!logged) {
 				logged = entry.getLevel() == LogService.LOG_ERROR;
@@ -3391,5 +3392,81 @@ public class PartRenderingEngineTests extends TestCase {
 				view.isStatePersisted());
 		assertNull(part.getObject());
 		assertNull(part.getContext());
+	}
+
+	public void testCurSharedRefBug457939() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveA.getChildren().add(partStackA);
+		perspectiveA.setSelectedElement(partStackA);
+
+		assertNull(part.getCurSharedRef());
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		partStackA.getChildren().add(placeholderA);
+		partStackA.setSelectedElement(placeholderA);
+
+		assertEquals(placeholderA, part.getCurSharedRef());
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveB.getChildren().add(partStackB);
+		perspectiveB.setSelectedElement(partStackB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		placeholderB.setRef(part);
+		partStackB.getChildren().add(placeholderB);
+		partStackB.setSelectedElement(placeholderB);
+
+		assertEquals(placeholderA, part.getCurSharedRef());
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Shell limboShell = (Shell) appContext.get("limbo");
+		assertNotNull(limboShell);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.switchPerspective(perspectiveB);
+		assertEquals(placeholderB, part.getCurSharedRef());
+
+		partService.switchPerspective(perspectiveA);
+		assertEquals(placeholderA, part.getCurSharedRef());
+
+		EModelService modelService = window.getContext().get(EModelService.class);
+
+		modelService.removePerspectiveModel(perspectiveA, window);
+		assertEquals(perspectiveB, modelService.getActivePerspective(window));
+		assertEquals(placeholderB, part.getCurSharedRef());
+
+		partService.switchPerspective(perspectiveB);
+		modelService.removePerspectiveModel(perspectiveB, window);
+		assertNull(part.getCurSharedRef());
 	}
 }
