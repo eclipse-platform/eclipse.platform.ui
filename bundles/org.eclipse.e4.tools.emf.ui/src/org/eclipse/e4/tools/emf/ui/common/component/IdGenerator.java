@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2015 TwelveTone LLC and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Steven Spungin <steven@spungin.tv> - initial API and implementation, Bug 437951
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 464464
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.common.component;
@@ -50,7 +51,7 @@ public class IdGenerator {
 	 *            Optional control.
 	 */
 	public void bind(final IObservableValue master, final IEMFEditValueProperty ebpLabel,
-		final IEMFEditValueProperty evpId, Control control) {
+			final IEMFEditValueProperty evpId, Control control) {
 
 		// RULES
 		// Only start generating if the label is initially empty and the id ends
@@ -112,9 +113,9 @@ public class IdGenerator {
 				if (labelValue == null) {
 					labelValue = ""; //$NON-NLS-1$
 				}
-				final String camelCase = camelCase(labelValue);
+				final String trimmedIdEnding = trimToLowercase(labelValue);
 				ignore = true;
-				evpId.setValue(master.getValue(), baseId + camelCase);
+				evpId.setValue(master.getValue(), baseId + trimmedIdEnding);
 				ignore = false;
 			}
 		});
@@ -122,26 +123,19 @@ public class IdGenerator {
 	}
 
 	/**
-	 * Strips all illegal id characters, and camel cases each word.
+	 * Strips all illegal id characters, and lower cases each word.
 	 *
 	 * @param value
 	 * @return
 	 */
-	protected static String camelCase(String value) {
+	protected static String trimToLowercase(String value) {
 		final String[] parts = value.split("\\s+"); //$NON-NLS-1$
-		String ret = ""; //$NON-NLS-1$
-		boolean first = true;
+		final StringBuilder sb = new StringBuilder();
 		for (String part : parts) {
 			part = part.replaceAll("[^0-9a-zA-Z_-]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (first) {
-				first = false;
-				ret = part.toLowerCase();
-			} else {
-				part = part.substring(0, 1).toUpperCase() + part.substring(1).toLowerCase();
-				ret += part;
-			}
+			sb.append(part.toLowerCase());
 		}
-		return ret;
+		return sb.toString();
 	}
 
 	/**
