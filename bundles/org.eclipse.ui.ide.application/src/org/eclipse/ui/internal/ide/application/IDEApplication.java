@@ -279,6 +279,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 					// workspace was selected to show the progress bar
 					if (parentShellVisible && isValidShell(shell)) {
 						shell.setVisible(true);
+						shell.forceActive();
 					}
                     return null;
                 }
