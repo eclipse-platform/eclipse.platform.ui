@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel (Lars.Vogel@vogella.com) - Bug 416082,  472654, 395825
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411, 461063
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 463962
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.internal.workbench;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,6 +31,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Persist;
@@ -55,6 +57,7 @@ import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
@@ -186,6 +189,8 @@ public class PartServiceImpl implements EPartService {
 	private ListenerList listeners = new ListenerList();
 
 	private boolean constructed = false;
+
+	private LinkedList<MPart> activationList = new LinkedList<>();
 
 	@Inject
 	public PartServiceImpl(MApplication application, @Optional MWindow window) {
@@ -1147,6 +1152,85 @@ public class PartServiceImpl implements EPartService {
 		Assert.isNotNull(part);
 		MPart localPart = findPart(part.getElementId());
 		return addPart(part, localPart == null ? part : localPart);
+	}
+
+	/**
+	 * Returns a unmodifiable list of {@link MPart} elements, which are ordered
+	 * according to the order part activations
+	 *
+	 * @return unmodifiable list of {@link MPart} elements, never
+	 *         <code>null</code>
+	 */
+	public List<MPart> getActivationList() {
+		return Collections.unmodifiableList(activationList);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicPartClosed(@EventTopic(UIEvents.UIElement.WIDGET) Event event) {
+		Object element = event.getProperty(EventTags.ELEMENT);
+		if (UIEvents.isREMOVE(event) && element instanceof MPart && event.getProperty(EventTags.NEW_VALUE) == null) {
+			activationList.remove(element);
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicPartActivate(@EventTopic(UIEvents.UILifeCycle.ACTIVATE) Event event) {
+		Object element = event.getProperty(EventTags.ELEMENT);
+		if (element instanceof MPart) {
+			MPart part = (MPart) element;
+			activationList.remove(part);
+			activationList.addFirst(part);
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicBringToTop(@EventTopic(UIEvents.UILifeCycle.BRINGTOTOP) Event event) {
+		Object element = event.getProperty(EventTags.ELEMENT);
+		if (element instanceof MPart) {
+			MPart part = (MPart) element;
+			MElementContainer<?> parent = part.getParent();
+			if (parent == null) {
+				MPlaceholder placeholder = part.getCurSharedRef();
+				if (placeholder == null) {
+					return;
+				}
+
+				parent = placeholder.getParent();
+			}
+
+			if (parent instanceof MPartStack) {
+				int newIndex = lastIndexOfContainer(parent);
+				// New index can be -1 if there is no last index
+				if (newIndex >= 0 && part == activationList.get(newIndex)) {
+					return;
+				}
+				activationList.remove(part);
+				if (newIndex >= 0 && newIndex < activationList.size() - 1) {
+					activationList.add(newIndex, part);
+				} else {
+					activationList.add(part);
+				}
+			}
+		}
+	}
+
+	private int lastIndexOfContainer(MElementContainer<?> parent) {
+		for (int i = 0; i < activationList.size(); i++) {
+			MPart mPart = activationList.get(i);
+			MElementContainer<MUIElement> container = mPart.getParent();
+			if (container == parent) {
+				return i;
+			} else if (container == null) {
+				MPlaceholder placeholder = mPart.getCurSharedRef();
+				if (placeholder != null && placeholder.getParent() == parent) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	@Override
