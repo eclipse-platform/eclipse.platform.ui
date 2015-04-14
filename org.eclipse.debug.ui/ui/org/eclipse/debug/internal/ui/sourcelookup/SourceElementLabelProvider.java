@@ -34,7 +34,17 @@ public class SourceElementLabelProvider extends LabelProvider {
 		}
 		return fLabelProvider;
 	}
-	
+
+	private ILabelProvider getLabelProvider(Object element) {
+		if (element instanceof IAdaptable) {
+			SourceElementLabelProvider lp = ((IAdaptable) element).getAdapter(SourceElementLabelProvider.class);
+			if (lp != null) {
+				return lp;
+			}
+		}
+		return getWorkbenchLabelProvider();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
@@ -44,20 +54,16 @@ public class SourceElementLabelProvider extends LabelProvider {
 		if (fLabelProvider != null) {
 			fLabelProvider.dispose();
 		}
-	}	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IAdaptable) {
-			SourceElementLabelProvider lp = ((IAdaptable) element).getAdapter(SourceElementLabelProvider.class);
-			if (lp != null) {
-				return lp.getImage(element);
-			}
-		}
-		return getWorkbenchLabelProvider().getImage(element);
+		return getLabelProvider(element).getImage(element);
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
@@ -65,12 +71,7 @@ public class SourceElementLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (element instanceof IResource) {
 			return SourceElementWorkbenchAdapter.getQualifiedName(((IResource)element).getFullPath());
-		} else if (element instanceof IAdaptable) {
-			SourceElementLabelProvider lp = ((IAdaptable) element).getAdapter(SourceElementLabelProvider.class);
-			if (lp != null) {
-				return lp.getText(element);
-			}
 		}
-		return getWorkbenchLabelProvider().getText(element);
+		return getLabelProvider(element).getText(element);
 	}
 }
