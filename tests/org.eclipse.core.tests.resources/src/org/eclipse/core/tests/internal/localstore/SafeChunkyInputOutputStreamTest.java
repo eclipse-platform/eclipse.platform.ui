@@ -220,10 +220,10 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 				}
 		}
 
-		SafeChunkyInputStream input = null;
+		DataInputStream input = null;
 		try {
-			input = new SafeChunkyInputStream(target);
-			new DataInputStream(input).readUTF();
+			input = new DataInputStream(new SafeChunkyInputStream(target));
+			input.readUTF();
 			fail("2.0");
 		} catch (EOFException e) {
 			// should hit here
