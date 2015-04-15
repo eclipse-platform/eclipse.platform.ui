@@ -31,6 +31,8 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -274,6 +276,16 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 					}
 				} else if (!userHoldsScrollLock.get()) {
 					setScrollLock(true);
+				}
+			}
+		});
+
+		styledText.addVerifyListener(new VerifyListener() {
+			@Override
+			public void verifyText(VerifyEvent e) {
+				// unlock the auto lock if user starts typing only if it was not manual lock
+				if (scrollLockStateProvider != null && !scrollLockStateProvider.getScrollLock()) {
+					setScrollLock(false);
 				}
 			}
 		});
