@@ -6,6 +6,15 @@ org.eclipse.jface/debug=true
 # Colorize bidi-processed fields and add tooltips/messages that show the configured handlingType for text widgets
 org.eclipse.jface/debug/bidiUtils=false
 
+# Trace time spent creating URLImageDescriptor images
+org.eclipse.jface/debug/trace/URLImageDescriptor=false
+
+# Switch URLImageDescriptor to load images directly via URL#openStream() (instead of FileLocator#toFileURL(URL))
+org.eclipse.jface/debug/loadURLImageDescriptorDirectly=false
+
+# Switch URLImageDescriptor to load images using the "@2x" convention for high-dpi
+org.eclipse.jface/debug/loadURLImageDescriptor2x=false
+
 # Log a message if a dialog is opened without a parent
 org.eclipse.jface/debug/dialog/noparent=false
 

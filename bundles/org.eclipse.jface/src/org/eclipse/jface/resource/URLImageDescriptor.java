@@ -13,6 +13,7 @@ package org.eclipse.jface.resource;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -26,6 +27,8 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
+import org.eclipse.swt.graphics.ImageFileNameProvider;
 
 /**
  * An ImageDescriptor that gets its information from a URL. This class is not
@@ -33,6 +36,41 @@ import org.eclipse.swt.graphics.ImageData;
  * uses a URL.
  */
 class URLImageDescriptor extends ImageDescriptor {
+
+	private static class URLImageFileNameProvider implements ImageFileNameProvider {
+		private URL url;
+
+		public URLImageFileNameProvider(URL url) {
+			this.url = url;
+		}
+
+		@Override
+		public String getImagePath(int zoom) {
+			URL xUrl = getxURL(url, zoom);
+			if (xUrl == null)
+				return null;
+			return getFilePath(xUrl); // can be null!
+		}
+	}
+
+	private static class URLImageDataProvider implements ImageDataProvider {
+		private URL url;
+
+		public URLImageDataProvider(URL url) {
+			this.url = url;
+		}
+
+		@Override
+		public ImageData getImageData(int zoom) {
+			URL xUrl = getxURL(url, zoom);
+			if (xUrl == null)
+				return null;
+			return URLImageDescriptor.getImageData(xUrl);
+		}
+	}
+
+	private static long cumulativeTime;
+
 	/**
 	 * Constant for the file protocol for optimized loading
 	 */
@@ -59,8 +97,12 @@ class URLImageDescriptor extends ImageDescriptor {
 
 	@Override
 	public ImageData getImageData() {
+		return getImageData(url);
+	}
+
+	private static ImageData getImageData(URL url) {
 		ImageData result = null;
-		InputStream in = getStream();
+		InputStream in = getStream(url);
 		if (in != null) {
 			try {
 				result = new ImageData(in);
@@ -89,6 +131,10 @@ class URLImageDescriptor extends ImageDescriptor {
 	 * @return the stream for loading the data
 	 */
 	protected InputStream getStream() {
+		return getStream(url);
+	}
+
+	private static InputStream getStream(URL url) {
 		try {
 			return new BufferedInputStream(url.openStream());
 		} catch (IOException e) {
@@ -111,12 +157,37 @@ class URLImageDescriptor extends ImageDescriptor {
 		return "URLImageDescriptor(" + url + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	private static URL getxURL(URL url, int zoom) {
+		if (zoom == 100) {
+			return url;
+		}
+		String path = url.getPath();
+		int dot = path.lastIndexOf('.');
+		if (dot != -1 && (zoom == 150 || zoom == 200)) {
+			String lead = path.substring(0, dot);
+			String tail = path.substring(dot);
+			String x = zoom == 150 ? "@1.5x" : "@2x"; //$NON-NLS-1$ //$NON-NLS-2$
+			try {
+				String file = lead + x + tail;
+				if (url.getQuery() != null) {
+					file += '?' + url.getQuery();
+				}
+				URL xUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
+				return xUrl;
+			} catch (MalformedURLException e) {
+				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
+			}
+		}
+		return null;
+
+	}
+
 	/**
 	 * Returns the filename for the ImageData.
 	 *
 	 * @return {@link String} or <code>null</code> if the file cannot be found
 	 */
-	private String getFilePath() {
+	private static String getFilePath(URL url) {
 
 		try {
 			if (!InternalPolicy.OSGI_AVAILABLE) {
@@ -139,17 +210,46 @@ class URLImageDescriptor extends ImageDescriptor {
 	@Override
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
 
-		// Try to see if we can optimize using SWTs file based image support.
-		String path = getFilePath();
-		if (path == null)
+		long start = 0;
+		if (InternalPolicy.DEBUG_TRACE_URL_IMAGE_DESCRIPTOR) {
+			start = System.nanoTime();
+		}
+		try {
+
+			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x) {
+				if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
+					try {
+						return new Image(device, new URLImageFileNameProvider(url));
+					} catch (SWTException exception) {
+						// If we fail fall back to the slower input stream method.
+					}
+				}
+
+				return new Image(device, new URLImageDataProvider(url));
+
+			}
+			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
+				return super.createImage(returnMissingImageOnError, device);
+			}
+
+			// Try to see if we can optimize using SWTs file based image support.
+			String path = getFilePath(url);
+			if (path != null) {
+				try {
+					return new Image(device, path);
+				} catch (SWTException exception) {
+					// If we fail fall back to the slower input stream method.
+				}
+			}
 			return super.createImage(returnMissingImageOnError, device);
 
-		try {
-			return new Image(device, path);
-		} catch (SWTException exception) {
-			// If we fail fall back to the slower input stream method.
+		} finally {
+			if (InternalPolicy.DEBUG_TRACE_URL_IMAGE_DESCRIPTOR) {
+				long time = System.nanoTime() - start;
+				cumulativeTime += time;
+				System.out.println("Accumulated time (ms) to load URLImageDescriptor images: " + cumulativeTime / 1000000); //$NON-NLS-1$
+			}
 		}
-		return super.createImage(returnMissingImageOnError, device);
 	}
 
 }
