@@ -31,6 +31,8 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -149,6 +151,9 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	private void setScrollLock(boolean lock) {
 		userHoldsScrollLock.set(lock);
 		if (scrollLockStateProvider != null && scrollLockStateProvider.getAutoScrollLock() != lock) {
+			if (!lock && scrollLockStateProvider.getScrollLock()) {
+				return;
+			}
 			scrollLockStateProvider.setAutoScrollLock(lock);
 		}
 	}
@@ -278,6 +283,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			}
 		});
 
+		styledText.addVerifyListener(new VerifyListener() {
+			@Override
+			public void verifyText(VerifyEvent e) {
+				// unlock the auto lock is user starts typing
+				setScrollLock(false);
+			}
+		});
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         propertyChangeListener = new HyperlinkColorChangeListener();
         colorRegistry.addListener(propertyChangeListener);
