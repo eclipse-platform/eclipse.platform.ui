@@ -1294,6 +1294,11 @@
           </adapter>
        </factory>
        <factory
+             adaptableType="org.eclipse.ui.ide.FileStoreEditorInput"
+             class="org.eclipse.ui.internal.ide.model.FileStoreInputAdapterFactory">
+          <adapter type="org.eclipse.core.filesystem.IFileStore"/>
+       </factory>
+       <factory
              adaptableType="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"
              class="org.eclipse.ui.internal.views.markers.MarkerShowInAdapter">
           <adapter
