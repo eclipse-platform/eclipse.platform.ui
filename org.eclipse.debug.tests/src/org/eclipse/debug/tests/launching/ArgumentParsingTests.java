@@ -19,16 +19,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.osgi.service.environment.Constants;
+
+import junit.framework.TestCase;
 
 /**
  * Tests {@link org.eclipse.debug.core.DebugPlugin#parseArguments(String)} and
@@ -84,10 +83,7 @@ public class ArgumentParsingTests extends TestCase {
 
 	private static void runCommandLine(String commandLine, String[] arguments) throws IOException,
 			URISyntaxException, CoreException {
-		URL classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), new Path("bin/"), null); //$NON-NLS-1$
-		if (classPathUrl == null) { // not running from the workspace, but from the built bundle
-			classPathUrl = FileLocator.find(TestsPlugin.getDefault().getBundle(), Path.ROOT, null);
-		}
+		URL classPathUrl = ArgumentsPrinter.class.getResource("/"); //$NON-NLS-1$
 		classPathUrl = FileLocator.toFileURL(classPathUrl);
 		File classPathFile = URIUtil.toFile(URIUtil.toURI(classPathUrl));
 
