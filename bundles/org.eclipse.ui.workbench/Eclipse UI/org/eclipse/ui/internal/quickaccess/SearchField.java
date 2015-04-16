@@ -577,8 +577,8 @@ public class SearchField {
 		dialogSettings.put(ORDERED_PROVIDERS, orderedProviders);
 		dialogSettings.put(TEXT_ENTRIES, textEntries);
 		dialogSettings.put(TEXT_ARRAY, textArray);
-		dialogSettings.put(DIALOG_HEIGHT, shell.getSize().y);
-		dialogSettings.put(DIALOG_WIDTH, shell.getSize().x);
+		dialogSettings.put(DIALOG_HEIGHT, dialogHeight);
+		dialogSettings.put(DIALOG_WIDTH, dialogWidth);
 	}
 
 	private IDialogSettings getDialogSettings() {
