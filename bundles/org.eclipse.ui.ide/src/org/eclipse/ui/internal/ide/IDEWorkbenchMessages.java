@@ -757,6 +757,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String MarkerDeleteHandler_JobMessageLabel;
 
 	public static String FilteredResourcesSelectionDialog_showDerivedResourcesAction;
+	public static String FilteredResourcesSelectionDialog_groupResourcesWithSameUndelyingLocation;
 
 	public static String ResourceSelectionDialog_label;
 	public static String ResourceSelectionDialog_matching;

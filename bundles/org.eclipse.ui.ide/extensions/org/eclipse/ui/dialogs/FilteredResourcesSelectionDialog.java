@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) Bug 86973 Allow path pattern matching
  *     Anton Leherbauer (Wind River Systems, Inc.) - Bug 415099 Terminating with "<" or " " (space) does not work for extensions
+ *     Mickael Istria (Red Hat Inc.) - Bug 460749: filter resources with same location
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -17,7 +18,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -89,6 +92,7 @@ public class FilteredResourcesSelectionDialog extends
 	private static final String WORKINGS_SET_SETTINGS = "WorkingSet"; //$NON-NLS-1$
 
 	private static final String SHOW_DERIVED = "ShowDerived"; //$NON-NLS-1$
+	private static final String FILTER_BY_LOCATION = "FilterByLocation"; //$NON-NLS-1$
 
 	private ShowDerivedResourcesAction showDerivedResourcesAction;
 
@@ -99,6 +103,9 @@ public class FilteredResourcesSelectionDialog extends
 	private WorkingSetFilterActionGroup workingSetFilterActionGroup;
 
 	private CustomWorkingSetFilter workingSetFilter = new CustomWorkingSetFilter();
+
+	private FilterResourcesByLocation filterResourceByLocation = new FilterResourcesByLocation();
+	private GroupResourcesByLocationAction groupResourcesByLocationAction;
 
 	private String title;
 
@@ -228,6 +235,7 @@ public class FilteredResourcesSelectionDialog extends
 		super.storeDialog(settings);
 
 		settings.put(SHOW_DERIVED, showDerivedResourcesAction.isChecked());
+		settings.put(FILTER_BY_LOCATION, this.groupResourcesByLocationAction.isChecked());
 
 		XMLMemento memento = XMLMemento.createWriteRoot("workingSet"); //$NON-NLS-1$
 		workingSetFilterActionGroup.saveState(memento);
@@ -251,6 +259,11 @@ public class FilteredResourcesSelectionDialog extends
 		boolean showDerived = settings.getBoolean(SHOW_DERIVED);
 		showDerivedResourcesAction.setChecked(showDerived);
 		this.isDerived = showDerived;
+
+		boolean groupByLoation = settings.getBoolean(FILTER_BY_LOCATION);
+		this.groupResourcesByLocationAction.setChecked(groupByLoation);
+		this.filterResourceByLocation.setEnabled(groupByLoation);
+		addListFilter(this.filterResourceByLocation);
 
 		String setting = settings.get(WORKINGS_SET_SETTINGS);
 		if (setting != null) {
@@ -277,6 +290,8 @@ public class FilteredResourcesSelectionDialog extends
 
 		showDerivedResourcesAction = new ShowDerivedResourcesAction();
 		menuManager.add(showDerivedResourcesAction);
+		this.groupResourcesByLocationAction = new GroupResourcesByLocationAction();
+		menuManager.add(this.groupResourcesByLocationAction);
 
 		workingSetFilterActionGroup = new WorkingSetFilterActionGroup(
 				getShell(), new IPropertyChangeListener() {
@@ -541,6 +556,27 @@ public class FilteredResourcesSelectionDialog extends
 		@Override
 		public void run() {
 			FilteredResourcesSelectionDialog.this.isDerived = isChecked();
+			applyFilter();
+		}
+	}
+
+	/**
+	 * Sets the groupByLocation flag on the FilterResourceByLocation instance
+	 */
+	private class GroupResourcesByLocationAction extends Action {
+
+		/**
+		 * Creates a new instance of the action.
+		 */
+		public GroupResourcesByLocationAction() {
+			super(IDEWorkbenchMessages.FilteredResourcesSelectionDialog_groupResourcesWithSameUndelyingLocation,
+					IAction.AS_CHECK_BOX);
+		}
+
+		@Override
+		public void run() {
+			FilteredResourcesSelectionDialog.this.filterResourceByLocation.setEnabled(isChecked());
+			scheduleRefresh();
 			applyFilter();
 		}
 	}
@@ -1012,6 +1048,41 @@ public class FilteredResourcesSelectionDialog extends
 		 */
 		public boolean isShowDerived() {
 			return showDerived;
+		}
+
+	}
+
+	protected class FilterResourcesByLocation extends ViewerFilter	 {
+
+		private boolean enabled;
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+
+		@Override
+		public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
+			if (!this.enabled) {
+				return elements;
+			}
+			Map<IPath, IResource> bestResourceForPath = new LinkedHashMap<IPath, IResource>();
+			for (Object item : elements) {
+				if (item instanceof IResource) {
+					IResource currentResource = (IResource) item;
+					IResource otherResource = bestResourceForPath.get(currentResource.getLocation());
+					if (otherResource == null || otherResource.getFullPath().segmentCount() > currentResource
+							.getFullPath().segmentCount()) {
+						bestResourceForPath.put(currentResource.getLocation(), currentResource);
+					}
+				}
+			}
+			return bestResourceForPath.values().toArray(new IResource[bestResourceForPath.size()]);
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			// shouldn't be called, but err on the side of caution
+			return true;
 		}
 
 	}
