@@ -24,7 +24,7 @@
 /* ############################## Global Styles ############################## */
 
 Composite, ScrolledComposite, ExpandableComposite, TabFolder, CLabel, Label,
-ToolItem, Sash, Group, Hyperlink, RefactoringLocationControl, Link, FilteredTree,
+ToolBar, ToolItem, Sash, Group, Hyperlink, RefactoringLocationControl, Link, FilteredTree,
 ProxyEntriesComposite, NonProxyHostsComposite, DelayedFilterCheckboxTree,
 Splitter, ScrolledPageContent, ViewForm, LaunchConfigurationFilteredTree,
 ContainerSelectionGroup, BrowseCatalogItem, EncodingSettings,
