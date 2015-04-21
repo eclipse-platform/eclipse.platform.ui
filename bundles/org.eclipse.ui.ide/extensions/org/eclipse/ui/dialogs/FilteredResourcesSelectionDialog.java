@@ -1052,7 +1052,7 @@ public class FilteredResourcesSelectionDialog extends
 
 	}
 
-	protected class FilterResourcesByLocation extends ViewerFilter	 {
+	private class FilterResourcesByLocation extends ViewerFilter {
 
 		private boolean enabled;
 
