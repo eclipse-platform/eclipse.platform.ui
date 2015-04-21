@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Bug 463245
  ******************************************************************************/
 package org.eclipse.e4.ui.widgets;
 
@@ -99,17 +100,23 @@ public class ImageBasedFrame extends Canvas {
 			}
 
 			public void controlMoved(ControlEvent e) {
+				// Bug 463245 - The framed control should always stay at the same location
+				setFramedControlLocation();
 			}
 		});
-		if (vertical) {
-			toWrap.setLocation(w1, h1 + handleHeight);
-		} else {
-			toWrap.setLocation(w1 + handleWidth, h1);
-		}
+		setFramedControlLocation();
 		setSize(computeSize(-1, -1));
 
 		if (toWrap instanceof ToolBar) {
 			id = "TB";// ((ToolBar) toWrap).getItem(0).getToolTipText(); //$NON-NLS-1$
+		}
+	}
+
+	private void setFramedControlLocation() {
+		if (vertical) {
+			framedControl.setLocation(w1, h1 + handleHeight);
+		} else {
+			framedControl.setLocation(w1 + handleWidth, h1);
 		}
 	}
 
