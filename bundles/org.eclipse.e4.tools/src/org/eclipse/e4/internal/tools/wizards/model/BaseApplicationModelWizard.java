@@ -12,9 +12,7 @@
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
@@ -29,19 +27,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.internal.tools.Messages;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
-import org.eclipse.e4.ui.model.fragment.MModelFragment;
-import org.eclipse.e4.ui.model.fragment.MModelFragments;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -110,17 +100,16 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			final IFile modelFile = getModelFile();
 
 			if (modelFile.exists()) {
-				if (!MessageDialog.openQuestion(getShell(), Messages.BaseApplicationModelWizard_FileExists,
-					Messages.BaseApplicationModelWizard_TheFileAlreadyExists
-						+ Messages.BaseApplicationModelWizard_AddExtractedNode)) {
-					return false;
+				final boolean continueWithExistingFile = handleFileExist();
+				if (!continueWithExistingFile) {
+					return true;
 				}
+
 			}
 
 			// Do the work within an operation.
 			//
-			final WorkspaceModifyOperation operation =
-				new WorkspaceModifyOperation() {
+			final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 				@Override
 				protected void execute(IProgressMonitor progressMonitor) {
 					try {
@@ -136,80 +125,22 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 						//
 						final Resource resource = resourceSet.createResource(fileURI);
 
+						final EObject rootObject = createInitialModel();
+
+						if (rootObject == null) {
+							throw new IllegalArgumentException(Messages.BaseApplicationModelWizard_ModelRootMustNotBeNull);
+						}
+
 						// If target file already exists, load its content
 						//
 						if (modelFile.exists()) {
 							resource.load(null);
-						}
 
-						// Add the initial model object to the contents.
-						//
-						final EObject rootObject = createInitialModel();
-						if (rootObject != null) {
-							if (resource.getContents().size() == 0) {
-								// If target model is empty (file just created) => add as is
-								resource.getContents().add(rootObject);
-							} else {
-								// Otherwise (file already exists) => take the roots of source and target models
-								// and copy multiple attributes 'imports' and 'fragments' objects from source to
-									// target
-								final MModelFragments sourceFragments = (MModelFragments) rootObject;
-								final MModelFragments targetFragments = (MModelFragments) resource.getContents()
-										.get(0);
-
-									final List<MCommand> listOfAllImportsFromElements = new ArrayList<MCommand>();
-								for (final MModelFragment fragment : sourceFragments.getFragments()) {
-									final List<MCommand> commandsToImport = new ArrayList<MCommand>();
-									final EObject eObject = (EObject) fragment;
-									final TreeIterator<EObject> eAllContents = eObject.eAllContents();
-									while (eAllContents.hasNext()) {
-										final EObject next = eAllContents.next();
-										final MApplicationElement mApplicationElement = (MApplicationElement) next;
-										if (mApplicationElement instanceof MHandler) {
-											final MHandler mHandler = (MHandler) mApplicationElement;
-											final MCommand command = mHandler.getCommand();
-											commandsToImport.add(command);
-											final MApplicationElement copy = (MApplicationElement) EcoreUtil
-													.copy((EObject) command);
-											targetFragments.getImports().add(copy);
-											mHandler.setCommand((MCommand) copy);
-										}
-										else if (mApplicationElement instanceof MHandledItem) {
-											final MHandledItem mHandledItem = (MHandledItem) mApplicationElement;
-											final MCommand command = mHandledItem.getCommand();
-											commandsToImport.add(command);
-											final MApplicationElement copy = (MApplicationElement) EcoreUtil
-													.copy((EObject) command);
-											targetFragments.getImports().add(copy);
-											mHandledItem.setCommand((MCommand) copy);
-										}
-
-									}
-									listOfAllImportsFromElements.addAll(commandsToImport);
-									targetFragments.getFragments().add(
-											(MModelFragment) EcoreUtil.copy((EObject) fragment));
-
-								}
-								for (final MApplicationElement element : sourceFragments.getImports()) {
-									boolean isAlreadyImport = true;
-										for (final MCommand mCommand : listOfAllImportsFromElements) {
-
-										if (!mCommand.getElementId().equals(element.getElementId())) {
-
-												isAlreadyImport = false;
-											break;
-										}
-										if (!isAlreadyImport) {
-
-											targetFragments.getImports().add(
-													(MApplicationElement) EcoreUtil.copy((EObject) element));
-										}
-
-									}
-
-								}
-
-							}
+							mergeWithExistingFile(resource, rootObject);
+						} else {
+							// If target model is empty (file just created)
+							// => add as is
+							resource.getContents().add(rootObject);
 						}
 
 						// Save the contents of the resource to the file system.
@@ -218,11 +149,9 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 						resource.save(options);
 						adjustBuildPropertiesFile(modelFile);
 						adjustDependencies(modelFile);
-					}
-					catch (final Exception exception) {
+					} catch (final Exception exception) {
 						throw new RuntimeException(exception);
-					}
-					finally {
+					} finally {
 						progressMonitor.done();
 					}
 				}
@@ -237,20 +166,18 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			final IWorkbenchPart activePart = page.getActivePart();
 			if (activePart instanceof ISetSelectionTarget) {
 				final ISelection targetSelection = new StructuredSelection(modelFile);
-				getShell().getDisplay().asyncExec
-				(new Runnable() {
-						@Override
+				getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
-							((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-						}
-					});
+						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
+					}
+				});
 			}
 
 			// Open an editor on the new file.
 			//
 			try {
-				page.openEditor
-				(new FileEditorInput(modelFile),
+				page.openEditor(new FileEditorInput(modelFile),
 						workbench.getEditorRegistry().getDefaultEditor(modelFile.getFullPath().toString()).getId());
 			} catch (final PartInitException exception) {
 				MessageDialog.openError(workbenchWindow.getShell(), "Could not init editor", exception.getMessage()); //$NON-NLS-1$
@@ -265,6 +192,21 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		}
 	}
 
+	/**
+	 * @return if the wizard should continue in case the file already exists
+	 */
+	protected boolean handleFileExist() {
+		MessageDialog.openInformation(getShell(), Messages.BaseApplicationModelWizard_FileExists,
+				Messages.BaseApplicationModelWizard_TheFileAlreadyExists);
+
+		return false;
+	}
+
+	/**
+	 * Creates the rootObject of the new model file. Must not be null.
+	 *
+	 * @return The root {@link EObject}
+	 */
 	protected abstract EObject createInitialModel();
 
 	protected IFile getModelFile() throws CoreException {
@@ -274,14 +216,15 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		final IResource resource = root.findMember(new Path(containerName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throwCoreException("Container \"" + containerName //$NON-NLS-1$
-				+ "\" does not exist."); //$NON-NLS-1$
+					+ "\" does not exist."); //$NON-NLS-1$
 		}
 		final IContainer container = (IContainer) resource;
 		return container.getFile(new Path(fileName));
 	}
 
 	private void throwCoreException(String message) throws CoreException {
-		final IStatus status = new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.editor3x", IStatus.OK, message, null); //$NON-NLS-1$
+		final IStatus status = new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.editor3x", IStatus.OK, message, //$NON-NLS-1$
+				null);
 		throw new CoreException(status);
 	}
 
@@ -300,8 +243,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	/**
 	 * Adds other file to the build.properties file.
 	 */
-	private void adjustBuildPropertiesFile(IFile file)
-		throws CoreException {
+	private void adjustBuildPropertiesFile(IFile file) throws CoreException {
 		final IProject project = file.getProject();
 		final IFile buildPropertiesFile = PDEProject.getBuildProperties(project);
 		if (buildPropertiesFile.exists()) {
@@ -335,8 +277,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		final IFile pluginXml = PDEProject.getPluginXml(project);
 		final IFile manifest = PDEProject.getManifest(project);
 
-		final WorkspaceBundlePluginModel fModel = new WorkspaceBundlePluginModel(
-			manifest, pluginXml);
+		final WorkspaceBundlePluginModel fModel = new WorkspaceBundlePluginModel(manifest, pluginXml);
 		try {
 			addWorkbenchDependencyIfRequired(fModel);
 			registerWithExtensionPointIfRequired(project, fModel, file);
@@ -346,8 +287,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		}
 	}
 
-	private void addWorkbenchDependencyIfRequired(
-		WorkspaceBundlePluginModel fModel) throws CoreException {
+	private void addWorkbenchDependencyIfRequired(WorkspaceBundlePluginModel fModel) throws CoreException {
 		final IPluginImport[] imports = fModel.getPluginBase().getImports();
 
 		final String WORKBENCH_IMPORT_ID = "org.eclipse.e4.ui.model.workbench"; //$NON-NLS-1$
@@ -359,19 +299,15 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		}
 
 		String version = ""; //$NON-NLS-1$
-		final IPluginModelBase findModel = PluginRegistry
-			.findModel(WORKBENCH_IMPORT_ID);
+		final IPluginModelBase findModel = PluginRegistry.findModel(WORKBENCH_IMPORT_ID);
 		if (findModel != null) {
-			final BundleDescription bundleDescription = findModel
-				.getBundleDescription();
+			final BundleDescription bundleDescription = findModel.getBundleDescription();
 			if (bundleDescription != null) {
-				version = bundleDescription.getVersion().toString()
-					.replaceFirst("\\.qualifier$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				version = bundleDescription.getVersion().toString().replaceFirst("\\.qualifier$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
-		final IPluginImport workbenchImport = fModel.getPluginFactory()
-			.createImport();
+		final IPluginImport workbenchImport = fModel.getPluginFactory().createImport();
 		workbenchImport.setId(WORKBENCH_IMPORT_ID);
 		workbenchImport.setVersion(version);
 		workbenchImport.setMatch(IMatchRules.GREATER_OR_EQUAL);
@@ -383,17 +319,20 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	 * Register the fragment.e4xmi with the org.eclipse.e4.workbench.model
 	 * extension point, if there is not already a fragment registered.
 	 */
-	private void registerWithExtensionPointIfRequired(IProject project,
-		WorkspaceBundlePluginModel fModel, IFile file) throws CoreException {
+	private void registerWithExtensionPointIfRequired(IProject project, WorkspaceBundlePluginModel fModel, IFile file)
+			throws CoreException {
 
 		final String WORKBENCH_MODEL_EP_ID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
 		final String FRAGMENT = "fragment"; //$NON-NLS-1$
 
-		// Fix bug #436836 : the received fModel is an empty plugin model without extension.
+		// Fix bug #436836 : the received fModel is an empty plugin model
+		// without extension.
 		// We must copy extensions found in registry plugin model into it
-		// The registry plugin model is read only and must be copied inside the new extension value..
+		// The registry plugin model is read only and must be copied inside the
+		// new extension value..
 		final BundlePluginModel registryModel = (BundlePluginModel) PluginRegistry.findModel(project.getName());
-		// The registry Model is not modifiable and may be contains some existing extensions.
+		// The registry Model is not modifiable and may be contains some
+		// existing extensions.
 		// Must copy them in the new created fModel
 		for (final IPluginExtension e : registryModel.getPluginBase().getExtensions()) {
 			final IPluginExtension clonedExtens = copyExtension(fModel.getFactory(), e);
@@ -403,8 +342,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 		// Can now check if we must add this extension (may be already inside).
 		final IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (final IPluginExtension iPluginExtension : extensions) {
-			if (WORKBENCH_MODEL_EP_ID
-				.equalsIgnoreCase(iPluginExtension.getPoint())) {
+			if (WORKBENCH_MODEL_EP_ID.equalsIgnoreCase(iPluginExtension.getPoint())) {
 				final IPluginObject[] children = iPluginExtension.getChildren();
 				for (final IPluginObject child : children) {
 					if (FRAGMENT.equalsIgnoreCase(child.getName())) {
@@ -414,10 +352,9 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			}
 		}
 
-		final IPluginExtension extPointFragmentRegister = fModel.getPluginFactory()
-			.createExtension();
-		final IPluginElement element = extPointFragmentRegister.getModel()
-			.getFactory().createElement(extPointFragmentRegister);
+		final IPluginExtension extPointFragmentRegister = fModel.getPluginFactory().createExtension();
+		final IPluginElement element = extPointFragmentRegister.getModel().getFactory()
+				.createElement(extPointFragmentRegister);
 		element.setName(FRAGMENT);
 		element.setAttribute("uri", file.getName()); //$NON-NLS-1$
 		extPointFragmentRegister.setId(project.getName() + "." + FRAGMENT); //$NON-NLS-1$
@@ -429,8 +366,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 
 	// Used to Fix bug #436836
 	private IPluginExtension copyExtension(IExtensionsModelFactory factory, final IPluginExtension ext) {
-		try
-		{
+		try {
 			final IPluginExtension clonedExt = factory.createExtension();
 			clonedExt.setPoint(ext.getPoint());
 			final IPluginObject[] _children = ext.getChildren();
@@ -451,9 +387,8 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 
 	// Used to Fix bug #436836
 	private IPluginElement copyExtensionElement(IExtensionsModelFactory factory, final IPluginElement elt,
-		final IPluginObject parent) {
-		try
-		{
+			final IPluginObject parent) {
+		try {
 			final IPluginElement clonedElt = factory.createElement(parent);
 			clonedElt.setName(elt.getName());
 			for (final IPluginAttribute a : elt.getAttributes()) {
@@ -471,6 +406,15 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			e.printStackTrace();
 		}
 		return null;
+
+	}
+
+	/**
+	 * @param resource
+	 * @param rootObject
+	 */
+	protected void mergeWithExistingFile(Resource resource, EObject rootObject) {
+		// do nothing
 
 	}
 

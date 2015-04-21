@@ -34,6 +34,7 @@ public class Messages extends NLS {
 	public static String BaseApplicationModelWizard_AddExtractedNode;
 	public static String BaseApplicationModelWizard_Error;
 	public static String BaseApplicationModelWizard_FileExists;
+	public static String BaseApplicationModelWizard_ModelRootMustNotBeNull;
 	public static String BaseApplicationModelWizard_TheFileAlreadyExists;
 	public static String NewAddonClassWizard_NewAddon;
 	public static String NewAddonClassWizard_NewAddonClass;
@@ -104,6 +105,7 @@ public class Messages extends NLS {
 	public static String E4NewProjectWizard_Quit;
 	public static String E4NewProjectWizard_SamplePart;
 	public static String E4NewProjectWizard_Save;
+	public static String ExtractContributionModelWizard_ExistingFragmentIsCorrupted;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
