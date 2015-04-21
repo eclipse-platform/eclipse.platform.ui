@@ -8,8 +8,7 @@
  * Contributors:
  * 		IBM Corporation - initial API and implementation
  * 		Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
- *      Sergey Prigogin (Google) - [464072] Refresh on Access ignored during text search
-******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.core.filesystem;
 
 import java.io.InputStream;
@@ -400,12 +399,11 @@ public interface IFileStore extends IAdaptable {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return An input stream on the contents of this file.
-	 * @exception CoreException if this method fails. The status code associated with exception
-	 *     reflects the cause of the failure. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>{@link EFS#ERROR_NOT_EXISTS} - This store does not exist.</li>
-	 * <li>{@link EFS#ERROR_WRONG_TYPE} - This store represents a directory.</li>
-	 * <li>{@link EFS#ERROR_READ} - The limit of concurrently opened streams has been exceeded.</li>
+	 * <li>This store does not exist.</li>
+	 * <li>This store represents a directory.</li>
+	 * <li>The limit of concurrently opened streams has been exceeded.</li>
 	 * </ul>
 	 */
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
@@ -433,16 +431,16 @@ public interface IFileStore extends IAdaptable {
 	 * and the new output will be written from the start of the file.
 	 * </p>
 	 * 
-	 * @param options bit-wise or of option flag constants ({@link EFS#APPEND}).
+	 * @param options bit-wise or of option flag constants (
+	 * {@link EFS#APPEND}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return An output stream on the contents of this file.
-	 * @exception CoreException if this method fails. The status code associated with exception
-	 *     reflects the cause of the failure. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li>{@link EFS#ERROR_NOT_EXISTS} - This store does not exist.</li>
-	 * <li>{@link EFS#ERROR_WRONG_TYPE} - This store represents a directory.</li>
-	 * <li>{@link EFS#ERROR_READ} - The limit of concurrently opened streams has been exceeded.</li>
+	 * <li>This store represents a directory.</li>
+	 * <li>The parent of this store does not exist.</li>
+	 * <li>The limit of concurrently opened streams has been exceeded.</li>
 	 * </ul>
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;

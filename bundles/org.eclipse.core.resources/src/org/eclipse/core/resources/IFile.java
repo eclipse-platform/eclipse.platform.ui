@@ -673,20 +673,17 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *  
 	 * @return a description for this file's current contents, or 
 	 * <code>null</code>
-	 * @exception CoreException if this method fails. The status code associated with exception
-	 *     reflects the cause of the failure. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_FOUND} - This file does not exist.
-	 *       Please notice that a successful {@link #exists()} check prior to calling
-	 *       {@link #getContentDescription()} does not guarantee the file existence since the file
-	 *       may be deleted outside Eclipse at the very last moment.</li> 
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_LOCAL} - This resource is not local.</li>
-	 * <li> {@link IResourceStatus#OUT_OF_SYNC_LOCAL} - The workspace is not in sync with
-	 * 		 the corresponding location in the local file system (and
-	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
-	 * <li> {@link IResourceStatus#FAILED_DESCRIBING_CONTENTS} - An I/O error occurred while
-	 *       reading the file.</li>
-	 * </ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource could not be read.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system and {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 *       disabled.</li>
+	 * <li> The corresponding location in the local file system
+	 *       is occupied by a directory.</li>
+	 * </ul> 
 	 * @see IContentDescription
 	 * @see IContentTypeManager#getDescriptionFor(InputStream, String, QualifiedName[])
 	 * @since 3.0

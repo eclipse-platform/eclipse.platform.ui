@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
- *     Sergey Prigogin (Google) - [464072] Refresh on Access ignored during text search
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -159,9 +158,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			try {
 				actual = target.openInputStream(EFS.NONE, null);
 			} catch (CoreException e) {
-				if (e.getCause() instanceof IOException) {
-					throw (IOException) e.getCause();
-				}
 				throw new IOException(e.getMessage());
 			}
 		}
@@ -456,9 +452,6 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		try {
 			IContentTypeMatcher matcher = getContentTypeMatcher((Project) file.getProject());
 			return matcher.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
-		} catch (FileNotFoundException e) {
-			String message = NLS.bind(Messages.localstore_fileNotFound, file.getFullPath());
-			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, file.getFullPath(), message, e);
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
