@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,6 +138,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             super.configureShell(newShell);
             String activityName = strings.getProperty(ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities);
             activityName = Util.replaceAll(activityName, "&", ""); //strips possible mnemonic //$NON-NLS-1$ //$NON-NLS-2$
+            activityName = Util.replaceAll(activityName, ":", ""); //strips possible colon //$NON-NLS-1$ //$NON-NLS-2$
 			newShell.setText(NLS.bind(
             		ActivityMessages.ActivitiesPreferencePage_advancedDialogTitle,
             		activityName
@@ -452,7 +453,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
         data.widthHint = 200;
         composite.setLayoutData(data);
         Label label = new Label(composite, SWT.NONE);
-        label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories) + ':');
+        label.setText(strings.getProperty(CATEGORY_NAME, ActivityMessages.ActivityEnabler_categories));
         Table table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
         table.addSelectionListener(new SelectionAdapter() {
 

@@ -293,7 +293,7 @@ public class ActivityEnabler {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(createGridLayoutWithoutMargins(1, fontMetrics));
 
-		new Label(composite, SWT.NONE).setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':');
+		new Label(composite, SWT.NONE).setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities));
 
 		dualViewer = new CheckboxTreeViewer(composite);
 		dualViewer.setComparator(new ViewerComparator());
