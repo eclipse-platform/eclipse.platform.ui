@@ -39,6 +39,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageListener;
@@ -671,7 +672,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         openPreferencesItem.setVisible(!Util.isMac());
         menu.add(openPreferencesItem);
 
-        menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
+		// Workaround for bug 461311. Radio buttons in the main menu can cause
+		// Eclipse to crash on GTK.
+		if (!SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
+			menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
+		}
         return menu;
     }
 
