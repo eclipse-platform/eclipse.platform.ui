@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.e4.ui.widgets
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.e4.ui.widgets;x-friends:="org.eclipse.e4.ui.workbench.swt"
 Require-Bundle: org.eclipse.swt;bundle-version="[3.6.0,4.0.0)"
