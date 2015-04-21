@@ -205,11 +205,6 @@ public class WorkbenchThemeManager extends EventManager implements
     		}
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.themes.IThemeManager#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		addListenerObject(listener);
@@ -259,11 +254,6 @@ public class WorkbenchThemeManager extends EventManager implements
 		firePropertyChange(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.themes.IThemeManager#getCurrentTheme()
-	 */
 	@Override
 	public ITheme getCurrentTheme() {
 		init();
@@ -320,11 +310,6 @@ public class WorkbenchThemeManager extends EventManager implements
 		return theme;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.themes.IThemeManager#getTheme(java.lang.String)
-	 */
 	@Override
 	public ITheme getTheme(String id) {
 		init();
@@ -349,21 +334,11 @@ public class WorkbenchThemeManager extends EventManager implements
 		return themeRegistry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.themes.IThemeManager#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		removeListenerObject(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.themes.IThemeManager#setCurrentTheme(java.lang.String)
-	 */
 	@Override
 	public void setCurrentTheme(String id) {
 		init();

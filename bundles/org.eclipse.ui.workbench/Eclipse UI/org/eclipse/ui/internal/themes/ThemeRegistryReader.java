@@ -229,9 +229,6 @@ public class ThemeRegistryReader extends RegistryReader {
         return match;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-     */
     @Override
 	public boolean readElement(IConfigurationElement element) {
         String elementName = element.getName();

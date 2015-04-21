@@ -90,17 +90,11 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
         return defaultsTo;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return pluginId;
@@ -131,27 +125,16 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
 		super.resetToDefaultValue();
 	}
 
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
     @Override
 	public String toString() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
-     */
     @Override
 	public boolean isEditable() {
         return isEditable;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (obj instanceof ColorDefinition) {
@@ -160,20 +143,11 @@ public class ColorDefinition extends ThemeElementDefinition implements IPluginCo
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
 		return getId().hashCode();
     }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.internal.css.swt.definition.
-	 * IThemeElementDefinitionOverridable#setValue(java.lang.Object)
-	 */
 	@Override
 	public void setValue(RGB data) {
 		if (data != null) {

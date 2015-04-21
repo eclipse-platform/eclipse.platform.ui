@@ -72,25 +72,16 @@ public class ThemeRegistry implements IThemeRegistry {
     	addOrReplaceDescriptor(colors, desc);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#findCategory(java.lang.String)
-     */
     @Override
 	public ThemeElementCategory findCategory(String id) {
         return (ThemeElementCategory) findDescriptor(getCategories(), id);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#findColor(java.lang.String)
-     */
     @Override
 	public ColorDefinition findColor(String id) {
         return (ColorDefinition) findDescriptor(getColors(), id);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IThemeRegistry#find(java.lang.String)
-     */
     @Override
 	public IThemeDescriptor findTheme(String id) {
         return (IThemeDescriptor) findDescriptor(getThemes(), id);
@@ -130,9 +121,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
-     */
     @Override
 	public IThemeDescriptor[] getThemes() {
         int nSize = themes.size();
@@ -142,9 +130,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return retArray;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
-     */
     @Override
 	public ColorDefinition[] getColors() {
         int nSize = colors.size();
@@ -154,9 +139,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return retArray;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getColorsFor(java.lang.String)
-     */
     @Override
 	public ColorDefinition[] getColorsFor(String themeId) {
         ColorDefinition[] defs = getColors();
@@ -169,9 +151,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return (ColorDefinition[]) overlay(defs, overrides);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getFontsFor(java.lang.String)
-     */
     @Override
 	public FontDefinition[] getFontsFor(String themeId) {
         FontDefinition[] defs = getFonts();
@@ -234,9 +213,6 @@ public class ThemeRegistry implements IThemeRegistry {
         fonts.add(definition);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getGradients()
-     */
     @Override
 	public FontDefinition[] getFonts() {
         int nSize = fonts.size();
@@ -246,9 +222,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return retArray;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#findFont(java.lang.String)
-     */
     @Override
 	public FontDefinition findFont(String id) {
         return (FontDefinition) findDescriptor(getFonts(), id);
@@ -264,9 +237,6 @@ public class ThemeRegistry implements IThemeRegistry {
         categories.add(definition);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getCategories()
-     */
     @Override
 	public ThemeElementCategory[] getCategories() {
         int nSize = categories.size();
@@ -288,9 +258,6 @@ public class ThemeRegistry implements IThemeRegistry {
         dataMap.put(name, value);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getData()
-     */
     @Override
 	public Map getData() {
         return Collections.unmodifiableMap(dataMap);
@@ -311,9 +278,6 @@ public class ThemeRegistry implements IThemeRegistry {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IThemeRegistry#getPresentationsBindingsFor(org.eclipse.ui.internal.themes.ThemeElementCategory)
-     */
     @Override
 	public Set getPresentationsBindingsFor(ThemeElementCategory category) {
         return (Set) categoryBindingMap.get(category.getId());

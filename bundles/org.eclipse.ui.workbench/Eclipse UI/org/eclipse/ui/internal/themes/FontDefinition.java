@@ -103,17 +103,11 @@ public class FontDefinition extends ThemeElementDefinition implements
 		super.resetToDefaultValue();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
-     */
     @Override
 	public boolean isEditable() {
         return isEditable;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (obj instanceof FontDefinition) {
@@ -122,21 +116,11 @@ public class FontDefinition extends ThemeElementDefinition implements
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
 	public int hashCode() {
 		return getId().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.css.swt.definition.IDefinitionOverridable#setData(java
-	 * .lang.Object)
-	 */
 	@Override
 	public void setValue(FontData[] data) {
 		if (data != null && data.length > 0) {

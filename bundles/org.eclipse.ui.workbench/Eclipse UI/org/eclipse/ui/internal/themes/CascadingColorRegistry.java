@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -53,9 +52,6 @@ public class CascadingColorRegistry extends ColorRegistry {
         parent.addListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ColorRegistry#get(java.lang.String)
-     */
     @Override
 	public Color get(String symbolicName) {
         if (super.hasValueFor(symbolicName)) {
@@ -65,9 +61,6 @@ public class CascadingColorRegistry extends ColorRegistry {
         return parent.get(symbolicName);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ColorRegistry#getKeySet()
-     */
     @Override
 	public Set getKeySet() {
         Set keyUnion = new HashSet(super.getKeySet());
@@ -75,9 +68,6 @@ public class CascadingColorRegistry extends ColorRegistry {
         return keyUnion;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ColorRegistry#getRGB(java.lang.String)
-     */
     @Override
 	public RGB getRGB(String symbolicName) {
         if (super.hasValueFor(symbolicName)) {
@@ -87,9 +77,6 @@ public class CascadingColorRegistry extends ColorRegistry {
         return parent.getRGB(symbolicName);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ColorRegistry#hasValueFor(java.lang.String)
-     */
     @Override
 	public boolean hasValueFor(String colorKey) {
         return super.hasValueFor(colorKey) || parent.hasValueFor(colorKey);

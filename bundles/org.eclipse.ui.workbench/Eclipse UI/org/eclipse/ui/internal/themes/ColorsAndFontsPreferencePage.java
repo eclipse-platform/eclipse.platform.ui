@@ -137,9 +137,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         private IThemeRegistry registry;
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-         */
         @Override
 		public Object[] getChildren(Object parentElement) {
             if (parentElement instanceof ThemeElementCategory) {
@@ -258,9 +255,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             return false;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-         */
         @Override
 		public Object getParent(Object element) {
 			if (element instanceof ThemeElementCategory)
@@ -291,9 +285,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			return null;
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-         */
         @Override
 		public boolean hasChildren(Object element) {
             if (element instanceof ThemeElementCategory) {
@@ -323,11 +314,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             return false;
         }
 
-        /*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
         @Override
 		public Object[] getElements(Object inputElement) {
             ArrayList list = new ArrayList();
@@ -347,17 +333,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             return list.toArray(new Object[list.size()]);
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
         @Override
 		public void dispose() {
             categoryMap.clear();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-         */
         @Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             categoryMap.clear();
@@ -406,9 +386,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             fontRegistry.addListener(listener);
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-         */
         @Override
 		public void dispose() {
             super.dispose();
@@ -447,9 +424,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     PresentationLabelProvider.this));
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-         */
         @Override
 		public Font getFont(Object element) {
             Display display = tree.getDisplay();
@@ -473,9 +447,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             return JFaceResources.getDialogFont();
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-         */
         @Override
 		public Image getImage(Object element) {
             if (element instanceof ColorDefinition) {
@@ -529,9 +500,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-         */
         @Override
 		public String getText(Object element) {
             if (element instanceof IHierarchalThemeElementDefinition) {
@@ -597,13 +565,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.
-		 * Object)
-		 */
 		@Override
 		public Color getBackground(Object element) {
 			return null;
@@ -891,9 +852,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		return separator;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-     */
     @Override
 	protected Control createContents(Composite parent) {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.FONTS_PREFERENCE_PAGE);
@@ -1009,15 +967,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		// non-category elements to be returned in the event that their children
 		// do not and also search the descriptions.
 		PatternFilter filter = new PatternFilter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.
-			 * jface.viewers.Viewer, java.lang.Object)
-			 *
-			 * @since 3.7
-			 */
 			@Override
 			protected boolean isLeafMatch(Viewer viewer, Object element) {
 				if (super.isLeafMatch(viewer, element))
@@ -1082,9 +1031,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		restoreTreeSelection();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-     */
     @Override
 	public void dispose() {
 		eventBroker.unsubscribe(themeRegistryRestyledHandler);
@@ -1347,9 +1293,6 @@ getPreferenceStore(),
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
     @Override
 	public void init(IWorkbench aWorkbench) {
         this.workbench = (Workbench) aWorkbench;
@@ -1568,9 +1511,6 @@ getPreferenceStore(),
 		return ThemeElementHelper.createPreferenceKey(currentTheme, definition.getId());
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-     */
     @Override
 	protected void performDefaults() {
         performColorDefaults();
@@ -1608,9 +1548,6 @@ getPreferenceStore(),
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-     */
     @Override
 	public boolean performOk() {
     	saveTreeExpansion();

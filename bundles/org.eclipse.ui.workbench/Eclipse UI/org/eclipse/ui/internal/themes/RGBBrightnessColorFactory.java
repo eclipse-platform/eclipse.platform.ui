@@ -27,9 +27,6 @@ public class RGBBrightnessColorFactory implements IColorFactory, IExecutableExte
 
 	String color, scaleFactor;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.themes.IColorFactory#createColor()
-	 */
 	@Override
 	public RGB createColor() {
 		RGB rgb = ColorUtil.getColorValue(color);
