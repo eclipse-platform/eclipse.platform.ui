@@ -17,6 +17,32 @@
                name="border-color-titlebar">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.ui.internal.forms.css.dom.FormElement"
+            composite="false"
+            handler="org.eclipse.ui.internal.forms.css.properties.css2.CSSPropertyFormHandler">
+         <property-name
+               name="text-background-color"> <!-- Supports a color or gradients such as #505F70 #00FF00 100% true -->
+         </property-name>
+         <property-name
+               name="h-bottom-keyline-1-color"> <!-- IFormColors.H_BOTTOM_KEYLINE1 -->
+         </property-name>
+         <property-name
+               name="h-bottom-keyline-2-color"> <!-- IFormColors.H_BOTTOM_KEYLINE2 -->
+         </property-name>
+         <property-name
+               name="h-hover-light-color"> <!-- IFormColors.H_HOVER_LIGHT -->
+         </property-name>
+         <property-name
+               name="h-hover-full-color"> <!-- IFormColors.H_HOVER_FULL -->
+         </property-name>
+         <property-name
+               name="tb-toggle-color"> <!-- IFormColors.TB_TOGGLE -->
+         </property-name>
+         <property-name
+               name="tb-toggle-hover-color"> <!-- IFormColors.TB_TOGGLE_HOVER -->
+         </property-name>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.e4.ui.css.core.elementProvider">
@@ -24,6 +50,8 @@
             class="org.eclipse.ui.internal.forms.css.dom.FormsElementProvider">
          <widget
                class="org.eclipse.ui.forms.widgets.Section"></widget>
+         <widget
+               class="org.eclipse.ui.forms.widgets.Form"></widget>
       </provider>
    </extension>
 </plugin>

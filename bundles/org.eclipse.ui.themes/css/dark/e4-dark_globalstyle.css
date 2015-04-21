@@ -10,6 +10,7 @@
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 430848
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 431635
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148
  *******************************************************************************/
 
 /*******************************************************************************
@@ -330,6 +331,23 @@ FormHeading {
     background-color: #505F70;
     background-image: #505f70;
     color: #9AC9D8;
+}
+
+Form {
+	/* Bug 465148: Additional styling for the Form */
+    text-background-color: #505F70;
+
+	tb-toggle-hover-color: #313538;
+	tb-toggle-color: #313538;
+	h-hover-full-color: #313538;
+	h-hover-light-color: #313538;
+	h-bottom-keyline-2-color: #313538;
+	h-bottom-keyline-1-color: #313538;
+
+	/* We also have to force the background mode (the
+	 * Label/ToolBar in the heading should inherit it).
+	 */
+    swt-background-mode: 'force';
 }
 
 Section {
