@@ -222,10 +222,29 @@ class URLImageDescriptor extends ImageDescriptor {
 						return new Image(device, new URLImageFileNameProvider(url));
 					} catch (SWTException exception) {
 						// If we fail fall back to the slower input stream method.
+					} catch (IllegalArgumentException exception) {
+						// If we fail fall back to the slower input stream method.
 					}
 				}
 
-				return new Image(device, new URLImageDataProvider(url));
+				Image image = null;
+				try {
+					image = new Image(device, new URLImageDataProvider(url));
+				} catch (SWTException e) {
+					if (e.code != SWT.ERROR_INVALID_IMAGE) {
+						throw e;
+					}
+				} catch (IllegalArgumentException e) {
+					// fall through
+				}
+				if (image == null && returnMissingImageOnError) {
+					try {
+						image = new Image(device, DEFAULT_IMAGE_DATA);
+					} catch (SWTException nextException) {
+						return null;
+					}
+				}
+				return image;
 
 			}
 			if (InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
