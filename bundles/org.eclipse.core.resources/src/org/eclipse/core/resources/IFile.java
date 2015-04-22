@@ -8,7 +8,6 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
- *     Sergey Prigogin (Google) - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -706,19 +705,14 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * The client is responsible for closing the stream when finished.
 	 *
 	 * @return an input stream containing the contents of the file
-	 * @exception CoreException if this method fails. The status code associated with exception
-	 *     reflects the cause of the failure. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_FOUND} - This file does not exist.
-	 *       Please notice that a successful {@link #exists()} check prior to calling
-	 *       {@link #getContents()} does not guarantee the file existence since the file may be
-	 *       deleted outside Eclipse at the very last moment.</li> 
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_LOCAL} - This resource is not local.</li>
-	 * <li> {@link IResourceStatus#RESOURCE_WRONG_TYPE} - The file-system resource is not
-	 *       a file.</li>
-	 * <li> {@link IResourceStatus#OUT_OF_SYNC_LOCAL} - The workspace is not in sync with
-	 * 		 the corresponding location in the local file system (and
-	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The file-system resource is not a file.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system (and {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} 
+	 *       is disabled).</li>
 	 * </ul>
 	 */
 	@Override
@@ -736,19 +730,12 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @param force a flag controlling how to deal with resources that
 	 *    are not in sync with the local file system
 	 * @return an input stream containing the contents of the file
-	 * @exception CoreException if this method fails. The status code associated with exception
-	 *     reflects the cause of the failure. Reasons include:
+	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_FOUND} - This file does not exist.
-	 *       Please notice that a successful {@link #exists()} check prior to calling
-	 *       {@link #getContents()} does not guarantee the file existence since the file may be
-	 *       deleted outside Eclipse at the very last moment.</li> 
-	 * <li> {@link IResourceStatus#RESOURCE_NOT_LOCAL} - This resource is not local.</li>
-	 * <li> {@link IResourceStatus#RESOURCE_WRONG_TYPE} - The file-system resource is not
-	 *       a file.</li>
-	 * <li> {@link IResourceStatus#OUT_OF_SYNC_LOCAL} - The workspace is not in sync with
-	 * 		 the corresponding location in the local file system (and
-	 *       {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is disabled).</li>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system and force is <code>false</code>.</li>
 	 * </ul>
 	 */
 	public InputStream getContents(boolean force) throws CoreException;

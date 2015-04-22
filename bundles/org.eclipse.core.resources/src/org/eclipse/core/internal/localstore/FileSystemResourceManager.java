@@ -11,7 +11,6 @@
  *     Martin Oberhuber (Wind River) - [233939] findFilesForLocation() with symlinks
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
- *                              - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -816,8 +815,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			final IFileInfo fileInfo = store.fetchInfo();
 			if (!fileInfo.exists()) {
 				asyncRefresh(target);
-				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
-				throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, null);
+				if (!force) {
+					String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
+					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+				}
 			}
 			ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 			int flags = ((Resource) target).getFlags(info);

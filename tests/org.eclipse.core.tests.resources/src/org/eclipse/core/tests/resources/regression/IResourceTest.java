@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google) - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -642,8 +641,7 @@ public class IResourceTest extends ResourceTest {
 			target.getContents(false);
 			fail("5.0");
 		} catch (CoreException e) {
-			// Expected.
-			assertEquals("5.1", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
+			// expected
 		}
 
 		try {

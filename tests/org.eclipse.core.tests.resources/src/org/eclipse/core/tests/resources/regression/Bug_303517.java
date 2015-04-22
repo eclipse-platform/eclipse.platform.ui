@@ -7,7 +7,6 @@
  *
  *  Contributors:
  *     James Blackburn (Broadcom Corp.) - initial API and implementation
- *     Sergey Prigogin (Google) - [462440] IFile#getContents methods should specify the status codes for its exceptions
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -52,7 +51,8 @@ public class Bug_303517 extends ResourceTest {
 	}
 
 	/**
-	 * Tests that file deleted is updated after #getContents
+	 * Tests that file deleted is udpated after #getContents
+	 * @throws Exception
 	 */
 	public void testExists() throws Exception {
 		createHierarchy();
@@ -81,6 +81,7 @@ public class Bug_303517 extends ResourceTest {
 
 	/**
 	 * Tests that file discovered out-of-sync during #getContents is updated
+	 * @throws Exception
 	 */
 	public void testGetContents() throws Exception {
 		createHierarchy();
@@ -93,10 +94,9 @@ public class Bug_303517 extends ResourceTest {
 		try {
 			InputStream in = f.getContents(false);
 			in.close();
-			assertTrue("2.0", false);
+			assertTrue("1.2", false);
 		} catch (CoreException e) {
-			// File is out-of-sync, so this is good.
-			assertEquals("2.1", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
+			// File is out-of-sync, so this is good
 		}
 
 		// Wait for auto-refresh to happen
@@ -108,12 +108,13 @@ public class Bug_303517 extends ResourceTest {
 			in.close();
 		} catch (CoreException e) {
 			// Bad, file shouldn't be out-of-sync
-			fail("3.0", e);
+			fail("1.3", e);
 		}
 	}
 
 	/**
 	 * Tests that file discovered out-of-sync during #getContents is updated
+	 * @throws Exception
 	 */
 	public void testGetContentsTrue() throws Exception {
 		createHierarchy();
@@ -123,9 +124,11 @@ public class Bug_303517 extends ResourceTest {
 
 		// Touch on file-system
 		touchInFilesystem(f);
-		try (InputStream in = f.getContents(true)) {
+		try {
+			InputStream in = f.getContents(true);
+			in.close();
 		} catch (CoreException e) {
-			// Bad, getContents(true) should succeed.
+			// File is out-of-sync, so this is good
 			fail("1.2", e);
 		}
 
@@ -133,25 +136,18 @@ public class Bug_303517 extends ResourceTest {
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
 
 		// File is now in sync.
-		try (InputStream in = f.getContents()) {
+		try {
+			InputStream in = f.getContents();
+			in.close();
 		} catch (CoreException e) {
-			// Bad, file shouldn't be out-of-sync.
+			// Bad, file shouldn't be out-of-sync
 			fail("1.3", e);
-		}
-
-		// Test that getContent(true) on an out-if-sync deleted file throws a CoreException
-		// with IResourceStatus.RESOURCE_NOT_FOUND error code.
-		f.getLocation().toFile().delete();
-		try (InputStream in = f.getContents(true)) {
-			fail("2.0");
-		} catch (CoreException e) {
-			// Expected.
-			assertEquals("2.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 		}
 	}
 
 	/**
 	 * Tests that resource discovered out-of-sync during #isSynchronized is updated
+	 * @throws Exception
 	 */
 	public void testIsSynchronized() throws Exception {
 		createHierarchy();
@@ -172,6 +168,7 @@ public class Bug_303517 extends ResourceTest {
 
 	/**
 	 * Tests that when changing resource gender is correctly picked up.
+	 * @throws Exception
 	 */
 	public void testChangeResourceGender() throws Exception {
 		createHierarchy();
