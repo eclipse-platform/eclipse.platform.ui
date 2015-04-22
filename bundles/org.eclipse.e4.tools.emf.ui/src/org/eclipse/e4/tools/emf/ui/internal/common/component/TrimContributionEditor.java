@@ -11,6 +11,7 @@
  * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  * Nicolaj Hoess <nicohoess@gmail.com> - Bug 396975
  * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Olivier Prouvost <olivier@opcoach.com> - Bug 462818
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -215,7 +216,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID)
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TRIM_CONTRIBUTION__PARENT_ID)
 					.observeDetail(getMaster()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
