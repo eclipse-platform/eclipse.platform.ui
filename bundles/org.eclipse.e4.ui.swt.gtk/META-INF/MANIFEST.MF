@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %fragmentName
+Bundle-SymbolicName: org.eclipse.e4.ui.swt.gtk;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.e4.ui.css.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: %providerName
+Eclipse-PlatformFilter: (osgi.ws=gtk)
+Import-Package: org.eclipse.e4.core.services.events,
+ org.eclipse.e4.ui.css.swt.theme,
+ org.osgi.service.event;version="1.3.1"

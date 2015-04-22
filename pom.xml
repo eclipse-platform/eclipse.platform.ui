@@ -112,6 +112,7 @@
     <module>bundles/org.eclipse.ui.ide.application</module>
     <module>bundles/org.eclipse.ui.win32</module>
     <module>bundles/org.eclipse.ui.cocoa</module>
+    <module>bundles/org.eclipse.e4.ui.swt.gtk</module>
     <module>bundles/org.eclipse.ui.navigator.resources</module>
 
     <module>tests</module>
