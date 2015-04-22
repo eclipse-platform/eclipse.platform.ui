@@ -133,6 +133,7 @@ public class VRootBindingContexts extends AbstractComponentEditor {
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(context);
 		}
 	}
 
