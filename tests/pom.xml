@@ -20,8 +20,11 @@
   <artifactId>eclipse.platform.runtime.tests</artifactId>
   <version>4.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <properties>
+    <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+    <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=443174
+  	Remove when parent pom doesn't force skipTests=true -->
+  	<skipTests>false</skipTests>
   </properties>
   <modules>
     <module>com.google.code.atinject.tck</module>
