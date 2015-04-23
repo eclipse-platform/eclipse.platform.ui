@@ -136,6 +136,10 @@ class URLImageDescriptor extends ImageDescriptor {
 
 	private static InputStream getStream(URL url) {
 		try {
+			URL platformURL = FileLocator.find(url);
+			if (platformURL != null) {
+				url = platformURL;
+			}
 			return new BufferedInputStream(url.openStream());
 		} catch (IOException e) {
 			return null;
