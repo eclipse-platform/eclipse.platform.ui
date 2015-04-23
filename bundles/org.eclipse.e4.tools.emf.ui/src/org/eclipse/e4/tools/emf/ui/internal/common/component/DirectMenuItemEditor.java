@@ -30,7 +30,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.Contributio
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -53,14 +52,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -71,21 +69,13 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_DirectMenuItem);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_DirectMenuItem);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_DirectMenuItem);
 	}
 
 	@Override
 	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		if (!isImport) {
 			final CTabFolder folder = super.createForm(parent, context, master, isImport);
 			createInstanceInspection(folder);
@@ -103,7 +93,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 		final ObjectViewer objectViewer = new ObjectViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container,
-			ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
+				ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	}
@@ -126,7 +116,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 		final Link lnk;
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(
-				MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
+					MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
 			if (project != null && c != null) {
 				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
@@ -135,7 +125,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-							lnk.getShell());
+								lnk.getShell());
 					}
 				});
 			} else {
@@ -158,11 +148,11 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 				}
 			});
 			final Binding binding = context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
-					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-					new UpdateValueStrategy());
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
+							new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+							new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -173,8 +163,8 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-						getEditingDomain(), (MContribution) getMaster().getValue(),
-						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
+							getEditingDomain(), (MContribution) getMaster().getValue(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});

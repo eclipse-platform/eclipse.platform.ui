@@ -58,7 +58,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -68,7 +67,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty BINDING_TABLE__BINDINGS = EMFProperties
-		.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
+			.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -80,7 +79,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.BindingTableEditor_AddKeyBinding,
-			createImageDescriptor(ResourceProvider.IMG_KeyBinding)) {
+				createImageDescriptor(ResourceProvider.IMG_KeyBinding)) {
 			@Override
 			public void run() {
 				handleAddKeyBinding();
@@ -89,8 +88,8 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_BindingTable);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_BindingTable);
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -168,9 +167,9 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
 
 		{
@@ -182,11 +181,11 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(
-					getEditingDomain(),
-					FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
-						ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(
+							getEditingDomain(),
+							FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
+									ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
@@ -196,10 +195,10 @@ public class BindingTableEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final BindingContextSelectionDialog dialog = new BindingContextSelectionDialog(b.getShell(),
-						getEditor().getModelProvider(), Messages);
+							getEditor().getModelProvider(), Messages);
 					if (dialog.open() == Window.OK) {
 						final Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(),
-							CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT, dialog.getSelectedContext());
+								CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT, dialog.getSelectedContext());
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
@@ -210,7 +209,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-				Messages, this, CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS) {
+					Messages, this, CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS) {
 				@Override
 				protected void addPressed() {
 					handleAddKeyBinding();
@@ -237,9 +236,9 @@ public class BindingTableEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MBindingTable.class);
 
@@ -257,7 +256,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	public String getDetailLabel(Object element) {
 		final MBindingTable cmd = (MBindingTable) element;
 		if (cmd.getBindingContext() != null && cmd.getBindingContext().getName() != null
-			&& cmd.getBindingContext().getName().trim().length() > 0) {
+				&& cmd.getBindingContext().getName().trim().length() > 0) {
 			return cmd.getBindingContext().getName();
 		}
 
@@ -267,7 +266,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
-			CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME) };
+				CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME) };
 	}
 
 	@Override
@@ -280,7 +279,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	protected void handleAddKeyBinding() {
 		final MKeyBinding handler = MCommandsFactory.INSTANCE.createKeyBinding();
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, handler);
+				CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, handler);
 		setElementId(handler);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

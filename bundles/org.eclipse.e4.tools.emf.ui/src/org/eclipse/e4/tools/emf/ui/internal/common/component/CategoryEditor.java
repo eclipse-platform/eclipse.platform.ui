@@ -34,7 +34,6 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 public class CategoryEditor extends AbstractComponentEditor {
 
@@ -48,8 +47,8 @@ public class CategoryEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_Category);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Category);
 	}
 
 	@Override
@@ -98,12 +97,12 @@ public class CategoryEditor extends AbstractComponentEditor {
 
 		getMaster().setValue(object);
 		enableIdGenerator(CommandsPackageImpl.Literals.CATEGORY__NAME,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -125,12 +124,12 @@ public class CategoryEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.CategoryEditor_Name, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.CATEGORY__NAME));
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.CATEGORY__NAME));
 		ControlFactory.createTextField(parent, Messages.CategoryEditor_Description, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION));
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -139,9 +138,9 @@ public class CategoryEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MCategory.class);
 

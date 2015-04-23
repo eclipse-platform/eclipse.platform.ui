@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.TextStyle;
 
 public class ComponentLabelProvider extends StyledCellLabelProvider {
 
-	private ModelEditor editor;
+	private final ModelEditor editor;
 
 	public static final String NOT_RENDERED_KEY = "NOT_RENDERED_STYLER";//$NON-NLS-1$
 
@@ -36,7 +36,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	private Font font;
 
-	private Messages Messages;
+	private final Messages Messages;
 
 	private static Styler BOTH_STYLER = new Styler() {
 		@Override
@@ -70,11 +70,11 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 	public void update(final ViewerCell cell) {
 		if (cell.getElement() instanceof EObject) {
 
-			EObject o = (EObject) cell.getElement();
-			AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
+			final EObject o = (EObject) cell.getElement();
+			final AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				String label = elementEditor.getLabel(o);
-				String detailText = elementEditor.getDetailLabel(o);
+				final String detailText = elementEditor.getDetailLabel(o);
 				Styler styler = null;
 
 				if (o instanceof MUIElement) {
@@ -92,23 +92,23 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				}
 
 				if (detailText == null) {
-					StyledString styledString = new StyledString(label, styler);
+					final StyledString styledString = new StyledString(label, styler);
 					cell.setText(styledString.getString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 				} else {
-					StyledString styledString = new StyledString(label, styler);
+					final StyledString styledString = new StyledString(label, styler);
 					styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 					cell.setText(styledString.getString());
 					cell.setStyleRanges(styledString.getStyleRanges());
 				}
-				cell.setImage(elementEditor.getImage(o, cell.getControl().getDisplay()));
+				cell.setImage(elementEditor.getImage(o));
 			} else {
 				cell.setText(cell.getElement().toString());
 			}
 		} else if (cell.getElement() instanceof VirtualEntry<?>) {
-			String s = cell.getElement().toString();
+			final String s = cell.getElement().toString();
 			if (font == null) {
-				FontData[] data = cell.getControl().getFont().getFontData();
+				final FontData[] data = cell.getControl().getFont().getFontData();
 				font = new Font(cell.getControl().getDisplay(), new FontData(data[0].getName(), data[0].getHeight(), SWT.ITALIC));
 			}
 			cell.setFont(font);

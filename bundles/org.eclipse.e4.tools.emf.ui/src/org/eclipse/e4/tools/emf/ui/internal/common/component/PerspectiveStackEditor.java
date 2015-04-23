@@ -32,7 +32,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
@@ -62,7 +61,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class PerspectiveStackEditor extends AbstractComponentEditor {
@@ -70,7 +68,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 	private final List<Action> actionsImport = new ArrayList<Action>();
@@ -90,7 +88,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.PerspectiveStackEditor_AddPerspective,
-			createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+				createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleAddPerspective();
@@ -99,7 +97,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 		// --- import ---
 		actionsImport.add(new Action(Messages.PerspectiveStackEditor_AddPerspective,
-			createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+				createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleImportPerspective();
@@ -108,16 +106,8 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_PerspectiveStack);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_PerspectiveStack);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_PerspectiveStack);
 	}
 
 	@Override
@@ -169,7 +159,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -191,18 +181,18 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
+				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveStackEditor_SelectedElement);
 
 		// ------------------------------------------------------------
 		{
 
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-				Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					Messages, this, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					handleAddPerspective();
@@ -219,11 +209,11 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -232,9 +222,9 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -256,7 +246,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -289,7 +279,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private void addToModel(MPerspective perspective) {
 		setElementId(perspective);
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, perspective);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, perspective);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 			getEditor().setSelection(perspective);

@@ -56,14 +56,13 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 	private final IListProperty MODEL_FRAGMENTS__FRAGMENTS = EMFProperties
-		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
+			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
 	private final IListProperty MODEL_FRAGMENTS__IMPORTS = EMFProperties
-		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
 
 	private Composite composite;
 
@@ -76,8 +75,8 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_ModelFragments);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_ModelFragments);
 	}
 
 	@Override
@@ -118,14 +117,14 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 
 			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE,
-				Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
-				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
+					Arrays.asList(PickListFeatures.NO_PICKER), Messages, this,
+					FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS) {
 				@Override
 				protected void addPressed() {
 					final MModelFragment component = MFragmentFactory.INSTANCE.createStringModelFragment();
 
 					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-						FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, component);
+							FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, component);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -163,14 +162,14 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		}
 
 		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
 				final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
 				final EObject eObject = EcoreUtil.create(eClass);
 
 				final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-					FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+						FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
 
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
@@ -210,7 +209,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		final List<FeatureClass> list = new ArrayList<FeatureClass>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
-			FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
+				FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 
 		pickList.setInput(list);
 		if (list.size() > 0) {
@@ -226,8 +225,8 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 			if (c instanceof EClass) {
 				final EClass eclass = (EClass) c;
 				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract()
-					&& !eclass.isInterface()
-					&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+						&& !eclass.isInterface()
+						&& eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
 					list.add(new FeatureClass(eclass.getName(), eclass));
 				}
 			}
@@ -242,14 +241,14 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 	public IObservableList getChildList(Object element) {
 		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_IMPORTS, MODEL_FRAGMENTS__IMPORTS, element,
-			Messages.ModelFragmentsEditor_Imports) {
+				Messages.ModelFragmentsEditor_Imports) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, MODEL_FRAGMENTS__FRAGMENTS, element,
-			Messages.ModelFragmentsEditor_ModelFragments) {
+				Messages.ModelFragmentsEditor_ModelFragments) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;

@@ -34,7 +34,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.Text
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PerspectiveIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
@@ -66,7 +65,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -75,9 +73,9 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private final IListProperty PERSPECTIVE__WINDOWS = EMFProperties
-		.list(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS);
+			.list(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -96,14 +94,14 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.PerspectiveEditor_AddPartSashContainer,
-			createImageDescriptor(ResourceProvider.IMG_Perspective)) {
+				createImageDescriptor(ResourceProvider.IMG_Perspective)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
 			}
 		});
 		actions.add(new Action(Messages.PerspectiveEditor_AddPartStack,
-			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.PART_STACK);
@@ -122,7 +120,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			}
 		});
 		actions.add(new Action(Messages.PerspectiveEditor_AddPlaceholder,
-			createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+				createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
 			@Override
 			public void run() {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
@@ -131,17 +129,8 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				final Image img = getImageFromIconURI(uiElement);
-				return img != null ? img : createImage(ResourceProvider.IMG_Perspective);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_Perspective);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Perspective);
 	}
 
 	@Override
@@ -157,7 +146,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL),
-			FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+				FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 
 	@Override
@@ -196,12 +185,12 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 		getMaster().setValue(object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -223,18 +212,18 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveEditor_SelectedElement);
 		ControlFactory.createTranslatedTextField(parent, Messages.PerspectiveEditor_LabelLabel, getMaster(), context,
-			textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL),
-			resourcePool, project);
+				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL),
+				resourcePool, project);
 		ControlFactory.createTranslatedTextField(parent, Messages.PerspectiveEditor_Tooltip, getMaster(), context,
-			textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP),
-			resourcePool, project);
+				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP),
+				resourcePool, project);
 
 		// ------------------------------------------------------------
 		{
@@ -246,9 +235,9 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-					master));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
+							master));
 
 			new ImageTooltip(t, Messages) {
 
@@ -270,27 +259,27 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final PerspectiveIconDialogEditor dialog = new PerspectiveIconDialogEditor(b.getShell(),
-						eclipseContext, project, getEditingDomain(), (MPerspective) getMaster().getValue(), Messages);
+							eclipseContext, project, getEditingDomain(), (MPerspective) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		final Composite comp0 = ControlFactory.createMapProperties(parent, Messages, this,
-			Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES,
-			VERTICAL_LIST_WIDGET_INDENT);
+				Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES,
+				VERTICAL_LIST_WIDGET_INDENT);
 		comp0.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1));
 
 		final Composite comp = ControlFactory.createStringListWidget(parent, Messages, this,
-			Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES,
-			VERTICAL_LIST_WIDGET_INDENT);
+				Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES,
+				VERTICAL_LIST_WIDGET_INDENT);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 1));
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -300,9 +289,9 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -324,7 +313,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -332,7 +321,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	public IObservableList getChildList(Object element) {
 		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PERSPECTIVE_WINDOWS, PERSPECTIVE__WINDOWS, element,
-			Messages.WindowEditor_Windows) {
+				Messages.WindowEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -341,7 +330,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PERSPECTIVE_CONTROLS, ELEMENT_CONTAINER__CHILDREN,
-			element, Messages.PerspectiveEditor_Controls) {
+				element, Messages.PerspectiveEditor_Controls) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -357,7 +346,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

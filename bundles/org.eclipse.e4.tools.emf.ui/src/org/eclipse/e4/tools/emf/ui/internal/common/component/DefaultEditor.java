@@ -5,12 +5,11 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class DefaultEditor extends AbstractComponentEditor {
 
 	@Override
-	public Image getImage(Object element, Display display) {
+	public Image getImage(Object element) {
 		// no image
 		return null;
 	}

@@ -29,7 +29,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.Contributio
 import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -52,14 +51,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectToolItemEditor extends ToolItemEditor {
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -70,17 +68,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				final Image img = getImageFromIconURI(uiElement);
-				return img != null ? img : createImage(ResourceProvider.IMG_DirectToolItem);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_DirectToolItem);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_DirectToolItem);
 	}
 
 	@Override
@@ -88,7 +77,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		final IContributionClassCreator c = getEditor().getContributionCreator(
-			MenuPackageImpl.Literals.DIRECT_TOOL_ITEM);
+				MenuPackageImpl.Literals.DIRECT_TOOL_ITEM);
 		final Link lnk;
 		if (project != null && c != null) {
 			lnk = new Link(parent, SWT.NONE);
@@ -120,9 +109,9 @@ public class DirectToolItemEditor extends ToolItemEditor {
 			}
 		});
 		final Binding binding = context.bindValue(textProp.observeDelayed(200, t),
-			EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI)
-			.observeDetail(master), new UpdateValueStrategy()
-		.setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
+				EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI)
+				.observeDetail(master), new UpdateValueStrategy()
+				.setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
 		Util.addDecoration(t, binding);
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -133,8 +122,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-					getEditingDomain(), (MContribution) getMaster().getValue(),
-					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
+						getEditingDomain(), (MContribution) getMaster().getValue(),
+						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 				dialog.open();
 			}
 		});
@@ -142,7 +131,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 	@Override
 	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		if (!isImport) {
 			final CTabFolder folder = super.createForm(parent, context, master, isImport);
 			createInstanceInspection(folder);
@@ -160,7 +149,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 		final ObjectViewer objectViewer = new ObjectViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container,
-			ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
+				ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	}

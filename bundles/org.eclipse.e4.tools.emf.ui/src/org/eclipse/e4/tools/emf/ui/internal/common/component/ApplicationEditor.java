@@ -38,7 +38,6 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -80,7 +79,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -90,32 +88,32 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
-		.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+			.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private final IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties
-		.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
+			.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
 	private final IListProperty APPLICATION__COMMANDS = EMFProperties
-		.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
+			.list(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 	// private IListProperty APPLICATION__DIALOGS =
 	// EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__DIALOGS);
 	private final IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties
-		.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+			.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private final IListProperty APPLICATION__ADDONS = EMFProperties
-		.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
+			.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 	private final IListProperty MENU_CONTRIBUTIONS = EMFProperties
-		.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
+			.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 	private final IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties
-		.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
+			.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 	private final IListProperty TRIM_CONTRIBUTIONS = EMFProperties
-		.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
+			.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 	private final IListProperty APPLICATION__SNIPPETS = EMFProperties
-		.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
+			.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
 	private final IListProperty APPLICATION__CATEGORIES = EMFProperties
-		.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
+			.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
 
 	private final IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties
-		.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+			.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
 	@Inject
 	@Optional
@@ -145,19 +143,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	void doCreateCommandWizard() {
 		final WizardDialog dialog = new WizardDialog(composite.getShell(), new CommandWizard((MApplication) getMaster()
-			.getValue()));
+				.getValue()));
 		dialog.open();
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			if (((MUIElement) element).isToBeRendered()) {
-				return createImage(ResourceProvider.IMG_Application);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_Application);
-		}
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Application);
 	}
 
 	@Override
@@ -197,17 +189,17 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp,
-			EMFEditProperties
+				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -216,14 +208,14 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
-			UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+				UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -245,7 +237,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -253,7 +245,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ADDONS, APPLICATION__ADDONS, element,
-			Messages.ApplicationEditor_Addons) {
+				Messages.ApplicationEditor_Addons) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -263,7 +255,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT,
-			element, Messages.ApplicationEditor_RootContexts) {
+				element, Messages.ApplicationEditor_RootContexts) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -273,7 +265,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element,
-			Messages.ApplicationEditor_BindingTables) {
+				Messages.ApplicationEditor_BindingTables) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -283,7 +275,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element,
-			Messages.ApplicationEditor_Handlers) {
+				Messages.ApplicationEditor_Handlers) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -293,7 +285,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_COMMAND, APPLICATION__COMMANDS, element,
-			Messages.ApplicationEditor_Commands) {
+				Messages.ApplicationEditor_Commands) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -302,7 +294,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_CATEGORIES, APPLICATION__CATEGORIES, element,
-			Messages.ApplicationEditor_Categories) {
+				Messages.ApplicationEditor_Categories) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -311,7 +303,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_APPLICATION_WINDOWS, ELEMENT_CONTAINER__CHILDREN,
-			element, Messages.ApplicationEditor_Windows) {
+				element, Messages.ApplicationEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -321,7 +313,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS,
-			element, Messages.ApplicationEditor_PartDescriptors) {
+				element, Messages.ApplicationEditor_PartDescriptors) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -331,7 +323,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS, element,
-			Messages.ApplicationEditor_MenuContributions) {
+				Messages.ApplicationEditor_MenuContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
@@ -339,7 +331,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS, element,
-			Messages.ApplicationEditor_ToolBarContributions) {
+				Messages.ApplicationEditor_ToolBarContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
@@ -347,14 +339,14 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS, element,
-			Messages.ApplicationEditor_TrimContributions) {
+				Messages.ApplicationEditor_TrimContributions) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
 			}
 		});
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_SNIPPETS, APPLICATION__SNIPPETS, element,
-			Messages.ApplicationEditor_Snippets) {
+				Messages.ApplicationEditor_Snippets) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
@@ -415,7 +407,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		public void addPages() {
 			getShell().setText(Messages.CommandWizard_ShellTitle);
 			setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(resourcePool
-				.getImageUnchecked(ResourceProvider.IMG_Wizban16_newexp_wiz)));
+					.getImageUnchecked(ResourceProvider.IMG_Wizban16_newexp_wiz)));
 			handlerPage = new HandlerCommandPage(Messages.ApplicationEditor_HandlerAndCommand);
 			addPage(handlerPage);
 
@@ -459,14 +451,14 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 			final CompoundCommand cmd = new CompoundCommand();
 			cmd.append(AddCommand.create(getEditingDomain(), application,
-				ApplicationPackageImpl.Literals.APPLICATION__COMMANDS, command));
+					ApplicationPackageImpl.Literals.APPLICATION__COMMANDS, command));
 			cmd.append(AddCommand.create(getEditingDomain(), application,
-				CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler));
+					CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler));
 
 			if (keyBinding != null) {
 				cmd.append(AddCommand.create(getEditingDomain(),
-					((IStructuredSelection) keyPage.bindtableViewer.getSelection()).getFirstElement(),
-					CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, keyBinding));
+						((IStructuredSelection) keyPage.bindtableViewer.getSelection()).getFirstElement(),
+						CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS, keyBinding));
 			}
 
 			if (cmd.canExecute()) {
@@ -801,7 +793,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			if (elementEditor != null) {
 				label = elementEditor.getDetailLabel(o);
 				label = label == null ? elementEditor.getLabel(o) : label;
-				img = elementEditor.getImage(o, composite.getDisplay());
+				img = elementEditor.getImage(o);
 			}
 
 			final List<String> parentPath = new ArrayList<String>();

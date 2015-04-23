@@ -30,7 +30,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.Text
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
@@ -53,7 +52,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
@@ -87,15 +85,8 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			if (((MUIElement) element).isToBeRendered()) {
-				return createImage(ResourceProvider.IMG_DynamicMenuContribution);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_DynamicMenuContribution);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_DynamicMenuContribution);
 	}
 
 	@Override
@@ -137,7 +128,7 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		final CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -159,17 +150,17 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
+				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTranslatedTextField(parent, Messages.DynamicMenuContributionEditor_LabelLabel,
-			getMaster(), context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
+				getMaster(), context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
 
 		// ------------------------------------------------------------
 		final Link lnk;
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(
-				MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION);
+					MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION);
 			if (project != null && c != null) {
 				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.DynamicMenuContributionEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
@@ -178,7 +169,7 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-							lnk.getShell());
+								lnk.getShell());
 					}
 				});
 			} else {
@@ -201,11 +192,11 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 				}
 			});
 			final Binding binding = context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
-				new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-				new UpdateValueStrategy());
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
+							new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+							new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -216,8 +207,8 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-						getEditingDomain(), (MContribution) getMaster().getValue(),
-						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
+							getEditingDomain(), (MContribution) getMaster().getValue(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});

@@ -67,7 +67,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	private final Messages Messages;
 
 	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder,
-		IModelResource resource, Messages Messages) {
+			IModelResource resource, Messages Messages) {
 		super(parentShell);
 		this.editor = editor;
 		this.placeholder = placeholder;
@@ -150,7 +150,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		if (!viewer.getSelection().isEmpty()) {
 			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 			final Command cmd = SetCommand.create(resource.getEditingDomain(), placeholder,
-				AdvancedPackageImpl.Literals.PLACEHOLDER__REF, s.getFirstElement());
+					AdvancedPackageImpl.Literals.PLACEHOLDER__REF, s.getFirstElement());
 			if (cmd.canExecute()) {
 				resource.getEditingDomain().getCommandStack().execute(cmd);
 				super.okPressed();
@@ -210,9 +210,9 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		@Override
 		public Image getImage(Object element) {
 			final AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element)
-				.eClass());
+					.eClass());
 			if (editor != null) {
-				return editor.getImage(element, getShell().getDisplay());
+				return editor.getImage(element);
 			}
 			return null;
 		}

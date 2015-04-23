@@ -14,8 +14,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -48,17 +50,15 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StructuredViewer viewer;
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -122,11 +122,6 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return null;
-	}
-
-	@Override
 	public String getLabel(Object element) {
 		return Messages.VWindowSharedElementsEditor_TreeLabel;
 	}
@@ -147,16 +142,16 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
@@ -164,10 +159,10 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 		{
 
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
+					final EClass eClass = (EClass) ((IStructuredSelection) getSelection()).getFirstElement();
 					handleAdd(eClass);
 				}
 
@@ -179,7 +174,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			viewer = pickList.getList();
 
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
+			final IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 
 			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
@@ -198,14 +193,14 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd(EClass eClass) {
-		EObject eObject = EcoreUtil.create(eClass);
+		final EObject eObject = EcoreUtil.create(eClass);
 		addToModel(eObject);
 	}
 
 	private void addToModel(EObject eObject) {
 		setElementId(eObject);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, eObject);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -215,11 +210,11 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 	protected void handleImport(EClass eClass, String hint) {
 		if (eClass == BasicPackageImpl.Literals.PART) {
-			ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, hint, resourcePool);
-			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			final ModelImportWizard wizard = new ModelImportWizard(MPart.class, this, hint, resourcePool);
+			final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
-				MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
-				for (MPart part : parts) {
+				final MPart[] parts = (MPart[]) wizard.getElements(MPart.class);
+				for (final MPart part : parts) {
 					addToModel((EObject) part);
 				}
 			}
@@ -228,14 +223,14 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
 		l.addAll(actionsImport);
 		return l;
 	}

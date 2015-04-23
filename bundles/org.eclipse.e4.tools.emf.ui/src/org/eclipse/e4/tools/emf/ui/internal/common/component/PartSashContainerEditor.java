@@ -32,7 +32,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.tools.emf.ui.internal.imp.ModelImportWizard;
 import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -71,7 +70,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -81,7 +79,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 	private final List<Action> actionsImport = new ArrayList<Action>();
@@ -101,21 +99,21 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.PartSashContainerEditor_AddPartSashContainer,
-			createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
+				createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
 			}
 		});
 		actions.add(new Action(Messages.PartSashContainerEditor_AddPartStack,
-			createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+				createImageDescriptor(ResourceProvider.IMG_PartStack)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.PART_STACK);
 			}
 		});
 		actions.add(new Action(Messages.PartSashContainerEditor_AddPart,
-			createImageDescriptor(ResourceProvider.IMG_Part)) {
+				createImageDescriptor(ResourceProvider.IMG_Part)) {
 			@Override
 			public void run() {
 				handleAddChild(BasicPackageImpl.Literals.PART);
@@ -123,21 +121,21 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		});
 
 		actions.add(new Action(Messages.PartSashContainerEditor_AddArea,
-			createImageDescriptor(ResourceProvider.IMG_Area)) {
+				createImageDescriptor(ResourceProvider.IMG_Area)) {
 			@Override
 			public void run() {
 				handleAddChild(AdvancedPackageImpl.Literals.AREA);
 			}
 		});
 		actions.add(new Action(Messages.PartSashContainerEditor_AddPlaceholder,
-			createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+				createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
 			@Override
 			public void run() {
 				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
 			}
 		});
 		for (final FeatureClass c : getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_STACK,
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN)) {
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN)) {
 			final EClass ec = c.eClass;
 			actions.add(new Action(c.label, createImageDescriptor(c.iconId)) {
 				@Override
@@ -164,25 +162,11 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
+	public Image getImage(Object element) {
 		final boolean horizontal = ((MPartSashContainer) element).isHorizontal();
 
-		if (!horizontal) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_PartSashContainer_vertical);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_PartSashContainer_vertical);
-		}
-
-		if (horizontal) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_PartSashContainer);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_PartSashContainer);
-		}
-		return null;
+		return horizontal ? getImage(element, ResourceProvider.IMG_PartSashContainer)
+				: getImage(element, ResourceProvider.IMG_PartSashContainer_vertical);
 	}
 
 	@Override
@@ -229,7 +213,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -251,11 +235,11 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		// ------------------------------------------------------------
 		{
@@ -272,23 +256,23 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				@Override
 				public String getText(Object element) {
 					return ((Boolean) element).booleanValue() ? Messages.PartSashContainerEditor_Horizontal
-						: Messages.PartSashContainerEditor_Vertical;
+							: Messages.PartSashContainerEditor_Vertical;
 				}
 			});
 			viewer.setInput(new Boolean[] { Boolean.TRUE, Boolean.FALSE });
 			final IViewerValueProperty vProp = ViewerProperties.singleSelection();
 			context.bindValue(vProp.observe(viewer),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL)
-				.observeDetail(getMaster()));
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL)
+					.observeDetail(getMaster()));
 		}
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PartSashContainerEditor_SelectedElement);
 		ControlFactory.createTextField(parent, Messages.PartSashContainerEditor_ContainerData, master, context,
-			textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
+				textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
@@ -308,7 +292,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			eClassList.add(new FeatureClass("Area", AdvancedPackageImpl.Literals.AREA)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Placeholder", AdvancedPackageImpl.Literals.PLACEHOLDER)); //$NON-NLS-1$
 			eClassList.addAll(getEditor().getFeatureClasses(BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN));
 			pickList.setInput(eClassList);
 			pickList.setSelection(new StructuredSelection(eClassList.get(0)));
 
@@ -318,11 +302,11 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -331,9 +315,9 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -355,7 +339,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -372,7 +356,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL),
-			FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+				FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 
 	protected void handleAddChild(EClass eClass) {
@@ -384,7 +368,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

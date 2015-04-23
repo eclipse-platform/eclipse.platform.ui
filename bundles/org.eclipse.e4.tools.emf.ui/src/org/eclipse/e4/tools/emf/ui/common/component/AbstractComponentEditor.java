@@ -13,7 +13,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
@@ -36,6 +38,7 @@ import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.impl.ResourceBundleTranslationProvider;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -58,9 +61,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
+	private static final String GREY_SUFFIX = "Grey"; //$NON-NLS-1$
+
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
 	private final WritableValue master = new WritableValue();
@@ -92,8 +96,6 @@ public abstract class AbstractComponentEditor {
 	@Optional
 	private ProjectOSGiTranslationProvider translationProvider;
 
-	/** An imageregistry for dynamic component images (see bug #403583) */
-	private static ImageRegistry componentImages = new ImageRegistry();
 
 	private Composite editorControl;
 
@@ -116,7 +118,7 @@ public abstract class AbstractComponentEditor {
 			final MApplicationElement el = (MApplicationElement) element;
 			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
 				el.setElementId(Util.getDefaultElementId(((EObject) getMaster().getValue()).eResource(), el,
-					getEditor().getProject()));
+						getEditor().getProject()));
 			}
 		}
 	}
@@ -132,36 +134,187 @@ public abstract class AbstractComponentEditor {
 		return ImageDescriptor.createFromImage(createImage(key));
 	}
 
+	private ImageRegistry getComponentImages() {
+		return editor.getComponentImages();
+	}
+
 	/**
 	 * Get the image described in element if this is a MUILabel
 	 *
-	 * @param element the element in tree to be displayed
-	 * @return image of element if iconUri is correct, else returns null
+	 * @param element
+	 *            the element in tree to be displayed
+	 * @return image of element if iconUri is not empty (returns bad image if
+	 *         bad URI), else returns null
 	 */
-	public Image getImageFromIconURI(Object element) {
-		Image img = null;
-		if (element instanceof MUILabel) {
-			final String iconUri = ((MUILabel) element).getIconURI();
-			if (iconUri != null) {
-				img = componentImages.get(iconUri);
-				if (img == null) {
-					try {
-						final URL url = new URL(iconUri);
-						final ImageDescriptor idesc = ImageDescriptor
-							.createFromURL(url);
-						componentImages.put(iconUri, idesc);
-						img = componentImages.get(iconUri);
-					} catch (final MalformedURLException e) {
-						// Nothing to do at this.. no image
-					}
-				}
+	public Image getImageFromIconURI(MUILabel element) {
 
+		Image img = null;
+		// Returns only an image if there is a non empty Icon URI
+		final String iconUri = element.getIconURI();
+		if (iconUri != null && iconUri.length() > 0) {
+			final boolean greyVersion = shouldBeGrey(element);
+			// Is this image already loaded ?
+			img = getImage(iconUri, greyVersion);
+			if (img == null) {
+				// No image registered yet in ImageRegistry...
+				final ImageDescriptor desc = getImageDescriptorFromUri(iconUri);
+
+				// Can now add this image in the image registry
+				getComponentImages().put(iconUri, desc);
+				img = getImage(iconUri, greyVersion);
 			}
 		}
+
 		return img;
 	}
 
-	public abstract Image getImage(Object element, Display display);
+	/** @return true if the image of this element should be displayed in grey*/
+	private boolean shouldBeGrey(Object element)
+	{
+		// It is grey if a MUIElement is not visible or not rendered
+		// It is not grey if this is not a MUIElement or if it is rendered and
+		// visible.
+		return element instanceof MUIElement
+				&& !(((MUIElement) element).isToBeRendered() && ((MUIElement) element).isVisible());
+	}
+
+	/**
+	 *
+	 * @param key
+	 *            the key of image (can be a constants from ResourceProvider or
+	 *            a platform:/ uri location
+	 * @param grey
+	 *            if true returns the grey version if original image exists
+	 * @return the image with a give key or grey version.
+	 */
+	private Image getImage(String key, boolean grey) {
+
+		// try to get image directly with right key and grey value
+		Image result = getComponentImages().get(key + (grey ? GREY_SUFFIX : "")); //$NON-NLS-1$
+
+		// may be image not yet created
+		if (result == null) {
+			result = getComponentImages().get(key);
+			// If no image found, ask the resource pool to create it...
+			if (result == null && !key.startsWith("platform:")) { //$NON-NLS-1$
+				try {
+					result = createImage(key);
+				} catch (final Exception e) {
+				}
+				if (result != null) {
+					getComponentImages().put(key, result);
+				}
+			}
+
+			// Create the grey version of image and put it in registry
+			if (result != null && grey) {
+				final Image greyImg = new Image(result.getDevice(), result, SWT.IMAGE_GRAY);
+				getComponentImages().put(key + GREY_SUFFIX, greyImg);
+				result = greyImg;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get image from an element Implements algorithm described in bug #465271
+	 *
+	 * @param element
+	 *            the Application Element
+	 * @param key
+	 *            the element image key if no icon URI
+	 * @return Image or null if nothing found
+	 */
+	public Image getImage(Object element, String key) {
+		Image result = null;
+
+		if (element instanceof MUILabel) {
+			result = getImageFromIconURI((MUILabel) element);
+		}
+
+		if (result == null) {
+			// This is a model element with a key or a MUILabel without IconUri
+			final boolean greyVersion = shouldBeGrey(element);
+			result = getImage(key, greyVersion);
+		}
+
+		return result;
+
+	}
+
+	/**
+	 * Create a readable ImageDescriptor behind URI.
+	 *
+	 * @param uri
+	 * @return
+	 */
+	private ImageDescriptor getImageDescriptorFromUri(String uri) {
+
+		// SEVERAL CASES are possible here :
+		// * uri = platform:/plugin/myplugin/icons/image.gif
+		// * uri = platform:/resource/myplugin/icons/image.gif
+		// * uri : platform:/plugin/myplugin/$nl$/icons/image.gif
+
+		// We must check if file exists before creating the ImageDescriptor
+		// because ImageRegistry will throw and print a DeviceResourceException
+		// With the E4 editors, the platform:/plugin/ is set for
+		// runtime, but the file can be in workspace during development In this
+		// case, we must rather use platform:/resource/.
+		// Used ideas from the ImageTooltip code around line 70 to fix this
+
+		ImageDescriptor result = null;
+		InputStream stream = null;
+		URL url = null;
+
+		try {
+			final URL uri2url = new URL(uri);
+			url = FileLocator.toFileURL(uri2url);
+			stream = url.openStream();
+		} catch (final IOException e) {
+			// If no stream behind this URL, it is probably a platform:/plugin
+			// which must be found as a platform:/resource (this case occurs in
+			// the model editor when icon URI are set using the dialog)
+			url = null;
+			if (uri.startsWith("platform:/plugin")) //$NON-NLS-1$
+			{
+				try {
+					// Try to get it using 'platform:/resource'
+					final URL resUrl = new URL(uri.replace("platform:/plugin", "platform:/resource")); //$NON-NLS-1$//$NON-NLS-2$
+					url = FileLocator.toFileURL(resUrl);
+					stream = url.openStream();
+
+				} catch (final IOException e2) {
+					// No file behind, may be this is a $nl$ or a $ws$ path..
+					// must use find on FileLocator which does not deal with
+					// platform:/resource !
+					try {
+						url = FileLocator.find(new URL(uri));
+						stream = url.openStream();
+					} catch (final IOException ex) {
+						url = null;
+						// Can't do more !
+					}
+				}
+			}
+		}
+
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (final IOException ex) {
+			}
+		}
+
+		if (url != null) {
+			result = ImageDescriptor.createFromURL(url);
+		}
+
+		return result;
+	}
+
+	public Image getImage(Object element) {
+		return null;
+	}
 
 	public abstract String getLabel(Object element);
 
@@ -191,8 +344,8 @@ public abstract class AbstractComponentEditor {
 	}
 
 	/**
-	 * Translates an input <code>String</code> using the current {@link ResourceBundleTranslationProvider} and
-	 * <code>locale</code> from
+	 * Translates an input <code>String</code> using the current
+	 * {@link ResourceBundleTranslationProvider} and <code>locale</code> from
 	 * the {@link TranslationService}.
 	 *
 	 * @param string
@@ -285,7 +438,7 @@ public abstract class AbstractComponentEditor {
 	}
 
 	protected void createContributedEditorTabs(CTabFolder folder, EMFDataBindingContext context, WritableValue master,
-		Class<?> clazz) {
+			Class<?> clazz) {
 		final List<AbstractElementEditorContribution> contributionList = editor.getTabContributionsForClass(clazz);
 
 		for (final AbstractElementEditorContribution eec : contributionList) {
@@ -320,7 +473,8 @@ public abstract class AbstractComponentEditor {
 		if (getEditor().isAutoCreateElementId()) {
 			generator = new IdGenerator();
 			generator.bind(getMaster(), EMFEditProperties.value(getEditingDomain(), attSource),
-				EMFEditProperties.value(getEditingDomain(), attId), control);
+					EMFEditProperties.value(getEditingDomain(), attId), control);
 		}
 	}
+
 }

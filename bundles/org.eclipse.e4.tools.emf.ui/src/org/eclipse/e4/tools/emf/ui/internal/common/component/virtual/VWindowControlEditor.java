@@ -44,10 +44,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class VWindowControlEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -111,11 +109,6 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 				return o1.getText().compareTo(o2.getText());
 			}
 		});
-	}
-
-	@Override
-	public Image getImage(Object element, Display display) {
-		return null;
 	}
 
 	@Override

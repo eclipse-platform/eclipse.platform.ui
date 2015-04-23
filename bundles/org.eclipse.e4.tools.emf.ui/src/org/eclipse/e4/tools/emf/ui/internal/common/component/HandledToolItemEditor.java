@@ -25,7 +25,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledToolItemCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
@@ -44,16 +43,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class HandledToolItemEditor extends ToolItemEditor {
 
 	private final IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
-		MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
+			MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	@Inject
 	private IModelResource resource;
@@ -64,17 +62,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				final Image img = getImageFromIconURI(uiElement);
-				return img != null ? img : createImage(ResourceProvider.IMG_HandledToolItem);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_HandledToolItem);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_HandledToolItem);
 	}
 
 	@Override
@@ -91,9 +80,9 @@ public class HandledToolItemEditor extends ToolItemEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
-				.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
-			.setConverter(new CommandToStringConverter(Messages)));
+					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
+					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
+					.setConverter(new CommandToStringConverter(Messages)));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -103,7 +92,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final HandledToolItemCommandSelectionDialog dialog = new HandledToolItemCommandSelectionDialog(b
-						.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
+							.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
@@ -144,7 +133,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		});
 
 		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element,
-			Messages.HandledToolItemEditor_Parameters) {
+				Messages.HandledToolItemEditor_Parameters) {
 			@Override
 			protected boolean accepted(MParameter o) {
 				return true;

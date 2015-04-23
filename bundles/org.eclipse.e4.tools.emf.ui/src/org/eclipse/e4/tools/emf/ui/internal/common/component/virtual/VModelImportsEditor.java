@@ -13,7 +13,9 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -40,10 +42,8 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class VModelImportsEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -56,11 +56,6 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 	@Inject
 	public VModelImportsEditor() {
 		super();
-	}
-
-	@Override
-	public Image getImage(Object element, Display display) {
-		return null;
 	}
 
 	@Override
@@ -84,34 +79,34 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 		composite = folder;
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
-		E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+		final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
 			@Override
 			protected void addPressed() {
 
-				Object firstElement = ((IStructuredSelection) getSelection()).getFirstElement();
+				final Object firstElement = ((IStructuredSelection) getSelection()).getFirstElement();
 
 				if (firstElement != null) {
-					FeatureClass featureClass = (FeatureClass) firstElement;
-					EClass eClass = featureClass.eClass;
-					EObject eObject = EcoreUtil.create(eClass);
+					final FeatureClass featureClass = (FeatureClass) firstElement;
+					final EClass eClass = featureClass.eClass;
+					final EObject eObject = EcoreUtil.create(eClass);
 
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -133,7 +128,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		pickList.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				FeatureClass eclass = (FeatureClass) element;
+				final FeatureClass eclass = (FeatureClass) element;
 				return eclass.label;
 			}
 		});
@@ -141,13 +136,13 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 		pickList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				FeatureClass eClass1 = (FeatureClass) e1;
-				FeatureClass eClass2 = (FeatureClass) e2;
+				final FeatureClass eClass1 = (FeatureClass) e1;
+				final FeatureClass eClass2 = (FeatureClass) e2;
 				return eClass1.label.compareTo(eClass2.label);
 			}
 		});
 
-		List<FeatureClass> list = new ArrayList<FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<FeatureClass>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 

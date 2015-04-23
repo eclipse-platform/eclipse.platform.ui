@@ -84,7 +84,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private Text searchText;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
-		MStringModelFragment fragment, Messages Messages) {
+			MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editor = editor;
@@ -101,7 +101,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
 		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
+				"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -188,13 +188,13 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			public void update(ViewerCell cell) {
 				final EObject o = (EObject) cell.getElement();
 				final AbstractComponentEditor editor = FindParentReferenceElementDialog.this.editor.getEditor()
-					.getEditor(o.eClass());
-				cell.setImage(editor.getImage(o, searchText.getDisplay()));
+						.getEditor(o.eClass());
+				cell.setImage(editor.getImage(o));
 
 				final MApplicationElement appEl = (MApplicationElement) o;
 
 				final StyledString styledString = new StyledString(
-					editor.getLabel(o)
+						editor.getLabel(o)
 						+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindParentReferenceElementDialog_NoId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				final String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
@@ -247,7 +247,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		list.clear();
 
 		final Filter filter = new Filter(
-			(EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
+				(EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
 
 		currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
 		getCollector().findModelElements(filter, currentResultHandler);
@@ -261,7 +261,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			final MApplicationElement el = (MApplicationElement) s.getFirstElement();
 			if (el.getElementId() != null && el.getElementId().trim().length() > 0) {
 				final Command cmd = SetCommand.create(editor.getEditingDomain(), fragment,
-					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, el.getElementId());
+						FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, el.getElementId());
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					super.okPressed();
@@ -290,7 +290,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		private final Resource resource;
 
 		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
-			Resource resource) {
+				Resource resource) {
 			this.list = list;
 			this.filter = filter;
 			this.editor = editor;

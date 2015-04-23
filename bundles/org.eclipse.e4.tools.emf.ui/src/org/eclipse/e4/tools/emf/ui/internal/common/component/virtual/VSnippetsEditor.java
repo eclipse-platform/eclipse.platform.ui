@@ -36,10 +36,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class VSnippetsEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -153,11 +151,6 @@ public class VSnippetsEditor extends AbstractComponentEditor {
 			}
 		});
 
-	}
-
-	@Override
-	public Image getImage(Object element, Display display) {
-		return null;
 	}
 
 	@Override

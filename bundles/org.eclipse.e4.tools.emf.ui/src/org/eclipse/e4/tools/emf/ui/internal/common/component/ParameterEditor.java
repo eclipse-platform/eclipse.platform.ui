@@ -43,7 +43,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -62,8 +61,8 @@ public class ParameterEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_Parameter);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Parameter);
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MParameter param = (MParameter) element;
+		final MParameter param = (MParameter) element;
 		if (param.getName() != null && param.getName().trim().length() > 0) {
 			return param.getName().trim();
 		} else if (param.getElementId() != null && param.getElementId().trim().length() > 0) {
@@ -121,7 +120,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -133,7 +132,7 @@ public class ParameterEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -168,19 +167,19 @@ public class ParameterEditor extends AbstractComponentEditor {
 
 	private void createParameterNameRow(Composite parent, IWidgetValueProperty textProp) {
 		{
-			Label commandParameterIdLabel = new Label(parent, SWT.NONE);
+			final Label commandParameterIdLabel = new Label(parent, SWT.NONE);
 			commandParameterIdLabel.setText(Messages.ParameterEditor_Command_Parameter_ID);
 			commandParameterIdLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text commandParameterIdValue = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final Text commandParameterIdValue = new Text(parent, SWT.BORDER);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			commandParameterIdValue.setLayoutData(gd);
 			TextPasteHandler.createFor(commandParameterIdValue);
-			IEMFEditValueProperty modelProp = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME);
+			final IEMFEditValueProperty modelProp = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME);
 			context.bindValue(textProp.observeDelayed(200, commandParameterIdValue), modelProp.observeDetail(getMaster()));
 		}
 
-		Button chooseParameterButton = new Button(parent, SWT.PUSH | SWT.FLAT);
+		final Button chooseParameterButton = new Button(parent, SWT.PUSH | SWT.FLAT);
 		chooseParameterButton.setText(Messages.ModelTooling_Common_FindEllipsis);
 		chooseParameterButton.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 		chooseParameterButton.addSelectionListener(new ChooseParameterButtonSelectionListener());
@@ -190,14 +189,14 @@ public class ParameterEditor extends AbstractComponentEditor {
 	private final class ChooseParameterButtonSelectionListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			WritableValue master = getMaster();
+			final WritableValue master = getMaster();
 			if (master == null || !(master.getValue() instanceof MParameter)) {
 				return;
 			}
 
-			IEclipseContext staticContext = EclipseContextFactory.create("ParameterIdSelectionDialog static context"); //$NON-NLS-1$
+			final IEclipseContext staticContext = EclipseContextFactory.create("ParameterIdSelectionDialog static context"); //$NON-NLS-1$
 			staticContext.set(MParameter.class, (MParameter) master.getValue());
-			ParameterIdSelectionDialog dialog = ContextInjectionFactory.make(ParameterIdSelectionDialog.class, eclipseContext, staticContext);
+			final ParameterIdSelectionDialog dialog = ContextInjectionFactory.make(ParameterIdSelectionDialog.class, eclipseContext, staticContext);
 			dialog.open();
 		}
 	}

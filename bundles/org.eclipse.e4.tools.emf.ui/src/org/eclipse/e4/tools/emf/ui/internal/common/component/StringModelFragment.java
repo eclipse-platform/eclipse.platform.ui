@@ -63,7 +63,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -72,7 +71,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
-		.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
+			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -89,7 +88,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		final List<FeatureClass> list = new ArrayList<FeatureClass>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
-			FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 		for (final FeatureClass featureClass : list) {
 			actions.add(new Action(featureClass.label) {
 
@@ -102,8 +101,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_StringModelFragment);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_StringModelFragment);
 	}
 
 	@Override
@@ -114,8 +113,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] {
-			FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME),
-			FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID) };
+				FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME),
+				FeaturePath.fromList(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID) };
 	}
 
 	@Override
@@ -184,9 +183,9 @@ public class StringModelFragment extends AbstractComponentEditor {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
 
 			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -194,7 +193,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
-						StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
+							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -220,9 +219,9 @@ public class StringModelFragment extends AbstractComponentEditor {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -230,7 +229,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),
-						getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages);
+							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -238,14 +237,14 @@ public class StringModelFragment extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.StringModelFragment_PositionInList, getMaster(), context,
-			textProp, EMFEditProperties.value(getEditingDomain(),
-				FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
+				textProp, EMFEditProperties.value(getEditingDomain(),
+						FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
 
 		// ------------------------------------------------------------
 		{
 
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
+					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
 					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
@@ -281,7 +280,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			final List<FeatureClass> list = new ArrayList<FeatureClass>();
 			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
-				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
 			pickList.setInput(list);
 			if (list.size() > 0) {
@@ -321,7 +320,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		final EObject eObject = EcoreUtil.create(eClass);
 		setElementId(eObject);
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
+				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

@@ -12,13 +12,13 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.common.Plugin;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -65,7 +66,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -74,9 +74,9 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
-	private List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
 
-	private IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
+	private final IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
 	@Inject
 	private IModelResource resource;
@@ -97,8 +97,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_KeyBinding);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_KeyBinding);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
@@ -157,7 +157,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			ControlFactory.createXMIId(parent, this);
 		}
 
-		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
@@ -169,26 +169,26 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.KeyBindingEditor_Sequence);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
+			final Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 		}
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
+			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.KeyBindingEditor_Command);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
@@ -201,14 +201,14 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					KeyBindingCommandSelectionDialog dialog = new KeyBindingCommandSelectionDialog(b.getShell(), (MKeyBinding) getMaster().getValue(), resource, Messages);
+					final KeyBindingCommandSelectionDialog dialog = new KeyBindingCommandSelectionDialog(b.getShell(), (MKeyBinding) getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		{
-			E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS) {
+			final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS) {
 				@Override
 				protected void addPressed() {
 					handleAddParameter();
@@ -251,7 +251,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MKeySequence seq = (MKeySequence) element;
+		final MKeySequence seq = (MKeySequence) element;
 		if (seq.getKeySequence() != null && seq.getKeySequence().trim().length() > 0) {
 			return seq.getKeySequence();
 		}
@@ -267,36 +267,36 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		@Override
 		public IStatus validate(Object value) {
-			int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
+			final int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
 			if (value != null && value.toString().trim().length() > 0) {
 				try {
-					KeySequence keySequence = KeySequence.getInstance(value.toString());
+					final KeySequence keySequence = KeySequence.getInstance(value.toString());
 					if (!keySequence.isComplete()) {
-						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete); 
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceNotComplete);
 					}
 					if (keySequence.isEmpty()) {
-						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); 
+						return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty);
 					}
 					if (!value.toString().toUpperCase().equals(value.toString())) {
-						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase); 
+						return new Status(IStatus.ERROR, Plugin.ID, Messages.KeyBindingEditor_SequenceLowercase);
 					}
 
 					return Status.OK_STATUS;
-				} catch (Exception e) {
-					return new Status(statusCode, Plugin.ID, e.getMessage(), e); 
+				} catch (final Exception e) {
+					return new Status(statusCode, Plugin.ID, e.getMessage(), e);
 				}
 			}
 
-			return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty); 
+			return new Status(statusCode, Plugin.ID, Messages.KeyBindingEditor_SequenceEmpty);
 		}
 	}
 
 	protected void handleAddParameter() {
-		MKeyBinding item = (MKeyBinding) getMaster().getValue();
-		MParameter param = MCommandsFactory.INSTANCE.createParameter();
+		final MKeyBinding item = (MKeyBinding) getMaster().getValue();
+		final MParameter param = MCommandsFactory.INSTANCE.createParameter();
 		setElementId(param);
 
-		Command cmd = AddCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, param);
+		final Command cmd = AddCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, param);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 		}
@@ -304,7 +304,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

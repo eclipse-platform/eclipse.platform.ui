@@ -51,7 +51,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 public class BindingContextEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -59,7 +58,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 	private StackLayout stackLayout;
 	private final IListProperty BINDING_CONTEXT__CHILDREN = EMFProperties
-		.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
+			.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -71,7 +70,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.BindingContextEditor_AddContext,
-			createImageDescriptor(ResourceProvider.IMG_BindingContext)) {
+				createImageDescriptor(ResourceProvider.IMG_BindingContext)) {
 			@Override
 			public void run() {
 				handleAddContext();
@@ -80,8 +79,8 @@ public class BindingContextEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_BindingContext);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_BindingContext);
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME),
-			FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
+				FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
 	}
 
 	@Override
@@ -142,7 +141,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		getMaster().setValue(object);
 		enableIdGenerator(CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
@@ -168,16 +167,16 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Name, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME),
-			Messages.BindingContextEditor_NameWarning);
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME),
+				Messages.BindingContextEditor_NameWarning);
 		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Description, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
 
 		final E4PickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER),
-			Messages, this, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN) {
+				Messages, this, CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN) {
 			@Override
 			protected void addPressed() {
 				handleAddContext();
@@ -193,7 +192,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		final TableViewer viewer = pickList.getList();
 		final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-			CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
+				CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 		viewer.setInput(prop.observeDetail(master));
 
 		item = new CTabItem(folder, SWT.NONE);
@@ -203,9 +202,9 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MBindingContext.class);
 
@@ -224,7 +223,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, eObject);
+				CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

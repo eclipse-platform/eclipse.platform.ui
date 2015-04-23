@@ -26,7 +26,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledMenuItemCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
@@ -45,16 +44,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class HandledMenuItemEditor extends MenuItemEditor {
 
 	private final IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
-		MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
+			MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	@Inject
 	private IModelResource resource;
@@ -65,17 +63,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				final Image img = getImageFromIconURI(uiElement);
-				return img != null ? img : createImage(ResourceProvider.IMG_HandledMenuItem);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_HandledMenuItem);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_HandledMenuItem);
 	}
 
 	@Override
@@ -103,9 +92,9 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
-				.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
-			.setConverter(new CommandToStringConverter(Messages)));
+					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND)
+					.observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy()
+					.setConverter(new CommandToStringConverter(Messages)));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
@@ -115,7 +104,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final HandledMenuItemCommandSelectionDialog dialog = new HandledMenuItemCommandSelectionDialog(b
-						.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
+							.getShell(), (MHandledItem) getMaster().getValue(), resource, Messages);
 					dialog.open();
 				}
 			});
@@ -145,7 +134,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 		});
 
 		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element,
-			Messages.HandledMenuItemEditor_Parameters) {
+				Messages.HandledMenuItemEditor_Parameters) {
 			@Override
 			protected boolean accepted(MParameter o) {
 				return true;

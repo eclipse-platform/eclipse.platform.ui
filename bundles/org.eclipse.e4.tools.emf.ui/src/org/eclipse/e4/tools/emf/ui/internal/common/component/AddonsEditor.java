@@ -53,7 +53,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
@@ -77,8 +76,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_Addons);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Addons);
 	}
 
 	@Override
@@ -134,7 +133,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -156,13 +155,13 @@ public class AddonsEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		final Link lnk;
 		// ------------------------------------------------------------
 		{
 			final IContributionClassCreator c = getEditor().getContributionCreator(
-				ApplicationPackageImpl.Literals.ADDON);
+					ApplicationPackageImpl.Literals.ADDON);
 			if (project != null && c != null) {
 				lnk = new Link(parent, SWT.NONE);
 				lnk.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
@@ -171,7 +170,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-							lnk.getShell());
+								lnk.getShell());
 					}
 				});
 			} else {
@@ -194,11 +193,11 @@ public class AddonsEditor extends AbstractComponentEditor {
 				}
 			});
 			final Binding binding = context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
-					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-					new UpdateValueStrategy());
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()),
+							new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+							new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -208,15 +207,15 @@ public class AddonsEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-						getEditingDomain(), (MContribution) getMaster().getValue(),
-						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
+							getEditingDomain(), (MContribution) getMaster().getValue(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -225,7 +224,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createInstanceInspection(folder);
@@ -247,7 +246,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 		final ObjectViewer objectViewer = new ObjectViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container,
-			ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
+				ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	}

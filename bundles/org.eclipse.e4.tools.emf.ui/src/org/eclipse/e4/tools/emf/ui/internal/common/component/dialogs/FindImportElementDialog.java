@@ -71,7 +71,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
 		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
+				"/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -106,11 +106,11 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 			@Override
 			public void update(ViewerCell cell) {
 				final EObject o = (EObject) cell.getElement();
-				cell.setImage(editor.getImage(o, searchText.getDisplay()));
+				cell.setImage(editor.getImage(o));
 
 				final MApplicationElement appEl = (MApplicationElement) o;
 				final StyledString styledString = new StyledString(
-					editor.getLabel(o)
+						editor.getLabel(o)
 						+ " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				final String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
@@ -171,7 +171,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 			final MApplicationElement el = (MApplicationElement) s.getFirstElement();
 			if (el.getElementId() != null && el.getElementId().trim().length() > 0) {
 				final Command cmd = SetCommand.create(editor.getEditingDomain(), element,
-					ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, el.getElementId());
+						ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, el.getElementId());
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					super.okPressed();
@@ -200,7 +200,7 @@ public class FindImportElementDialog extends SaveDialogBoundsSettingsDialog {
 		private final Resource resource;
 
 		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor,
-			Resource resource) {
+				Resource resource) {
 			this.list = list;
 			this.filter = filter;
 			this.editor = editor;

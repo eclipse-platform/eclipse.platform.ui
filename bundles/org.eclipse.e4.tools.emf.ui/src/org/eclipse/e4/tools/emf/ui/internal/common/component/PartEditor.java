@@ -41,7 +41,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -73,7 +72,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
@@ -85,7 +83,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 	private final IListProperty PART__MENUS = EMFProperties.list(BasicPackageImpl.Literals.PART__MENUS);
 	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
-		.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+			.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private final IValueProperty PART__TOOLBAR = EMFProperties.value(BasicPackageImpl.Literals.PART__TOOLBAR);
 	private Button createRemoveToolBar;
 	private StackLayout stackLayout;
@@ -103,16 +101,8 @@ public class PartEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			if (((MUIElement) element).isToBeRendered()) {
-				final Image img = getImageFromIconURI(element);
-				return img != null ? img : createImage(ResourceProvider.IMG_Part);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_Part);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Part);
 	}
 
 	@Override
@@ -163,13 +153,13 @@ public class PartEditor extends AbstractComponentEditor {
 
 		getMaster().setValue(object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 
 		return composite;
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master,
-		boolean isImport) {
+			boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.BORDER);
@@ -191,15 +181,15 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.PartEditor_LabelLabel, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, master, context,
-			textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createTextField(parent, Messages.PartEditor_Tooltip, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP));
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP));
 
 		// ------------------------------------------------------------
 		{
@@ -212,9 +202,9 @@ public class PartEditor extends AbstractComponentEditor {
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-					master));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
+							master));
 
 			new ImageTooltip(t, Messages) {
 
@@ -237,7 +227,7 @@ public class PartEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final PartIconDialogEditor dialog = new PartIconDialogEditor(b.getShell(), eclipseContext, project,
-						getEditingDomain(), (MPart) getMaster().getValue(), Messages);
+							getEditingDomain(), (MPart) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -255,7 +245,7 @@ public class PartEditor extends AbstractComponentEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project,
-							lnk.getShell());
+								lnk.getShell());
 					}
 				});
 			} else {
@@ -282,11 +272,11 @@ public class PartEditor extends AbstractComponentEditor {
 				}
 			});
 			final Binding binding = context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(),
-					ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
-					new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
-					new UpdateValueStrategy());
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master),
+							new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()),
+							new UpdateValueStrategy());
 			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -297,8 +287,8 @@ public class PartEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), eclipseContext,
-						getEditingDomain(), (MContribution) getMaster().getValue(),
-						ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
+							getEditingDomain(), (MContribution) getMaster().getValue(),
+							ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, Messages);
 					dialog.open();
 				}
 			});
@@ -306,7 +296,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		ControlFactory.createTextField(parent, Messages.PartEditor_ContainerData, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		createSubformElements(parent, context, master);
 
@@ -331,22 +321,22 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.PartEditor_Closeable, Messages.PartEditor_Closeable_Tooltip,
-			getMaster(), context, WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART__CLOSEABLE));
+				getMaster(), context, WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART__CLOSEABLE));
 
 		// ------------------------------------------------------------
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.PartEditor_BindingContexts);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties,
-			UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
+				UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -355,10 +345,10 @@ public class PartEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
-			Messages.ModelTooling_Context_Variables_Tooltip, UiPackageImpl.Literals.CONTEXT__VARIABLES,
-			VERTICAL_LIST_WIDGET_INDENT);
+				Messages.ModelTooling_Context_Variables_Tooltip, UiPackageImpl.Literals.CONTEXT__VARIABLES,
+				VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createInstanceInspection(folder);
@@ -381,7 +371,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		final ObjectViewer objectViewer = new ObjectViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container,
-			ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
+				ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -394,7 +384,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -403,7 +393,7 @@ public class PartEditor extends AbstractComponentEditor {
 		setElementId(menu);
 
 		final Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(),
-			BasicPackageImpl.Literals.PART__TOOLBAR, menu);
+				BasicPackageImpl.Literals.PART__TOOLBAR, menu);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 		}
@@ -411,7 +401,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 	private void removeToolBar() {
 		final Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(),
-			BasicPackageImpl.Literals.PART__TOOLBAR, null);
+				BasicPackageImpl.Literals.PART__TOOLBAR, null);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
 		}
@@ -430,7 +420,7 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_MENU, PART__MENUS, element,
-			Messages.PartEditor_Menus) {
+				Messages.PartEditor_Menus) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -440,7 +430,7 @@ public class PartEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element,
-			Messages.PartEditor_Handlers) {
+				Messages.PartEditor_Handlers) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -486,6 +476,6 @@ public class PartEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL),
-			FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+				FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 }

@@ -35,7 +35,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.Text
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolBarIdDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -70,7 +69,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -79,7 +77,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -101,28 +99,28 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem,
-			createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
+				createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem,
-			createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
+				createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddToolControl,
-			createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+				createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator,
-			createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
+				createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
@@ -131,16 +129,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_ToolBarContribution);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_ToolBarContribution);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_ToolBarContribution);
 	}
 
 	@Override
@@ -213,11 +203,11 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
+				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -229,7 +219,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__PARENT_ID)
+					EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__PARENT_ID)
 					.observeDetail(getMaster()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -240,20 +230,20 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final ToolBarIdDialog dialog = new ToolBarIdDialog(t.getShell(), resource,
-						(MToolBarContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
+							(MToolBarContribution) getMaster().getValue(), getEditingDomain(), modelService, Messages);
 					dialog.open();
 				}
 			});
 		}
 
 		ControlFactory.createTextField(parent, Messages.MenuContributionEditor_Position, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(),
-				MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
+				EMFEditProperties.value(getEditingDomain(),
+						MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT));
 
 		// ------------------------------------------------------------
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					final Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
@@ -262,7 +252,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 					setElementId(eObject);
 
 					final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-						UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+							UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
@@ -277,24 +267,24 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			final TableViewer viewer = pickList.getList();
 
 			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(master));
 
 			final Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem,
-				MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+					MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
 			pickList.setInput(new Struct[] { defaultStruct,
-				new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false),
-				new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false),
-				new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
+					new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false),
+					new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false),
+					new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -303,9 +293,9 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -327,7 +317,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -353,7 +343,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

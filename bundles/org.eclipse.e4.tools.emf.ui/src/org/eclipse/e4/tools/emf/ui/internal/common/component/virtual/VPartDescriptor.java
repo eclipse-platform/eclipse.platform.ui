@@ -14,8 +14,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -41,17 +43,15 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 public class VPartDescriptor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actionsImport = new ArrayList<Action>();
 
 	@Inject
 	public VPartDescriptor() {
@@ -90,11 +90,6 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return null;
-	}
-
-	@Override
 	public String getLabel(Object element) {
 		return Messages.VPartDescriptor_TreeLabel;
 	}
@@ -115,23 +110,23 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>) object;
+		final VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		final CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabDefault);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
 		{
-			AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS) {
+			final AbstractPickList pickList = new E4PickList(parent, SWT.NONE, Arrays.asList(PickListFeatures.NO_PICKER), Messages, this, BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS) {
 				@Override
 				protected void addPressed() {
 					handleAdd();
@@ -139,7 +134,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 
 				@Override
 				protected List<?> getContainerChildren(Object container) {
-					MPartDescriptorContainer c = (MPartDescriptorContainer) container;
+					final MPartDescriptorContainer c = (MPartDescriptorContainer) container;
 					return c.getDescriptors();
 				}
 			};
@@ -158,14 +153,14 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	}
 
 	protected void handleAdd() {
-		MPartDescriptor partDescription = MBasicFactory.INSTANCE.createPartDescriptor();
+		final MPartDescriptor partDescription = MBasicFactory.INSTANCE.createPartDescriptor();
 		addToModel(partDescription);
 	}
 
 	private void addToModel(MPartDescriptor partDescription) {
 		setElementId(partDescription);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, partDescription);
+		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, partDescription);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
@@ -176,11 +171,11 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	protected void handleImport(EClass eClass, String hint) {
 
 		if (eClass == BasicPackageImpl.Literals.PART_DESCRIPTOR) {
-			ModelImportWizard wizard = new ModelImportWizard(MPartDescriptor.class, this, hint, resourcePool);
-			WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
+			final ModelImportWizard wizard = new ModelImportWizard(MPartDescriptor.class, this, hint, resourcePool);
+			final WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(), wizard);
 			if (wizardDialog.open() == Window.OK) {
-				MPartDescriptor[] parts = (MPartDescriptor[]) wizard.getElements(MPartDescriptor.class);
-				for (MPartDescriptor part : parts) {
+				final MPartDescriptor[] parts = (MPartDescriptor[]) wizard.getElements(MPartDescriptor.class);
+				for (final MPartDescriptor part : parts) {
 					addToModel(part);
 				}
 			}
@@ -189,14 +184,14 @@ public class VPartDescriptor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		final ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
 		l.addAll(actionsImport);
 		return l;
 	}

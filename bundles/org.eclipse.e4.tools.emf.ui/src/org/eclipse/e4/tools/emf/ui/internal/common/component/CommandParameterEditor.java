@@ -37,7 +37,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 public class CommandParameterEditor extends AbstractComponentEditor {
@@ -54,12 +53,12 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME),
-			FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
+				FeaturePath.fromList(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID) };
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_CommandParameter);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_CommandParameter);
 	}
 
 	@Override
@@ -138,14 +137,14 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
-			Messages.ModelTooling_Empty_Warning);
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID),
+				Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_Name, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME),
-			Messages.ModelTooling_Empty_Warning);
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME),
+				Messages.ModelTooling_Empty_Warning);
 		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_TypeId, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
+				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
@@ -156,7 +155,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
 
 			final IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(),
-				CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
+					CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
 			final IWidgetValueProperty uiProp = WidgetProperties.selection();
 
 			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
@@ -169,9 +168,9 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MCommandParameter.class);
 

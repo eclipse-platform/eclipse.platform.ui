@@ -27,7 +27,6 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -56,7 +55,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 public class ToolBarEditor extends AbstractComponentEditor {
 
@@ -64,7 +62,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -76,28 +74,28 @@ public class ToolBarEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem,
-			createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
+				createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem,
-			createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
+				createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddToolControl,
-			createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+				createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
 			}
 		});
 		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator,
-			createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
+				createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
 			@Override
 			public void run() {
 				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
@@ -106,16 +104,8 @@ public class ToolBarEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				return createImage(ResourceProvider.IMG_ToolBar);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_ToolBar);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_ToolBar);
 	}
 
 	@Override
@@ -183,16 +173,16 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
+				EMFEditProperties
 				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		// ------------------------------------------------------------
 		{
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN) {
 				@Override
 				protected void addPressed() {
 					final Struct struct = (Struct) ((IStructuredSelection) getSelection()).getFirstElement();
@@ -205,24 +195,24 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(master));
 
 			final Struct defaultStruct = new Struct(Messages.ToolBarEditor_HandledToolItem,
-				MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+					MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
 			pickList.setInput(new Struct[] { defaultStruct,
-				new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false),
-				new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false),
-				new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
+					new Struct(Messages.ToolBarEditor_DirectToolItem, MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false),
+					new Struct(Messages.ToolBarEditor_ToolControl, MenuPackageImpl.Literals.TOOL_CONTROL, false),
+					new Struct(Messages.ToolBarEditor_Separator, MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 		}
 
 		ControlFactory
-			.createCheckBox(
+		.createCheckBox(
 				parent,
 				"To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
 		ControlFactory
-			.createCheckBox(
+		.createCheckBox(
 				parent,
 				"Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
 
@@ -233,9 +223,9 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MToolBar.class);
 
@@ -271,7 +261,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		setElementId(eObject);
 
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

@@ -88,7 +88,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -98,9 +97,9 @@ public class MenuEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
-		.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
-		.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
+			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<Action>();
 
@@ -121,7 +120,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	@PostConstruct
 	void init() {
 		actions.add(new Action(Messages.MenuEditor_AddHandledMenuItem,
-			createImageDescriptor(ResourceProvider.IMG_HandledMenuItem)) {
+				createImageDescriptor(ResourceProvider.IMG_HandledMenuItem)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
@@ -134,33 +133,33 @@ public class MenuEditor extends AbstractComponentEditor {
 			}
 		});
 		actions.add(new Action(Messages.MenuEditor_AddDirectMenuItem,
-			createImageDescriptor(ResourceProvider.IMG_DirectMenuItem)) {
+				createImageDescriptor(ResourceProvider.IMG_DirectMenuItem)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false);
 			}
 		});
 		actions.add(new Action(Messages.MenuEditor_AddSeparator,
-			createImageDescriptor(ResourceProvider.IMG_MenuSeparator)) {
+				createImageDescriptor(ResourceProvider.IMG_MenuSeparator)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
 			}
 		});
 		actions.add(new Action(Messages.MenuEditor_AddDynamicMenuContribution,
-			createImageDescriptor(ResourceProvider.IMG_DynamicMenuContribution)) {
+				createImageDescriptor(ResourceProvider.IMG_DynamicMenuContribution)) {
 			@Override
 			public void run() {
 				handleAdd(MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false);
 			}
 		});
 		addExpression = new Action(Messages.MenuEditor_AddCoreExpression,
-			createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
+				createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
 			@Override
 			public void run() {
 				final MUIElement e = (MUIElement) getMaster().getValue();
 				final Command cmd = SetCommand.create(getEditingDomain(), e,
-					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
+						UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
 				}
@@ -169,17 +168,8 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		if (element instanceof MUIElement) {
-			final MUIElement uiElement = (MUIElement) element;
-			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				final Image img = getImageFromIconURI(uiElement);
-				return img != null ? img : createImage(ResourceProvider.IMG_Menu);
-			}
-			return createImage(ResourceProvider.IMG_Tbr_Menu);
-		}
-
-		return null;
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_Menu);
 	}
 
 	@Override
@@ -218,12 +208,12 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		getMaster().setValue(object);
 		enableIdGenerator(UiPackageImpl.Literals.UI_LABEL__LABEL,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, null);
 		return composite;
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master,
-		boolean rootMenu, boolean isImport) {
+			boolean rootMenu, boolean isImport) {
 		final CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -245,18 +235,18 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp,
-			EMFEditProperties
-			.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+				EMFEditProperties
+				.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		// ------------------------------------------------------------
 		if (!rootMenu) {
 			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_LabelLabel, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool,
-				project);
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool,
+					project);
 		}
 
 		ControlFactory.createTextField(parent, Messages.MenuEditor_Mnemonics, master, context, textProp,
-			EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
+				EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
 
 		{
 
@@ -269,23 +259,23 @@ public class MenuEditor extends AbstractComponentEditor {
 			// new Label(parent, SWT.NONE);
 
 			final E4PickList pickList = new E4PickList(parent, SWT.NONE, null, Messages, this,
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			pickList.setText(Messages.MenuEditor_Children);
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 
 			final Struct defaultStruct = new Struct(Messages.MenuEditor_HandledMenuItem,
-				MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
+					MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
 			pickList.setInput(new Struct[] {
-				new Struct(Messages.MenuEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true),
-				new Struct(Messages.MenuEditor_Menu, MenuPackageImpl.Literals.MENU, false),
-				defaultStruct,
-				new Struct(Messages.MenuEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false),
-				new Struct(Messages.MenuEditor_DynamicMenuContribution,
-					MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
+					new Struct(Messages.MenuEditor_Separator, MenuPackageImpl.Literals.MENU_SEPARATOR, true),
+					new Struct(Messages.MenuEditor_Menu, MenuPackageImpl.Literals.MENU, false),
+					defaultStruct,
+					new Struct(Messages.MenuEditor_DirectMenuItem, MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false),
+					new Struct(Messages.MenuEditor_DynamicMenuContribution,
+							MenuPackageImpl.Literals.DYNAMIC_MENU_CONTRIBUTION, false) });
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 
 			final IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(),
-				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+					UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			pickList.getList().setInput(prop.observeDetail(master));
 
 		}
@@ -293,8 +283,8 @@ public class MenuEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		if (!rootMenu) {
 			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_Tooltip, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
-				project);
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool,
+					project);
 		}
 
 		// ------------------------------------------------------------
@@ -307,9 +297,9 @@ public class MenuEditor extends AbstractComponentEditor {
 			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(
-				textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
-					master));
+					textProp.observeDelayed(200, t),
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
+							master));
 
 			new ImageTooltip(t, Messages) {
 
@@ -332,7 +322,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), eclipseContext, project,
-						getEditingDomain(), (MMenu) getMaster().getValue(), Messages);
+							getEditingDomain(), (MMenu) getMaster().getValue(), Messages);
 					dialog.open();
 				}
 			});
@@ -361,20 +351,20 @@ public class MenuEditor extends AbstractComponentEditor {
 			list.add(Messages.MenuItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
 			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION,
-				UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
+					UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
 			combo.setInput(list);
 			context.bindValue(ViewerProperties.singleSelection().observe(combo),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
-				.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
-				new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN)
+					.observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject(Messages)),
+					new UpdateValueStrategy().setConverter(new EObject2EClass(Messages)));
 		}
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
-			WidgetProperties.selection(),
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+				WidgetProperties.selection(),
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
@@ -383,12 +373,12 @@ public class MenuEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(),
-			context, textProp,
-			EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+				context, textProp,
+				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		if (project == null) {
 			createUITreeInspection(folder);
@@ -410,7 +400,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		final UIViewer objectViewer = new UIViewer();
 		final TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET,
-			getMaster(), resourcePool, Messages);
+				getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
@@ -499,7 +489,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		final MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
 		setElementId(eObject);
 		final Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(),
-			UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+				UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

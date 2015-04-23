@@ -56,42 +56,6 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_WindowTrim = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.WindowTrim"; //$NON-NLS-1$
 	public static final String IMG_WizardDialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.WizardDialog"; //$NON-NLS-1$
 
-	public static final String IMG_Tbr_Addons = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Addons"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Application = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Application"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Area_vertical = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Area_vertical"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Area = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Area"; //$NON-NLS-1$
-	public static final String IMG_Tbr_BindingContext = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.BindingContext"; //$NON-NLS-1$
-	public static final String IMG_Tbr_BindingTable = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.BindingTable"; //$NON-NLS-1$
-	public static final String IMG_Tbr_CommandParameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.CommandParameter"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Dialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Dialog"; //$NON-NLS-1$
-	public static final String IMG_Tbr_DirectMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DirectMenuItem"; //$NON-NLS-1$
-	public static final String IMG_Tbr_DirectToolItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DirectToolItem"; //$NON-NLS-1$
-	public static final String IMG_Tbr_HandledMenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.HandledMenuItem"; //$NON-NLS-1$
-	public static final String IMG_Tbr_HandledToolItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.HandledToolItem"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Menu = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Menu"; //$NON-NLS-1$
-	public static final String IMG_Tbr_MenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuContribution"; //$NON-NLS-1$
-	public static final String IMG_Tbr_MenuItem = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuItem"; //$NON-NLS-1$
-	public static final String IMG_Tbr_DynamicMenuContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.DynamicMenuContribution"; //$NON-NLS-1$
-	public static final String IMG_Tbr_MenuSeparator = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.MenuSeparator"; //$NON-NLS-1$
-	public static final String IMG_Tbr_ModelFragments = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ModelFragments"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Parameter = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Parameter"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Part = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Part"; //$NON-NLS-1$
-	public static final String IMG_Tbr_PartDescriptor = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.PartDescriptor"; //$NON-NLS-1$
-	public static final String IMG_Tbr_PartSashContainer_vertical = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.PartSashContainer_vertical"; //$NON-NLS-1$
-	public static final String IMG_Tbr_PartSashContainer = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.PartSashContainer"; //$NON-NLS-1$
-	public static final String IMG_Tbr_PartStack = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.PartStack"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Perspective = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Perspective"; //$NON-NLS-1$
-	public static final String IMG_Tbr_PerspectiveStack = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.PerspectiveStack"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Placeholder = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Placeholder"; //$NON-NLS-1$
-	public static final String IMG_Tbr_StringModelFragment = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.StringModelFragment"; //$NON-NLS-1$
-	public static final String IMG_Tbr_ToolBar = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ToolBar"; //$NON-NLS-1$
-	public static final String IMG_Tbr_ToolBarContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ToolBarContribution"; //$NON-NLS-1$
-	public static final String IMG_Tbr_ToolBarSeparator = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ToolBarSeparator"; //$NON-NLS-1$
-	public static final String IMG_Tbr_ToolControl = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.ToolControl"; //$NON-NLS-1$
-	public static final String IMG_Tbr_TrimContribution = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.TrimContribution"; //$NON-NLS-1$
-	public static final String IMG_Tbr_Window = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.Window"; //$NON-NLS-1$
-	public static final String IMG_Tbr_WindowTrim = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.WindowTrim"; //$NON-NLS-1$
-	public static final String IMG_Tbr_WizardDialog = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.tbr.WizardDialog"; //$NON-NLS-1$
 
 	public static final String IMG_Obj16_arrow_down = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_down"; //$NON-NLS-1$
 	public static final String IMG_Obj16_arrow_up = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_up"; //$NON-NLS-1$
@@ -156,5 +120,5 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String COLOR_PROC_INSTR = "COLOR_org.eclipse.e4.tools.emf.ui.PROC_INSTR"; //$NON-NLS-1$
 	public static final String COLOR_STRING = "COLOR_org.eclipse.e4.tools.emf.ui.STRING"; //$NON-NLS-1$
 	public static final String COLOR_DEFAULT = "COLOR_org.eclipse.e4.tools.emf.ui.DEFAULT"; //$NON-NLS-1$
-	public static final String COLOR_TAG = "COLOR_org.eclipse.e4.tools.emf.ui.TAG"; //$NON-NLS-1$	
+	public static final String COLOR_TAG = "COLOR_org.eclipse.e4.tools.emf.ui.TAG"; //$NON-NLS-1$
 }

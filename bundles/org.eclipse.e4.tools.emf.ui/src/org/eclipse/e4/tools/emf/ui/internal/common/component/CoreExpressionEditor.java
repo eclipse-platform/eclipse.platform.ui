@@ -35,7 +35,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -49,8 +48,8 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Image getImage(Object element, Display display) {
-		return createImage(ResourceProvider.IMG_CoreExpression);
+	public Image getImage(Object element) {
+		return getImage(element, ResourceProvider.IMG_CoreExpression);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		if (((MCoreExpression) element).getCoreExpressionId() != null
-			&& ((MCoreExpression) element).getCoreExpressionId().trim().length() > 0) {
+				&& ((MCoreExpression) element).getCoreExpressionId().trim().length() > 0) {
 			return ((MCoreExpression) element).getCoreExpressionId();
 		}
 		return null;
@@ -109,8 +108,8 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t),
-				EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID)
-				.observeDetail(getMaster()));
+					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID)
+					.observeDetail(getMaster()));
 
 			if (getEditor().getExtensionLookup() == null) {
 				gd.horizontalSpan = 2;
@@ -122,8 +121,8 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						final ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor()
-							.getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(),
-							getEditor().isLiveModel(), Messages);
+								.getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(),
+								getEditor().isLiveModel(), Messages);
 						dialog.open();
 					}
 				});
@@ -137,9 +136,9 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 		item.setControl(parent.getParent());
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
-			ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
 		createContributedEditorTabs(folder, context, getMaster(), MCoreExpression.class);
 
