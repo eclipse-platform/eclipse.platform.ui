@@ -256,7 +256,8 @@ public class RenderMojo extends AbstractMojo {
         try {
             String outputName = icon.nameBase;
             if (outputScale != 1) {
-                outputName += "@" + outputScale + "x";
+                String scaleId = outputScale == (double) (int) outputScale ? Integer.toString((int) outputScale): Double.toString(outputScale);
+                outputName += "@" + scaleId + "x";
             }
             outputName += ".png";
             ImageIO.write(sourceImage, "PNG", new File(icon.outputPath, outputName));
