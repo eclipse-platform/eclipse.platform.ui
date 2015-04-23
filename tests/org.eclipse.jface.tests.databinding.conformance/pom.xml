@@ -19,6 +19,11 @@
   <groupId>org.eclipse.jface</groupId>
   <artifactId>org.eclipse.jface.tests.databinding.conformance</artifactId>
   <version>1.2.0-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>eclipse-test-plugin</packaging>
+
+  <properties>
+  	<!-- Test not ready for Surefire -->
+  	<skipTests>true</skipTests>
+  </properties>
 
 </project>

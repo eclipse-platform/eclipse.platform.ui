@@ -23,7 +23,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-    <skipTests>false</skipTests>
    	<testSuiteUITests>**/org/eclipse/ui/tests/UiTestSuite.java</testSuiteUITests>
 	<testSuiteJFace>**/org/eclipse/jface/tests/AllTests.java</testSuiteJFace>
   </properties>
