@@ -297,7 +297,7 @@ public interface EModelService {
 	 * @param newParent
 	 *            The new parent for the element.
 	 */
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent);
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
@@ -311,7 +311,7 @@ public interface EModelService {
 	 * @param leavePlaceholder
 	 *            true if a placeholder for the element should be added
 	 */
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent,
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent,
 			boolean leavePlaceholder);
 
 	/**
@@ -325,7 +325,7 @@ public interface EModelService {
 	 * @param index
 	 *            The index to insert the element at; -1 means at the end
 	 */
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent, int index);
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index);
 
 	/**
 	 * Move the element to a new location. The element will be placed at the end of the new parent's
@@ -340,7 +340,7 @@ public interface EModelService {
 	 * @param leavePlaceholder
 	 *            true if a placeholder for the element should be added
 	 */
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent, int index,
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index,
 			boolean leavePlaceholder);
 
 	/**

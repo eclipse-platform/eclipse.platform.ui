@@ -529,23 +529,23 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	@Override
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent) {
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent) {
 		move(element, newParent, -1, false);
 	}
 
 	@Override
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent,
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent,
 			boolean leavePlaceholder) {
 		move(element, newParent, -1, leavePlaceholder);
 	}
 
 	@Override
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent, int index) {
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index) {
 		move(element, newParent, index, false);
 	}
 
 	@Override
-	public void move(MUIElement element, MElementContainer<MUIElement> newParent, int index,
+	public <T extends MUIElement> void move(T element, MElementContainer<? super T> newParent, int index,
 			boolean leavePlaceholder) {
 		// Cache where we were
 		MElementContainer<MUIElement> curParent = element.getParent();
