@@ -14,7 +14,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="jar_l_obj.svg">
   <defs
      id="defs4">
@@ -155,16 +155,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9999997"
-     inkscape:cx="17.862428"
-     inkscape:cy="21.20306"
+     inkscape:zoom="15.999999"
+     inkscape:cx="9.2099556"
+     inkscape:cy="6.3743868"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="469"
-     inkscape:window-height="455"
-     inkscape:window-x="125"
-     inkscape:window-y="125"
+     inkscape:window-width="994"
+     inkscape:window-height="803"
+     inkscape:window-x="1054"
+     inkscape:window-y="466"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -230,8 +230,9 @@
     <path
        inkscape:connector-curvature="0"
        id="path21765"
-       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#10305a;fill-opacity:1;stroke:#17325d;stroke-width:0.26428938000000002;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline;font-family:Gautami;-inkscape-font-specification:Gautami"
-       d="m 8.851266,1043.4647 0,3.7669 -0.694881,0 0,-3.0736 -0.446431,0.3254 -0.407611,-0.3254 0.94333,-0.6933 z" />
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10px;line-height:125%;font-family:Gautami;-inkscape-font-specification:Gautami;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#10305a;fill-opacity:1;stroke:#17325d;stroke-width:0.26428938;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 8.8747035,1043.4881 0,3.7435 -0.7456623,0 0.00726,-3.7513 z"
+       sodipodi:nodetypes="ccccc" />
     <path
        inkscape:connector-curvature="0"
        id="path21763-3"

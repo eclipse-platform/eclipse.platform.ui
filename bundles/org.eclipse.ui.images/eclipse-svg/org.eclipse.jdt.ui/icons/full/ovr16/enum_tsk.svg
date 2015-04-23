@@ -14,7 +14,7 @@
    height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="enum_tsk.svg">
   <defs
      id="defs4">
@@ -105,16 +105,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="44.8"
-     inkscape:cx="2.3788257"
-     inkscape:cy="1.8027404"
+     inkscape:zoom="22.627417"
+     inkscape:cx="7.726766"
+     inkscape:cy="-0.81018539"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="831"
-     inkscape:window-height="877"
-     inkscape:window-x="350"
-     inkscape:window-y="350"
+     inkscape:window-width="1287"
+     inkscape:window-height="988"
+     inkscape:window-x="698"
+     inkscape:window-y="538"
      inkscape:window-maximized="0"
      inkscape:snap-global="false">
     <inkscape:grid
@@ -150,7 +150,7 @@
        sodipodi:cy="468.23718"
        sodipodi:rx="10.625"
        sodipodi:ry="10.625"
-       d="m 398.75,468.23718 c 0,5.86803 -4.75697,10.625 -10.625,10.625 -5.86803,0 -10.625,-4.75697 -10.625,-10.625 0,-5.86802 4.75697,-10.625 10.625,-10.625 5.86803,0 10.625,4.75698 10.625,10.625 z"
+       d="m 398.75,468.23718 a 10.625,10.625 0 0 1 -10.625,10.625 10.625,10.625 0 0 1 -10.625,-10.625 10.625,10.625 0 0 1 10.625,-10.625 10.625,10.625 0 0 1 10.625,10.625 z"
        transform="matrix(0.29745286,0,0,0.29745286,-111.98566,908.63317)" />
     <path
        sodipodi:type="arc"
@@ -160,40 +160,40 @@
        sodipodi:cy="468.23718"
        sodipodi:rx="10.625"
        sodipodi:ry="10.625"
-       d="m 398.75,468.23718 a 10.625,10.625 0 1 1 -21.25,0 10.625,10.625 0 1 1 21.25,0 z"
+       d="m 398.75,468.23718 a 10.625,10.625 0 0 1 -10.625,10.625 10.625,10.625 0 0 1 -10.625,-10.625 10.625,10.625 0 0 1 10.625,-10.625 10.625,10.625 0 0 1 10.625,10.625 z"
        transform="matrix(0.29745286,0,0,0.29745286,-111.98566,908.63317)" />
     <g
        style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
        id="g8046"
        transform="matrix(0.53611583,0,0,0.71389361,-3.2649866,309.05512)">
       <rect
-         y="1031.3481"
-         x="9.87041"
-         height="7"
-         width="2"
+         y="1031.3979"
+         x="9.8115282"
+         height="7.0048976"
+         width="1.8694412"
          id="rect7222"
          style="fill:#ffffff;fill-opacity:1;stroke:none" />
       <rect
-         y="1031.3481"
-         x="9.87041"
-         height="1.03125"
-         width="5.46875"
+         y="1031.3979"
+         x="9.8188887"
+         height="1.4192483"
+         width="5.6035433"
          id="rect7222-7"
-         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans" />
+         style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
       <rect
-         y="1037.3481"
-         x="9.87041"
-         height="1.03125"
-         width="5.46875"
+         y="1036.9999"
+         x="10.406231"
+         height="1.4013208"
+         width="5.0057907"
          id="rect7222-7-2"
-         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans" />
+         style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
       <rect
-         y="1034.3481"
-         x="9.87041"
-         height="1.03125"
-         width="4.96875"
+         y="1034.2012"
+         x="10.756576"
+         height="1.387207"
+         width="2.7797804"
          id="rect7222-7-2-5"
-         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans" />
+         style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none" />
     </g>
   </g>
 </svg>

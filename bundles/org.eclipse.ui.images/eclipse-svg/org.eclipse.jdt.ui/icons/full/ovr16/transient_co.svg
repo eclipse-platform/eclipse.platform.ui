@@ -11,10 +11,10 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="7"
-   height="7"
+   height="8"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="transient_co.svg">
   <defs
      id="defs4">
@@ -39,7 +39,7 @@
        x2="6"
        y2="1050.3622"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-2,2)" />
+       gradientTransform="translate(-2,0.99688974)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -48,16 +48,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="44.8"
-     inkscape:cx="2.8541521"
-     inkscape:cy="2.562252"
+     inkscape:zoom="44.800002"
+     inkscape:cx="0.93183537"
+     inkscape:cy="0.25144632"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g4143"
      showgrid="true"
-     inkscape:window-width="831"
-     inkscape:window-height="877"
-     inkscape:window-x="153"
-     inkscape:window-y="366"
+     inkscape:window-width="1049"
+     inkscape:window-height="951"
+     inkscape:window-x="866"
+     inkscape:window-y="491"
      inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
@@ -83,11 +83,29 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1045.3622)">
+     transform="translate(0,-1044.3622)">
+    <g
+       id="g4143">
+      <rect
+         y="1044.4023"
+         x="1.7235791e-08"
+         height="2.9330533"
+         width="6.9776788"
+         id="rect4139"
+         style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.89999998;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         y="1045.3354"
+         x="2.0223215"
+         height="7.0267859"
+         width="2.9776785"
+         id="rect4141"
+         style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.89999998;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
     <path
        style="fill:url(#linearGradient3786);fill-opacity:1;stroke:none"
-       d="m 1,1045.3622 0,1 2,0 0,6 1,0 0,-6 2,0 0,-1 -5,0 z"
+       d="m 1,1045.3636 0,1 2,0 0,6.0223 1,0 0,-6.0223 2,0 0,-1 z"
        id="rect2999"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc" />
   </g>
 </svg>
