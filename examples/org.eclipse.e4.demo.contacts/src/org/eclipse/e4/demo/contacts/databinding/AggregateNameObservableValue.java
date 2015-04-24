@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Siemens AG and others.
+ * Copyright (c) 2009, 2015 Siemens AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,11 +8,12 @@
  *
  * Contributors:
  *     Kai Tödter - initial implementation
+ *     Stephan Hackstedt <stephan.hackstedt@googlemail.com> - Bug 465449
  ******************************************************************************/
 
 package org.eclipse.e4.demo.contacts.databinding;
 
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -29,9 +30,10 @@ public class AggregateNameObservableValue extends AbstractObservableValue {
 
 	public AggregateNameObservableValue(WritableValue value) {
 		String[] properties = new String[] { "firstName", "middleName",
-				"lastName" };
+		"lastName" };
 		observableValues = new IObservableValue[properties.length];
 		listener = new IValueChangeListener() {
+			@Override
 			public void handleValueChange(ValueChangeEvent event) {
 				if (!isUpdating) {
 					fireValueChange(Diffs.createValueDiff(currentStringValue,
@@ -41,8 +43,8 @@ public class AggregateNameObservableValue extends AbstractObservableValue {
 		};
 		int i = 0;
 		for (String property : properties) {
-			observableValues[i] = PojoObservables.observeDetailValue(value,
-					property, String.class);
+			observableValues[i] = PojoProperties.value((Class<?>) value.getValueType(), property, String.class)
+					.observeDetail(value);
 			observableValues[i++].addValueChangeListener(listener);
 		}
 	}
@@ -92,14 +94,15 @@ public class AggregateNameObservableValue extends AbstractObservableValue {
 		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
+	@Override
 	public Object getValueType() {
 		return String.class;
 	}
 
 	@Override
 	public synchronized void dispose() {
-		for (int i = 0; i < observableValues.length; i++) {
-			observableValues[i].removeValueChangeListener(listener);
+		for (IObservableValue observableValue : observableValues) {
+			observableValue.removeValueChangeListener(listener);
 		}
 		super.dispose();
 	}

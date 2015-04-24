@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Siemens AG and others.
+ * Copyright (c) 2009, 2015 Siemens AG and others.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -9,12 +9,13 @@
  * Contributors:
  *     Kai Tödter - initial implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 427896
+ *     Stephan Hackstedt <stephan.hackstedt@googlemail.com> - Bug 465449
  ******************************************************************************/
 
 package org.eclipse.e4.demo.contacts.views;
 
 import javax.inject.Inject;
-import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
@@ -105,9 +106,12 @@ public class ListView {
 
 		contactsViewer.setContentProvider(contentProvider);
 
-		IObservableMap[] attributes = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Contact.class,
-				new String[] { "firstName", "lastName" });
+		IObservableMap firstName = BeanProperties.value(Contact.class, "firstName")
+				.observeDetail(contentProvider.getKnownElements());
+		IObservableMap lastName = BeanProperties.value(Contact.class, "lastName")
+				.observeDetail(contentProvider.getKnownElements());
+		IObservableMap[] attributes = { firstName, lastName };
+
 		contactsViewer.setLabelProvider(new ObservableMapLabelProvider(
 				attributes));
 
