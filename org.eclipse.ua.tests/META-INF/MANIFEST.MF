@@ -22,8 +22,8 @@ Require-Bundle: org.junit,
  org.eclipse.equinox.jsp.jasper.registry;bundle-version="1.0.100"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
-Import-Package: javax.servlet;version="2.4.0",
- javax.servlet.http;version="2.4.0",
+Import-Package: javax.servlet;version="3.1.0",
+ javax.servlet.http;version="3.1.0",
  org.apache.lucene.index;core=split;version="[3.5.0,4.0.0)",
  org.apache.lucene.search;core=split;version="[3.5.0,4.0.0)",
  org.apache.lucene.store;core=split;version="[3.5.0,4.0.0)"
