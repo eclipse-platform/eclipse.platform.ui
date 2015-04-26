@@ -90,15 +90,6 @@ public class RenderMojo extends AbstractMojo {
     /** The amount of scaling to apply to rasterized images. */
     private double outputScale;
 
-    /** Used for creating desaturated icons */
-    private GrayscaleFilter grayFilter;
-
-    /** Used for creating desaturated icons */
-    private HSBAdjustFilter desaturator;
-
-    /** Reduces contrast for disabled icons. */
-    private ContrastFilter decontrast;
-
     /**
      * @return the number of icons rendered at the time of the call
      */
@@ -119,7 +110,7 @@ public class RenderMojo extends AbstractMojo {
      * @param icon
      *            the icon to render
      */
-    public void rasterize(IconEntry icon) {
+    public void rasterize(IconEntry icon, GrayscaleFilter grayFilter, HSBAdjustFilter desaturator, ContrastFilter decontrast) {
         if (icon == null) {
             log.error("Null icon definition, skipping.");
             failedIcons.add(icon);
@@ -213,6 +204,21 @@ public class RenderMojo extends AbstractMojo {
         }
 
         writeIcon(icon, outputWidth, outputHeight, inputImage);
+
+        try {
+            if (icon.disabledPath != null) {
+                BufferedImage desaturated16 = desaturator.filter(
+                    grayFilter.filter(inputImage, null), null);
+
+                BufferedImage deconstrast = decontrast.filter(desaturated16, null);
+
+                ImageIO.write(deconstrast, "PNG", new File(icon.disabledPath, icon.nameBase));
+            }
+        } catch (Exception e1) {
+            log.error("Failed to render disabled icon: "  +
+                               icon.nameBase, e1);
+            failedIcons.add(icon);
+        }
     }
 
     /**
@@ -261,15 +267,6 @@ public class RenderMojo extends AbstractMojo {
             }
             outputName += ".png";
             ImageIO.write(sourceImage, "PNG", new File(icon.outputPath, outputName));
-
-            if (icon.disabledPath != null) {
-                BufferedImage desaturated16 = desaturator.filter(
-                        grayFilter.filter(sourceImage, null), null);
-
-                BufferedImage deconstrast = decontrast.filter(desaturated16, null);
-
-                ImageIO.write(deconstrast, "PNG", new File(icon.disabledPath, outputName));
-            }
         } catch (Exception e1) {
             log.error("Failed to resize rendered icon to output size: "  +
                                icon.nameBase, e1);
@@ -329,9 +326,19 @@ public class RenderMojo extends AbstractMojo {
             // Create the callable and add it to the task pool
             Callable<Object> runnable = new Callable<Object>() {
                 public Object call() throws Exception {
+                    // The jhlabs filters are not thread safe, so provide one set per thread
+                    GrayscaleFilter grayFilter = new GrayscaleFilter();
+
+                    HSBAdjustFilter desaturator = new HSBAdjustFilter();
+                         desaturator.setSFactor(0.0f);
+
+                    ContrastFilter decontrast = new ContrastFilter();
+                         decontrast.setBrightness(2.9f);
+                         decontrast.setContrast(0.2f);
+
                     // Rasterize this batch
                     for (int count = 0; count < execCount; count++) {
-                        rasterize(icons.get(batchStart + count));
+                        rasterize(icons.get(batchStart + count), grayFilter, desaturator, decontrast);
                     }
 
                     // Update the render counter
@@ -463,26 +470,6 @@ public class RenderMojo extends AbstractMojo {
         icons = new ArrayList<IconEntry>();
         execPool = Executors.newFixedThreadPool(threads);
         counter = new AtomicInteger();
-
-        grayFilter = new GrayscaleFilter();
-
-        desaturator = new HSBAdjustFilter();
-        desaturator.setSFactor(0.0f);
-
-        decontrast = new ContrastFilter();
-        decontrast.setBrightness(2.9f);
-        decontrast.setContrast(0.2f);
-        initFilter(decontrast);
-    }
-
-    /**
-     * Work around the fact that {@link com.jhlabs.image.TransferFilter#initialize()}
-     * is not thread-safe.
-     * @param filter the filter
-     */
-    private void initFilter(TransferFilter filter) {
-		filter.filter(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
-				new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
     }
 
     /**
