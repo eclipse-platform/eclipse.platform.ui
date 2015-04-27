@@ -632,7 +632,7 @@
             extensions="icontest1"/>            
        <editor
             class="org.eclipse.ui.tests.api.MockEditorPart"
-            icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/class_obj.gif"
+            icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/class_obj.png"
             default="true"
             name="Plugin Icon Test 2"
             id="org.eclipse.ui.tests.IconTestEditor2"

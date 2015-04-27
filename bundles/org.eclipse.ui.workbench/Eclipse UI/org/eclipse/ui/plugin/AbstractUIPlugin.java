@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
@@ -700,15 +701,31 @@ public abstract class AbstractUIPlugin extends Plugin {
 		// directly supported by PlatformURLConnection and needs to go through
 		// FileLocator#find(URL), see bug 250432.
 		IPath uriPath = new Path("/plugin").append(pluginId).append(imageFilePath); //$NON-NLS-1$
-		URL fullPathString;
+		URL url;
 		try {
 			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
-			fullPathString = uri.toURL();
+			url = uri.toURL();
 		} catch (MalformedURLException | URISyntaxException e) {
 			return null;
 		}
 
-        return ImageDescriptor.createFromURL(fullPathString);
+		// look for the image
+		URL fullPathString = FileLocator.find(url);
+		if (fullPathString == null) {
+			// If not found, reinterpret imageFilePath as full URL.
+			// This is unspecified, but apparently widely-used, see bug 395126.
+			try {
+				fullPathString = new URL(imageFilePath);
+			} catch (MalformedURLException e) {
+				return null;
+			}
+			URL platformURL = FileLocator.find(fullPathString);
+			if (platformURL != null) {
+				url = fullPathString;
+			}
+		}
+		// create image descriptor with the platform:/ URL
+		return ImageDescriptor.createFromURL(url);
     }
 
     /**

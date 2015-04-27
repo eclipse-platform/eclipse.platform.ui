@@ -60,7 +60,7 @@ public class EditorIconTest extends UITestCase {
 	        i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 	                "foo.icontest2").getImageDescriptor().createImage();
 	        i2 = AbstractUIPlugin.imageDescriptorFromPlugin(
-	                "org.eclipse.jdt.ui", "icons/full/obj16/class_obj.gif")
+	                "org.eclipse.jdt.ui", "icons/full/obj16/class_obj.png") // layer breaker!
 	                .createImage();
 	        ImageTests.assertEquals(i1, i2);
         }
