@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,9 @@ import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -74,6 +77,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Launch delegate for Ant builds
  */
+@SuppressWarnings("restriction")
 public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger"; //$NON-NLS-1$
@@ -109,12 +113,26 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 
 	private boolean fUserSpecifiedLogger = false;
 
-	/**
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 *      org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		String path = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, new String("")); //$NON-NLS-1$
+		if (!path.isEmpty()) {
+			IPath jrePath = Path.fromPortableString(path);
+			IVMInstall vm = JavaRuntime.getVMInstall(jrePath);
+			if (vm instanceof AbstractVMInstall) {
+				AbstractVMInstall install = (AbstractVMInstall) vm;
+				String vmver = install.getJavaVersion();
+				// versionToJdkLevel only handles 3 char versions = 1.5, 1.6, 1.9, etc
+				if (vmver.length() > 3) {
+					vmver = vmver.substring(0, 3);
+				}
+				int ver = (int) (CompilerOptions.versionToJdkLevel(vmver) >>> 16);
+				if (ver < ClassFileConstants.MAJOR_VERSION_1_7) {
+					IStatus status = new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, 1, AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__2, null);
+					throw new CoreException(status);
+				}
+			}
+		}
 		if (monitor.isCanceled()) {
 			return;
 		}
@@ -128,9 +146,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		boolean isSeparateJRE = AntLaunchingUtil.isSeparateJREAntBuild(configuration);
 
 		if (AntLaunchingUtil.isLaunchInBackground(configuration)) {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new Object[] { configuration.getName() }), 10);
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new Object[] {
+					configuration.getName() }), 10);
 		} else {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Running__0__2, new Object[] { configuration.getName() }), 100);
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Running__0__2, new Object[] {
+					configuration.getName() }), 100);
 		}
 
 		// resolve location
@@ -142,7 +162,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 
 		if (!isSeparateJRE && AntRunner.isBuildRunning()) {
-			IStatus status = new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Build_In_Progress, new Object[] { location.toOSString() }), null);
+			IStatus status = new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Build_In_Progress, new Object[] {
+					location.toOSString() }), null);
 			throw new CoreException(status);
 		}
 
@@ -218,7 +239,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		StringBuffer commandLine = generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, isSeparateJRE, captureOutput, setInputHandler);
 
 		if (isSeparateJRE) {
-			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new Object[] { configuration.getName() }), 10);
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__1, new Object[] {
+					configuration.getName() }), 10);
 			runInSeparateVM(configuration, launch, monitor, idStamp, antHome, port, requestPort, commandLine, captureOutput, setInputHandler);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine);
