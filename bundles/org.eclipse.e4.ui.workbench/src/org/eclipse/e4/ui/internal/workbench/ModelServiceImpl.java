@@ -552,7 +552,11 @@ public class ModelServiceImpl implements EModelService {
 		int curIndex = curParent.getChildren().indexOf(element);
 
 		// Move the model element
-		newParent.getChildren().add(index, element);
+		if (index == -1) {
+			newParent.getChildren().add(element);
+		} else {
+			newParent.getChildren().add(index, element);
+		}
 
 		if (leavePlaceholder) {
 			MPlaceholder ph = MAdvancedFactory.INSTANCE.createPlaceholder();
