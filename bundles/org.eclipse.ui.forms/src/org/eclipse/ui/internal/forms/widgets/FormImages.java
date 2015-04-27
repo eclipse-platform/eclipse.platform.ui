@@ -310,6 +310,7 @@ public class FormImages {
 			gc.dispose();
 			color1.dispose();
 			color2.dispose();
+			originalBgColor.dispose();
 			return image;
 		}
 
