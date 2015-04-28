@@ -350,8 +350,9 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 					wrapped.getTitleImage());
 		}
 
-		if (wrapped instanceof ISaveablePart) {
-			part.setDirty(((ISaveablePart) wrapped).isDirty());
+		ISaveablePart saveable = SaveableHelper.getSaveable(wrapped);
+		if (saveable != null) {
+			part.setDirty(saveable.isDirty());
 		}
 
 		wrapped.addPropertyListener(new IPropertyListener() {
