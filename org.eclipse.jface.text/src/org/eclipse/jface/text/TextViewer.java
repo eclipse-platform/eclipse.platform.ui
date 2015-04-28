@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Markus Schorn <markus.schorn@windriver.com> - shift with trailing empty line - https://bugs.eclipse.org/325438
  *     Sergey Prigogin (Google) - Bug 441827 - TextViewer.ViewerState.restore method looses caret position
+ *     Jonah Graham (Kichwa Coders) - Bug 465684 - Fix initial setVisibleRegion of 0, 0
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -3007,8 +3008,12 @@ public class TextViewer extends Viewer implements
 			int offset= document.getLineOffset(line);
 			int length= (visibleRegionOffset - offset) + visibleRegionLength;
 
+			// Bug 465684: It is not possible to determine the difference between a
+			// set parent document range of 0, 0 vs an unset one. So in the 0, 0 case
+			// always set the parent document range.
 			Position parentRange= childDocument.getParentDocumentRange();
-			if (offset != parentRange.getOffset() || length != parentRange.getLength()) {
+			if (offset != parentRange.getOffset() || length != parentRange.getLength()
+					|| (offset == 0 && length == 0)) {
 				childDocument.setParentDocumentRange(offset, length);
 				return true;
 			}

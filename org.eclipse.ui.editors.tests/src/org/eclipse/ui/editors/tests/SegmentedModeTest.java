@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jonah Graham (Kichwa Coders) - Bug 465684 - Fix initial setVisibleRegion of 0, 0
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
@@ -16,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -89,6 +91,40 @@ public class SegmentedModeTest extends TestCase {
 						buffer.insert(5, "really ");
 						IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 						assertEquals(buffer.toString(), document.get());
+					}
+				}
+			} finally {
+				page.saveEditor(part, false);
+			}
+
+		} catch (PartInitException e) {
+			assertTrue(false);
+		}
+	}
+
+	/*
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=465684
+	 */
+	public void testShowNothing() {
+		IWorkbench workbench= PlatformUI.getWorkbench();
+		IWorkbenchPage page= workbench.getActiveWorkbenchWindow().getActivePage();
+		try {
+			while (Display.getDefault().readAndDispatch()) {
+			}
+			IEditorPart part= IDE.openEditor(page, fFile);
+
+			try {
+				if (part instanceof ITextEditor) {
+					ITextEditor editor= (ITextEditor)part;
+
+					editor.showHighlightRangeOnly(true);
+					editor.setHighlightRange(0, 0, true);
+
+					Control control= (Control)part.getAdapter(Control.class);
+					if (control instanceof StyledText) {
+						StyledText styledText= (StyledText)control;
+						String text= styledText.getText();
+						assertEquals("", text);
 					}
 				}
 			} finally {
