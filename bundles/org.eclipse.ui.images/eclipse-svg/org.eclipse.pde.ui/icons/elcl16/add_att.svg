@@ -14,8 +14,8 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="add_obj.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="add_att.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -41,7 +41,7 @@
          id="stop5587-3" />
     </linearGradient>
     <linearGradient
-       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.5980621,1028.9745)"
+       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.6918121,1029.0994)"
        y2="9.1435204"
        x2="2.03125"
        y1="6.9396911"
@@ -51,7 +51,7 @@
        xlink:href="#linearGradient5591-4"
        inkscape:collect="always" />
     <linearGradient
-       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.5980621,1028.9745)"
+       gradientTransform="matrix(1.9375158,0,0,2.0245922,3.6918121,1029.0994)"
        y2="4.671875"
        x2="2.03125"
        y1="9.1435204"
@@ -69,18 +69,19 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="32.000001"
-     inkscape:cx="9.0872213"
+     inkscape:cx="9.1487089"
      inkscape:cy="7.1700733"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1241"
      inkscape:window-height="814"
-     inkscape:window-x="25"
-     inkscape:window-y="25"
+     inkscape:window-x="1150"
+     inkscape:window-y="671"
      inkscape:window-maximized="0"
      showguides="true"
-     inkscape:guide-bbox="true">
+     inkscape:guide-bbox="true"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid3971" />
@@ -104,8 +105,8 @@
      style="display:inline"
      transform="translate(0,-1036.3622)">
     <path
-       style="fill:url(#linearGradient5618);fill-opacity:1;stroke:url(#linearGradient5620);stroke-width:0.89473408;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
-       d="m 5.4144832,1038.7811 3.9961264,0 0,3.9228 3.8750314,0 0,4.1756 -4.0566734,0 0,4.1127 -3.8144844,0 0,-4.1127 -3.9961262,0 0,-4.1123 3.935579,0 z"
+       style="display:inline;fill:url(#linearGradient5618);fill-opacity:1;stroke:url(#linearGradient5620);stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 6.5082332,1038.906 2.9961264,0 0,3.9228 4.0000314,0 0,2.8944 -3.9629234,0 0,4.2064 -3.0332344,0 0,-4.2064 -3.9961262,0 0,-2.8311 3.935579,0 z"
        id="path5581"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccccccccc" />
