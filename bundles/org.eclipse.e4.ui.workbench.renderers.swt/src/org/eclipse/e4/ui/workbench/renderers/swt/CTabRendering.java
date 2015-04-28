@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fabio Zadrozny - Bug 465711
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -93,11 +94,18 @@ ICTabRendering {
 	private CTabFolderRendererWrapper rendererWrapper;
 	private CTabFolderWrapper parentWrapper;
 
+	private Color hotUnselectedTabsColorBackground;
+
 	@Inject
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
 		parentWrapper = new CTabFolderWrapper(parent);
 		rendererWrapper = new CTabFolderRendererWrapper(this);
+	}
+
+	@Override
+	public void setUnselectedHotTabsColorBackground(Color color) {
+		this.hotUnselectedTabsColorBackground = color;
 	}
 
 	@Override
@@ -652,7 +660,13 @@ ICTabRendering {
 							+ INNER_KEYLINE + OUTER_KEYLINE), bounds.y
 							+ bounds.height);
 
-			gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+			Color color = hotUnselectedTabsColorBackground;
+			if (color == null) {
+				// Fallback: if color was not set, use white for highlighting
+				// hot tab.
+				color = gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
+			}
+			gc.setBackground(color);
 			int[] tmpPoints = new int[index];
 			System.arraycopy(points, 0, tmpPoints, 0, index);
 			gc.fillPolygon(tmpPoints);
