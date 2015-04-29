@@ -536,7 +536,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							if (!saveable.isSaveOnCloseNeeded()) {
 								return Save.NO;
 							}
-							return SaveableHelper.savePart((ISaveablePart) part, part,
+							return SaveableHelper.savePart(saveable, part,
 									WorkbenchWindow.this, true) ? Save.NO : Save.CANCEL;
 						}
 					}
@@ -581,11 +581,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					Object object = dirtyPart.getObject();
 					if (object instanceof CompatibilityPart) {
 						IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
-						if (workbenchPart instanceof ISaveablePart) {
+						if (SaveableHelper.isSaveable(workbenchPart)) {
 							SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 									.getService(ISaveablesLifecycleListener.class);
 							Object saveResult = saveablesList.preCloseParts(
-									Collections.singletonList((ISaveablePart) workbenchPart), true,
+									Collections.singletonList(workbenchPart), true,
 									WorkbenchWindow.this);
 							return saveResult != null;
 						}
@@ -595,23 +595,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 				@Override
 				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm) {
-					ArrayList<ISaveablePart> saveables = new ArrayList<ISaveablePart>();
+					ArrayList<IWorkbenchPart> saveableParts = new ArrayList<>();
 					for (MPart part : dirtyParts) {
 						Object object = part.getObject();
 						if (object instanceof CompatibilityPart) {
 							IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
-							if (workbenchPart instanceof ISaveablePart) {
-								saveables.add((ISaveablePart) workbenchPart);
+							if (SaveableHelper.isSaveable(workbenchPart)) {
+								saveableParts.add(workbenchPart);
 							}
 						}
 					}
-					if (saveables.isEmpty()) {
+					if (saveableParts.isEmpty()) {
 						return super.saveParts(dirtyParts, confirm);
 					}
 
 					SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
 							.getService(ISaveablesLifecycleListener.class);
-					Object saveResult = saveablesList.preCloseParts(saveables, true,
+					Object saveResult = saveablesList.preCloseParts(saveableParts, true,
 							WorkbenchWindow.this);
 					return saveResult != null;
 				}

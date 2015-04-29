@@ -344,22 +344,21 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param window
 	 * @return the post close info to be passed to postClose
 	 */
-	public Object preCloseParts(List partsToClose, boolean save,
+	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save,
 			final IWorkbenchWindow window) {
 		return preCloseParts(partsToClose, save, window, window);
 	}
 
-	public Object preCloseParts(List partsToClose, boolean save, IShellProvider shellProvider,
+	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean save, IShellProvider shellProvider,
 			final IWorkbenchWindow window) {
 		return preCloseParts(partsToClose, false, save, shellProvider, window);
 	}
 
-	public Object preCloseParts(List partsToClose, boolean addNonPartSources, boolean save,
+	public Object preCloseParts(List<IWorkbenchPart> partsToClose, boolean addNonPartSources, boolean save,
 			IShellProvider shellProvider, final IWorkbenchWindow window) {
 		// reference count (how many occurrences of a model will go away?)
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
-		for (Iterator it = partsToClose.iterator(); it.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart) it.next();
+		for (IWorkbenchPart part : partsToClose) {
 			postCloseInfo.partsClosing.add(part);
 			ISaveablePart saveable = SaveableHelper.getSaveable(part);
 			if (saveable != null) {
@@ -675,7 +674,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	private static class PostCloseInfo {
-		private List partsClosing = new ArrayList();
+		private List<IWorkbenchPart> partsClosing = new ArrayList<>();
 
 		private Map modelsDecrementing = new HashMap();
 
@@ -688,8 +687,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	public void postClose(Object postCloseInfoObject) {
 		PostCloseInfo postCloseInfo = (PostCloseInfo) postCloseInfoObject;
 		List removed = new ArrayList();
-		for (Iterator it = postCloseInfo.partsClosing.iterator(); it.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart) it.next();
+		for (IWorkbenchPart part : postCloseInfo.partsClosing) {
 			Set saveables = (Set) modelMap.get(part);
 			if (saveables != null) {
 				// make a copy to avoid a ConcurrentModificationException - we
