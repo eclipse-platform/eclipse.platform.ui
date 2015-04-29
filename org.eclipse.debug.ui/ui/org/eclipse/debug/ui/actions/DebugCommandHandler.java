@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,10 +73,13 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         
         EnabledTarget(IWorkbenchWindow window) {
             fWindow = window;
+		}
+
+		void init() {
             DebugCommandService.getService(fWindow).updateCommand(getCommandType(), this);
             getContextService(fWindow).addDebugContextListener(this);
-        }
-        
+		}
+
         @Override
 		public void setEnabled(boolean enabled) {
             boolean oldEnabled = fEnabled;
@@ -188,7 +191,8 @@ public abstract class DebugCommandHandler extends AbstractHandler {
         EnabledTarget target = fEnabledTargetsMap.get(window);
         if (target == null) {
             target = new EnabledTarget(window);
-            fEnabledTargetsMap.put(window, target);
+			fEnabledTargetsMap.put(window, target);
+			target.init();
         }
         return target;
     }
