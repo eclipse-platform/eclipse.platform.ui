@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug https://bugs.eclipse.org/436247
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
- *     Robert Roth <robert.roth.off@gmail.com> - Bug 274005
+ *     Robert Roth <robert.roth.off@gmail.com> - Bugs 274005, 456291
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
@@ -327,7 +327,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                     Set bindings = themeRegistry
                             .getPresentationsBindingsFor(categories[i]);
 					if (bindings == null) {
-						list.add(categories[i]);
+						Object[] children = getChildren(categories[i]);
+						if (children != null && children.length > 0) {
+							list.add(categories[i]);
+						}
 					}
                 }
             }
