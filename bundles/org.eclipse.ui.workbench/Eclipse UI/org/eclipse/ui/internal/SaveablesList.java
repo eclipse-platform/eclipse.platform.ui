@@ -13,12 +13,12 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
@@ -76,12 +76,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private ListenerList listeners = new ListenerList();
 
 	// event source (mostly ISaveablesSource) -> Set of Saveable
-	private Map modelMap = new HashMap();
+	private Map<Object, Set<Saveable>> modelMap = new HashMap<>();
 
-	// reference counting map, Saveable -> Integer
-	private Map modelRefCounts = new HashMap();
+	// reference counting map
+	private Map<Saveable, Integer> modelRefCounts = new HashMap<>();
 
-	private Set nonPartSources = new HashSet();
+	private Set<ISaveablesSource> nonPartSources = new HashSet<>();
 
 	/**
 	 * Returns the list of open models managed by this model manager.
@@ -89,12 +89,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return a list of models
 	 */
 	public Saveable[] getOpenModels() {
-		Set allDistinctModels = new HashSet();
-		Iterator saveables = modelMap.values().iterator();
-		while (saveables.hasNext())
-			allDistinctModels.addAll((Set)saveables.next());
+		Set<Saveable> allDistinctModels = new HashSet<>();
+		Iterator<Set<Saveable>> saveables = modelMap.values().iterator();
+		while (saveables.hasNext()) {
+			allDistinctModels.addAll(saveables.next());
+		}
 
-		return (Saveable[]) allDistinctModels.toArray(
+		return allDistinctModels.toArray(
 				new Saveable[allDistinctModels.size()]);
 	}
 
@@ -106,9 +107,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			return false;
 		}
 		boolean result = false;
-		Set modelsForSource = (Set) modelMap.get(source);
+		Set<Saveable> modelsForSource = modelMap.get(source);
 		if (modelsForSource == null) {
-			modelsForSource = new HashSet();
+			modelsForSource = new HashSet<>();
 			modelMap.put(source, modelsForSource);
 		}
 		if (modelsForSource.add(model)) {
@@ -127,9 +128,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param key
 	 * @return true if the ref count of the given key is now 1
 	 */
-	private boolean incrementRefCount(Map referenceMap, Object key) {
+	private boolean incrementRefCount(Map<Saveable, Integer> referenceMap, Saveable key) {
 		boolean result = false;
-		Integer refCount = (Integer) referenceMap.get(key);
+		Integer refCount = referenceMap.get(key);
 		if (refCount == null) {
 			result = true;
 			refCount = new Integer(0);
@@ -145,11 +146,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param key
 	 * @return true if the ref count of the given key was 1
 	 */
-	private boolean decrementRefCount(Map referenceMap, Object key) {
+	private boolean decrementRefCount(Map<Saveable, Integer> referenceMap, Saveable key) {
 		boolean result = false;
-		Integer refCount = (Integer) referenceMap.get(key);
+		Integer refCount = referenceMap.get(key);
 		if (refCount == null)
-			Assert.isTrue(false, key + ": " + ((Saveable) key).getName()); //$NON-NLS-1$
+			Assert.isTrue(false, key + ": " + key.getName()); //$NON-NLS-1$
 		if (refCount.intValue() == 1) {
 			referenceMap.remove(key);
 			result = true;
@@ -162,7 +163,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	// returns true if this model was removed from getModels();
 	private boolean removeModel(Object source, Saveable model) {
 		boolean result = false;
-		Set modelsForSource = (Set) modelMap.get(source);
+		Set<Saveable> modelsForSource = modelMap.get(source);
 		if (modelsForSource == null) {
 			logWarning(
 					"Ignored attempt to remove a saveable when no saveables were known", source, model); //$NON-NLS-1$
@@ -224,8 +225,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			break;
 		case SaveablesLifecycleEvent.PRE_CLOSE:
 			Saveable[] models = event.getSaveables();
-			Map modelsDecrementing = new HashMap();
-			Set modelsClosing = new HashSet();
+			Map<Saveable, Integer> modelsDecrementing = new HashMap<>();
+			Set<Saveable> modelsClosing = new HashSet<>();
 			for (int i = 0; i < models.length; i++) {
 				incrementRefCount(modelsDecrementing, models[i]);
 			}
@@ -266,7 +267,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param modelArray
 	 */
 	private void removeModels(Object source, Saveable[] modelArray) {
-		List removed = new ArrayList();
+		List<Saveable> removed = new ArrayList<>();
 		for (int i = 0; i < modelArray.length; i++) {
 			Saveable model = modelArray[i];
 			if (removeModel(source, model)) {
@@ -275,7 +276,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		if (removed.size() > 0) {
 			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
-					SaveablesLifecycleEvent.POST_OPEN, (Saveable[]) removed
+					SaveablesLifecycleEvent.POST_OPEN, removed
 							.toArray(new Saveable[removed.size()]), false));
 		}
 	}
@@ -285,7 +286,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param modelArray
 	 */
 	private void addModels(Object source, Saveable[] modelArray) {
-		List added = new ArrayList();
+		List<Saveable> added = new ArrayList<>();
 		for (int i = 0; i < modelArray.length; i++) {
 			Saveable model = modelArray[i];
 			if (addModel(source, model)) {
@@ -294,7 +295,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		if (added.size() > 0) {
 			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
-					SaveablesLifecycleEvent.POST_OPEN, (Saveable[]) added
+					SaveablesLifecycleEvent.POST_OPEN, added
 							.toArray(new Saveable[added.size()]), false));
 		}
 	}
@@ -417,16 +418,16 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return true if the user canceled
 	 */
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window,
-			Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
+			Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing, boolean canCancel) {
 		return promptForSavingIfNecessary(window, window, modelsClosing, modelsDecrementing,
 				canCancel);
 	}
 
 	private boolean promptForSavingIfNecessary(IShellProvider shellProvider,
-			IWorkbenchWindow window, Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
-		List modelsToOptionallySave = new ArrayList();
-		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
-			Saveable modelDecrementing = (Saveable) it.next();
+ IWorkbenchWindow window,
+			Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing, boolean canCancel) {
+		List<Saveable> modelsToOptionallySave = new ArrayList<>();
+		for (Saveable modelDecrementing : modelsDecrementing.keySet()) {
 			if (modelDecrementing.isDirty() && !modelsClosing.contains(modelDecrementing)) {
 				modelsToOptionallySave.add(modelDecrementing);
 			}
@@ -439,9 +440,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			return true;
 		}
 
-		List modelsToSave = new ArrayList();
-		for (Iterator it = modelsClosing.iterator(); it.hasNext();) {
-			Saveable modelClosing = (Saveable) it.next();
+		List<Saveable> modelsToSave = new ArrayList<>();
+		for (Saveable modelClosing : modelsClosing) {
 			if (modelClosing.isDirty()) {
 				modelsToSave.add(modelClosing);
 			}
@@ -454,9 +454,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param modelsClosing
 	 * @param modelsDecrementing
 	 */
-	private void fillModelsClosing(Set modelsClosing, Map modelsDecrementing) {
-		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
-			Saveable model = (Saveable) it.next();
+	private void fillModelsClosing(Set<Saveable> modelsClosing, Map<Saveable, Integer> modelsDecrementing) {
+		for (Saveable model : modelsDecrementing.keySet()) {
 			if (modelsDecrementing.get(model).equals(modelRefCounts.get(model))) {
 				modelsClosing.add(model);
 			}
@@ -475,7 +474,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param stillOpenElsewhere whether the models are referenced by open parts
 	 * @return true if the user canceled
 	 */
-	public boolean promptForSaving(List modelsToSave,
+	public boolean promptForSaving(List<Saveable> modelsToSave,
 			final IShellProvider shellProvider, IRunnableContext runnableContext, final boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
@@ -491,7 +490,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				modelsToSave.clear();
 				return false;
 			} else if (modelsToSave.size() == 1) {
-				Saveable model = (Saveable) modelsToSave.get(0);
+				Saveable model = modelsToSave.get(0);
 				// Show a dialog.
 				String[] buttons;
 				if(canCancel) {
@@ -604,7 +603,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN, false);
 					}
 
-					modelsToSave = Arrays.asList(dlg.getResult());
+					modelsToSave = new ArrayList<>();
+					Object[] objects = dlg.getResult();
+					for (Object object : objects) {
+						if (object instanceof Saveable) {
+							modelsToSave.add((Saveable) object);
+						}
+					}
 				}
 			}
 		}
@@ -622,7 +627,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 *            use a workbench window for this.
 	 * @return <code>true</code> if the operation was canceled
 	 */
-	public boolean saveModels(final List finalModels, final IShellProvider shellProvider,
+	public boolean saveModels(final List<Saveable> finalModels, final IShellProvider shellProvider,
 			IRunnableContext runnableContext) {
 		return saveModels(finalModels, shellProvider, runnableContext, true);
 	}
@@ -642,7 +647,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @param blockUntilSaved
 	 * @return <code>true</code> if the operation was canceled
 	 */
-	public boolean saveModels(final List finalModels, final IShellProvider shellProvider,
+	public boolean saveModels(final List<Saveable> finalModels, final IShellProvider shellProvider,
 			IRunnableContext runnableContext, final boolean blockUntilSaved) {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			@Override
@@ -650,8 +655,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
 						monitor);
 				monitorWrap.beginTask(WorkbenchMessages.Saving_Modifications, finalModels.size());
-				for (Iterator i = finalModels.iterator(); i.hasNext();) {
-					Saveable model = (Saveable) i.next();
+				for (Saveable model : finalModels) {
 					// handle case where this model got saved as a result of
 					// saving another
 					if (!model.isDirty()) {
@@ -676,9 +680,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	private static class PostCloseInfo {
 		private List<IWorkbenchPart> partsClosing = new ArrayList<>();
 
-		private Map modelsDecrementing = new HashMap();
+		private Map<Saveable, Integer> modelsDecrementing = new HashMap<>();
 
-		private Set modelsClosing = new HashSet();
+		private Set<Saveable> modelsClosing = new HashSet<>();
 	}
 
 	/**
@@ -686,15 +690,14 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	public void postClose(Object postCloseInfoObject) {
 		PostCloseInfo postCloseInfo = (PostCloseInfo) postCloseInfoObject;
-		List removed = new ArrayList();
+		List<Saveable> removed = new ArrayList<>();
 		for (IWorkbenchPart part : postCloseInfo.partsClosing) {
-			Set saveables = (Set) modelMap.get(part);
+			Set<Saveable> saveables = modelMap.get(part);
 			if (saveables != null) {
 				// make a copy to avoid a ConcurrentModificationException - we
 				// will remove from the original set as we iterate
-				saveables = new HashSet(saveables);
-				for (Iterator it2 = saveables.iterator(); it2.hasNext();) {
-					Saveable saveable = (Saveable) it2.next();
+				saveables = new HashSet<>(saveables);
+				for (Saveable saveable : saveables) {
 					if (removeModel(part, saveable)) {
 						removed.add(saveable);
 					}
@@ -703,7 +706,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		if (removed.size() > 0) {
 			fireModelLifecycleEvent(new SaveablesLifecycleEvent(this,
-					SaveablesLifecycleEvent.POST_CLOSE, (Saveable[]) removed
+					SaveablesLifecycleEvent.POST_CLOSE, removed
 							.toArray(new Saveable[removed.size()]), false));
 		}
 	}
@@ -729,14 +732,14 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	/**
-	 * @param actualPart
+	 * @param part
 	 */
 	public void postOpen(IWorkbenchPart part) {
 		addModels(part, getSaveables(part));
 	}
 
 	/**
-	 * @param actualPart
+	 * @param part
 	 */
 	public void dirtyChanged(IWorkbenchPart part) {
 		Saveable[] saveables = getSaveables(part);
@@ -750,13 +753,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * For testing purposes. Not to be called by clients.
 	 *
 	 * @param model
-	 * @return
+	 * @return never null
 	 */
 	public Object[] testGetSourcesForModel(Saveable model) {
-		List result = new ArrayList();
-		for (Iterator it = modelMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Set values = (Set) entry.getValue();
+		List<Object> result = new ArrayList<>();
+		for (Entry<Object, Set<Saveable>> entry : modelMap.entrySet()) {
+			Set<Saveable> values = entry.getValue();
 			if (values.contains(model)) {
 				result.add(entry.getKey());
 			}
@@ -784,9 +786,6 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			setShellStyle(shellStyle | SWT.SHEET);
 		}
 
-		/**
-		 * @return
-		 */
 		public boolean getDontPromptSelection() {
 			return dontPromptSelection;
 		}
@@ -836,23 +835,19 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 *         list which are not workbench parts.
 	 */
 	public ISaveablesSource[] getNonPartSources() {
-		return (ISaveablesSource[]) nonPartSources
+		return nonPartSources
 				.toArray(new ISaveablesSource[nonPartSources.size()]);
 	}
 
-	/**
-	 * @param model
-	 */
 	public IWorkbenchPart[] getPartsForSaveable(Saveable model) {
-		List result = new ArrayList();
-		for (Iterator it = modelMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Set values = (Set) entry.getValue();
+		List<IWorkbenchPart> result = new ArrayList<>();
+		for (Entry<Object, Set<Saveable>> entry : modelMap.entrySet()) {
+			Set<Saveable> values = entry.getValue();
 			if (values.contains(model) && entry.getKey() instanceof IWorkbenchPart) {
-				result.add(entry.getKey());
+				result.add((IWorkbenchPart) entry.getKey());
 			}
 		}
-		return (IWorkbenchPart[]) result.toArray(new IWorkbenchPart[result.size()]);
+		return result.toArray(new IWorkbenchPart[result.size()]);
 	}
 
 }
