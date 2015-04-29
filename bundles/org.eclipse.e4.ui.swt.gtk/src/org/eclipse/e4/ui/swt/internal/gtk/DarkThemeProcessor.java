@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-@SuppressWarnings("restriction")
 public class DarkThemeProcessor {
 
 	@Inject
@@ -49,11 +48,7 @@ public class DarkThemeProcessor {
 
 					@Override
 					public void run() {
-						OS.gdk_flush();
-						OS.g_object_set(OS.gtk_settings_get_default(), "gtk-application-prefer-dark-theme".getBytes(), //$NON-NLS-1$
-								isDark, 0);
-						OS.g_object_notify(OS.gtk_settings_get_default(),
-								"gtk-application-prefer-dark-theme".getBytes());
+						OS.setDarkThemePreferred(isDark);
 					}
 				});
 			}
