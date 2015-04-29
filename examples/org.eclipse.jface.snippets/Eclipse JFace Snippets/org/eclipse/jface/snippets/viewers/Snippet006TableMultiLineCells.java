@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 - 2013 IBM Corporation and others.
+ * Copyright (c) 2005 - 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Robert Roth <robert.roth.off@gmail.com> - Bug 417685
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -118,9 +119,11 @@ public class Snippet006TableMultiLineCells {
 
 			@Override
 			protected void measure(Event event, Object element) {
+				event.width = viewer.getTable().getColumn(event.index).getWidth();
+				if (event.width == 0)
+					return;
 				LineEntry line = (LineEntry) element;
 				Point size = event.gc.textExtent(line.line);
-				event.width = viewer.getTable().getColumn(event.index).getWidth();
 				int lines = size.x / event.width + 1;
 				event.height = size.y * lines;
 
