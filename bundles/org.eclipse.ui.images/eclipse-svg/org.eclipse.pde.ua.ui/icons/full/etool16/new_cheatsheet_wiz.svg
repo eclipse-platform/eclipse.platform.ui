@@ -15,7 +15,7 @@
    viewBox="0 0 16 16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="new_cheatsheet_wiz.svg">
   <defs
      id="defs4">
@@ -400,8 +400,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="45.254834"
-     inkscape:cx="6.0746531"
-     inkscape:cy="10.297486"
+     inkscape:cx="12.873713"
+     inkscape:cy="8.3344481"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -412,7 +412,8 @@
      inkscape:window-height="964"
      inkscape:window-x="512"
      inkscape:window-y="347"
-     inkscape:window-maximized="0">
+     inkscape:window-maximized="0"
+     inkscape:snap-global="false">
     <inkscape:grid
        type="xygrid"
        id="grid3336" />
@@ -485,7 +486,7 @@
     <g
        id="layer1-3"
        inkscape:label="Layer 1"
-       transform="translate(-1.9272359,1.1849966)">
+       transform="translate(-1.9935272,1.1849966)">
       <rect
          ry="0.37885904"
          rx="0.37885904"
@@ -559,7 +560,7 @@
     <g
        style="font-style:normal;font-weight:normal;font-size:13.58917427px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
        id="g6432"
-       transform="translate(14.97748,-10.260798)">
+       transform="translate(15.008061,-10.323298)">
       <path
          style="display:inline;fill:url(#linearGradient6323-7-1-1);fill-opacity:1;stroke:none"
          d="m -7.007813,1053.62 2,0 1.492188,-1.4844 -2.0312504,0 z"
@@ -627,7 +628,7 @@
              sodipodi:nodetypes="ccccccccccccc"
              inkscape:connector-curvature="0"
              id="path5581-5-5"
-             d="m 12.471186,1054.309 1.001133,0 0,1.946 1.986639,0 0,1.0167 -1.986639,0 0,2.043 -1.001133,0 0,-2.043 -1.98664,0 0,-1.0167 1.98664,0 z"
+             d="m 12.471186,1054.309 1.001133,0 0,2.0123 1.986639,0 0,0.9934 -1.986639,0 0,2 -1.001133,0 0,-2 -1.98664,0 0,-0.9934 1.98664,0 z"
              style="display:inline;fill:url(#linearGradient3093-5-2-7-0-9);fill-opacity:1;stroke:none" />
         </g>
       </g>
