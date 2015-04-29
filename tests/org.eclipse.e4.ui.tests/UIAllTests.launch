@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
 <booleanAttribute key="append.args" value="true"/>
 <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <booleanAttribute key="askclear" value="false"/>
@@ -19,9 +20,6 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
-<mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="DISPLAY" value=":1.0"/>
-</mapAttribute>
 <stringAttribute key="org.eclipse.e4.ui.model.application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
