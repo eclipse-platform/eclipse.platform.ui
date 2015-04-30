@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc and others.
+ * Copyright (C) 2014, 2015 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,10 @@ package org.eclipse.ui.internal.monitoring.preferences;
 
 import java.util.Arrays;
 
-import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
 
@@ -31,20 +30,23 @@ public class FilterListEditor extends ListEditor {
 			String dialogMessage, Composite parent) {
 		super(name, label, parent);
 		this.dialogMessage = dialogMessage;
-		getAddButton().setText(addButtonLabel);
-		getRemoveButton().setText(removeButtonLabel);
+		setButtonLabel(getAddButton(), addButtonLabel);
+		setButtonLabel(getRemoveButton(), removeButtonLabel);
 		getUpButton().setVisible(false);
 		getDownButton().setVisible(false);
+	}
+
+	private void setButtonLabel(Button button, String label) {
+		button.setText(label);
+		GridDataFactory.fillDefaults().applyTo(button);
 	}
 
     @Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
     	super.doFillIntoGrid(parent, numColumns);
         List list = getListControl(parent);
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true, numColumns - 1, 1);
-    	PixelConverter pixelConverter = new PixelConverter(parent);
-        gd.widthHint = pixelConverter.convertWidthInCharsToPixels(75);
-        list.setLayoutData(gd);
+        GridDataFactory.defaultsFor(list).applyTo(list);
+        GridDataFactory.fillDefaults().applyTo(getButtonBoxControl(parent));
     }
 
 	/**

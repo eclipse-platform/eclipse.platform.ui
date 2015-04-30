@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc and others.
+ * Copyright (C) 2014, 2015 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ package org.eclipse.ui.internal.monitoring.preferences;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -22,8 +25,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -104,84 +105,84 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 	public void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
     	PixelConverter pixelConverter = new PixelConverter(parent);
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
 
 		Composite container = new Composite(parent, SWT.NONE);
-		layout = new GridLayout(1, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.verticalSpacing = pixelConverter.convertHeightInCharsToPixels(1);
-		container.setLayout(layout);
-		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Composite topGroup = new Composite(container, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		topGroup.setLayout(layout);
-		topGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		createTopBlock(container);
+		createBottomBlock(container, pixelConverter);
+
+		GridLayoutFactory.fillDefaults()
+				.numColumns(1)
+				.spacing(LayoutConstants.getSpacing())
+				.generateLayout(container);
+
+		GridLayoutFactory.fillDefaults()
+				.numColumns(1)
+				.spacing(LayoutConstants.getSpacing())
+				.generateLayout(parent);
+	}
+
+	private Composite createTopBlock(Composite container) {
+		Composite block = new Composite(container, SWT.NONE);
 
 		monitoringEnabled = createBooleanEditor(PreferenceConstants.MONITORING_ENABLED,
-				Messages.MonitoringPreferencePage_enable_monitoring_label, topGroup);
+				Messages.MonitoringPreferencePage_enable_monitoring_label, block);
 		createBooleanEditor(PreferenceConstants.LOG_TO_ERROR_LOG,
-				Messages.MonitoringPreferencePage_log_freeze_events_label, topGroup);
+				Messages.MonitoringPreferencePage_log_freeze_events_label, block);
 
 		longEventWarningThreshold = createIntegerEditor(
 				PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_warning_threshold_label, topGroup,
+				Messages.MonitoringPreferencePage_warning_threshold_label, block,
 				3, HOUR_IN_MS);
 		longEventErrorThreshold = createIntegerEditor(
 				PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_error_threshold_label, topGroup,
+				Messages.MonitoringPreferencePage_error_threshold_label, block,
 				3, HOUR_IN_MS);
 		deadlockThreshold = createIntegerEditor(
 				PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
-				Messages.MonitoringPreferencePage_deadlock_threshold_label, topGroup,
+				Messages.MonitoringPreferencePage_deadlock_threshold_label, block,
 				1000, 24 * HOUR_IN_MS);
 		createIntegerEditor(
 				PreferenceConstants.MAX_STACK_SAMPLES,
-				Messages.MonitoringPreferencePage_max_stack_samples_label, topGroup, 0, 100);
+				Messages.MonitoringPreferencePage_max_stack_samples_label, block, 0, 100);
+		GridLayoutFactory.fillDefaults()
+				.numColumns(2)
+				.spacing(LayoutConstants.getSpacing())
+				.applyTo(block);
+		return block;
+	}
 
-		topGroup.setLayout(layout);
+	private Composite createBottomBlock(Composite container, PixelConverter pixelConverter) {
+		Composite block = new Composite(container, SWT.NONE);
 
-		final Composite bottomGroup = new Composite(container, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		bottomGroup.setLayout(layout);
-		bottomGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+		createEmptySpace(block, pixelConverter.convertVerticalDLUsToPixels(3), 2);
 		FilterListEditor uiThreadFilter = new FilterListEditor(PreferenceConstants.UI_THREAD_FILTER,
 				Messages.MonitoringPreferencePage_ui_thread_filter_label,
 				Messages.MonitoringPreferencePage_add_ui_thread_filter_button_label,
 				Messages.MonitoringPreferencePage_remove_ui_thread_filter_button_label,
 				Messages.FilterInputDialog_ui_thread_filter_message,
-				bottomGroup);
-		addField(uiThreadFilter, bottomGroup);
+				block);
+		addField(uiThreadFilter, block);
 
-		createEmptySpace(bottomGroup, pixelConverter.convertVerticalDLUsToPixels(3), 2);
+		createEmptySpace(block, pixelConverter.convertVerticalDLUsToPixels(3), 2);
 		FilterListEditor noninterestingThreadFilter = new FilterListEditor(
 				PreferenceConstants.NONINTERESTING_THREAD_FILTER,
 				Messages.MonitoringPreferencePage_noninteresting_thread_filter_label,
 				Messages.MonitoringPreferencePage_add_noninteresting_thread_filter_button_label,
 				Messages.MonitoringPreferencePage_remove_noninteresting_thread_filter_button_label,
 				Messages.FilterInputDialog_noninteresting_thread_filter_message,
-				bottomGroup);
-		addField(noninterestingThreadFilter, bottomGroup);
+				block);
+		addField(noninterestingThreadFilter, block);
+		GridLayoutFactory.fillDefaults()
+				.numColumns(2)
+				.spacing(LayoutConstants.getSpacing())
+				.applyTo(block);
+		return block;
 	}
 
 	private static Control createEmptySpace(Composite parent, int height, int span) {
 		Label label= new Label(parent, SWT.LEFT);
-		GridData gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.grabExcessHorizontalSpace= false;
-		gd.horizontalSpan= span;
-		gd.horizontalIndent= 0;
-		gd.widthHint= 0;
-		gd.heightHint= height;
-		label.setLayoutData(gd);
+		GridDataFactory.fillDefaults().span(span, 1).hint(0, height).applyTo(label);
 		return label;
 	}
 
