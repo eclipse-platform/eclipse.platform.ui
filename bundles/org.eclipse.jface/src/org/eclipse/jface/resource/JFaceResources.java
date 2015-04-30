@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431093, 440080
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431093, 440080, 440270
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -433,17 +433,17 @@ public class JFaceResources {
 		declareImage(
 				bundle,
 				TitleAreaDialog.DLG_IMG_TITLE_BANNER,
-				ICONS_PATH + "title_banner.png", TitleAreaDialog.class, "images/title_banner.gif");//$NON-NLS-1$ //$NON-NLS-2$
+				ICONS_PATH + "title_banner.png", TitleAreaDialog.class, "images/title_banner.png");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(
 				bundle,
 				PreferenceDialog.PREF_DLG_TITLE_IMG,
 				ICONS_PATH + "pref_dialog_title.png", PreferenceDialog.class, "images/pref_dialog_title.png");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(bundle, PopupDialog.POPUP_IMG_MENU, ICONS_PATH
-				+ "popup_menu.gif", PopupDialog.class, "images/popup_menu.gif");//$NON-NLS-1$ //$NON-NLS-2$
+				+ "popup_menu.png", PopupDialog.class, "images/popup_menu.png");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(
 				bundle,
 				PopupDialog.POPUP_IMG_MENU_DISABLED,
-				ICONS_PATH + "popup_menu_disabled.gif", PopupDialog.class, "images/popup_menu_disabled.gif");//$NON-NLS-1$ //$NON-NLS-2$
+				ICONS_PATH + "popup_menu_disabled.png", PopupDialog.class, "images/popup_menu_disabled.png");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

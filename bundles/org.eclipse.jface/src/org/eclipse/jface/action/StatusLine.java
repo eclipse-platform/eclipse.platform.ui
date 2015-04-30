@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440270
  *******************************************************************************/
 
 package org.eclipse.jface.action;
@@ -115,7 +116,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 	/** stop image descriptor */
 	protected static ImageDescriptor fgStopImage = ImageDescriptor
-			.createFromFile(StatusLine.class, "images/stop.gif");//$NON-NLS-1$
+			.createFromFile(StatusLine.class, "images/stop.png");//$NON-NLS-1$
 
 	private MenuItem copyMenuItem;
 	static {

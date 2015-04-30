@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440270
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
@@ -106,25 +107,25 @@ public class FieldDecorationRegistry {
 		// Define the images used in the standard decorations.
 		imageRegistry.put(IMG_DEC_FIELD_CONTENT_PROPOSAL, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/contassist_ovr.gif"));//$NON-NLS-1$
+						"images/contassist_ovr.png"));//$NON-NLS-1$
 		imageRegistry.put(IMG_DEC_FIELD_ERROR, ImageDescriptor.createFromFile(
-				FieldDecorationRegistry.class, "images/error_ovr.gif"));//$NON-NLS-1$
+				FieldDecorationRegistry.class, "images/error_ovr.png"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_WARNING, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/warn_ovr.gif"));//$NON-NLS-1$
+						"images/warn_ovr.png"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_REQUIRED, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/required_field_cue.gif"));//$NON-NLS-1$
+						"images/required_field_cue.png"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_ERROR_QUICKFIX, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/errorqf_ovr.gif"));//$NON-NLS-1$
+						"images/errorqf_ovr.png"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_INFO, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/info_ovr.gif"));//$NON-NLS-1$
+						"images/info_ovr.png"));//$NON-NLS-1$
 
 		// Define the standard decorations. Some do not have standard
 		// descriptions. Use null in these cases.

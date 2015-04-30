@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440270
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -91,7 +92,7 @@ public abstract class DialogCellEditor extends CellEditor {
     static {
         ImageRegistry reg = JFaceResources.getImageRegistry();
         reg.put(CELL_EDITOR_IMG_DOTS_BUTTON, ImageDescriptor.createFromFile(
-                DialogCellEditor.class, "images/dots_button.gif"));//$NON-NLS-1$
+                DialogCellEditor.class, "images/dots_button.png"));//$NON-NLS-1$
     }
 
     /**
