@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
+Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.e4.tools.jdt.templates;singleton:=true
 Bundle-Version: 4.5.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
