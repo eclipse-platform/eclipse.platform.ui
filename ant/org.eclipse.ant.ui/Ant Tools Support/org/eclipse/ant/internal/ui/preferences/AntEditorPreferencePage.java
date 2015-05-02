@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Robert Roth <robert.roth.off@gmail.com> - bug 184656
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
@@ -21,6 +22,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -245,7 +247,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			AntEditorPreferenceConstants.PROBLEM_PROPERTIES, AntEditorPreferenceConstants.PROBLEM_IMPORTS,
 			AntEditorPreferenceConstants.PROBLEM_TASKS, AntEditorPreferenceConstants.PROBLEM_SECURITY };
 
-	private ColorEditor fSyntaxForegroundColorEditor;
+	private ColorSelector fSyntaxForegroundColorSelector;
 	private Button fBoldCheckBox;
 	private Button fItalicCheckBox;
 
@@ -462,8 +464,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
 
-		fSyntaxForegroundColorEditor = new ColorEditor(stylesComposite);
-		Button foregroundColorButton = fSyntaxForegroundColorEditor.getButton();
+		fSyntaxForegroundColorSelector = new ColorSelector(stylesComposite);
+		Button foregroundColorButton = fSyntaxForegroundColorSelector.getButton();
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
@@ -508,7 +510,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item = getHighlightingColorListItem();
-				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
+				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorSelector.getColorValue());
 			}
 		});
 
@@ -565,7 +567,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private void handleSyntaxColorListSelection() {
 		HighlightingColorListItem item = getHighlightingColorListItem();
 		RGB rgb = PreferenceConverter.getColor(getOverlayStore(), item.getColorKey());
-		fSyntaxForegroundColorEditor.setColorValue(rgb);
+		fSyntaxForegroundColorSelector.setColorValue(rgb);
 		fBoldCheckBox.setSelection(getOverlayStore().getBoolean(item.getBoldKey()));
 		fItalicCheckBox.setSelection(getOverlayStore().getBoolean(item.getItalicKey()));
 	}

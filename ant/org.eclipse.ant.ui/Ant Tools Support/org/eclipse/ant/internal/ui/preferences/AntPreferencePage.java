@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Robert Roth <robert.roth.off@gmail.com> - bug 184656
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -108,7 +110,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	}
 
 	private List fConsoleColorList;
-	private ColorEditor fConsoleColorEditor;
+	private ColorSelector fConsoleColorSelector;
 	private IntegerFieldEditor timeout;
 	private BooleanFieldEditor workspacejre = null;
 
@@ -264,8 +266,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		gd.horizontalAlignment = GridData.BEGINNING;
 		label.setLayoutData(gd);
 
-		fConsoleColorEditor = new ColorEditor(stylesComposite);
-		Button foregroundColorButton = fConsoleColorEditor.getButton();
+		fConsoleColorSelector = new ColorSelector(stylesComposite);
+		Button foregroundColorButton = fConsoleColorSelector.getButton();
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment = GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
@@ -285,7 +287,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 					return;
 				}
 				String key = fAppearanceColorListModel[i][1];
-				PreferenceConverter.setValue(getPreferenceStore(), key, fConsoleColorEditor.getColorValue());
+				PreferenceConverter.setValue(getPreferenceStore(), key, fConsoleColorSelector.getColorValue());
 			}
 		});
 	}
@@ -318,7 +320,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		}
 		String key = fAppearanceColorListModel[i][1];
 		RGB rgb = PreferenceConverter.getColor(getPreferenceStore(), key);
-		fConsoleColorEditor.setColorValue(rgb);
+		fConsoleColorSelector.setColorValue(rgb);
 	}
 
 	/**
