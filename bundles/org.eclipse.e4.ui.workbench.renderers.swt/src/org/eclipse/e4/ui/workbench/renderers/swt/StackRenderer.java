@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -1311,10 +1311,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		// Ensure that the newly selected control is correctly sized
 		if (cti.getControl() instanceof Composite) {
 			Composite ctiComp = (Composite) cti.getControl();
-			// Do not call layout(true, true) because it forces all
-			// subcomponents to relayout as well
-			// ctiComp.layout(true, true);
-			ctiComp.setBounds(ctf.getClientArea());
+			// see bug 461573: call below is still needed to make view
+			// descriptions visible after unhiding the view with changed bounds
+			ctiComp.layout(false, true);
 		}
 		ctf.setSelection(cti);
 		ignoreTabSelChanges = false;
