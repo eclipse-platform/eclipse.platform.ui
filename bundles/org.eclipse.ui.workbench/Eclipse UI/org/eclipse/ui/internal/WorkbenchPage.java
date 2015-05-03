@@ -12,7 +12,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431340, 431348, 426535, 433234
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431868
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442214
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 411639, 372799
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 411639, 372799, 466230
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -2517,11 +2517,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (perspective != null) {
 			int scope = allPerspectives ? WINDOW_SCOPE : EModelService.PRESENTATION;
 			Set<MUIElement> parts = new HashSet<MUIElement>();
-			parts.addAll(modelService.findElements(window, null, MPlaceholder.class, null, scope));
+			List<MPlaceholder> placeholders = modelService.findElements(window, null, MPlaceholder.class, null, scope);
+			parts.addAll(placeholders);
 			parts.addAll(modelService.findElements(window, null, MPart.class, null, scope));
 			List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
 			for (ViewReference reference : viewReferences) {
-				if (parts.contains(reference.getModel()) && reference.getModel().isToBeRendered()) {
+				MPart model = reference.getModel();
+				// The part may be linked in either directly or via a
+				// placeholder. In the latter case we can look directly
+				// at the part's curSharedRef since we're only considering
+				// parts visible in the current perspective
+				if (parts.contains(model) && model.isToBeRendered()
+						&& (model.getCurSharedRef() == null || model.getCurSharedRef().isToBeRendered())) {
 					// only rendered placeholders are valid view references
 					visibleReferences.add(reference);
 				}
