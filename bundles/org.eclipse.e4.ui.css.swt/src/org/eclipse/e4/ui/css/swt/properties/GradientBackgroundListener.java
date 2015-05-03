@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Kai Toedter - added radial gradient support
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 461688
+ *     Robert Roth <robert.roth.off@gmail.com> - Bug 283255
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties;
 
@@ -53,7 +54,7 @@ public class GradientBackgroundListener implements Listener {
 	private DisposeListener disposeListener = new DisposeListener() {
 		@Override
 		public void widgetDisposed(DisposeEvent e) {
-			dispose();
+			GradientBackgroundListener.remove(control);
 		}
 	};
 
