@@ -10,7 +10,7 @@
  *     Brock Janicyak - brockj@tpg.com.au
  *     		- Fix for Bug 11142 [HeapStatus] Heap status is updated too frequently
  *          - Fix for Bug 192996 [Workbench] Reduce amount of garbage created by HeapStatus
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422040, 372517, 463652
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422040, 372517, 463652, 466275
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -223,6 +223,27 @@ public class HeapStatus extends Composite {
 		button.redraw();
 		button.update();
 	}
+
+	@Override
+	public void setForeground(Color color) {
+		if (color == null) {
+			usedMemCol = getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		} else {
+			usedMemCol = color;
+		}
+
+		button.redraw();
+		button.update();
+	}
+
+	@Override
+	public Color getForeground() {
+		if (usedMemCol != null) {
+			return usedMemCol;
+		}
+		return getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+	}
+
 	/**
 	 * Returns the maximum memory limit, or Long.MAX_VALUE if the max is not known.
 	 */

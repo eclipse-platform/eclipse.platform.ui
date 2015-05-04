@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
- *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189
- *     Stefan Winkler <stefan@winklerweb.net> - Bug 430848
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189, 430848
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 431635
  *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148, 465711
+ *     Lars Vogel <Lars.Vogel@vogella.com> Bug 463652,466275
  *******************************************************************************/
 
 /*******************************************************************************
@@ -390,8 +390,10 @@ LayoutComposite > Table {
 }
 
 HeapStatus {
-	background-color:#41464a;
+	background-color: #41464a;
+ 	color: black;
 }
+
 Twistie {
     color: #E8E4DF;
 }
