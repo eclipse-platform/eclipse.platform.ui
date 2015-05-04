@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 402439, 475689
+ *     Robert Roth <robert.roth.off@gmail.com> - Bug 259245
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -1654,6 +1655,23 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	public abstract void reveal(Object element);
 
+	/**
+	 * Sets the content provider used by this viewer.
+	 * <p>
+	 * The <code>StructuredViewer</code> implementation of this method calls the
+	 * super implementation after checking if the given content provider is a
+	 * valid one for the viewer. The check is done by
+	 * <code>assertContentProviderType</code>, which should be overridden in
+	 * subclasses requiring support for additional content provider types.
+	 * Overriding this method is generally not required; however, if overriding
+	 * in a subclass, <code>super.setContentProvider</code> must be invoked.
+	 * </p>
+	 *
+	 * @param provider
+	 *            the content provider
+	 * @see #getContentProvider
+	 * @see #assertContentProviderType
+	 */
 	@Override
 	public void setContentProvider(IContentProvider provider) {
 		assertContentProviderType(provider);
