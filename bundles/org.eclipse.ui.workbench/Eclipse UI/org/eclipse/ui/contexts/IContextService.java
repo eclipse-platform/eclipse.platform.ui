@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.contexts;
 
 import java.util.Collection;
-
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
@@ -329,12 +328,12 @@ public interface IContextService extends IServiceWithSources {
 	 * Registers a shell to automatically promote or demote some basic types of
 	 * contexts. The "In Dialogs" and "In Windows" contexts are provided by the
 	 * system. This a convenience method to ensure that these contexts are
-	 * promoted when the given is shell is active.
+	 * promoted when the given shell is active.
 	 * </p>
 	 * <p>
 	 * If a shell is registered as a window, then the "In Windows" context is
-	 * enabled when that shell is active. If a shell is registered as a dialog --
-	 * or is not registered, but has a parent shell -- then the "In Dialogs"
+	 * enabled when that shell is active. If a shell is registered as a dialog
+	 * -- or is not registered, but has a parent shell -- then the "In Dialogs"
 	 * context is enabled when that shell is active. If the shell is registered
 	 * as none -- or is not registered, but has no parent shell -- then the
 	 * neither of the contexts will be enabled (by us -- someone else can always
@@ -352,9 +351,8 @@ public interface IContextService extends IServiceWithSources {
 	 *            The type of shell being registered. This value must be one of
 	 *            the constants given in this interface.
 	 *
-	 * @return <code>true</code> if the shell had already been registered
-	 *         (i.e., the registration has changed); <code>false</code>
-	 *         otherwise.
+	 * @return <code>true</code> if the shell had already been registered (i.e.,
+	 *         the registration has changed); <code>false</code> otherwise.
 	 */
 	public boolean registerShell(Shell shell, int type);
 
