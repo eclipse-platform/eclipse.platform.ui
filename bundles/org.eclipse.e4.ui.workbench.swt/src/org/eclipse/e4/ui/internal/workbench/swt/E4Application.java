@@ -155,8 +155,6 @@ public class E4Application implements IApplication {
 					workbench.getContext()))
 				return EXIT_OK;
 
-			IEclipseContext workbenchContext = workbench.getContext();
-
 			// Create and run the UI (if any)
 			workbench.createAndRunUI(workbench.getApplication());
 
