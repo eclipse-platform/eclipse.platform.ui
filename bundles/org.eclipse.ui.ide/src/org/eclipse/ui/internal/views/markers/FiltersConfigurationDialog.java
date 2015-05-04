@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com>
  * 			- Fix for Bug 214443 Problem view filter created even if I hit Cancel
+ *     Robert Roth <robert.roth.off@gmail.com>
+ *          - Fix for Bug 364736 Setting limit to 0 has no effect
  ******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -298,9 +300,16 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		});
 
 		limitText.addModifyListener(e -> {
+			boolean isInvalid = false;
 			try {
-				Integer.parseInt(limitText.getText());
+				int value = Integer.parseInt(limitText.getText());
+				if (value <= 0) {
+					isInvalid = true;
+				}
 			} catch (NumberFormatException ex) {
+				isInvalid = true;
+			}
+			if (isInvalid) {
 				limitText.setText(Integer.toString(generator.getMarkerLimits()));
 			}
 		});
