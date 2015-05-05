@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Sopot Cela <sopotcela@gmail.com>
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 421066
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -50,6 +51,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -145,6 +147,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	private IPackageFragmentRoot froot;
 	private final IWorkspaceRoot fWorkspaceRoot;
 	private String initialString;
+	private String initialPackage;
 
 	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot,
 		IWorkspaceRoot fWorkspaceRoot) {
@@ -160,6 +163,24 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		IWorkspaceRoot fWorkspaceRoot, String initialString) {
 		this(pageName, title, description, froot, fWorkspaceRoot);
 		this.initialString = initialString;
+	}
+
+	/**
+	 * The wizard owning this page is responsible for calling this method with
+	 * the current selection. The selection is used to initialize the fields of
+	 * the wizard page.
+	 *
+	 * @param selection
+	 *            used to initialize the fields
+	 */
+	public void init(IStructuredSelection selection) {
+		if (selection == null || selection.isEmpty() || selection.getFirstElement() == null) {
+			return;
+		}
+		if (selection.getFirstElement() instanceof IPackageFragment) {
+			final IPackageFragment pkg = (IPackageFragment) selection.getFirstElement();
+			initialPackage = pkg.getElementName();
+		}
 	}
 
 	@Override
@@ -186,6 +207,8 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString) == null ? "" //$NON-NLS-1$
 				: parseInitialStringForPackage(initialString)));
 			clazz.setName(parseInitialStringForClassName(initialString));
+		} else if (froot != null && initialPackage != null) {
+			clazz.setPackageFragment(froot.getPackageFragment(initialPackage));
 		}
 		final DataBindingContext dbc = new DataBindingContext();
 		WizardPageSupport.create(this, dbc);

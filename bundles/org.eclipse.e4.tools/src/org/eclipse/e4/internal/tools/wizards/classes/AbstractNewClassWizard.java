@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Sopot Cela <sopotcela@gmail.com>
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 421066
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -35,6 +36,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -53,6 +55,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	private static final String JAVA = ".java"; //$NON-NLS-1$
 	protected IPackageFragmentRoot root;
 	protected IFile file;
+	private IStructuredSelection selection;
 
 	public AbstractNewClassWizard() {
 		setWindowTitle(Messages.AbstractNewClassWizard_NewClass);
@@ -60,7 +63,27 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.selection = selection;
 		root = getFragmentRoot(getInitialJavaElement(selection));
+	}
+
+	/**
+	 * @return the selection
+	 */
+	public IStructuredSelection getSelection() {
+		return selection;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see org.eclipse.jface.wizard.Wizard#addPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	@Override
+	public void addPage(IWizardPage page) {
+		super.addPage(page);
+		if (page instanceof AbstractNewClassPage) {
+			((AbstractNewClassPage) page).init(getSelection());
+		}
 	}
 
 	protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
