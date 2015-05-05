@@ -13,7 +13,7 @@
    height="16"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="collapseall.svg"
    inkscape:export-filename="C:\Users\jmietling\Documents\rect3997-9-1.png"
    inkscape:export-xdpi="90"
@@ -96,9 +96,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="12.401688"
-     inkscape:cy="5.8085286"
+     inkscape:zoom="8"
+     inkscape:cx="36.279537"
+     inkscape:cy="4.7306908"
      inkscape:document-units="px"
      inkscape:current-layer="layer1-0"
      showgrid="true"
@@ -139,7 +139,7 @@
        transform="matrix(0.77393739,0,0,0.77393739,-0.808785,233.54106)">
       <g
          id="g3021"
-         transform="translate(0.04037792,0)">
+         transform="translate(0.04037792,-0.16151177)">
         <path
            transform="matrix(1.2920942,0,0,1.2920942,1.0450264,1037.3205)"
            inkscape:connector-curvature="0"
@@ -157,7 +157,7 @@
       <g
          style="display:inline"
          id="g3021-1"
-         transform="matrix(-1,0,0,1,23.995088,2.0846073e-8)">
+         transform="matrix(-1,0,0,1,24.015277,-0.12113381)">
         <path
            transform="matrix(1.2920942,0,0,1.2920942,1.0450264,1037.3205)"
            inkscape:connector-curvature="0"
@@ -191,13 +191,12 @@
            style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       </g>
       <rect
-         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.89999998000000003;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.29209423;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect3084"
-         width="3.8437502"
-         height="3.9375002"
-         x="6.5625"
-         y="6.5624995"
-         transform="matrix(1.2920942,0,0,1.2920942,1.0450264,1037.3205)" />
+         width="5.1461229"
+         height="5.219964"
+         x="9.4648619"
+         y="1045.6892" />
       <g
          style="display:inline"
          id="g3021-9"
