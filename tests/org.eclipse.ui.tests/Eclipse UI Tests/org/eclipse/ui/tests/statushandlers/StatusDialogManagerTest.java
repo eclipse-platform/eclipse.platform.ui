@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  ******************************************************************************/
 
 package org.eclipse.ui.tests.statushandlers;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,6 +52,8 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
+
+import junit.framework.TestCase;
 
 public class StatusDialogManagerTest extends TestCase {
 
@@ -1222,11 +1222,14 @@ public class StatusDialogManagerTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		wsdm = null;
 		Shell shell = StatusDialogUtil.getStatusShell();
 		if (shell != null) {
 			shell.dispose();
+			WorkbenchStatusDialogManagerImpl impl = (WorkbenchStatusDialogManagerImpl) wsdm
+					.getProperty(IStatusDialogConstants.MANAGER_IMPL);
+			assertNull(impl.getProperty(IStatusDialogConstants.CURRENT_STATUS_ADAPTER));
 		}
+		wsdm = null;
 		ErrorDialog.AUTOMATED_MODE = automatedMode;
 		Policy.setErrorSupportProvider(null);
 		super.tearDown();
