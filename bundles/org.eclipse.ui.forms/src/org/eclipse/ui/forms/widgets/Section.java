@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545)
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205, 458055
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -389,7 +389,7 @@ public class Section extends ExpandableComposite {
 				updateHeaderImage(bg, bounds, gradientheight, theight);
 			gc.setBackground(getBackground());
 			gc.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-			drawBackground(gc, bounds.x, bounds.y, bounds.width, theight);
+			drawBackground(gc, bounds.x, bounds.y, bounds.width, theight - 2);
 			if (marginWidth > 0) {
 				// fix up margins
 				gc.setBackground(getBackground());
@@ -431,24 +431,18 @@ public class Section extends ExpandableComposite {
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0 || isExpanded()) {
 			// left vertical edge gradient
-			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
-					gradientheight - 2, true);
+			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1, theight + 2, true);
 			// right vertical edge gradient
-			gc.fillGradientRectangle(bounds.width - marginWidth - 1,
-					marginHeight + 2, 1, gradientheight - 2, true);
+			gc.fillGradientRectangle(bounds.width - marginWidth - 1, marginHeight + 2, 1, theight + 2, true);
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			// New in 3.3 - edge treatmant
 			gc.setForeground(getBackground());
-			gc.drawPolyline(new int[] { marginWidth + 1,
-					marginHeight + gradientheight - 1, marginWidth + 1,
-					marginHeight + 2, marginWidth + 2, marginHeight + 2,
-					marginWidth + 2, marginHeight + 1,
-					bounds.width - marginWidth - 3, marginHeight + 1,
-					bounds.width - marginWidth - 3, marginHeight + 2,
-					bounds.width - marginWidth - 2, marginHeight + 2,
-					bounds.width - marginWidth - 2,
-					marginHeight + gradientheight - 1 });
+			gc.drawPolyline(new int[] { marginWidth + 1, marginHeight + gradientheight + 4, marginWidth + 1,
+					marginHeight + 2, marginWidth + 2, marginHeight + 2, marginWidth + 2, marginHeight + 1,
+					bounds.width - marginWidth - 3, marginHeight + 1, bounds.width - marginWidth - 3, marginHeight + 2,
+					bounds.width - marginWidth - 2, marginHeight + 2, bounds.width - marginWidth - 2,
+					marginHeight + gradientheight + 4 });
 		}
 		if (buffer != null) {
 			gc.dispose();
@@ -459,7 +453,7 @@ public class Section extends ExpandableComposite {
 
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight, int realtheight) {
 		Color gradient = getTitleBarGradientBackground() != null ? getTitleBarGradientBackground() : getBackground();
-		Image image = FormImages.getInstance().getSectionGradientImage(getBackground(), gradient, bg, realtheight,
+		Image image = FormImages.getInstance().getSectionGradientImage(gradient, bg, realtheight,
 				theight, marginHeight, getDisplay());
 		super.setBackgroundImage(image);
 	}

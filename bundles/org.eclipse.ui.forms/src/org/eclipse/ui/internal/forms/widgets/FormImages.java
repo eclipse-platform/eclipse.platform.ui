@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wang Yizhuo (wangyizhuo@gmail.com) - patch (see Bugzilla #239178)
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 430205, 458055
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -281,23 +281,23 @@ public class FormImages {
 			gc.fillRectangle(0, fTheight - fMarginHeight - 4, 1, 4);
 			gc.dispose();
 			color1.dispose();
+			originalBgColor.dispose();
 			return image;
 		}
 	}
 
 	private class SimpleSectionGradientImageDescriptor extends SimpleSectionImageDescriptor {
 
-		SimpleSectionGradientImageDescriptor(Color originalBgColor, Color color1, Color color2, int realtheight,
+		SimpleSectionGradientImageDescriptor(Color color1, Color color2, int realtheight,
 				int theight,
 				int marginHeight) {
-			super(new Color[] { originalBgColor, color1, color2 }, realtheight, theight, marginHeight);
+			super(new Color[] { color1, color2 }, realtheight, theight, marginHeight);
 		}
 
 		public Image createImage(boolean returnMissingImageOnError, Device device) {
 			Image image = new Image(device, 1, fLength);
-			Color originalBgColor = new Color(device, fRGBs[0]);
-			Color color1 = new Color(device, fRGBs[1]);
-			Color color2 = new Color(device, fRGBs[2]);
+			Color color1 = new Color(device, fRGBs[0]);
+			Color color2 = new Color(device, fRGBs[1]);
 			image.setBackground(color1);
 			GC gc = new GC(image);
 			gc.setBackground(color1);
@@ -305,23 +305,20 @@ public class FormImages {
 			gc.setForeground(color2);
 			gc.setBackground(color1);
 			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
-			gc.setBackground(originalBgColor);
-			gc.fillRectangle(0, fTheight - fMarginHeight - 4, 1, 4);
 			gc.dispose();
 			color1.dispose();
 			color2.dispose();
-			originalBgColor.dispose();
+
 			return image;
 		}
 
 	}
 
-	public Image getSectionGradientImage(Color originalBgColor, Color color1, Color color2, int realtheight,
-			int theight,
-			int marginHeight, Display display) {
+	public Image getSectionGradientImage(Color color1, Color color2, int realtheight, int theight, int marginHeight,
+			Display display) {
 		if (color1 == null || color1.isDisposed())
 			return null;
-		AbstractImageDescriptor desc = new SimpleSectionGradientImageDescriptor(originalBgColor, color1, color2,
+		AbstractImageDescriptor desc = new SimpleSectionGradientImageDescriptor(color1, color2,
 				realtheight, theight, marginHeight);
 		return getGradient(desc, display);
 	}
