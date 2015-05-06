@@ -88,6 +88,7 @@ create_wiki_section "4.5 RC1" 4.5%20RC1
 create_wiki_section "4.5 RC2" 4.5%20RC2
 create_wiki_section "4.5 RC3" 4.5%20RC3
 create_wiki_section "4.5 RC4" 4.5%20RC4
+create_wiki_section "4.5" 4.5
 create_wiki_section "4.6" 4.6
 
 
