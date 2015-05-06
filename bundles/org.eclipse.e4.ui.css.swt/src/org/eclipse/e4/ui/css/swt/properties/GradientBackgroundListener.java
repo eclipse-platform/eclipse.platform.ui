@@ -11,6 +11,7 @@
  *     Kai Toedter - added radial gradient support
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 461688
  *     Robert Roth <robert.roth.off@gmail.com> - Bug 283255
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 466646
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties;
 
@@ -21,7 +22,6 @@ import java.awt.image.DataBufferInt;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
@@ -137,12 +137,16 @@ public class GradientBackgroundListener implements Listener {
 		// and they will be replaced by linear gradients
 		if (grad.isRadial() && isRadialSupported) {
 			List<java.awt.Color> colors = new ArrayList<java.awt.Color>();
-			for (Iterator<?> iterator = grad.getRGBs().iterator(); iterator
-					.hasNext();) {
-				RGB rgb = (RGB) iterator.next();
-				java.awt.Color color = new java.awt.Color(rgb.red, rgb.green,
-						rgb.blue);
-				colors.add(color);
+			for (Object rgbObj : grad.getRGBs()) {
+				if (rgbObj instanceof RGBA) {
+					RGBA rgba = (RGBA) rgbObj;
+					java.awt.Color color = new java.awt.Color(rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
+					colors.add(color);
+				} else if (rgbObj instanceof RGB) {
+					RGB rgb = (RGB) rgbObj;
+					java.awt.Color color = new java.awt.Color(rgb.red, rgb.green, rgb.blue);
+					colors.add(color);
+				}
 			}
 
 			BufferedImage image = getBufferedImage(size.x, size.y, colors,
@@ -163,11 +167,16 @@ public class GradientBackgroundListener implements Listener {
 			gradientImage = new Image(control.getDisplay(), x, y);
 			GC gc = new GC(gradientImage);
 			List<Color> colors = new ArrayList<Color>();
-			for (Iterator<?> iterator = grad.getRGBs().iterator(); iterator
-					.hasNext();) {
-				RGBA rgba = (RGBA) iterator.next();
-				Color color = new Color(control.getDisplay(), rgba);
-				colors.add(color);
+			for (Object rgbObj : grad.getRGBs()) {
+				if (rgbObj instanceof RGBA) {
+					RGBA rgba = (RGBA) rgbObj;
+					Color color = new Color(control.getDisplay(), rgba);
+					colors.add(color);
+				} else if (rgbObj instanceof RGB) {
+					RGB rgb = (RGB) rgbObj;
+					Color color = new Color(control.getDisplay(), rgb);
+					colors.add(color);
+				}
 			}
 			fillGradient(gc, new Rectangle(0, 0, x, y), colors,
 					CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
