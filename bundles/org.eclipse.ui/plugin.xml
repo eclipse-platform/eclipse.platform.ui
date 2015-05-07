@@ -967,7 +967,13 @@
             defaultHandler="org.eclipse.ui.internal.handlers.QuitHandler"
             description="%command.exit.description"
             id="org.eclipse.ui.file.exit"
-            name="%command.exit.name"/>
+            name="%command.exit.name">
+         <commandParameter
+               id="mayPrompt"
+               name="%command.exit.mayPrompt.name"
+               optional="true">
+         </commandParameter>
+      </command>
       <command
             name="%command.undo.name"
             description="%command.undo.description"
