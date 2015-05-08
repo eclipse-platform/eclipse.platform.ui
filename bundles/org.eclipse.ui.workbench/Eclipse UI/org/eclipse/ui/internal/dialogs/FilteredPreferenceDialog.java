@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Stefan Xenos <sxenos@google.com> - Bug 466793
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -221,8 +222,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		TreeViewer tree;
 		if (!hasAtMostOnePage()) {
 			filteredTree= new PreferenceFilteredTree(parent, styleBits, new PreferencePatternFilter());
-			GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.horizontalIndent= IDialogConstants.HORIZONTAL_MARGIN;
 			filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 			tree= filteredTree.getViewer();

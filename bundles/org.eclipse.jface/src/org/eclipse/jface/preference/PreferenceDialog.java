@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Teddy Walker <teddy.walker@googlemail.com>
  *     	- Bug 188056 [Preferences] PreferencePages have to less indent in PreferenceDialog
+ *     Stefan Xenos <sxenos@google.com> - Bug 466793
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -30,6 +31,7 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
@@ -369,13 +371,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		createSash(composite,treeControl);
 
 		Label versep = new Label(composite, SWT.SEPARATOR | SWT.VERTICAL);
-		GridData verGd = new GridData(GridData.FILL_VERTICAL | GridData.GRAB_VERTICAL);
-
-		versep.setLayoutData(verGd);
-		versep.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
+		GridDataFactory.fillDefaults().grab(false, true).applyTo(versep);
 
 		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
-		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridDataFactory.fillDefaults().grab(true, true).applyTo(pageAreaComposite);
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -895,10 +894,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * @since 3.0
 	 */
 	protected void layoutTreeAreaControl(Control control) {
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = getLastRightWidth();
-		gd.verticalSpan = 1;
-		control.setLayoutData(gd);
+		GridDataFactory.fillDefaults().hint(getLastRightWidth(), convertVerticalDLUsToPixels(120)).grab(false, true)
+				.applyTo(control);
 	}
 
 	/**
