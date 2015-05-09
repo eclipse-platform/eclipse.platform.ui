@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 444070
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
-
-import junit.framework.Assert;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -25,6 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.internal.util.VerifyDialog;
+
+import junit.framework.Assert;
 
 /**
  * A <code>DialogCheck</code> is used test a dialog in
@@ -86,7 +86,9 @@ public class DialogCheck {
         dialog.open();
         Shell shell = dialog.getShell();
         verifyCompositeText(shell, assertion);
-        dialog.close();
+		dialog.close();
+		// close "verify results" dialog, it makes other tests unhappy
+		_verifyDialog.buttonPressed(IDialogConstants.YES_ID);
     }
 
     /**
