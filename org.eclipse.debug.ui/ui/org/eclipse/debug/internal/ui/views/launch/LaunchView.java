@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
  *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
+ *     Andrey Loskutov <loskutov@gmx.de> - fixed memory leak due the breadcrumb (Bug 466789)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -1109,6 +1110,9 @@ public class LaunchView extends AbstractDebugView
 			handler.dispose();
 		}
 		fHandlers.clear();
+		if (fBreadcrumbPage != null) {
+			fBreadcrumbPage.dispose();
+		}
 		super.dispose();
 	}
 		
