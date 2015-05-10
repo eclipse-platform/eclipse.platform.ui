@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     vogella GmbH - Bug 287303 - [patch] Add Word Wrap action to Console View
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 466789
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -19,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -29,7 +29,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -39,7 +38,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -357,6 +355,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
         consoleManager.removeConsoleListener(this);
         consoleManager.unregisterConsoleView(this);
+		if (fDisplayConsoleAction != null) {
+			fDisplayConsoleAction.dispose();
+		}
 	}
 
 	/**
@@ -685,7 +686,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
     /**
 	 * Returns if the specified part reference is to this view part (if the part
 	 * reference is the console view or not)
-	 * 
+	 *
 	 * @param partRef the workbench part reference
 	 * @return true if the specified part reference is the console view
 	 */
