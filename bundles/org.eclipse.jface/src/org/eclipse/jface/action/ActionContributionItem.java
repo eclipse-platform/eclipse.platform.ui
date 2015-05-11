@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 436225
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -1200,7 +1199,6 @@ public class ActionContributionItem extends ContributionItem {
 			widget = null;
 		}
 		holdMenu = null;
-		action = null;
 	}
 
 	/**
