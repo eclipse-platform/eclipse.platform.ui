@@ -20,7 +20,7 @@
       <wizard
             category="org.eclipse.e4.tools"
             class="org.eclipse.e4.internal.tools.wizards.project.E4NewProjectWizard"
-            icon="platform:/plugin/org.eclipse.pde.ui/icons/etool16/newpprj_wiz.gif"
+            icon="icons/full/etool16/newpprj_wiz.png"
             id="org.eclipse.e4.tools.E4NewProjectWizard"
             name="%wizard.name"
             project="true">
@@ -51,7 +51,7 @@
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
             class="org.eclipse.e4.internal.tools.wizards.classes.NewHandlerClassWizard"
-            icon="icons/full/obj16/class_obj.gif"
+            icon="icons/full/obj16/class_obj.png"
             id="org.eclipse.e4.tools.newhandler"
             name="%wizard.name.2">
          <description>
