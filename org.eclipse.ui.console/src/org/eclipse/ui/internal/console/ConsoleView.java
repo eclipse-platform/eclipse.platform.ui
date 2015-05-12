@@ -357,6 +357,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         consoleManager.unregisterConsoleView(this);
 		if (fDisplayConsoleAction != null) {
 			fDisplayConsoleAction.dispose();
+			fDisplayConsoleAction = null;
 		}
 	}
 
