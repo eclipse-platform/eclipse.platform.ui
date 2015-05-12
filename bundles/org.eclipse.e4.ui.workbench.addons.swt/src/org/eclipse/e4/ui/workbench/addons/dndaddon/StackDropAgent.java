@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -69,14 +68,15 @@ public class StackDropAgent extends DropAgent {
 		if (stack == dragElement)
 			return false;
 
-		// You can only drag MParts from window to window 68
-		if (!(dragElement instanceof MPart)) {
+		// You can only drag MParts from window to window
+		// NOTE: Disabled again due to too many issues, see bug 445305 for details
+		// if (!(dragElement instanceof MPart)) {
 			EModelService ms = dndManager.getModelService();
 			MWindow dragElementWin = ms.getTopLevelWindowFor(dragElement);
 			MWindow dropWin = ms.getTopLevelWindowFor(stack);
 			if (dragElementWin != dropWin)
 				return false;
-		}
+		// }
 
 		// only allow dropping into the the area
 		Rectangle areaRect = getTabAreaRect((CTabFolder) stack.getWidget());
