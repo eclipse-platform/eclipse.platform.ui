@@ -11,15 +11,16 @@
  *     Kai Toedter - added radial gradient support
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 461688
  *     Robert Roth <robert.roth.off@gmail.com> - Bug 283255
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 466646
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 466646, 461690
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties;
 
 import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint.CycleMethod;
+import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,6 @@ import org.eclipse.swt.widgets.Listener;
 
 public class GradientBackgroundListener implements Listener {
 	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
-	private static boolean isRadialSupported;
 
 	private Gradient grad;
 	private final Control control;
@@ -57,21 +57,6 @@ public class GradientBackgroundListener implements Listener {
 			GradientBackgroundListener.remove(control);
 		}
 	};
-
-	static {
-		// The following code tries to instantiate a
-		// java.awt.RadialGradientPaint that is only available in Java 6 and
-		// higher. Since the BREE is set to J2SE-1.5, reflection is used.
-		try {
-			Class.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
-			isRadialSupported = true;
-		} catch (Exception e) {
-			//			System.err
-			//					.println("Warning - radial gradients are only supported in Java 6 and higher, using linear gradient instead"); //$NON-NLS-1$
-			isRadialSupported = false;
-		}
-
-	}
 
 	private GradientBackgroundListener(Control control, Gradient grad) {
 		this.grad = grad;
@@ -132,10 +117,7 @@ public class GradientBackgroundListener implements Listener {
 		 * for the full size of the control's size; linear backgrounds are
 		 * just a slice for the control's height that is then repeated.
 		 */
-
-		// If Java 5 or lower is used, radial gradients are not supported yet
-		// and they will be replaced by linear gradients
-		if (grad.isRadial() && isRadialSupported) {
+		if (grad.isRadial()) {
 			List<java.awt.Color> colors = new ArrayList<java.awt.Color>();
 			for (Object rgbObj : grad.getRGBs()) {
 				if (rgbObj instanceof RGBA) {
@@ -274,38 +256,9 @@ public class GradientBackgroundListener implements Listener {
 				BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2 = (Graphics2D) image.getGraphics();
 
-		// The following code tries to instantiate a
-		// java.awt.RadialGradientPaint that is only available in Java 6 and
-		// higher. Since the BREE is set to J2SE-1.5, reflection is used. If
-		// this code is run with a Java version below 6, the radial gradient is
-		// replaced by a flat background color (the first color in the color
-		// array).
-		try {
-			Class<?> radialGradientPaintClass = Class
-					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
-			Class<?>[] classes = radialGradientPaintClass.getClasses();
-			int i;
-			for (i = 0; i < classes.length; i++) {
-				if ("java.awt.MultipleGradientPaint.CycleMethod" //$NON-NLS-1$
-						.equals(classes[i].getCanonicalName())) {
-					break;
-				}
-			}
-			Constructor<?> ctor = radialGradientPaintClass
-					.getConstructor(new Class[] { java.awt.geom.Point2D.class,
-							float.class, java.awt.geom.Point2D.class,
-							float[].class, java.awt.Color[].class, classes[i] });
-
-			final Object radialGradientPaint = ctor.newInstance(new Object[] {
-					new Point2D.Double(width / 2.0, 0), width,
-					new Point2D.Double(width / 2.0, 0.0), fractions,
-					colorArray, classes[i].getEnumConstants()[0] });
-			g2.setPaint((java.awt.Paint) radialGradientPaint);
-		} catch (Exception e) {
-			System.err
-			.println("Warning - radial gradients are only supported in Java 6 and higher, using flat background color instead"); //$NON-NLS-1$
-			g2.setColor(colorArray[0]);
-		}
+		RadialGradientPaint radialGradientPaint = new RadialGradientPaint(new Point2D.Double(width / 2.0, 0), width,
+				new Point2D.Double(width / 2.0, 0.0), fractions, colorArray, CycleMethod.NO_CYCLE);
+		g2.setPaint(radialGradientPaint);
 
 		g2.fillRect(0, 0, width, height);
 		return image;
