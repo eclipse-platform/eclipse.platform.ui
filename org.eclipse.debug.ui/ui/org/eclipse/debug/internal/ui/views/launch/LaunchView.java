@@ -1112,6 +1112,7 @@ public class LaunchView extends AbstractDebugView
 		fHandlers.clear();
 		if (fBreadcrumbPage != null) {
 			fBreadcrumbPage.dispose();
+			fBreadcrumbPage = null;
 		}
 		super.dispose();
 	}
