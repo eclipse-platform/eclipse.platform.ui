@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Sopot Cela <sopotcela@gmail.com>
- * Patrik Suzzi <psuzzi@gmail.com> - Bug 421066
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 421066, 466491
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
@@ -20,7 +20,10 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.MultiValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -46,6 +49,7 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
@@ -150,7 +154,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	private String initialPackage;
 
 	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot,
-		IWorkspaceRoot fWorkspaceRoot) {
+			IWorkspaceRoot fWorkspaceRoot) {
 		super(pageName);
 		this.froot = froot;
 		this.fWorkspaceRoot = fWorkspaceRoot;
@@ -160,7 +164,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	}
 
 	protected AbstractNewClassPage(String pageName, String title, String description, IPackageFragmentRoot froot,
-		IWorkspaceRoot fWorkspaceRoot, String initialString) {
+			IWorkspaceRoot fWorkspaceRoot, String initialString) {
 		this(pageName, title, description, froot, fWorkspaceRoot);
 		this.initialString = initialString;
 	}
@@ -186,7 +190,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		final Image img = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream(
-			"/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
+				"/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
 		setImageDescriptor(ImageDescriptor.createFromImage(img));
 
 		parent.addDisposeListener(new DisposeListener() {
@@ -205,7 +209,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		clazz = createInstance();
 		if (froot != null && initialString != null) {
 			clazz.setPackageFragment(froot.getPackageFragment(parseInitialStringForPackage(initialString) == null ? "" //$NON-NLS-1$
-				: parseInitialStringForPackage(initialString)));
+					: parseInitialStringForPackage(initialString)));
 			clazz.setName(parseInitialStringForClassName(initialString));
 		} else if (froot != null && initialPackage != null) {
 			clazz.setPackageFragment(froot.getPackageFragment(initialPackage));
@@ -222,11 +226,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			t.setEditable(false);
 
 			final Binding bd = dbc.bindValue(
-				WidgetProperties.text().observe(t),
-				BeanProperties.value(FRAGMENT_ROOT).observe(clazz),
-				new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()),
-				new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
-				);
+					WidgetProperties.text().observe(t),
+					BeanProperties.value(FRAGMENT_ROOT).observe(clazz),
+					new UpdateValueStrategy().setBeforeSetValidator(new PFRootValidator()),
+					new UpdateValueStrategy().setConverter(new PackageFragmentRootToStringConverter())
+					);
 
 			final Button b = new Button(parent, SWT.PUSH);
 			b.setText(Messages.AbstractNewClassPage_Browse);
@@ -243,18 +247,19 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			});
 		}
 
+		final Text tClassPackage;
 		{
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.AbstractNewClassPage_Package);
-			final Text t = new Text(parent, SWT.BORDER);
-			t.setEditable(true);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			tClassPackage = new Text(parent, SWT.BORDER);
+			tClassPackage.setEditable(true);
+			tClassPackage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			final Binding bd = dbc.bindValue(
-				WidgetProperties.text(SWT.Modify).observe(t),
-				BeanProperties.value(PACKAGE_FRAGMENT).observe(clazz),
-				new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)),
-				new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
-				);
+					WidgetProperties.text(SWT.Modify).observe(tClassPackage),
+					BeanProperties.value(PACKAGE_FRAGMENT).observe(clazz),
+					new UpdateValueStrategy().setConverter(new StringToPackageFragmentConverter(clazz)),
+					new UpdateValueStrategy().setConverter(new PackageFragmentToStringConverter())
+					);
 
 			final Button b = new Button(parent, SWT.PUSH);
 			b.setText(Messages.AbstractNewClassPage_Browse);
@@ -270,16 +275,18 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			});
 		}
 
+		final Text tClassName;
 		{
 			final IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 			final Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.AbstractNewClassPage_Name);
 
-			final Text t = new Text(parent, SWT.BORDER);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			dbc.bindValue(textProp.observe(t), BeanProperties.value(PROPERTY_NAME, String.class).observe(clazz),
-				new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator(clazz)), null);
+			tClassName = new Text(parent, SWT.BORDER);
+			tClassName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			dbc.bindValue(textProp.observe(tClassName),
+					BeanProperties.value(PROPERTY_NAME, String.class).observe(clazz),
+					new UpdateValueStrategy().setBeforeSetValidator(new ClassnameValidator()), null);
 
 			new Label(parent, SWT.NONE);
 		}
@@ -288,6 +295,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			final Label l = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 			l.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 3, 1));
 		}
+
+		final ISWTObservableValue obsPackage = WidgetProperties.text(SWT.Modify).observe(tClassPackage);
+		final ISWTObservableValue obsClass = WidgetProperties.text(SWT.Modify).observe(tClassName);
+		final ClassMultiValidator multiValidator = new ClassMultiValidator(clazz, obsPackage, obsClass);
+		dbc.addValidationStatusProvider(multiValidator);
 
 		createFields(parent, dbc);
 		setControl(parent);
@@ -301,11 +313,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		final int iSecondSlash = initialString2.lastIndexOf('/');
 		if (
 
-		initialString2.length() == 0 || // empty
-			ioBC == -1 || // no bundle class
-			iSecondSlash == -1 || // no package &| class name
-			initialString2.indexOf('.') == -1// no package
-		) {
+				initialString2.length() == 0 || // empty
+				ioBC == -1 || // no bundle class
+				iSecondSlash == -1 || // no package &| class name
+				initialString2.indexOf('.') == -1// no package
+				) {
 			return null;
 		}
 
@@ -322,11 +334,11 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		final int iSecondSlash = initialString.lastIndexOf('/');
 		if (
 
-		initialString.length() == 0 || // empty
-			ioBC == -1 || // no bundle class
-			iSecondSlash == -1 || // no package &| class name
-			initialString.indexOf('.') == -1// no package
-		) {
+				initialString.length() == 0 || // empty
+				ioBC == -1 || // no bundle class
+				iSecondSlash == -1 || // no package &| class name
+				initialString.indexOf('.') == -1// no package
+				) {
 			return null;
 		}
 		final int lastDot = initialString.lastIndexOf('.');
@@ -413,7 +425,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		final ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(),
-			new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
+				new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT));
 		dialog.setIgnoreCase(false);
 		dialog.setTitle(Messages.AbstractNewClassPage_ChoosePackage);
 		dialog.setMessage(Messages.AbstractNewClassPage_ChooseAPackage);
@@ -439,13 +451,44 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		return clazz;
 	}
 
-	static class ClassnameValidator implements IValidator {
+	/**
+	 * Validate the specified class does not already exists
+	 */
+	static class ClassMultiValidator extends MultiValidator {
 
-		private final JavaClass clazz;
+		private final JavaClass javaClass;
+		private final IObservableValue observedPackage;
+		private final IObservableValue observedClass;
 
-		public ClassnameValidator(JavaClass clazz) {
-			this.clazz = clazz;
+		public ClassMultiValidator(JavaClass javaClass, final IObservableValue observedPackage,
+				final IObservableValue observedClass) {
+			this.javaClass = javaClass;
+			this.observedPackage = observedPackage;
+			this.observedClass = observedClass;
 		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @see org.eclipse.core.databinding.validation.MultiValidator#validate()
+		 */
+		@Override
+		protected IStatus validate() {
+			final String classPackage = (String) observedPackage.getValue();
+			final String className = (String) observedClass.getValue();
+
+			final IPackageFragment packageFragment = javaClass.getFragmentRoot().getPackageFragment(classPackage);
+
+			if (JavaClass.exists(javaClass.getFragmentRoot(), packageFragment, className)) {
+				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID, Messages.AbstractNewClassPage_ClassExists);
+			}
+
+			return ValidationStatus.ok();
+		}
+
+	}
+
+	static class ClassnameValidator implements IValidator {
 
 		@Override
 		public IStatus validate(Object value) {
@@ -455,10 +498,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			}
 			if (name.indexOf('.') != -1 || name.trim().indexOf(' ') != -1) {
 				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID,
-					Messages.AbstractNewClassPage_NameMustBeQualified);
-			}
-			if (JavaClass.exists(clazz.getFragmentRoot(), clazz.getPackageFragment(), name)) {
-				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID, Messages.AbstractNewClassPage_ClassExists);
+						Messages.AbstractNewClassPage_NameMustBeQualified);
 			}
 
 			return JavaConventions.validateJavaTypeName(name, JavaCore.VERSION_1_3, JavaCore.VERSION_1_3);
@@ -472,7 +512,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			final String name = value.toString();
 			if (name.length() == 0) {
 				return new Status(IStatus.ERROR, ToolsPlugin.PLUGIN_ID,
-					Messages.AbstractNewClassPage_SourceFolderNotEmpty);
+						Messages.AbstractNewClassPage_SourceFolderNotEmpty);
 			}
 
 			return new Status(IStatus.OK, ToolsPlugin.PLUGIN_ID, ""); //$NON-NLS-1$
