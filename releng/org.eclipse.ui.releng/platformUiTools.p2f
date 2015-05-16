@@ -123,14 +123,14 @@
         <repository location='http://download.eclipse.org/e4/updates/0.17'/>
       </repositories>
     </iu>
-    <iu id='org.eclipse.e4.core.tools.feature.feature.group' name='Eclipse e4 Tools (Incubation)' >
+    <iu id='org.eclipse.e4.core.tools.feature.feature.group' name='Eclipse e4 Tools' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
+        <repository location='http://download.eclipse.org/eclipse/updates/4.5-I-builds/'/>
       </repositories>
     </iu>
-    <iu id='org.eclipse.e4.core.tools.feature.source.feature.group' name='Eclipse e4 Tools Source (Incubation)' >
+    <iu id='org.eclipse.e4.core.tools.feature.source.feature.group' name='Eclipse e4 Tools Source' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/e4/updates/0.17'/>
+        <repository location='http://download.eclipse.org/eclipse/updates/4.5-I-builds/'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.egit.feature.group' name='Eclipse Git Team Provider' >
