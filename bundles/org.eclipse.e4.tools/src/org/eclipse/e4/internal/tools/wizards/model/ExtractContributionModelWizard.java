@@ -12,7 +12,6 @@
 package org.eclipse.e4.internal.tools.wizards.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,12 +23,10 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
-import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -167,51 +164,8 @@ public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 
 		final MModelFragments sourceFragments = (MModelFragments) rootObject;
 		final MModelFragments targetFragments = (MModelFragments) existingRootObject;
+		FragmentMergeHelper.merge(sourceFragments, targetFragments);
 
-		targetFragments.getFragments().addAll(sourceFragments.getFragments());
-		final List<MApplicationElement> sourceImports = new ArrayList<MApplicationElement>();
-		sourceImports.addAll(sourceFragments.getImports());
-		for (final MApplicationElement source : sourceImports) {
-
-			boolean doImport = true;
-			for (final MApplicationElement target : targetFragments.getImports()) {
-				if (target.getElementId() == null || source.getElementId() == null) {
-					continue;
-				}
-				if (target.getElementId().equals(source.getElementId())) {
-					doImport = false;
-					connectToExistingImport(targetFragments.getFragments(), target, source);
-					break;
-				}
-
-			}
-			if (doImport) {
-				targetFragments.getImports().add(source);
-			}
-
-		}
-
-	}
-
-	/**
-	 * @param fragments
-	 * @param existingImport
-	 * @param source
-	 */
-	private void connectToExistingImport(List<MModelFragment> fragments, MApplicationElement target,
-			MApplicationElement source) {
-		final Collection<Setting> settings = EcoreUtil.UsageCrossReferencer.find((EObject) source, fragments);
-		for (final Setting setting : settings) {
-			if (setting.getEStructuralFeature().isMany()) {
-				@SuppressWarnings("unchecked")
-				final List<MApplicationElement> list = (List<MApplicationElement>) setting.getEObject()
-				.eGet(setting.getEStructuralFeature());
-				list.remove(source);
-				list.add(target);
-			} else {
-				setting.getEObject().eSet(setting.getEStructuralFeature(), target);
-			}
-		}
 
 	}
 }
