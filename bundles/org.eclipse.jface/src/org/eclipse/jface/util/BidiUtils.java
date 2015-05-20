@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -474,7 +474,8 @@ public final class BidiUtils {
 	}
 
 	/**
-	 * Applies a Base Text Direction to the given control (and its descendants, if it's a {@link Composite}).
+	 * Applies a Base Text Direction to the given control (and its descendants,
+	 * if it's a {@link Composite}).
 	 *
 	 * <p>
 	 * Possible values for <code>textDirection</code> are:
@@ -485,53 +486,53 @@ public final class BidiUtils {
 	 * <li>{@link BidiUtils#BTD_DEFAULT}</li>
 	 * </ul>
 	 * <p>
-	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and {@link BidiUtils#AUTO} are
-	 * usable whether {@link #getBidiSupport() bidi support} is enabled or disabled.
+	 * The 3 values {@link #LEFT_TO_RIGHT}, {@link #RIGHT_TO_LEFT}, and
+	 * {@link BidiUtils#AUTO} are usable whether {@link #getBidiSupport() bidi
+	 * support} is enabled or disabled.
 	 * <p>
-	 * {@link BidiUtils#AUTO} currently only works for {@link Text}, {@link StyledText}, and {@link Combo} controls.
-	 * <p>
-	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if bidi support is enabled.
+	 * The remaining value {@link BidiUtils#BTD_DEFAULT} only has an effect if
+	 * bidi support is enabled.
 	 *
 	 * <p>
-	 * <strong>Note:</strong>
-	 * If this method is called on a control, then no <code>applyBidiProcessing</code> method must be called on the same control.
+	 * <strong>Note:</strong> If this method is called on a control, then no
+	 * <code>applyBidiProcessing</code> method must be called on the same
+	 * control.
 	 * <p>
 	 * <strong>Note:</strong>
-	 * {@link org.eclipse.swt.widgets.Control#setTextDirection(int)}
-	 * is currently only implemented on Windows, so the direction won't be inherited by descendants on GTK and Cocoa.
+	 * {@link org.eclipse.swt.widgets.Control#setTextDirection(int)} is
+	 * currently only implemented on Windows, so the direction won't be
+	 * inherited by descendants on GTK and Cocoa.
 	 * <p>
-	 * <strong>Note:</strong>
-	 * {@link BidiUtils#BTD_DEFAULT} is currently not inherited by descendants of the control if
-	 * {@link BidiUtils#getTextDirection()} is {@link BidiUtils#AUTO}.
 	 *
-	 * @param control the control
-	 * @param textDirection the text direction
+	 * @param control
+	 *            the control
+	 * @param textDirection
+	 *            the text direction
 	 */
 	public static void applyTextDirection(Control control, String textDirection) {
 		int textDir = 0;
-		boolean auto = false;
 
 		if (LEFT_TO_RIGHT.equals(textDirection)) {
 			textDir = SWT.LEFT_TO_RIGHT;
 		} else if (RIGHT_TO_LEFT.equals(textDirection)) {
 			textDir = SWT.RIGHT_TO_LEFT;
 		} else if (AUTO.equals(textDirection)) {
-			auto = true;
+			textDir = SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
 		} else if (getBidiSupport() && BTD_DEFAULT.equals(textDirection)) {
 			if (LEFT_TO_RIGHT.equals(getTextDirection())) {
 				textDir = SWT.LEFT_TO_RIGHT;
 			} else if (RIGHT_TO_LEFT.equals(getTextDirection())) {
 				textDir = SWT.RIGHT_TO_LEFT;
 			} else if (AUTO.equals(getTextDirection())) {
-				auto = true;
+				textDir = SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
 			}
 		}
 
-		if (control instanceof Text && (auto || textDir != 0)) {
+		if (control instanceof Text && textDir != 0) {
 			applyBidiProcessing((Text) control, textDirection);
-		} else if (control instanceof StyledText && (auto || textDir != 0)) {
+		} else if (control instanceof StyledText && textDir != 0) {
 			applyBidiProcessing((StyledText) control, textDirection);
-		} else if (control instanceof Combo && (auto || textDir != 0)) {
+		} else if (control instanceof Combo && textDir != 0) {
 			applyBidiProcessing((Combo) control, textDirection);
 		} else if (textDir != 0) {
 			control.setTextDirection(textDir);
