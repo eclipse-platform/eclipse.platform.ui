@@ -11,9 +11,8 @@
 
 package org.eclipse.e4.core.internal.tests.contexts;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -21,6 +20,10 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectSuperClass;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Test for changing a context's parent.
@@ -277,5 +280,65 @@ public class ReparentingTest extends TestCase {
 
 		childContext.setParent(childContext.getParent());
 		assertEquals(1, testServiceCount[0]);
+	}
+
+	public void testBug468048_contextFunction() {
+		IEclipseContext p1 = EclipseContextFactory.create("parent1");
+		p1.set("sample", new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return Integer.valueOf(1);
+			}
+		});
+
+		IEclipseContext p2 = EclipseContextFactory.create("parent2");
+		p2.set("sample", new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return Integer.valueOf(2);
+			}
+		});
+
+		final IEclipseContext intermed = p1.createChild("intermed");
+
+		final IEclipseContext leaf = intermed.createChild("leaf");
+		assertEquals(Integer.valueOf(1), leaf.get("sample"));
+		intermed.setParent(p2);
+		assertEquals(Integer.valueOf(2), leaf.get("sample"));
+	}
+
+	public void testBug468048_injection() {
+		IEclipseContext p1 = EclipseContextFactory.create("parent1");
+		p1.set("sample", new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return Integer.valueOf(1);
+			}
+		});
+
+		IEclipseContext p2 = EclipseContextFactory.create("parent2");
+		p2.set("sample", new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				return Integer.valueOf(2);
+			}
+		});
+
+		final IEclipseContext intermed = p1.createChild("intermed");
+
+		final IEclipseContext leaf = intermed.createChild("leaf");
+		Bug468048 b = ContextInjectionFactory.make(Bug468048.class, leaf);
+
+		assertEquals(Integer.valueOf(1), b.sample);
+		System.err.println("==========");
+		intermed.setParent(p2);
+		assertEquals(Integer.valueOf(2), b.sample);
+	}
+
+	public static class Bug468048 {
+		@Inject
+		@Named("sample")
+		public Integer sample;
+
 	}
 }

@@ -497,12 +497,21 @@ public class EclipseContext implements IEclipseContext {
 				invalidate(name, ContextChangeEvent.ADDED, oldValue, newValue, scheduled);
 		}
 
+		invalidateLocalComputations(scheduled);
+	}
+
+	protected void invalidateLocalComputations(Set<Scheduled> scheduled) {
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.ADDED, null, null, null);
 		for (Computation computation : localValueComputations.values()) {
 			weakListeners.remove(computation);
 			computation.handleInvalid(event, scheduled);
 		}
 		localValueComputations.clear();
+
+		// We need to cleanup computations recursively see bug 468048
+		for (EclipseContext c : getChildren()) {
+			c.invalidateLocalComputations(scheduled);
+		}
 	}
 
 	private void collectDependentNames(Set<String> usedNames) {
