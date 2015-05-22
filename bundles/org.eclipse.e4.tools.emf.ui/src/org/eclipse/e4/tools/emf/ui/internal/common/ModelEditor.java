@@ -1717,6 +1717,9 @@ public class ModelEditor implements IGotoObject {
 
 		@Override
 		public boolean performDrop(Object data) {
+			if (!(data instanceof Object[])) {
+				return false;
+			}
 			final Object[] dropDataArray = (Object[]) data;
 			for (final Object object : dropDataArray) {
 				final boolean result = performSingleDrop(object);
