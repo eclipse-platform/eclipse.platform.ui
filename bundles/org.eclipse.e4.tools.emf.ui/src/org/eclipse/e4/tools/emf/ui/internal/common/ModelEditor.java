@@ -1285,7 +1285,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	private void registerDefaultEditors() {
-		System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool); //$NON-NLS-1$
+		// System.err.println(getClass().getName() + ".registerDefaultEditors: " + resourcePool); //$NON-NLS-1$
 
 		registerEditor(ApplicationPackageImpl.Literals.APPLICATION,
 			ContextInjectionFactory.make(ApplicationEditor.class, context));

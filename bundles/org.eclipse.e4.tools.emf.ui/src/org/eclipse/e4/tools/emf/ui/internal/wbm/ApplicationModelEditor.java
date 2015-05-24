@@ -123,15 +123,21 @@ public class ApplicationModelEditor extends ModelEditor {
 			}
 		}
 
-		private void hidePart(boolean force) {
-			partService.hidePart(part, force);
+		private void hidePart(final boolean force) {
+			sync.asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					partService.hidePart(part, force);
+				}
+			});
 		}
 	};
 
 	/**
 	 * Shows an error dialog based on the passed exception. It should never
 	 * occur but if it does, the user can report a problem.
-	 * 
+	 *
 	 * @param exc
 	 */
 	protected void statusDialog(final Exception exc) {

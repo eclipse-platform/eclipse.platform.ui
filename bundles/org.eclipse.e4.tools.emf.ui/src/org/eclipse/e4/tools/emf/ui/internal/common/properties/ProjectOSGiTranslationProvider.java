@@ -176,6 +176,9 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 	 */
 	private void handleManifestChange(IFile file) {
 		try {
+			if (!file.isAccessible()) {
+				return;
+			}
 			final String newValue = extractBasenameFromManifest(file);
 
 			if (!newValue.equals(basename)) {
