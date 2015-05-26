@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.doc;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.ua.tests.doc.internal.linkchecker.ApiDocTest;
 import org.eclipse.ua.tests.doc.internal.linkchecker.PrebuiltIndexChecker;
 import org.eclipse.ua.tests.doc.internal.linkchecker.TocLinkChecker;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /*
  * Tests all user assistance functionality (automated).
@@ -34,5 +35,6 @@ public class AllTests extends TestSuite {
 	public AllTests() {
 		addTestSuite(PrebuiltIndexChecker.class);
 		addTestSuite(TocLinkChecker.class);
+		addTestSuite(ApiDocTest.class);
 	}
 }
