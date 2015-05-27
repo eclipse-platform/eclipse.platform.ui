@@ -68,10 +68,12 @@ public class UIEvents {
 	/**
 	 * Event sent when a enabled update is requested for tool-items.
 	 * <p>
-	 * As a value you can pass in to the {@link IEventBroker}:
+	 * As a value you may pass in to the {@link IEventBroker#DATA}:
 	 * <ul>
-	 * <li>the {@link MApplicationElement#getElementId()} of the element to check</li>
-	 * <li>the special value {@link #ALL_ELEMENT_ID}</li>
+	 * <li>the special value {@link #ALL_ELEMENT_ID} to request changes of all
+	 * applicable elements (the default)</li>
+	 * <li>the {@link MApplicationElement#getElementId()} of the element to
+	 * check</li>
 	 * <li>instance of {@link Selector}</li>
 	 * </ul>
 	 * </p>

@@ -278,7 +278,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Optional
 	private void subscribeTopicUpdateToolbarEnablement(
 			@UIEventTopic(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC) Event eventData) {
-		final Object v = eventData.getProperty(IEventBroker.DATA);
+		final Object v = eventData != null ? eventData.getProperty(IEventBroker.DATA) : UIEvents.ALL_ELEMENT_ID;
 		Selector s;
 		if (v instanceof Selector) {
 			s = (Selector) v;
