@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -64,6 +65,15 @@ public class PartRenderingEngineTests extends TestCase {
 		}
 	};
 	private boolean logged = false;
+
+	private boolean checkMacBug466636() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			System.out.println("skipping " + PartRenderingEngineTests.class.getName() + "#" + getName()
+					+ " on Mac for now, see bug 466636");
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -926,6 +936,9 @@ public class PartRenderingEngineTests extends TestCase {
 	}
 
 	public void testBug324839() throws Exception {
+		if (checkMacBug466636())
+			return;
+
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		application.setContext(appContext);
@@ -2133,6 +2146,8 @@ public class PartRenderingEngineTests extends TestCase {
 	}
 
 	public void testBug326175_False() {
+		if (checkMacBug466636())
+			return;
 		testBug326175(false);
 	}
 
