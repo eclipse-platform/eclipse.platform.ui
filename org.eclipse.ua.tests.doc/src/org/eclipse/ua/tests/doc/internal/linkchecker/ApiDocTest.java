@@ -183,16 +183,20 @@ public class ApiDocTest extends TestCase {
 				URL schema = bundle.getEntry(schemaReference);
 				if (schema == null || schemaReference.isEmpty()) {
 					System.out.append("Extension point schema file not found for " + id + ": " + schemaReference + "\n");
-					continue;
-				}
-				
-				SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-				SAXParser parser = parserFactory.newSAXParser();
-				InternalExtensionFinder handler = new InternalExtensionFinder();
-				try {
-					parser.parse(schema.toString(), handler);
-				} catch (InternalExtensionFoundException e) {
-					continue; // don't report internal extension points
+					/* Internal extension points will be reported as "Undocumented".
+					 * This will e.g. happen during the official test run, since all
+					 * bundles are only present as binary, and they typically miss
+					 * the schema/*.exsd files.
+					 */
+				} else {
+					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+					SAXParser parser = parserFactory.newSAXParser();
+					InternalExtensionFinder handler = new InternalExtensionFinder();
+					try {
+						parser.parse(schema.toString(), handler);
+					} catch (InternalExtensionFoundException e) {
+						continue; // don't report internal extension points
+					}
 				}
 			}
 			registeredIds.add(id);
@@ -210,7 +214,7 @@ public class ApiDocTest extends TestCase {
 		registeredIds.removeAll(extIds);
 		if (!registeredIds.isEmpty()) {
 			// these currently don't make the test fail, since the list contains false positives (esp. when run locally)
-			System.out.append("\n* Undocumented (non-internal) extension points:\n");
+			System.out.append("\n* Undocumented extension points:\n");
 			for (String registeredId : registeredIds) {
 				System.out.append(registeredId).append('\n');
 			}
