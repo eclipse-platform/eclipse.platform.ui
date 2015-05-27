@@ -36,9 +36,6 @@ public abstract class ContextFunction implements IContextFunction {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 		// call into now-deprecated method to maintain backwards compatibility
