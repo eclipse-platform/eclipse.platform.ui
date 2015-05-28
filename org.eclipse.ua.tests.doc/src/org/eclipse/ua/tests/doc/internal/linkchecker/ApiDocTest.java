@@ -10,18 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.doc.internal.linkchecker;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.IUAElement;
@@ -36,6 +43,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -167,7 +175,22 @@ public class ApiDocTest extends TestCase {
 		assertEquals("", problems.toString());
 	}
 
-	protected void checkExtensionPoints(Set<String> extIds, StringBuilder problems) throws Exception {
+	private static void checkExtensionPoints(Set<String> extIds, StringBuilder problems) throws Exception {
+		Callable<BundleInfo[]> sourceBundlesCache= new Callable<BundleInfo[]>() {
+			private BundleInfo[] bundleInfos;
+			
+			@Override
+			public BundleInfo[] call() throws Exception {
+				if (bundleInfos == null) {
+					BundleContext context = Activator.getDefault().getBundle().getBundleContext();
+					ServiceReference<SimpleConfiguratorManipulator> serviceReference = context.getServiceReference(SimpleConfiguratorManipulator.class);
+					SimpleConfiguratorManipulator manipulator = context.getService(serviceReference);
+					bundleInfos = manipulator.loadConfiguration(context, SimpleConfiguratorManipulator.SOURCE_INFO);
+				}
+				return bundleInfos;
+			}
+		};
+		
 		Set<String> registeredIds = new TreeSet<String>();
 		
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
@@ -175,28 +198,22 @@ public class ApiDocTest extends TestCase {
 		for (IExtensionPoint extensionPoint : extensionPoints) {
 			String id = extensionPoint.getUniqueIdentifier();
 			String schemaReference = extensionPoint.getSchemaReference();
-			if (schemaReference == null) {
+			if (schemaReference == null || schemaReference.isEmpty()) {
 				problems.append("Extension point missing a schema reference: " + id + "\n");
 			} else {
-				String contributor = extensionPoint.getContributor().getName();
-				Bundle bundle = Platform.getBundle(contributor);
-				URL schema = bundle.getEntry(schemaReference);
-				if (schema == null || schemaReference.isEmpty()) {
-					System.out.append("Extension point schema file not found for " + id + ": " + schemaReference + "\n");
-					/* Internal extension points will be reported as "Undocumented".
-					 * This will e.g. happen during the official test run, since all
-					 * bundles are only present as binary, and they typically miss
-					 * the schema/*.exsd files.
-					 */
-				} else {
+				InputSource schemaSource = getExtensionPointSchemaSource(extensionPoint, schemaReference, sourceBundlesCache);
+				if (schemaSource != null) {
 					SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 					SAXParser parser = parserFactory.newSAXParser();
 					InternalExtensionFinder handler = new InternalExtensionFinder();
 					try {
-						parser.parse(schema.toString(), handler);
+						parser.parse(schemaSource, handler);
 					} catch (InternalExtensionFoundException e) {
-						continue; // don't report internal extension points
+						System.out.append("Skipping internal extension point " + id + "\n");
+						continue; // don't report internal extension points as undocumented
 					}
+				} else {
+					System.out.append("Extension point schema file not found for " + id + ": " + schemaReference + "\n");
 				}
 			}
 			registeredIds.add(id);
@@ -214,14 +231,40 @@ public class ApiDocTest extends TestCase {
 		registeredIds.removeAll(extIds);
 		if (!registeredIds.isEmpty()) {
 			// these currently don't make the test fail, since the list contains false positives (esp. when run locally)
-			System.out.append("\n* Undocumented extension points:\n");
+			System.out.append("\n* Undocumented non-internal extension points:\n");
 			for (String registeredId : registeredIds) {
 				System.out.append(registeredId).append('\n');
 			}
 		}
 	}
+
+	private static InputSource getExtensionPointSchemaSource(IExtensionPoint extensionPoint, String schemaReference, Callable<BundleInfo[]> sourceBundlesLoader) throws Exception {
+		String contributor = extensionPoint.getContributor().getName();
+		Bundle bundle = Platform.getBundle(contributor);
+		URL schemaURL = bundle.getEntry(schemaReference);
+		if (schemaURL != null) {
+			return new InputSource(schemaURL.toString());
+		} else {
+			// Binary bundles typically miss the schema/*.exsd files.
+			// Let's try to find it in the source bundle (e.g. during the official test run):
+			BundleInfo[] bundles = sourceBundlesLoader.call();
+			for (BundleInfo bundleInfo : bundles) {
+				if (bundleInfo.getSymbolicName().equals(contributor + ".source")) {
+					URI location = bundleInfo.getLocation();
+					URL fileURL = FileLocator.toFileURL(location.toURL());
+					ZipFile zipFile = new ZipFile(fileURL.getPath());
+					ZipEntry entry = zipFile.getEntry(schemaReference);
+					if (entry == null) {
+						return null;
+					}
+					return new InputSource(zipFile.getInputStream(entry));
+				}
+			}
+			return null;
+		}
+	}
 	
-	protected void checkPackages(Set<String> packageIds, StringBuilder problems) {
+	private static void checkPackages(Set<String> packageIds, StringBuilder problems) {
 		Set<String> exportedPackageIds = new TreeSet<String>();
 		
 		exportedPackageIds.add("org.eclipse.core.runtime.adaptor"); // not exported, but makes sense to document since accessible from outside of OSGi framework
