@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 469057
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
@@ -274,13 +275,40 @@ public class PatternFilter extends ViewerFilter {
 	 * @return true if the given element's label matches the filter text
 	 */
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
-				.getLabelProvider()).getText(element);
+		// check for CellLabelProvider, which are also ILabelProvider,
+		// e.g., ColumnLabelProvider
+		CellLabelProvider cellLabelProvider = null;
+		if (viewer instanceof ColumnViewer) {
+			cellLabelProvider = ((ColumnViewer) viewer).getLabelProvider(0);
+		}
+		String labelText = getTextFromLabelProvider(cellLabelProvider, element);
 
 		if (labelText == null) {
-			return false;
+			IBaseLabelProvider baseLabelProvider = ((StructuredViewer) viewer).getLabelProvider();
+			labelText = getTextFromLabelProvider(baseLabelProvider, element);
 		}
 		return wordMatches(labelText);
+	}
+
+	private String getTextFromLabelProvider(IBaseLabelProvider baseLabelProvider, Object element) {
+		if (baseLabelProvider == null) {
+			return null;
+		}
+		String labelText = null;
+		if (baseLabelProvider instanceof ILabelProvider) {
+			labelText = ((ILabelProvider) baseLabelProvider).getText(element);
+		} else if (baseLabelProvider instanceof IStyledLabelProvider) {
+			labelText = ((IStyledLabelProvider) baseLabelProvider).getStyledText(element).getString();
+		} else if (baseLabelProvider instanceof DelegatingStyledCellLabelProvider) {
+			IStyledLabelProvider styledStringProvider = ((DelegatingStyledCellLabelProvider) baseLabelProvider)
+					.getStyledStringProvider();
+			StyledString styledText = styledStringProvider.getStyledText(element);
+			if (styledText != null) {
+				labelText = styledText.getString();
+			}
+		}
+
+		return labelText;
 	}
 
 	/**
