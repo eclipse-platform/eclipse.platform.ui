@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -479,7 +479,7 @@ public abstract class PreferencePage extends DialogPage implements
      * <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa511266.aspx#commitButtons">Windows</a>
      * wants applied changes to persist on Cancel, whereas
      * <a href="http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AppleHIGuidelines/Windows/Windows.html#//apple_ref/doc/uid/20000961-TPXREF58">Mac</a> and
-     * <a href="https://developer.gnome.org/hig-book/stable/windows-utility.html.en#windows-explicit-apply">GTK</a>
+     * <a href="https://developer.gnome.org/hig/stable/dialogs.html.en#instant-and-explicit-apply">GTK</a>
      * consider Apply a preview that should not be saved on Cancel. Eclipse applications
      * typically adhere to the Windows guidelines and just override {@link #performOk()} and save preferences there.
      * </p>
