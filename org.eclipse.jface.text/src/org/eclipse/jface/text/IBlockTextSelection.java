@@ -16,6 +16,7 @@ package org.eclipse.jface.text;
  * column may not be equal for two different lines, therefore computing the set of disjunct
  * character ranges covered by a column selection is influenced by the used font and tabulator
  * width. Using column selections with proportional fonts may render unexpected results.
+ * 
  * <h5><a name="virtual">Virtual Spaces</a></h5>
  * The {@linkplain #getStartColumn() start column} and {@linkplain #getEndColumn() end column} may
  * refer to &quot;virtual offsets&quot; in the white space beyond the end of the line. Such an
@@ -38,7 +39,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * Returns the column on the {@linkplain ITextSelection#getStartLine() start line} at which the
 	 * selection starts. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
-	 * href="#virtual">virtual</a> offset.
+	 * href="IBlockTextSelection#virtual">virtual</a> offset.
 	 * 
 	 * @return the start column measured from the line start
 	 */
@@ -47,7 +48,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * Returns the exclusive column on the {@linkplain ITextSelection#getEndLine() end line} at which the
 	 * selection ends. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
-	 * href="#virtual">virtual</a> offset.
+	 * href="IBlockTextSelection#virtual">virtual</a> offset.
 	 * 
 	 * @return the end column measured from the line start
 	 */
@@ -59,7 +60,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * {@linkplain ITextSelection#getOffset() offset} and {@link ITextSelection#getLength() length},
 	 * as only the text within the selected columns is returned.
 	 * <p>
-	 * Any <a href="#virtual">virtual</a> spaces beyond the end of the selected lines are
+	 * Any <a href="IBlockTextSelection#virtual">virtual</a> spaces beyond the end of the selected lines are
 	 * materialized and returned as text.
 	 * </p>
 	 * 
