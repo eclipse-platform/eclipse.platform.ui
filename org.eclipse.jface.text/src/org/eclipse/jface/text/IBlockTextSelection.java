@@ -39,7 +39,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * Returns the column on the {@linkplain ITextSelection#getStartLine() start line} at which the
 	 * selection starts. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
-	 * href="IBlockTextSelection#virtual">virtual</a> offset.
+	 * href="IBlockTextSelection.html#virtual">virtual</a> offset.
 	 * 
 	 * @return the start column measured from the line start
 	 */
@@ -48,7 +48,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * Returns the exclusive column on the {@linkplain ITextSelection#getEndLine() end line} at which the
 	 * selection ends. The returned column is a character count measured from the start of the
 	 * line. It may be larger than the length of the line, in which case it is a <a
-	 * href="IBlockTextSelection#virtual">virtual</a> offset.
+	 * href="IBlockTextSelection.html#virtual">virtual</a> offset.
 	 * 
 	 * @return the end column measured from the line start
 	 */
@@ -60,7 +60,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * {@linkplain ITextSelection#getOffset() offset} and {@link ITextSelection#getLength() length},
 	 * as only the text within the selected columns is returned.
 	 * <p>
-	 * Any <a href="IBlockTextSelection#virtual">virtual</a> spaces beyond the end of the selected lines are
+	 * Any <a href="IBlockTextSelection.html#virtual">virtual</a> spaces beyond the end of the selected lines are
 	 * materialized and returned as text.
 	 * </p>
 	 * 
