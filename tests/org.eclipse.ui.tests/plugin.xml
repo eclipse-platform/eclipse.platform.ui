@@ -4386,5 +4386,12 @@
    <extension point="org.eclipse.e4.ui.css.swt.theme">
    		<theme basestylesheeturi="css/mock.css" id="org.eclipse.e4.ui.css.theme.mock" label="mock"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.editorAssociationOverride">
+      <editorAssociationOverride
+            class="org.eclipse.ui.tests.ide.api.IDETest$TestOverride"
+            id="org.eclipse.ui.tests.editorAssociationOverride1">
+      </editorAssociationOverride>
+   </extension>
    
 </plugin>

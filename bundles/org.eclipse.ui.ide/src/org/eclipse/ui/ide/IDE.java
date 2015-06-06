@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -845,7 +845,7 @@ public final class IDE {
 		for (int i = 0; i < overrides.length; i++) {
 			editorDescriptors = overrides[i].overrideEditors(editorInput, contentType, editorDescriptors);
 		}
-		return editorDescriptors;
+		return removeNullEntries(editorDescriptors);
 	}
 
 	/**
@@ -866,7 +866,27 @@ public final class IDE {
 		for (int i = 0; i < overrides.length; i++) {
 			editorDescriptors = overrides[i].overrideEditors(fileName, contentType, editorDescriptors);
 		}
-		return editorDescriptors;
+		return removeNullEntries(editorDescriptors);
+	}
+
+	private static IEditorDescriptor[] removeNullEntries(IEditorDescriptor[] editorDescriptors) {
+		boolean nullDescriptorFound = false;
+		for (IEditorDescriptor d : editorDescriptors) {
+			if (d == null) {
+				nullDescriptorFound = true;
+				break;
+			}
+		}
+		if (!nullDescriptorFound) {
+			return editorDescriptors;
+		}
+		List<IEditorDescriptor> nonNullDescriptors = new ArrayList<>(editorDescriptors.length);
+		for (IEditorDescriptor d : editorDescriptors) {
+			if (d != null) {
+				nonNullDescriptors.add(d);
+			}
+		}
+		return nonNullDescriptors.toArray(new IEditorDescriptor[nonNullDescriptors.size()]);
 	}
 
 	/**
