@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -41,11 +40,11 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 
     // Collection of EditorDescriptor, where the first one
     // if considered the default one.
-    private List editors = new ArrayList(1);
+	private List<IEditorDescriptor> editors = new ArrayList<>(1);
 
-    private List deletedEditors = new ArrayList(1);
+	private List<IEditorDescriptor> deletedEditors = new ArrayList<>(1);
 
-	private List declaredDefaultEditors = new ArrayList(1);
+	private List<IEditorDescriptor> declaredDefaultEditors = new ArrayList<>(1);
 
     /**
      *  Create an instance of this class.
@@ -81,7 +80,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param editor the editor to add
      */
-    public void addEditor(EditorDescriptor editor) {
+	public void addEditor(EditorDescriptor editor) {
         editors.add(editor);
         deletedEditors.remove(editor);
     }
@@ -89,22 +88,21 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
     /**
      * Clone the receiver.
      */
-    @Override
+	@SuppressWarnings("unchecked")
+	@Override
 	public Object clone() {
         try {
             FileEditorMapping clone = (FileEditorMapping) super.clone();
-            clone.editors = (List) ((ArrayList) editors).clone();
-			clone.deletedEditors = (List) ((ArrayList) deletedEditors).clone();
-			clone.declaredDefaultEditors = (List) ((ArrayList) declaredDefaultEditors).clone();
+			clone.editors = (List<IEditorDescriptor>) ((ArrayList<IEditorDescriptor>) editors).clone();
+			clone.deletedEditors = (List<IEditorDescriptor>) ((ArrayList<IEditorDescriptor>) deletedEditors).clone();
+			clone.declaredDefaultEditors = (List<IEditorDescriptor>) ((ArrayList<IEditorDescriptor>) declaredDefaultEditors)
+					.clone();
             return clone;
         } catch (CloneNotSupportedException e) {
             return null;
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
 	public boolean equals(Object obj) {
         if (this == obj) {
@@ -134,13 +132,13 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * Compare the editor ids from both lists and return true if they
      * are equals.
      */
-    private boolean compareList(List l1, List l2) {
+	private boolean compareList(List<IEditorDescriptor> l1, List<IEditorDescriptor> l2) {
         if (l1.size() != l2.size()) {
 			return false;
 		}
 
-        Iterator i1 = l1.iterator();
-        Iterator i2 = l2.iterator();
+		Iterator<IEditorDescriptor> i1 = l1.iterator();
+		Iterator<IEditorDescriptor> i2 = l2.iterator();
         while (i1.hasNext() && i2.hasNext()) {
             Object o1 = i1.next();
             Object o2 = i2.next();
@@ -164,38 +162,27 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 		return result;
 	}
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public IEditorDescriptor getDefaultEditor() {
-
         if (editors.size() == 0 || WorkbenchActivityHelper.restrictUseOf(editors.get(0))) {
 			return null;
 		}
-
-        return (IEditorDescriptor) editors.get(0);
+        return editors.get(0);
     }
 
     /**
      * Returns all editor descriptors of this mapping, not filtered by activities.
      */
     IEditorDescriptor[] getUnfilteredEditors() {
-    	return (IEditorDescriptor[]) editors.toArray(new IEditorDescriptor[editors.size()]);
+    	return editors.toArray(new IEditorDescriptor[editors.size()]);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public IEditorDescriptor[] getEditors() {
-    	Collection descs = WorkbenchActivityHelper.restrictCollection(editors, new ArrayList());
-		return (IEditorDescriptor[]) descs.toArray(new IEditorDescriptor[descs.size()]);
+		Collection<IEditorDescriptor> descs = WorkbenchActivityHelper.restrictCollection(editors, new ArrayList<>());
+		return descs.toArray(new IEditorDescriptor[descs.size()]);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public IEditorDescriptor[] getDeletedEditors() {
         IEditorDescriptor[] array = new IEditorDescriptor[deletedEditors.size()];
@@ -203,17 +190,11 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
         return array;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public String getExtension() {
         return extension;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public ImageDescriptor getImageDescriptor() {
         IEditorDescriptor editor = getDefaultEditor();
@@ -224,17 +205,11 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
         return editor.getImageDescriptor();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public String getLabel() {
         return TextProcessor.process(name + (extension.length() == 0 ? "" : DOT + extension), STAR + DOT); 	//$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * Method declared on IFileEditorMapping.
-     */
     @Override
 	public String getName() {
         return name;
@@ -245,7 +220,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param editor the editor to remove
      */
-    public void removeEditor(EditorDescriptor editor) {
+	public void removeEditor(IEditorDescriptor editor) {
         editors.remove(editor);
         deletedEditors.add(editor);
         declaredDefaultEditors.remove(editor);
@@ -257,7 +232,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param editor the editor to be set as default
      */
-    public void setDefaultEditor(EditorDescriptor editor) {
+	public void setDefaultEditor(IEditorDescriptor editor) {
         editors.remove(editor);
         editors.add(0, editor);
         declaredDefaultEditors.remove(editor);
@@ -274,7 +249,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param newEditors the new list of associated editors
      */
-    public void setEditorsList(List newEditors) {
+	public void setEditorsList(List<IEditorDescriptor> newEditors) {
         editors = newEditors;
         declaredDefaultEditors.retainAll(newEditors);
     }
@@ -288,7 +263,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param newDeletedEditors the new list of associated (but deleted) editors
      */
-    public void setDeletedEditorsList(List newDeletedEditors) {
+	public void setDeletedEditorsList(List<IEditorDescriptor> newDeletedEditors) {
         deletedEditors = newDeletedEditors;
     }
 
@@ -318,8 +293,9 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 	 * @since 3.1
 	 */
 	public IEditorDescriptor [] getDeclaredDefaultEditors() {
-		Collection descs = WorkbenchActivityHelper.restrictCollection(declaredDefaultEditors, new ArrayList());
-		return (IEditorDescriptor []) descs.toArray(new IEditorDescriptor[descs.size()]);
+		Collection<IEditorDescriptor> descs = WorkbenchActivityHelper.restrictCollection(declaredDefaultEditors,
+				new ArrayList<>());
+		return descs.toArray(new IEditorDescriptor[descs.size()]);
 	}
 
 	/**
@@ -342,7 +318,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 	 * @param defaultEditors the editors
 	 * @since 3.1
 	 */
-	public void setDefaultEditors(List defaultEditors) {
+	public void setDefaultEditors(List<IEditorDescriptor> defaultEditors) {
 		declaredDefaultEditors = defaultEditors;
 	}
 }
