@@ -1049,9 +1049,13 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
     @Override
 	public void setDefaultEditor(String fileName, String editorId) {
-        IEditorDescriptor desc = findEditor(editorId);
-        FileEditorMapping[] mapping = getMappingForFilename(fileName);
-        if (mapping[0] != null) {
+		IEditorDescriptor desc = findEditor(editorId);
+		setDefaultEditor(fileName, desc);
+	}
+
+	public void setDefaultEditor(String fileName, IEditorDescriptor desc) {
+		FileEditorMapping[] mapping = getMappingForFilename(fileName);
+		if (mapping[0] != null) {
 			mapping[0].setDefaultEditor(desc);
 		}
 		if (mapping[1] != null) {
