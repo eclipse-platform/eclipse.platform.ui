@@ -968,7 +968,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			editorMemento.putString(IWorkbenchConstants.TAG_EXTENSION, type.getExtension());
             IEditorDescriptor[] editorArray = type.getEditors();
 			for (IEditorDescriptor editor : editorArray) {
-                if (!editors.contains(editor)) {
+				if (editor == null) {
+					continue;
+				}
+				if (!editors.contains(editor)) {
                     editors.add(editor);
                 }
 				IMemento idMemento = editorMemento.createChild(IWorkbenchConstants.TAG_EDITOR);
@@ -976,7 +979,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
             }
             editorArray = type.getDeletedEditors();
 			for (IEditorDescriptor editor : editorArray) {
-                if (!editors.contains(editor)) {
+				if (editor == null) {
+					continue;
+				}
+				if (!editors.contains(editor)) {
                     editors.add(editor);
                 }
 				IMemento idMemento = editorMemento.createChild(IWorkbenchConstants.TAG_DELETED_EDITOR);
@@ -984,7 +990,10 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
             }
             editorArray = type.getDeclaredDefaultEditors();
 			for (IEditorDescriptor editor : editorArray) {
-                if (!editors.contains(editor)) {
+				if (editor == null) {
+					continue;
+				}
+				if (!editors.contains(editor)) {
                     editors.add(editor);
                 }
 				IMemento idMemento = editorMemento.createChild(IWorkbenchConstants.TAG_DEFAULT_EDITOR);
@@ -1394,19 +1403,18 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 			RelatedRegistry registry) {
 		List<IEditorDescriptor> allRelated = new ArrayList<IEditorDescriptor>();
 		List<IEditorDescriptor> nonDefaultFileEditors = new ArrayList<IEditorDescriptor>();
-		IEditorDescriptor [] related;
 
 		if (fileName != null) {
 			FileEditorMapping mapping = getMappingFor(fileName);
 			if (mapping != null) {
 				// backwards compatibility - add editors flagged as "default"
-				related = mapping.getDeclaredDefaultEditors();
-				for (int i = 0; i < related.length; i++) {
+				IEditorDescriptor[] related = mapping.getDeclaredDefaultEditors();
+				for (IEditorDescriptor editor : related) {
 					// we don't want to return duplicates
-					if (!allRelated.contains(related[i])) {
+					if (editor != null && !allRelated.contains(editor)) {
 						// if it's not filtered, add it to the list
-						if (!WorkbenchActivityHelper.filterItem(related[i])) {
-							allRelated.add(related[i]);
+						if (!WorkbenchActivityHelper.filterItem(editor)) {
+							allRelated.add(editor);
 						}
 					}
 				}
@@ -1422,13 +1430,13 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 				String extension = "*" + fileName.substring(index); //$NON-NLS-1$
 				mapping = getMappingFor(extension);
 				if (mapping != null) {
-					related = mapping.getDeclaredDefaultEditors();
-					for (int i = 0; i < related.length; i++) {
+					IEditorDescriptor[] related = mapping.getDeclaredDefaultEditors();
+					for (IEditorDescriptor editor : related) {
 						// we don't want to return duplicates
-						if (!allRelated.contains(related[i])) {
+						if (editor != null && !allRelated.contains(editor)) {
 							// if it's not filtered, add it to the list
-							if (!WorkbenchActivityHelper.filterItem(related[i])) {
-								allRelated.add(related[i]);
+							if (!WorkbenchActivityHelper.filterItem(editor)) {
+								allRelated.add(editor);
 							}
 						}
 					}
@@ -1439,7 +1447,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 		if (type != null) {
 			// now add any objects directly related to the content type
-			related = registry.getRelatedObjects(type);
+			IEditorDescriptor[] related = registry.getRelatedObjects(type);
 			for (int i = 0; i < related.length; i++) {
 				// we don't want to return duplicates
 				if (!allRelated.contains(related[i])) {
@@ -1455,7 +1463,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		if (type != null) {
 			// now add any indirectly related objects, walking up the content type hierarchy
 			while ((type = type.getBaseType()) != null) {
-				related = registry.getRelatedObjects(type);
+				IEditorDescriptor[] related = registry.getRelatedObjects(type);
 				for (int i = 0; i < related.length; i++) {
 					// we don't want to return duplicates
 					if (!allRelated.contains(related[i])) {
@@ -1470,7 +1478,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 
 		// add all non-default editors to the list
 		for (IEditorDescriptor editor : nonDefaultFileEditors) {
-			if (!allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
+			if (editor != null && !allRelated.contains(editor) && !WorkbenchActivityHelper.filterItem(editor)) {
 				allRelated.add(editor);
 			}
 		}

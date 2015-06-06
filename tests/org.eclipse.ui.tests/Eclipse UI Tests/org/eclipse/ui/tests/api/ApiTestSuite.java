@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.tests.api.workbenchpart.ArbitraryPropertyTest;
 import org.eclipse.ui.tests.api.workbenchpart.LifecycleViewTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
 import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
 import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
 import org.eclipse.ui.tests.ide.api.FileEditorInputTest;
+import org.eclipse.ui.tests.ide.api.IDETest;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI API.
@@ -76,6 +77,7 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(UIJobTest.class));
         addTest(new TestSuite(Bug75118Test.class));
         addTest(new TestSuite(FileEditorInputTest.class));
+		addTest(new TestSuite(IDETest.class));
         addTest(new TestSuite(IEditorMatchingStrategyTest.class));
         addTest(new TestSuite(XMLMementoTest.class));
         //addTest(new TestSuite(IWorkbenchPartTestableTests.class));
