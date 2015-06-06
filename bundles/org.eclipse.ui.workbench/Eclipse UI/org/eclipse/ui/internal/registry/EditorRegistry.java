@@ -1200,16 +1200,15 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
         Iterator<FileEditorMapping> iter = map.values().iterator();
 		while (iter.hasNext()) {
         	FileEditorMapping mapping = iter.next();
-        	IEditorDescriptor[] editors = mapping.getUnfilteredEditors();
-            for (int i = 0; i < editors.length; i++) {
-				if (editors[i] == desc) {
-					mapping.removeEditor(editors[i]);
+			for (IEditorDescriptor editor : mapping.getUnfilteredEditors()) {
+				if (editor == desc) {
+					mapping.removeEditor(editor);
                     break;
                 }
 			}
-            if (editors.length <= 0) {
-                map.remove(mapping);
-                break;
+			IEditorDescriptor[] editors = mapping.getUnfilteredEditors();
+			if (editors.length == 0) {
+				iter.remove();
             }
         }
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 442043
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,6 +33,8 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+
+import junit.framework.TestCase;
 
 public class IEditorRegistryTest extends TestCase {
 	private IEditorRegistry fReg;
@@ -467,7 +467,7 @@ public class IEditorRegistryTest extends TestCase {
 					"Parameter map should not be null before setting the default editor",
 					map);
 
-			map.setDefaultEditor((EditorDescriptor) htmlDescriptor);
+			map.setDefaultEditor(htmlDescriptor);
 			((EditorRegistry) fReg).setFileEditorMappings(maps);
 			((EditorRegistry) fReg).saveAssociations();
 			PrefUtil.savePrefs();
@@ -516,4 +516,38 @@ public class IEditorRegistryTest extends TestCase {
 		}
 	}
 
+	public void testRemoveExtension() {
+		FileEditorMapping mapping1 = new FileEditorMapping(null, "testRemoveExtension1");
+		FileEditorMapping mapping2 = new FileEditorMapping(null, "testRemoveExtension2");
+		EditorDescriptor editor = EditorDescriptor.createForProgram("notepad.exe");
+		mapping1.addEditor(editor);
+		mapping2.addEditor(editor);
+		FileEditorMapping[] src = (FileEditorMapping[]) fReg.getFileEditorMappings();
+		FileEditorMapping[] maps = new FileEditorMapping[src.length + 2];
+		System.arraycopy(src, 0, maps, 0, src.length);
+		maps[maps.length - 1] = mapping1;
+		maps[maps.length - 2] = mapping2;
+		try {
+			((EditorRegistry) fReg).setFileEditorMappings(maps);
+			((EditorRegistry) fReg).saveAssociations();
+
+			IEditorDescriptor editor1 = fReg.getDefaultEditor("a.testRemoveExtension1");
+			assertEquals(editor, editor1);
+			IEditorDescriptor editor2 = fReg.getDefaultEditor("a.testRemoveExtension2");
+			assertEquals(editor, editor2);
+
+			EditorDescriptor[] descriptors = new EditorDescriptor[] { editor };
+			((EditorRegistry) fReg).removeExtension(null, descriptors);
+
+			editor1 = fReg.getDefaultEditor("a.testRemoveExtension1");
+			assertNull(editor1);
+			editor2 = fReg.getDefaultEditor("a.testRemoveExtension2");
+			assertNull(editor2);
+			IFileEditorMapping[] mappings = fReg.getFileEditorMappings();
+			assertEquals(src.length, mappings.length);
+		} finally {
+			((EditorRegistry) fReg).setFileEditorMappings(src);
+			((EditorRegistry) fReg).saveAssociations();
+		}
+	}
 }
