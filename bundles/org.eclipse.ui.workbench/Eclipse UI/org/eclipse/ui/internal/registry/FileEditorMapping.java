@@ -257,7 +257,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      *
      * @param editor the editor to be set as default
      */
-    public void setDefaultEditor(EditorDescriptor editor) {
+	public void setDefaultEditor(IEditorDescriptor editor) {
         editors.remove(editor);
         editors.add(0, editor);
         declaredDefaultEditors.remove(editor);

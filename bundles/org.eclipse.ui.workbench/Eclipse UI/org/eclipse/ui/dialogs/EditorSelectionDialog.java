@@ -568,11 +568,16 @@ public class EditorSelectionDialog extends Dialog {
 		EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
 		if (rememberTypeButton == null || !rememberTypeButton.getSelection()) {
 			updateFileMappings(reg, true);
-			reg.setDefaultEditor(fileName, editorId);
+			reg.setDefaultEditor(fileName, selectedEditor);
 		} else {
 			updateFileMappings(reg, false);
-			reg.setDefaultEditor("*." + getFileType(), editorId); //$NON-NLS-1$
+			reg.setDefaultEditor("*." + getFileType(), selectedEditor); //$NON-NLS-1$
 		}
+		// bug 468906: always re-set editor mappings: this is needed to rebuild
+		// internal editors map after setting the default editor
+		List<IFileEditorMapping> newMappings = new ArrayList<IFileEditorMapping>();
+		newMappings.addAll(Arrays.asList(reg.getFileEditorMappings()));
+		reg.setFileEditorMappings(newMappings.toArray(new FileEditorMapping[newMappings.size()]));
 		reg.saveAssociations();
 	}
 
