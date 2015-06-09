@@ -86,8 +86,11 @@ public class ResourceHandler implements IModelResourceHandler {
 	 *
 	 */
 	final private boolean deltaRestore;
-	final private boolean saveAndRestore;
 	final private boolean clearPersistedState;
+
+	@Inject
+	@Named(IWorkbench.PERSIST_STATE)
+	private boolean saveAndRestore;
 
 	/**
 	 * Constructor.
@@ -97,10 +100,8 @@ public class ResourceHandler implements IModelResourceHandler {
 	 * @param deltaRestore
 	 */
 	@Inject
-	public ResourceHandler(@Named(IWorkbench.PERSIST_STATE) boolean saveAndRestore,
-			@Named(IWorkbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
+	public ResourceHandler(@Named(IWorkbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
 			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
-		this.saveAndRestore = saveAndRestore;
 		this.clearPersistedState = clearPersistedState;
 		this.deltaRestore = deltaRestore;
 	}
