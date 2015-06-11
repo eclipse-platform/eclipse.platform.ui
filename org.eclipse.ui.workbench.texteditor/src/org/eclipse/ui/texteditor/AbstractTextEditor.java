@@ -4508,7 +4508,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *         none is defined
 	 * @since 2.1
 	 */
-	private String getSymbolicFontName() {
+	/*package*/ String getSymbolicFontName() {
 		if (getConfigurationElement() != null)
 			return getConfigurationElement().getAttribute("symbolicFontName"); //$NON-NLS-1$
 		return null;

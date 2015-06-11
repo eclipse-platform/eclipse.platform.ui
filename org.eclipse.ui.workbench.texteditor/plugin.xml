@@ -208,6 +208,18 @@
 	        id="org.eclipse.ui.edit.text.scroll.lineDown">
 	  </command>
 	  <command
+	        name="%command.zoomIn.name"
+	        description="%command.zoomIn.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.zoomIn">
+	  </command>
+	  <command
+	        name="%command.zoomOut.name"
+	        description="%command.zoomOut.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.zoomOut">
+	  </command>
+	  <command
 	        name="%command.selectLineUp.name"
 	        description="%command.selectLineUp.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
@@ -448,6 +460,17 @@
             id="org.eclipse.ui.edit.text.open.hyperlink">
       </command>
 	</extension>
+
+	<extension point="org.eclipse.ui.commandImages">
+		<image
+			commandId="org.eclipse.ui.edit.text.zoomIn"
+			icon="$nl$/icons/full/etool16/zoomIn.gif">
+		</image>
+		<image
+			commandId="org.eclipse.ui.edit.text.zoomOut"
+			icon="$nl$/icons/full/etool16/zoomOut.gif">
+		</image>
+	</extension>
    
 	<extension
 	     point="org.eclipse.ui.bindings">
@@ -513,6 +536,16 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+ARROW_DOWN"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.zoomIn"
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1++"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.zoomOut"
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+-"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.toggleOverwrite"
 	        contextId="org.eclipse.ui.textEditorScope"
@@ -1236,5 +1269,17 @@
                value="Monaco-regular-11">
          </fontValue>
       </fontDefinition>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.texteditor.TextZoomInHandler"
+            commandId="org.eclipse.ui.edit.text.zoomIn">
+      </handler>
+      <handler
+            class="org.eclipse.ui.texteditor.TextZoomOutHandler"
+            commandId="org.eclipse.ui.edit.text.zoomOut">
+      </handler>
    </extension>
 </plugin>
