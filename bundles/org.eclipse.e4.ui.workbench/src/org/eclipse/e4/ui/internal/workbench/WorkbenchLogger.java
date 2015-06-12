@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
@@ -30,6 +31,7 @@ public final class WorkbenchLogger extends Logger {
 	protected DebugTrace trace;
 	protected FrameworkLog log;
 	private String bundleName;
+	private boolean isDebugEnabled;
 
 	/**
 	 * Creates a new workbench logger
@@ -38,6 +40,7 @@ public final class WorkbenchLogger extends Logger {
 	public WorkbenchLogger(@Optional @Named("logger.bundlename") String bundleName) {
 		super();
 		this.bundleName = bundleName == null ? Activator.PI_WORKBENCH : bundleName;
+		isDebugEnabled = Platform.inDebugMode();
 	}
 
 	@Override
@@ -47,6 +50,9 @@ public final class WorkbenchLogger extends Logger {
 
 	@Override
 	public void debug(Throwable t, String message) {
+		if (!isDebugEnabled()) {
+			return;
+		}
 		trace(t, message);
 	}
 
@@ -92,7 +98,7 @@ public final class WorkbenchLogger extends Logger {
 
 	@Override
 	public boolean isDebugEnabled() {
-		return false;
+		return isDebugEnabled;
 	}
 
 	@Override
