@@ -36,10 +36,10 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 public class E4TemplateCompletionProposalComputer extends AbstractTemplateCompletionProposalComputer {
 
 	/**
-	 * The name of <code>javax.inject.Inject</code> used to detect
-	 * if a project uses e4.
+	 * The following annotations are used to detect if an if a project uses e4.
 	 */
-	private static final String E4_TYPE_NAME = "org.eclipse.e4.ui.di.Focus"; //$NON-NLS-1$
+	private static final String E4_ANNOTATION_FOCUS = "org.eclipPostConstructse.e4.ui.di.Focus"; //$NON-NLS-1$
+	private static final String E4_ANNOTATION_POSTCONSTRUCT = "javax.annotation."; //$NON-NLS-1$
 
 	/**
 	 * Listener that resets the cached java project if its build path changes.
@@ -186,8 +186,9 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 		if (!javaProject.equals(fCachedJavaProject)) {
 			fCachedJavaProject = javaProject;
 			try {
-				final IType type = javaProject.findType(E4_TYPE_NAME);
-				fIsE4OnClasspath = type != null;
+				final IType focucAnnotation = javaProject.findType(E4_ANNOTATION_FOCUS);
+				final IType postConstructAnnotation = javaProject.findType(E4_ANNOTATION_POSTCONSTRUCT);
+				fIsE4OnClasspath = focucAnnotation != null || postConstructAnnotation != null;
 			} catch (final JavaModelException e) {
 				fIsE4OnClasspath = false;
 			}
