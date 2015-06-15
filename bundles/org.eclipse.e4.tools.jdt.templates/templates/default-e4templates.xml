@@ -16,11 +16,6 @@
 
 <templates>
 
-<template name="Inject - Composite" description="Injected Parent Composite" id="org.eclipse.e4.tools.jdt.templates.parent" context="e4-members" enabled="true" autoinsert="false">@Inject
-Composite parent;
-${imp:import(javax.inject.Inject)}
-</template>
-
 <template name="Inject -  Preference Value" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
 void setPreferenceValue(@Named("preference-PREFERENCE_KEY") String preferenceValue) {
 	${cursor}
@@ -37,6 +32,10 @@ IEventBroker eventBroker;
 ${imp:import(org.eclipse.e4.core.services.events.IEventBroker)}
 </template>
 
+<template name="ESelection service as field" description="Injected ESEectionService" id="org.eclipse.e4.tools.jdt.templates.selectionservice" context="e4-members" enabled="true" autoinsert="false">@Inject
+ESelectionService selectionService;
+${imp:import(org.eclipse.e4.ui.workbench.modeling.ESelectionService)}
+</template>
 
 <template name="Injectject -  Event" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
 void handleSomeEvent(Payload payloadObject) {
