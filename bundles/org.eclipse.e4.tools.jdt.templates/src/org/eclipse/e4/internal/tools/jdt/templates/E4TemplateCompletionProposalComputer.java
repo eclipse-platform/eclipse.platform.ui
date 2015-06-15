@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation (adapted from JDT's SWTTemplateCompletionProposalComputer)
+ * Lars Vogel <Lars.Vogel@vogella.com> - Bug 470221
  *******************************************************************************/
 package org.eclipse.e4.internal.tools.jdt.templates;
 
@@ -53,8 +54,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 			}
 
 			final IJavaElementDelta[] children = event.getDelta().getChangedChildren();
-			for (int i = 0; i < children.length; i++) {
-				final IJavaElementDelta child = children[i];
+			for (final IJavaElementDelta child : children) {
 				if (javaProject.equals(child.getElement())) {
 					if (isClasspathChange(child)) {
 						setCachedJavaProject(null);
@@ -65,7 +65,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 		/**
 		 * Does the delta indicate a classpath change?
-		 * 
+		 *
 		 * @param delta the delta to inspect
 		 * @return true if classpath has changed
 		 */
@@ -77,8 +77,8 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 			if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
 				final IJavaElementDelta[] children = delta.getAffectedChildren();
-				for (int i = 0; i < children.length; i++) {
-					if (isClasspathChangeFlag(children[i].getFlags())) {
+				for (final IJavaElementDelta element : children) {
+					if (isClasspathChangeFlag(element.getFlags())) {
 						return true;
 					}
 				}
@@ -89,7 +89,7 @@ public class E4TemplateCompletionProposalComputer extends AbstractTemplateComple
 
 		/**
 		 * Do the flags indicate a classpath change?
-		 * 
+		 *
 		 * @param flags the flags to inspect
 		 * @return true if the flag flags a classpath change
 		 */
