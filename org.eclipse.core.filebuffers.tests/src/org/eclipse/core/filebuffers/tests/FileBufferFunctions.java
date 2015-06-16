@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alex Blewitt <alex.blewitt@gmail.com> - Replace new Boolean with Boolean.valueOf - https://bugs.eclipse.org/470244
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
@@ -823,7 +824,7 @@ public abstract class FileBufferFunctions extends TestCase {
 							buf.append("listener.newLocation: " + listener.newLocation + "\n");
 							buf.append("newLocation: " + newLocation + "\n");
 						}
-						buf.append("buffers identical: " + new Boolean(listener.buffer == fileBuffer));
+						buf.append("buffers identical: " + Boolean.valueOf(listener.buffer == fileBuffer));
 						fail(buf.toString());
 					}
 				}
