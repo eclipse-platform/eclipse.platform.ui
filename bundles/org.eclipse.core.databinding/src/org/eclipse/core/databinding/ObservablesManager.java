@@ -81,8 +81,8 @@ public class ObservablesManager {
 	public void addObservablesFromContext(DataBindingContext context,
 			boolean trackTargets, boolean trackModels) {
 		if (trackTargets || trackModels) {
-			contexts.put(context, new Pair(new Boolean(trackTargets),
-					new Boolean(trackModels)));
+			contexts.put(context, new Pair(Boolean.valueOf(trackTargets),
+					Boolean.valueOf(trackModels)));
 		}
 	}
 

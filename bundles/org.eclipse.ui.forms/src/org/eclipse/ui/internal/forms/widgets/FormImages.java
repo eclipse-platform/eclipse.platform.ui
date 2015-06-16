@@ -162,7 +162,7 @@ public class FormImages {
 
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = hash * 7 + new Boolean(fVertical).hashCode();
+			hash = hash * 7 + Boolean.valueOf(fVertical).hashCode();
 			for (int i = 0; i < fPercents.length; i++)
 				hash = hash * 7 + new Integer(fPercents[i]).hashCode();
 			return hash;

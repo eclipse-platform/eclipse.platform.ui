@@ -93,7 +93,7 @@ public class DuckType implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       if (method.getName().equals("equals") && args != null && args.length == 1) {
-         return new Boolean(equals(args[0]));
+         return Boolean.valueOf(equals(args[0]));
       }
       if (method.getName().equals("hashCode") && args == null) {
          return new Integer(hashCode());

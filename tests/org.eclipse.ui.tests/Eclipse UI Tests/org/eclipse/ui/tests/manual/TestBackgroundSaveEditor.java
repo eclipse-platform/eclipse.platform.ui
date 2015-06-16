@@ -170,7 +170,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		}
 
 		public void setDirty(boolean dirty) {
-			firePropertyChange("dirty", new Boolean(this.dirty), new Boolean(
+			firePropertyChange("dirty", Boolean.valueOf(this.dirty), Boolean.valueOf(
 					this.dirty = dirty));
 			getSite().getShell().getDisplay().syncExec(new Runnable(){
 				@Override
@@ -254,7 +254,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 				dirtyObservable, null, null);
 		// IObservableValue inputAndOutputDiffer = new ComputedValue(realm) {
 		// protected Object calculate() {
-		// return new Boolean(!Util.equals(inputObservable.getValue(),
+		// return Boolean.valueOf(!Util.equals(inputObservable.getValue(),
 		// outputObservable.getValue()));
 		// }
 		// };

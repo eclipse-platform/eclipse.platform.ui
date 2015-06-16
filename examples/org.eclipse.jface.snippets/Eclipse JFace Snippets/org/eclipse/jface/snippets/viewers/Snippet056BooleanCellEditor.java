@@ -104,7 +104,7 @@ public class Snippet056BooleanCellEditor {
 
 			@Override
 			protected Object getValue(Object element) {
-				return new Boolean(((MyModel) element).flag);
+				return Boolean.valueOf(((MyModel) element).flag);
 			}
 
 			@Override

@@ -267,7 +267,7 @@ public class FilteredTree extends Composite {
 			Text testText = null;
 			try {
 				testText = new Text(composite, SWT.SEARCH | SWT.ICON_CANCEL);
-				useNativeSearchField = new Boolean(
+				useNativeSearchField = Boolean.valueOf(
 						(testText.getStyle() & SWT.ICON_CANCEL) != 0);
 			} finally {
 				if (testText != null) {

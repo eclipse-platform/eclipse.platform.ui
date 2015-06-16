@@ -365,7 +365,7 @@ public class EditMask {
 			updating = true;
 			try {
 				if (!text.isDisposed()) {
-					Boolean oldIsComplete = new Boolean(editMaskParser.isComplete());
+					Boolean oldIsComplete = Boolean.valueOf(editMaskParser.isComplete());
 
 					editMaskParser.setInput(text.getText());
 					text.setText(editMaskParser.getFormattedResult());
@@ -420,7 +420,7 @@ public class EditMask {
 		}
 
 		private void firePropertyChangeEvents(Boolean oldIsComplete, String newRawText) {
-			Boolean newIsComplete = new Boolean(editMaskParser.isComplete());
+			Boolean newIsComplete = Boolean.valueOf(editMaskParser.isComplete());
 			if (!oldIsComplete.equals(newIsComplete)) {
 				firePropertyChange(FIELD_COMPLETE, oldIsComplete, newIsComplete);
 			}

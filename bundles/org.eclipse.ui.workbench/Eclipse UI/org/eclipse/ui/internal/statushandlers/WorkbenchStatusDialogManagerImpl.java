@@ -246,7 +246,7 @@ public class WorkbenchStatusDialogManagerImpl {
 		if (isDialogClosed()) {
 
 			getErrors().add(statusAdapter);
-			getModals().put(statusAdapter, new Boolean(modal));
+			getModals().put(statusAdapter, Boolean.valueOf(modal));
 			// Delay prompting if the status adapter property is set
 			if (shouldPrompt(statusAdapter)) {
 				// notify all interested parties that status adapters will be
@@ -309,7 +309,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	private void openStatusDialog(final boolean modal,
 			final StatusAdapter statusAdapter) {
 		getErrors().add(statusAdapter);
-		getModals().put(statusAdapter, new Boolean(modal));
+		getModals().put(statusAdapter, Boolean.valueOf(modal));
 		boolean shouldBeModal = shouldBeModal();
 		if (shouldBeModal ^ dialog.isModal()) {
 			dialog.getShell().removeDisposeListener(disposeListener);

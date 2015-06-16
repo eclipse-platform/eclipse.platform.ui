@@ -915,7 +915,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// and premature attempt to resolve class reference
 			boolean isBidi = com.ibm.icu.text.Bidi.requiresBidi(message.toCharArray(), 0,
 					message.length());
-			return new Boolean(isBidi);
+			return Boolean.valueOf(isBidi);
 		} catch (NoClassDefFoundError e) {
 			// the ICU Base bundle used in place of ICU?
 			return null;

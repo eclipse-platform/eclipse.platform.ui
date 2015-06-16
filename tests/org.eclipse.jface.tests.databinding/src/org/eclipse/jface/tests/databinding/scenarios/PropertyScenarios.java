@@ -494,7 +494,7 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
         // and vice versa.
         Converter negatingConverter = new Converter(boolean.class, boolean.class) {
             private Boolean negated(Boolean booleanObject) {
-                return new Boolean(!booleanObject.booleanValue());
+                return Boolean.valueOf(!booleanObject.booleanValue());
             }
 
             @Override

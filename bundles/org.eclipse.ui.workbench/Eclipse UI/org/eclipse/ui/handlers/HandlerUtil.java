@@ -655,7 +655,7 @@ public class HandlerUtil {
 			throw new ExecutionException("The command's toggle state doesn't contain a boolean value"); //$NON-NLS-1$
 
 		boolean oldValue = ((Boolean) state.getValue()).booleanValue();
-		state.setValue(new Boolean(!oldValue));
+		state.setValue(Boolean.valueOf(!oldValue));
 		return oldValue;
 	}
 
