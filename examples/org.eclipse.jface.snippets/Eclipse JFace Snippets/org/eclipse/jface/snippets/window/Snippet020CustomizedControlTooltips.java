@@ -66,6 +66,7 @@ public class Snippet020CustomizedControlTooltips {
 			this.parentShell = control.getShell();
 		}
 
+		@Override
 		protected Composite createToolTipContentArea(Event event,
 				Composite parent) {
 			Composite comp = new Composite(parent,SWT.NONE);
@@ -122,6 +123,7 @@ public class Snippet020CustomizedControlTooltips {
 			helpIcon.setImage(JFaceResources.getImage(HEADER_HELP_ICON));
 			helpIcon.addMouseListener(new MouseAdapter() {
 
+				@Override
 				public void mouseDown(MouseEvent e) {
 					hide();
 					openHelp();
@@ -134,6 +136,7 @@ public class Snippet020CustomizedControlTooltips {
 			closeIcon.setImage(JFaceResources.getImage(HEADER_CLOSE_ICON));
 			closeIcon.addMouseListener(new MouseAdapter() {
 
+				@Override
 				public void mouseDown(MouseEvent e) {
 					parentShell.setFocus();
 					hide();
@@ -167,6 +170,7 @@ public class Snippet020CustomizedControlTooltips {
 
 		MyToolTip myTooltipLabel = new MyToolTip(text) {
 
+			@Override
 			protected Composite createContentArea(Composite parent) {
 				Composite comp = super.createContentArea(parent);
 				comp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -177,6 +181,7 @@ public class Snippet020CustomizedControlTooltips {
 				l.setText("This a custom tooltip you can: \n- pop up any control you want\n- define delays\n - ... \nGo and get Eclipse M4 from <a>http://www.eclipse.org</a>");
 				l.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 				l.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						openURL();
 					}
@@ -191,6 +196,7 @@ public class Snippet020CustomizedControlTooltips {
 				box.open();
 			}
 
+			@Override
 			protected void openHelp() {
 				MessageBox box = new MessageBox(parent,SWT.ICON_INFORMATION);
 				box.setText("Info");
@@ -218,6 +224,7 @@ public class Snippet020CustomizedControlTooltips {
 		toolTipDelayed.setHideDelay(2000);
 
 		b.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toolTipDelayed.show(new Point(0,0));
 			}

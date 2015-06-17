@@ -44,6 +44,7 @@ public class Snippet012DialogWithImageButtons {
 				return desc;
 			}
 
+			@Override
 			protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 				Button b = super.createButton(parent, id, label, defaultButton);
 				if( id == IDialogConstants.OK_ID ) {
