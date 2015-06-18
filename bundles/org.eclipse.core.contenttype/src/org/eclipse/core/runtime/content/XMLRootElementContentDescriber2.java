@@ -207,12 +207,12 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		XMLRootHandler xmlHandler = new XMLRootHandler(true);
 		try {
 			if (!xmlHandler.parseContents(input)) {
-				properties.put(RESULT, new Boolean(false));
+				properties.put(RESULT, Boolean.FALSE);
 				return;
 			}
 		} catch (SAXException e) {
 			// we may be handed any kind of contents... it is normal we fail to parse
-			properties.put(RESULT, new Boolean(false));
+			properties.put(RESULT, Boolean.FALSE);
 			return;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
@@ -229,7 +229,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		String namespace = xmlHandler.getRootNamespace();
 		if (namespace != null)
 			properties.put(NAMESPACE, namespace);
-		properties.put(RESULT, new Boolean(true));
+		properties.put(RESULT, Boolean.TRUE);
 	}
 
 	/* (Intentionally not included in javadoc)

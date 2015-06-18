@@ -281,7 +281,7 @@ public class ContextInjectionTest extends TestCase {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(12.3);
-		Boolean testBoolean = new Boolean(true);
+		Boolean testBoolean = Boolean.TRUE;
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();

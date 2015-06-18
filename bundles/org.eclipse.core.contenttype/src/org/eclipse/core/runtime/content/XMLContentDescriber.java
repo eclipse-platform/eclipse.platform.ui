@@ -102,11 +102,11 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private void fillContentProperties(String line, IContentDescription description, Map<String, Object> properties) throws IOException {
 		// XMLDecl should be the first string (no blanks allowed)
 		if (line != null && line.startsWith(XML_PREFIX))
-			properties.put(FULL_XML_DECL, new Boolean(true));
+			properties.put(FULL_XML_DECL, Boolean.TRUE);
 		String charset = getCharset(line);
 		if (charset != null)
 			properties.put(CHARSET, charset);
-		properties.put(RESULT, new Boolean(true));
+		properties.put(RESULT, Boolean.TRUE);
 	}
 
 	private int internalDescribe(IContentDescription description, Map<String, Object> properties) {

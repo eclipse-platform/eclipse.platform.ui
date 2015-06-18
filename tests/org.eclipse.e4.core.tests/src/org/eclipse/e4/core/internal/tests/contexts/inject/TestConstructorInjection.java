@@ -86,7 +86,7 @@ public class TestConstructorInjection extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		Integer intValue = new Integer(123);
 		context.set(Integer.class.getName(), intValue);
-		Boolean boolValue = new Boolean(true);
+		Boolean boolValue = Boolean.TRUE;
 		context.set(Boolean.class.getName(), boolValue);
 		Double doubleValue = new Double(1.23);
 		context.set(Double.class.getName(), doubleValue);
