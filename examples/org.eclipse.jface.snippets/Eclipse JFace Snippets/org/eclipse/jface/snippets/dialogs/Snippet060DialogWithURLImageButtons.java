@@ -51,7 +51,6 @@ public class Snippet060DialogWithURLImageButtons {
 				return desc;
 			}
 
-			@Override
 			protected Button createButton(Composite parent, int id,
 					String label, boolean defaultButton) {
 				Button b = super.createButton(parent, id, label, defaultButton);
