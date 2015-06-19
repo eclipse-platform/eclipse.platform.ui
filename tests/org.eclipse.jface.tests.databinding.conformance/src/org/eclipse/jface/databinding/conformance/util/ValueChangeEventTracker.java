@@ -21,10 +21,10 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 /**
  * Listener for tracking the firing of ValueChangeEvents.
  */
-public class ValueChangeEventTracker implements IValueChangeListener {
+public class ValueChangeEventTracker<T> implements IValueChangeListener<T> {
 	public int count;
 
-	public ValueChangeEvent event;
+	public ValueChangeEvent<? extends T> event;
 
 	public final List<IObservablesListener> queue;
 
@@ -37,7 +37,7 @@ public class ValueChangeEventTracker implements IValueChangeListener {
 	}
 
 	@Override
-	public void handleValueChange(ValueChangeEvent event) {
+	public void handleValueChange(ValueChangeEvent<? extends T> event) {
 		count++;
 		this.event = event;
 
@@ -52,8 +52,8 @@ public class ValueChangeEventTracker implements IValueChangeListener {
 	 * @param observable
 	 * @return tracker
 	 */
-	public static ValueChangeEventTracker observe(IObservableValue observable) {
-		ValueChangeEventTracker tracker = new ValueChangeEventTracker();
+	public static <T> ValueChangeEventTracker<T> observe(IObservableValue<T> observable) {
+		ValueChangeEventTracker<T> tracker = new ValueChangeEventTracker<>();
 		observable.addValueChangeListener(tracker);
 		return tracker;
 	}

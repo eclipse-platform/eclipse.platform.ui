@@ -29,12 +29,14 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**
+ * @param <E>
+ *            The element type.
  * @since 3.3
  *
  */
-public class ValidatedObservableSet extends ObservableSet {
-	private IObservableSet target;
-	private IObservableValue validationStatus;
+public class ValidatedObservableSet<E> extends ObservableSet<E> {
+	private IObservableSet<E> target;
+	private IObservableValue<IStatus> validationStatus;
 
 	// Only true when out of sync with target due to validation status
 	private boolean stale;
@@ -44,24 +46,24 @@ public class ValidatedObservableSet extends ObservableSet {
 
 	private boolean updatingTarget = false;
 
-	private ISetChangeListener targetChangeListener = event -> {
+	private ISetChangeListener<E> targetChangeListener = event -> {
 		if (updatingTarget)
 			return;
-		IStatus status = (IStatus) validationStatus.getValue();
+		IStatus status = validationStatus.getValue();
 		if (isValid(status)) {
 			if (stale) {
 				// this.stale means we are out of sync with target,
 				// so reset wrapped list to exactly mirror target
 				stale = false;
-				updateWrappedSet(new HashSet(target));
+				updateWrappedSet(new HashSet<>(target));
 			} else {
-				SetDiff diff = event.diff;
+				SetDiff<? extends E> diff = event.diff;
 				if (computeNextDiff) {
 					diff = Diffs.computeSetDiff(wrappedSet, target);
 					computeNextDiff = false;
 				}
 				applyDiff(diff, wrappedSet);
-				fireSetChange(diff);
+				fireSetChange(Diffs.unmodifiableDiff(diff));
 			}
 		} else {
 			makeStale();
@@ -70,15 +72,14 @@ public class ValidatedObservableSet extends ObservableSet {
 
 	private IStaleListener targetStaleListener = staleEvent -> fireStale();
 
-	private IValueChangeListener validationStatusChangeListener = event -> {
-		IStatus oldStatus = (IStatus) event.diff.getOldValue();
-		IStatus newStatus = (IStatus) event.diff.getNewValue();
+	private IValueChangeListener<IStatus> validationStatusChangeListener = event -> {
+		IStatus oldStatus = event.diff.getOldValue();
+		IStatus newStatus = event.diff.getNewValue();
 		if (stale && !isValid(oldStatus) && isValid(newStatus)) {
 			// this.stale means we are out of sync with target,
 			// reset wrapped set to exactly mirror target
 			stale = false;
-			updateWrappedSet(new HashSet(target));
-
+			updateWrappedSet(new HashSet<>(target));
 			// If the validation status becomes valid because of a change in
 			// target observable
 			computeNextDiff = true;
@@ -89,14 +90,14 @@ public class ValidatedObservableSet extends ObservableSet {
 	 * @param target
 	 * @param validationStatus
 	 */
-	public ValidatedObservableSet(final IObservableSet target,
-			final IObservableValue validationStatus) {
-		super(target.getRealm(), new HashSet(target), target.getElementType());
+	public ValidatedObservableSet(final IObservableSet<E> target,
+			final IObservableValue<IStatus> validationStatus) {
+		super(target.getRealm(), new HashSet<>(target), target
+				.getElementType());
 		Assert.isNotNull(validationStatus,
 				"Validation status observable cannot be null"); //$NON-NLS-1$
-		Assert
-				.isTrue(target.getRealm().equals(validationStatus.getRealm()),
-						"Target and validation status observables must be on the same realm"); //$NON-NLS-1$
+		Assert.isTrue(target.getRealm().equals(validationStatus.getRealm()),
+				"Target and validation status observables must be on the same realm"); //$NON-NLS-1$
 		this.target = target;
 		this.validationStatus = validationStatus;
 		target.addSetChangeListener(targetChangeListener);
@@ -104,9 +105,9 @@ public class ValidatedObservableSet extends ObservableSet {
 		validationStatus.addValueChangeListener(validationStatusChangeListener);
 	}
 
-	private void updateWrappedSet(Set newSet) {
-		Set oldSet = wrappedSet;
-		SetDiff diff = Diffs.computeSetDiff(oldSet, newSet);
+	private void updateWrappedSet(Set<E> newSet) {
+		Set<E> oldSet = wrappedSet;
+		SetDiff<E> diff = Diffs.computeSetDiff(oldSet, newSet);
 		wrappedSet = newSet;
 		fireSetChange(diff);
 	}
@@ -115,12 +116,12 @@ public class ValidatedObservableSet extends ObservableSet {
 		return status.isOK() || status.matches(IStatus.INFO | IStatus.WARNING);
 	}
 
-	private void applyDiff(SetDiff diff, Set set) {
-		for (Iterator iterator = diff.getRemovals().iterator(); iterator
+	private void applyDiff(SetDiff<? extends E> diff, Set<E> set) {
+		for (Iterator<? extends E> iterator = diff.getRemovals().iterator(); iterator
 				.hasNext();) {
 			set.remove(iterator.next());
 		}
-		for (Iterator iterator = diff.getAdditions().iterator(); iterator
+		for (Iterator<? extends E> iterator = diff.getAdditions().iterator(); iterator
 				.hasNext();) {
 			set.add(iterator.next());
 		}
@@ -133,7 +134,7 @@ public class ValidatedObservableSet extends ObservableSet {
 		}
 	}
 
-	private void updateTargetSet(SetDiff diff) {
+	private void updateTargetSet(SetDiff<E> diff) {
 		updatingTarget = true;
 		try {
 			if (stale) {
@@ -154,12 +155,12 @@ public class ValidatedObservableSet extends ObservableSet {
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		getterCalled();
 		boolean changed = wrappedSet.add(o);
 		if (changed) {
-			SetDiff diff = Diffs.createSetDiff(Collections.singleton(o),
-					Collections.EMPTY_SET);
+			SetDiff<E> diff = Diffs.createSetDiff(Collections.singleton(o),
+					Collections.<E> emptySet());
 			updateTargetSet(diff);
 			fireSetChange(diff);
 		}
@@ -167,12 +168,12 @@ public class ValidatedObservableSet extends ObservableSet {
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
-		HashSet set = new HashSet(wrappedSet);
+		HashSet<E> set = new HashSet<E>(wrappedSet);
 		boolean changed = set.addAll(c);
 		if (changed) {
-			SetDiff diff = Diffs.computeSetDiff(wrappedSet, set);
+			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);
 			wrappedSet = set;
 			updateTargetSet(diff);
 			fireSetChange(diff);
@@ -185,18 +186,19 @@ public class ValidatedObservableSet extends ObservableSet {
 		getterCalled();
 		if (isEmpty())
 			return;
-		SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET, wrappedSet);
-		wrappedSet = new HashSet();
+		SetDiff<E> diff = Diffs.createSetDiff(Collections.<E> emptySet(),
+				wrappedSet);
+		wrappedSet = new HashSet<E>();
 		updateTargetSet(diff);
 		fireSetChange(diff);
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		getterCalled();
-		final Iterator wrappedIterator = wrappedSet.iterator();
-		return new Iterator() {
-			Object last = null;
+		final Iterator<E> wrappedIterator = wrappedSet.iterator();
+		return new Iterator<E>() {
+			E last = null;
 
 			@Override
 			public boolean hasNext() {
@@ -204,15 +206,16 @@ public class ValidatedObservableSet extends ObservableSet {
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				return last = wrappedIterator.next();
 			}
 
 			@Override
 			public void remove() {
 				wrappedIterator.remove();
-				SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET,
-						Collections.singleton(last));
+				SetDiff<E> diff = Diffs
+						.createSetDiff(Collections.<E> emptySet(),
+								Collections.singleton(last));
 				updateTargetSet(diff);
 				fireSetChange(diff);
 			}
@@ -224,8 +227,9 @@ public class ValidatedObservableSet extends ObservableSet {
 		getterCalled();
 		boolean changed = wrappedSet.remove(o);
 		if (changed) {
-			SetDiff diff = Diffs.createSetDiff(Collections.EMPTY_SET,
-					Collections.singleton(o));
+			@SuppressWarnings("unchecked")
+			SetDiff<E> diff = Diffs.createSetDiff(Collections.emptySet(),
+					Collections.singleton((E) o));
 			updateTargetSet(diff);
 			fireSetChange(diff);
 		}
@@ -233,12 +237,12 @@ public class ValidatedObservableSet extends ObservableSet {
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		getterCalled();
-		Set set = new HashSet(wrappedSet);
+		Set<E> set = new HashSet<E>(wrappedSet);
 		boolean changed = set.removeAll(c);
 		if (changed) {
-			SetDiff diff = Diffs.computeSetDiff(wrappedSet, set);
+			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);
 			wrappedSet = set;
 			updateTargetSet(diff);
 			fireSetChange(diff);
@@ -247,12 +251,12 @@ public class ValidatedObservableSet extends ObservableSet {
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		getterCalled();
-		Set set = new HashSet(wrappedSet);
+		Set<E> set = new HashSet<E>(wrappedSet);
 		boolean changed = set.retainAll(c);
 		if (changed) {
-			SetDiff diff = Diffs.computeSetDiff(wrappedSet, set);
+			SetDiff<E> diff = Diffs.computeSetDiff(wrappedSet, set);
 			wrappedSet = set;
 			updateTargetSet(diff);
 			fireSetChange(diff);

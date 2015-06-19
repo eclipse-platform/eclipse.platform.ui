@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
-import java.util.Iterator;
-
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -35,10 +33,10 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * A DataBindingContext provides the following abilities:
  * <ul>
- * <li>Ability to create bindings between
- * {@link IObservableValue observable values}.</li>
- * <li>Ability to create bindings between
- * {@link IObservableList observable lists}.</li>
+ * <li>Ability to create bindings between {@link IObservableValue observable
+ * values}.</li>
+ * <li>Ability to create bindings between {@link IObservableList observable
+ * lists}.</li>
  * <li>Access to the bindings created by the instance.</li>
  * <li>Access to the list of validation status providers (this includes all
  * bindings).</li>
@@ -47,28 +45,28 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * Multiple contexts can be used at any point in time. One strategy for the
  * management of contexts is the aggregation of validation statuses. For example
- * an <code>IWizardPage</code> could use a single context and the statuses
- * could be aggregated to set the page status and fulfillment. Each page in the
+ * an <code>IWizardPage</code> could use a single context and the statuses could
+ * be aggregated to set the page status and fulfillment. Each page in the
  * <code>IWizard</code> would have its own context instance.
  * </p>
  *
  * @since 1.0
  */
 public class DataBindingContext {
-	private WritableList bindings;
-	private WritableList validationStatusProviders;
+	private WritableList<Binding> bindings;
+	private WritableList<ValidationStatusProvider> validationStatusProviders;
 
 	/**
 	 * Unmodifiable version of {@link #bindings} for public exposure.
 	 */
-	private IObservableList unmodifiableBindings;
+	private IObservableList<Binding> unmodifiableBindings;
 	/**
 	 * Unmodifiable version of {@link #validationStatusProviders} for public
 	 * exposure.
 	 */
-	private IObservableList unmodifiableStatusProviders;
+	private IObservableList<ValidationStatusProvider> unmodifiableStatusProviders;
 
-	private IObservableMap validationStatusMap;
+	private IObservableMap<Binding, IStatus> validationStatusMap;
 
 	private Realm validationRealm;
 
@@ -97,16 +95,13 @@ public class DataBindingContext {
 
 		ObservableTracker.setIgnore(true);
 		try {
-			bindings = new WritableList(validationRealm);
-			unmodifiableBindings = Observables
-					.unmodifiableObservableList(bindings);
+			bindings = new WritableList<>(validationRealm);
+			unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 
-			validationStatusProviders = new WritableList(validationRealm);
-			unmodifiableStatusProviders = Observables
-					.unmodifiableObservableList(validationStatusProviders);
+			validationStatusProviders = new WritableList<>(validationRealm);
+			unmodifiableStatusProviders = Observables.unmodifiableObservableList(validationStatusProviders);
 
-			validationStatusMap = new ValidationStatusMap(validationRealm,
-					bindings);
+			validationStatusMap = new ValidationStatusMap(validationRealm, bindings);
 		} finally {
 			ObservableTracker.setIgnore(false);
 		}
@@ -125,10 +120,9 @@ public class DataBindingContext {
 	 * @return created binding
 	 * @since 1.2
 	 */
-	public final Binding bindValue(IObservableValue targetObservableValue,
-			IObservableValue modelObservableValue) {
-		return bindValue(targetObservableValue, modelObservableValue, null,
-				null);
+	public final <T, M> Binding bindValue(IObservableValue<T> targetObservableValue,
+			IObservableValue<M> modelObservableValue) {
+		return bindValue(targetObservableValue, modelObservableValue, null, null);
 	}
 
 	/**
@@ -152,18 +146,19 @@ public class DataBindingContext {
 	 *
 	 * @see UpdateValueStrategy
 	 */
-	public final Binding bindValue(IObservableValue targetObservableValue,
-			IObservableValue modelObservableValue,
-			UpdateValueStrategy targetToModel, UpdateValueStrategy modelToTarget) {
-		UpdateValueStrategy targetToModelStrategy = targetToModel != null ? targetToModel
-						: createTargetToModelUpdateValueStrategy(targetObservableValue, modelObservableValue);
-		UpdateValueStrategy modelToTargetStrategy = modelToTarget != null ? modelToTarget
+	public final <T, M> Binding bindValue(
+			IObservableValue<T> targetObservableValue, IObservableValue<M> modelObservableValue,
+			UpdateValueStrategy<? super T, ? extends M> targetToModel,
+			UpdateValueStrategy<? super M, ? extends T> modelToTarget) {
+		UpdateValueStrategy<? super T, ? extends M> targetToModelStrategy = targetToModel != null ? targetToModel
+				: createTargetToModelUpdateValueStrategy(targetObservableValue, modelObservableValue);
+		UpdateValueStrategy<? super M, ? extends T> modelToTargetStrategy = modelToTarget != null ? modelToTarget
 				: createModelToTargetUpdateValueStrategy(modelObservableValue, targetObservableValue);
 		targetToModelStrategy.fillDefaults(targetObservableValue, modelObservableValue);
 		modelToTargetStrategy.fillDefaults(modelObservableValue, targetObservableValue);
-		ValueBinding result = new ValueBinding(targetObservableValue,
-				modelObservableValue, targetToModelStrategy,
-				modelToTargetStrategy);
+		ValueBinding<M, T> result = new ValueBinding<>(
+				targetObservableValue, modelObservableValue,
+				targetToModelStrategy, modelToTargetStrategy);
 		result.init(this);
 		return result;
 	}
@@ -176,9 +171,9 @@ public class DataBindingContext {
 	 * @param toValue
 	 * @return a update value strategy
 	 */
-	protected UpdateValueStrategy createModelToTargetUpdateValueStrategy(
-			IObservableValue fromValue, IObservableValue toValue) {
-		return new UpdateValueStrategy();
+	protected <M, T> UpdateValueStrategy<M, T> createModelToTargetUpdateValueStrategy(
+			IObservableValue<M> fromValue, IObservableValue<T> toValue) {
+		return new UpdateValueStrategy<>();
 	}
 
 	/**
@@ -189,9 +184,9 @@ public class DataBindingContext {
 	 * @param toValue
 	 * @return a update value strategy
 	 */
-	protected UpdateValueStrategy createTargetToModelUpdateValueStrategy(
-			IObservableValue fromValue, IObservableValue toValue) {
-		return new UpdateValueStrategy();
+	protected <T, M> UpdateValueStrategy<T, M> createTargetToModelUpdateValueStrategy(
+			IObservableValue<T> fromValue, IObservableValue<M> toValue) {
+		return new UpdateValueStrategy<>();
 	}
 
 	/**
@@ -209,8 +204,8 @@ public class DataBindingContext {
 	 * @see UpdateListStrategy
 	 * @since 1.2
 	 */
-	public final Binding bindList(IObservableList targetObservableList,
-			IObservableList modelObservableList) {
+	public final <T, M> Binding bindList(IObservableList<T> targetObservableList,
+			IObservableList<M> modelObservableList) {
 		return bindList(targetObservableList, modelObservableList, null, null);
 	}
 
@@ -235,20 +230,20 @@ public class DataBindingContext {
 	 *
 	 * @see UpdateListStrategy
 	 */
-	public final Binding bindList(IObservableList targetObservableList,
-			IObservableList modelObservableList,
-			UpdateListStrategy targetToModel, UpdateListStrategy modelToTarget) {
-		UpdateListStrategy targetToModelStrategy = targetToModel != null ? targetToModel
-				: createTargetToModelUpdateListStrategy(targetObservableList,
-						modelObservableList);
-		UpdateListStrategy modelToTargetStrategy = modelToTarget != null ? modelToTarget
-				: createModelToTargetUpdateListStrategy(modelObservableList,
-						targetObservableList);
+	public final <T, M> Binding bindList(
+			IObservableList<T> targetObservableList,
+			IObservableList<M> modelObservableList,
+			UpdateListStrategy<? super T, ? extends M> targetToModel,
+			UpdateListStrategy<? super M, ? extends T> modelToTarget) {
+		UpdateListStrategy<? super T, ? extends M> targetToModelStrategy = targetToModel != null ? targetToModel
+				: createTargetToModelUpdateListStrategy(targetObservableList, modelObservableList);
+		UpdateListStrategy<? super M, ? extends T> modelToTargetStrategy = modelToTarget != null ? modelToTarget
+				: createModelToTargetUpdateListStrategy(modelObservableList, targetObservableList);
 		targetToModelStrategy.fillDefaults(targetObservableList,
 				modelObservableList);
 		modelToTargetStrategy.fillDefaults(modelObservableList,
 				targetObservableList);
-		ListBinding result = new ListBinding(targetObservableList,
+		ListBinding<M, T> result = new ListBinding<>(targetObservableList,
 				modelObservableList, targetToModelStrategy,
 				modelToTargetStrategy);
 		result.init(this);
@@ -260,10 +255,10 @@ public class DataBindingContext {
 	 * @param targetObservableList
 	 * @return an update list strategy
 	 */
-	protected UpdateListStrategy createModelToTargetUpdateListStrategy(
-			IObservableList modelObservableList,
-			IObservableList targetObservableList) {
-		return new UpdateListStrategy();
+	protected <M, T> UpdateListStrategy<M, T> createModelToTargetUpdateListStrategy(
+			IObservableList<M> modelObservableList,
+			IObservableList<T> targetObservableList) {
+		return new UpdateListStrategy<>();
 	}
 
 	/**
@@ -271,10 +266,10 @@ public class DataBindingContext {
 	 * @param modelObservableList
 	 * @return an update list strategy
 	 */
-	protected UpdateListStrategy createTargetToModelUpdateListStrategy(
-			IObservableList targetObservableList,
-			IObservableList modelObservableList) {
-		return new UpdateListStrategy();
+	protected <T, M> UpdateListStrategy<T, M> createTargetToModelUpdateListStrategy(
+			IObservableList<T> targetObservableList,
+			IObservableList<M> modelObservableList) {
+		return new UpdateListStrategy<>();
 	}
 
 	/**
@@ -290,17 +285,15 @@ public class DataBindingContext {
 	 * @return created binding
 	 * @since 1.2
 	 */
-	public final Binding bindSet(IObservableSet targetObservableSet,
-			IObservableSet modelObservableSet) {
+	public final <T, M> Binding bindSet(IObservableSet<T> targetObservableSet, IObservableSet<M> modelObservableSet) {
 		return bindSet(targetObservableSet, modelObservableSet, null, null);
 	}
 
 	/**
 	 * Creates a {@link Binding} to synchronize the values of two
-	 * {@link IObservableSet observable sets}. During synchronization
-	 * validation and conversion can be employed to customize the process. For
-	 * specifics on the customization of the process see
-	 * {@link UpdateSetStrategy}.
+	 * {@link IObservableSet observable sets}. During synchronization validation
+	 * and conversion can be employed to customize the process. For specifics on
+	 * the customization of the process see {@link UpdateSetStrategy}.
 	 *
 	 * @param targetObservableSet
 	 *            target set, commonly a set representing a set in the UI
@@ -315,9 +308,11 @@ public class DataBindingContext {
 	 * @return created binding
 	 * @since 1.1
 	 */
-	public final Binding bindSet(IObservableSet targetObservableSet,
-			IObservableSet modelObservableSet, UpdateSetStrategy targetToModel,
-			UpdateSetStrategy modelToTarget) {
+	public final <T, M> Binding bindSet(
+			IObservableSet<T> targetObservableSet,
+			IObservableSet<M> modelObservableSet,
+			UpdateSetStrategy<? super T, ? extends M> targetToModel,
+			UpdateSetStrategy<? super M, ? extends T> modelToTarget) {
 		if (targetToModel == null)
 			targetToModel = createTargetToModelUpdateSetStrategy(
 					targetObservableSet, modelObservableSet);
@@ -326,7 +321,7 @@ public class DataBindingContext {
 					modelObservableSet, targetObservableSet);
 		targetToModel.fillDefaults(targetObservableSet, modelObservableSet);
 		modelToTarget.fillDefaults(modelObservableSet, targetObservableSet);
-		SetBinding result = new SetBinding(targetObservableSet,
+		SetBinding<? super M, ? extends T> result = new SetBinding<>(targetObservableSet,
 				modelObservableSet, targetToModel, modelToTarget);
 		result.init(this);
 		return result;
@@ -338,10 +333,10 @@ public class DataBindingContext {
 	 * @return a default set update strategy
 	 * @since 1.1
 	 */
-	protected UpdateSetStrategy createTargetToModelUpdateSetStrategy(
-			IObservableSet targetObservableSet,
-			IObservableSet modelObservableSet) {
-		return new UpdateSetStrategy();
+	protected <T, M> UpdateSetStrategy<T, M> createTargetToModelUpdateSetStrategy(
+			IObservableSet<T> targetObservableSet,
+			IObservableSet<M> modelObservableSet) {
+		return new UpdateSetStrategy<>();
 	}
 
 	/**
@@ -350,10 +345,10 @@ public class DataBindingContext {
 	 * @return a default set update strategy
 	 * @since 1.1
 	 */
-	protected UpdateSetStrategy createModelToTargetUpdateSetStrategy(
-			IObservableSet modelObservableSet,
-			IObservableSet targetObservableSet) {
-		return new UpdateSetStrategy();
+	protected <M, T> UpdateSetStrategy<M, T> createModelToTargetUpdateSetStrategy(
+			IObservableSet<M> modelObservableSet,
+			IObservableSet<T> targetObservableSet) {
+		return new UpdateSetStrategy<>();
 	}
 
 	/**
@@ -362,11 +357,11 @@ public class DataBindingContext {
 	 * called in the {@link #getValidationRealm() validation realm}.
 	 */
 	public final void dispose() {
-		Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
+		Binding[] bindingArray = bindings.toArray(new Binding[bindings.size()]);
 		for (Binding binding : bindingArray) {
 			binding.dispose();
 		}
-		ValidationStatusProvider[] statusProviderArray = (ValidationStatusProvider[]) validationStatusProviders
+		ValidationStatusProvider[] statusProviderArray = validationStatusProviders
 				.toArray(new ValidationStatusProvider[validationStatusProviders
 						.size()]);
 		for (int i = 0; i < statusProviderArray.length; i++) {
@@ -376,42 +371,39 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
-	 * of all bindings in order by time of addition.
+	 * Returns an unmodifiable {@link IObservableList} of all bindings in order
+	 * by time of addition.
 	 *
-	 * @return an unmodifiable {@link IObservableList} &lt; {@link Binding} &gt;
-	 *         of all bindings
+	 * @return an unmodifiable {@link IObservableList} of all bindings
 	 */
-	public final IObservableList getBindings() {
+	public final IObservableList<Binding> getBindings() {
 		return unmodifiableBindings;
 	}
 
 	/**
-	 * Returns an unmodifiable {@link IObservableList} &lt;
-	 * {@link ValidationStatusProvider} &gt; of all validation status providers
-	 * in order by time of addition.
+	 * Returns an unmodifiable {@link IObservableList} of all validation status
+	 * providers in order by time of addition.
 	 *
-	 * @return an unmodifiable {@link IObservableList} &lt;
-	 *         {@link ValidationStatusProvider} &gt; of all validation status
+	 * @return an unmodifiable {@link IObservableList} of all validation status
 	 *         providers
 	 * @since 1.1
 	 */
-	public final IObservableList getValidationStatusProviders() {
+	public final IObservableList<ValidationStatusProvider> getValidationStatusProviders() {
 		return unmodifiableStatusProviders;
 	}
 
 	/**
-	 * Returns an {@link IObservableMap} &lt; {@link Binding}, {@link IStatus}
-	 * &gt; mapping from bindings to current validation statuses. The keys of the
-	 * map are the bindings returned by {@link #getBindings()}, and the values
-	 * are the current IStatus objects for each binding.
+	 * Returns an {@link IObservableMap} mapping from bindings to current
+	 * validation statuses. The keys of the map are the bindings returned by
+	 * {@link #getBindings()}, and the values are the current IStatus objects
+	 * for each binding.
 	 *
 	 * @return the observable map from bindings to status objects.
 	 *
 	 * @deprecated as of 1.1, please use {@link #getValidationStatusProviders()}
 	 */
 	@Deprecated
-	public final IObservableMap getValidationStatusMap() {
+	public final IObservableMap<Binding, IStatus> getValidationStatusMap() {
 		return validationStatusMap;
 	}
 
@@ -447,8 +439,7 @@ public class DataBindingContext {
 	 *
 	 */
 	public final void updateModels() {
-		for (Iterator it = bindings.iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
+		for (Binding binding : bindings) {
 			binding.updateTargetToModel();
 		}
 	}
@@ -459,8 +450,7 @@ public class DataBindingContext {
 	 *
 	 */
 	public final void updateTargets() {
-		for (Iterator it = bindings.iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
+		for (Binding binding : bindings) {
 			binding.updateModelToTarget();
 		}
 	}

@@ -13,8 +13,7 @@ package org.eclipse.core.internal.databinding.conversion;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a BigInteger.
@@ -24,17 +23,17 @@ import com.ibm.icu.text.NumberFormat;
  *
  * @since 1.0
  */
-public class NumberToBigIntegerConverter extends NumberToNumberConverter {
+public class NumberToBigIntegerConverter extends NumberToNumberConverter<BigInteger> {
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 */
-	public NumberToBigIntegerConverter(NumberFormat numberFormat, Class fromType) {
+	public NumberToBigIntegerConverter(Format numberFormat, Class<?> fromType) {
 		super(numberFormat, fromType, BigInteger.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected BigInteger doConvert(Number number) {
 		return toBigDecimal(number).toBigInteger();
 	}
 

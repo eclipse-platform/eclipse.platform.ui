@@ -27,7 +27,7 @@ public class StringToIntegerValidator extends AbstractStringToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public StringToIntegerValidator(NumberFormatConverter converter) {
+	public StringToIntegerValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}
 

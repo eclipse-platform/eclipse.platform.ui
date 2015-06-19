@@ -56,7 +56,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	public void testUpdateModelFromTarget() throws Exception {
 		target.add("1");
 
-		dbc.bindSet(target, model, new UpdateSetStrategy(UpdateSetStrategy.POLICY_NEVER), new UpdateSetStrategy());
+		dbc.bindSet(target, model, new UpdateSetStrategy<>(UpdateSetStrategy.POLICY_NEVER), new UpdateSetStrategy<>());
 
 		assertEquals("target != model", target, model);
 	}
@@ -65,7 +65,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	public void testUpdateTargetFromModel() throws Exception {
 		model.add("1");
 
-		dbc.bindSet(target, model, new UpdateSetStrategy(), new UpdateSetStrategy(UpdateSetStrategy.POLICY_NEVER));
+		dbc.bindSet(target, model, new UpdateSetStrategy<>(), new UpdateSetStrategy<>(UpdateSetStrategy.POLICY_NEVER));
 
 		assertEquals("model != target" + model + target, model, target);
 	}
@@ -85,7 +85,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 		});
 
 		model.add("first");
-		new SetBinding(target, model, new UpdateSetStrategy(), new UpdateSetStrategy());
+		new SetBinding<String, String>(target, model, new UpdateSetStrategy<>(), new UpdateSetStrategy<>());
 		model.remove("first");
 	}
 
@@ -95,7 +95,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
 		target.add("first");
-		dbc.bindSet(target, model, new UpdateSetStrategy(POLICY_UPDATE), new UpdateSetStrategy(POLICY_NEVER));
+		dbc.bindSet(target, model, new UpdateSetStrategy<>(POLICY_UPDATE), new UpdateSetStrategy<>(POLICY_NEVER));
 		assertEquals(model.size(), target.size());
 	}
 

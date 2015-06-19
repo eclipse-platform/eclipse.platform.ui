@@ -16,8 +16,8 @@ import org.eclipse.core.databinding.conversion.IConverter;
 /**
  * Converts any object to a string by calling its toString() method.
  */
-public class ObjectToStringConverter implements IConverter {
-	private final Class fromClass;
+public class ObjectToStringConverter implements IConverter<Object, String> {
+	private final Class<?> fromClass;
 
 	/**
 	 *
@@ -29,12 +29,12 @@ public class ObjectToStringConverter implements IConverter {
 	/**
 	 * @param fromClass
 	 */
-	public ObjectToStringConverter(Class fromClass) {
+	public ObjectToStringConverter(Class<?> fromClass) {
 		this.fromClass = fromClass;
 	}
 
 	@Override
-	public Object convert(Object source) {
+	public String convert(Object source) {
 		if (source == null) {
 			return ""; //$NON-NLS-1$
 		}

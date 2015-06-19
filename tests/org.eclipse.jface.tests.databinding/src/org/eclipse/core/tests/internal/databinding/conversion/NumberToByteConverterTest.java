@@ -34,17 +34,17 @@ public class NumberToByteConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, Byte> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToByteConverter(numberFormat, fromType, false);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Byte> doGetToPrimitiveValidator(Class<?> fromType) {
 		return new NumberToByteConverter(numberFormat, fromType, true);
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? Byte.TYPE : Byte.class;
 	}
 }

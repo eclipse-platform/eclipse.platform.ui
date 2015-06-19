@@ -15,14 +15,18 @@ import java.util.function.Function;
 /**
  * A one-way converter.
  *
+ * @param <F>
+ *            type of the source value
+ * @param <T>
+ *            type of the converted value
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should subclass {@link Converter}.
- *
  * @since 1.0
  *
  */
-public interface IConverter {
+public interface IConverter<F, T> {
 
 	/**
 	 * Returns the type whose instances can be converted by this converter. The
@@ -51,7 +55,7 @@ public interface IConverter {
 	 *            the object to convert, of type {@link #getFromType()}
 	 * @return the converted object, of type {@link #getToType()}
 	 */
-	public Object convert(Object fromObject);
+	public T convert(F fromObject);
 
 	/**
 	 * Create a converter
@@ -65,9 +69,8 @@ public interface IConverter {
 	 * @return a new converter instance
 	 * @since 1.6
 	 */
-	public static IConverter create(Object fromType, Object toType, @SuppressWarnings("rawtypes") Function conversion) {
-		return new IConverter() {
-
+	public static <F, T> IConverter<F, T> create(Object fromType, Object toType, Function<F, T> conversion) {
+		return new IConverter<F, T>() {
 			@Override
 			public Object getFromType() {
 				return fromType;
@@ -78,9 +81,8 @@ public interface IConverter {
 				return toType;
 			}
 
-			@SuppressWarnings("unchecked")
 			@Override
-			public Object convert(Object fromObject) {
+			public T convert(F fromObject) {
 				return conversion.apply(fromObject);
 			}
 		};

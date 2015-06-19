@@ -76,9 +76,8 @@ public class NumberToStringConverterTest {
 		Integer input = Integer.valueOf(1000);
 		String expected = integerFormat.format(input.longValue());
 
-		NumberToStringConverter converter = NumberToStringConverter
-				.fromInteger(false);
-		String result = (String) converter.convert(input);
+		NumberToStringConverter converter = NumberToStringConverter.fromInteger(false);
+		String result = converter.convert(input);
 		assertEquals(expected, result);
 	}
 
@@ -89,7 +88,7 @@ public class NumberToStringConverterTest {
 
 		NumberToStringConverter converter = NumberToStringConverter
 				.fromDouble(false);
-		String result = (String) converter.convert(input);
+		String result = converter.convert(input);
 		assertEquals(expected, result);
 	}
 
@@ -100,7 +99,7 @@ public class NumberToStringConverterTest {
 
 		NumberToStringConverter converter = NumberToStringConverter
 				.fromFloat(false);
-		String result = (String) converter.convert(input);
+		String result = converter.convert(input);
 		assertEquals(expected, result);
 	}
 
@@ -111,7 +110,7 @@ public class NumberToStringConverterTest {
 
 		NumberToStringConverter converter = NumberToStringConverter
 				.fromLong(false);
-		String result = (String) converter.convert(input);
+		String result = converter.convert(input);
 		assertEquals(expected, result);
 	}
 
@@ -121,12 +120,12 @@ public class NumberToStringConverterTest {
 		String expected = integerFormat.format(input);
 
 		NumberToStringConverter converter = NumberToStringConverter.fromBigInteger();
-		String result = (String) converter.convert(input);
+		String result = converter.convert(input);
 		assertEquals(expected, result);
 	}
 
-	Class icuBigDecimal = null;
-	Constructor icuBigDecimalCtr = null;
+	Class<?> icuBigDecimal = null;
+	Constructor<?> icuBigDecimalCtr = null;
 	{
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
@@ -161,25 +160,25 @@ public class NumberToStringConverterTest {
 		// Test 1: Decimal
 		BigDecimal input = new BigDecimal("100.23");
 		String expected = formatBigDecimal(input);
-		String result = (String) converter.convert(input);
+		String result = converter.convert(input);
 		assertEquals("Non-integer BigDecimal", expected, result);
 
 		// Test 2: Long
 		input = new BigDecimal(Integer.MAX_VALUE + 100L);
 		expected = formatBigDecimal(input);
-		result = (String) converter.convert(input);
+		result = converter.convert(input);
 		assertEquals("Integral BigDecimal in long range", expected, result);
 
 		// Test 3: BigInteger range
 		input = new BigDecimal(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.valueOf(100L)));
 		expected = formatBigDecimal(input);
-		result = (String) converter.convert(input);
+		result = converter.convert(input);
 		assertEquals("Integral BigDecimal in BigInteger range", expected, result);
 
 		// Test 4: Very high precision Decimal
 		input = new BigDecimal("100404101.233456783456788934567893456789231982001345678234567890");
 		expected = formatBigDecimal(input);
-		result = (String) converter.convert(input);
+		result = converter.convert(input);
 		assertEquals("High-precision BigDecimal", expected, result);
 
 	}

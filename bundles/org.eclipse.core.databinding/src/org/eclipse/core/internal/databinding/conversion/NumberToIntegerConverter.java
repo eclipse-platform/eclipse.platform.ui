@@ -11,9 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Integer.
@@ -22,21 +20,19 @@ import com.ibm.icu.text.NumberFormat;
  * </p>
  * @since 1.0
  */
-public class NumberToIntegerConverter extends NumberToNumberConverter implements
-		IConverter {
+public class NumberToIntegerConverter extends NumberToNumberConverter<Integer> {
 
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToIntegerConverter(NumberFormat numberFormat,
-			Class fromType, boolean primitive) {
+	public NumberToIntegerConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Integer.TYPE : Integer.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Integer doConvert(Number number) {
 		if (StringToNumberParser.inIntegerRange(number)) {
 			return Integer.valueOf(number.intValue());
 		}

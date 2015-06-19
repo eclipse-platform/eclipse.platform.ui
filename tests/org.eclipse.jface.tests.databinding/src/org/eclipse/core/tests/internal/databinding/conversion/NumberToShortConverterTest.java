@@ -34,17 +34,17 @@ public class NumberToShortConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, Short> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToShortConverter(numberFormat, fromType, false);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Short> doGetToPrimitiveValidator(Class<?> fromType) {
 		return new NumberToShortConverter(numberFormat, fromType, true);
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? Short.TYPE : Short.class;
 	}
 }

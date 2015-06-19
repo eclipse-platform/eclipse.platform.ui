@@ -44,7 +44,7 @@ public class StringToShortValidatorTest extends
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
 		StringToShortConverter converter = StringToShortConverter.toShort(numberFormat, false);
 		return new StringToShortValidator(converter);
 	}

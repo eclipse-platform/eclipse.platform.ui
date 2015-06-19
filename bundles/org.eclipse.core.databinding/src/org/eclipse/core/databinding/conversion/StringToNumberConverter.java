@@ -29,9 +29,20 @@ import com.ibm.icu.text.NumberFormat;
  * Converts a String to a Number using <code>NumberFormat.parse(...)</code>.
  * This class is thread safe.
  *
+ * Note that this class does not have precise type parameters because it
+ * manually handles argument type mismatches and throws
+ * {@link IllegalArgumentException}.
+ *
+ * The first type parameter of {@link NumberFormatConverter} is set to
+ * {@link Object} to preserve backwards compability, but the argument is meant
+ * to always be a {@link String}.
+ *
+ * @param <T>
+ *            The type to which values are converted.
+ *
  * @since 1.0
  */
-public class StringToNumberConverter extends NumberFormatConverter {
+public class StringToNumberConverter<T extends Number> extends NumberFormatConverter<Object, T> {
 	private Class<?> toType;
 	/**
 	 * NumberFormat instance to use for conversion. Access must be synchronized.
@@ -115,8 +126,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            a convenience that allows for the checking against one type
 	 *            rather than boxed and unboxed types
 	 */
-	private StringToNumberConverter(NumberFormat numberFormat, Class<?> toType,
-			Number min, Number max, Class<?> boxedType) {
+	private StringToNumberConverter(NumberFormat numberFormat, Class<T> toType, Number min, Number max,
+			Class<T> boxedType) {
 		super(String.class, toType, numberFormat);
 
 		this.toType = toType;
@@ -133,13 +144,15 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
 	 * @throws IllegalArgumentException
 	 *             if the value isn't in the format required by the NumberFormat
-	 *             or the value is out of range for the
-	 *             {@link #getToType() to type}.
+	 *             or the value is out of range for the {@link #getToType() to
+	 *             type}.
 	 * @throws IllegalArgumentException
 	 *             if conversion was not possible
+	 * @since 1.7
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object convert(Object fromObject) {
+	public T convert(Object fromObject) {
 		ParseResult result = StringToNumberParser.parse(fromObject,
 				numberFormat, toType.isPrimitive());
 
@@ -163,44 +176,44 @@ public class StringToNumberConverter extends NumberFormatConverter {
 		 */
 		if (Integer.class.equals(boxedType)) {
 			if (StringToNumberParser.inIntegerRange(result.getNumber())) {
-				return Integer.valueOf(result.getNumber().intValue());
+				return (T) Integer.valueOf(result.getNumber().intValue());
 			}
 		} else if (Double.class.equals(boxedType)) {
 			if (StringToNumberParser.inDoubleRange(result.getNumber())) {
-				return Double.valueOf(result.getNumber().doubleValue());
+				return (T) Double.valueOf(result.getNumber().doubleValue());
 			}
 		} else if (Long.class.equals(boxedType)) {
 			if (StringToNumberParser.inLongRange(result.getNumber())) {
-				return Long.valueOf(result.getNumber().longValue());
+				return (T) Long.valueOf(result.getNumber().longValue());
 			}
 		} else if (Float.class.equals(boxedType)) {
 			if (StringToNumberParser.inFloatRange(result.getNumber())) {
-				return Float.valueOf(result.getNumber().floatValue());
+				return (T) Float.valueOf(result.getNumber().floatValue());
 			}
 		} else if (BigInteger.class.equals(boxedType)) {
 			Number n = result.getNumber();
 			if(n instanceof Long)
-				return BigInteger.valueOf(n.longValue());
+				return (T) BigInteger.valueOf(n.longValue());
 			else if(n instanceof BigInteger)
-				return n;
+				return (T) n;
 			else if(n instanceof BigDecimal)
-				return ((BigDecimal) n).toBigInteger();
+				return (T) ((BigDecimal) n).toBigInteger();
 			else
-				return new BigDecimal(n.doubleValue()).toBigInteger();
+				return (T) new BigDecimal(n.doubleValue()).toBigInteger();
 		} else if (BigDecimal.class.equals(boxedType)) {
 			Number n = result.getNumber();
 			if(n instanceof Long)
-				return BigDecimal.valueOf(n.longValue());
+				return (T) BigDecimal.valueOf(n.longValue());
 			else if(n instanceof BigInteger)
-				return new BigDecimal((BigInteger) n);
+				return (T) new BigDecimal((BigInteger) n);
 			else if(n instanceof BigDecimal)
-				return n;
+				return (T) n;
 			else if(icuBigDecimal != null && icuBigDecimal.isInstance(n)) {
 				try {
 					// Get ICU BigDecimal value and use to construct java.math.BigDecimal
 					int scale = ((Integer) icuBigDecimalScale.invoke(n)).intValue();
 					BigInteger unscaledValue = (BigInteger) icuBigDecimalUnscaledValue.invoke(n);
-					return new java.math.BigDecimal(unscaledValue, scale);
+					return (T) new java.math.BigDecimal(unscaledValue, scale);
 				} catch(IllegalAccessException e) {
 					throw new IllegalArgumentException("Error (IllegalAccessException) converting BigDecimal using ICU"); //$NON-NLS-1$
 				} catch(InvocationTargetException e) {
@@ -208,18 +221,19 @@ public class StringToNumberConverter extends NumberFormatConverter {
 				}
 			} else if(n instanceof Double) {
 				BigDecimal bd = new BigDecimal(n.doubleValue());
-				if(bd.scale() == 0) return bd;
+				if (bd.scale() == 0)
+					return (T) bd;
 				throw new IllegalArgumentException("Non-integral Double value returned from NumberFormat " + //$NON-NLS-1$
 						"which cannot be accurately stored in a BigDecimal due to lost precision. " + //$NON-NLS-1$
 						"Consider using ICU4J or Java 5 which can properly format and parse these types."); //$NON-NLS-1$
 			}
 		} else if (Short.class.equals(boxedType)) {
 			if (StringToNumberParser.inShortRange(result.getNumber())) {
-				return Short.valueOf(result.getNumber().shortValue());
+				return (T) Short.valueOf(result.getNumber().shortValue());
 			}
 		} else if (Byte.class.equals(boxedType)) {
 			if (StringToNumberParser.inByteRange(result.getNumber())) {
-				return Byte.valueOf(result.getNumber().byteValue());
+				return (T) Byte.valueOf(result.getNumber().byteValue());
 			}
 		}
 
@@ -241,7 +255,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            <code>true</code> if the convert to type is an int
 	 * @return to Integer converter for the default locale
 	 */
-	public static StringToNumberConverter toInteger(boolean primitive) {
+	public static StringToNumberConverter<Integer> toInteger(boolean primitive) {
 		return toInteger(NumberFormat.getIntegerInstance(), primitive);
 	}
 
@@ -250,9 +264,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 * @return to Integer converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toInteger(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Integer> toInteger(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Integer.TYPE : Integer.class, MIN_INTEGER,
 				MAX_INTEGER, Integer.class);
 	}
@@ -262,7 +275,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            <code>true</code> if the convert to type is a double
 	 * @return to Double converter for the default locale
 	 */
-	public static StringToNumberConverter toDouble(boolean primitive) {
+	public static StringToNumberConverter<Double> toDouble(boolean primitive) {
 		return toDouble(NumberFormat.getNumberInstance(), primitive);
 	}
 
@@ -271,9 +284,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 * @return to Double converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toDouble(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Double> toDouble(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Double.TYPE : Double.class, MIN_DOUBLE,
 				MAX_DOUBLE, Double.class);
 	}
@@ -283,7 +295,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            <code>true</code> if the convert to type is a long
 	 * @return to Long converter for the default locale
 	 */
-	public static StringToNumberConverter toLong(boolean primitive) {
+	public static StringToNumberConverter<Long> toLong(boolean primitive) {
 		return toLong(NumberFormat.getIntegerInstance(), primitive);
 	}
 
@@ -292,9 +304,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 * @return to Long converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toLong(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Long> toLong(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Long.TYPE : Long.class, MIN_LONG, MAX_LONG,
 				Long.class);
 	}
@@ -304,7 +315,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 *            <code>true</code> if the convert to type is a float
 	 * @return to Float converter for the default locale
 	 */
-	public static StringToNumberConverter toFloat(boolean primitive) {
+	public static StringToNumberConverter<Float> toFloat(boolean primitive) {
 		return toFloat(NumberFormat.getNumberInstance(), primitive);
 	}
 
@@ -313,9 +324,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param primitive
 	 * @return to Float converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toFloat(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Float> toFloat(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Float.TYPE : Float.class, MIN_FLOAT, MAX_FLOAT,
 				Float.class);
 	}
@@ -323,7 +333,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	/**
 	 * @return to BigInteger converter for the default locale
 	 */
-	public static StringToNumberConverter toBigInteger() {
+	public static StringToNumberConverter<BigInteger> toBigInteger() {
 		return toBigInteger(NumberFormat.getIntegerInstance());
 	}
 
@@ -331,8 +341,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @param numberFormat
 	 * @return to BigInteger converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toBigInteger(NumberFormat numberFormat) {
-		return new StringToNumberConverter(numberFormat, BigInteger.class,
+	public static StringToNumberConverter<BigInteger> toBigInteger(NumberFormat numberFormat) {
+		return new StringToNumberConverter<>(numberFormat, BigInteger.class,
 				null, null, BigInteger.class);
 	}
 
@@ -340,7 +350,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to BigDecimal converter for the default locale
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toBigDecimal() {
+	public static StringToNumberConverter<BigDecimal> toBigDecimal() {
 		return toBigDecimal(NumberFormat.getNumberInstance());
 	}
 
@@ -349,8 +359,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to BigDecimal converter with the provided numberFormat
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toBigDecimal(NumberFormat numberFormat) {
-		return new StringToNumberConverter(numberFormat, BigDecimal.class,
+	public static StringToNumberConverter<BigDecimal> toBigDecimal(NumberFormat numberFormat) {
+		return new StringToNumberConverter<>(numberFormat, BigDecimal.class,
 				null, null, BigDecimal.class);
 	}
 
@@ -360,7 +370,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to Short converter for the default locale
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toShort(boolean primitive) {
+	public static StringToNumberConverter<Short> toShort(boolean primitive) {
 		return toShort(NumberFormat.getIntegerInstance(), primitive);
 	}
 
@@ -370,9 +380,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to Short converter with the provided numberFormat
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toShort(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Short> toShort(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Short.TYPE : Short.class, MIN_SHORT,
 				MAX_SHORT, Short.class);
 	}
@@ -383,7 +392,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to Byte converter for the default locale
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toByte(boolean primitive) {
+	public static StringToNumberConverter<Byte> toByte(boolean primitive) {
 		return toByte(NumberFormat.getIntegerInstance(), primitive);
 	}
 
@@ -393,9 +402,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 * @return to Byte converter with the provided numberFormat
 	 * @since 1.2
 	 */
-	public static StringToNumberConverter toByte(NumberFormat numberFormat,
-			boolean primitive) {
-		return new StringToNumberConverter(numberFormat,
+	public static StringToNumberConverter<Byte> toByte(NumberFormat numberFormat, boolean primitive) {
+		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Byte.TYPE : Byte.class, MIN_BYTE,
 				MAX_BYTE, Byte.class);
 	}

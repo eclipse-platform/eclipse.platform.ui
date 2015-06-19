@@ -206,38 +206,30 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
-		IObservableValue targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
-		final IObservableValue middleField1 = new WritableValue(null,
-				Integer.TYPE);
+		IObservableValue<String> targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
+		final IObservableValue<Integer> middleField1 = new WritableValue<>(null, Integer.TYPE);
 		dbc.bindValue(targetField1, middleField1);
 
-		IObservableValue targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
-		final IObservableValue middleField2 = new WritableValue(null,
-				Integer.TYPE);
+		IObservableValue<String> targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
+		final IObservableValue<Integer> middleField2 = new WritableValue<>(null, Integer.TYPE);
 		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
-				Integer field1 = (Integer) middleField1.getValue();
-				Integer field2 = (Integer) middleField2.getValue();
-				if (Math.abs(field1.intValue()) % 2 != Math.abs(field2
-						.intValue()) % 2)
-					return ValidationStatus
-							.error("Fields 1 and 2 must be both even or both odd");
+				Integer field1 = middleField1.getValue();
+				Integer field2 = middleField2.getValue();
+				if (Math.abs(field1.intValue()) % 2 != Math.abs(field2.intValue()) % 2)
+					return ValidationStatus.error("Fields 1 and 2 must be both even or both odd");
 				return null;
 			}
 		};
 		dbc.addValidationStatusProvider(validator);
 
-		IObservableValue modelField1 = new WritableValue(Integer.valueOf(1),
-				Integer.TYPE);
-		IObservableValue modelField2 = new WritableValue(Integer.valueOf(4),
-				Integer.TYPE);
-		dbc.bindValue(validator.observeValidatedValue(middleField1),
-				modelField1);
-		dbc.bindValue(validator.observeValidatedValue(middleField2),
-				modelField2);
+		IObservableValue<Integer> modelField1 = new WritableValue<>(Integer.valueOf(1), Integer.TYPE);
+		IObservableValue<Integer> modelField2 = new WritableValue<>(Integer.valueOf(4), Integer.TYPE);
+		dbc.bindValue(validator.observeValidatedValue(middleField1), modelField1);
+		dbc.bindValue(validator.observeValidatedValue(middleField2), modelField2);
 
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue),
 				modelField1);

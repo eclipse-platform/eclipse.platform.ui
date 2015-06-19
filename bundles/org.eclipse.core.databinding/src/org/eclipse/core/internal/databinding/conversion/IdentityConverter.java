@@ -18,16 +18,16 @@ import org.eclipse.core.databinding.conversion.IConverter;
 /**
  * TheIdentityConverter. Returns the source value (the identity function).
  */
-public class IdentityConverter implements IConverter {
+public class IdentityConverter implements IConverter<Object, Object> {
 
-	private Class fromType;
+	private Class<?> fromType;
 
-	private Class toType;
+	private Class<?> toType;
 
 	/**
 	 * @param type
 	 */
-	public IdentityConverter(Class type) {
+	public IdentityConverter(Class<?> type) {
 		this.fromType = type;
 		this.toType = type;
 	}
@@ -36,12 +36,12 @@ public class IdentityConverter implements IConverter {
 	 * @param fromType
 	 * @param toType
 	 */
-	public IdentityConverter(Class fromType, Class toType) {
+	public IdentityConverter(Class<?> fromType, Class<?> toType) {
 		this.fromType = fromType;
 		this.toType = toType;
 	}
 
-	private Class[][] primitiveMap = new Class[][] {
+	private Class<?>[][] primitiveMap = new Class[][] {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },
@@ -56,7 +56,7 @@ public class IdentityConverter implements IConverter {
 			}
 		}
 		if (source != null) {
-			Class sourceClass = source.getClass();
+			Class<?> sourceClass = source.getClass();
 			if (toType.isPrimitive() || sourceClass.isPrimitive()) {
 				if (sourceClass.equals(toType)
 						|| isPrimitiveTypeMatchedWithBoxed(sourceClass, toType)) {
@@ -80,9 +80,8 @@ public class IdentityConverter implements IConverter {
 	 * @param toClass
 	 * @return true if sourceClass and toType are matched primitive/boxed types
 	 */
-	public boolean isPrimitiveTypeMatchedWithBoxed(Class sourceClass,
-			Class toClass) {
-		for (Class[] primitiveTuple : primitiveMap) {
+	public boolean isPrimitiveTypeMatchedWithBoxed(Class<?> sourceClass, Class<?> toClass) {
+		for (Class<?>[] primitiveTuple : primitiveMap) {
 			if (toClass.equals(primitiveTuple[0])
 					&& sourceClass.equals(primitiveTuple[1])) {
 				return true;

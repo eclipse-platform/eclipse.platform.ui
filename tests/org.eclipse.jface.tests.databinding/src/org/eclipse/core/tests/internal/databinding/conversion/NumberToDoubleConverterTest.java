@@ -28,17 +28,17 @@ public class NumberToDoubleConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, Double> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, false);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Double> doGetToPrimitiveValidator(Class<?> fromType) {
 		return new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, true);
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? Double.TYPE : Double.class;
 	}
 }

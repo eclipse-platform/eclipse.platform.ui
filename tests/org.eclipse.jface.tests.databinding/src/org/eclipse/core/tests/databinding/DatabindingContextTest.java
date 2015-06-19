@@ -43,6 +43,7 @@ import org.junit.Test;
 public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -50,6 +51,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		if (dbc != null) {
@@ -71,8 +73,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testBindValue() throws Exception {
-		IObservableValue target = WritableValue.withValueType(String.class);
-		IObservableValue model = WritableValue.withValueType(String.class);
+		IObservableValue<String> target = WritableValue.withValueType(String.class);
+		IObservableValue<String> model = WritableValue.withValueType(String.class);
 
 		Binding binding = dbc.bindValue(target, model);
 		assertTrue("binding is of the incorrect type", binding.getClass()
@@ -81,8 +83,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testBindList() throws Exception {
-		IObservableList target = WritableList.withElementType(Object.class);
-		IObservableList model = WritableList.withElementType(Object.class);
+		IObservableList<Object> target = WritableList.withElementType(Object.class);
+		IObservableList<Object> model = WritableList.withElementType(Object.class);
 
 		Binding binding = dbc.bindList(target, model);
 		assertTrue("binding is of the incorrect type", binding.getClass()
@@ -97,39 +99,37 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testValidationError() throws Exception {
-		WritableValue targetObservable = WritableValue
+		WritableValue<String> targetObservable = WritableValue
 				.withValueType(String.class);
-		WritableValue modelObservable = WritableValue
+		WritableValue<String> modelObservable = WritableValue
 				.withValueType(String.class);
 
 		final String errorMessage = "error";
-		ValueChangeEventTracker errorCounter = new ValueChangeEventTracker();
+		ValueChangeEventTracker<IStatus> errorCounter = new ValueChangeEventTracker<>();
 		ChangeEventTracker errorsCounter = new ChangeEventTracker();
 
-		IObservableValue error = new AggregateValidationStatus(dbc
+		IObservableValue<IStatus> error = new AggregateValidationStatus(dbc
 				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
 		error.addValueChangeListener(errorCounter);
-		assertTrue(((IStatus) error.getValue()).isOK());
+		assertTrue(error.getValue().isOK());
 
-		IObservableMap errors = dbc.getValidationStatusMap();
+		IObservableMap<Binding, IStatus> errors = dbc.getValidationStatusMap();
 		errors.addChangeListener(errorsCounter);
 		assertEquals(0, errors.size());
 
-		IValidator validator = new IValidator() {
+		IValidator<String> validator = new IValidator<String>() {
 			@Override
-			public IStatus validate(Object value) {
+			public IStatus validate(String value) {
 				return ValidationStatus.error(errorMessage);
 			}
 		};
 
-		dbc
-				.bindValue(targetObservable, modelObservable,
-						new UpdateValueStrategy()
-								.setAfterGetValidator(validator), null);
+		dbc.bindValue(targetObservable, modelObservable,
+				new UpdateValueStrategy<String, String>().setAfterGetValidator(validator), null);
 
 		targetObservable.setValue("");
-		assertFalse(((IStatus) error.getValue()).isOK());
-		assertEquals(errorMessage, ((IStatus) error.getValue()).getMessage());
+		assertFalse(error.getValue().isOK());
+		assertEquals(errorMessage, error.getValue().getMessage());
 		assertEquals(1, errors.size());
 		assertEquals(1, errorsCounter.count);
 		assertEquals(1, errorCounter.count);
@@ -145,8 +145,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testBindValueAddBinding() throws Exception {
-		WritableValue targetValue = WritableValue.withValueType(String.class);
-		WritableValue modelValue = WritableValue.withValueType(String.class);
+		WritableValue<String> targetValue = WritableValue.withValueType(String.class);
+		WritableValue<String> modelValue = WritableValue.withValueType(String.class);
 
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
@@ -167,9 +167,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testBindListAddBinding() throws Exception {
-		WritableList targetList = new WritableList(new ArrayList(),
-				Object.class);
-		WritableList modelList = new WritableList(new ArrayList(), Object.class);
+		WritableList<Object> targetList = new WritableList<>(new ArrayList<>(), Object.class);
+		WritableList<Object> modelList = new WritableList<>(new ArrayList<>(), Object.class);
 
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
@@ -214,9 +213,12 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testValidateTargetAfterValueBindingCreation() throws Exception {
-		WritableValue target = new WritableValue("", String.class);
-		WritableValue model = new WritableValue("2", String.class);
-		class Validator implements IValidator {
+		WritableValue<String> target = new WritableValue<>("", String.class);
+		WritableValue<String> model = new WritableValue<>("2", String.class);
+
+		// Test contra-variant validator type on setAfterConvertValidator by
+		// using Object as type argument
+		class Validator implements IValidator<Object> {
 			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.error("error");
@@ -224,11 +226,10 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		}
 
 		Binding binding = dbc.bindValue(target, model,
-				new UpdateValueStrategy()
-						.setAfterConvertValidator(new Validator()), null);
+				new UpdateValueStrategy<String, String>().setAfterConvertValidator(new Validator()), null);
 
-		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus()
-				.getValue()).getSeverity());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus()
+				.getValue().getSeverity());
 	}
 
 	protected void assertNoErrorsFound() {
@@ -247,11 +248,11 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	private static class BindingStub extends Binding {
 
 		public BindingStub() {
-			super(new WritableValue(), new WritableValue());
+			super(new WritableValue<>(), new WritableValue<>());
 		}
 
 		@Override
-		public IObservableValue getValidationStatus() {
+		public IObservableValue<IStatus> getValidationStatus() {
 			return null;
 		}
 

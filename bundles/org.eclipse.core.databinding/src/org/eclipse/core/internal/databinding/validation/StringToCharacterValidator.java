@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * Validates a String to Character conversion.
  */
-public class StringToCharacterValidator implements IValidator {
+public class StringToCharacterValidator implements IValidator<Object> {
 
 	private final StringToCharacterConverter converter;
 

@@ -56,10 +56,9 @@ public class TestMasterDetail {
 	 * @since 3.2
 	 *
 	 */
-	private static final class CustomUpdateValueStrategy extends
-			UpdateValueStrategy {
+	private static final class CustomUpdateValueStrategy<S, D> extends UpdateValueStrategy<S, D> {
 		@Override
-		protected IStatus doSet(IObservableValue observableValue, Object value) {
+		protected IStatus doSet(IObservableValue<? super D> observableValue, D value) {
 			IStatus result = super.doSet(observableValue, value);
 			if (result.isOK()) {
 				Object changed = observableValue;
@@ -230,15 +229,15 @@ public class TestMasterDetail {
 
 		DataBindingContext dbc = new DataBindingContext(realm) {
 			@Override
-			protected UpdateValueStrategy createTargetToModelUpdateValueStrategy(
-					IObservableValue fromValue, IObservableValue toValue) {
-				return new CustomUpdateValueStrategy();
+			protected <T, M> UpdateValueStrategy<T, M> createTargetToModelUpdateValueStrategy(
+					IObservableValue<T> fromValue, IObservableValue<M> toValue) {
+				return new CustomUpdateValueStrategy<>();
 			}
 		};
-		IConverter upperCaseConverter = new IConverter() {
+		IConverter<String, String> upperCaseConverter = new IConverter<String, String>() {
 			@Override
-			public Object convert(Object fromObject) {
-				return ((String) fromObject).toUpperCase();
+			public String convert(String fromObject) {
+				return fromObject.toUpperCase();
 			}
 
 			@Override
@@ -251,27 +250,25 @@ public class TestMasterDetail {
 				return String.class;
 			}
 		};
-		IValidator vowelValidator = new IValidator() {
+		IValidator<String> vowelValidator = new IValidator<String>() {
 			@Override
-			public IStatus validate(Object value) {
-				String s = (String) value;
-				if (!s.matches("[aeiouAEIOU]*")) {
+			public IStatus validate(String value) {
+				if (!value.matches("[aeiouAEIOU]*")) {
 					return ValidationStatus.error("only vowels allowed");
 				}
 				return Status.OK_STATUS;
 			}
 		};
 		Binding b = dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
-				BeanProperties.value((Class) selectedPerson.getValueType(), "name", String.class).observeDetail(
-								selectedPerson), new CustomUpdateValueStrategy()
-						.setConverter(upperCaseConverter).setAfterGetValidator(
-								vowelValidator), null);
+				BeanProperties.value((Class<?>) selectedPerson.getValueType(), "name", String.class)
+						.observeDetail(selectedPerson),
+				new CustomUpdateValueStrategy<String, String>().setConverter(upperCaseConverter)
+						.setAfterGetValidator(vowelValidator), null);
 
 		// AggregateValidationStatus status = new AggregateValidationStatus(dbc
 		// .getBindings(), AggregateValidationStatus.MAX_SEVERITY);
-		dbc.bindValue(WidgetProperties.text().observe(validationStatus), b
-				.getValidationStatus(), null, new UpdateValueStrategy()
-				.setConverter(new ObjectToStringConverter()));
+		dbc.bindValue(WidgetProperties.text().observe(validationStatus), b.getValidationStatus(), null,
+				new UpdateValueStrategy<Object, String>().setConverter(new ObjectToStringConverter()));
 
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(address),
 				BeanProperties.value((Class) selectedPerson.getValueType(), "address", String.class).observeDetail(

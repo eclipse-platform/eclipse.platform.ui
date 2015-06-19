@@ -11,9 +11,9 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import org.eclipse.core.databinding.conversion.Converter;
+import java.text.Format;
 
-import com.ibm.icu.text.NumberFormat;
+import org.eclipse.core.databinding.conversion.Converter;
 
 /**
  * Base class for number to number converters.
@@ -21,16 +21,19 @@ import com.ibm.icu.text.NumberFormat;
  * This class is thread safe.
  * </p>
  *
+ * @param <T>
+ *            type of the converted value
+ *
  * @since 1.0
  */
-public abstract class NumberToNumberConverter extends Converter {
-	private NumberFormat numberFormat;
+public abstract class NumberToNumberConverter<T extends Number> extends Converter<Object, T> {
+	private Format numberFormat;
 
 	private boolean primitive;
 
 	private String outOfRangeMessage;
 
-	protected NumberToNumberConverter(NumberFormat numberFormat,
+	protected NumberToNumberConverter(Format numberFormat,
 			Class<?> fromType, Class<?> toType) {
 		super(fromType, toType);
 		this.numberFormat = numberFormat;
@@ -38,7 +41,7 @@ public abstract class NumberToNumberConverter extends Converter {
 	}
 
 	@Override
-	public final Object convert(Object fromObject) {
+	public final T convert(Object fromObject) {
 		if (fromObject == null) {
 			if (primitive) {
 				throw new IllegalArgumentException(
@@ -54,7 +57,7 @@ public abstract class NumberToNumberConverter extends Converter {
 		}
 
 		Number number = (Number) fromObject;
-		Number result = doConvert(number);
+		T result = doConvert(number);
 
 		if (result != null) {
 			return result;
@@ -78,7 +81,7 @@ public abstract class NumberToNumberConverter extends Converter {
 	 * @return number if conversion was successfule, <code>null</code> if the
 	 *         number was out of range
 	 */
-	protected abstract Number doConvert(Number number);
+	protected abstract T doConvert(Number number);
 
 	/**
 	 * NumberFormat being used by the converter. Access to the format must be
@@ -86,7 +89,7 @@ public abstract class NumberToNumberConverter extends Converter {
 	 *
 	 * @return number format
 	 */
-	public NumberFormat getNumberFormat() {
+	public Format getNumberFormat() {
 		return numberFormat;
 	}
 }

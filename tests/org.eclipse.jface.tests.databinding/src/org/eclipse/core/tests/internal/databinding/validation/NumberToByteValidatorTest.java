@@ -27,14 +27,14 @@ public class NumberToByteValidatorTest extends NumberToNumberValidatorTestHarnes
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToByteConverter converter = new NumberToByteConverter(NumberFormat.getInstance(),
 				fromType, false);
 		return new NumberToByteValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToByteConverter converter = new NumberToByteConverter(NumberFormat.getInstance(),
 				fromType, true);
 		return new NumberToByteValidator(converter);

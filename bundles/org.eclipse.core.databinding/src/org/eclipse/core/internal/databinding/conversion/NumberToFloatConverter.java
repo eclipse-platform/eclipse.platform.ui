@@ -11,7 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Float.
@@ -20,19 +20,19 @@ import com.ibm.icu.text.NumberFormat;
  * </p>
  * @since 1.0
  */
-public class NumberToFloatConverter extends NumberToNumberConverter {
+public class NumberToFloatConverter extends NumberToNumberConverter<Float> {
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToFloatConverter(NumberFormat numberFormat, Class<?> fromType,
+	public NumberToFloatConverter(Format numberFormat, Class<?> fromType,
 			boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Float.TYPE : Float.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Float doConvert(Number number) {
 		if (StringToNumberParser.inFloatRange(number)) {
 			return Float.valueOf(number.floatValue());
 		}

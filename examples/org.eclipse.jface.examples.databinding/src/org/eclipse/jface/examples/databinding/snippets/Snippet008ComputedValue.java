@@ -55,17 +55,19 @@ public class Snippet008ComputedValue {
 
 				// Bind the UI to the Data.
 				DataBindingContext dbc = new DataBindingContext();
-				dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(ui.firstName), data.firstName);
-				dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(ui.lastName), data.lastName);
+				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
+						data.firstName);
+				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
+						data.lastName);
 
 				// Construct the formatted name observable.
-				FormattedName formattedName = new FormattedName(data.firstName,
-						data.lastName);
+				FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
 
 				// Bind the formatted name Text to the formatted name
 				// observable.
-				dbc.bindValue(WidgetProperties.text(SWT.None).observe(ui.formattedName), formattedName,
-						new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
+				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
+						formattedName,
+						new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
 
 				shell.pack();
 				shell.open();
@@ -92,20 +94,20 @@ public class Snippet008ComputedValue {
 	 *
 	 * @since 3.2
 	 */
-	static class FormattedName extends ComputedValue {
-		private IObservableValue firstName;
+	static class FormattedName extends ComputedValue<String> {
+		private IObservableValue<String> firstName;
 
-		private IObservableValue lastName;
+		private IObservableValue<String> lastName;
 
-		FormattedName(IObservableValue firstName, IObservableValue lastName) {
+		FormattedName(IObservableValue<String> firstName, IObservableValue<String> lastName) {
 			this.firstName = firstName;
 			this.lastName = lastName;
 		}
 
 		@Override
-		protected Object calculate() {
-			String lastName = (String) this.lastName.getValue();
-			String firstName = (String) this.firstName.getValue();
+		protected String calculate() {
+			String lastName = this.lastName.getValue();
+			String firstName = this.firstName.getValue();
 			lastName = (lastName != null && lastName.length() > 0) ? lastName
 					: "[Last Name]";
 			firstName = (firstName != null && firstName.length() > 0) ? firstName
@@ -119,13 +121,13 @@ public class Snippet008ComputedValue {
 	}
 
 	static class Data {
-		final WritableValue firstName;
+		final WritableValue<String> firstName;
 
-		final WritableValue lastName;
+		final WritableValue<String> lastName;
 
 		Data() {
-			firstName = new WritableValue("", String.class);
-			lastName = new WritableValue("", String.class);
+			firstName = new WritableValue<>("", String.class);
+			lastName = new WritableValue<>("", String.class);
 		}
 	}
 

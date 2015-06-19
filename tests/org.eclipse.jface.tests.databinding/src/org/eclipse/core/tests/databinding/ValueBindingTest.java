@@ -15,7 +15,6 @@ package org.eclipse.core.tests.databinding;
 
 import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_UPDATE;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -51,15 +50,16 @@ import org.junit.Test;
  * @since 1.1
  */
 public class ValueBindingTest extends AbstractDefaultRealmTestCase {
-	private WritableValue target;
+	private WritableValue<Object> target;
 
-	private WritableValue model;
+	private WritableValue<String> model;
 
 	private DataBindingContext dbc;
 	private Binding binding;
 
-	private List log;
+	private List<String> log;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -67,7 +67,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		target = WritableValue.withValueType(String.class);
 		model = WritableValue.withValueType(String.class);
 		dbc = new DataBindingContext();
-		log = new ArrayList();
+		log = new ArrayList<>();
 	}
 
 	@Override
@@ -85,10 +85,9 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testNoUpdateTargetFromModel() throws Exception {
 		try {
-			new DataBindingContext().bindValue(new ObservableValueStub(),
-					new ObservableValueStub(), new UpdateValueStrategy(
-							UpdateValueStrategy.POLICY_NEVER),
-					new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER));
+			new DataBindingContext().bindValue(new ObservableValueStub<>(), new ObservableValueStub<>(),
+					new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER),
+					new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_NEVER));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -128,44 +127,41 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		target.setValue(value);
 
 		assertEquals("value copied to model", value, model.getValue());
-		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());
+		assertTrue(binding.getValidationStatus().getValue().isOK());
 	}
 
 	@Test
 	public void testWarningStatusInValidationUpdatesModel() throws Exception {
 		Binding binding = dbc.bindValue(target, model,
-				new UpdateValueStrategy()
-						.setAfterGetValidator(warningValidator()), null);
+				new UpdateValueStrategy<Object, String>().setAfterGetValidator(warningValidator()), null);
 
 		String value = "value";
 		assertFalse(value.equals(model.getValue()));
 		target.setValue(value);
 
 		assertEquals("value copied to model", value, model.getValue());
-		assertEquals("warning status", IStatus.WARNING, ((IStatus) binding
-				.getValidationStatus().getValue()).getSeverity());
+		assertEquals("warning status", IStatus.WARNING, binding.getValidationStatus().getValue().getSeverity());
 	}
 
 	@Test
 	public void testInfoStatusInValidationUpdatesModel() throws Exception {
-		Binding binding = dbc
-				.bindValue(target, model, new UpdateValueStrategy()
-						.setAfterGetValidator(infoValidator()), null);
+		Binding binding = dbc.bindValue(target, model,
+				new UpdateValueStrategy<Object, String>().setAfterGetValidator(infoValidator()), null);
 
 		String value = "value";
 		assertFalse(value.equals(model.getValue()));
 		target.setValue(value);
 
 		assertEquals("value copied to model", value, model.getValue());
-		assertEquals("info status", IStatus.INFO, ((IStatus) binding
-				.getValidationStatus().getValue()).getSeverity());
+		assertEquals("info status", IStatus.INFO, binding
+				.getValidationStatus().getValue().getSeverity());
 	}
 
 	@Test
 	public void testErrorStatusInValidationDoesNotUpdateModel()
 			throws Exception {
 		Binding binding = dbc.bindValue(target, model,
-				new UpdateValueStrategy()
+				new UpdateValueStrategy<Object, String>()
 						.setAfterGetValidator(errorValidator()), null);
 
 		String value = "value";
@@ -173,32 +169,30 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		target.setValue(value);
 
 		assertFalse("value not copied to model", value.equals(model.getValue()));
-		assertEquals("error status", IStatus.ERROR, ((IStatus) binding
-				.getValidationStatus().getValue()).getSeverity());
+		assertEquals("error status", IStatus.ERROR, binding
+				.getValidationStatus().getValue().getSeverity());
 	}
 
 	@Test
 	public void testCancelStatusInValidationDoesNotUpdateModel()
 			throws Exception {
 		Binding binding = dbc.bindValue(target, model,
-				new UpdateValueStrategy()
-						.setAfterGetValidator(cancelValidator()), null);
+				new UpdateValueStrategy<Object, String>().setAfterGetValidator(cancelValidator()), null);
 
 		String value = "value";
 		assertFalse(value.equals(model.getValue()));
 		target.setValue(value);
 
 		assertFalse("value not copied to model", value.equals(model.getValue()));
-		assertEquals("cancel status", IStatus.CANCEL, ((IStatus) binding
-				.getValidationStatus().getValue()).getSeverity());
+		assertEquals("cancel status", IStatus.CANCEL, binding
+				.getValidationStatus().getValue().getSeverity());
 	}
 
 	@Test
 	public void testStatusesFromEveryPhaseAreReturned() throws Exception {
-		UpdateValueStrategy strategy = new UpdateValueStrategy() {
+		UpdateValueStrategy<Object, String> strategy = new UpdateValueStrategy<Object, String>() {
 			@Override
-			protected IStatus doSet(IObservableValue observableValue,
-					Object value) {
+			protected IStatus doSet(IObservableValue<? super String> observableValue, String value) {
 				super.doSet(observableValue, value);
 				return ValidationStatus.info("");
 			}
@@ -214,7 +208,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 		target.setValue(value);
 		assertEquals(value, model.getValue());
-		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		IStatus status = binding.getValidationStatus().getValue();
 		assertTrue(status.isMultiStatus());
 		assertEquals("max status", IStatus.WARNING, status.getSeverity());
 
@@ -239,25 +233,25 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testDiffsAreCheckedForEqualityBeforeUpdate() throws Exception {
-		class WritableValueStub extends WritableValue {
+		class WritableValueStub extends WritableValue<String> {
 			public WritableValueStub() {
 				super("", String.class);
 			}
 
 			@Override
-			protected void fireValueChange(ValueDiff diff) {
+			protected void fireValueChange(ValueDiff<String> diff) {
 				super.fireValueChange(diff);
 			}
 		}
 
 		WritableValueStub target = new WritableValueStub();
-		WritableValue model = WritableValue.withValueType(String.class);
+		WritableValue<String> model = WritableValue.withValueType(String.class);
 
-		class Strategy extends UpdateValueStrategy {
+		class Strategy extends UpdateValueStrategy<String, String> {
 			int afterGetCount;
 
 			@Override
-			public IStatus validateAfterGet(Object value) {
+			public IStatus validateAfterGet(String value) {
 				afterGetCount++;
 				return super.validateAfterGet(value);
 			}
@@ -359,7 +353,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 				"model-set" }), log);
 
 		log.clear();
-		model.setValue(new Object());
+		model.setValue("dummy model value");
 		assertEquals(Arrays.asList(new String[] { "model-set", "model-get",
 				"model-convert", "model-after-convert" }), log);
 	}
@@ -369,54 +363,50 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
-		bindLoggingValue(new UpdateValueStrategy(true, POLICY_UPDATE), new UpdateValueStrategy(true, POLICY_NEVER));
+		bindLoggingValue(new UpdateValueStrategy<>(true, POLICY_UPDATE), new UpdateValueStrategy<>(true, POLICY_NEVER));
 		assertEquals(model.getValue(), target.getValue());
 	}
 
-	private void bindLoggingValue(UpdateValueStrategy targetToModel,
-			UpdateValueStrategy modelToTarget) {
+	private void bindLoggingValue(UpdateValueStrategy<Object, String> targetToModel,
+			UpdateValueStrategy<String, Object> modelToTarget) {
 		// Set model and target to different values to ensure we get a change
 		// notification when the binding is first created.
 		model.setValue("1");
 		target.setValue("2");
 
-		target.addValueChangeListener(new IValueChangeListener() {
+		target.addValueChangeListener(new IValueChangeListener<Object>() {
 			@Override
-			public void handleValueChange(ValueChangeEvent event) {
+			public void handleValueChange(ValueChangeEvent<?> event) {
 				log.add("target-set");
 			}
 		});
-		model.addValueChangeListener(new IValueChangeListener() {
+		model.addValueChangeListener(new IValueChangeListener<String>() {
 			@Override
-			public void handleValueChange(ValueChangeEvent event) {
+			public void handleValueChange(ValueChangeEvent<? extends String> event) {
 				log.add("model-set");
 			}
 		});
 		binding = dbc.bindValue(target, model, targetToModel, modelToTarget);
 	}
 
-	private UpdateValueStrategy loggingModelToTargetStrategy(int updatePolicy) {
-		return new UpdateValueStrategy(updatePolicy).setAfterGetValidator(
-				loggingValidator(log, "model-get")).setConverter(
-				loggingConverter(log, "model-convert"))
-				.setAfterConvertValidator(
-						loggingValidator(log, "model-after-convert"))
-				.setBeforeSetValidator(
-						loggingValidator(log, "target-before-set"));
+	private UpdateValueStrategy<String, Object> loggingModelToTargetStrategy(int updatePolicy) {
+		return new UpdateValueStrategy<String, Object>(updatePolicy)
+				.setAfterGetValidator(loggingValidator(log, "model-get"))
+				.setConverter(loggingConverter(log, "model-convert"))
+				.setAfterConvertValidator(loggingValidator(log, "model-after-convert"))
+				.setBeforeSetValidator(loggingValidator(log, "target-before-set"));
 	}
 
-	private UpdateValueStrategy loggingTargetToModelStrategy(int updatePolicy) {
-		return new UpdateValueStrategy(updatePolicy).setAfterGetValidator(
-				loggingValidator(log, "target-get")).setConverter(
-				loggingConverter(log, "target-convert"))
-				.setAfterConvertValidator(
-						loggingValidator(log, "target-after-convert"))
-				.setBeforeSetValidator(
-						loggingValidator(log, "model-before-set"));
+	private UpdateValueStrategy<Object, String> loggingTargetToModelStrategy(int updatePolicy) {
+		return new UpdateValueStrategy<Object, String>(updatePolicy)
+				.setAfterGetValidator(loggingValidator(log, "target-get"))
+				.setConverter(loggingConverter(log, "target-convert"))
+				.setAfterConvertValidator(loggingValidator(log, "target-after-convert"))
+				.setBeforeSetValidator(loggingValidator(log, "model-before-set"));
 	}
 
-	private IValidator loggingValidator(final List log, final String message) {
-		return new IValidator() {
+	private IValidator<Object> loggingValidator(final List<String> log, final String message) {
+		return new IValidator<Object>() {
 			@Override
 			public IStatus validate(Object value) {
 				log.add(message);
@@ -425,18 +415,19 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		};
 	}
 
-	private IConverter loggingConverter(final List log, final String message) {
-		return new Converter(null, null) {
+	private <F, T> IConverter<F, T> loggingConverter(final List<String> log, final String message) {
+		return new Converter<F, T>(null, null) {
+			@SuppressWarnings("unchecked")
 			@Override
-			public Object convert(Object fromObject) {
+			public T convert(F fromObject) {
 				log.add(message);
-				return fromObject;
+				return (T) fromObject;
 			}
 		};
 	}
 
-	private IValidator warningValidator() {
-		return new IValidator() {
+	private IValidator<Object> warningValidator() {
+		return new IValidator<Object>() {
 			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.warning("");
@@ -444,8 +435,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		};
 	}
 
-	private IValidator infoValidator() {
-		return new IValidator() {
+	private IValidator<Object> infoValidator() {
+		return new IValidator<Object>() {
 			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.info("");
@@ -453,8 +444,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		};
 	}
 
-	private IValidator errorValidator() {
-		return new IValidator() {
+	private IValidator<Object> errorValidator() {
+		return new IValidator<Object>() {
 			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.error("");
@@ -462,8 +453,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		};
 	}
 
-	private IValidator cancelValidator() {
-		return new IValidator() {
+	private IValidator<Object> cancelValidator() {
+		return new IValidator<Object>() {
 			@Override
 			public IStatus validate(Object value) {
 				return ValidationStatus.cancel("");
@@ -471,9 +462,9 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		};
 	}
 
-	private static class ObservableValueStub extends AbstractObservableValue {
+	private static class ObservableValueStub<T> extends AbstractObservableValue<T> {
 		@Override
-		protected Object doGetValue() {
+		protected T doGetValue() {
 			// do nothing
 			return null;
 		}
@@ -485,7 +476,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		}
 
 		@Override
-		protected void doSetValue(Object value) {
+		protected void doSetValue(T value) {
 
 		}
 	}

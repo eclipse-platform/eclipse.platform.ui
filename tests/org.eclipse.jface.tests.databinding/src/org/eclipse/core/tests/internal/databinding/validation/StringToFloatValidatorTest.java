@@ -44,8 +44,8 @@ public class StringToFloatValidatorTest extends
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
-		StringToNumberConverter converter = StringToNumberConverter.toFloat(numberFormat, false);
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
+		StringToNumberConverter<Float> converter = StringToNumberConverter.toFloat(numberFormat, false);
 		return new StringToFloatValidator(converter);
 	}
 }

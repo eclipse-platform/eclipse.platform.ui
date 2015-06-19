@@ -34,7 +34,7 @@ public class AbstractStringToNumberValidatorTest {
 	 */
 	@Test
 	public void testErrorMessagesAreNotCached() throws Exception {
-		NumberFormatConverter c = StringToNumberConverter.toInteger(false);
+		StringToNumberConverter<Integer> c = StringToNumberConverter.toInteger(false);
 		ValidatorStub v = new ValidatorStub(c);
 
 		IStatus status1 = v.validate("1a");
@@ -47,7 +47,7 @@ public class AbstractStringToNumberValidatorTest {
 	}
 
 	static class ValidatorStub extends AbstractStringToNumberValidator {
-		ValidatorStub(NumberFormatConverter c) {
+		ValidatorStub(NumberFormatConverter<?, ?> c) {
 			super(c, Integer.valueOf(Integer.MIN_VALUE), Integer.valueOf(Integer.MAX_VALUE));
 		}
 

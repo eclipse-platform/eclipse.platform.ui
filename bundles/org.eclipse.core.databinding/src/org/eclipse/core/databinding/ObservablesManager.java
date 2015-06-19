@@ -14,7 +14,6 @@
 package org.eclipse.core.databinding;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,8 +34,8 @@ import org.eclipse.core.internal.databinding.Pair;
  */
 public class ObservablesManager {
 
-	private Set managedObservables = new IdentitySet();
-	private Set excludedObservables = new IdentitySet();
+	private Set<IObservable> managedObservables = new IdentitySet<>();
+	private Set<IObservable> excludedObservables = new IdentitySet<>();
 	private Map<DataBindingContext, Pair> contexts = new HashMap<>();
 
 	/**
@@ -110,7 +109,7 @@ public class ObservablesManager {
 	 * Disposes of this manager and all observables that it manages.
 	 */
 	public void dispose() {
-		Set observables = new IdentitySet();
+		Set<IObservable> observables = new IdentitySet<>();
 		observables.addAll(managedObservables);
 		for (Entry<DataBindingContext, Pair> entry : contexts.entrySet()) {
 			DataBindingContext context = entry.getKey();
@@ -119,8 +118,7 @@ public class ObservablesManager {
 					.booleanValue();
 			boolean disposeModels = ((Boolean) trackModelsOrTargets.b)
 					.booleanValue();
-			for (Iterator it2 = context.getBindings().iterator(); it2.hasNext();) {
-				Binding binding = (Binding) it2.next();
+			for (Binding binding : context.getBindings()) {
 				if (disposeTargets) {
 					observables.add(binding.getTarget());
 				}
@@ -130,8 +128,7 @@ public class ObservablesManager {
 			}
 		}
 		observables.removeAll(excludedObservables);
-		for (Iterator it = observables.iterator(); it.hasNext();) {
-			IObservable observable = (IObservable) it.next();
+		for (IObservable observable : observables) {
 			observable.dispose();
 		}
 	}

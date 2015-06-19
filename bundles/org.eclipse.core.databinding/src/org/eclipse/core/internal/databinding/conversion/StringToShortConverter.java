@@ -17,9 +17,13 @@ import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import com.ibm.icu.text.NumberFormat;
 
 /**
+ * Note that this class does not have precise type parameters because it
+ * manually handles argument type mismatches and throws
+ * {@link IllegalArgumentException}.
+ *
  * @since 1.0
  */
-public class StringToShortConverter extends NumberFormatConverter {
+public class StringToShortConverter extends NumberFormatConverter<Object, Short> {
 	private final NumberFormat numberFormat;
 	private final boolean primitive;
 
@@ -35,7 +39,7 @@ public class StringToShortConverter extends NumberFormatConverter {
 	}
 
 	@Override
-	public Object convert(Object fromObject) {
+	public Short convert(Object fromObject) {
 		ParseResult result = StringToNumberParser.parse(fromObject,
 				numberFormat, primitive);
 

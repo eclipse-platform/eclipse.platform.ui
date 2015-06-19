@@ -44,7 +44,7 @@ public class StringToByteValidatorTest extends
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
 		StringToByteConverter converter = StringToByteConverter.toByte(numberFormat, false);
 		return new StringToByteValidator(converter);
 	}

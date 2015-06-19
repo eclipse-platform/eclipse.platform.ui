@@ -32,7 +32,7 @@ public abstract class NumberToNumberTestHarness {
 	 * @param fromType
 	 * @return validator, <code>null</code> if the type does not have a primitive form
 	 */
-	protected abstract IConverter doGetToPrimitiveValidator(Class fromType);
+	protected abstract IConverter<Object, ? extends Number> doGetToPrimitiveValidator(Class<?> fromType);
 
 	/**
 	 * Invoked when a to boxed validator is needed.
@@ -40,7 +40,7 @@ public abstract class NumberToNumberTestHarness {
 	 * @param fromType
 	 * @return
 	 */
-	protected abstract IConverter doGetToBoxedTypeValidator(Class fromType);
+	protected abstract IConverter<Object, ? extends Number> doGetToBoxedTypeValidator(Class<?> fromType);
 
 	/**
 	 * Invoked when the type is needed.
@@ -48,7 +48,7 @@ public abstract class NumberToNumberTestHarness {
 	 * @param primitive
 	 * @return type, <code>null</code> if the type does not have a primitive form
 	 */
-	protected abstract Class doGetToType(boolean primitive);
+	protected abstract Class<?> doGetToType(boolean primitive);
 
 	/**
 	 * Invoked when an out of range number is needed to use for conversion.
@@ -59,13 +59,13 @@ public abstract class NumberToNumberTestHarness {
 
 	@Test
 	public void testFromType() throws Exception {
-		Class from = Integer.class;
+		Class<?> from = Integer.class;
 		assertEquals(from, doGetToBoxedTypeValidator(from).getFromType());
 	}
 
 	@Test
 	public void testToTypeIsPrimitive() throws Exception {
-		Class toType = doGetToType(true);
+		Class<?> toType = doGetToType(true);
 
 		if (toType == null) {
 			//return if there is no primitive type
@@ -78,7 +78,7 @@ public abstract class NumberToNumberTestHarness {
 
 	@Test
 	public void testToTypeIsBoxedType() throws Exception {
-		Class toType = doGetToType(false);
+		Class<?> toType = doGetToType(false);
 		assertEquals(toType, doGetToBoxedTypeValidator(Integer.class)
 				.getToType());
 		assertFalse(toType.isPrimitive());
@@ -87,8 +87,7 @@ public abstract class NumberToNumberTestHarness {
 	@Test
 	public void testValidConversion() throws Exception {
 		Integer value = Integer.valueOf(1);
-		Number result = (Number) doGetToBoxedTypeValidator(Integer.class)
-				.convert(value);
+		Number result = doGetToBoxedTypeValidator(Integer.class).convert(value);
 
 		assertNotNull("result was null", result);
 

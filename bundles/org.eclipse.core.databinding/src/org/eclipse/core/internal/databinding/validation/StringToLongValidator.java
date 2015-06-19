@@ -26,7 +26,7 @@ public class StringToLongValidator extends AbstractStringToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public StringToLongValidator(NumberFormatConverter converter) {
+	public StringToLongValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}
 

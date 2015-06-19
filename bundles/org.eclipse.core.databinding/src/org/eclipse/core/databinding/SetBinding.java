@@ -14,7 +14,6 @@
 package org.eclipse.core.databinding;
 
 import java.util.Collections;
-import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -29,30 +28,35 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
+ * @param <T>
+ *            the type of the elements in the set on the target side
+ * @param <M>
+ *            the type of the elements in the set on the model side
  * @since 1.1
  *
  */
-public class SetBinding extends Binding {
+public class SetBinding<M, T> extends Binding {
 
-	private UpdateSetStrategy targetToModel;
-	private UpdateSetStrategy modelToTarget;
-	private IObservableValue validationStatusObservable;
+	private UpdateSetStrategy<? super T, ? extends M> targetToModel;
+	private UpdateSetStrategy<? super M, ? extends T> modelToTarget;
+	private IObservableValue<IStatus> validationStatusObservable;
+	private IObservableSet<T> target;
+	private IObservableSet<M> model;
 	private boolean updatingTarget;
 	private boolean updatingModel;
 
-	private ISetChangeListener targetChangeListener = event -> {
+	private ISetChangeListener<T> targetChangeListener = event -> {
 		if (!updatingTarget) {
-			doUpdate((IObservableSet) getTarget(), (IObservableSet) getModel(), event.diff, targetToModel, false,
-					false);
+			doUpdate(target, model, event.diff, targetToModel, false, false);
 		}
 	};
 
-	private ISetChangeListener modelChangeListener = event -> {
+	private ISetChangeListener<M> modelChangeListener = event -> {
 		if (!updatingModel) {
-			doUpdate((IObservableSet) getModel(), (IObservableSet) getTarget(), event.diff, modelToTarget, false,
-					false);
+			doUpdate(model, target, event.diff, modelToTarget, false, false);
 		}
 	};
+
 
 	/**
 	 * @param target
@@ -60,16 +64,18 @@ public class SetBinding extends Binding {
 	 * @param modelToTargetStrategy
 	 * @param targetToModelStrategy
 	 */
-	public SetBinding(IObservableSet target, IObservableSet model,
-			UpdateSetStrategy targetToModelStrategy,
-			UpdateSetStrategy modelToTargetStrategy) {
+	public SetBinding(IObservableSet<T> target, IObservableSet<M> model,
+			UpdateSetStrategy<? super T, ? extends M> targetToModelStrategy,
+			UpdateSetStrategy<? super M, ? extends T> modelToTargetStrategy) {
 		super(target, model);
+		this.target = target;
+		this.model = model;
 		this.targetToModel = targetToModelStrategy;
 		this.modelToTarget = modelToTargetStrategy;
 	}
 
 	@Override
-	public IObservableValue getValidationStatus() {
+	public IObservableValue<IStatus> getValidationStatus() {
 		return validationStatusObservable;
 	}
 
@@ -77,8 +83,8 @@ public class SetBinding extends Binding {
 	protected void preInit() {
 		ObservableTracker.setIgnore(true);
 		try {
-			validationStatusObservable = new WritableValue(context
-					.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+			validationStatusObservable = new WritableValue<>(
+					context.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 		} finally {
 			ObservableTracker.setIgnore(false);
 		}
@@ -87,8 +93,8 @@ public class SetBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getModel().getRealm().exec(() -> {
-				((IObservableSet) getModel()).addSetChangeListener(modelChangeListener);
+			model.getRealm().exec(() -> {
+				model.addSetChangeListener(modelChangeListener);
 				updateModelToTarget();
 			});
 		} else {
@@ -96,8 +102,8 @@ public class SetBinding extends Binding {
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			getTarget().getRealm().exec(() -> {
-				((IObservableSet) getTarget()).addSetChangeListener(targetChangeListener);
+			target.getRealm().exec(() -> {
+				target.addSetChangeListener(targetChangeListener);
 				if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_NEVER) {
 					// we have to sync from target to model, if the other
 					// way round (model to target) is forbidden (POLICY_NEVER)
@@ -113,19 +119,17 @@ public class SetBinding extends Binding {
 
 	@Override
 	public void updateModelToTarget() {
-		final IObservableSet modelSet = (IObservableSet) getModel();
-		modelSet.getRealm().exec(() -> {
-			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, modelSet);
-			doUpdate(modelSet, (IObservableSet) getTarget(), diff, modelToTarget, true, true);
+		model.getRealm().exec(() -> {
+			SetDiff<M> diff = Diffs.computeSetDiff(Collections.emptySet(), model);
+			doUpdate(model, target, diff, modelToTarget, true, true);
 		});
 	}
 
 	@Override
 	public void updateTargetToModel() {
-		final IObservableSet targetSet = (IObservableSet) getTarget();
-		targetSet.getRealm().exec(() -> {
-			SetDiff diff = Diffs.computeSetDiff(Collections.EMPTY_SET, targetSet);
-			doUpdate(targetSet, (IObservableSet) getModel(), diff, targetToModel, true, true);
+		target.getRealm().exec(() -> {
+			SetDiff<T> diff = Diffs.computeSetDiff(Collections.emptySet(), target);
+			doUpdate(target, model, diff, targetToModel, true, true);
 		});
 	}
 
@@ -143,10 +147,9 @@ public class SetBinding extends Binding {
 	 * This method may be moved to UpdateSetStrategy in the future if clients
 	 * need more control over how the two sets are kept in sync.
 	 */
-	private void doUpdate(final IObservableSet source,
-			final IObservableSet destination, final SetDiff diff,
-			final UpdateSetStrategy updateSetStrategy, final boolean explicit,
-			final boolean clearDestination) {
+	private <S, D1, D2 extends D1> void doUpdate(final IObservableSet<S> source, final IObservableSet<D1> destination,
+			final SetDiff<? extends S> diff, final UpdateSetStrategy<? super S, D2> updateSetStrategy,
+			final boolean explicit, final boolean clearDestination) {
 		final int policy = updateSetStrategy.getUpdatePolicy();
 		if (policy == UpdateSetStrategy.POLICY_NEVER)
 			return;
@@ -161,7 +164,7 @@ public class SetBinding extends Binding {
 			diff.getRemovals();
 		}
 		destination.getRealm().exec(() -> {
-			if (destination == getTarget()) {
+			if (destination == target) {
 				updatingTarget = true;
 			} else {
 				updatingModel = true;
@@ -173,9 +176,8 @@ public class SetBinding extends Binding {
 					destination.clear();
 				}
 
-				for (Iterator iterator1 = diff.getRemovals().iterator(); iterator1.hasNext();) {
-					IStatus setterStatus1 = updateSetStrategy.doRemove(destination,
-							updateSetStrategy.convert(iterator1.next()));
+				for (S element : diff.getRemovals()) {
+					IStatus setterStatus1 = updateSetStrategy.doRemove(destination, updateSetStrategy.convert(element));
 
 					mergeStatus(multiStatus, setterStatus1);
 					// TODO - at this point, the two sets
@@ -183,9 +185,8 @@ public class SetBinding extends Binding {
 					// occurred...
 				}
 
-				for (Iterator iterator2 = diff.getAdditions().iterator(); iterator2.hasNext();) {
-					IStatus setterStatus2 = updateSetStrategy.doAdd(destination,
-							updateSetStrategy.convert(iterator2.next()));
+				for (S element : diff.getAdditions()) {
+					IStatus setterStatus2 = updateSetStrategy.doAdd(destination, updateSetStrategy.convert(element));
 
 					mergeStatus(multiStatus, setterStatus2);
 					// TODO - at this point, the two sets
@@ -195,7 +196,7 @@ public class SetBinding extends Binding {
 			} finally {
 				setValidationStatus(multiStatus);
 
-				if (destination == getTarget()) {
+				if (destination == target) {
 					updatingTarget = false;
 				} else {
 					updatingModel = false;
@@ -224,13 +225,11 @@ public class SetBinding extends Binding {
 	@Override
 	public void dispose() {
 		if (targetChangeListener != null) {
-			((IObservableSet) getTarget())
-					.removeSetChangeListener(targetChangeListener);
+			target.removeSetChangeListener(targetChangeListener);
 			targetChangeListener = null;
 		}
 		if (modelChangeListener != null) {
-			((IObservableSet) getModel())
-					.removeSetChangeListener(modelChangeListener);
+			model.removeSetChangeListener(modelChangeListener);
 			modelChangeListener = null;
 		}
 		super.dispose();

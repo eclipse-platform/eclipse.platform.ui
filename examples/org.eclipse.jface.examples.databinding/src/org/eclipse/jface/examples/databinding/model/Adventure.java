@@ -51,14 +51,12 @@ public class Adventure extends ModelObject {
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
 	}
 
-	public IValidator getMaxNumberOfPeopleDomainValidator() {
-		return new IValidator() {
+	public IValidator<Integer> getMaxNumberOfPeopleDomainValidator() {
+		return new IValidator<Integer>() {
 			@Override
-			public IStatus validate(Object value) {
-				int intValue = ((Integer)value).intValue();
-				if (intValue < 1 || intValue > 20) {
-					return ValidationStatus
-							.error("Max number of people must be between 1 and 20 inclusive");
+			public IStatus validate(Integer value) {
+				if (value < 1 || value > 20) {
+					return ValidationStatus.error("Max number of people must be between 1 and 20 inclusive");
 				}
 				return null;
 			}

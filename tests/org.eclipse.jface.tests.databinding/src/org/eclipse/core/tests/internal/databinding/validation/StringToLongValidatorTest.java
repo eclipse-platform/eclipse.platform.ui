@@ -43,8 +43,8 @@ public class StringToLongValidatorTest extends StringToNumberValidatorTestHarnes
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
-		NumberFormatConverter converter = StringToNumberConverter.toInteger(numberFormat, false);
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
+		NumberFormatConverter<Object, Integer> converter = StringToNumberConverter.toInteger(numberFormat, false);
 		return new StringToLongValidator(converter);
 	}
 }

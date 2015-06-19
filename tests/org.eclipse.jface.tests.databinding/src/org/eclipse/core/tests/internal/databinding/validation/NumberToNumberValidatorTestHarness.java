@@ -24,8 +24,9 @@ import org.junit.Test;
  * @since 1.1
  */
 public abstract class NumberToNumberValidatorTestHarness {
-	protected abstract NumberToNumberValidator doGetToPrimitiveValidator(Class fromType);
-	protected abstract NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType);
+	protected abstract NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType);
+
+	protected abstract NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType);
 	protected abstract Number doGetOutOfRangeNumber();
 
 	@Test
@@ -37,7 +38,7 @@ public abstract class NumberToNumberValidatorTestHarness {
 	@Test
 	public void testValidateNullForPrimitiveThrowsIllegalArgumentException()
 			throws Exception {
-		IValidator validator = doGetToPrimitiveValidator(Integer.class);
+		IValidator<Object> validator = doGetToPrimitiveValidator(Integer.class);
 
 		if (validator == null) {
 			//return if a primitive validator does not exist (e.g. BigInteger, BigDecimal, etc.)

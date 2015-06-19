@@ -11,7 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Short.
@@ -20,20 +20,18 @@ import com.ibm.icu.text.NumberFormat;
  * </p>
  * @since 1.0
  */
-public class NumberToShortConverter extends NumberToNumberConverter {
+public class NumberToShortConverter extends NumberToNumberConverter<Short> {
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToShortConverter(NumberFormat numberFormat, Class fromType,
-			boolean primitive) {
-
+	public NumberToShortConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Short.TYPE : Short.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Short doConvert(Number number) {
 		if (StringToNumberParser.inShortRange(number)) {
 			return Short.valueOf(number.shortValue());
 		}

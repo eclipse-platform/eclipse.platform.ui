@@ -17,9 +17,8 @@ package org.eclipse.core.internal.databinding.conversion;
 public class StringToBooleanConverter extends StringToBooleanPrimitiveConverter {
 
 	@Override
-	public Object convert(Object source) {
-		String sourceString = (String) source;
-		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
+	public Boolean convert(String source) {
+		if ("".equals(source.trim())) { //$NON-NLS-1$
 			return null;
 		}
 		return super.convert(source);

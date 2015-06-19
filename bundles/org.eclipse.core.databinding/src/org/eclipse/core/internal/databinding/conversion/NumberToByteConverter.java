@@ -11,7 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Byte.
@@ -21,19 +21,18 @@ import com.ibm.icu.text.NumberFormat;
  *
  * @since 1.0
  */
-public class NumberToByteConverter extends NumberToNumberConverter {
+public class NumberToByteConverter extends NumberToNumberConverter<Byte> {
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToByteConverter(NumberFormat numberFormat, Class fromType,
-			boolean primitive) {
+	public NumberToByteConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Byte.TYPE : Byte.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Byte doConvert(Number number) {
 		if (StringToNumberParser.inByteRange(number)) {
 			return Byte.valueOf(number.byteValue());
 		}

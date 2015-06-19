@@ -11,14 +11,18 @@
 
 package org.eclipse.core.databinding.conversion;
 
-
 /**
  * Abstract base class for converters.
+ *
+ * @param <F>
+ *            type of the source value
+ * @param <T>
+ *            type of the converted value
  *
  * @since 1.0
  *
  */
-public abstract class Converter implements IConverter {
+public abstract class Converter<F, T> implements IConverter<F, T> {
 
 	private Object fromType;
 	private Object toType;

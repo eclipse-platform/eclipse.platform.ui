@@ -29,6 +29,7 @@ import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -50,14 +51,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
-	private DependencyObservableValue dependency;
+	private DependencyObservableValue<Object> dependency;
 	private MultiValidator validator;
-	private IObservableValue validationStatus;
+	private IObservableValue<IStatus> validationStatus;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		dependency = new DependencyObservableValue(null, IStatus.class);
+		dependency = new DependencyObservableValue<>(null, IStatus.class);
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
@@ -83,7 +85,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValidationStatus_NullResultYieldsOKStatus() {
-		IStatus status = (IStatus) validationStatus.getValue();
+		IStatus status = validationStatus.getValue();
 		assertTrue(status.isOK()); // null -> OK
 	}
 
@@ -126,7 +128,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 	public void testObserveValidatedValue_WrongRealm() {
 		Realm otherRealm = new CurrentRealm(true);
 		try {
-			validator.observeValidatedValue(new WritableValue(otherRealm));
+			validator.observeValidatedValue(new WritableValue<>(otherRealm));
 			fail("Expected AssertionFailedException");
 		} catch (AssertionFailedException expected) {
 		}
@@ -134,8 +136,9 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testObserveValidatedValue_ReturnValue() {
-		WritableValue target = new WritableValue();
-		ValidatedObservableValue validated = (ValidatedObservableValue) validator.observeValidatedValue(target);
+		WritableValue<Object> target = new WritableValue<>();
+		ValidatedObservableValue<Object> validated = (ValidatedObservableValue<Object>) validator
+				.observeValidatedValue(target);
 
 		target.setValue(new Object());
 		assertEquals(target.getValue(), validated.getValue());
@@ -175,7 +178,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testBug237884_Comment3_ValidationStatusAsDependencyCausesStackOverflow() {
-		dependency = new DependencyObservableValue(new Object(), Object.class);
+		dependency = new DependencyObservableValue<>(new Object(), Object.class);
 		validator = new MultiValidator() {
 			private int counter;
 
@@ -272,10 +275,10 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testBug240590_ValidationStatusSetWhileTrackingDependencies() {
-		final IObservableValue noDependency = new WritableValue();
-		validationStatus.addValueChangeListener(new IValueChangeListener() {
+		final IObservableValue<Object> noDependency = new WritableValue<>();
+		validationStatus.addValueChangeListener(new IValueChangeListener<Object>() {
 			@Override
-			public void handleValueChange(ValueChangeEvent event) {
+			public void handleValueChange(ValueChangeEvent<?> event) {
 				// Explicitly track the faked dependency.
 				ObservableTracker.getterCalled(noDependency);
 			}
@@ -291,7 +294,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testValidationStaleness() {
-		ValueChangeEventTracker validationChangeCounter = ValueChangeEventTracker.observe(validationStatus);
+		ValueChangeEventTracker<IStatus> validationChangeCounter = ValueChangeEventTracker.observe(validationStatus);
 
 		StaleEventTracker validationStaleCounter = StaleEventTracker.observe(validationStatus);
 
@@ -346,21 +349,21 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testValidationStatusBecomesStaleThroughNewDependency() {
-		final DependencyObservableValue nonStaleDependency = new DependencyObservableValue(ValidationStatus.ok(),
-				IStatus.class);
+		final DependencyObservableValue<IStatus> nonStaleDependency = new DependencyObservableValue<>(
+				ValidationStatus.ok(), IStatus.class);
 		nonStaleDependency.setStale(false);
 
-		final DependencyObservableValue staleDependency = new DependencyObservableValue(ValidationStatus.ok(),
-				IStatus.class);
+		final DependencyObservableValue<IStatus> staleDependency = new DependencyObservableValue<>(
+				ValidationStatus.ok(), IStatus.class);
 		staleDependency.setStale(true);
 
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
 				if (nonStaleDependency.getValue() != null) {
-					return (IStatus) nonStaleDependency.getValue();
+					return nonStaleDependency.getValue();
 				}
-				return (IStatus) staleDependency.getValue();
+				return staleDependency.getValue();
 			}
 		};
 		validationStatus = validator.getValidationStatus();
@@ -399,7 +402,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		// force init validation
 		validationStatus = validator.getValidationStatus();
 
-		IObservableList targets = validator.getTargets();
+		IObservableList<IObservable> targets = validator.getTargets();
 		assertEquals(1, targets.size());
 		assertSame(dependency1, targets.get(0));
 
@@ -412,7 +415,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testBug251003_MissingDependencies() {
-		final WritableList emptyListDependency = new WritableList();
+		final WritableList<Object> emptyListDependency = new WritableList<>();
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
@@ -449,17 +452,17 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
-				return (IStatus) validator.getValidationStatus().getValue();
+				return validator.getValidationStatus().getValue();
 			}
 		};
 
 		validator.getValidationStatus();
 	}
 
-	private static class DependencyObservableValue extends WritableValue {
+	private static class DependencyObservableValue<T> extends WritableValue<T> {
 		private boolean stale = false;
 
-		public DependencyObservableValue(Object initialValue, Object valueType) {
+		public DependencyObservableValue(T initialValue, Object valueType) {
 			super(initialValue, valueType);
 		}
 

@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
@@ -19,10 +20,15 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 /**
  * Simple value property which applies a given converter on a source object in
  * order to produce the property's value.
+ *
+ * @param <S>
+ *            type of the source object
+ * @param <T>
+ *            type of the value of the property (after conversion)
  */
-public class ConverterValueProperty extends SimpleValueProperty {
+public class ConverterValueProperty<S, T> extends SimpleValueProperty<S, T> {
 
-	private final IConverter converter;
+	private final IConverter<S, T> converter;
 
 	/**
 	 * Creates a new value property which applies the given converter on the
@@ -31,7 +37,7 @@ public class ConverterValueProperty extends SimpleValueProperty {
 	 * @param converter
 	 *            The converter to apply to the source object.
 	 */
-	public ConverterValueProperty(IConverter converter) {
+	public ConverterValueProperty(IConverter<S, T> converter) {
 		this.converter = converter;
 	}
 
@@ -42,27 +48,27 @@ public class ConverterValueProperty extends SimpleValueProperty {
 	}
 
 	@Override
-	public Object getValue(Object source) {
+	public T getValue(S source) {
 		// We do also pass null values to the converter.
 		return doGetValue(source);
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
+	protected T doGetValue(S source) {
 		// delegate to the IConverter
 		return converter.convert(source);
 	}
 
 	@Override
-	protected void doSetValue(Object source, Object value) {
+	protected void doSetValue(S source, T value) {
 		// setting a value is not supported
 		throw new UnsupportedOperationException(toString()
 				+ ": Setter not supported on a converted value!"); //$NON-NLS-1$
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<S> adaptListener(
+			ISimplePropertyListener<S, ValueDiff<? extends T>> listener) {
 		// no listener API
 		return null;
 	}

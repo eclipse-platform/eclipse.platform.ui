@@ -30,30 +30,26 @@ public abstract class ValidationStatusProvider {
 	protected boolean disposed = false;
 
 	/**
-	 * @return an {@link IObservableValue}&lt; {@link IStatus} &gt; containing
-	 *         the current validation status
+	 * @return an {@link IObservableValue} containing the current validation
+	 *         status
 	 */
-	public abstract IObservableValue getValidationStatus();
+	public abstract IObservableValue<IStatus> getValidationStatus();
 
 	/**
-	 * Returns an {@link IObservableList} &lt; {@link IObservable} &gt;
-	 * containing the target observables (if any) that are being tracked by this
-	 * validation status provider.
+	 * Returns an {@link IObservableList} containing the target observables (if
+	 * any) that are being tracked by this validation status provider.
 	 *
-	 * @return an {@link IObservableList} &lt; {@link IObservable} &gt; (may be
-	 *         empty)
+	 * @return an {@link IObservableList} (may be empty)
 	 */
-	public abstract IObservableList getTargets();
+	public abstract IObservableList<IObservable> getTargets();
 
 	/**
-	 * Returns an {@link IObservableList} &lt; {@link IObservable} &gt;
-	 * containing the model observables (if any) that are being tracked by this
-	 * validation status provider.
+	 * Returns an {@link IObservableList} containing the model observables (if
+	 * any) that are being tracked by this validation status provider.
 	 *
-	 * @return an {@link IObservableList} &lt; {@link IObservable} &gt; (may be
-	 *         empty)
+	 * @return an {@link IObservableList} (may be empty)
 	 */
-	public abstract IObservableList getModels();
+	public abstract IObservableList<IObservable> getModels();
 
 	/**
 	 * Disposes of this ValidationStatusProvider. Subclasses may extend, but

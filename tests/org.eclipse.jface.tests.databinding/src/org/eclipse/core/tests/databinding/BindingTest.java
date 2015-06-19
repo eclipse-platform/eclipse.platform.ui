@@ -17,20 +17,20 @@ import static org.junit.Assert.fail;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 public class BindingTest extends AbstractDefaultRealmTestCase {
-	private IObservable target;
-
-	private IObservable model;
+	private IObservableValue<String> target;
+	private IObservableValue<String> model;
 
 	private DataBindingContext dbc;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -127,12 +127,12 @@ public class BindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	private static class BindingStub extends Binding {
-		BindingStub(IObservable target, IObservable model) {
+		BindingStub(IObservableValue<String> target, IObservableValue<String> model) {
 			super(target, model);
 		}
 
 		@Override
-		public IObservableValue getValidationStatus() {
+		public IObservableValue<IStatus> getValidationStatus() {
 			return null;
 		}
 

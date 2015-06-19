@@ -29,6 +29,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ListBinding;
 import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.util.ILogger;
@@ -46,8 +47,8 @@ import org.junit.Test;
  * @since 1.1
  */
 public class ListBindingTest extends AbstractDefaultRealmTestCase {
-	private IObservableList target;
-	private IObservableList model;
+	private IObservableList<String> target;
+	private IObservableList<String> model;
 	private DataBindingContext dbc;
 
 	@Override
@@ -55,8 +56,8 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		target = new WritableList(new ArrayList(), String.class);
-		model = new WritableList(new ArrayList(), String.class);
+		target = new WritableList<>(new ArrayList<>(), String.class);
+		model = new WritableList<>(new ArrayList<>(), String.class);
 		dbc = new DataBindingContext();
 	}
 
@@ -71,11 +72,11 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testUpdateModelFromTarget() throws Exception {
 		Binding binding = dbc.bindList(target, model,
-				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
-				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
+				new UpdateListStrategy<>(UpdateListStrategy.POLICY_ON_REQUEST),
+				new UpdateListStrategy<>(UpdateListStrategy.POLICY_ON_REQUEST));
 
 		target.add("1");
-		List targetCopy = new ArrayList(target.size());
+		List<String> targetCopy = new ArrayList<>(target.size());
 		targetCopy.addAll(target);
 
 		model.add("2");
@@ -89,13 +90,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testUpdateTargetFromModel() throws Exception {
 		Binding binding = dbc.bindList(target, model,
-				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
-				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
+				new UpdateListStrategy<>(UpdateListStrategy.POLICY_ON_REQUEST),
+				new UpdateListStrategy<>(UpdateListStrategy.POLICY_ON_REQUEST));
 
 		target.add("1");
 		model.add("2");
 
-		List modelCopy = new ArrayList(model.size());
+		List<String> modelCopy = new ArrayList<>(model.size());
 		modelCopy.addAll(model);
 
 		assertFalse("model should not equal target", model.equals(target));
@@ -108,13 +109,15 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testGetTarget() throws Exception {
 		Binding binding = dbc.bindList(target, model);
-		assertEquals(target, binding.getTarget());
+		IObservable targetList = binding.getTarget();
+		assertEquals(target, targetList);
 	}
 
 	@Test
 	public void testGetModel() throws Exception {
 		Binding binding = dbc.bindList(target, model);
-		assertEquals(model, binding.getModel());
+		IObservable modelList = binding.getModel();
+		assertEquals(model, modelList);
 	}
 
 	@Test
@@ -125,10 +128,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testAddValidationStatusContainsMultipleStatuses() throws Exception {
-		UpdateListStrategy strategy = new UpdateListStrategy() {
+		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<String, String>() {
 			@Override
-			protected IStatus doAdd(IObservableList observableList,
-					Object element, int index) {
+			protected IStatus doAdd(IObservableList<? super String> observableList, String element, int index) {
 				super.doAdd(observableList, element, index);
 
 				switch (index) {
@@ -145,7 +147,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model, strategy, null);
 		target.addAll(Arrays.asList(new String[] {"1", "2"}));
 
-		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		IStatus status = binding.getValidationStatus().getValue();
 		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
 		assertTrue("multi status", status.isMultiStatus());
 
@@ -157,13 +159,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testRemoveValidationStatusContainsMultipleStatuses() throws Exception {
-		List items = Arrays.asList(new String[] {"1", "2"});
+		List<String> items = Arrays.asList(new String[] { "1", "2" });
 		model.addAll(items);
 
-		UpdateListStrategy strategy = new UpdateListStrategy() {
+		UpdateListStrategy<String, String> strategy = new UpdateListStrategy<String, String>() {
 			int count;
 			@Override
-			protected IStatus doRemove(IObservableList observableList, int index) {
+			protected IStatus doRemove(IObservableList<? super String> observableList, int index) {
 				super.doRemove(observableList, index);
 
 				switch (count++) {
@@ -180,7 +182,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model, strategy, null);
 		target.removeAll(items);
 
-		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		IStatus status = binding.getValidationStatus().getValue();
 		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
 		assertTrue("multi status", status.isMultiStatus());
 
@@ -195,7 +197,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model);
 		target.add("1");
 
-		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		IStatus status = binding.getValidationStatus().getValue();
 		assertTrue(status.isOK());
 		assertEquals(0, status.getChildren().length);
 	}
@@ -206,7 +208,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindList(target, model);
 
 		target.remove("1");
-		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		IStatus status = binding.getValidationStatus().getValue();
 		assertTrue(status.isOK());
 		assertEquals(0, status.getChildren().length);
 	}
@@ -217,8 +219,8 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testErrorDuringConversionIsLogged() {
-		UpdateListStrategy modelToTarget = new UpdateListStrategy();
-		modelToTarget.setConverter(new IConverter() {
+		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<String, String>();
+		modelToTarget.setConverter(new IConverter<String, String>() {
 
 			@Override
 			public Object getFromType() {
@@ -231,13 +233,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 			}
 
 			@Override
-			public Object convert(Object fromObject) {
+			public String convert(String fromObject) {
 				throw new IllegalArgumentException();
 			}
 
 		});
 
-		dbc.bindList(target, model, new UpdateListStrategy(), modelToTarget);
+		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(new ILogger() {
@@ -269,7 +271,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy(), new UpdateListStrategy());
+		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(new ILogger() {
@@ -300,7 +302,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy(), new UpdateListStrategy());
+		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(new ILogger() {
@@ -332,7 +334,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy(), new UpdateListStrategy());
+		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(new ILogger() {
@@ -366,7 +368,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		});
 
 		model.add("first");
-		new ListBinding(target, model, new UpdateListStrategy(), new UpdateListStrategy());
+		new ListBinding<String, String>(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		model.remove(0);
 	}
 
@@ -376,7 +378,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
 		target.add("first");
-		dbc.bindList(target, model, new UpdateListStrategy(POLICY_UPDATE), new UpdateListStrategy(POLICY_NEVER));
+		dbc.bindList(target, model, new UpdateListStrategy<>(POLICY_UPDATE), new UpdateListStrategy<>(POLICY_NEVER));
 		assertEquals(model.size(), target.size());
 	}
 
@@ -385,9 +387,8 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void testConversion() {
-		UpdateListStrategy modelToTarget = new UpdateListStrategy();
-		modelToTarget.setConverter(new IConverter() {
-
+		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
+		modelToTarget.setConverter(new IConverter<String, String>() {
 			@Override
 			public Object getFromType() {
 				return String.class;
@@ -397,15 +398,14 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 			public Object getToType() {
 				return String.class;
 			}
-
 			@Override
-			public Object convert(Object fromObject) {
-				return ((String) fromObject) + "converted";
+			public String convert(String fromObject) {
+				return fromObject + "converted";
 			}
 
 		});
 
-		dbc.bindList(target, model, new UpdateListStrategy(), modelToTarget);
+		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 
 		model.add("1");
 		assertEquals("1converted", target.get(0));

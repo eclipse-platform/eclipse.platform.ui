@@ -57,27 +57,23 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		final Model model = new Model();
 
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text1),
-				model.value1, new UpdateValueStrategy()
-						.setAfterConvertValidator(new CrossFieldValidator(
-								model.value2)), null);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text2),
-				model.value2, new UpdateValueStrategy()
-						.setAfterConvertValidator(new CrossFieldValidator(
-								model.value1)), null);
+		dbc.bindValue(
+				(IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(view.text1), model.value1,
+				new UpdateValueStrategy<String, String>()
+						.setAfterConvertValidator(new CrossFieldValidator(model.value2)), null);
+
+		dbc.bindValue(
+				(IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(view.text2), model.value2,
+				new UpdateValueStrategy<String, String>()
+					.setAfterConvertValidator(new CrossFieldValidator(model.value1)), null);
 
 		// DEBUG - print to show value change
-		model.value1.addValueChangeListener(new IValueChangeListener() {
-			@Override
-			public void handleValueChange(ValueChangeEvent event) {
-				System.out.println("Value 1: " + model.value1.getValue());
-			}
-		});
+		model.value1.addValueChangeListener(event -> System.out.println("Value 1: " + model.value1.getValue()));
 
 		// DEBUG - print to show value change
-		model.value2.addValueChangeListener(new IValueChangeListener() {
+		model.value2.addValueChangeListener(new IValueChangeListener<Object>() {
 			@Override
-			public void handleValueChange(ValueChangeEvent event) {
+			public void handleValueChange(ValueChangeEvent<?> event) {
 				System.out.println("Value 2: " + model.value2.getValue());
 			}
 		});
@@ -96,16 +92,16 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 	 * @since 3.2
 	 *
 	 */
-	private static final class CrossFieldValidator implements IValidator {
+	private static final class CrossFieldValidator implements IValidator<Object> {
 		/**
 		 *
 		 */
-		private final IObservableValue other;
+		private final IObservableValue<?> other;
 
 		/**
 		 * @param model
 		 */
-		private CrossFieldValidator(IObservableValue other) {
+		private CrossFieldValidator(IObservableValue<?> other) {
 			this.other = other;
 		}
 
@@ -123,8 +119,8 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 	}
 
 	static class Model {
-		WritableValue value1 = new WritableValue();
-		WritableValue value2 = new WritableValue();
+		WritableValue<String> value1 = new WritableValue<>();
+		WritableValue<String> value2 = new WritableValue<>();
 	}
 
 	static class View {

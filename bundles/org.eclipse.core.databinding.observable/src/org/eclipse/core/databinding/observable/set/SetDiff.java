@@ -56,7 +56,7 @@ public abstract class SetDiff<E> implements IDiff {
 	 *            the set to which the diff will be applied
 	 * @since 1.2
 	 */
-	public void applyTo(Set<E> set) {
+	public void applyTo(Set<? super E> set) {
 		set.addAll(getAdditions());
 		set.removeAll(getRemovals());
 	}

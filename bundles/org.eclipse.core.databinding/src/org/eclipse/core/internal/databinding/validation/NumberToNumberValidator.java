@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.Status;
  *
  * @since 1.0
  */
-public abstract class NumberToNumberValidator implements IValidator {
-	private final NumberToNumberConverter converter;
+public abstract class NumberToNumberValidator implements IValidator<Object> {
+	private final NumberToNumberConverter<?> converter;
 
 	private final Number min;
 
@@ -44,13 +44,13 @@ public abstract class NumberToNumberValidator implements IValidator {
 	 * @param max
 	 *            can be <code>null</code>
 	 */
-	protected NumberToNumberValidator(NumberToNumberConverter converter,
+	protected NumberToNumberValidator(NumberToNumberConverter<?> converter,
 			Number min, Number max) {
 		this.converter = converter;
 		this.min = min;
 		this.max = max;
 
-		primitive = ((Class) converter.getToType()).isPrimitive();
+		primitive = ((Class<?>) converter.getToType()).isPrimitive();
 	}
 
 	@Override

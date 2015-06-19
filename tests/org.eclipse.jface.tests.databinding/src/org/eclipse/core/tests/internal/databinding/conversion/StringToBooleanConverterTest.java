@@ -30,9 +30,9 @@ import org.junit.Test;
 public class StringToBooleanConverterTest {
 	private StringToBooleanConverter converter;
 
-	private List trueValues;
+	private List<String> trueValues;
 
-	private List falseValues;
+	private List<String> falseValues;
 
 	@Before
 	public void setUp() {
@@ -48,9 +48,9 @@ public class StringToBooleanConverterTest {
 		assertTrue(falseValues.size() > 0);
 	}
 
-	private List toValues(String delimiter, String values) {
+	private List<String> toValues(String delimiter, String values) {
 		StringTokenizer tokenizer = new StringTokenizer(values, delimiter);
-		List result = new LinkedList();
+		List<String> result = new LinkedList<>();
 
 		while (tokenizer.hasMoreTokens()) {
 			result.add(tokenizer.nextToken());
@@ -61,26 +61,26 @@ public class StringToBooleanConverterTest {
 
 	@Test
 	public void testConvertsToTrue() throws Exception {
-		Boolean result = (Boolean) converter.convert(trueValues.get(0));
+		Boolean result = converter.convert(trueValues.get(0));
 		assertTrue(result.booleanValue());
 	}
 
 	@Test
 	public void testConvertsToFalse() throws Exception {
-		Boolean result = (Boolean) converter.convert(falseValues.get(0));
+		Boolean result = converter.convert(falseValues.get(0));
 		assertFalse(result.booleanValue());
 	}
 
 	@Test
 	public void testUpperCaseStringConvertsToTrue() throws Exception {
-		Boolean result = (Boolean) converter.convert(((String) trueValues.get(0))
+		Boolean result = converter.convert(trueValues.get(0)
 				.toUpperCase());
 		assertTrue(result.booleanValue());
 	}
 
 	@Test
 	public void testUpperCaseStringConvertsToFalse() throws Exception {
-		Boolean result = (Boolean) converter.convert(((String) falseValues.get(0))
+		Boolean result = converter.convert(falseValues.get(0)
 				.toUpperCase());
 		assertFalse(result.booleanValue());
 	}

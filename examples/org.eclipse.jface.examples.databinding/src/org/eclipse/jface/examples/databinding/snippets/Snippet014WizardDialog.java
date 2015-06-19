@@ -45,17 +45,15 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet014WizardDialog {
 
 	static class FirstWizardPage extends WizardPage {
-		private final class SingleDigitValidator implements IValidator {
+		private final class SingleDigitValidator implements IValidator<Integer> {
 			@Override
-			public IStatus validate(Object value) {
-				Integer i = (Integer) value;
-				if (i == null) {
+			public IStatus validate(Integer value) {
+				if (value == null) {
 					return ValidationStatus
 							.info("Please enter a value.");
 				}
-				if (i.intValue() < 0 || i.intValue() > 9) {
-					return ValidationStatus
-							.error("Value must be between 0 and 9.");
+				if (value < 0 || value > 9) {
+					return ValidationStatus.error("Value must be between 0 and 9.");
 				}
 				return ValidationStatus.ok();
 			}
@@ -75,10 +73,10 @@ public class Snippet014WizardDialog {
 			label.setText("Enter a number between 0 and 9:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-							((SampleWizard) getWizard()).getModel().intValue,
-							new UpdateValueStrategy().setAfterConvertValidator(new SingleDigitValidator()),
-							null);
+			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text),
+					((SampleWizard) getWizard()).getModel().intValue,
+					new UpdateValueStrategy<String, Integer>()
+						.setAfterConvertValidator(new SingleDigitValidator()), null);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
 					composite);
@@ -111,8 +109,8 @@ public class Snippet014WizardDialog {
 	}
 
 	static class SampleWizardModel {
-		IObservableValue intValue = new WritableValue(null, Integer.class);
-		IObservableValue dateValue = new WritableValue(null, Date.class);
+		IObservableValue<Integer> intValue = new WritableValue<>(null, Integer.class);
+		IObservableValue<Integer> dateValue = new WritableValue<>(null, Date.class);
 	}
 
 	static class SampleWizard extends Wizard {

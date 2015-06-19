@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +37,8 @@ public class StringToByteConverterTest {
 
 	@Test
 	public void testConvertsToByte() throws Exception {
-		Byte value = Byte.valueOf((byte) 1);
-		Byte result = (Byte) converter.convert(numberFormat.format(value));
+		Byte value = (byte) 1;
+		Byte result = converter.convert(numberFormat.format(value));
 
 		assertEquals(value, result);
 	}
@@ -45,8 +46,8 @@ public class StringToByteConverterTest {
 	@Test
 	public void testConvertsToBytePrimitive() throws Exception {
 		converter = StringToByteConverter.toByte(numberFormat, true);
-		Byte value = Byte.valueOf((byte) 1);
-		Byte result = (Byte) converter.convert(numberFormat.format(value));
+		Byte value = (byte) 1;
+		Byte result = converter.convert(numberFormat.format(value));
 		assertEquals(value, result);
 	}
 
@@ -75,7 +76,7 @@ public class StringToByteConverterTest {
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
 		try {
-			converter.convert(Integer.valueOf(1));
+			((IConverter<Object, ?>) converter).convert(new Integer(1));
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}

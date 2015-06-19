@@ -47,8 +47,8 @@ public class StringToDoubleValidatorTest extends
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
-		StringToNumberConverter converter = StringToNumberConverter.toDouble(numberFormat, false);
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
+		StringToNumberConverter<Double> converter = StringToNumberConverter.toDouble(numberFormat, false);
 		return new StringToDoubleValidator(converter);
 	}
 }

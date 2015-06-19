@@ -23,7 +23,7 @@ import org.eclipse.core.internal.databinding.BindingMessages;
 /**
  * StringToBooleanPrimitiveConverter.
  */
-public class StringToBooleanPrimitiveConverter implements IConverter {
+public class StringToBooleanPrimitiveConverter implements IConverter<String, Boolean> {
 	private static final String[] trueValues;
 
 	private static final String[] falseValues;
@@ -45,21 +45,20 @@ public class StringToBooleanPrimitiveConverter implements IConverter {
 	 * @return sorted array of values
 	 */
 	private static String[] valuesToSortedArray(String delimiter, String values) {
-		List list = new LinkedList();
+		List<String> list = new LinkedList<>();
 		StringTokenizer tokenizer = new StringTokenizer(values, delimiter);
 		while (tokenizer.hasMoreTokens()) {
 			list.add(tokenizer.nextToken().toUpperCase());
 		}
 
-		String[] array = (String[]) list.toArray(new String[list.size()]);
+		String[] array = list.toArray(new String[list.size()]);
 		Arrays.sort(array);
 
 		return array;
 	}
 
 	@Override
-	public Object convert(Object source) {
-		String s = (String) source;
+	public Boolean convert(String s) {
 		s = s.toUpperCase();
 
 		if (Arrays.binarySearch(trueValues, s) > -1) {

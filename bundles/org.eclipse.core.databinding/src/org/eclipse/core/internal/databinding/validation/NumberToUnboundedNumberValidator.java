@@ -25,7 +25,7 @@ public class NumberToUnboundedNumberValidator extends NumberToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public NumberToUnboundedNumberValidator(NumberToNumberConverter converter) {
+	public NumberToUnboundedNumberValidator(NumberToNumberConverter<?> converter) {
 		super(converter, null, null);
 	}
 

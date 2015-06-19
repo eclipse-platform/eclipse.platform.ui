@@ -29,17 +29,17 @@ public class NumberToBigDecimalTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, BigDecimal> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToBigDecimalConverter(NumberFormat.getInstance(), fromType);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Number> doGetToPrimitiveValidator(Class<?> fromType) {
 		return null; // does not exist
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? null : BigDecimal.class;
 	}
 }

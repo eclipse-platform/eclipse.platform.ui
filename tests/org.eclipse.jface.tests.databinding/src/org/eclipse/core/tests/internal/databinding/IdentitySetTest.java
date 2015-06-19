@@ -34,11 +34,11 @@ import org.junit.Test;
  * @since 1.2
  */
 public class IdentitySetTest {
-	IdentitySet set;
+	IdentitySet<Object> set;
 
 	@Before
 	public void setUp() throws Exception {
-		set = new IdentitySet();
+		set = new IdentitySet<>();
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class IdentitySetTest {
 	@Test
 	public void testConstructorWithCollection_AddsAllElements() {
 		Collection<Object> toCopy = Collections.singleton(new Object());
-		set = new IdentitySet(toCopy);
+		set = new IdentitySet<>(toCopy);
 		assertTrue(set.containsAll(toCopy));
 	}
 
@@ -131,7 +131,7 @@ public class IdentitySetTest {
 		Object o = new Object();
 		set.add(o);
 
-		Iterator iterator = set.iterator();
+		Iterator<Object> iterator = set.iterator();
 		assertTrue(iterator.hasNext());
 		assertSame(o, iterator.next());
 
@@ -215,7 +215,7 @@ public class IdentitySetTest {
 		Object o = new String("unique");
 		set.add(o);
 
-		String[] array = (String[]) set.toArray(new String[0]);
+		String[] array = set.toArray(new String[0]);
 		assertEquals(1, array.length);
 		assertSame(o, array[0]);
 	}

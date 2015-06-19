@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.Status;
  *
  * @since 1.0
  */
-public abstract class AbstractStringToNumberValidator implements IValidator {
-	private final NumberFormatConverter converter;
+public abstract class AbstractStringToNumberValidator implements IValidator<Object> {
+	private final NumberFormatConverter<?, ?> converter;
 	private final boolean toPrimitive;
 
 	private final Number min;
@@ -40,14 +40,13 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 	 * @param min minimum value, used for reporting a range error to the user
 	 * @param max maximum value, used for reporting a range error to the user
 	 */
-	protected AbstractStringToNumberValidator(NumberFormatConverter converter,
-			Number min, Number max) {
+	protected AbstractStringToNumberValidator(NumberFormatConverter<?, ?> converter, Number min, Number max) {
 		this.converter = converter;
 		this.min = min;
 		this.max = max;
 
 		if (converter.getToType() instanceof Class) {
-			Class clazz = (Class) converter.getToType();
+			Class<?> clazz = (Class<?>) converter.getToType();
 			toPrimitive = clazz.isPrimitive();
 		} else {
 			toPrimitive = false;

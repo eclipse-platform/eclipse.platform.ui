@@ -29,13 +29,13 @@ public class NumberToFloatValidatorTest extends
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToFloatConverter converter = new NumberToFloatConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToFloatValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToFloatConverter converter = new NumberToFloatConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToFloatValidator(converter);
 	}

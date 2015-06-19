@@ -69,14 +69,14 @@ public class StringToNumberConverterTest {
 	public void testConvertsToBigInteger() throws Exception {
 		BigInteger input = BigInteger.valueOf(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toBigInteger();
-		BigInteger result = (BigInteger) converter.convert(numberFormat.format(input));
+		StringToNumberConverter<BigInteger> converter = StringToNumberConverter.toBigInteger();
+		BigInteger result = converter.convert(numberFormat.format(input));
 
 		assertEquals(input, result);
 	}
 
-	Class icuBigDecimal = null;
-	Constructor icuBigDecimalCtr = null;
+	Class<?> icuBigDecimal = null;
+	Constructor<?> icuBigDecimalCtr = null;
 	{
 		try {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
@@ -108,25 +108,25 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testConvertsToBigDecimal() throws Exception {
-		StringToNumberConverter converter = StringToNumberConverter.toBigDecimal();
+		StringToNumberConverter<BigDecimal> converter = StringToNumberConverter.toBigDecimal();
 		// Test 1: Decimal
 		BigDecimal input = new BigDecimal("100.23");
-		BigDecimal result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		BigDecimal result = converter.convert(formatBigDecimal(input));
 		assertEquals("Non-integer BigDecimal", input, result);
 
 		// Test 2: Long
 		input = new BigDecimal(Integer.MAX_VALUE + 100L);
-		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		result = converter.convert(formatBigDecimal(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
 
 		// Test 3: BigInteger range
 		input = new BigDecimal("92233720368547990480");
-		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		result = converter.convert(formatBigDecimal(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
 
 		// Test 4: Very high precision Decimal.
 		input = new BigDecimal("100404101.23345678345678893456789345678923198200134567823456789");
-		result = (BigDecimal) converter.convert(formatBigDecimal(input));
+		result = converter.convert(formatBigDecimal(input));
 		assertEquals("Non-integer BigDecimal", input, result);
 	}
 
@@ -134,9 +134,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToInteger() throws Exception {
 		Integer input = Integer.valueOf(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
-		Integer result = (Integer) converter.convert(numberIntegerFormat.format(input
-				.longValue()));
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
+		Integer result = converter.convert(numberIntegerFormat.format(input.longValue()));
 		assertEquals(input, result);
 	}
 
@@ -144,9 +143,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToDouble() throws Exception {
 		Double input = new Double(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toDouble(false);
-		Double result = (Double) converter.convert(numberFormat.format(input
-				.doubleValue()));
+		StringToNumberConverter<Double> converter = StringToNumberConverter.toDouble(false);
+		Double result = converter.convert(numberFormat.format(input.doubleValue()));
 
 		assertEquals(input, result);
 	}
@@ -155,9 +153,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToLong() throws Exception {
 		Long input = new Long(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toLong(false);
-		Long result = (Long) converter.convert(numberIntegerFormat.format(input
-				.longValue()));
+		StringToNumberConverter<Long> converter = StringToNumberConverter.toLong(false);
+		Long result = converter.convert(numberIntegerFormat.format(input.longValue()));
 
 		assertEquals(input, result);
 	}
@@ -166,9 +163,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToFloat() throws Exception {
 		Float input = new Float(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toFloat(false);
-		Float result = (Float) converter.convert(numberFormat.format(input
-				.floatValue()));
+		StringToNumberConverter<Float> converter = StringToNumberConverter.toFloat(false);
+		Float result = converter.convert(numberFormat.format(input.floatValue()));
 
 		assertEquals(input, result);
 	}
@@ -177,9 +173,8 @@ public class StringToNumberConverterTest {
 	public void testConvertedToIntegerPrimitive() throws Exception {
 		Integer input = Integer.valueOf(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(true);
-		Integer result = (Integer) converter.convert(numberIntegerFormat.format(input
-				.longValue()));
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(true);
+		Integer result = converter.convert(numberIntegerFormat.format(input.longValue()));
 		assertEquals(input, result);
 	}
 
@@ -187,9 +182,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToDoublePrimitive() throws Exception {
 		Double input = new Double(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toDouble(true);
-		Double result = (Double) converter.convert(numberFormat.format(input
-				.doubleValue()));
+		StringToNumberConverter<Double> converter = StringToNumberConverter.toDouble(true);
+		Double result = converter.convert(numberFormat.format(input.doubleValue()));
 
 		assertEquals(input, result);
 	}
@@ -198,9 +192,8 @@ public class StringToNumberConverterTest {
 	public void testConvertsToLongPrimitive() throws Exception {
 		Long input = new Long(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toLong(true);
-		Long result = (Long) converter.convert(numberIntegerFormat.format(input
-				.longValue()));
+		StringToNumberConverter<Long> converter = StringToNumberConverter.toLong(true);
+		Long result = converter.convert(numberIntegerFormat.format(input.longValue()));
 
 		assertEquals(input, result);
 	}
@@ -209,16 +202,15 @@ public class StringToNumberConverterTest {
 	public void testConvertsToFloatPrimitive() throws Exception {
 		Float input = new Float(1000);
 
-		StringToNumberConverter converter = StringToNumberConverter.toFloat(true);
-		Float result = (Float) converter.convert(numberFormat.format(input
-				.floatValue()));
+		StringToNumberConverter<Float> converter = StringToNumberConverter.toFloat(true);
+		Float result = converter.convert(numberFormat.format(input.floatValue()));
 
 		assertEquals(input, result);
 	}
 
 	@Test
 	public void testReturnsNullBoxedTypeForEmptyString() throws Exception {
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
 		try {
 			assertNull(converter.convert(""));
 		} catch (Exception e) {
@@ -227,11 +219,10 @@ public class StringToNumberConverterTest {
 	}
 
 	@Test
-	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
-			throws Exception {
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
+	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString() throws Exception {
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
 		try {
-			converter.convert(Integer.valueOf(1));
+			converter.convert(1);
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
@@ -245,8 +236,7 @@ public class StringToNumberConverterTest {
 	 */
 	@Test
 	public void testInvalidInteger() throws Exception {
-		StringToNumberConverter converter = StringToNumberConverter
-				.toInteger(false);
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
 
 		try {
 			Object result = converter.convert("1 1 -1");
@@ -257,7 +247,7 @@ public class StringToNumberConverterTest {
 
 	@Test
 	public void testThrowsIllegalArgumentExceptionIfNumberIsOutOfRange() throws Exception {
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(false);
 		try {
 			converter.convert(numberFormat.format(Long.MAX_VALUE));
 			fail("exception should have been thrown");

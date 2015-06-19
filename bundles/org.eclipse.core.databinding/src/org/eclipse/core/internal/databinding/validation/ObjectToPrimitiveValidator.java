@@ -22,11 +22,11 @@ import org.eclipse.core.runtime.Status;
  * @since 3.2
  *
  */
-public class ObjectToPrimitiveValidator implements IValidator {
+public class ObjectToPrimitiveValidator implements IValidator<Object> {
 
-	private Class toType;
+	private Class<?> toType;
 
-	private Class[][] primitiveMap = new Class[][] {
+	private Class<?>[][] primitiveMap = new Class[][] {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },
@@ -36,11 +36,11 @@ public class ObjectToPrimitiveValidator implements IValidator {
 	/**
 	 * @param toType
 	 */
-	public ObjectToPrimitiveValidator(Class toType) {
+	public ObjectToPrimitiveValidator(Class<?> toType) {
 		this.toType = toType;
 	}
 
-	protected Class getToType() {
+	protected Class<?> getToType() {
 		return this.toType;
 	}
 
@@ -59,8 +59,8 @@ public class ObjectToPrimitiveValidator implements IValidator {
 		return ValidationStatus.error(getNullHint());
 	}
 
-	private boolean mapContainsValues(Class toType, Class fromType) {
-		for (Class[] primitiveTuple : primitiveMap) {
+	private boolean mapContainsValues(Class<?> toType, Class<?> fromType) {
+		for (Class<?>[] primitiveTuple : primitiveMap) {
 			if ((primitiveTuple[0].equals(toType))
 					&& (primitiveTuple[1].equals(fromType))) {
 				return true;

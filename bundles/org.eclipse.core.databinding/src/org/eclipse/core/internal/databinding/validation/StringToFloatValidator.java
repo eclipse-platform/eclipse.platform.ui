@@ -27,7 +27,7 @@ public class StringToFloatValidator extends AbstractStringToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public StringToFloatValidator(NumberFormatConverter converter) {
+	public StringToFloatValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}
 

@@ -15,11 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.ibm.icu.text.NumberFormat;
+
 
 /**
  * @since 1.1
@@ -36,8 +38,8 @@ public class StringToShortConverterTest {
 
 	@Test
 	public void testConvertsToShort() throws Exception {
-		Short value = Short.valueOf((short) 1);
-		Short result = (Short) converter.convert(numberFormat.format(value));
+		Short value = (short) 1;
+		Short result = converter.convert(numberFormat.format(value));
 
 		assertEquals(value, result);
 	}
@@ -45,8 +47,8 @@ public class StringToShortConverterTest {
 	@Test
 	public void testConvertsToShortPrimitive() throws Exception {
 		converter = StringToShortConverter.toShort(numberFormat, true);
-		Short value = Short.valueOf((short) 1);
-		Short result = (Short) converter.convert(numberFormat.format(value));
+		Short value = (short) 1;
+		Short result = converter.convert(numberFormat.format(value));
 		assertEquals(value, result);
 	}
 
@@ -75,7 +77,7 @@ public class StringToShortConverterTest {
 	public void testThrowsIllegalArgumentExceptionIfAskedToConvertNonString()
 			throws Exception {
 		try {
-			converter.convert(Integer.valueOf(1));
+			((IConverter<Object, ?>) converter).convert(1);
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}

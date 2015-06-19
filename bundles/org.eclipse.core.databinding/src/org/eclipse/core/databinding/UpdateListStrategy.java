@@ -37,13 +37,20 @@ import org.eclipse.core.runtime.Status;
  * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
  *
- *
+ * @param <S>
+ *            the type of the elements on the source side (i.e. the model side
+ *            if this is a model-to-target update and the target side if this is
+ *            a target-to-model update)
+ * @param <D>
+ *            the type of the elements on the destination side (i.e. the target
+ *            side if this is a model-to-target update and the model side if
+ *            this is a target-to-model update)
  * @see DataBindingContext#bindList(IObservableList, IObservableList,
  *      UpdateListStrategy, UpdateListStrategy)
  * @see IConverter
  * @since 1.0
  */
-public class UpdateListStrategy extends UpdateStrategy {
+public class UpdateListStrategy<S, D> extends UpdateStrategy<S, D> {
 
 	/**
 	 * Policy constant denoting that the source observable's state should not be
@@ -131,13 +138,13 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @param source
 	 * @param destination
 	 */
-	protected void fillDefaults(IObservableList source,
-			IObservableList destination) {
+	@SuppressWarnings("unchecked")
+	protected void fillDefaults(IObservableList<? extends S> source, IObservableList<? super D> destination) {
 		Object sourceType = source.getElementType();
 		Object destinationType = destination.getElementType();
 		if (provideDefaults && sourceType != null && destinationType != null) {
 			if (converter == null) {
-				setConverter(createConverter(sourceType, destinationType));
+				setConverter((IConverter<S, D>) createConverter(sourceType, destinationType));
 			}
 		}
 		if (converter != null) {
@@ -166,7 +173,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
-	public UpdateListStrategy setConverter(IConverter converter) {
+	public UpdateListStrategy<S, D> setConverter(IConverter<? super S, ? extends D> converter) {
 		this.converter = converter;
 		return this;
 	}
@@ -180,8 +187,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @param index
 	 * @return a status
 	 */
-	protected IStatus doAdd(IObservableList observableList, Object element,
-			int index) {
+	protected IStatus doAdd(IObservableList<? super D> observableList, D element, int index) {
 		try {
 			observableList.add(index, element);
 		} catch (Exception ex) {
@@ -198,7 +204,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @param index
 	 * @return a status
 	 */
-	protected IStatus doRemove(IObservableList observableList, int index) {
+	protected IStatus doRemove(IObservableList<? super D> observableList, int index) {
 		try {
 			observableList.remove(index);
 		} catch (Exception ex) {
@@ -247,8 +253,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @return a status
 	 * @since 1.2
 	 */
-	protected IStatus doMove(IObservableList observableList, int oldIndex,
-			int newIndex) {
+	protected IStatus doMove(IObservableList<? super D> observableList, int oldIndex, int newIndex) {
 		try {
 			observableList.move(oldIndex, newIndex);
 		} catch (Exception ex) {
@@ -267,8 +272,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * @return a status
 	 * @since 1.2
 	 */
-	protected IStatus doReplace(IObservableList observableList, int index,
-			Object element) {
+	protected IStatus doReplace(IObservableList<? super D> observableList, int index, D element) {
 		try {
 			observableList.set(index, element);
 		} catch (Exception ex) {

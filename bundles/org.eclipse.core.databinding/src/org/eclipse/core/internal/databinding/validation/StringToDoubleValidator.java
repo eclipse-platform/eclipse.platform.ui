@@ -23,7 +23,7 @@ public class StringToDoubleValidator extends AbstractStringToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public StringToDoubleValidator(NumberFormatConverter converter) {
+	public StringToDoubleValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, MIN, MAX);
 	}
 

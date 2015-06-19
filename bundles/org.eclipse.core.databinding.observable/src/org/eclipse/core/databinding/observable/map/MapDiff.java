@@ -52,7 +52,7 @@ public abstract class MapDiff<K, V> implements IDiff {
 	 *            the map to which the diff will be applied
 	 * @since 1.2
 	 */
-	public void applyTo(Map<K, V> map) {
+	public void applyTo(Map<? super K, ? super V> map) {
 		for (K key : getAddedKeys()) {
 			map.put(key, getNewValue(key));
 		}

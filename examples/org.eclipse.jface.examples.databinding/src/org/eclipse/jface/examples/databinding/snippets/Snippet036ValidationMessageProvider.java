@@ -31,7 +31,6 @@ import org.eclipse.jface.databinding.dialog.ValidationMessageProvider;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationUpdater;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.wizard.WizardPageSupport;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -97,7 +96,7 @@ public class Snippet036ValidationMessageProvider {
 	private static final class MessageProviderWizardPage extends WizardPage {
 
 		private DataBindingContext dbc;
-		private Map bindingMapName;
+		private Map<Binding, String> bindingMapName;
 
 		protected MessageProviderWizardPage() {
 			super(MessageProviderWizardPage.class.getName());
@@ -108,7 +107,7 @@ public class Snippet036ValidationMessageProvider {
 		@Override
 		public void createControl(Composite parent) {
 			dbc = new DataBindingContext();
-			bindingMapName = new HashMap();
+			bindingMapName = new HashMap<>();
 
 			// Create the container composite.
 			Composite container = new Composite(parent, SWT.NULL);
@@ -132,26 +131,23 @@ public class Snippet036ValidationMessageProvider {
 					bindingMapName));
 		}
 
-		private void createTextLine(Composite parent, String labelText,
-				IObservableValue modelValue) {
+		private <T> void createTextLine(Composite parent, String labelText, IObservableValue<T> modelValue) {
 			// Create the Label.
 			Label label = new Label(parent, SWT.LEFT);
 			label.setText(labelText);
-			GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).applyTo(
-					label);
+			GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).applyTo(label);
 
 			// Create the Text.
 			final Text text = new Text(parent, SWT.BORDER);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
 
 			// Create the Text observable.
-			ISWTObservableValue textObservable = WidgetProperties.text(SWT.Modify).observe(text);
+			IObservableValue<String> textObservable = WidgetProperties.text(SWT.Modify).observe(text);
 
 			// Bind the Text to the model and attach a RequiredValidator.
 			Binding binding = dbc.bindValue(textObservable, modelValue,
-					new UpdateValueStrategy()
-							.setAfterConvertValidator(new RequiredValidator()),
-					new UpdateValueStrategy());
+					new UpdateValueStrategy<String, T>().setAfterConvertValidator(new RequiredValidator()),
+					new UpdateValueStrategy<>());
 
 			// Custom control decoration for "required" validation.
 			ControlDecorationUpdater decorationUpdater = new ControlDecorationUpdater() {
@@ -192,16 +188,16 @@ public class Snippet036ValidationMessageProvider {
 	private static final class CustomMessageProvider extends
 			ValidationMessageProvider {
 
-		private final Map bindingMapName;
+		private final Map<Binding, String> bindingMapName;
 
-		public CustomMessageProvider(Map bindingMapName) {
+		public CustomMessageProvider(Map<Binding, String> bindingMapName) {
 			this.bindingMapName = bindingMapName;
 		}
 
 		@Override
 		public String getMessage(ValidationStatusProvider statusProvider) {
 			if (statusProvider != null) {
-				String name = (String) bindingMapName.get(statusProvider);
+				String name = bindingMapName.get(statusProvider);
 				if (name != null) {
 					// For named bindings, we display "<name>: <message>"
 					String message = super.getMessage(statusProvider);
@@ -215,14 +211,12 @@ public class Snippet036ValidationMessageProvider {
 		public int getMessageType(ValidationStatusProvider statusProvider) {
 			if (statusProvider instanceof Binding) {
 				Binding binding = (Binding) statusProvider;
-				IStatus status = (IStatus) binding.getValidationStatus()
-						.getValue();
+				IStatus status = binding.getValidationStatus().getValue();
 
 				// For required validations, we do not want to display an error
 				// icon since the user has not done anything wrong.
 				if (status.matches(IStatus.ERROR)) {
-					IObservableValue target = (IObservableValue) binding
-							.getTarget();
+					IObservableValue<?> target = (IObservableValue<?>) binding.getTarget();
 					// If the input is empty, we do not display any error icon.
 					if ("".equals(target.getValue())) {
 						return IMessageProvider.NONE;
@@ -233,7 +227,7 @@ public class Snippet036ValidationMessageProvider {
 		}
 	}
 
-	private static final class RequiredValidator implements IValidator {
+	private static final class RequiredValidator implements IValidator<Object> {
 
 		@Override
 		public IStatus validate(Object value) {

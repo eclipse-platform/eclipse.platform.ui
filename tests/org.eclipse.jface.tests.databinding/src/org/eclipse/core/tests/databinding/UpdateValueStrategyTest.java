@@ -180,16 +180,16 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testCachesDefaultedValidators() throws Exception {
-		WritableValue source = WritableValue.withValueType(String.class);
-		WritableValue destination = WritableValue.withValueType(Integer.class);
+		WritableValue<String> source = WritableValue.withValueType(String.class);
+		WritableValue<Integer> destination = WritableValue.withValueType(Integer.class);
 
-		UpdateValueStrategyStub strategy = new UpdateValueStrategyStub();
+		UpdateValueStrategyStub<String, Integer> strategy = new UpdateValueStrategyStub<>();
 		strategy.fillDefaults(source, destination);
 
-		IValidator validator = strategy.validator;
+		IValidator<String> validator = strategy.validator;
 		assertNotNull(validator);
 
-		strategy = new UpdateValueStrategyStub();
+		strategy = new UpdateValueStrategyStub<>();
 		strategy.fillDefaults(source, destination);
 
 		assertSame(validator, strategy.validator);
@@ -198,17 +198,15 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertSourceTypeExtendsConverterFromType() {
 		// Valid use: source type String extends converter from-type Object
-		UpdateValueStrategyStub strategy = new UpdateValueStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		UpdateValueStrategyStub<Object, Object> strategy = new UpdateValueStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		strategy.fillDefaults(WritableValue.withValueType(String.class),
 				WritableValue.withValueType(Object.class));
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateValueStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(String.class, Object.class));
+		strategy = new UpdateValueStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(String.class, Object.class));
 		try {
 			strategy.fillDefaults(WritableValue.withValueType(Object.class),
 					WritableValue.withValueType(Object.class));
@@ -220,17 +218,15 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertConverterToTypeExtendsDestinationType() {
 		// Valid use: converter to-type String extends destination type Object
-		UpdateValueStrategyStub strategy = new UpdateValueStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, String.class));
+		UpdateValueStrategyStub<String, Object> strategy = new UpdateValueStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, String.class));
 		strategy.fillDefaults(WritableValue.withValueType(Object.class),
 				WritableValue.withValueType(Object.class));
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateValueStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		strategy = new UpdateValueStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		try {
 			strategy.fillDefaults(WritableValue.withValueType(Object.class),
 					WritableValue.withValueType(String.class));
@@ -239,31 +235,28 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	private void assertDefaultValidator(Class fromType, Class toType,
-			Class validatorType) {
-		WritableValue source = WritableValue.withValueType(fromType);
-		WritableValue destination = WritableValue.withValueType(toType);
+	private void assertDefaultValidator(Class<?> fromType, Class<?> toType, Class<?> validatorType) {
+		WritableValue<Object> source = WritableValue.withValueType(fromType);
+		WritableValue<Object> destination = WritableValue.withValueType(toType);
 
-		UpdateValueStrategyStub strategy = new UpdateValueStrategyStub();
+		UpdateValueStrategyStub<Object, Object> strategy = new UpdateValueStrategyStub<Object, Object>();
 		strategy.fillDefaults(source, destination);
 
-		IValidator validator = strategy.validator;
+		IValidator<?> validator = strategy.validator;
 		assertNotNull("validator not null", validator);
-		assertTrue("converter instanceof " + validatorType, validatorType
-				.isInstance(validator));
+		assertTrue("converter instanceof " + validatorType, validatorType.isInstance(validator));
 	}
 
-	class UpdateValueStrategyStub extends UpdateValueStrategy {
-		IValidator validator;
+	class UpdateValueStrategyStub<S, D> extends UpdateValueStrategy<S, D> {
+		IValidator<S> validator;
 
 		@Override
-		protected void fillDefaults(IObservableValue source,
-				IObservableValue destination) {
+		protected void fillDefaults(IObservableValue<? extends S> source, IObservableValue<? super D> destination) {
 			super.fillDefaults(source, destination);
 		}
 
 		@Override
-		protected IValidator createValidator(Object fromType, Object toType) {
+		protected IValidator<S> createValidator(Object fromType, Object toType) {
 			validator = super.createValidator(fromType, toType);
 			return validator;
 		}

@@ -29,13 +29,13 @@ public class NumberToLongValidatorTest extends
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToLongConverter converter = new NumberToLongConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToLongValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToLongConverter converter = new NumberToLongConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToLongValidator(converter);
 	}

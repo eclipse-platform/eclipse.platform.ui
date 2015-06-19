@@ -17,7 +17,7 @@ import org.eclipse.core.databinding.conversion.IConverter;
 /**
  * StringToCharacterConverter.
  */
-public class StringToCharacterConverter implements IConverter {
+public class StringToCharacterConverter implements IConverter<Object, Character> {
 
 	private final boolean primitiveTarget;
 
@@ -30,7 +30,7 @@ public class StringToCharacterConverter implements IConverter {
 	}
 
 	@Override
-	public Object convert(Object source) {
+	public Character convert(Object source) {
 		if (source != null && !(source instanceof String))
 			throw new IllegalArgumentException(
 					"String2Character: Expected type String, got type [" + source.getClass().getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$

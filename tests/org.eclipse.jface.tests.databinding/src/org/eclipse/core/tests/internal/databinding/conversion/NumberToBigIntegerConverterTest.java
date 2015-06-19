@@ -30,17 +30,17 @@ public class NumberToBigIntegerConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, BigInteger> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToBigIntegerConverter(numberFormat, fromType);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Number> doGetToPrimitiveValidator(Class<?> fromType) {
 		return null;  //no such thing
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? null : BigInteger.class;
 	}
 }

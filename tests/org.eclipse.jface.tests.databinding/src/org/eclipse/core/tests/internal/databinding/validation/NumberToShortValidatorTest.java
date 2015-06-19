@@ -27,14 +27,14 @@ public class NumberToShortValidatorTest extends NumberToNumberValidatorTestHarne
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToShortConverter converter = new NumberToShortConverter(NumberFormat.getInstance(),
 				Integer.class, false);
 		return new NumberToShortValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToShortConverter converter = new NumberToShortConverter(NumberFormat.getInstance(),
 				Integer.class, true);
 		return new NumberToShortValidator(converter);

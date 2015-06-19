@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.conversion.Converter;
 /**
  * Converts a character to a string.
  */
-public class CharacterToStringConverter extends Converter {
+public class CharacterToStringConverter extends Converter<Object, String> {
 	private final boolean primitive;
 
 	/**
@@ -28,7 +28,7 @@ public class CharacterToStringConverter extends Converter {
 	}
 
 	@Override
-	public Object convert(Object fromObject) {
+	public String convert(Object fromObject) {
 		// Null is allowed when the type is not primitive.
 		if (fromObject == null) {
 			if (primitive)

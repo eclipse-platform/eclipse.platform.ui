@@ -29,13 +29,13 @@ public class NumberToIntegerValidatorTest extends
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToIntegerConverter converter = new NumberToIntegerConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToIntegerValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToIntegerConverter converter = new NumberToIntegerConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToIntegerValidator(converter);
 	}

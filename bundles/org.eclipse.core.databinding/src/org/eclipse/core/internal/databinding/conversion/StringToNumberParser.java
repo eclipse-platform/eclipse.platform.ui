@@ -13,6 +13,7 @@ package org.eclipse.core.internal.databinding.conversion;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Format;
 import java.text.ParsePosition;
 
 import org.eclipse.core.internal.databinding.BindingMessages;
@@ -135,7 +136,7 @@ public class StringToNumberParser {
 	 * @return message
 	 */
 	public static String createOutOfRangeMessage(Number minValue,
-			Number maxValue, NumberFormat numberFormat) {
+			Number maxValue, Format numberFormat) {
 		String min = null;
 		String max = null;
 

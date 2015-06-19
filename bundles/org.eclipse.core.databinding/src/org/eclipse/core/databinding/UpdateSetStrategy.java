@@ -37,13 +37,20 @@ import org.eclipse.core.runtime.Status;
  * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
  *
- *
+ * @param <S>
+ *            the type of the elements on the source side (i.e. the model side
+ *            if this is a model-to-target update and the target side if this is
+ *            a target-to-model update)
+ * @param <D>
+ *            the type of the elements on the destination side (i.e. the target
+ *            side if this is a model-to-target update and the model side if
+ *            this is a target-to-model update)
  * @see DataBindingContext#bindSet(IObservableSet, IObservableSet,
  *      UpdateSetStrategy, UpdateSetStrategy)
  * @see IConverter
  * @since 1.1
  */
-public class UpdateSetStrategy extends UpdateStrategy {
+public class UpdateSetStrategy<S, D> extends UpdateStrategy<S, D> {
 
 	/**
 	 * Policy constant denoting that the source observable's state should not be
@@ -131,13 +138,13 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * @param source
 	 * @param destination
 	 */
-	protected void fillDefaults(IObservableSet source,
-			IObservableSet destination) {
+	@SuppressWarnings("unchecked")
+	protected void fillDefaults(IObservableSet<? extends S> source, IObservableSet<? super D> destination) {
 		Object sourceType = source.getElementType();
 		Object destinationType = destination.getElementType();
 		if (provideDefaults && sourceType != null && destinationType != null) {
 			if (converter == null) {
-				setConverter(createConverter(sourceType, destinationType));
+				setConverter((IConverter<S, D>) createConverter(sourceType, destinationType));
 			}
 		}
 		if (converter != null) {
@@ -166,7 +173,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
-	public UpdateSetStrategy setConverter(IConverter converter) {
+	public UpdateSetStrategy<S, D> setConverter(IConverter<S, D> converter) {
 		this.converter = converter;
 		return this;
 	}
@@ -179,7 +186,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * @param element
 	 * @return a status
 	 */
-	protected IStatus doAdd(IObservableSet observableSet, Object element) {
+	protected IStatus doAdd(IObservableSet<? super D> observableSet, D element) {
 		try {
 			observableSet.add(element);
 		} catch (Exception ex) {
@@ -196,7 +203,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * @param element
 	 * @return a status
 	 */
-	protected IStatus doRemove(IObservableSet observableSet, Object element) {
+	protected IStatus doRemove(IObservableSet<? super D> observableSet, D element) {
 		try {
 			observableSet.remove(element);
 		} catch (Exception ex) {

@@ -15,6 +15,7 @@ package org.eclipse.core.databinding;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Format;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ import com.ibm.icu.text.NumberFormat;
  * @since 1.0
  *
  */
-/* package */class UpdateStrategy {
+/* package */class UpdateStrategy<S, D> {
 
 	private static final String BOOLEAN_CLASS = "boolean.class"; //$NON-NLS-1$
 
@@ -69,9 +70,9 @@ import com.ibm.icu.text.NumberFormat;
 
 	private static final String CHARACTER_CLASS = "char.class"; //$NON-NLS-1$
 
-	private static Map converterMap;
+	private static Map<Pair, Object> converterMap;
 
-	private static Class autoboxed(Class clazz) {
+	private static Class<?> autoboxed(Class<?> clazz) {
 		if (clazz == Float.TYPE)
 			return Float.class;
 		else if (clazz == Double.TYPE)
@@ -91,7 +92,7 @@ import com.ibm.icu.text.NumberFormat;
 		return clazz;
 	}
 
-	protected IConverter converter;
+	protected IConverter<? super S, ? extends D> converter;
 
 	final protected void checkAssignable(Object toType, Object fromType,
 			String errorString) {
@@ -107,39 +108,35 @@ import com.ibm.icu.text.NumberFormat;
 	/**
 	 * Tries to create a converter that can convert from values of type
 	 * fromType. Returns <code>null</code> if no converter could be created.
-	 * Either toType or modelDescription can be <code>null</code>, but not
-	 * both.
+	 * Either toType or modelDescription can be <code>null</code>, but not both.
 	 *
 	 * @param fromType
 	 * @param toType
 	 * @return an IConverter, or <code>null</code> if unsuccessful
 	 */
-	protected IConverter createConverter(Object fromType, Object toType) {
+	protected IConverter<?, ?> createConverter(Object fromType, Object toType) {
 		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
 			return new DefaultConverter(fromType, toType);
 		}
-		Class toClass = (Class) toType;
-		Class originalToClass = toClass;
+		Class<?> toClass = (Class<?>) toType;
+		Class<?> originalToClass = toClass;
 		if (toClass.isPrimitive()) {
 			toClass = autoboxed(toClass);
 		}
-		Class fromClass = (Class) fromType;
-		Class originalFromClass = fromClass;
+		Class<?> fromClass = (Class<?>) fromType;
+		Class<?> originalFromClass = fromClass;
 		if (fromClass.isPrimitive()) {
 			fromClass = autoboxed(fromClass);
 		}
-		if (!((Class) toType).isPrimitive()
-				&& toClass.isAssignableFrom(fromClass)) {
+		if (!((Class<?>) toType).isPrimitive() && toClass.isAssignableFrom(fromClass)) {
 			return new IdentityConverter(originalFromClass, originalToClass);
 		}
-		if (((Class) fromType).isPrimitive() && ((Class) toType).isPrimitive()
-				&& fromType.equals(toType)) {
+		if (((Class<?>) fromType).isPrimitive() && ((Class<?>) toType).isPrimitive() && fromType.equals(toType)) {
 			return new IdentityConverter(originalFromClass, originalToClass);
 		}
-		Map converterMap = getConverterMap();
-		Class[] supertypeHierarchyFlattened = ClassLookupSupport
-				.getTypeHierarchyFlattened(fromClass);
-		for (Class currentFromClass : supertypeHierarchyFlattened) {
+		Map<Pair, Object> converterMap = getConverterMap();
+		Class<?>[] supertypeHierarchyFlattened = ClassLookupSupport.getTypeHierarchyFlattened(fromClass);
+		for (Class<?> currentFromClass : supertypeHierarchyFlattened) {
 			if (currentFromClass == toType) {
 				// converting to toType is just a widening
 				return new IdentityConverter(fromClass, toClass);
@@ -147,13 +144,13 @@ import com.ibm.icu.text.NumberFormat;
 			Pair key = new Pair(getKeyForClass(fromType, currentFromClass), getKeyForClass(toType, toClass));
 			Object converterOrClassname = converterMap.get(key);
 			if (converterOrClassname instanceof IConverter) {
-				return (IConverter) converterOrClassname;
+				return (IConverter<?, ?>) converterOrClassname;
 			} else if (converterOrClassname instanceof String) {
 				String classname = (String) converterOrClassname;
 				Class<?> converterClass;
 				try {
 					converterClass = Class.forName(classname);
-					IConverter result = (IConverter) converterClass.getDeclaredConstructor().newInstance();
+					IConverter<?, ?> result = (IConverter<?, ?>) converterClass.getDeclaredConstructor().newInstance();
 					converterMap.put(key, result);
 					return result;
 				} catch (Exception e) {
@@ -177,7 +174,7 @@ import com.ibm.icu.text.NumberFormat;
 		return new DefaultConverter(fromType, toType);
 	}
 
-	private synchronized static Map getConverterMap() {
+	private synchronized static Map<Pair, Object> getConverterMap() {
 		// using string-based lookup avoids loading of too many classes
 		if (converterMap == null) {
 			// NumberFormat to be shared across converters for the formatting of
@@ -187,7 +184,7 @@ import com.ibm.icu.text.NumberFormat;
 			// integer values
 			NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
-			converterMap = new HashMap();
+			converterMap = new HashMap<Pair, Object>();
 			// Standard and Boxed Types
 			converterMap
 					.put(
@@ -416,11 +413,11 @@ import com.ibm.icu.text.NumberFormat;
 		return converterMap;
 	}
 
-	private static final Class[] integerClasses = new Class[] { byte.class,
+	private static final Class<?>[] integerClasses = new Class[] { byte.class,
 			Byte.class, short.class, Short.class, int.class, Integer.class,
 			long.class, Long.class, BigInteger.class };
 
-	private static final Class[] floatClasses = new Class[] { float.class,
+	private static final Class<?>[] floatClasses = new Class[] { float.class,
 			Float.class, double.class, Double.class, BigDecimal.class };
 
 	/**
@@ -431,22 +428,17 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToByteConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
+	private static void addNumberToByteConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
 
-		for (Class fromType : fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Byte.class) && !fromType.equals(byte.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, BYTE_CLASS),
-								new NumberToByteConverter(numberFormat,
-										fromType, true));
-				map
-						.put(new Pair(fromName, Byte.class.getName()),
-								new NumberToByteConverter(numberFormat,
-										fromType, false));
+				map.put(new Pair(fromName, BYTE_CLASS),
+						new NumberToByteConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Byte.class.getName()),
+						new NumberToByteConverter(numberFormat, fromType, false));
 			}
 		}
 	}
@@ -459,17 +451,14 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToShortConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToShortConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Short.class) && !fromType.equals(short.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, SHORT_CLASS),
-								new NumberToShortConverter(numberFormat,
-										fromType, true));
+				map.put(new Pair(fromName, SHORT_CLASS),
+						new NumberToShortConverter(numberFormat, fromType, true));
 				map.put(new Pair(fromName, Short.class.getName()),
 						new NumberToShortConverter(numberFormat, fromType,
 								false));
@@ -485,9 +474,8 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToIntegerConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToIntegerConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Integer.class)
 					&& !fromType.equals(int.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
@@ -511,21 +499,16 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToLongConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToLongConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Long.class) && !fromType.equals(long.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, LONG_CLASS),
-								new NumberToLongConverter(numberFormat,
-										fromType, true));
-				map
-						.put(new Pair(fromName, Long.class.getName()),
-								new NumberToLongConverter(numberFormat,
-										fromType, false));
+				map.put(new Pair(fromName, LONG_CLASS),
+						new NumberToLongConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Long.class.getName()),
+						new NumberToLongConverter(numberFormat, fromType, false));
 			}
 		}
 	}
@@ -538,17 +521,14 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToFloatConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToFloatConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Float.class) && !fromType.equals(float.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, FLOAT_CLASS),
-								new NumberToFloatConverter(numberFormat,
-										fromType, true));
+				map.put(new Pair(fromName, FLOAT_CLASS),
+						new NumberToFloatConverter(numberFormat, fromType, true));
 				map.put(new Pair(fromName, Float.class.getName()),
 						new NumberToFloatConverter(numberFormat, fromType,
 								false));
@@ -564,9 +544,8 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToDoubleConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToDoubleConverters(Map<Pair, Object> map, Format numberFormat, Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(Double.class) && !fromType.equals(double.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
@@ -589,17 +568,15 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToBigIntegerConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToBigIntegerConverters(Map<Pair, Object> map, Format numberFormat,
+			Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(BigInteger.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, BigInteger.class.getName()),
-								new NumberToBigIntegerConverter(numberFormat,
-										fromType));
+				map.put(new Pair(fromName, BigInteger.class.getName()),
+						new NumberToBigIntegerConverter(numberFormat, fromType));
 			}
 		}
 	}
@@ -612,25 +589,23 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param numberFormat
 	 * @param fromTypes
 	 */
-	private static void addNumberToBigDecimalConverters(Map map,
-			NumberFormat numberFormat, Class[] fromTypes) {
-		for (Class fromType : fromTypes) {
+	private static void addNumberToBigDecimalConverters(Map<Pair, Object> map, Format numberFormat,
+			Class<?>[] fromTypes) {
+		for (Class<?> fromType : fromTypes) {
 			if (!fromType.equals(BigDecimal.class)) {
 				String fromName = (fromType.isPrimitive()) ? getKeyForClass(
 						fromType, null) : fromType.getName();
 
-				map
-						.put(new Pair(fromName, BigDecimal.class.getName()),
-								new NumberToBigDecimalConverter(numberFormat,
-										fromType));
+				map.put(new Pair(fromName, BigDecimal.class.getName()),
+						new NumberToBigDecimalConverter(numberFormat, fromType));
 			}
 		}
 	}
 
 	private static String getKeyForClass(Object originalValue,
-			Class filteredValue) {
+			Class<?> filteredValue) {
 		if (originalValue instanceof Class) {
-			Class originalClass = (Class) originalValue;
+			Class<?> originalClass = (Class<?>) originalValue;
 			if (originalClass.equals(int.class)) {
 				return INTEGER_CLASS;
 			} else if (originalClass.equals(byte.class)) {
@@ -657,16 +632,16 @@ import com.ibm.icu.text.NumberFormat;
 	 *
 	 * @param fromType
 	 * @param toType
-	 * @return whether fromType is assignable to toType, or <code>null</code>
-	 *         if unknown
+	 * @return whether fromType is assignable to toType, or <code>null</code> if
+	 *         unknown
 	 */
 	protected Boolean isAssignableFromTo(Object fromType, Object toType) {
 		if (fromType instanceof Class && toType instanceof Class) {
-			Class toClass = (Class) toType;
+			Class<?> toClass = (Class<?>) toType;
 			if (toClass.isPrimitive()) {
 				toClass = autoboxed(toClass);
 			}
-			Class fromClass = (Class) fromType;
+			Class<?> fromClass = (Class<?>) fromType;
 			if (fromClass.isPrimitive()) {
 				fromClass = autoboxed(fromClass);
 			}
@@ -698,7 +673,8 @@ import com.ibm.icu.text.NumberFormat;
 	 * @param value
 	 * @return the converted value
 	 */
-	public Object convert(Object value) {
+	@SuppressWarnings("unchecked")
+	public D convert(S value) {
 		if (converter != null) {
 			try {
 				return converter.convert(value);
@@ -706,13 +682,13 @@ import com.ibm.icu.text.NumberFormat;
 				Policy.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex));
 			}
 		}
-		return value;
+		return (D) value;
 	}
 
 	/*
 	 * Default converter implementation, does not perform any conversion.
 	 */
-	static final class DefaultConverter implements IConverter {
+	static final class DefaultConverter implements IConverter<Object, Object> {
 
 		private final Object toType;
 

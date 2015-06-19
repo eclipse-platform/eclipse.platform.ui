@@ -34,17 +34,17 @@ public class NumberToFloatConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, Float> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToFloatConverter(numberFormat, fromType, false);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Float> doGetToPrimitiveValidator(Class<?> fromType) {
 		return new NumberToFloatConverter(numberFormat, fromType, true);
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? Float.TYPE : Float.class;
 	}
 }

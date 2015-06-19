@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -44,6 +45,7 @@ public class Snippet004DataBindingContextErrorLabel {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void run() {
 				Shell shell = new Shell(display);
@@ -53,7 +55,7 @@ public class Snippet004DataBindingContextErrorLabel {
 				new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
 
 				Text text = new Text(shell, SWT.BORDER);
-				WritableValue value = WritableValue.withValueType(String.class);
+				WritableValue<String> value = WritableValue.withValueType(String.class);
 				new Label(shell, SWT.NONE).setText("Error:");
 
 				Label errorLabel = new Label(shell, SWT.BORDER);
@@ -64,10 +66,9 @@ public class Snippet004DataBindingContextErrorLabel {
 				DataBindingContext dbc = new DataBindingContext();
 
 				// Bind the text to the value.
-				dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
-						value, new UpdateValueStrategy()
-								.setAfterConvertValidator(new FiveValidator()),
-						null);
+				dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(text),
+						value, new UpdateValueStrategy<String, String>()
+								.setAfterConvertValidator(new FiveValidator()), null);
 
 				// Bind the error label to the validation error on the dbc.
 				dbc.bindValue(
@@ -91,9 +92,9 @@ public class Snippet004DataBindingContextErrorLabel {
 	 *
 	 * @since 3.2
 	 */
-	private static class FiveValidator implements IValidator {
+	private static class FiveValidator implements IValidator<String> {
 		@Override
-		public IStatus validate(Object value) {
+		public IStatus validate(String value) {
 			return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus
 					.error("the value was '" + value + "', not '5'");
 		}

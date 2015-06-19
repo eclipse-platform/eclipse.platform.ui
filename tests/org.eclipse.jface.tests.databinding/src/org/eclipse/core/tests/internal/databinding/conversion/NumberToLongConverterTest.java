@@ -34,17 +34,17 @@ public class NumberToLongConverterTest extends NumberToNumberTestHarness {
 	}
 
 	@Override
-	protected IConverter doGetToBoxedTypeValidator(Class fromType) {
+	protected IConverter<Object, Long> doGetToBoxedTypeValidator(Class<?> fromType) {
 		return new NumberToLongConverter(numberFormat, fromType, false);
 	}
 
 	@Override
-	protected IConverter doGetToPrimitiveValidator(Class fromType) {
+	protected IConverter<Object, Long> doGetToPrimitiveValidator(Class<?> fromType) {
 		return new NumberToLongConverter(numberFormat, fromType, true);
 	}
 
 	@Override
-	protected Class doGetToType(boolean primitive) {
+	protected Class<?> doGetToType(boolean primitive) {
 		return (primitive) ? Long.TYPE : Long.class;
 	}
 }

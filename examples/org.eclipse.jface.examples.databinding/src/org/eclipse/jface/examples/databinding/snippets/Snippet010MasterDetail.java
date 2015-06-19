@@ -41,6 +41,7 @@ public class Snippet010MasterDetail {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void run() {
 				Shell shell = new Shell(display);
@@ -56,19 +57,17 @@ public class Snippet010MasterDetail {
 				Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
 
 				// 1. Observe changes in selection.
-				IObservableValue selection = ViewersObservables
-						.observeSingleSelection(viewer);
+				IObservableValue<Object> selection = ViewersObservables.observeSingleSelection(viewer);
 
 				// 2. Observe the name property of the current selection.
-				IObservableValue detailObservable = BeanProperties.value((Class) selection.getValueType(), "name",
-						String.class)
-						.observeDetail(selection);
+				IObservableValue<String> detailObservable = BeanProperties
+						.value((Class<?>) selection.getValueType(), "name", String.class).observeDetail(selection);
 
 				// 3. Bind the Text widget to the name detail (selection's
 				// name).
-				new DataBindingContext().bindValue(WidgetProperties.text(SWT.NONE).observe(name), detailObservable,
-						new UpdateValueStrategy(false,
-								UpdateValueStrategy.POLICY_NEVER), null);
+				new DataBindingContext().bindValue(
+						(IObservableValue<String>) WidgetProperties.text(SWT.NONE).observe(name), detailObservable,
+						new UpdateValueStrategy<Object, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
 
 				shell.open();
 				while (!shell.isDisposed()) {

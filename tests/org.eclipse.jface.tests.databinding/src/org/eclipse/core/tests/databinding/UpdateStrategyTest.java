@@ -295,18 +295,18 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 	}
 
 
-	private static Class[] primitiveNumberTypes = new Class[] { Byte.TYPE,
+	private static Class<?>[] primitiveNumberTypes = new Class[] { Byte.TYPE,
 			Short.TYPE, Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE };
 
-	private static Class[] boxedNumberTypes = new Class[] { Byte.class,
+	private static Class<?>[] boxedNumberTypes = new Class[] { Byte.class,
 			Short.class, Integer.class, Long.class, Float.class, Double.class,
 			BigInteger.class, BigDecimal.class };
 
-	private void assertFromNumberToNumberConverter(Class toType,
-			Class toCounterPrimitiveType, Class converterType) {
+	private void assertFromNumberToNumberConverter(Class<?> toType, Class<?> toCounterPrimitiveType,
+			Class<?> converterType) {
 
 		for (int i = 0; i < primitiveNumberTypes.length; i++) {
-			Class primitiveType = primitiveNumberTypes[i];
+			Class<?> primitiveType = primitiveNumberTypes[i];
 
 			if (!primitiveType.equals(toType)
 					&& !primitiveType.equals(toCounterPrimitiveType)) {
@@ -318,7 +318,7 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 
 		for (int i = 0; i < boxedNumberTypes.length; i++) {
-			Class boxedType = boxedNumberTypes[i];
+			Class<?> boxedType = boxedNumberTypes[i];
 
 			if (!boxedType.equals(toType)
 					&& !boxedType.equals(toCounterPrimitiveType)) {
@@ -330,14 +330,14 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	private void assertDefaultConverter(Class fromType, Class toType, Class converterType) {
-		WritableValue source = WritableValue.withValueType(fromType);
-		WritableValue destination = WritableValue.withValueType(toType);
+	private void assertDefaultConverter(Class<?> fromType, Class<?> toType, Class<?> converterType) {
+		WritableValue<Object> source = WritableValue.withValueType(fromType);
+		WritableValue<Object> destination = WritableValue.withValueType(toType);
 
-		UpdateStrategyStub strategy = new UpdateStrategyStub();
+		UpdateStrategyStub<Object, Object> strategy = new UpdateStrategyStub<>();
 		strategy.fillDefaults(source, destination);
 
-		IConverter converter = strategy.converter;
+		IConverter<?, ?> converter = strategy.conv;
 		assertNotNull("converter not null", converter);
 		assertEquals("fromType [" + fromType + "]" , fromType, converter.getFromType());
 		assertEquals("toType [" + toType + "]", toType, converter.getToType());
@@ -346,18 +346,17 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 				.isInstance(converter));
 	}
 
-	class UpdateStrategyStub extends UpdateValueStrategy {
-		IConverter converter;
+	class UpdateStrategyStub<S, D> extends UpdateValueStrategy<S, D> {
+		IConverter<?, ?> conv;
 
 		@Override
-		protected void fillDefaults(IObservableValue source,
-				IObservableValue destination) {
+		protected void fillDefaults(IObservableValue<? extends S> source, IObservableValue<? super D> destination) {
 			super.fillDefaults(source, destination);
 		}
 
 		@Override
-		public UpdateValueStrategy setConverter(IConverter converter) {
-			this.converter = converter;
+		public UpdateValueStrategy<S, D> setConverter(IConverter<? super S, ? extends D> converter) {
+			this.conv = converter;
 			return super.setConverter(converter);
 		}
 	}

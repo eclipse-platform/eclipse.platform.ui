@@ -31,13 +31,13 @@ public class NumberToDoubleValidatorTest extends
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class<?> fromType) {
 		NumberToDoubleConverter converter = new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToDoubleValidator(converter);
 	}
 
 	@Override
-	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
+	protected NumberToNumberValidator doGetToPrimitiveValidator(Class<?> fromType) {
 		NumberToDoubleConverter converter = new NumberToDoubleConverter(NumberFormat.getInstance(), fromType, true);
 		return new NumberToDoubleValidator(converter);
 	}

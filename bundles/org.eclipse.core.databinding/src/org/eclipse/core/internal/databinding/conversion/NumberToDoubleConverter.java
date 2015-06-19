@@ -11,7 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Double.
@@ -21,20 +21,19 @@ import com.ibm.icu.text.NumberFormat;
  *
  * @since 1.0
  */
-public class NumberToDoubleConverter extends NumberToNumberConverter {
+public class NumberToDoubleConverter extends NumberToNumberConverter<Double> {
 
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToDoubleConverter(NumberFormat numberFormat, Class<?> fromType,
-			boolean primitive) {
+	public NumberToDoubleConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Double.TYPE : Double.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Double doConvert(Number number) {
 		if (StringToNumberParser.inDoubleRange(number)) {
 			return Double.valueOf(number.doubleValue());
 		}

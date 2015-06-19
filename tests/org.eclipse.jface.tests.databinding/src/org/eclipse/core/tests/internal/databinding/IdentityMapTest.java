@@ -36,18 +36,18 @@ import org.junit.Test;
  * @since 1.2
  */
 public class IdentityMapTest {
-	IdentityMap map;
+	IdentityMap<Object, Object> map;
 
 	Object key;
 	Object value;
-	Map.Entry entry;
+	Map.Entry<Object, Object> entry;
 
 	@Before
 	public void setUp() throws Exception {
-		map = new IdentityMap();
+		map = new IdentityMap<>();
 		key = new Object();
 		value = new Object();
-		entry = new Map.Entry() {
+		entry = new Map.Entry<Object, Object>() {
 			@Override
 			public Object getKey() {
 				return key;
@@ -68,7 +68,7 @@ public class IdentityMapTest {
 	@Test
 	public void testConstructor_NullComparer() {
 		try {
-			new IdentityMap(null);
+			new IdentityMap<>(null);
 			fail("Constructor should throw exception when null comparer passed in");
 		} catch (RuntimeException expected) {
 		}
@@ -77,7 +77,7 @@ public class IdentityMapTest {
 	@Test
 	public void testConstructorWithCollection_NullCollection() {
 		try {
-			new IdentityMap(null);
+			new IdentityMap<>(null);
 			fail("Constructor should throw exception when null collection passed in");
 		} catch (RuntimeException expected) {
 		}
@@ -87,7 +87,7 @@ public class IdentityMapTest {
 	public void testConstructorWithCollection_ContainsAllEntries() {
 		Map<Object, Object> toCopy = new HashMap<Object, Object>();
 		toCopy.put(new Object(), new Object());
-		map = new IdentityMap(toCopy);
+		map = new IdentityMap<>(toCopy);
 		assertEquals(toCopy, map);
 	}
 
@@ -301,7 +301,7 @@ public class IdentityMapTest {
 	public void testKeySet_ToArrayWithObjectArray() {
 		key = new String("key");
 		map.put(key, value);
-		String[] array = (String[]) map.keySet().toArray(new String[0]);
+		String[] array = map.keySet().toArray(new String[0]);
 		assertEquals(1, array.length);
 		assertSame(key, array[0]);
 	}
@@ -328,12 +328,12 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertTrue(entrySet.isEmpty());
 
 		map.put(key, value);
 		assertEquals(1, entrySet.size());
-		Map.Entry entry = (Map.Entry) entrySet.iterator().next();
+		Map.Entry<Object, Object> entry = entrySet.iterator().next();
 		assertEquals(key, entry.getKey());
 		assertEquals(value, entry.getValue());
 
@@ -353,7 +353,7 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_AddAll() {
 		try {
-			map.entrySet().addAll(Collections.EMPTY_SET);
+			map.entrySet().addAll(Collections.emptySet());
 			fail("Expected UnsupportedOperationException");
 		} catch (UnsupportedOperationException expected) {
 		}
@@ -370,7 +370,7 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_Contains() {
 		map.put(key, value);
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertTrue(entrySet.contains(new MapEntryStub(key, value)));
 		map.remove(key);
 		assertFalse(entrySet.contains(new MapEntryStub(key, value)));
@@ -378,7 +378,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_ContainsAll() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertFalse(entrySet.containsAll(Collections.singleton(new MapEntryStub(key, value))));
 		assertTrue(entrySet.containsAll(Collections.EMPTY_SET));
 
@@ -388,7 +388,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_IsEmpty() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertTrue(entrySet.isEmpty());
 		map.put(key, value);
 		assertFalse(entrySet.isEmpty());
@@ -397,9 +397,9 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_Iterator() {
 		map.put(key, value);
-		Iterator<Object> iterator = map.entrySet().iterator();
+		Iterator<Map.Entry<Object, Object>> iterator = map.entrySet().iterator();
 		assertTrue(iterator.hasNext());
-		Map.Entry entry = (Map.Entry) iterator.next();
+		Map.Entry<Object, Object> entry = iterator.next();
 		assertTrue(entry.equals(new MapEntryStub(key, value)));
 
 		assertEquals(1, map.size());
@@ -419,7 +419,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_RemoveAll() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertFalse(entrySet.removeAll(Collections.EMPTY_SET));
 
 		map.put(key, value);
@@ -430,7 +430,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_RetainAll() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertFalse(entrySet.retainAll(Collections.EMPTY_SET));
 
 		map.put(key, value);
@@ -443,7 +443,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_Size() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertEquals(0, entrySet.size());
 		map.put(key, value);
 		assertEquals(1, entrySet.size());
@@ -451,7 +451,7 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_ToArray() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertEquals(0, entrySet.toArray().length);
 
 		map.put(key, value);
@@ -462,18 +462,18 @@ public class IdentityMapTest {
 
 	@Test
 	public void testEntrySet_ToArrayWithObjectArray() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertEquals(0, entrySet.toArray(new Object[0]).length);
 
 		map.put(key, value);
-		Map.Entry[] array = entrySet.toArray(new Map.Entry[0]);
+		Map.Entry<?, ?>[] array = entrySet.toArray(new Map.Entry[0]);
 		assertEquals(1, array.length);
 		assertTrue(array[0].equals(new MapEntryStub(key, value)));
 	}
 
 	@Test
 	public void testEntrySet_Equals() {
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertFalse(entrySet.equals(null));
 		assertTrue(entrySet.equals(entrySet));
 
@@ -488,7 +488,7 @@ public class IdentityMapTest {
 	@Test
 	public void testEntrySet_HashCode() {
 		// hash formula mandated by Map contract
-		Set<Object> entrySet = map.entrySet();
+		Set<Map.Entry<Object, Object>> entrySet = map.entrySet();
 		assertEquals(0, entrySet.hashCode());
 
 		map.put(key, value);
@@ -500,7 +500,7 @@ public class IdentityMapTest {
 	public void testEntrySet_Entry_SetValue() {
 		map.put(key, value);
 
-		Map.Entry entry = (Map.Entry) map.entrySet().iterator().next();
+		Map.Entry<Object, Object> entry = map.entrySet().iterator().next();
 
 		Object newValue = new Object();
 		Object oldValue = entry.setValue(newValue);
@@ -513,7 +513,7 @@ public class IdentityMapTest {
 	public void testEntrySet_Entry_Equals() {
 		map.put(key, value);
 
-		Map.Entry entry = (Map.Entry) map.entrySet().iterator().next();
+		Map.Entry<Object, Object> entry = map.entrySet().iterator().next();
 		assertFalse(entry.equals(null));
 		assertTrue(entry.equals(entry));
 		assertTrue(entry.equals(new MapEntryStub(key, value)));
@@ -554,7 +554,7 @@ public class IdentityMapTest {
 		assertEquals(hash, map.hashCode());
 	}
 
-	static class MapEntryStub implements Map.Entry {
+	static class MapEntryStub implements Map.Entry<Object, Object> {
 		private final Object key;
 		private final Object value;
 

@@ -28,17 +28,15 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertSourceTypeExtendsConverterFromType() {
 		// Valid use: source type String extends converter from-type Object
-		UpdateListStrategyStub strategy = new UpdateListStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		UpdateListStrategyStub<Object, Object> strategy = new UpdateListStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		strategy.fillDefaults(WritableList.withElementType(String.class),
 				WritableList.withElementType(Object.class));
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateListStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(String.class, Object.class));
+		strategy = new UpdateListStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(String.class, Object.class));
 		try {
 			strategy.fillDefaults(WritableList.withElementType(Object.class),
 					WritableList.withElementType(Object.class));
@@ -50,17 +48,15 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertConverterToTypeExtendsDestinationType() {
 		// Valid use: converter to-type String extends destination type Object
-		UpdateListStrategyStub strategy = new UpdateListStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, String.class));
+		UpdateListStrategyStub<Object, Object> strategy = new UpdateListStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, String.class));
 		strategy.fillDefaults(WritableList.withElementType(Object.class),
 				WritableList.withElementType(Object.class));
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateListStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		strategy = new UpdateListStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		try {
 			strategy.fillDefaults(WritableList.withElementType(Object.class),
 					WritableList.withElementType(String.class));
@@ -69,10 +65,9 @@ public class UpdateListStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	class UpdateListStrategyStub extends UpdateListStrategy {
+	class UpdateListStrategyStub<S, D> extends UpdateListStrategy<S, D> {
 		@Override
-		protected void fillDefaults(IObservableList source,
-				IObservableList destination) {
+		protected void fillDefaults(IObservableList<? extends S> source, IObservableList<? super D> destination) {
 			super.fillDefaults(source, destination);
 		}
 	}

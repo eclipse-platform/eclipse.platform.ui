@@ -11,7 +11,7 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Converts from a Number to a Long.
@@ -20,19 +20,18 @@ import com.ibm.icu.text.NumberFormat;
  * </p>
  * @since 1.0
  */
-public class NumberToLongConverter extends NumberToNumberConverter {
+public class NumberToLongConverter extends NumberToNumberConverter<Long> {
 	/**
 	 * @param numberFormat
 	 * @param fromType
 	 * @param primitive
 	 */
-	public NumberToLongConverter(NumberFormat numberFormat, Class fromType,
-			boolean primitive) {
+	public NumberToLongConverter(Format numberFormat, Class<?> fromType, boolean primitive) {
 		super(numberFormat, fromType, (primitive) ? Long.TYPE : Long.class);
 	}
 
 	@Override
-	protected Number doConvert(Number number) {
+	protected Long doConvert(Number number) {
 		if (StringToNumberParser.inLongRange(number)) {
 			return Long.valueOf(number.longValue());
 		}

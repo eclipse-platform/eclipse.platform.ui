@@ -18,9 +18,14 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * Converter that uses a number format for conversion.
  *
+ * @param <F>
+ *            The type from which values are converted.
+ * @param <T>
+ *            The type to which values are converted.
+ *
  * @since 1.0
  */
-public abstract class NumberFormatConverter extends Converter {
+public abstract class NumberFormatConverter<F, T extends Number> extends Converter<F, T> {
 	private final NumberFormat numberFormat;
 
 	/**

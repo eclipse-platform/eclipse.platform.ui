@@ -24,18 +24,22 @@ import com.ibm.icu.text.NumberFormat;
  * Converts a Number to a String using <code>NumberFormat.format(...)</code>.
  * This class is thread safe.
  *
+ * The first type parameter of {@link Converter} is set to {@link Object} to
+ * preserve backwards compability, but the argument is meant to always be a
+ * {@link Number}.
+ *
  * @since 1.0
  */
-public class NumberToStringConverter extends Converter {
+public class NumberToStringConverter extends Converter<Object, String> {
 	private final NumberFormat numberFormat;
-	private final Class fromType;
+	private final Class<?> fromType;
 	private boolean fromTypeFitsLong;
 	private boolean fromTypeIsDecimalType;
 	private boolean fromTypeIsBigInteger;
 	private boolean fromTypeIsBigDecimal;
 
-	static Class icuBigDecimal = null;
-	static Constructor icuBigDecimalCtr = null;
+	static Class<?> icuBigDecimal = null;
+	static Constructor<?> icuBigDecimalCtr = null;
 
 	{
 		/*
@@ -66,7 +70,7 @@ public class NumberToStringConverter extends Converter {
 	 * @param numberFormat
 	 * @param fromType
 	 */
-	private NumberToStringConverter(NumberFormat numberFormat, Class fromType) {
+	private NumberToStringConverter(NumberFormat numberFormat, Class<?> fromType) {
 		super(fromType, String.class);
 
 		this.numberFormat = numberFormat;
@@ -98,9 +102,10 @@ public class NumberToStringConverter extends Converter {
 	 *            value to convert. May be <code>null</code> if the converter
 	 *            was constructed for a non primitive type.
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
+	 * @since 1.7
 	 */
 	@Override
-	public Object convert(Object fromObject) {
+	public String convert(Object fromObject) {
 		// Null is allowed when the type is not primitve.
 		if (fromObject == null && !fromType.isPrimitive()) {
 			return ""; //$NON-NLS-1$

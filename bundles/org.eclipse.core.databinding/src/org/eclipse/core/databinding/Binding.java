@@ -162,9 +162,8 @@ public abstract class Binding extends ValidationStatusProvider {
 	}
 
 	@Override
-	public IObservableList getTargets() {
-		return Observables.staticObservableList(context.getValidationRealm(),
-				Collections.singletonList(target));
+	public IObservableList<IObservable> getTargets() {
+		return Observables.staticObservableList(context.getValidationRealm(), Collections.singletonList(target));
 	}
 
 	/**
@@ -177,8 +176,7 @@ public abstract class Binding extends ValidationStatusProvider {
 	}
 
 	@Override
-	public IObservableList getModels() {
-		return Observables.staticObservableList(context.getValidationRealm(),
-				Collections.singletonList(model));
+	public IObservableList<IObservable> getModels() {
+		return Observables.staticObservableList(context.getValidationRealm(), Collections.singletonList(model));
 	}
 }

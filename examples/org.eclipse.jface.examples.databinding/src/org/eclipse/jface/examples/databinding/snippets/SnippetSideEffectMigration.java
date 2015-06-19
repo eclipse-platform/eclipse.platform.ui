@@ -162,27 +162,28 @@ public class SnippetSideEffectMigration {
 		private void bindData() {
 			DataBindingContext dbc = new DataBindingContext();
 
-			IObservableValue personFirstNameObservable = BeanProperties.value(ObservableBeanPerson.PROPERTY_FIRST_NAME)
+			IObservableValue<String> personFirstNameObservable = BeanProperties
+					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME)
 					.observe(person);
-			ISWTObservableValue personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
+			IObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
 
 			dbc.bindValue(personFirstNameTextObservable, personFirstNameObservable,
-					new UpdateValueStrategy().setAfterConvertValidator(obj -> {
-						if (obj instanceof String && ((String) obj).isEmpty()) {
+					new UpdateValueStrategy<String, String>().setAfterConvertValidator(obj -> {
+						if (obj == null || obj.isEmpty()) {
 							return ValidationStatus.error("First Name may not be empty");
 						}
 						return Status.OK_STATUS;
 					}), null);
 
-			IObservableValue personLastNameObservable = BeanProperties.value(ObservableBeanPerson.PROPERTY_LAST_NAME)
-					.observe(person);
-			ISWTObservableValue personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
+			IObservableValue<String> personLastNameObservable = BeanProperties
+					.value(ObservableBeanPerson.PROPERTY_LAST_NAME).observe(person);
+			IObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personLastNameText);
 
 			dbc.bindValue(personLastNameTextObservable, personLastNameObservable,
-					new UpdateValueStrategy().setAfterConvertValidator(obj -> {
-						if (obj instanceof String && ((String) obj).isEmpty()) {
+					new UpdateValueStrategy<String, String>().setAfterConvertValidator(obj -> {
+						if (obj == null || obj.isEmpty()) {
 							return ValidationStatus.error("Last Name may not be empty");
 						}
 						return Status.OK_STATUS;

@@ -13,43 +13,46 @@ package org.eclipse.core.internal.databinding;
 
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * @since 3.3
  *
  */
-public final class ValidationStatusProviderValidationStatusProperty extends
-		SimpleValueProperty {
+public final class ValidationStatusProviderValidationStatusProperty
+		extends SimpleValueProperty<ValidationStatusProvider, IObservableValue<IStatus>> {
 	@Override
 	public Object getValueType() {
 		return IObservableValue.class;
 	}
 
 	@Override
-	protected Object doGetValue(Object source) {
-		return ((ValidationStatusProvider) source).getValidationStatus();
+	protected IObservableValue<IStatus> doGetValue(ValidationStatusProvider source) {
+		return source.getValidationStatus();
 	}
 
 	@Override
-	protected void doSetValue(Object source, Object value) {
+	protected void doSetValue(ValidationStatusProvider source, IObservableValue<IStatus> value) {
 		// no setter API
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<ValidationStatusProvider> adaptListener(
+			ISimplePropertyListener<ValidationStatusProvider, ValueDiff<? extends IObservableValue<IStatus>>> listener) {
 		// no listener API
 		return null;
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(ValidationStatusProvider source,
+			INativePropertyListener<ValidationStatusProvider> listener) {
 	}
 
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
+	protected void doRemoveListener(ValidationStatusProvider source,
+			INativePropertyListener<ValidationStatusProvider> listener) {
 	}
 
 	@Override

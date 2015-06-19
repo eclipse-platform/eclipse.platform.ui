@@ -28,9 +28,8 @@ public class StringToIntegerValidatorTest extends
 	}
 
 	@Override
-	protected IValidator setupValidator(NumberFormat numberFormat) {
-		StringToNumberConverter converter = StringToNumberConverter.toInteger(
-				numberFormat, false);
+	protected IValidator<Object> setupValidator(NumberFormat numberFormat) {
+		StringToNumberConverter<Integer> converter = StringToNumberConverter.toInteger(numberFormat, false);
 		return new StringToIntegerValidator(converter);
 	}
 

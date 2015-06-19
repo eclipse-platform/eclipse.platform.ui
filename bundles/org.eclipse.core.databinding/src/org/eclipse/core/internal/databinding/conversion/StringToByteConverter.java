@@ -17,9 +17,13 @@ import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import com.ibm.icu.text.NumberFormat;
 
 /**
+ * Note that this class does not have precise type parameters because it
+ * manually handles argument type mismatches and throws
+ * {@link IllegalArgumentException}.
+ *
  * @since 1.0
  */
-public class StringToByteConverter extends NumberFormatConverter {
+public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	private String outOfRangeMessage;
 	private NumberFormat numberFormat;
 	private boolean primitive;
@@ -28,7 +32,7 @@ public class StringToByteConverter extends NumberFormatConverter {
 	 * @param numberFormat
 	 * @param toType
 	 */
-	private StringToByteConverter(NumberFormat numberFormat, Class toType) {
+	private StringToByteConverter(NumberFormat numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);
 		primitive = toType.isPrimitive();
 		this.numberFormat = numberFormat;
@@ -39,8 +43,7 @@ public class StringToByteConverter extends NumberFormatConverter {
 	 * @param primitive
 	 * @return converter
 	 */
-	public static StringToByteConverter toByte(NumberFormat numberFormat,
-			boolean primitive) {
+	public static StringToByteConverter toByte(NumberFormat numberFormat, boolean primitive) {
 		return new StringToByteConverter(numberFormat, (primitive) ? Byte.TYPE : Byte.class);
 	}
 
@@ -53,7 +56,7 @@ public class StringToByteConverter extends NumberFormatConverter {
 	}
 
 	@Override
-	public Object convert(Object fromObject) {
+	public Byte convert(Object fromObject) {
 		ParseResult result = StringToNumberParser.parse(fromObject,
 				numberFormat, primitive);
 

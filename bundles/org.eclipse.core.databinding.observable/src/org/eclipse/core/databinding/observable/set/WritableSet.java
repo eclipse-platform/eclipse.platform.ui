@@ -184,7 +184,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 *            can be <code>null</code>
 	 * @return new instance with the default realm
 	 */
-	public static WritableSet<?> withElementType(Object elementType) {
-		return new WritableSet<Object>(Realm.getDefault(), new HashSet<Object>(), elementType);
+	public static <E> WritableSet<E> withElementType(Object elementType) {
+		return new WritableSet<E>(Realm.getDefault(), new HashSet<E>(), elementType);
 	}
 }

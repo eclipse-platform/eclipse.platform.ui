@@ -12,7 +12,6 @@
 package org.eclipse.core.internal.databinding.conversion;
 
 import org.eclipse.core.databinding.conversion.Converter;
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
  *
  * @since 1.0
  */
-public class StatusToStringConverter extends Converter implements IConverter {
+public class StatusToStringConverter extends Converter<IStatus, String> {
 	/**
 	 * Constructs a new instance.
 	 */
@@ -30,13 +29,12 @@ public class StatusToStringConverter extends Converter implements IConverter {
 	}
 
 	@Override
-	public Object convert(Object fromObject) {
+	public String convert(IStatus fromObject) {
 		if (fromObject == null) {
 			throw new IllegalArgumentException(
 					"Parameter 'fromObject' was null."); //$NON-NLS-1$
 		}
 
-		IStatus status = (IStatus) fromObject;
-		return status.getMessage();
+		return fromObject.getMessage();
 	}
 }

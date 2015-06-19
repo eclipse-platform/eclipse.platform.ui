@@ -20,7 +20,7 @@ public class StringToByteValidator extends AbstractStringToNumberValidator {
 	/**
 	 * @param converter
 	 */
-	public StringToByteValidator(NumberFormatConverter converter) {
+	public StringToByteValidator(NumberFormatConverter<?, ?> converter) {
 		super(converter, Byte.MIN_VALUE, Byte.MAX_VALUE);
 	}
 

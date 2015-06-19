@@ -31,7 +31,7 @@ import com.ibm.icu.text.NumberFormat;
  */
 public abstract class StringToNumberValidatorTestHarness {
 	private NumberFormat numberFormat;
-	private IValidator validator;
+	private IValidator<Object> validator;
 
 	@Rule
 	public BindingTestSetup testSetup = new BindingTestSetup();
@@ -56,7 +56,7 @@ public abstract class StringToNumberValidatorTestHarness {
 	 * @param numberFormat
 	 * @return validator
 	 */
-	protected abstract IValidator setupValidator(NumberFormat numberFormat);
+	protected abstract IValidator<Object> setupValidator(NumberFormat numberFormat);
 
 	/**
 	 * Returns a string value that will not parse.

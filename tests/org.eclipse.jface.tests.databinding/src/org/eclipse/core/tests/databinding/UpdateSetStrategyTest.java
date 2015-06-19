@@ -28,15 +28,14 @@ public class UpdateSetStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertSourceTypeExtendsConverterFromType() {
 		// Valid use: source type String extends converter from-type Object
-		UpdateSetStrategyStub strategy = new UpdateSetStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		UpdateSetStrategyStub<Object, Object> strategy = new UpdateSetStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		strategy.fillDefaults(WritableSet.withElementType(String.class),
 				WritableSet.withElementType(Object.class));
 
 		// Invalid use: source type Object does not extend converter from-type
 		// String
-		strategy = new UpdateSetStrategyStub();
+		strategy = new UpdateSetStrategyStub<>();
 		strategy
 				.setConverter(new IdentityConverter(String.class, Object.class));
 		try {
@@ -50,17 +49,15 @@ public class UpdateSetStrategyTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testFillDefaults_AssertConverterToTypeExtendsDestinationType() {
 		// Valid use: converter to-type String extends destination type Object
-		UpdateSetStrategyStub strategy = new UpdateSetStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, String.class));
+		UpdateSetStrategyStub<Object, Object> strategy = new UpdateSetStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, String.class));
 		strategy.fillDefaults(WritableSet.withElementType(Object.class),
 				WritableSet.withElementType(Object.class));
 
 		// Invalid use: converter to-type Object does not extend destination
 		// type String
-		strategy = new UpdateSetStrategyStub();
-		strategy
-				.setConverter(new IdentityConverter(Object.class, Object.class));
+		strategy = new UpdateSetStrategyStub<>();
+		strategy.setConverter(new IdentityConverter(Object.class, Object.class));
 		try {
 			strategy.fillDefaults(WritableSet.withElementType(Object.class),
 					WritableSet.withElementType(String.class));
@@ -69,10 +66,9 @@ public class UpdateSetStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
-	class UpdateSetStrategyStub extends UpdateSetStrategy {
+	class UpdateSetStrategyStub<S, D> extends UpdateSetStrategy<S, D> {
 		@Override
-		protected void fillDefaults(IObservableSet source,
-				IObservableSet destination) {
+		protected void fillDefaults(IObservableSet<? extends S> source, IObservableSet<? super D> destination) {
 			super.fillDefaults(source, destination);
 		}
 	}

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Daniel Kruegler - bug 137435
  *     Matthew Hall - bug 303847
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding;
@@ -18,36 +19,40 @@ package org.eclipse.core.internal.databinding;
  * and hashCode() when putting them in sets or hashmaps to ensure identity
  * comparison.
  *
+ * @param <T>
+ *            the type of the object being wrapped
  * @since 1.0
  *
  */
-public class IdentityWrapper {
+public class IdentityWrapper<T> {
 
-	private static final IdentityWrapper NULL_WRAPPER = new IdentityWrapper(
-			null);
+	@SuppressWarnings("rawtypes")
+	private static final IdentityWrapper NULL_WRAPPER = new IdentityWrapper<>(null);
 
 	/**
-	 * @param obj
+	 * @param <T>
+	 *            the type of the object being wrapped
+	 * @param o
 	 *            the object to wrap
 	 * @return an IdentityWrapper wrapping the specified object
 	 */
-	public static IdentityWrapper wrap(Object obj) {
-		return obj == null ? NULL_WRAPPER : new IdentityWrapper(obj);
+	public static <T> IdentityWrapper<T> wrap(T o) {
+		return o == null ? NULL_WRAPPER : new IdentityWrapper<>(o);
 	}
 
-	final Object o;
+	final T o;
 
 	/**
 	 * @param o
 	 */
-	private IdentityWrapper(Object o) {
+	private IdentityWrapper(T o) {
 		this.o = o;
 	}
 
 	/**
 	 * @return the unwrapped object
 	 */
-	public Object unwrap() {
+	public T unwrap() {
 		return o;
 	}
 
@@ -56,7 +61,7 @@ public class IdentityWrapper {
 		if (obj == null || obj.getClass() != IdentityWrapper.class) {
 			return false;
 		}
-		return o == ((IdentityWrapper) obj).o;
+		return o == ((IdentityWrapper<?>) obj).o;
 	}
 
 	@Override
