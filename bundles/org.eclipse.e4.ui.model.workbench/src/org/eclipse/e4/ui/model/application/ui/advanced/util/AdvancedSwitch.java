@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.advanced.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -102,6 +103,7 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseElementContainer(perspective);
 				if (result == null) result = caseUILabel(perspective);
 				if (result == null) result = caseContext(perspective);
+				if (result == null) result = caseHandlerContainer(perspective);
 				if (result == null) result = caseUIElement(perspective);
 				if (result == null) result = caseApplicationElement(perspective);
 				if (result == null) result = caseLocalizable(perspective);
@@ -317,6 +319,21 @@ public class AdvancedSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Handler Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseHandlerContainer(MHandlerContainer object) {
 		return null;
 	}
 

@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.Bug308317Test;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
 import org.eclipse.e4.ui.tests.workbench.ExtensionsSortTests;
+import org.eclipse.e4.ui.tests.workbench.HandlerActivationTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
 import org.eclipse.e4.ui.tests.workbench.InjectionEventTest;
 import org.eclipse.e4.ui.tests.workbench.MMenuItemTest;
@@ -82,6 +83,7 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(ThemeDefinitionChangedHandlerTest.class);
 		addTestSuite(TopoSortTests.class);
 		addTestSuite(ExtensionsSortTests.class);
+		addTestSuite(HandlerActivationTest.class);
 		// addTestSuite(SWTPartRendererTest.class);
 	}
 }
