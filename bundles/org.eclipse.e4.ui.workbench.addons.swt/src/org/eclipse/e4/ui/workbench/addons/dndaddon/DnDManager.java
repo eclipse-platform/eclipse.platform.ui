@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -451,7 +452,21 @@ class DnDManager {
 		}
 
 		overlayFrame.setRegion(rgn);
+		// Region object needs to be disposed at the right point in time
+		addResourceDisposeListener(overlayFrame, rgn);
 		overlayFrame.setVisible(true);
+	}
+
+	private void addResourceDisposeListener(Control control, final Resource resource) {
+		control.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				if (!resource.isDisposed()) {
+					resource.dispose();
+				}
+			}
+		});
 	}
 
 	private Rectangle getOverlayBounds() {
