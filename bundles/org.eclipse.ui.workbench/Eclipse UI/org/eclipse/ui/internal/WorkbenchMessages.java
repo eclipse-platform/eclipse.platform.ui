@@ -430,12 +430,12 @@ public class WorkbenchMessages extends NLS {
 	public static String TypesFiltering_typeDelimiter;
 
 	// --- Import/Export ---
-	public static String ImportExportPage_chooseImportSource;
+	public static String ImportExportPage_chooseImportWizard;
 	public static String ImportExportPage_chooseExportWizard;
 
 	// --- Import ---
 	public static String ImportWizard_title;
-	public static String ImportWizard_selectSource;
+	public static String ImportWizard_selectWizard;
 
 	// --- Export ---
 	public static String ExportWizard_title;

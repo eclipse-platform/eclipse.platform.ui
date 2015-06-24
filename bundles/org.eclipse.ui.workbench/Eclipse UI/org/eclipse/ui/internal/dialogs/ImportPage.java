@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alain Bernard <alain.bernard1224@gmail.com> - Bug 281490
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -62,7 +63,7 @@ public class ImportPage extends ImportExportPage {
 		IWizardCategory root = WorkbenchPlugin.getDefault()
 			.getImportWizardRegistry().getRootCategory();
 		importTree = new CategorizedWizardSelectionTree(
-				root, WorkbenchMessages.ImportWizard_selectSource);
+				root, WorkbenchMessages.ImportWizard_selectWizard);
 		Composite importComp = importTree.createControl(parent);
 		importTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
 			@Override
@@ -103,7 +104,7 @@ public class ImportPage extends ImportExportPage {
 
 	@Override
 	protected void updateMessage(){
-		setMessage(WorkbenchMessages.ImportExportPage_chooseImportSource);
+		setMessage(WorkbenchMessages.ImportExportPage_chooseImportWizard);
 		super.updateMessage();
 	}
 }
