@@ -13,10 +13,12 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -178,7 +180,12 @@ public class ContentGeneratorDescriptor {
 	 */
 	public Collection<MarkerGroup> getMarkerGroups() {
 		if (groups == null) {
-			groups = new HashSet<>();
+			groups = new TreeSet<>(new Comparator<MarkerGroup>() {
+				@Override
+				public int compare(MarkerGroup mg1, MarkerGroup mg2) {
+					return mg1.getMarkerField().getName().compareTo(mg2.getMarkerField().getName());
+				}
+			});
 
 			// Add the groups defined in the receiver
 			addDefinedGroups(groups);
