@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
@@ -758,12 +759,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
         //1FTUHE0: ITPCORE:ALL - API - Status & logging - loss of semantic info
 
-        if (message != null) {
-            getDefault().getLog().log(
-                    StatusUtil.newStatus(IStatus.ERROR, message, null));
+		// Combine message and status into a MultiStatus to avoid losing
+		// context, but avoid creating the MultiStatus unnecessarily if message
+		// is the same
+		if (message != null && !message.equals(status.getMessage())) {
+			status = StatusUtil.newStatus(Collections.singletonList(status), message, null);
         }
-
-        getDefault().getLog().log(status);
+		getDefault().getLog().log(status);
     }
 
     /**
