@@ -19,7 +19,7 @@
     <relativePath>../eclipse-platform-parent</relativePath>
   </parent>
 
-  <groupId>org.eclipse.platform.runtime</groupId>
+  <groupId>eclipse.platform.runtime</groupId>
   <artifactId>eclipse.platform.runtime</artifactId>
   <version>4.6.0-SNAPSHOT</version>
   <packaging>pom</packaging>
