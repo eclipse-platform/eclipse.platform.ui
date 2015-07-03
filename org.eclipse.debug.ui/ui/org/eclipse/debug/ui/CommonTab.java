@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink <sw@wahlbrink.eu> - Bug 471829
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -350,6 +351,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private void createInputCaptureComponent(Composite parent){
 		Composite comp1 = SWTFactory.createComposite(parent, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fConsoleOutput = createCheckButton(comp1, LaunchConfigurationsMessages.CommonTab_5);
+		fConsoleOutput.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 
 		Composite comp = SWTFactory.createComposite(comp1, comp1.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
 		fInputFileCheckButton = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_17);
