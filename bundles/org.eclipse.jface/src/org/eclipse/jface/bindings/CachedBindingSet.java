@@ -62,7 +62,7 @@ final class CachedBindingSet {
 	 * a trigger (<code>TriggerSequence</code>) to binding (<code>Binding</code>).
 	 * This value may be <code>null</code> if it has not yet been initialized.
 	 */
-	private Map bindingsByTrigger = null;
+	private volatile Map bindingsByTrigger;
 
 	/**
 	 * A map of triggers to collections of bindings. If this binding set
@@ -70,7 +70,7 @@ final class CachedBindingSet {
 	 *
 	 * @since 3.3
 	 */
-	private Map conflictsByTrigger = null;
+	private volatile Map conflictsByTrigger;
 
 	/**
 	 * The hash code for this object. This value is computed lazily, and marked
@@ -120,7 +120,7 @@ final class CachedBindingSet {
 	 * to command identifier (<code>String</code>). This value is
 	 * <code>null</code> if it has not yet been initialized.
 	 */
-	private Map prefixTable = null;
+	private volatile Map prefixTable;
 
 	/**
 	 * <p>
@@ -143,7 +143,7 @@ final class CachedBindingSet {
 	 * of <code>TriggerSequence</code>). This value may be <code>null</code>
 	 * if it has not yet been initialized.
 	 */
-	private Map triggersByCommandId = null;
+	private volatile Map triggersByCommandId;
 
 	/**
 	 * Constructs a new instance of <code>CachedBindingSet</code>.
@@ -373,5 +373,13 @@ final class CachedBindingSet {
 		}
 
 		this.triggersByCommandId = triggersByCommandId;
+	}
+
+	/**
+	 * @return true if all the required maps are computed and non null
+	 */
+	final boolean isInitialized() {
+		return bindingsByTrigger != null && triggersByCommandId != null && conflictsByTrigger != null
+				&& prefixTable != null;
 	}
 }
