@@ -139,6 +139,9 @@
          os="Win32"
          executable="chrome.exe">
          <location>%%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe</location>
+         <location>%%ProgramFiles%\Google\Chrome\Application\chrome.exe</location>
+         <location>%%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe</location>
+         <location>%%ProgramW6432%\Google\Chrome\Application\chrome.exe</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.opera"
