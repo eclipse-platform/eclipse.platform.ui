@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.e4.ui.swt.gtk;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Fragment-Host: org.eclipse.e4.ui.css.swt.theme;bundle-version="0.10.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Localization: fragment-gtk
