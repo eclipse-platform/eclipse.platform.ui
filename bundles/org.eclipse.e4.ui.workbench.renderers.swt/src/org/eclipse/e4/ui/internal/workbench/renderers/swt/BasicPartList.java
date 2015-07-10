@@ -80,7 +80,7 @@ public class BasicPartList extends AbstractTableInformationControl {
 
 		@Override
 		public String getToolTipText(Object element) {
-			return ((MUILabel) element).getLocalizedTooltip();
+			return renderer.getToolTip((MUILabel) element);
 		}
 
 		@Override
