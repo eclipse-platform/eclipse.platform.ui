@@ -1321,11 +1321,6 @@ public class PopupDialog extends Window {
 	protected void adjustBounds() {
 	}
 
-	/**
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
-	 */
 	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = getDefaultLocation(initialSize);

@@ -13,8 +13,8 @@ package org.eclipse.jface.preference;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -157,9 +157,6 @@ public class PreferenceNode implements IPreferenceNode {
         page.setTitle(label);
     }
 
-    /**
-     * (non-Javadoc) Method declared on IPreferenceNode.
-     */
     @Override
 	public void disposeResources() {
         if (image != null) {
