@@ -35,10 +35,6 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 	//----------------------------------------
 	// W3C CSSRule API methods
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSRule.getType()
-	 */
 	@Override
 	public short getType() {
 		return CSSRule.STYLE_RULE;
@@ -48,29 +44,17 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 	//----------------------------------------
 	// W3C CSSStyleRule API methods
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleRule#getSelectorText()
-	 */
 	@Override
 	public String getSelectorText() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleRule#getStyle()
-	 */
 	@Override
 	public CSSStyleDeclaration getStyle() {
 		return styleDeclaration;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleRule#setSelectorText(String)
-	 */
 	@Override
 	public void setSelectorText(String selectorText) throws DOMException {
 		// TODO Auto-generated method stub
@@ -81,10 +65,6 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 	//----------------------------------------
 	// Additional methods
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.ui.css.core.dom#ExtendedCSSRule#getSelectorList()
-	 */
 	@Override
 	public SelectorList getSelectorList() {
 		return selectors;

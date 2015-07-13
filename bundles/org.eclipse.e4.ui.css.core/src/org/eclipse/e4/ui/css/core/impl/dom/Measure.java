@@ -47,10 +47,6 @@ public class Measure extends CSSValueImpl {
 		return value.getIntegerValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSPrimitiveValue#getStringValue()
-	 */
 	@Override
 	public String getStringValue() throws DOMException {
 		short lexicalUnit = value.getLexicalUnitType();
@@ -62,10 +58,6 @@ public class Measure extends CSSValueImpl {
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSPrimitiveValue#getPrimitiveType()
-	 */
 	@Override
 	public short getPrimitiveType() {
 		switch (value.getLexicalUnitType()) {
@@ -101,10 +93,6 @@ public class Measure extends CSSValueImpl {
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED - LexicalUnit type: " + value.getLexicalUnitType());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSValue#getCssText()
-	 */
 	@Override
 	public String getCssText() {
 		// TODO: All LexicalUnit.SAC_OPERATOR_* except for COMMA left undone for

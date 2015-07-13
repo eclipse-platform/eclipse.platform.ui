@@ -35,11 +35,6 @@ public class CSSValueConverterConfigColorImpl implements
 		this.format = format;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterColorConfig#getFormat()
-	 */
 	@Override
 	public int getFormat() {
 		return format;

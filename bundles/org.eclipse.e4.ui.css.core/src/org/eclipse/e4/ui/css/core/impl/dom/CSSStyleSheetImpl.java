@@ -31,10 +31,6 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 
 	// W3C CSSStyleSheet API methods
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleSheet#deleteRule(int)
-	 */
 	@Override
 	public void deleteRule(int position) throws DOMException {
 		try {
@@ -44,29 +40,17 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleSheet#getCssRules()
-	 */
 	@Override
 	public CSSRuleList getCssRules() {
 		return rules;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleSheet#getOwnerRule()
-	 */
 	@Override
 	public CSSRule getOwnerRule() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.css.CSSStyleSheet#insertRule(String, int)
-	 */
 	@Override
 	public int insertRule(String arg0, int arg1) throws DOMException {
 		// TODO Auto-generated method stub
@@ -76,80 +60,48 @@ public class CSSStyleSheetImpl extends AbstractCSSNode implements CSSStyleSheet 
 
 	// org.w3c.dom.stylesheet.StyleSheet API methods
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getDisabled()
-	 */
 	@Override
 	public boolean getDisabled() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getHref()
-	 */
 	@Override
 	public String getHref() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getMedia()
-	 */
 	@Override
 	public MediaList getMedia() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getOwnerNode()
-	 */
 	@Override
 	public Node getOwnerNode() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getParentStyleSheet()
-	 */
 	@Override
 	public StyleSheet getParentStyleSheet() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#getType()
-	 */
 	@Override
 	public String getType() {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.w3c.dom.stylesheet.StyleSheet#setDisabled(boolean)
-	 */
 	@Override
 	public void setDisabled(boolean disabled) {
 		// TODO Auto-generated method stub

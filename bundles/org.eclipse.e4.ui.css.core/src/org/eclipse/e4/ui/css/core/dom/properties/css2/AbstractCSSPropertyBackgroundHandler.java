@@ -69,13 +69,6 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackground(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackground(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
@@ -83,65 +76,30 @@ public abstract class AbstractCSSPropertyBackgroundHandler extends
 				engine);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundAttachment(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackgroundAttachment(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("background-attachment");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundColor(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("background-color");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundImage(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("background-image");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundPosition(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackgroundPosition(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		throw new UnsupportedPropertyException("background-position");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler#applyCSSPropertyBackgroundRepeat(java.lang.Object,
-	 *      org.w3c.dom.css.CSSValue, java.lang.String,
-	 *      org.eclipse.e4.css.core.engine.CSSEngine)
-	 */
 	@Override
 	public void applyCSSPropertyBackgroundRepeat(Object element,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {

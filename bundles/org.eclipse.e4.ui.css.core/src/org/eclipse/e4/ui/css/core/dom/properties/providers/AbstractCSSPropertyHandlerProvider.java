@@ -22,12 +22,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 public abstract class AbstractCSSPropertyHandlerProvider implements
 		ICSSPropertyHandlerProvider {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider#getDefaultCSSStyleDeclaration(org.eclipse.e4.ui.css.core.engine.CSSEngine,
-	 *      java.lang.Object, org.w3c.dom.css.CSSStyleDeclaration)
-	 */
 	@Override
 	public CSSStyleDeclaration getDefaultCSSStyleDeclaration(CSSEngine engine,
 			Object widget, CSSStyleDeclaration newStyle, String pseudoE)

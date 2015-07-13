@@ -24,10 +24,6 @@ public class CSSErrorHandlerImpl implements CSSErrorHandler {
 
 	public static final CSSErrorHandler INSTANCE = new CSSErrorHandlerImpl();
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.e4.ui.css.core.engine.CSSErrorHandler#error(java.lang.Exception)
-	 */
 	@Override
 	public void error(Exception e) {
 		e.printStackTrace();
