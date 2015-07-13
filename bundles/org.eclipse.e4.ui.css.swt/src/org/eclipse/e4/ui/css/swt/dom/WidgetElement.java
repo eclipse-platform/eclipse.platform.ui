@@ -193,13 +193,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return SWTStyleHelpers.getSWTWidgetStyleAsString(getWidget());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.css.core.dom.ElementAdapter#getAttribute(java.lang.
-	 * String)
-	 */
 	@Override
 	public String getAttribute(String attr) {
 		Widget widget = getWidget();
@@ -282,11 +275,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getCSSClass()
-	 */
 	@Override
 	public String getCSSClass() {
 		Widget widget = getWidget();
@@ -297,11 +285,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.css.core.dom.CSSStylableElement#getCSSStyle()
-	 */
 	@Override
 	public String getCSSStyle() {
 		Widget widget = getWidget();

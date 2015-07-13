@@ -29,11 +29,6 @@ public class SWTHTMLElementProvider extends SWTElementProvider {
 
 	public static final IElementProvider INSTANCE = new SWTHTMLElementProvider();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.core.css.dom.IElementProvider#getElement(java.lang.Object)
-	 */
 	@Override
 	public Element getElement(Object element, CSSEngine engine) {
 		if (element instanceof Widget) {
