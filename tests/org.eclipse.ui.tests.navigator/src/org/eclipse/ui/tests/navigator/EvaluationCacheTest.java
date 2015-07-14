@@ -20,12 +20,11 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.tests.navigator.util.TestNavigatorActivationService;
 import org.eclipse.ui.tests.navigator.util.TestNavigatorViewerDescriptor;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests the {@link EvaluationCache} to ensure it can find various key types as
  * well as maintain the cache properly.
- *
- * @since 3.3
  */
 public class EvaluationCacheTest extends NavigatorTestBase {
 	EvaluationCache cache;
@@ -53,10 +52,12 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		Assert.assertNull(cache.getDescriptors(key, !toComputeOverrides));
 	}
 
+	@Test
 	public void testSimpleAddGetNotOverrides() {
 		doSimpleAddGet(false);
 	}
 
+	@Test
 	public void testSimpleAddGetOverrides() {
 		doSimpleAddGet(true);
 	}
@@ -77,10 +78,12 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		Assert.assertNull(cache.getDescriptors(key2, !toComputeOverrides));
 	}
 
+	@Test
 	public void testNotSameInstEqualNotOverrides() {
 		doNotSameInstEqual(false);
 	}
 
+	@Test
 	public void testNotSameInstEqualOverrides() {
 		doNotSameInstEqual(true);
 	}
@@ -95,14 +98,17 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 		Assert.assertSame(value2, cache.getDescriptors(key, toComputeOverrides));
 	}
 
+	@Test
 	public void testReplaceNotOverrides() {
 		doTestReplace(false);
 	}
 
+	@Test
 	public void testReplaceOverrides() {
 		doTestReplace(true);
 	}
 
+	@Test
 	public void testOnVisibilityOrActivationChangeClearsCaches() {
 		Object key = new Object();
 		NavigatorContentDescriptor[] value1 = new NavigatorContentDescriptor[0];
