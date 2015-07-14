@@ -397,7 +397,7 @@ public class BindingLookupTest {
 		bs.activateBinding(db);
 
 		// the list will always be ordered
-		ArrayList<TriggerSequence> list = new ArrayList<TriggerSequence>();
+		ArrayList<TriggerSequence> list = new ArrayList<>();
 		list.add(seq);
 		list.add(seq2);
 
@@ -429,7 +429,7 @@ public class BindingLookupTest {
 		bs1.activateBinding(db);
 
 		// the list will always be ordered
-		ArrayList<TriggerSequence> list = new ArrayList<TriggerSequence>();
+		ArrayList<TriggerSequence> list = new ArrayList<>();
 		list.add(seq);
 		list.add(seq2);
 
@@ -488,7 +488,7 @@ public class BindingLookupTest {
 		TriggerSequence sseq = bs1.createSequence("CTRL+5 Y");
 		Binding b2 = createDefaultBinding(bs1, sseq, cmd2, ID_DIALOG_AND_WINDOW);
 		bs1.activateBinding(b2);
-		ArrayList<Binding> commandMatches = new ArrayList<Binding>();
+		ArrayList<Binding> commandMatches = new ArrayList<>();
 		commandMatches.add(b1);
 		commandMatches.add(b2);
 
@@ -504,7 +504,7 @@ public class BindingLookupTest {
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command,
 			String contextId) {
-		Map<String, String> attrs = new HashMap<String,String>();
+		Map<String, String> attrs = new HashMap<>();
 		attrs.put("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
 
 		return bs.createBinding(sequence, command, contextId, attrs);

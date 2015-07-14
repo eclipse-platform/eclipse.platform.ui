@@ -117,7 +117,7 @@ public class KeyDispatcherTest {
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command) {
 
-		Map<String, String> attrs = new HashMap<String,String>();
+		Map<String, String> attrs = new HashMap<>();
 		attrs.put("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
 
 		return bs.createBinding(sequence, command, ID_WINDOW, attrs);

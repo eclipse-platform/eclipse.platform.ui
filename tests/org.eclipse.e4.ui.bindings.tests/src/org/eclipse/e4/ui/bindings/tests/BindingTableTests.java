@@ -91,7 +91,7 @@ public class BindingTableTests {
 		if (loadedBindings == null) {
 			IEclipseContext globalContext = Activator.getDefault().getGlobalContext();
 			workbenchContext = globalContext.createChild("workbenchContext");
-			loadedBindings = new ArrayList<Binding>();
+			loadedBindings = new ArrayList<>();
 			contextManager = new ContextManager();
 			ContextSet.setComparator(new ContextSet.CComp(contextManager));
 			for (int i = 0; i < CONTEXTS.length; i += 3) {
@@ -194,7 +194,7 @@ public class BindingTableTests {
 	public void testContextSet() {
 		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
-		ArrayList<Context> window = new ArrayList<Context>();
+		ArrayList<Context> window = new ArrayList<>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
 		Context dawContext = contextManager.getContext(ID_DIALOG_AND_WINDOW);
 		window.add(winContext);
@@ -203,7 +203,7 @@ public class BindingTableTests {
 		assertContextSet(windowSet, new String[] { ID_DIALOG_AND_WINDOW,
 				ID_WINDOW });
 
-		ArrayList<Context> text = new ArrayList<Context>(window);
+		ArrayList<Context> text = new ArrayList<>(window);
 		Context textContext = contextManager.getContext(ID_TEXT);
 		text.add(textContext);
 		ContextSet textSet = manager.createContextSet(text);
@@ -215,7 +215,7 @@ public class BindingTableTests {
 	public void testContextSetSibling() {
 		BindingTableManager manager = ContextInjectionFactory
 				.make(BindingTableManager.class, workbenchContext);
-		ArrayList<Context> all = new ArrayList<Context>();
+		ArrayList<Context> all = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
 			all.add(context);
@@ -233,14 +233,14 @@ public class BindingTableTests {
 		manager.addTable(loadTable(ID_WINDOW));
 		manager.addTable(loadTable(ID_TEXT));
 
-		ArrayList<Context> window = new ArrayList<Context>();
+		ArrayList<Context> window = new ArrayList<>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
 		Context dawContext = contextManager.getContext(ID_DIALOG_AND_WINDOW);
 		window.add(winContext);
 		window.add(dawContext);
 		ContextSet windowSet = manager.createContextSet(window);
 
-		ArrayList<Context> text = new ArrayList<Context>(window);
+		ArrayList<Context> text = new ArrayList<>(window);
 		Context textContext = contextManager.getContext(ID_TEXT);
 		text.add(textContext);
 		ContextSet textSet = manager.createContextSet(text);
@@ -271,7 +271,7 @@ public class BindingTableTests {
 
 		assertEquals(correctIndent.getTriggerSequence(), indentLine
 				.getTriggerSequence());
-		ArrayList<Context> all = new ArrayList<Context>();
+		ArrayList<Context> all = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
 			all.add(context);
@@ -293,7 +293,7 @@ public class BindingTableTests {
 
 		ContextSet javaSet = createJavaSet(manager);
 
-		ArrayList<Context> jsList = new ArrayList<Context>();
+		ArrayList<Context> jsList = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context context = contextManager.getContext(CONTEXTS[i]);
 			if (!ID_JAVA.equals(context.getId())) {
@@ -316,7 +316,7 @@ public class BindingTableTests {
 		BindingTableManager manager = createManager();
 		Binding paste = getTestBinding(PASTE_ID);
 
-		ArrayList<Context> window = new ArrayList<Context>();
+		ArrayList<Context> window = new ArrayList<>();
 		Context winContext = contextManager.getContext(ID_WINDOW);
 		Context dawContext = contextManager.getContext(ID_DIALOG_AND_WINDOW);
 		window.add(winContext);
@@ -422,7 +422,7 @@ public class BindingTableTests {
 	}
 
 	private ContextSet createJavaSet(BindingTableManager manager) {
-		ArrayList<Context> javaList = new ArrayList<Context>();
+		ArrayList<Context> javaList = new ArrayList<>();
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			if (CONTEXTS[i].equals(ID_JS) || CONTEXTS[i].equals(ID_DIALOG)) {
 				continue;
