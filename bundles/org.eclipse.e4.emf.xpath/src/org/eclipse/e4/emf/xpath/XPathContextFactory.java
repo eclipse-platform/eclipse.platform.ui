@@ -48,6 +48,6 @@ public abstract class XPathContextFactory<Type extends Object> {
 	 * @return Create a new XPath-Factory
 	 */
 	public static <Type> XPathContextFactory<Type> newInstance() {
-		return new JXPathContextFactoryImpl<Type>();
+		return new JXPathContextFactoryImpl<>();
 	}
 }

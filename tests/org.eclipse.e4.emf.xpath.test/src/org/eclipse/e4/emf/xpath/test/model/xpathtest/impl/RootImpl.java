@@ -97,7 +97,7 @@ public class RootImpl extends EObjectImpl implements Root {
 	 */
 	public EList<Node> getNodes() {
 		if (nodes == null) {
-			nodes = new EObjectContainmentEList<Node>(Node.class, this, XpathtestPackage.ROOT__NODES);
+			nodes = new EObjectContainmentEList<>(Node.class, this, XpathtestPackage.ROOT__NODES);
 		}
 		return nodes;
 	}

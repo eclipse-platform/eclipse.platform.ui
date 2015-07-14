@@ -129,7 +129,7 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	protected static long doWork(long pnSeqeuence, long iterations) {
-		LinkedList<String> messages = new LinkedList<String>();
+		LinkedList<String> messages = new LinkedList<>();
 
 		for (long i = 0; i < iterations; ++i) {
 			pnSeqeuence = pn63(pnSeqeuence);
@@ -187,9 +187,9 @@ public class EventLoopMonitorThreadManualTests {
 		int totalThreadCount =
 				jvmThreadManager.dumpAllThreads(dumpLockedMonitors, dumpLockedSynchronizers).length;
 
-		List<Double> controlResults = new ArrayList<Double>(NUM_CONTROL_MEASUREMENTS);
-		List<Double> uiStackResults = new ArrayList<Double>(NUM_UI_STACK_MEASUREMENTS);
-		List<Double> allStacksResults = new ArrayList<Double>(NUM_ALL_STACKS_MEASUREMENTS);
+		List<Double> controlResults = new ArrayList<>(NUM_CONTROL_MEASUREMENTS);
+		List<Double> uiStackResults = new ArrayList<>(NUM_UI_STACK_MEASUREMENTS);
+		List<Double> allStacksResults = new ArrayList<>(NUM_ALL_STACKS_MEASUREMENTS);
 		double expectedRunningTime = 0.0;
 		double maxRunningTime = 0.0;
 
@@ -504,7 +504,7 @@ public class EventLoopMonitorThreadManualTests {
 			System.out.println(String.format("Starting %d background tasks and %d background idlers",
 					numBackgroundTasks, numBackgroundIdlers));
 		}
-		Queue<Thread> threads = new ArrayDeque<Thread>(numBackgroundIdlers + numBackgroundTasks);
+		Queue<Thread> threads = new ArrayDeque<>(numBackgroundIdlers + numBackgroundTasks);
 		for (int i = 0; i < numBackgroundTasks; i++) {
 			Thread t = new Thread(backgroundTaskRunnable);
 			threads.add(t);

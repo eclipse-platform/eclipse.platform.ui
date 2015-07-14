@@ -188,7 +188,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 */
 	public EList<MenuElement> getMenus() {
 		if (menus == null) {
-			menus = new EObjectContainmentEList<MenuElement>(MenuElement.class, this, XpathtestPackage.NODE__MENUS);
+			menus = new EObjectContainmentEList<>(MenuElement.class, this, XpathtestPackage.NODE__MENUS);
 		}
 		return menus;
 	}
@@ -241,7 +241,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 */
 	public EList<Node> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<Node>(Node.class, this, XpathtestPackage.NODE__CHILDREN, XpathtestPackage.NODE__PARENT);
+			children = new EObjectContainmentWithInverseEList<>(Node.class, this, XpathtestPackage.NODE__CHILDREN, XpathtestPackage.NODE__PARENT);
 		}
 		return children;
 	}
@@ -354,7 +354,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 */
 	public EList<Node> getInrefs() {
 		if (inrefs == null) {
-			inrefs = new EObjectWithInverseResolvingEList.ManyInverse<Node>(Node.class, this, XpathtestPackage.NODE__INREFS, XpathtestPackage.NODE__OUTREFS);
+			inrefs = new EObjectWithInverseResolvingEList.ManyInverse<>(Node.class, this, XpathtestPackage.NODE__INREFS, XpathtestPackage.NODE__OUTREFS);
 		}
 		return inrefs;
 	}
@@ -366,7 +366,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 */
 	public EList<Node> getOutrefs() {
 		if (outrefs == null) {
-			outrefs = new EObjectWithInverseResolvingEList.ManyInverse<Node>(Node.class, this, XpathtestPackage.NODE__OUTREFS, XpathtestPackage.NODE__INREFS);
+			outrefs = new EObjectWithInverseResolvingEList.ManyInverse<>(Node.class, this, XpathtestPackage.NODE__OUTREFS, XpathtestPackage.NODE__INREFS);
 		}
 		return outrefs;
 	}

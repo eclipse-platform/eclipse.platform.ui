@@ -32,7 +32,7 @@ public class EcoreXPathContextFactory{
 	 * @return the factory
 	 */
 	public static XPathContextFactory<EObject> newInstance() {
-		return new JXPathContextFactoryImpl<EObject>();
+		return new JXPathContextFactoryImpl<>();
 	}
 
 }
