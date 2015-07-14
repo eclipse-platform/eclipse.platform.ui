@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -127,7 +128,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	}
 
 	protected void processLanguages() {
-		languages = new HashMap<String, Object>();
+		languages = new HashMap<>();
 		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
 		IConfigurationElement[] languageElements = registry.getConfigurationElementsFor(extId);
 		for (int i = 0; i < languageElements.length; i++) {

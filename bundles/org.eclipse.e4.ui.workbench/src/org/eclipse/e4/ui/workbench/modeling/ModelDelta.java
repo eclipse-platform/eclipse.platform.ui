@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.modeling;
@@ -50,7 +51,7 @@ public abstract class ModelDelta implements IDelta {
 			return delta.getObject();
 		} else if (value instanceof List<?>) {
 			List<?> values = (List<?>) value;
-			List<Object> objects = new ArrayList<Object>(values.size());
+			List<Object> objects = new ArrayList<>(values.size());
 			for (int i = 0; i < values.size(); i++) {
 				Object object = values.get(i);
 				if (object instanceof IDelta) {

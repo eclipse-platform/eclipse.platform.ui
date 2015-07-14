@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430075, 430080, 431464, 433336
- *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430075, 430080, 431464, 433336, 472654
+ *     René Brandstetter - Bug 419749
  *     Brian de Alwis (MTI) - Bug 433053
  ******************************************************************************/
 
@@ -75,8 +75,8 @@ public class ModelAssembler {
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
 		IExtension[] extensions = new ExtensionsSort().sort(extPoint.getExtensions());
 
-		List<MApplicationElement> imports = new ArrayList<MApplicationElement>();
-		List<MApplicationElement> addedElements = new ArrayList<MApplicationElement>();
+		List<MApplicationElement> imports = new ArrayList<>();
+		List<MApplicationElement> addedElements = new ArrayList<>();
 
 		// run processors which are marked to run before fragments
 		runProcessors(extensions, initial, false);
@@ -266,7 +266,7 @@ public class ModelAssembler {
 		if (imports.isEmpty())
 			return;
 		// now that we have all components loaded, resolve imports
-		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<MApplicationElement, MApplicationElement>();
+		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<>();
 		for (MApplicationElement importedElement : imports) {
 			MApplicationElement realElement = ModelUtils.findElementById(application,
 					importedElement.getElementId());
@@ -278,7 +278,7 @@ public class ModelAssembler {
 		}
 
 		TreeIterator<EObject> it = EcoreUtil.getAllContents(addedElements);
-		List<Runnable> commands = new ArrayList<Runnable>();
+		List<Runnable> commands = new ArrayList<>();
 
 		// TODO Probably use EcoreUtil.UsageCrossReferencer
 		while (it.hasNext()) {

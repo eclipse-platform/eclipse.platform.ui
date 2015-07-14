@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -124,13 +125,13 @@ final class GenericMApplicationElementFactoryImpl {
 		private static final String CONFIG_ATTR_EPACKAGE_URI = "ePackageNS"; //$NON-NLS-1$
 
 		/** Holds the mapping between {@link Class} and {@link EClass}. */
-		private final ConcurrentMap<Class<? extends MApplicationElement>, EClass> classToEClass = new ConcurrentHashMap<Class<? extends MApplicationElement>, EClass>();
+		private final ConcurrentMap<Class<? extends MApplicationElement>, EClass> classToEClass = new ConcurrentHashMap<>();
 
 		/**
 		 * Holds the required information per extension point which needs to be clean-up in the
 		 * {@link #removed(IExtension[])} method.
 		 */
-		private final ConcurrentMap<IExtension, List<Class<? extends MApplicationElement>>> registeredClasses = new ConcurrentHashMap<IExtension, List<Class<? extends MApplicationElement>>>();
+		private final ConcurrentMap<IExtension, List<Class<? extends MApplicationElement>>> registeredClasses = new ConcurrentHashMap<>();
 
 		/** A reference to the {@link MApplicationElement}-EClass. */
 		private final EClass mApplicationElementEClass = ApplicationPackageImpl.eINSTANCE
@@ -225,7 +226,7 @@ final class GenericMApplicationElementFactoryImpl {
 				return null;
 			}
 
-			List<Class<? extends MApplicationElement>> allMappedEntried = new ArrayList<Class<? extends MApplicationElement>>();
+			List<Class<? extends MApplicationElement>> allMappedEntried = new ArrayList<>();
 
 			for (IConfigurationElement configElement : configurationElements) {
 				if (configElement.getName().equals(CONFIG_ELEMENT_NAME)) {
@@ -278,7 +279,7 @@ final class GenericMApplicationElementFactoryImpl {
 				return null;
 
 			List<EClassifier> eClassifiers = ePackage.getEClassifiers();
-			Map<Class<? extends MApplicationElement>, EClass> mapping = new HashMap<Class<? extends MApplicationElement>, EClass>();
+			Map<Class<? extends MApplicationElement>, EClass> mapping = new HashMap<>();
 
 			for (EClassifier eClassifier : eClassifiers) {
 				if (eClassifier instanceof EClass) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Manumitting Technologies Inc and others.
+ * Copyright (c) 2014, 2015 Manumitting Technologies Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Brian de Alwis (MTI) - initial API and implementation
- *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
+ *     René Brandstetter - Bug 419749
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -110,7 +111,7 @@ public class ExtensionsSort extends TopologicalSort<IExtension, Bundle> {
 			return Collections.emptySet();
 		}
 
-		Set<Bundle> required = new HashSet<Bundle>();
+		Set<Bundle> required = new HashSet<>();
 		addDependents(required, providerWiring);
 		return Collections.unmodifiableSet(required);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     René Brandstetter - Bug 419749 - [Workbench] [e4 Workbench] - Remove the deprecated PackageAdmin
+ *     René Brandstetter - Bug 419749
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -33,7 +34,7 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 final class BundleFinder implements BundleTrackerCustomizer<List<Bundle>> {
 
 	/** Map of bundle symbolic name to the corresponding bundles (hint: different versions). */
-	private final ConcurrentMap<String, List<Bundle>> trackedBundles = new ConcurrentHashMap<String, List<Bundle>>();
+	private final ConcurrentMap<String, List<Bundle>> trackedBundles = new ConcurrentHashMap<>();
 
 	/**
 	 * Resolves the latest bundle with the given bundle symbolic name.
@@ -49,7 +50,7 @@ final class BundleFinder implements BundleTrackerCustomizer<List<Bundle>> {
 		if (bundlesWithSameSymName == null)
 			return null;
 
-		List<Bundle> snapshot = new ArrayList<Bundle>(bundlesWithSameSymName);
+		List<Bundle> snapshot = new ArrayList<>(bundlesWithSameSymName);
 
 		switch (snapshot.size()) {
 		case 0:
@@ -71,7 +72,7 @@ final class BundleFinder implements BundleTrackerCustomizer<List<Bundle>> {
 
 		List<Bundle> bundlesWithSameSymName = trackedBundles.get(bundleSymName);
 		if (bundlesWithSameSymName == null) {
-			bundlesWithSameSymName = new CopyOnWriteArrayList<Bundle>();
+			bundlesWithSameSymName = new CopyOnWriteArrayList<>();
 
 			if (trackedBundles.putIfAbsent(bundleSymName, bundlesWithSameSymName) != null) {
 				// some other thread has won the race, so we use his List object

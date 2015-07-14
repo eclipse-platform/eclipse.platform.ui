@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 434611
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434611, 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -156,7 +156,7 @@ public class ModelServiceImpl implements EModelService {
 		if (searchRoot instanceof MApplication && (searchFlags == ANYWHERE)) {
 			MApplication app = (MApplication) searchRoot;
 
-			List<MApplicationElement> children = new ArrayList<MApplicationElement>();
+			List<MApplicationElement> children = new ArrayList<>();
 			if (clazz != null) {
 				if (clazz.equals(MHandler.class)) {
 					children.addAll(app.getHandlers());
@@ -308,7 +308,7 @@ public class ModelServiceImpl implements EModelService {
 	@Override
 	public <T> List<T> findElements(MApplicationElement searchRoot, Class<T> clazz,
 			int searchFlags, Selector matcher) {
-		List<T> elements = new ArrayList<T>();
+		List<T> elements = new ArrayList<>();
 		findElementsRecursive(searchRoot, clazz, matcher, elements, searchFlags);
 		return elements;
 	}
@@ -316,7 +316,7 @@ public class ModelServiceImpl implements EModelService {
 	private <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id,
 			Class<T> clazz,
 			List<String> tagsToMatch) {
-		List<T> elements = new ArrayList<T>();
+		List<T> elements = new ArrayList<>();
 		ElementMatcher matcher = new ElementMatcher(id, clazz, tagsToMatch);
 		findElementsRecursive(searchRoot, clazz, matcher, elements, PRESENTATION);
 		return elements;
@@ -501,7 +501,7 @@ public class ModelServiceImpl implements EModelService {
 	@Override
 	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
 		List<MPlaceholder> phList = findPerspectiveElements(window, null, MPlaceholder.class, null);
-		List<MPlaceholder> elementRefs = new ArrayList<MPlaceholder>();
+		List<MPlaceholder> elementRefs = new ArrayList<>();
 		for (MPlaceholder ph : phList) {
 			if (ph.getRef() == element) {
 				elementRefs.add(ph);
@@ -772,7 +772,7 @@ public class ModelServiceImpl implements EModelService {
 
 		// Remove any minimized stacks for this perspective
 		List<MTrimBar> bars = findElements(window, null, MTrimBar.class, null);
-		List<MToolControl> toRemove = new ArrayList<MToolControl>();
+		List<MToolControl> toRemove = new ArrayList<>();
 		for (MTrimBar bar : bars) {
 			for (MUIElement barKid : bar.getChildren()) {
 				if (!(barKid instanceof MToolControl)) {
@@ -916,7 +916,7 @@ public class ModelServiceImpl implements EModelService {
 				OUTSIDE_PERSPECTIVE | IN_SHARED_AREA);
 
 		// Iterate across the perspective(s) removing any 'local' placeholders
-		List<MPerspective> persps = new ArrayList<MPerspective>();
+		List<MPerspective> persps = new ArrayList<>();
 		if (perspective != null) {
 			persps.add(perspective);
 		} else {

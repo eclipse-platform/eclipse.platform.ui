@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -35,7 +36,7 @@ class PartActivationHistory {
 
 	private EModelService modelService;
 
-	private LinkedList<MPart> generalActivationHistory = new LinkedList<MPart>();
+	private LinkedList<MPart> generalActivationHistory = new LinkedList<>();
 
 	PartActivationHistory(PartServiceImpl partService, EModelService modelService) {
 		this.partService = partService;
@@ -211,7 +212,7 @@ class PartActivationHistory {
 
 	MPart getActivationCandidate(Collection<MPart> validParts) {
 		// check activation history, since the history is global, we need to filter it down first
-		Collection<MPart> validCandidates = new ArrayList<MPart>();
+		Collection<MPart> validCandidates = new ArrayList<>();
 		for (MPart validPart : generalActivationHistory) {
 			if (validParts.contains(validPart)) {
 				validCandidates.add(validPart);
@@ -268,7 +269,7 @@ class PartActivationHistory {
 		}
 
 		// check activation history, since the history is global, we need to filter it down first
-		Collection<MPart> validCandidates = new ArrayList<MPart>();
+		Collection<MPart> validCandidates = new ArrayList<>();
 		for (MPart validPart : generalActivationHistory) {
 			if (validParts.contains(validPart)) {
 				validCandidates.add(validPart);
@@ -303,7 +304,7 @@ class PartActivationHistory {
 			}
 		}
 
-		List<String> activeTag = new ArrayList<String>();
+		List<String> activeTag = new ArrayList<>();
 		activeTag.add(EPartService.ACTIVE_ON_CLOSE_TAG);
 		List<MPart> activeCandidates = modelService.findElements(perspective, null, MPart.class,
 				activeTag);

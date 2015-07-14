@@ -94,7 +94,7 @@ public class Activator implements BundleActivator {
 				// ignore this. It should never happen as we have tested the
 				// above format.
 			}
-			locationTracker = new ServiceTracker<Location, Location>(context, filter, null);
+			locationTracker = new ServiceTracker<>(context, filter, null);
 			locationTracker.open();
 		}
 		return locationTracker.getService();
@@ -106,7 +106,7 @@ public class Activator implements BundleActivator {
 		this.context = context;
 
 		// track required bundles
-		resolvedBundles = new BundleTracker<List<Bundle>>(context, Bundle.RESOLVED
+		resolvedBundles = new BundleTracker<>(context, Bundle.RESOLVED
 				| Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING, bundleFinder);
 		resolvedBundles.open();
 	}
@@ -137,7 +137,7 @@ public class Activator implements BundleActivator {
 		if (debugTracker == null) {
 			if (context == null)
 				return null;
-			debugTracker = new ServiceTracker<DebugOptions, DebugOptions>(context,
+			debugTracker = new ServiceTracker<>(context,
 					DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
@@ -169,7 +169,7 @@ public class Activator implements BundleActivator {
 			logService = logTracker.getService();
 		} else {
 			if (context != null) {
-				logTracker = new ServiceTracker<LogService, LogService>(context,
+				logTracker = new ServiceTracker<>(context,
 						LogService.class.getName(), null);
 				logTracker.open();
 				logService = logTracker.getService();
