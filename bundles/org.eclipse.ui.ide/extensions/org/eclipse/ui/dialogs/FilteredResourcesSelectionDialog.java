@@ -1065,7 +1065,7 @@ public class FilteredResourcesSelectionDialog extends
 			if (!this.enabled) {
 				return elements;
 			}
-			Map<IPath, IResource> bestResourceForPath = new LinkedHashMap<IPath, IResource>();
+			Map<IPath, IResource> bestResourceForPath = new LinkedHashMap<>();
 			for (Object item : elements) {
 				if (item instanceof IResource) {
 					IResource currentResource = (IResource) item;

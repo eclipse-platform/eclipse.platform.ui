@@ -29,7 +29,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class TypeMarkerGroup extends MarkerGroup {
 
-	private Map<String, TypesMarkerGroupingEntry> entries=new HashMap<String, TypesMarkerGroupingEntry>();
+	private Map<String, TypesMarkerGroupingEntry> entries=new HashMap<>();
 	/**
 	 * TypeMarkerField is the MarkerField used for MarkerGroupungs
 	 *

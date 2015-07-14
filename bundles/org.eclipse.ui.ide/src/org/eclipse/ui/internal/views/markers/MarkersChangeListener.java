@@ -190,7 +190,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 		if (markerDeltas.length == 0) {
 			return;
 		}
-		Collection<MarkerEntry> removed = new LinkedList<MarkerEntry>(), added = new LinkedList<MarkerEntry>(), changed = new LinkedList<>();
+		Collection<MarkerEntry> removed = new LinkedList<>(), added = new LinkedList<>(), changed = new LinkedList<>();
 		String[] types = listeningTypes;
 		for (int i = 0; i < markerDeltas.length; i++) {
 			try {
