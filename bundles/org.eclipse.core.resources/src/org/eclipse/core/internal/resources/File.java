@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Sergey Prigogin (Google) - [464072] Refresh on Access ignored during text search
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -193,7 +194,14 @@ public class File extends Resource implements IFile {
 		if (!exists(flags, false))
 			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
 		checkLocal(flags, DEPTH_ZERO);
-		return internalGetCharset(checkImplicit, info);
+		try {
+			return internalGetCharset(checkImplicit, info);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
+			}
+			throw e;
+		}
 	}
 
 	@Override
