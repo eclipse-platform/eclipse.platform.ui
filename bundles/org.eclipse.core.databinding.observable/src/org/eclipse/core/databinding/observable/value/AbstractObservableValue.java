@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Matthew Hall - bugs 208332, 263691
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -24,10 +25,14 @@ import org.eclipse.core.databinding.observable.Realm;
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ *
+ * @param <T>
+ *            the type of value being observed
  * @since 1.0
  *
  */
-abstract public class AbstractObservableValue extends AbstractObservable implements IObservableValue {
+abstract public class AbstractObservableValue<T> extends AbstractObservable
+		implements IObservableValue<T> {
 	/**
 	 * Constructs a new instance with the default realm.
 	 */
@@ -43,17 +48,19 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 	}
 
 	@Override
-	public synchronized void addValueChangeListener(IValueChangeListener listener) {
+	public synchronized void addValueChangeListener(
+			IValueChangeListener<? super T> listener) {
 		addListener(ValueChangeEvent.TYPE, listener);
 	}
 
 	@Override
-	public synchronized void removeValueChangeListener(IValueChangeListener listener) {
+	public synchronized void removeValueChangeListener(
+			IValueChangeListener<? super T> listener) {
 		removeListener(ValueChangeEvent.TYPE, listener);
 	}
 
 	@Override
-	final public void setValue(Object value) {
+	final public void setValue(T value) {
 		checkRealm();
 		doSetValue(value);
 	}
@@ -64,23 +71,23 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 	 *
 	 * @param value
 	 */
-	protected void doSetValue(Object value) {
+	protected void doSetValue(T value) {
 		throw new UnsupportedOperationException();
 	}
 
-	protected void fireValueChange(ValueDiff diff) {
+	protected void fireValueChange(ValueDiff<? extends T> diff) {
 		// fire general change event first
 		super.fireChange();
-		fireEvent(new ValueChangeEvent(this, diff));
+		fireEvent(new ValueChangeEvent<>(this, diff));
 	}
 
 	@Override
-	public final Object getValue() {
+	public final T getValue() {
 		getterCalled();
 		return doGetValue();
 	}
 
-	abstract protected Object doGetValue();
+	abstract protected T doGetValue();
 
 	@Override
 	public boolean isStale() {

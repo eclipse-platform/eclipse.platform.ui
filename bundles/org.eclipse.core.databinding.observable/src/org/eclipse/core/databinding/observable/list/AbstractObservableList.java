@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Brad Reynolds - bugs 164653, 167204
  *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397, 249526,
  *                    349038
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -39,11 +40,14 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * listeners may be invoked from any thread.
  * </p>
  *
+ * @param <E>
+ *            the list element type
+ *
  * @since 1.0
  *
  */
-public abstract class AbstractObservableList extends AbstractList implements
-		IObservableList {
+public abstract class AbstractObservableList<E> extends AbstractList<E>
+		implements IObservableList<E> {
 	private final class PrivateChangeSupport extends ChangeSupport {
 		private PrivateChangeSupport(Realm realm) {
 			super(realm);
@@ -104,23 +108,23 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	@Override
-	public synchronized void addListChangeListener(IListChangeListener listener) {
+	public synchronized void addListChangeListener(IListChangeListener<? super E> listener) {
 		if (!disposed) {
 			changeSupport.addListener(ListChangeEvent.TYPE, listener);
 		}
 	}
 
 	@Override
-	public synchronized void removeListChangeListener(IListChangeListener listener) {
+	public synchronized void removeListChangeListener(IListChangeListener<? super E> listener) {
 		if (!disposed) {
 			changeSupport.removeListener(ListChangeEvent.TYPE, listener);
 		}
 	}
 
-	protected void fireListChange(ListDiff diff) {
+	protected void fireListChange(ListDiff<? extends E> diff) {
 		// fire general change event first
 		fireChange();
-		changeSupport.fireEvent(new ListChangeEvent(this, diff));
+		changeSupport.fireEvent(new ListChangeEvent<E>(this, diff));
 	}
 
 	@Override
@@ -252,10 +256,10 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		getterCalled();
-		final Iterator wrappedIterator = super.iterator();
-		return new Iterator() {
+		final Iterator<E> wrappedIterator = super.iterator();
+		return new Iterator<E>() {
 			@Override
 			public void remove() {
 				wrappedIterator.remove();
@@ -267,7 +271,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				return wrappedIterator.next();
 			}
 		};
@@ -280,7 +284,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	@Override
-	public Object[] toArray(Object a[]) {
+	public <T> T[] toArray(T a[]) {
 		getterCalled();
 		return super.toArray(a);
 	}
@@ -288,7 +292,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	// Modification Operations
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		getterCalled();
 		return super.add(o);
 	}
@@ -311,13 +315,14 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 *            range <code>0 &lt;= newIndex &lt; size()</code>.
 	 * @return the element that was moved.
 	 * @throws IndexOutOfBoundsException
-	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
+	 *             if either argument is out of range (
+	 *             <code>0 &lt;= index &lt; size()</code>).
 	 * @see ListDiffVisitor#handleMove(int, int, Object)
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
 	 */
 	@Override
-	public Object move(int oldIndex, int newIndex) {
+	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = doGetSize();
 		if (oldIndex < 0 || oldIndex >= size)
@@ -326,7 +331,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		if (newIndex < 0 || newIndex >= size)
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		Object element = remove(oldIndex);
+		E element = remove(oldIndex);
 		add(newIndex, element);
 		return element;
 	}
@@ -340,31 +345,31 @@ public abstract class AbstractObservableList extends AbstractList implements
 	// Bulk Modification Operations
 
 	@Override
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		getterCalled();
 		return super.containsAll(c);
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		getterCalled();
 		return super.addAll(c);
 	}
 
 	@Override
-	public boolean addAll(int index, Collection c) {
+	public boolean addAll(int index, Collection<? extends E> c) {
 		getterCalled();
 		return super.addAll(c);
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		getterCalled();
 		return super.removeAll(c);
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		getterCalled();
 		return super.retainAll(c);
 	}

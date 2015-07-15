@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Sebastian Fuchs <spacehorst@gmail.com> - bug 243848
  *     Matthew Hall - bugs 208858, 213145, 243848
  *     Ovidio Mallo - bug 332367
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -34,9 +35,12 @@ import org.eclipse.core.databinding.observable.Realm;
  * listeners may be invoked from any thread.
  * </p>
  *
+ * @param <E>
+ *            the type of the elements in this list
+ *
  * @since 1.0
  */
-public class WritableList extends ObservableList {
+public class WritableList<E> extends ObservableList<E> {
 
 	/**
 	 * Creates an empty writable list in the default realm with a
@@ -54,7 +58,7 @@ public class WritableList extends ObservableList {
 	 *            the observable's realm
 	 */
 	public WritableList(Realm realm) {
-		this(realm, new ArrayList(), null);
+		this(realm, new ArrayList<E>(), null);
 	}
 
 	/**
@@ -69,7 +73,7 @@ public class WritableList extends ObservableList {
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */
-	public WritableList(List toWrap, Object elementType) {
+	public WritableList(List<E> toWrap, Object elementType) {
 		this(Realm.getDefault(), toWrap, elementType);
 	}
 
@@ -84,8 +88,8 @@ public class WritableList extends ObservableList {
 	 *            can be <code>null</code>
 	 * @since 1.2
 	 */
-	public WritableList(Collection collection, Object elementType) {
-		this(Realm.getDefault(), new ArrayList(collection), elementType);
+	public WritableList(Collection<E> collection, Object elementType) {
+		this(Realm.getDefault(), new ArrayList<E>(collection), elementType);
 	}
 
 	/**
@@ -103,7 +107,7 @@ public class WritableList extends ObservableList {
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */
-	public WritableList(Realm realm, List toWrap, Object elementType) {
+	public WritableList(Realm realm, List<E> toWrap, Object elementType) {
 		super(realm, toWrap, elementType);
 	}
 
@@ -120,14 +124,15 @@ public class WritableList extends ObservableList {
 	 *            can be <code>null</code>
 	 * @since 1.2
 	 */
-	public WritableList(Realm realm, Collection collection, Object elementType) {
-		super(realm, new ArrayList(collection), elementType);
+	public WritableList(Realm realm, Collection<E> collection,
+			Object elementType) {
+		super(realm, new ArrayList<E>(collection), elementType);
 	}
 
 	@Override
-	public Object set(int index, Object element) {
+	public E set(int index, E element) {
 		checkRealm();
-		Object oldElement = wrappedList.set(index, element);
+		E oldElement = wrappedList.set(index, element);
 		fireListChange(Diffs.createListDiff(
 				Diffs.createListDiffEntry(index, false, oldElement),
 				Diffs.createListDiffEntry(index, true, element)));
@@ -138,7 +143,7 @@ public class WritableList extends ObservableList {
 	 * @since 1.1
 	 */
 	@Override
-	public Object move(int oldIndex, int newIndex) {
+	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
 		if (oldIndex < 0 || oldIndex >= size)
@@ -149,7 +154,7 @@ public class WritableList extends ObservableList {
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
 		if (oldIndex == newIndex)
 			return wrappedList.get(oldIndex);
-		Object element = wrappedList.remove(oldIndex);
+		E element = wrappedList.remove(oldIndex);
 		wrappedList.add(newIndex, element);
 		fireListChange(Diffs.createListDiff(
 				Diffs.createListDiffEntry(oldIndex, false, element),
@@ -158,16 +163,16 @@ public class WritableList extends ObservableList {
 	}
 
 	@Override
-	public Object remove(int index) {
+	public E remove(int index) {
 		checkRealm();
-		Object oldElement = wrappedList.remove(index);
+		E oldElement = wrappedList.remove(index);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
 				false, oldElement)));
 		return oldElement;
 	}
 
 	@Override
-	public boolean add(Object element) {
+	public boolean add(E element) {
 		checkRealm();
 		boolean added = wrappedList.add(element);
 		if (added) {
@@ -178,7 +183,7 @@ public class WritableList extends ObservableList {
 	}
 
 	@Override
-	public void add(int index, Object element) {
+	public void add(int index, E element) {
 		checkRealm();
 		wrappedList.add(index, element);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
@@ -186,14 +191,14 @@ public class WritableList extends ObservableList {
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		checkRealm();
-		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
-		int i = 0;
+		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+				c.size());
 		int addIndex = wrappedList.size();
-		for (Iterator it = c.iterator(); it.hasNext();) {
-			Object element = it.next();
-			entries[i++] = Diffs.createListDiffEntry(addIndex++, true, element);
+		for (Iterator<? extends E> it = c.iterator(); it.hasNext();) {
+			E element = it.next();
+			entries.add(Diffs.createListDiffEntry(addIndex++, true, element));
 		}
 		boolean added = wrappedList.addAll(c);
 		fireListChange(Diffs.createListDiff(entries));
@@ -201,14 +206,14 @@ public class WritableList extends ObservableList {
 	}
 
 	@Override
-	public boolean addAll(int index, Collection c) {
+	public boolean addAll(int index, Collection<? extends E> c) {
 		checkRealm();
-		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
-		int i = 0;
+		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+				c.size());
 		int addIndex = index;
-		for (Iterator it = c.iterator(); it.hasNext();) {
-			Object element = it.next();
-			entries[i++] = Diffs.createListDiffEntry(addIndex++, true, element);
+		for (Iterator<? extends E> it = c.iterator(); it.hasNext();) {
+			E element = it.next();
+			entries.add(Diffs.createListDiffEntry(addIndex++, true, element));
 		}
 		boolean added = wrappedList.addAll(index, c);
 		fireListChange(Diffs.createListDiff(entries));
@@ -222,38 +227,42 @@ public class WritableList extends ObservableList {
 		if (index == -1) {
 			return false;
 		}
+
+		// Fetch it back so we can get it typed in a safe manner
+		E typedO = wrappedList.get(index);
+
 		wrappedList.remove(index);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
-				false, o)));
+				false, typedO)));
 		return true;
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		checkRealm();
-		List entries = new ArrayList();
-		for (Iterator it = c.iterator(); it.hasNext();) {
+		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
+		for (Iterator<?> it = c.iterator(); it.hasNext();) {
 			Object element = it.next();
 			int removeIndex = wrappedList.indexOf(element);
 			if (removeIndex != -1) {
+				E removedElement = wrappedList.get(removeIndex);
 				wrappedList.remove(removeIndex);
 				entries.add(Diffs.createListDiffEntry(removeIndex, false,
-						element));
+						removedElement));
 			}
 		}
 		if (entries.size() > 0)
-			fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
-					.toArray(new ListDiffEntry[entries.size()])));
+			fireListChange(Diffs.createListDiff(entries));
 		return entries.size() > 0;
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		checkRealm();
-		List entries = new ArrayList();
+		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>();
 		int removeIndex = 0;
-		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Iterator<E> it = wrappedList.iterator(); it.hasNext();) {
+			E element = it.next();
 			if (!c.contains(element)) {
 				entries.add(Diffs.createListDiffEntry(removeIndex, false,
 						element));
@@ -264,8 +273,7 @@ public class WritableList extends ObservableList {
 			}
 		}
 		if (entries.size() > 0)
-			fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
-					.toArray(new ListDiffEntry[entries.size()])));
+			fireListChange(Diffs.createListDiff(entries));
 		return entries.size() > 0;
 	}
 
@@ -274,14 +282,13 @@ public class WritableList extends ObservableList {
 		checkRealm();
 		// We remove the elements from back to front which is typically much
 		// faster on common list implementations like ArrayList.
-		ListDiffEntry[] entries = new ListDiffEntry[wrappedList.size()];
-		int entryIndex = 0;
-		for (ListIterator it = wrappedList.listIterator(wrappedList.size()); it
+		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+				wrappedList.size());
+		for (ListIterator<E> it = wrappedList.listIterator(wrappedList.size()); it
 				.hasPrevious();) {
 			int elementIndex = it.previousIndex();
-			Object element = it.previous();
-			entries[entryIndex++] = Diffs.createListDiffEntry(elementIndex,
-					false, element);
+			E element = it.previous();
+			entries.add(Diffs.createListDiffEntry(elementIndex, false, element));
 		}
 		wrappedList.clear();
 		fireListChange(Diffs.createListDiff(entries));
@@ -292,8 +299,7 @@ public class WritableList extends ObservableList {
 	 *            can be <code>null</code>
 	 * @return new list with the default realm.
 	 */
-	public static WritableList withElementType(Object elementType) {
-		return new WritableList(Realm.getDefault(), new ArrayList(),
-				elementType);
+	public static <T> WritableList<T> withElementType(Object elementType) {
+		return new WritableList<T>(Realm.getDefault(), new ArrayList<T>(), elementType);
 	}
 }

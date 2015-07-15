@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022, 251424
  *     Ovidio Mallo - bug 241318
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -33,38 +34,43 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
+ * @param <M>
+ *            type of the master observable
+ * @param <E>
+ *            type of the elements in the inner observable list
  * @since 3.2
  *
  */
-public class DetailObservableSet extends ObservableSet implements IObserving {
+public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObserving {
 
 	private boolean updating = false;
 
-	private ISetChangeListener innerChangeListener = new ISetChangeListener() {
+	private ISetChangeListener<E> innerChangeListener = new ISetChangeListener<E>() {
 		@Override
-		public void handleSetChange(SetChangeEvent event) {
+		public void handleSetChange(SetChangeEvent<? extends E> event) {
 			if (!updating) {
 				fireSetChange(event.diff);
 			}
 		}
 	};
 
-	private Object currentOuterValue;
+	private M currentOuterValue;
 
-	private IObservableSet innerObservableSet;
+	private IObservableSet<E> innerObservableSet;
 
-	private IObservableValue outerObservableValue;
+	private IObservableValue<M> outerObservableValue;
 
-	private IObservableFactory factory;
+	private IObservableFactory<? super M, IObservableSet<E>> factory;
 
 	/**
 	 * @param factory
 	 * @param outerObservableValue
 	 * @param detailType
 	 */
-	public DetailObservableSet(IObservableFactory factory,
-			IObservableValue outerObservableValue, Object detailType) {
-		super(outerObservableValue.getRealm(), Collections.EMPTY_SET,
+	public DetailObservableSet(
+			IObservableFactory<? super M, IObservableSet<E>> factory,
+			IObservableValue<M> outerObservableValue, Object detailType) {
+		super(outerObservableValue.getRealm(), Collections.<E> emptySet(),
 				detailType);
 		Assert.isTrue(!outerObservableValue.isDisposed(),
 				"Master observable is disposed"); //$NON-NLS-1$
@@ -74,7 +80,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 		outerObservableValue.addDisposeListener(new IDisposeListener() {
 			@Override
-			public void handleDispose(DisposeEvent staleEvent) {
+			public void handleDispose(DisposeEvent disposeEvent) {
 				dispose();
 			}
 		});
@@ -88,14 +94,14 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
-	IValueChangeListener outerChangeListener = new IValueChangeListener() {
+	IValueChangeListener<M> outerChangeListener = new IValueChangeListener<M>() {
 		@Override
-		public void handleValueChange(ValueChangeEvent event) {
+		public void handleValueChange(ValueChangeEvent<? extends M> event) {
 			if (isDisposed())
 				return;
 			ObservableTracker.setIgnore(true);
 			try {
-				Set oldSet = new HashSet(wrappedSet);
+				Set<E> oldSet = new HashSet<>(wrappedSet);
 				updateInnerObservableSet();
 				fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
 			} finally {
@@ -112,12 +118,11 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 		}
 		if (currentOuterValue == null) {
 			innerObservableSet = null;
-			wrappedSet = Collections.EMPTY_SET;
+			wrappedSet = Collections.emptySet();
 		} else {
 			ObservableTracker.setIgnore(true);
 			try {
-				innerObservableSet = (IObservableSet) factory
-						.createObservable(currentOuterValue);
+				innerObservableSet = factory.createObservable(currentOuterValue);
 			} finally {
 				ObservableTracker.setIgnore(false);
 			}
@@ -137,7 +142,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	}
 
 	@Override
-	public boolean add(final Object o) {
+	public boolean add(final E o) {
 		getterCalled();
 		ObservableTracker.setIgnore(true);
 		try {
@@ -159,7 +164,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	}
 
 	@Override
-	public boolean addAll(final Collection c) {
+	public boolean addAll(final Collection<? extends E> c) {
 		getterCalled();
 		ObservableTracker.setIgnore(true);
 		try {
@@ -170,7 +175,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	}
 
 	@Override
-	public boolean removeAll(final Collection c) {
+	public boolean removeAll(final Collection<?> c) {
 		getterCalled();
 		ObservableTracker.setIgnore(true);
 		try {
@@ -181,7 +186,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	}
 
 	@Override
-	public boolean retainAll(final Collection c) {
+	public boolean retainAll(final Collection<?> c) {
 		getterCalled();
 		ObservableTracker.setIgnore(true);
 		try {

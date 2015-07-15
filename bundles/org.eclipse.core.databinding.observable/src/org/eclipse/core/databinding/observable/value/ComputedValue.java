@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 116920, 147515
  *     Matthew Hall - bug 274081
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
@@ -59,15 +60,18 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  * System.out.println(sum.getValue()); // =&gt; 13
  * </pre>
  *
+ * @param <T>
+ *            the type of value being observed
+ *
  * @since 1.0
  */
-public abstract class ComputedValue extends AbstractObservableValue {
+public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 
 	private boolean dirty = true;
 
 	private boolean stale = false;
 
-	private Object cachedValue = null;
+	private T cachedValue = null;
 
 	/**
 	 * Array of observables this computed value depends on. This field has a
@@ -154,7 +158,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private Object valueType;
 
 	@Override
-	protected final Object doGetValue() {
+	protected final T doGetValue() {
 		if (dirty) {
 			// This line will do the following:
 			// - Run the calculate method
@@ -190,7 +194,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 *
 	 * @return the object's value
 	 */
-	protected abstract Object calculate();
+	protected abstract T calculate();
 
 	protected final void makeDirty() {
 		if (!dirty) {
@@ -199,18 +203,18 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			stopListening();
 
 			// copy the old value
-			final Object oldValue = cachedValue;
+			final T oldValue = cachedValue;
 			// Fire the "dirty" event. This implementation recomputes the new
 			// value lazily.
-			fireValueChange(new ValueDiff() {
+			fireValueChange(new ValueDiff<T>() {
 
 				@Override
-				public Object getOldValue() {
+				public T getOldValue() {
 					return oldValue;
 				}
 
 				@Override
-				public Object getNewValue() {
+				public T getNewValue() {
 					return getValue();
 				}
 			});
@@ -290,7 +294,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	@Override
 	public synchronized void addValueChangeListener(
-			IValueChangeListener listener) {
+			IValueChangeListener<? super T> listener) {
 		super.addValueChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners

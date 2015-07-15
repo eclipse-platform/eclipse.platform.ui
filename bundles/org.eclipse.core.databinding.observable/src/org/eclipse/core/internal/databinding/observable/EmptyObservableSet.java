@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 208332, 146397, 249526
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -28,10 +29,13 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Singleton empty set
+ *
+ * @param <E>
+ *            the type of the object in this collection
  */
-public class EmptyObservableSet implements IObservableSet {
+public class EmptyObservableSet<E> implements IObservableSet<E> {
 
-	private static final Set emptySet = Collections.EMPTY_SET;
+	private final Set<E> emptySet = Collections.emptySet();
 
 	private final Realm realm;
 	private Object elementType;
@@ -64,11 +68,11 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	@Override
-	public void addSetChangeListener(ISetChangeListener listener) {
+	public void addSetChangeListener(ISetChangeListener<? super E> listener) {
 	}
 
 	@Override
-	public void removeSetChangeListener(ISetChangeListener listener) {
+	public void removeSetChangeListener(ISetChangeListener<? super E> listener) {
 	}
 
 	@Override
@@ -100,7 +104,7 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		checkRealm();
 		return emptySet.iterator();
 	}
@@ -112,12 +116,12 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	@Override
-	public Object[] toArray(Object[] a) {
+	public <T> T[] toArray(T[] a) {
 		return emptySet.toArray(a);
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -127,23 +131,23 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	@Override
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		checkRealm();
 		return c.isEmpty();
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -206,7 +210,7 @@ public class EmptyObservableSet implements IObservableSet {
 		if (!(obj instanceof Set))
 			return false;
 
-		return ((Set) obj).isEmpty();
+		return ((Set<?>) obj).isEmpty();
 	}
 
 	@Override

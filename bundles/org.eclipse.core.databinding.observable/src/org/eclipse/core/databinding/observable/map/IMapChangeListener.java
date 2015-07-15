@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -16,10 +17,14 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 /**
  * Listener for changes to observable maps.
  *
+ * @param <K>
+ *            type of the keys to the map
+ * @param <V>
+ *            type of the values in the map
  * @since 1.0
  *
  */
-public interface IMapChangeListener extends IObservablesListener {
+public interface IMapChangeListener<K, V> extends IObservablesListener {
 
 	/**
 	 * Handle a change an observable map. The given event object must only be
@@ -30,6 +35,6 @@ public interface IMapChangeListener extends IObservablesListener {
 	 * @param event
 	 *            the event
 	 */
-	void handleMapChange(MapChangeEvent event);
+	void handleMapChange(MapChangeEvent<? extends K, ? extends V> event);
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 210115, 146397, 249526, 262269, 251424
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
@@ -65,15 +66,15 @@ public class ObservableTracker {
 	 * changes the current value, it remembers the old value as a local variable
 	 * and restores the old value when the method exits.
 	 */
-	private static ThreadLocal currentChangeListener = new ThreadLocal();
+	private static ThreadLocal<IChangeListener> currentChangeListener = new ThreadLocal<>();
 
-	private static ThreadLocal currentStaleListener = new ThreadLocal();
+	private static ThreadLocal<IStaleListener> currentStaleListener = new ThreadLocal<>();
 
-	private static ThreadLocal currentGetterCalledSet = new ThreadLocal();
+	private static ThreadLocal<Set<IObservable>> currentGetterCalledSet = new ThreadLocal<>();
 
-	private static ThreadLocal currentObservableCreatedSet = new ThreadLocal();
+	private static ThreadLocal<Set<IObservable>> currentObservableCreatedSet = new ThreadLocal<>();
 
-	private static ThreadLocal currentIgnoreCount = new ThreadLocal();
+	private static ThreadLocal<Integer> currentIgnoreCount = new ThreadLocal<>();
 
 	/**
 	 * Invokes the given runnable, and returns the set of IObservables that were
@@ -93,14 +94,12 @@ public class ObservableTracker {
 	public static IObservable[] runAndMonitor(Runnable runnable,
 			IChangeListener changeListener, IStaleListener staleListener) {
 		// Remember the previous value in the listener stack
-		Set lastObservableSet = (Set) currentGetterCalledSet.get();
-		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
-				.get();
-		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
-				.get();
-		Integer lastIgnore = (Integer) currentIgnoreCount.get();
+		Set<IObservable> lastObservableSet = currentGetterCalledSet.get();
+		IChangeListener lastChangeListener = currentChangeListener.get();
+		IStaleListener lastStaleListener = currentStaleListener.get();
+		Integer lastIgnore = currentIgnoreCount.get();
 
-		Set observableSet = new IdentitySet();
+		Set<IObservable> observableSet = new IdentitySet<>();
 		// Push the new listeners to the top of the stack
 		currentGetterCalledSet.set(observableSet);
 		currentChangeListener.set(changeListener);
@@ -118,8 +117,7 @@ public class ObservableTracker {
 			currentIgnoreCount.set(lastIgnore);
 		}
 
-		return (IObservable[]) observableSet
-				.toArray(new IObservable[observableSet.size()]);
+		return observableSet.toArray(new IObservable[observableSet.size()]);
 	}
 
 	/**
@@ -139,10 +137,10 @@ public class ObservableTracker {
 	 * @since 1.2
 	 */
 	public static IObservable[] runAndCollect(Runnable runnable) {
-		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
-		Integer lastIgnore = (Integer) currentIgnoreCount.get();
+		Set<IObservable> lastObservableCreatedSet = currentObservableCreatedSet.get();
+		Integer lastIgnore = currentIgnoreCount.get();
 
-		Set observableSet = new IdentitySet();
+		Set<IObservable> observableSet = new IdentitySet<>();
 		// Push the new listeners to the top of the stack
 		currentObservableCreatedSet.set(observableSet);
 		currentIgnoreCount.set(null);
@@ -156,22 +154,19 @@ public class ObservableTracker {
 			currentIgnoreCount.set(lastIgnore);
 		}
 
-		return (IObservable[]) observableSet
-				.toArray(new IObservable[observableSet.size()]);
+		return observableSet.toArray(new IObservable[observableSet.size()]);
 	}
 
 	private static void checkUnmatchedIgnore(Runnable runnable) {
 		if (isIgnore()) {
-			Policy
-					.getLog()
-					.log(
-							new Status(
-									IStatus.ERROR,
-									Policy.JFACE_DATABINDING,
-									"There were " //$NON-NLS-1$
-											+ currentIgnoreCount.get()
-											+ " unmatched setIgnore(true) invocations in runnable " //$NON-NLS-1$
-											+ runnable));
+			Policy.getLog()
+					.log(new Status(
+							IStatus.ERROR,
+							Policy.JFACE_DATABINDING,
+							"There were " //$NON-NLS-1$
+									+ currentIgnoreCount.get()
+									+ " unmatched setIgnore(true) invocations in runnable " //$NON-NLS-1$
+									+ runnable));
 		}
 	}
 
@@ -196,7 +191,7 @@ public class ObservableTracker {
 	 * @since 1.3
 	 */
 	public static void setIgnore(boolean ignore) {
-		Integer lastCount = (Integer) currentIgnoreCount.get();
+		Integer lastCount = currentIgnoreCount.get();
 
 		int newCount = (lastCount == null ? 0 : lastCount.intValue())
 				+ (ignore ? 1 : -1);
@@ -259,15 +254,13 @@ public class ObservableTracker {
 		if (isIgnore())
 			return;
 
-		Set getterCalledSet = (Set) currentGetterCalledSet.get();
+		Set<IObservable> getterCalledSet = currentGetterCalledSet.get();
 		if (getterCalledSet != null && getterCalledSet.add(observable)) {
 			// If anyone is listening for observable usage...
-			IChangeListener changeListener = (IChangeListener) currentChangeListener
-					.get();
+			IChangeListener changeListener = currentChangeListener.get();
 			if (changeListener != null)
 				observable.addChangeListener(changeListener);
-			IStaleListener staleListener = (IStaleListener) currentStaleListener
-					.get();
+			IStaleListener staleListener = currentStaleListener.get();
 			if (staleListener != null)
 				observable.addStaleListener(staleListener);
 		}
@@ -283,7 +276,7 @@ public class ObservableTracker {
 	public static void observableCreated(IObservable observable) {
 		if (isIgnore())
 			return;
-		Set observableCreatedSet = (Set) currentObservableCreatedSet.get();
+		Set<IObservable> observableCreatedSet = currentObservableCreatedSet.get();
 		if (observableCreatedSet != null) {
 			observableCreatedSet.add(observable);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 175735)
  *     Matthew Hall - bug 262407
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -23,12 +24,16 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.internal.databinding.observable.Util;
 
 /**
+ * @param <T>
+ *            the type of value being observed
  * @since 1.2
  */
-public abstract class DuplexingObservableValue extends AbstractObservableValue {
+public abstract class DuplexingObservableValue<T> extends AbstractObservableValue<T> {
 	/**
 	 * Returns a DuplexingObservableValue implementation with predefined values
 	 * to use if the list is empty or contains multiple different values.
+	 *
+	 * @param <T>
 	 *
 	 * @param target
 	 *            the observable list
@@ -36,20 +41,20 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	 *            the value to use when the target list is empty
 	 * @param multiValue
 	 *            the value to use when the target list contains multiple values
-	 *            that are not equivalent to eachother.
+	 *            that are not equivalent to each other.
 	 * @return a DuplexingObservableValue implementation with predefined values
 	 *         to use if the list is empty or contains multiple different
 	 *         values.
 	 */
-	public static DuplexingObservableValue withDefaults(IObservableList target,
-			final Object emptyValue, final Object multiValue) {
-		return new DuplexingObservableValue(target) {
+	public static <T> DuplexingObservableValue<T> withDefaults(
+			IObservableList<T> target, final T emptyValue, final T multiValue) {
+		return new DuplexingObservableValue<T>(target) {
 			@Override
-			protected Object coalesceElements(Collection elements) {
+			protected T coalesceElements(Collection<T> elements) {
 				if (elements.isEmpty())
 					return emptyValue;
-				Iterator it = elements.iterator();
-				Object first = it.next();
+				Iterator<T> it = elements.iterator();
+				T first = it.next();
 				while (it.hasNext())
 					if (!Util.equals(first, it.next()))
 						return multiValue;
@@ -58,19 +63,19 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 		};
 	}
 
-	private IObservableList target;
+	private IObservableList<T> target;
 	private final Object valueType;
 
 	private boolean dirty = true;
 	private boolean updating = false;
-	private Object cachedValue = null; // applicable only while hasListener()
+	private T cachedValue = null; // applicable only while hasListener()
 
 	private PrivateInterface privateInterface;
 
 	/**
 	 * @param target
 	 */
-	public DuplexingObservableValue(IObservableList target) {
+	public DuplexingObservableValue(IObservableList<T> target) {
 		this(target, target.getElementType());
 	}
 
@@ -78,7 +83,7 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	 * @param target
 	 * @param valueType
 	 */
-	public DuplexingObservableValue(IObservableList target, Object valueType) {
+	public DuplexingObservableValue(IObservableList<T> target, Object valueType) {
 		super(target.getRealm());
 		this.target = target;
 		this.valueType = valueType;
@@ -118,17 +123,17 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 			dirty = true;
 
 			// copy the old value
-			final Object oldValue = cachedValue;
+			final T oldValue = cachedValue;
 			// Fire the "dirty" event. This implementation recomputes the new
 			// value lazily.
-			fireValueChange(new ValueDiff() {
+			fireValueChange(new ValueDiff<T>() {
 				@Override
-				public Object getOldValue() {
+				public T getOldValue() {
 					return oldValue;
 				}
 
 				@Override
-				public Object getNewValue() {
+				public T getNewValue() {
 					return getValue();
 				}
 			});
@@ -142,7 +147,7 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	}
 
 	@Override
-	protected Object doGetValue() {
+	protected T doGetValue() {
 		if (!hasListeners())
 			return coalesceElements(target);
 
@@ -156,11 +161,11 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 		return cachedValue;
 	}
 
-	protected abstract Object coalesceElements(Collection elements);
+	protected abstract T coalesceElements(Collection<T> elements);
 
 	@Override
-	protected void doSetValue(Object value) {
-		final Object oldValue = cachedValue;
+	protected void doSetValue(T value) {
+		final T oldValue = cachedValue;
 
 		boolean wasUpdating = updating;
 		try {
@@ -174,14 +179,14 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 		// Fire the "dirty" event. This implementation recomputes the new
 		// value lazily.
 		if (hasListeners()) {
-			fireValueChange(new ValueDiff() {
+			fireValueChange(new ValueDiff<T>() {
 				@Override
-				public Object getOldValue() {
+				public T getOldValue() {
 					return oldValue;
 				}
 
 				@Override
-				public Object getNewValue() {
+				public T getNewValue() {
 					return getValue();
 				}
 			});
@@ -202,8 +207,7 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	}
 
 	@Override
-	public synchronized void addValueChangeListener(
-			IValueChangeListener listener) {
+	public synchronized void addValueChangeListener(IValueChangeListener<? super T> listener) {
 		super.addValueChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
@@ -238,6 +242,8 @@ public abstract class DuplexingObservableValue extends AbstractObservableValue {
 	public synchronized void dispose() {
 		if (privateInterface != null && target != null) {
 			target.removeChangeListener(privateInterface);
+		}
+		if (privateInterface != null && target != null) {
 			target.removeStaleListener(privateInterface);
 		}
 		target = null;

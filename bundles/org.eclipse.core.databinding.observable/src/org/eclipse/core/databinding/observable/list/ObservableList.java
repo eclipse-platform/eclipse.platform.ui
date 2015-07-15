@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164653, 167204
  *     Matthew Hall - bugs 208858, 208332, 274450
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -33,13 +34,16 @@ import org.eclipse.core.databinding.observable.Realm;
  * listeners may be invoked from any thread.
  * </p>
  *
+ * @param <E>
+ *            the type of the elements in this list
+ *
  * @since 1.0
  *
  */
-public abstract class ObservableList extends AbstractObservable implements
-		IObservableList {
+public abstract class ObservableList<E> extends AbstractObservable implements
+		IObservableList<E> {
 
-	protected List wrappedList;
+	protected List<E> wrappedList;
 
 	/**
 	 * Stale state of the list. Access must occur in the current realm.
@@ -48,31 +52,33 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	private Object elementType;
 
-	protected ObservableList(List wrappedList, Object elementType) {
+	protected ObservableList(List<E> wrappedList, Object elementType) {
 		this(Realm.getDefault(), wrappedList, elementType);
 	}
 
-	protected ObservableList(Realm realm, List wrappedList, Object elementType) {
+	protected ObservableList(Realm realm, List<E> wrappedList,
+			Object elementType) {
 		super(realm);
 		this.wrappedList = wrappedList;
 		this.elementType = elementType;
 	}
 
 	@Override
-	public synchronized void addListChangeListener(IListChangeListener listener) {
+	public synchronized void addListChangeListener(
+			IListChangeListener<? super E> listener) {
 		addListener(ListChangeEvent.TYPE, listener);
 	}
 
 	@Override
 	public synchronized void removeListChangeListener(
-			IListChangeListener listener) {
+			IListChangeListener<? super E> listener) {
 		removeListener(ListChangeEvent.TYPE, listener);
 	}
 
-	protected void fireListChange(ListDiff diff) {
+	protected void fireListChange(ListDiff<? extends E> diff) {
 		// fire general change event first
 		super.fireChange();
-		fireEvent(new ListChangeEvent(this, diff));
+		fireEvent(new ListChangeEvent<E>(this, diff));
 	}
 
 	@Override
@@ -82,7 +88,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	@Override
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		getterCalled();
 		return wrappedList.containsAll(c);
 	}
@@ -106,10 +112,10 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		getterCalled();
-		final Iterator wrappedIterator = wrappedList.iterator();
-		return new Iterator() {
+		final Iterator<E> wrappedIterator = wrappedList.iterator();
+		return new Iterator<E>() {
 
 			@Override
 			public void remove() {
@@ -122,7 +128,7 @@ public abstract class ObservableList extends AbstractObservable implements
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				return wrappedIterator.next();
 			}
 		};
@@ -141,7 +147,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	@Override
-	public Object[] toArray(Object[] a) {
+	public <T> T[] toArray(T[] a) {
 		getterCalled();
 		return wrappedList.toArray(a);
 	}
@@ -156,7 +162,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @TrackedGetter
 	 */
 	@Override
-	public Object get(int index) {
+	public E get(int index) {
 		getterCalled();
 		return wrappedList.get(index);
 	}
@@ -185,7 +191,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @TrackedGetter
 	 */
 	@Override
-	public ListIterator listIterator() {
+	public ListIterator<E> listIterator() {
 		return listIterator(0);
 	}
 
@@ -193,10 +199,10 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @TrackedGetter
 	 */
 	@Override
-	public ListIterator listIterator(int index) {
+	public ListIterator<E> listIterator(int index) {
 		getterCalled();
-		final ListIterator wrappedIterator = wrappedList.listIterator(index);
-		return new ListIterator() {
+		final ListIterator<E> wrappedIterator = wrappedList.listIterator(index);
+		return new ListIterator<E>() {
 
 			@Override
 			public int nextIndex() {
@@ -224,34 +230,34 @@ public abstract class ObservableList extends AbstractObservable implements
 			}
 
 			@Override
-			public Object next() {
+			public E next() {
 				return wrappedIterator.next();
 			}
 
 			@Override
-			public Object previous() {
+			public E previous() {
 				return wrappedIterator.previous();
 			}
 
 			@Override
-			public void add(Object o) {
+			public void add(E o) {
 				throw new UnsupportedOperationException();
 			}
 
 			@Override
-			public void set(Object o) {
+			public void set(E o) {
 				throw new UnsupportedOperationException();
 			}
 		};
 	}
 
 	@Override
-	public List subList(final int fromIndex, final int toIndex) {
+	public List<E> subList(final int fromIndex, final int toIndex) {
 		getterCalled();
 		if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
 			throw new IndexOutOfBoundsException();
 		}
-		return new AbstractObservableList(getRealm()) {
+		return new AbstractObservableList<E>(getRealm()) {
 
 			@Override
 			public Object getElementType() {
@@ -259,7 +265,7 @@ public abstract class ObservableList extends AbstractObservable implements
 			}
 
 			@Override
-			public Object get(int location) {
+			public E get(int location) {
 				return ObservableList.this.get(fromIndex + location);
 			}
 
@@ -275,7 +281,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	@Override
-	public Object set(int index, Object element) {
+	public E set(int index, E element) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -304,7 +310,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @since 1.1
 	 */
 	@Override
-	public Object move(int oldIndex, int newIndex) {
+	public E move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
 		if (oldIndex < 0 || oldIndex >= size)
@@ -313,33 +319,33 @@ public abstract class ObservableList extends AbstractObservable implements
 		if (newIndex < 0 || newIndex >= size)
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
-		Object element = remove(oldIndex);
+		E element = remove(oldIndex);
 		add(newIndex, element);
 		return element;
 	}
 
 	@Override
-	public Object remove(int index) {
+	public E remove(int index) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void add(int index, Object element) {
+	public void add(int index, E element) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean addAll(int index, Collection c) {
+	public boolean addAll(int index, Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -349,12 +355,12 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -408,9 +414,9 @@ public abstract class ObservableList extends AbstractObservable implements
 		return elementType;
 	}
 
-	protected void updateWrappedList(List newList) {
-		List oldList = wrappedList;
-		ListDiff listDiff = Diffs.computeListDiff(oldList, newList);
+	protected void updateWrappedList(List<E> newList) {
+		List<E> oldList = wrappedList;
+		ListDiff<E> listDiff = Diffs.computeListDiff(oldList, newList);
 		wrappedList = newList;
 		fireListChange(listDiff);
 	}

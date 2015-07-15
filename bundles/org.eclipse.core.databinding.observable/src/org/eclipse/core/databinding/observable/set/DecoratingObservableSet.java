@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
  *     Matthew Hall - bug 246626
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -17,14 +18,17 @@ import org.eclipse.core.databinding.observable.DecoratingObservableCollection;
 /**
  * An observable set which decorates another observable set.
  *
+ * @param <E>
+ *            the type of the elements in this set
+ *
  * @since 1.2
  */
-public class DecoratingObservableSet extends DecoratingObservableCollection
-		implements IObservableSet {
+public class DecoratingObservableSet<E> extends
+		DecoratingObservableCollection<E> implements IObservableSet<E> {
 
-	private IObservableSet decorated;
+	private IObservableSet<E> decorated;
 
-	private ISetChangeListener setChangeListener;
+	private ISetChangeListener<E> setChangeListener;
 
 	/**
 	 * Constructs a DecoratingObservableSet which decorates the given
@@ -34,7 +38,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	 *            the observable set being decorated
 	 * @param disposeDecoratedOnDispose
 	 */
-	public DecoratingObservableSet(IObservableSet decorated,
+	public DecoratingObservableSet(IObservableSet<E> decorated,
 			boolean disposeDecoratedOnDispose) {
 		super(decorated, disposeDecoratedOnDispose);
 		this.decorated = decorated;
@@ -47,19 +51,21 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	}
 
 	@Override
-	public synchronized void addSetChangeListener(ISetChangeListener listener) {
+	public synchronized void addSetChangeListener(
+			ISetChangeListener<? super E> listener) {
 		addListener(SetChangeEvent.TYPE, listener);
 	}
 
 	@Override
-	public synchronized void removeSetChangeListener(ISetChangeListener listener) {
+	public synchronized void removeSetChangeListener(
+			ISetChangeListener<? super E> listener) {
 		removeListener(SetChangeEvent.TYPE, listener);
 	}
 
-	protected void fireSetChange(SetDiff diff) {
+	protected void fireSetChange(SetDiff<? extends E> diff) {
 		// fire general change event first
 		super.fireChange();
-		fireEvent(new SetChangeEvent(this, diff));
+		fireEvent(new SetChangeEvent<>(this, diff));
 	}
 
 	@Override
@@ -71,9 +77,9 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	@Override
 	protected void firstListenerAdded() {
 		if (setChangeListener == null) {
-			setChangeListener = new ISetChangeListener() {
+			setChangeListener = new ISetChangeListener<E>() {
 				@Override
-				public void handleSetChange(SetChangeEvent event) {
+				public void handleSetChange(SetChangeEvent<? extends E> event) {
 					DecoratingObservableSet.this.handleSetChange(event);
 				}
 			};
@@ -100,7 +106,7 @@ public class DecoratingObservableSet extends DecoratingObservableCollection
 	 * @param event
 	 *            the change event received from the decorated observable
 	 */
-	protected void handleSetChange(final SetChangeEvent event) {
+	protected void handleSetChange(final SetChangeEvent<? extends E> event) {
 		fireSetChange(event.diff);
 	}
 

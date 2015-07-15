@@ -1,5 +1,5 @@
 /************************************************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * 		IBM Corporation - initial API and implementation
  * 		Brad Reynolds - initial API and implementation (through bug 116920 and bug 147515)
  * 		Matthew Hall - bugs 211786, 274081
+ * 		Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ***********************************************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -71,10 +72,13 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  * System.out.println(fibonacci); // =&gt; &quot;[0, 1, 1, 2, 3]&quot;
  * </pre>
  *
+ * @param <E>
+ *            the list element type
+ *
  * @since 1.1
  */
-public abstract class ComputedList extends AbstractObservableList {
-	private List cachedList = new ArrayList();
+public abstract class ComputedList<E> extends AbstractObservableList<E> {
+	private List<E> cachedList = new ArrayList<E>();
 
 	private boolean dirty = true;
 	private boolean stale = false;
@@ -180,17 +184,17 @@ public abstract class ComputedList extends AbstractObservableList {
 	}
 
 	@Override
-	public Object get(int index) {
+	public E get(int index) {
 		getterCalled();
 		return doGetList().get(index);
 	}
 
-	private final List getList() {
+	private final List<E> getList() {
 		getterCalled();
 		return doGetList();
 	}
 
-	final List doGetList() {
+	final List<E> doGetList() {
 		if (dirty) {
 			// This line will do the following:
 			// - Run the calculate method
@@ -236,7 +240,7 @@ public abstract class ComputedList extends AbstractObservableList {
 	 *
 	 * @return the object's list.
 	 */
-	protected abstract List calculate();
+	protected abstract List<E> calculate();
 
 	private void makeDirty() {
 		if (!dirty) {
@@ -247,18 +251,19 @@ public abstract class ComputedList extends AbstractObservableList {
 			stopListening();
 
 			// copy the old list
-			final List oldList = new ArrayList(cachedList);
+			final List<E> oldList = new ArrayList<E>(cachedList);
 			// Fire the "dirty" event. This implementation recomputes the new
 			// list lazily.
-			fireListChange(new ListDiff() {
-				ListDiffEntry[] differences;
+			fireListChange(new ListDiff<E>() {
+				List<ListDiffEntry<E>> differences;
 
 				@Override
-				public ListDiffEntry[] getDifferences() {
+				public ListDiffEntry<E>[] getDifferences() {
 					if (differences == null)
-						differences = Diffs.computeListDiff(oldList, getList())
+						return Diffs.computeListDiff(oldList, getList())
 								.getDifferences();
-					return differences;
+					return differences.toArray(new ListDiffEntry[differences
+							.size()]);
 				}
 			});
 		}
@@ -304,7 +309,7 @@ public abstract class ComputedList extends AbstractObservableList {
 	}
 
 	@Override
-	public synchronized void addListChangeListener(IListChangeListener listener) {
+	public synchronized void addListChangeListener(IListChangeListener<? super E> listener) {
 		super.addListChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners

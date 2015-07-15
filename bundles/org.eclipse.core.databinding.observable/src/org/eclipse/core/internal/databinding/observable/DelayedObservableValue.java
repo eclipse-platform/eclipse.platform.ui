@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Matthew Hall and others.
+ * Copyright (c) 2007, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * 		Boris Bokowski, IBM - initial API and implementation
  * 		Matthew Hall - bugs 212223, 208332, 245647
  *  	Will Horn - bug 215297
+ *  	Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -40,17 +41,20 @@ import org.eclipse.core.databinding.observable.value.ValueDiff;
  * Note that this class will not forward {@link ValueChangingEvent} events from
  * a wrapped {@link IVetoableValue}.
  *
+ * @param <T>
+ *            the type of the object being observed
+ *
  * @since 1.2
  */
-public class DelayedObservableValue extends AbstractObservableValue implements
-		IStaleListener, IValueChangeListener {
+public class DelayedObservableValue<T> extends AbstractObservableValue<T>
+		implements IStaleListener, IValueChangeListener<T> {
 	class ValueUpdater implements Runnable {
-		private final Object oldValue;
+		private final T oldValue;
 
 		boolean cancel = false;
 		boolean running = false;
 
-		ValueUpdater(Object oldValue) {
+		ValueUpdater(T oldValue) {
 			this.oldValue = oldValue;
 		}
 
@@ -71,10 +75,10 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 	}
 
 	private final int delay;
-	private IObservableValue observable;
+	private IObservableValue<T> observable;
 
 	private boolean dirty = true;
-	private Object cachedValue = null;
+	private T cachedValue = null;
 
 	private boolean updating = false;
 
@@ -91,7 +95,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 	 * @throws IllegalArgumentException
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */
-	public DelayedObservableValue(int delayMillis, IObservableValue observable) {
+	public DelayedObservableValue(int delayMillis, IObservableValue<T> observable) {
 		super(observable.getRealm());
 		this.delay = delayMillis;
 		this.observable = observable;
@@ -103,7 +107,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 	}
 
 	@Override
-	public void handleValueChange(ValueChangeEvent event) {
+	public void handleValueChange(ValueChangeEvent<? extends T> event) {
 		if (!updating)
 			makeDirty();
 	}
@@ -115,7 +119,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 	}
 
 	@Override
-	protected Object doGetValue() {
+	protected T doGetValue() {
 		if (dirty) {
 			cachedValue = observable.getValue();
 			dirty = false;
@@ -130,7 +134,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 	}
 
 	@Override
-	protected void doSetValue(Object value) {
+	protected void doSetValue(T value) {
 		updating = true;
 		try {
 			// Principle of least surprise: setValue overrides any pending
@@ -138,7 +142,7 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 			dirty = false;
 			cancelScheduledUpdate();
 
-			Object oldValue = cachedValue;
+			T oldValue = cachedValue;
 			observable.setValue(value);
 			// Bug 215297 - target observable could veto or override value
 			// passed to setValue(). Make sure we cache whatever is set.
@@ -199,16 +203,16 @@ public class DelayedObservableValue extends AbstractObservableValue implements
 		getRealm().timerExec(delay, updater);
 	}
 
-	private void internalFireValueChange(final Object oldValue) {
+	private void internalFireValueChange(final T oldValue) {
 		cancelScheduledUpdate();
-		fireValueChange(new ValueDiff() {
+		fireValueChange(new ValueDiff<T>() {
 			@Override
-			public Object getOldValue() {
+			public T getOldValue() {
 				return oldValue;
 			}
 
 			@Override
-			public Object getNewValue() {
+			public T getNewValue() {
 				return getValue();
 			}
 		});

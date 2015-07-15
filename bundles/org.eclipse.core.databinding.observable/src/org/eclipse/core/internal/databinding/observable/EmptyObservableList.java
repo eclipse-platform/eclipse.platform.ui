@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 208858, 208332, 146397, 249526
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -29,17 +30,20 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Singleton empty list
+ *
+ * @param <E>
+ *            the type of element in the list
  */
-public class EmptyObservableList implements IObservableList {
+public class EmptyObservableList<E> implements IObservableList<E> {
 
-	private static final List emptyList = Collections.EMPTY_LIST;
+	private final List<E> emptyList = Collections.emptyList();
 
 	private final Realm realm;
 	private Object elementType;
 
 	/**
-	 * Creates an empty list. This list may be disposed multiple times
-	 * without any side-effects.
+	 * Creates an empty list. This list may be disposed multiple times without
+	 * any side-effects.
 	 *
 	 * @param realm
 	 *            the realm of the constructed list
@@ -49,8 +53,8 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	/**
-	 * Creates an empty list. This list may be disposed multiple times
-	 * without any side-effects.
+	 * Creates an empty list. This list may be disposed multiple times without
+	 * any side-effects.
 	 *
 	 * @param realm
 	 *            the realm of the constructed list
@@ -65,12 +69,12 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public void addListChangeListener(IListChangeListener listener) {
+	public void addListChangeListener(IListChangeListener<? super E> listener) {
 		// ignore
 	}
 
 	@Override
-	public void removeListChangeListener(IListChangeListener listener) {
+	public void removeListChangeListener(IListChangeListener<? super E> listener) {
 		// ignore
 	}
 
@@ -103,7 +107,7 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public Iterator iterator() {
+	public Iterator<E> iterator() {
 		checkRealm();
 		return emptyList.iterator();
 	}
@@ -115,12 +119,12 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public Object[] toArray(Object[] a) {
+	public <T> T[] toArray(T[] a) {
 		return emptyList.toArray(a);
 	}
 
 	@Override
-	public boolean add(Object o) {
+	public boolean add(E o) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -130,23 +134,23 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public boolean containsAll(Collection c) {
+	public boolean containsAll(Collection<?> c) {
 		checkRealm();
 		return c.isEmpty();
 	}
 
 	@Override
-	public boolean addAll(Collection c) {
+	public boolean addAll(Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean retainAll(Collection c) {
+	public boolean retainAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public boolean removeAll(Collection c) {
+	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -195,12 +199,12 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public boolean addAll(int index, Collection c) {
+	public boolean addAll(int index, Collection<? extends E> c) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object get(int index) {
+	public E get(int index) {
 		return emptyList.get(index);
 	}
 
@@ -215,37 +219,37 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	@Override
-	public ListIterator listIterator() {
+	public ListIterator<E> listIterator() {
 		return emptyList.listIterator();
 	}
 
 	@Override
-	public ListIterator listIterator(int index) {
+	public ListIterator<E> listIterator(int index) {
 		return emptyList.listIterator(index);
 	}
 
 	@Override
-	public Object remove(int index) {
+	public E remove(int index) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object set(int index, Object element) {
+	public E set(int index, E element) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object move(int oldIndex, int newIndex) {
+	public E move(int oldIndex, int newIndex) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List subList(int fromIndex, int toIndex) {
+	public List<E> subList(int fromIndex, int toIndex) {
 		return emptyList.subList(fromIndex, toIndex);
 	}
 
 	@Override
-	public void add(int index, Object o) {
+	public void add(int index, E o) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -264,7 +268,7 @@ public class EmptyObservableList implements IObservableList {
 		if (!(obj instanceof List))
 			return false;
 
-		return ((List) obj).isEmpty();
+		return ((List<?>) obj).isEmpty();
 	}
 
 	@Override

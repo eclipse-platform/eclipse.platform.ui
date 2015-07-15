@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 167204
  *     Matthew Hall - bugs 208858, 237718
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -23,6 +24,9 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 /**
  * A list whose changes can be tracked by list change listeners.
  *
+ * @param <E>
+ *            the type of elements in this collection
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the framework classes
  *              that implement this interface. Note that direct implementers of
@@ -34,123 +38,125 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
  *
  * @since 1.0
  */
-public interface IObservableList extends List, IObservableCollection {
+public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 
 	/**
 	 * Adds the given list change listener to the list of list change listeners.
-	 * @param listener
-	 */
-	public void addListChangeListener(IListChangeListener listener);
-
-	/**
-	 * Removes the given list change listener from the list of list change listeners.
-	 * Has no effect if the given listener is not registered as a list change listener.
 	 *
 	 * @param listener
 	 */
-	public void removeListChangeListener(IListChangeListener listener);
+	public void addListChangeListener(IListChangeListener<? super E> listener);
+
+	/**
+	 * Removes the given list change listener from the list of list change
+	 * listeners. Has no effect if the given listener is not registered as a
+	 * list change listener.
+	 *
+	 * @param listener
+	 */
+	public void removeListChangeListener(IListChangeListener<? super E> listener);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public int size();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public boolean isEmpty();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public boolean contains(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public Iterator iterator();
+	@Override
+	public Iterator<E> iterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public Object[] toArray();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public Object[] toArray(Object a[]);
+	@Override
+	public <T> T[] toArray(T a[]);
 
 	/**
 	 *
 	 */
-    @Override
-	public boolean add(Object o);
+	@Override
+	public boolean add(E o);
 
 	/**
 	 *
 	 */
-    @Override
+	@Override
 	public boolean remove(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public boolean containsAll(Collection c);
+	@Override
+	public boolean containsAll(Collection<?> c);
 
 	/**
 	 *
 	 */
-    @Override
-	public boolean addAll(Collection c);
+	@Override
+	public boolean addAll(Collection<? extends E> c);
 
 	/**
 	 *
 	 */
-    @Override
-	public boolean addAll(int index, Collection c);
+	@Override
+	public boolean addAll(int index, Collection<? extends E> c);
 
 	/**
 	 *
 	 */
-    @Override
-	public boolean removeAll(Collection c);
+	@Override
+	public boolean removeAll(Collection<?> c);
 
 	/**
 	 *
 	 */
-    @Override
-	public boolean retainAll(Collection c);
+	@Override
+	public boolean retainAll(Collection<?> c);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public boolean equals(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public int hashCode();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public Object get(int index);
+	@Override
+	public E get(int index);
 
 	/**
 	 *
 	 */
-    @Override
-	public Object set(int index, Object element);
+	@Override
+	public E set(int index, E element);
 
 	/**
 	 * Moves the element located at <code>oldIndex</code> to
@@ -170,48 +176,49 @@ public interface IObservableList extends List, IObservableCollection {
 	 *            range <code>0 &lt;= newIndex &lt; size()</code>.
 	 * @return the element that was moved.
 	 * @throws IndexOutOfBoundsException
-	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
+	 *             if either argument is out of range (
+	 *             <code>0 &lt;= index &lt; size()</code>).
 	 * @see ListDiffVisitor#handleMove(int, int, Object)
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
 	 */
-	public Object move(int oldIndex, int newIndex);
+	public E move(int oldIndex, int newIndex);
 
 	/**
 	 *
 	 */
-    @Override
-	public Object remove(int index);
+	@Override
+	public E remove(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public int indexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
+	@Override
 	public int lastIndexOf(Object o);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public ListIterator listIterator();
+	@Override
+	public ListIterator<E> listIterator();
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public ListIterator listIterator(int index);
+	@Override
+	public ListIterator<E> listIterator(int index);
 
 	/**
 	 * @TrackedGetter
 	 */
-    @Override
-	public List subList(int fromIndex, int toIndex);
+	@Override
+	public List<E> subList(int fromIndex, int toIndex);
 
 	/**
 	 * @return the type of the elements or <code>null</code> if untyped

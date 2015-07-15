@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -18,9 +19,12 @@ import org.eclipse.core.databinding.observable.ObservableEvent;
  * List change event describing an incremental change of an
  * {@link IObservableList} object.
  *
+ * @param <E>
+ *            the type of the elements in this change event
+ *
  * @since 1.0
  */
-public class ListChangeEvent extends ObservableEvent {
+public class ListChangeEvent<E> extends ObservableEvent {
 
 	/**
 	 *
@@ -33,7 +37,13 @@ public class ListChangeEvent extends ObservableEvent {
 	 * Description of the change to the source observable list. Listeners must
 	 * not change this field.
 	 */
-	public ListDiff diff;
+	public ListDiff<? extends E> diff;
+
+	/**
+	 * Always identical to <code>EventObject.source</code> but the type
+	 * information is maintained.
+	 */
+	private IObservableList<E> typedSource;
 
 	/**
 	 * Creates a new list change event.
@@ -43,8 +53,9 @@ public class ListChangeEvent extends ObservableEvent {
 	 * @param diff
 	 *            the list change
 	 */
-	public ListChangeEvent(IObservableList source, ListDiff diff) {
+	public ListChangeEvent(IObservableList<E> source, ListDiff<? extends E> diff) {
 		super(source);
+		this.typedSource = source;
 		this.diff = diff;
 	}
 
@@ -53,13 +64,14 @@ public class ListChangeEvent extends ObservableEvent {
 	 *
 	 * @return the observable list from which this event originated
 	 */
-	public IObservableList getObservableList() {
-		return (IObservableList) getSource();
+	public IObservableList<E> getObservableList() {
+		return typedSource;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void dispatch(IObservablesListener listener) {
-		((IListChangeListener) listener).handleListChange(this);
+		((IListChangeListener<E>) listener).handleListChange(this);
 	}
 
 	@Override

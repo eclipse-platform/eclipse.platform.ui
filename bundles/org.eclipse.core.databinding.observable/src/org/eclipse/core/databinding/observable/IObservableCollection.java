@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -22,16 +23,20 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  * changes have to be added using more concrete subtypes such as
  * {@link IObservableList} or {@link IObservableSet}.
  *
+ * @param <E>
+ *            type of the elements in the collection
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  *              Clients should instead subclass one of the classes that
  *              implement this interface. Note that direct implementers of this
  *              interface outside of the framework will be broken in future
- *              releases when methods are added to this interface. </p>
+ *              releases when methods are added to this interface.
+ *              </p>
  *
  * @since 1.0
  */
-public interface IObservableCollection extends IObservable, Collection {
+public interface IObservableCollection<E> extends IObservable, Collection<E> {
 
 	/**
 	 * Returns the element type of this observable collection, or

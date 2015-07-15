@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 208858, 251884, 194734, 272651, 301774
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -22,18 +23,27 @@ import org.eclipse.core.internal.databinding.observable.Util;
 /**
  * Object describing a diff between two lists.
  *
+ * @param <E>
+ *            the type of the elements in this diff
+ *
  * @since 1.0
  */
-public abstract class ListDiff implements IDiff {
+public abstract class ListDiff<E> implements IDiff {
 
 	/**
 	 * Returns a ListDiffEntry array representing the differences in the list,
 	 * in the order they are to be processed.
+	 * <P>
+	 * This method returns identical results to
+	 * <code>getDifferencesAsList</code> except that the results are returned as
+	 * a array and so the ListDiffEntry objects are not properly typed. This
+	 * form is here for compatibility. Use <code>getDifferencesAsList</code> to
+	 * get typed results.
 	 *
 	 * @return a ListDiffEntry array representing the differences in the list,
 	 *         in the order they are to be processed.
 	 */
-	public abstract ListDiffEntry[] getDifferences();
+	public abstract ListDiffEntry<E>[] getDifferences();
 
 	/**
 	 * Traverses the {@link #getDifferences()} array, calling the appropriate
@@ -56,22 +66,22 @@ public abstract class ListDiff implements IDiff {
 	 * @see ListDiffVisitor
 	 * @since 1.1
 	 */
-	public void accept(ListDiffVisitor visitor) {
-		ListDiffEntry[] differences = getDifferences();
+	public void accept(ListDiffVisitor<E> visitor) {
+		ListDiffEntry<E>[] differences = getDifferences();
 		for (int i = 0; i < differences.length; i++) {
-			ListDiffEntry entry = differences[i];
-			Object elem = entry.getElement();
+			ListDiffEntry<E> entry = differences[i];
+			E elem = entry.getElement();
 			int pos = entry.getPosition();
 			boolean add = entry.isAddition();
 
 			if (i + 1 < differences.length) {
-				ListDiffEntry nextEntry = differences[i + 1];
+				ListDiffEntry<E> nextEntry = differences[i + 1];
 				if (add != nextEntry.isAddition()) {
 					int addPos;
-					Object addElem;
+					E addElem;
 
 					int removePos;
-					Object removeElem;
+					E removeElem;
 
 					if (add) {
 						addPos = pos;
@@ -159,21 +169,20 @@ public abstract class ListDiff implements IDiff {
 	 *            the list to which the diff will be applied
 	 * @since 1.2
 	 */
-	public void applyTo(final List list) {
-		accept(new ListDiffVisitor() {
+	public void applyTo(final List<E> list) {
+		accept(new ListDiffVisitor<E>() {
 			@Override
-			public void handleAdd(int index, Object element) {
+			public void handleAdd(int index, E element) {
 				list.add(index, element);
 			}
 
 			@Override
-			public void handleRemove(int index, Object element) {
+			public void handleRemove(int index, E element) {
 				list.remove(index);
 			}
 
 			@Override
-			public void handleReplace(int index, Object oldElement,
-					Object newElement) {
+			public void handleReplace(int index, E oldElement, E newElement) {
 				list.set(index, newElement);
 			}
 		});
@@ -193,40 +202,46 @@ public abstract class ListDiff implements IDiff {
 	 * @see #applyTo(List)
 	 * @since 1.3
 	 */
-	public List simulateOn(List list) {
-		final List[] result = { list };
-		accept(new ListDiffVisitor() {
+	public List<E> simulateOn(List<E> list) {
+		class ResultReference {
+			List<E> value;
+		}
+		final ResultReference result = new ResultReference();
+		result.value = list;
+		accept(new ListDiffVisitor<E>() {
 			@Override
-			public void handleAdd(int index, Object element) {
-				List first = result[0].subList(0, index);
-				List middle = Collections.singletonList(element);
-				List last = result[0].subList(index, result[0].size());
-				result[0] = ConcatList.cat(first, middle, last);
+			public void handleAdd(int index, E element) {
+				List<E> first = result.value.subList(0, index);
+				List<E> middle = Collections.singletonList(element);
+				List<E> last = result.value.subList(index, result.value.size());
+				result.value = ConcatList.cat(first, middle, last);
 			}
 
 			@Override
-			public void handleRemove(int index, Object element) {
-				List first = result[0].subList(0, index);
-				List last = result[0].subList(index + 1, result[0].size());
-				result[0] = ConcatList.cat(first, last);
+			public void handleRemove(int index, E element) {
+				List<E> first = result.value.subList(0, index);
+				List<E> last = result.value.subList(index + 1, result.value.size());
+				result.value = ConcatList.cat(first, last);
 			}
 
 			@Override
-			public void handleReplace(int index, Object oldElement,
-					Object newElement) {
-				List first = result[0].subList(0, index);
-				List middle = Collections.singletonList(newElement);
-				List last = result[0].subList(index + 1, result[0].size());
-				result[0] = ConcatList.cat(first, middle, last);
+			public void handleReplace(int index, E oldElement,
+					E newElement) {
+				List<E> first = result.value.subList(0, index);
+				List<E> middle = Collections.singletonList(newElement);
+				List<E> last = result.value.subList(index + 1, result.value.size());
+				result.value = ConcatList.cat(first, middle, last);
 			}
 		});
-		return result[0];
+		return result.value;
 	}
 
-	private static class ConcatList extends AbstractList {
-		private final List[] subLists;
+	private static class ConcatList<E> extends AbstractList<E> {
+		private final List<E> firstSublist;
+		private final List<E> middleSublist;
+		private final List<E> lastSublist;
 
-		public static List cat(List a, List b, List c) {
+		public static <T> List<T> cat(List<T> a, List<T> b, List<T> c) {
 			if (a.isEmpty()) {
 				return cat(b, c);
 			} else if (b.isEmpty()) {
@@ -234,45 +249,48 @@ public abstract class ListDiff implements IDiff {
 			} else if (c.isEmpty()) {
 				return cat(a, b);
 			}
-			return new ConcatList(new List[] { a, b, c });
+			return new ConcatList<T>(a, b, c);
 		}
 
-		public static List cat(List a, List b) {
+		public static <T> List<T> cat(List<T> a, List<T> b) {
 			if (a.isEmpty()) {
 				if (b.isEmpty()) {
-					return Collections.EMPTY_LIST;
+					return Collections.emptyList();
 				}
 				return b;
 			} else if (b.isEmpty()) {
 				return a;
 			}
-			return new ConcatList(new List[] { a, b });
+			return new ConcatList<T>(a, b, Collections.<T> emptyList());
 		}
 
-		private ConcatList(List[] sublists) {
-			this.subLists = sublists;
+		private ConcatList(List<E> firstSublist, List<E> middleSublist, List<E> lastSublist) {
+			this.firstSublist = firstSublist;
+			this.middleSublist = middleSublist;
+			this.lastSublist = lastSublist;
 		}
 
 		@Override
-		public Object get(int index) {
-			int offset = 0;
-			for (int i = 0; i < subLists.length; i++) {
-				int subListIndex = index - offset;
-				if (subListIndex < subLists[i].size()) {
-					return subLists[i].get(subListIndex);
-				}
-				offset += subLists[i].size();
+		public E get(int index) {
+			int subListIndex = index;
+			if (subListIndex < firstSublist.size()) {
+				return firstSublist.get(subListIndex);
 			}
+			subListIndex -= firstSublist.size();
+			if (subListIndex < middleSublist.size()) {
+				return middleSublist.get(subListIndex);
+			}
+			subListIndex -= middleSublist.size();
+			if (subListIndex < lastSublist.size()) {
+				return lastSublist.get(subListIndex);
+			}
+
 			throw new IndexOutOfBoundsException();
 		}
 
 		@Override
 		public int size() {
-			int size = 0;
-			for (int i = 0; i < subLists.length; i++) {
-				size += subLists[i].size();
-			}
-			return size;
+			return firstSublist.size() + middleSublist.size() + lastSublist.size();
 		}
 	}
 
@@ -281,7 +299,7 @@ public abstract class ListDiff implements IDiff {
 	 */
 	@Override
 	public String toString() {
-		ListDiffEntry[] differences = getDifferences();
+		ListDiffEntry<E>[] differences = getDifferences();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getClass().getName());
 
@@ -295,10 +313,10 @@ public abstract class ListDiff implements IDiff {
 					buffer.append(", "); //$NON-NLS-1$
 
 				buffer.append("difference[") //$NON-NLS-1$
-						.append(i).append("] [") //$NON-NLS-1$
-						.append(
-								differences[i] != null ? differences[i]
-										.toString() : "null") //$NON-NLS-1$
+						.append(i)
+						.append("] [") //$NON-NLS-1$
+						.append(differences[i] != null ? differences[i]
+								.toString() : "null") //$NON-NLS-1$
 						.append("]"); //$NON-NLS-1$
 			}
 			buffer.append("}"); //$NON-NLS-1$

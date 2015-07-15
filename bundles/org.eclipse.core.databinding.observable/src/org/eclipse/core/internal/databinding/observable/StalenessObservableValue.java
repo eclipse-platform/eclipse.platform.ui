@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 212468
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable;
 
@@ -24,7 +25,7 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
  *
  * @since 1.1
  */
-public class StalenessObservableValue extends AbstractObservableValue {
+public class StalenessObservableValue extends AbstractObservableValue<Boolean> {
 
 	private class MyListener implements IChangeListener, IStaleListener {
 		@Override
@@ -66,8 +67,8 @@ public class StalenessObservableValue extends AbstractObservableValue {
 	}
 
 	@Override
-	protected Object doGetValue() {
-		return tracked.isStale() ? Boolean.TRUE : Boolean.FALSE;
+	protected Boolean doGetValue() {
+		return tracked.isStale();
 	}
 
 	@Override

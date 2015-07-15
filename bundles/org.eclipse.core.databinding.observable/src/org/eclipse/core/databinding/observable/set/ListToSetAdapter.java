@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -31,23 +32,24 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
  * listeners may be invoked from any thread.
  * </p>
  *
+ * @param <E>
+ *            the type of elements in the collection
  * @since 1.0
  *
  */
-public class ListToSetAdapter extends ObservableSet {
+public class ListToSetAdapter<E> extends ObservableSet<E> {
 
-	private final IObservableList list;
+	private final IObservableList<E> list;
 
-	private IListChangeListener listener = new IListChangeListener() {
+	private IListChangeListener<E> listener = new IListChangeListener<E>() {
 
 		@Override
-		public void handleListChange(ListChangeEvent event) {
-			Set added = new HashSet();
-			Set removed = new HashSet();
-			ListDiffEntry[] differences = event.diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry entry = differences[i];
-				Object element = entry.getElement();
+		public void handleListChange(ListChangeEvent<? extends E> event) {
+			Set<E> added = new HashSet<>();
+			Set<E> removed = new HashSet<>();
+			ListDiffEntry<? extends E>[] differences = event.diff.getDifferences();
+			for (ListDiffEntry<? extends E> entry : differences) {
+				E element = entry.getElement();
 				if (entry.isAddition()) {
 					if (wrappedSet.add(element)) {
 						if (!removed.remove(element))
@@ -67,8 +69,8 @@ public class ListToSetAdapter extends ObservableSet {
 	/**
 	 * @param list
 	 */
-	public ListToSetAdapter(IObservableList list) {
-		super(list.getRealm(), new HashSet(), list.getElementType());
+	public ListToSetAdapter(IObservableList<E> list) {
+		super(list.getRealm(), new HashSet<E>(), list.getElementType());
 		this.list = list;
 		wrappedSet.addAll(list);
 		this.list.addListChangeListener(listener);
