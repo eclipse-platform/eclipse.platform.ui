@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * 	   Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
- * 	   Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
- * 	   Sergey Prigogin (Google) - [433061] Deletion of project follows symbolic links
- *                                [464072] Refresh on Access ignored during text search
+ * 	Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
+ * 	Martin Lippert (VMware) - [394607] Poor performance when using findFilesForLocationURI
+ * 	Sergey Prigogin (Google) - Fix for bug 435519
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -383,16 +382,13 @@ public class LocalFile extends FileStore {
 			return new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			String message;
-			if (!file.exists()) {
+			if (!file.exists())
 				message = NLS.bind(Messages.fileNotFound, filePath);
-				Policy.error(EFS.ERROR_NOT_EXISTS, message, e);
-			} else if (file.isDirectory()) {
+			else if (file.isDirectory())
 				message = NLS.bind(Messages.notAFile, filePath);
-				Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
-			} else {
+			else
 				message = NLS.bind(Messages.couldNotRead, filePath);
-				Policy.error(EFS.ERROR_READ, message, e);
-			}
+			Policy.error(EFS.ERROR_READ, message, e);
 			return null;
 		} finally {
 			monitor.done();
@@ -409,13 +405,11 @@ public class LocalFile extends FileStore {
 			checkReadOnlyParent(file, e);
 			String message;
 			String path = filePath;
-			if (file.isDirectory()) {
+			if (file.isDirectory())
 				message = NLS.bind(Messages.notAFile, path);
-				Policy.error(EFS.ERROR_WRONG_TYPE, message, e);
-			} else {
+			else
 				message = NLS.bind(Messages.couldNotWrite, path);
-				Policy.error(EFS.ERROR_WRITE, message, e);
-			}
+			Policy.error(EFS.ERROR_WRITE, message, e);
 			return null;
 		} finally {
 			monitor.done();
