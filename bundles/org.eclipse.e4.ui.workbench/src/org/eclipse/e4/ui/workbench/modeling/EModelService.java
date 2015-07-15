@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - Bug 380609
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.modeling;
@@ -344,17 +345,20 @@ public interface EModelService {
 			boolean leavePlaceholder);
 
 	/**
-	 * Inserts the given element into the UI Model by either creating a new sash or augmenting an
-	 * existing sash if the orientation permits.
+	 * Inserts the given element into the UI Model by either creating a new sash
+	 * or augmenting an existing sash if the orientation permits.
 	 *
 	 * @param toInsert
 	 *            The element to insert
 	 * @param relTo
 	 *            The element that the new one is to be relative to
 	 * @param where
-	 *            An SWT constant indicating where the inserted element should be placed
+	 *            Indication of where the inserted element should be placed:
+	 *            {@link #LEFT_OF}, {@link #RIGHT_OF}, {@link #ABOVE},
+	 *            {@link #BELOW}.
 	 * @param ratio
-	 *            The percentage of the area to be occupied by the inserted element
+	 *            The percentage of the area to be occupied by the inserted
+	 *            element; should be a number greater than 0 and less than 1
 	 */
 	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			int where, float ratio);
