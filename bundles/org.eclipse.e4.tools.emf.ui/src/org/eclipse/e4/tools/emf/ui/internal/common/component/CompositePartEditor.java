@@ -27,14 +27,12 @@ import org.eclipse.e4.tools.emf.ui.internal.imp.RegistryUtil;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -266,18 +264,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 					EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(
 							master));
 
-			new ImageTooltip(t, Messages) {
-
-				@Override
-				protected URI getImageURI() {
-					final MUILabel part = (MUILabel) getMaster().getValue();
-					final String uri = part.getIconURI();
-					if (uri == null || uri.trim().length() == 0) {
-						return null;
-					}
-					return URI.createURI(part.getIconURI());
-				}
-			};
+			new ImageTooltip(t, Messages, this);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
