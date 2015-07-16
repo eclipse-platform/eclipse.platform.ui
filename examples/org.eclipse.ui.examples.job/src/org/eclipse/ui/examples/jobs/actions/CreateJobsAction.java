@@ -57,7 +57,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 	private boolean askForFailure() {
 		MessageDialog dialog = new MessageDialog(window.getShell(), "Born to fail?", //$NON-NLS-1$
 				null, "Should the jobs return an error status?", //$NON-NLS-1$
-				MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1 // no is the default
+				MessageDialog.QUESTION, 1, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL// no is the default
 		);
 		return dialog.open() == 0;
 	}
