@@ -530,7 +530,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				endOperation(rule, build, null);
 			}
 		} catch (CoreException e) {
-			Policy.log(e.getStatus());
+			Policy.log(e.getStatus().getSeverity(), e.getMessage(), e);
 		}
 	}
 
