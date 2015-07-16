@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Lars Vogel <Lars.Vogel@vogella.com> - Bug 472690
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -125,52 +126,114 @@ public class MessageDialog extends IconAndMessageDialog {
     private Control customArea;
 
     /**
-     * Create a message dialog. Note that the dialog will have no visual
-     * representation (no widgets) until it is told to open.
-     * <p>
-     * The labels of the buttons to appear in the button bar are supplied in
-     * this constructor as an array. The <code>open</code> method will return
-     * the index of the label in this array corresponding to the button that was
-     * pressed to close the dialog.
-     * </p>
-     * <p>
-     * <strong>Note:</strong> If the dialog was dismissed without pressing
-     * a button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
-     * Note that the <code>open</code> method blocks.
-     * </p>
-     *
-     * @param parentShell
-     *            the parent shell, or <code>null</code> to create a top-level shell
-     * @param dialogTitle
-     *            the dialog title, or <code>null</code> if none
-     * @param dialogTitleImage
-     *            the dialog title image, or <code>null</code> if none
-     * @param dialogMessage
-     *            the dialog message
-     * @param dialogImageType
-     *            one of the following values:
-     *            <ul>
-     *            <li><code>MessageDialog.NONE</code> for a dialog with no
-     *            image</li>
-     *            <li><code>MessageDialog.ERROR</code> for a dialog with an
-     *            error image</li>
-     *            <li><code>MessageDialog.INFORMATION</code> for a dialog
-     *            with an information image</li>
-     *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
-     *            question image</li>
-     *            <li><code>MessageDialog.WARNING</code> for a dialog with a
-     *            warning image</li>
-     *            </ul>
-     * @param dialogButtonLabels
-     *            an array of labels for the buttons in the button bar
-     * @param defaultIndex
-     *            the index in the button label array of the default button
-     */
+	 * Create a message dialog. Note that the dialog will have no visual
+	 * representation (no widgets) until it is told to open.
+	 * <p>
+	 * The labels of the buttons to appear in the button bar are supplied in
+	 * this constructor as an array. The <code>open</code> method will return
+	 * the index of the label in this array corresponding to the button that was
+	 * pressed to close the dialog.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> If the dialog was dismissed without pressing a
+	 * button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
+	 * Note that the <code>open</code> method blocks.
+	 * </p>
+	 *
+	 * As of 3.11 you can also use the other constructor which is based on
+	 * varargs
+	 *
+	 * @param parentShell
+	 *            the parent shell, or <code>null</code> to create a top-level
+	 *            shell
+	 * @param dialogTitle
+	 *            the dialog title, or <code>null</code> if none
+	 * @param dialogTitleImage
+	 *            the dialog title image, or <code>null</code> if none
+	 * @param dialogMessage
+	 *            the dialog message
+	 * @param dialogImageType
+	 *            one of the following values:
+	 *            <ul>
+	 *            <li><code>MessageDialog.NONE</code> for a dialog with no image
+	 *            </li>
+	 *            <li><code>MessageDialog.ERROR</code> for a dialog with an
+	 *            error image</li>
+	 *            <li><code>MessageDialog.INFORMATION</code> for a dialog with
+	 *            an information image</li>
+	 *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
+	 *            question image</li>
+	 *            <li><code>MessageDialog.WARNING</code> for a dialog with a
+	 *            warning image</li>
+	 *            </ul>
+	 * @param dialogButtonLabels
+	 *            an array of labels for the buttons in the button bar
+	 * @param defaultIndex
+	 *            the index in the button label array of the default button
+	 *
+	 */
     public MessageDialog(Shell parentShell, String dialogTitle,
             Image dialogTitleImage, String dialogMessage, int dialogImageType,
             String[] dialogButtonLabels, int defaultIndex) {
         super(parentShell);
-        this.title = dialogTitle;
+		init(dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, defaultIndex, dialogButtonLabels);
+	}
+
+	/**
+	 * Create a message dialog. Note that the dialog will have no visual
+	 * representation (no widgets) until it is told to open.
+	 * <p>
+	 * The labels of the buttons to appear in the button bar are supplied in
+	 * this constructor as a varargs of Strings. The <code>open</code> method
+	 * will return the index of the label in this array corresponding to the
+	 * button that was pressed to close the dialog.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> If the dialog was dismissed without pressing a
+	 * button (ESC key, close box, etc.) then {@link SWT#DEFAULT} is returned.
+	 * Note that the <code>open</code> method blocks.
+	 * </p>
+	 *
+	 * @param parentShell
+	 *            the parent shell, or <code>null</code> to create a top-level
+	 *            shell
+	 * @param dialogTitle
+	 *            the dialog title, or <code>null</code> if none
+	 * @param dialogTitleImage
+	 *            the dialog title image, or <code>null</code> if none
+	 * @param dialogMessage
+	 *            the dialog message
+	 * @param dialogImageType
+	 *            one of the following values:
+	 *            <ul>
+	 *            <li><code>MessageDialog.NONE</code> for a dialog with no image
+	 *            </li>
+	 *            <li><code>MessageDialog.ERROR</code> for a dialog with an
+	 *            error image</li>
+	 *            <li><code>MessageDialog.INFORMATION</code> for a dialog with
+	 *            an information image</li>
+	 *            <li><code>MessageDialog.QUESTION </code> for a dialog with a
+	 *            question image</li>
+	 *            <li><code>MessageDialog.WARNING</code> for a dialog with a
+	 *            warning image</li>
+	 *            </ul>
+	 * @param defaultIndex
+	 *            the index in the button label array of the default button
+	 *
+	 * @param dialogButtonLabels
+	 *            varargs of Strings for the button labels in the button bar
+	 *
+	 * @since 3.11
+	 */
+	public MessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
+			int dialogImageType, int defaultIndex, String... dialogButtonLabels) {
+		super(parentShell);
+		init(dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, defaultIndex, dialogButtonLabels);
+	}
+
+	private void init(String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType,
+			int defaultIndex, String... dialogButtonLabels) {
+		this.title = dialogTitle;
         this.titleImage = dialogTitleImage;
         this.message = dialogMessage;
 
@@ -196,7 +259,7 @@ public class MessageDialog extends IconAndMessageDialog {
         }
         this.buttonLabels = dialogButtonLabels;
         this.defaultButtonIndex = defaultIndex;
-    }
+	}
 
     @Override
 	protected void buttonPressed(int buttonId) {
@@ -220,8 +283,7 @@ public class MessageDialog extends IconAndMessageDialog {
         buttons = new Button[buttonLabels.length];
         for (int i = 0; i < buttonLabels.length; i++) {
             String label = buttonLabels[i];
-            Button button = createButton(parent, i, label,
-                    defaultButtonIndex == i);
+			Button button = createButton(parent, i, label, defaultButtonIndex == i);
             buttons[i] = button;
         }
     }
@@ -280,8 +342,9 @@ public class MessageDialog extends IconAndMessageDialog {
      */
     @Override
 	protected Button getButton(int index) {
-        if (buttons == null || index < 0 || index >= buttons.length)
-            return null;
+		if (buttons == null || index < 0 || index >= buttons.length) {
+			return null;
+		}
         return buttons[index];
     }
 
@@ -351,10 +414,8 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *         <code>false</code> otherwise
 	 * @since 3.5
 	 */
-	public static boolean open(int kind, Shell parent, String title,
-			String message, int style) {
-		MessageDialog dialog = new MessageDialog(parent, title, null, message,
-				kind, getButtonLabels(kind), 0);
+	public static boolean open(int kind, Shell parent, String title, String message, int style) {
+		MessageDialog dialog = new MessageDialog(parent, title, null, message, kind, getButtonLabels(kind), 0);
 		style &= SWT.SHEET;
 		dialog.setShellStyle(dialog.getShellStyle() | style);
 		return dialog.open() == 0;
@@ -386,8 +447,7 @@ public class MessageDialog extends IconAndMessageDialog {
 			break;
 		}
 		default: {
-			throw new IllegalArgumentException(
-					"Illegal value for kind in MessageDialog.open()"); //$NON-NLS-1$
+			throw new IllegalArgumentException("Illegal value for kind in MessageDialog.open()"); //$NON-NLS-1$
 		}
 		}
 		return dialogButtonLabels;
@@ -532,10 +592,10 @@ public class MessageDialog extends IconAndMessageDialog {
      * @param buttons
      *            The buttons in the button bar; must not be <code>null</code>.
      */
-    protected void setButtons(Button[] buttons) {
+	protected void setButtons(Button... buttons) {
         if (buttons == null) {
-            throw new NullPointerException(
-                    "The array of buttons cannot be null.");} //$NON-NLS-1$
+			throw new NullPointerException("The array of buttons cannot be null."); //$NON-NLS-1$
+		}
         this.buttons = buttons;
     }
 
@@ -545,10 +605,10 @@ public class MessageDialog extends IconAndMessageDialog {
      * @param buttonLabels
      *            The button labels to use; must not be <code>null</code>.
      */
-    protected void setButtonLabels(String[] buttonLabels) {
+	protected void setButtonLabels(String... buttonLabels) {
         if (buttonLabels == null) {
-            throw new NullPointerException(
-                    "The array of button labels cannot be null.");} //$NON-NLS-1$
+			throw new NullPointerException("The array of button labels cannot be null."); //$NON-NLS-1$
+		}
         this.buttonLabels = buttonLabels;
     }
 }
