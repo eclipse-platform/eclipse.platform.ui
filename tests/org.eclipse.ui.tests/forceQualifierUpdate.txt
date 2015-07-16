@@ -2,3 +2,4 @@
 Bug 403352 - Update all parent versions to match our build stream
 Bug 429184 - [Metadata] comparator errors in most recent I-builds
 Bug 438659 - [Metadata] comparator errors in weekly I-build: I20140701-0800
+Bug 472126 - Unusual comparator error in I-build and M-build 
