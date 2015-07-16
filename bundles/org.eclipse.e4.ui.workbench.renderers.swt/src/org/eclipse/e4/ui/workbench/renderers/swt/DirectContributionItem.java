@@ -14,6 +14,8 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
@@ -99,6 +101,39 @@ public class DirectContributionItem extends ContributionItem {
 	@Optional
 	private Logger logger;
 
+	// We'll only ever log an error during update once to prevent spamming the
+	// log
+	private boolean logged = false;
+
+	private ISafeRunnable updateRunner;
+
+	private ISafeRunnable getUpdateRunner() {
+		if (updateRunner == null) {
+			updateRunner = new ISafeRunnable() {
+				@Override
+				public void run() throws Exception {
+					boolean shouldEnable = canExecuteItem(null);
+					if (shouldEnable != model.isEnabled()) {
+						model.setEnabled(shouldEnable);
+						update();
+					}
+				}
+
+				@Override
+				public void handleException(Throwable exception) {
+					if (!logged) {
+						logged = true;
+						if (logger != null) {
+							logger.error(exception,
+									"Internal error during tool item enablement updating, this is only logged once per tool item."); //$NON-NLS-1$
+						}
+					}
+				}
+			};
+		}
+		return updateRunner;
+	}
+
 	private IMenuListener menuListener = new IMenuListener() {
 		@Override
 		public void menuAboutToShow(IMenuManager manager) {
@@ -181,6 +216,11 @@ public class DirectContributionItem extends ContributionItem {
 		widget = item;
 		model.setWidget(widget);
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
+
+		ToolItemUpdater updater = getUpdater();
+		if (updater != null) {
+			updater.registerItem(this);
+		}
 
 		update(null);
 	}
@@ -322,6 +362,10 @@ public class DirectContributionItem extends ContributionItem {
 			if (infoContext != null) {
 				infoContext.dispose();
 				infoContext = null;
+			}
+			ToolItemUpdater updater = getUpdater();
+			if (updater != null) {
+				updater.removeItem(this);
 			}
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
@@ -553,4 +597,33 @@ public class DirectContributionItem extends ContributionItem {
 	public Widget getWidget() {
 		return widget;
 	}
+
+	/**
+	 * @return the model
+	 */
+	public MItem getModel() {
+		return model;
+	}
+
+	private ToolItemUpdater getUpdater() {
+		if (model != null) {
+			Object obj = model.getRenderer();
+			if (obj instanceof ToolBarManagerRenderer) {
+				return ((ToolBarManagerRenderer) obj).getUpdater();
+			}
+		}
+		return null;
+	}
+
+	protected void updateItemEnablement() {
+		if (!(model.getWidget() instanceof ToolItem))
+			return;
+
+		ToolItem widget = (ToolItem) model.getWidget();
+		if (widget == null || widget.isDisposed())
+			return;
+
+		SafeRunner.run(getUpdateRunner());
+	}
+
 }
