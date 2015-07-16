@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
  *     James Blackburn (Broadcom Corp.) - ongoing development
- *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
+ *     Sergey Prigogin (Google) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -23,6 +23,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -31,6 +32,8 @@ import org.osgi.service.prefs.Preferences;
  * Static utility methods for manipulating Files and URIs.
  */
 public class FileUtil {
+	static final boolean MACOSX = Constants.OS_MACOSX.equals(getOS());
+
 	/**
 	 * Singleton buffer created to prevent buffer creations in the
 	 * transferStreams method.  Used as an optimization, based on the assumption
@@ -98,24 +101,52 @@ public class FileUtil {
 		if (device != null) {
 			realPath = realPath.setDevice(device.toUpperCase());
 		}
-		IFileStore file = null;
+		IFileStore fileStore = null;
+		File file = null;
 		for (int i = 0; i < path.segmentCount(); i++) {
-			String segment = path.segment(i);
+			final String segment = path.segment(i);
 			if (i == 0 && path.isUNC()) {
 				realPath = realPath.append(segment.toUpperCase());
 				realPath = realPath.makeUNC(true);
 			} else {
-				if (file == null)
-					file = fileSystem.getStore(realPath);
-				file = file.getChild(segment);
-				IFileInfo info = file.fetchInfo();
-				if (!info.exists()) {
-					// The remainder of the path doesn't exist on the file system - copy from
-					// the original path.
-					realPath = realPath.append(path.removeFirstSegments(realPath.segmentCount()));
-					break;
+				if (MACOSX) {
+					// IFileInfo.getName() may not return the real name of the file on Mac OS X.
+					// Obtain the real name of the file from a listing of its parent directory.
+					if (file == null)
+						file = realPath.toFile();
+					String[] names = file.list(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String n) {
+							return n.equalsIgnoreCase(segment);
+						}
+					});
+					String realName;
+					if (names.length == 0) {
+						// The remainder of the path doesn't exist on the file system - copy from
+						// the original path.
+						realPath = realPath.append(path.removeFirstSegments(realPath.segmentCount()));
+						break;
+					} else if (names.length == 1) {
+						realName = names[0];
+					} else {
+						// More than one file matches the file name. Maybe the file system was
+						// misreported to be case insensitive. Preserve the original name. 
+						realName = segment;
+					}
+					realPath = realPath.append(realName);
+				} else {
+					if (fileStore == null)
+						fileStore = fileSystem.getStore(realPath);
+					fileStore = fileStore.getChild(segment);
+					IFileInfo info = fileStore.fetchInfo();
+					if (!info.exists()) {
+						// The remainder of the path doesn't exist on the file system - copy from
+						// the original path.
+						realPath = realPath.append(path.removeFirstSegments(realPath.segmentCount()));
+						break;
+					}
+					realPath = realPath.append(info.getName());
 				}
-				realPath = realPath.append(info.getName());
 			}
 		}
 		if (path.hasTrailingSeparator()) {
@@ -123,6 +154,14 @@ public class FileUtil {
 		}
 		// Return the original path if it's the same as the real one.
 		return realPath.equals(path) ? path : realPath;
+	}
+
+	/**
+	 * Returns the current OS.  Equivalent to Platform.getOS(), but tolerant of the platform runtime
+	 * not being present.
+	 */
+	private static String getOS() {
+		return System.getProperty("osgi.os", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

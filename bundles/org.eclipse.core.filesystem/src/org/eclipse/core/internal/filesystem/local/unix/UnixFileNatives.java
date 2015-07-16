@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
+ *     Sergey Prigogin (Google) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local.unix;
 
-import java.io.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Enumeration;
 import org.eclipse.core.filesystem.EFS;
@@ -94,30 +95,14 @@ public abstract class UnixFileNatives {
 				info.setError(IFileInfo.IO_ERROR);
 		}
 
-		// Fill in the real name of the file.
-		File file = new File(fileName);
-		final String lastName = file.getName();
-		// If the file does not exist, or the file system is not case sensitive, or the name
-		// of the file is not case sensitive, use the name we have. Otherwise obtain the real
-		// name of the file from a parent directory listing.
-		if (!info.exists() || EFS.getLocalFileSystem().isCaseSensitive() || lastName.toLowerCase().equals(lastName.toUpperCase())) {
-			info.setName(lastName);
-		} else {
-			// Notice that file.getParentFile() is guaranteed to be not null since fileName == "/"
-			// case is handled by the other branch of the 'if' statement.
-			String[] names = file.getParentFile().list(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String n) {
-					return n.equalsIgnoreCase(lastName);
-				}
-			});
-			if (names.length == 1) {
-				info.setName(names[0]);
-			} else {
-				info.setName(lastName);
-			}
+		if (info.getName() == null) {
+			// If the file system is case insensitive, we don't know the real name of the file.
+			// Since obtaining the real name in such situation is pretty expensive, we use the name
+			// passed as a parameter, which may differ by case from the real name of the file
+			// if the file system is case insensitive.
+			File file = new File(fileName);
+			info.setName(file.getName());
 		}
-
 		return info;
 	}
 
