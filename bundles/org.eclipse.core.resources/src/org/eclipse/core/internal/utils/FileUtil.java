@@ -35,13 +35,6 @@ public class FileUtil {
 	static final boolean MACOSX = Constants.OS_MACOSX.equals(getOS());
 
 	/**
-	 * Singleton buffer created to prevent buffer creations in the
-	 * transferStreams method.  Used as an optimization, based on the assumption
-	 * that multiple writes won't happen in a given instance of FileStore.
-	 */
-	private static final byte[] buffer = new byte[8192];
-
-	/**
 	 * Converts a ResourceAttributes object into an IFileInfo object.
 	 * @param attributes The resource attributes
 	 * @return The file info
@@ -406,33 +399,27 @@ public class FileUtil {
 	public static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			/*
-			 * Note: although synchronizing on the buffer is thread-safe,
-			 * it may result in slower performance in the future if we want 
-			 * to allow concurrent writes.
-			 */
-			synchronized (buffer) {
-				while (true) {
-					int bytesRead = -1;
-					try {
-						bytesRead = source.read(buffer);
-					} catch (IOException e) {
-						String msg = NLS.bind(Messages.localstore_failedReadDuringWrite, path);
-						throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), msg, e);
-					}
-					try {
-						if (bytesRead == -1) {
-							// Bug 332543 - ensure we don't ignore failures on close()
-							destination.close();
-							break;
-						}
-						destination.write(buffer, 0, bytesRead);
-					} catch (IOException e) {
-						String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
-						throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
-					}
-					monitor.worked(1);
+			byte[] buffer = new byte[8192];
+			while (true) {
+				int bytesRead = -1;
+				try {
+					bytesRead = source.read(buffer);
+				} catch (IOException e) {
+					String msg = NLS.bind(Messages.localstore_failedReadDuringWrite, path);
+					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), msg, e);
 				}
+				try {
+					if (bytesRead == -1) {
+						// Bug 332543 - ensure we don't ignore failures on close()
+						destination.close();
+						break;
+					}
+					destination.write(buffer, 0, bytesRead);
+				} catch (IOException e) {
+					String msg = NLS.bind(Messages.localstore_couldNotWrite, path);
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), msg, e);
+				}
+				monitor.worked(1);
 			}
 		} finally {
 			safeClose(source);
