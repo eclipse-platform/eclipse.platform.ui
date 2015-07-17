@@ -172,7 +172,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 
 		/**
 		 * We will now test the various ways an element can be contributed to
-		 * multiple parents. ModelFragments.e4mi has been configured to add 2
+		 * multiple parents. ModelFragments.e4xmi has been configured to add 2
 		 * menus to the Main Menu. These menus will receive our test
 		 * contributions.
 		 */
