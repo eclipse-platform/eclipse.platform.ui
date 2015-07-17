@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# script to upload a file called "output.txt" to https://wiki.eclipse.org/Platform_UI/Plan/4.5/Milestones
+# script to upload a file called "output.txt" to https://wiki.eclipse.org/Platform_UI/Plan/4.6/Milestones
 # usage: ./updateMileStoneWiki.sh eclipseuser eclipsepw 
 # generate "output.txt" via:
 #  ./wiki-from-csv.sh > output
