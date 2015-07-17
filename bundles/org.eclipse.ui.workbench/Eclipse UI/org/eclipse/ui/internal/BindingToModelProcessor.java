@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -37,10 +38,10 @@ import org.eclipse.ui.internal.keys.BindingService;
 
 public class BindingToModelProcessor {
 
-	private Map<String, MBindingContext> contexts = new HashMap<String, MBindingContext>();
-	private Map<String, MCommand> commands = new HashMap<String, MCommand>();
-	private Map<String, MBindingTable> tables = new HashMap<String, MBindingTable>();
-	private Set<MKeyBinding> keys = new HashSet<MKeyBinding>();
+	private Map<String, MBindingContext> contexts = new HashMap<>();
+	private Map<String, MCommand> commands = new HashMap<>();
+	private Map<String, MBindingTable> tables = new HashMap<>();
+	private Set<MKeyBinding> keys = new HashSet<>();
 
 	@Execute
 	void process(final MApplication application, IEclipseContext context) {

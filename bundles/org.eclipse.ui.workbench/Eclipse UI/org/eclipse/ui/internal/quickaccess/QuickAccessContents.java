@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -315,14 +316,14 @@ public abstract class QuickAccessContents {
 			for (int i = 0; i < providers.length
 					&& (showAllMatches || countTotal < maxCount); i++) {
 				if (entries[i] == null) {
-					entries[i] = new ArrayList<QuickAccessEntry>();
+					entries[i] = new ArrayList<>();
 					indexPerProvider[i] = 0;
 				}
 				int count = 0;
 				QuickAccessProvider provider = providers[i];
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted();
-					List<QuickAccessEntry> poorFilterMatches = new ArrayList<QuickAccessEntry>();
+					List<QuickAccessEntry> poorFilterMatches = new ArrayList<>();
 
 					int j = indexPerProvider[i];
 					while (j < sortedElements.length
@@ -389,7 +390,7 @@ public abstract class QuickAccessContents {
 			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
 			if (entryEnabled(providers[0], entry)) {
 				if (entries[0] == null) {
-					entries[0] = new ArrayList<QuickAccessEntry>();
+					entries[0] = new ArrayList<>();
 					indexPerProvider[0] = 0;
 				}
 				entries[0].add(entry);

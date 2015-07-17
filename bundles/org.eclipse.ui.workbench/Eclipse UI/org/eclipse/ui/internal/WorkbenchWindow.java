@@ -12,7 +12,7 @@
  *     								 removes a menu from multiple perspectives
  *     René Brandstetter - Bug 411821 - [QuickAccess] Contribute SearchField
  *                                      through a fragment or other means
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431446, 433979, 440810, 441184
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431446, 433979, 440810, 441184, 472654
  *     Denis Zygann <d.zygann@web.de> - Bug 457390
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *******************************************************************************/
@@ -264,9 +264,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	ProgressRegion progressRegion = null;
 
-	private List<MTrimElement> workbenchTrimElements = new ArrayList<MTrimElement>();
+	private List<MTrimElement> workbenchTrimElements = new ArrayList<>();
 
-	private Map<MToolControl, IConfigurationElement> iceMap = new HashMap<MToolControl, IConfigurationElement>();
+	private Map<MToolControl, IConfigurationElement> iceMap = new HashMap<>();
 
 	public IConfigurationElement getICEFor(MToolControl mtc) {
 		return iceMap.get(mtc);
@@ -551,7 +551,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							return ((MPart) element).getLocalizedLabel();
 						}
 					};
-					List<MPart> parts = new ArrayList<MPart>(dirtyParts);
+					List<MPart> parts = new ArrayList<>(dirtyParts);
 					ListSelectionDialog dialog = new ListSelectionDialog(getShell(), parts,
 							ArrayContentProvider.getInstance(), labelProvider,
 							WorkbenchMessages.EditorManager_saveResourcesMessage);
@@ -1157,7 +1157,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// Part 1: Add groups
 		IConfigurationElement[] exts = extensionRegistry
 				.getConfigurationElementsFor("org.eclipse.ui.menus"); //$NON-NLS-1$
-		List<IConfigurationElement> items = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> items = new ArrayList<>();
 		for (IConfigurationElement ice : exts) {
 			if ("group".equals(ice.getName()) || "widget".equals(ice.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
 				items.add(ice);
@@ -1169,7 +1169,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// Iterate over the items until they've all been placed or until
 		// an iteration doesn't place anything
-		List<IConfigurationElement> handledElements = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> handledElements = new ArrayList<>();
 		handledElements.add(items.get(0)); // Hack!! startup seeding
 		MUIElement createdTrim = null;
 		while (items.size() > 0 && handledElements.size() > 0) {
@@ -1373,13 +1373,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * <code>ActionHandler</code>. This map is never <code>null</code>, and is
 	 * never empty as long as at least one global action has been registered.
 	 */
-	private Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<String, ActionHandler>();
+	private Map<String, ActionHandler> globalActionHandlersByCommandId = new HashMap<>();
 
 	/**
 	 * The list of handler submissions submitted to the workbench command
 	 * support. This list may be empty, but it is never <code>null</code>.
 	 */
-	private List<IHandlerActivation> handlerActivations = new ArrayList<IHandlerActivation>();
+	private List<IHandlerActivation> handlerActivations = new ArrayList<>();
 
 	/**
 	 * The number of large updates that are currently going on. If this is
@@ -1450,10 +1450,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		 * Mash the action sets and global actions together, with global actions
 		 * taking priority.
 		 */
-		Map<String, ActionHandler> handlersByCommandId = new HashMap<String, ActionHandler>();
+		Map<String, ActionHandler> handlersByCommandId = new HashMap<>();
 		handlersByCommandId.putAll(globalActionHandlersByCommandId);
 
-		List<IHandlerActivation> newHandlers = new ArrayList<IHandlerActivation>(
+		List<IHandlerActivation> newHandlers = new ArrayList<>(
 				handlersByCommandId.size());
 
 		Iterator<IHandlerActivation> existingIter = handlerActivations.iterator();
@@ -1848,7 +1848,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	private void hideNonRestorableViews() {
-		List<MPart> sharedPartsToRemove = new ArrayList<MPart>();
+		List<MPart> sharedPartsToRemove = new ArrayList<>();
 		List<MPlaceholder> phList = modelService
 				.findElements(model, null, MPlaceholder.class, null);
 		for (MPlaceholder ph : phList) {
@@ -2104,7 +2104,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			IBindingService bs = model.getContext().get(IBindingService.class);
 			boolean keyFilterEnabled = bs.isKeyFilterEnabled();
-			List<Control> toEnable = new ArrayList<Control>();
+			List<Control> toEnable = new ArrayList<>();
 			Shell theShell = getShell();
 			Display display = theShell.getDisplay();
 			Control currentFocus = display.getFocusControl();
@@ -2220,7 +2220,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	private Set<Object> menuRestrictions = new HashSet<Object>();
+	private Set<Object> menuRestrictions = new HashSet<>();
 
 	private Boolean valueOf(boolean result) {
 		return result ? Boolean.TRUE : Boolean.FALSE;
@@ -2879,7 +2879,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			setPerspectiveBarVisible(!perspectivebarVisible);
 		}
 		ICommandService commandService = (ICommandService) getService(ICommandService.class);
-		Map<String, WorkbenchWindow> filter = new HashMap<String, WorkbenchWindow>();
+		Map<String, WorkbenchWindow> filter = new HashMap<>();
 		filter.put(IServiceScopes.WINDOW_SCOPE, this);
 		commandService.refreshElements(COMMAND_ID_TOGGLE_COOLBAR, filter);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 180308
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 180308, 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
@@ -432,7 +432,7 @@ public class MenuHelper {
 	}
 
 	public static Map<String, String> getParameters(IConfigurationElement element) {
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		IConfigurationElement[] parameters = element
 				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
 		for (int i = 0; i < parameters.length; i++) {

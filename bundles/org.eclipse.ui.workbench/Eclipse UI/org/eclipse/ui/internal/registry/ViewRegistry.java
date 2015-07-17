@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430616, 441267, 441282, 445609, 441280
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430616, 441267, 441282, 445609, 441280, 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -56,11 +56,11 @@ public class ViewRegistry implements IViewRegistry {
 	@Inject
 	Logger logger;
 
-	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
+	private Map<String, IViewDescriptor> descriptors = new HashMap<>();
 
-	private List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<IStickyViewDescriptor>();
+	private List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<>();
 
-	private HashMap<String, ViewCategory> categories = new HashMap<String, ViewCategory>();
+	private HashMap<String, ViewCategory> categories = new HashMap<>();
 
 	private Category miscCategory = new Category();
 
@@ -183,14 +183,14 @@ public class ViewRegistry implements IViewRegistry {
 	@Override
 	public IViewDescriptor[] getViews() {
 		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(
-				descriptors.values(), new ArrayList<Object>());
+				descriptors.values(), new ArrayList<>());
 		return allowedViews.toArray(new IViewDescriptor[allowedViews.size()]);
 	}
 
 	@Override
 	public IStickyViewDescriptor[] getStickyViews() {
 		Collection<?> allowedViews = WorkbenchActivityHelper.restrictCollection(stickyDescriptors,
-				new ArrayList<Object>());
+				new ArrayList<>());
 		return allowedViews.toArray(new IStickyViewDescriptor[allowedViews.size()]);
 	}
 

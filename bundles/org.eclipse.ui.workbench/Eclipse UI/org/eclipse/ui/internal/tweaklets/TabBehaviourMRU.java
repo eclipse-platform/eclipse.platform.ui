@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.ui.internal.tweaklets;
@@ -52,8 +53,8 @@ public class TabBehaviourMRU extends TabBehaviour {
 		if (length < page.getEditorReuseThreshold()) {
 			return null;
 		} else if (length > page.getEditorReuseThreshold()) {
-			List<IEditorReference> refs = new ArrayList<IEditorReference>();
-			List<IEditorReference> keep = new ArrayList<IEditorReference>(Arrays.asList(editors));
+			List<IEditorReference> refs = new ArrayList<>();
+			List<IEditorReference> keep = new ArrayList<>(Arrays.asList(editors));
 			int extra = length - page.getEditorReuseThreshold();
 			// look for extra editors that should be closed
 			for (int i = 0; i < editors.length; i++) {

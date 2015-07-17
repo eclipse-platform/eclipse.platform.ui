@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 472654
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -49,7 +49,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
      */
     private boolean disposed;
 
-	private final Map<IWorkbenchSite, IKeyBindingService> nestedServices = new HashMap<IWorkbenchSite, IKeyBindingService>();
+	private final Map<IWorkbenchSite, IKeyBindingService> nestedServices = new HashMap<>();
 
     /**
      * The set of context identifiers enabled in this key binding service (not
@@ -69,7 +69,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 
 	private IKeyBindingService activeService;
 
-	private Map<IAction, IHandlerActivation> actionToProxy = new HashMap<IAction, IHandlerActivation>();
+	private Map<IAction, IHandlerActivation> actionToProxy = new HashMap<>();
 
     /**
      * Constructs a new instance of <code>KeyBindingService</code> on a given
@@ -290,7 +290,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 		}
 
         // Build the list of active scopes
-		final Set<String> activeScopes = new HashSet<String>();
+		final Set<String> activeScopes = new HashSet<>();
         activeScopes.addAll(enabledContextIds);
 		if (activeService instanceof KeyBindingService) {
 			activeScopes.addAll(((KeyBindingService) activeService).enabledContextIds);
@@ -373,7 +373,7 @@ public final class KeyBindingService implements INestableKeyBindingService {
 			return;
 		}
 		Set<String> oldContextIds = enabledContextIds;
-		enabledContextIds = new HashSet<String>(Arrays.asList(scopes));
+		enabledContextIds = new HashSet<>(Arrays.asList(scopes));
 		EContextService cs = workbenchPartSite.getService(EContextService.class);
 		addParents(cs, scopes);
 

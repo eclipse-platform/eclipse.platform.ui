@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -71,14 +72,14 @@ public class ContributionFactoryGenerator extends ContextFunction {
 	public Object compute(IEclipseContext context, String contextKey) {
 		AbstractContributionFactory factory = getFactory();
 		final IMenuService menuService = context.get(IMenuService.class);
-		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<Object>(),
+		final ContributionRoot root = new ContributionRoot(menuService, new HashSet<>(),
 				null, factory);
 		ServiceLocator sl = new ServiceLocator();
 		sl.setContext(context);
 		factory.createContributionItems(sl, root);
 		final List contributionItems = root.getItems();
 		final Map<IContributionItem, Expression> itemsToExpression = root.getVisibleWhen();
-		List<MUIElement> menuElements = new ArrayList<MUIElement>();
+		List<MUIElement> menuElements = new ArrayList<>();
 		for (Object obj : contributionItems) {
 			if (obj instanceof IContributionItem) {
 				IContributionItem ici = (IContributionItem) obj;

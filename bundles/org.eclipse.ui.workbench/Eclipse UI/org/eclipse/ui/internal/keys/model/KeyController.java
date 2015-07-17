@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 472654
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys.model;
@@ -160,7 +160,7 @@ public class KeyController {
 		bindingManager.setLocale(bindingService.getLocale());
 		bindingManager.setPlatform(bindingService.getPlatform());
 
-		Set<Binding> bindings = new HashSet<Binding>();
+		Set<Binding> bindings = new HashSet<>();
 		EBindingService eBindingService = locator
 				.getService(EBindingService.class);
 		bindings.addAll(eBindingService.getActiveBindings());

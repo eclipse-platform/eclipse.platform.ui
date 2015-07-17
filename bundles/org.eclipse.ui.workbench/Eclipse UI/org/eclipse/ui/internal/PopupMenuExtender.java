@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dan Rubel (dan_rubel@instantiations.com) - accessor to get menu id
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -90,7 +91,7 @@ public class PopupMenuExtender implements IMenuListener2,
      */
 	private int bitSet = 0;
 
-	private ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<PluginActionContributionItem>();
+	private ArrayList<PluginActionContributionItem> actionContributionCache = new ArrayList<>();
 	private boolean cleanupNeeded = false;
 
 	private MPart modelPart;
@@ -386,7 +387,7 @@ public class PopupMenuExtender implements IMenuListener2,
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
-		Set<IObjectActionContributor> contributedItems = new HashSet<IObjectActionContributor>();
+		Set<IObjectActionContributor> contributedItems = new HashSet<>();
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
 			addEditorActions(mgr, contributedItems);
         }
@@ -517,7 +518,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
 
 		if (staticActionBuilders == null) {
-			staticActionBuilders = new HashMap<String, ViewerActionBuilder>();
+			staticActionBuilders = new HashMap<>();
 		}
 
 		Object object = staticActionBuilders.get(menuId);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.ui.internal.e4.compatibility;
@@ -57,8 +58,8 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 
 	private ListenerList listeners = new ListenerList();
 	private ListenerList postSelectionListeners = new ListenerList();
-	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<String, Set<ISelectionListener>>();
-	private Map<String, Set<ISelectionListener>> targetedPostSelectionListeners = new HashMap<String, Set<ISelectionListener>>();
+	private Map<String, Set<ISelectionListener>> targetedListeners = new HashMap<>();
+	private Map<String, Set<ISelectionListener>> targetedPostSelectionListeners = new HashMap<>();
 
 	private org.eclipse.e4.ui.workbench.modeling.ISelectionListener listener = new org.eclipse.e4.ui.workbench.modeling.ISelectionListener() {
 		@Override
@@ -276,7 +277,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	public void addSelectionListener(String partId, ISelectionListener listener) {
 		Set<ISelectionListener> listeners = targetedListeners.get(partId);
 		if (listeners == null) {
-			listeners = new HashSet<ISelectionListener>();
+			listeners = new HashSet<>();
 			targetedListeners.put(partId, listeners);
 		}
 		if (listeners.size() == 0 && selectionService != null) {
@@ -308,7 +309,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
 		Set<ISelectionListener> listeners = targetedPostSelectionListeners.get(partId);
 		if (listeners == null) {
-			listeners = new HashSet<ISelectionListener>();
+			listeners = new HashSet<>();
 			targetedPostSelectionListeners.put(partId, listeners);
 		}
 		if (listeners.size() == 0 && selectionService != null) {

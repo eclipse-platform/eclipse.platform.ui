@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -31,7 +32,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 public class WizardProvider extends QuickAccessProvider {
 
 	private QuickAccessElement[] cachedElements;
-	private Map<String, WizardElement> idToElement = new HashMap<String, WizardElement>();
+	private Map<String, WizardElement> idToElement = new HashMap<>();
 
 	@Override
 	public QuickAccessElement getElementForId(String id) {
@@ -44,7 +45,7 @@ public class WizardProvider extends QuickAccessProvider {
 		if (cachedElements == null) {
 			IWizardCategory rootCategory = WorkbenchPlugin.getDefault()
 					.getNewWizardRegistry().getRootCategory();
-			List<IWizardDescriptor> result = new ArrayList<IWizardDescriptor>();
+			List<IWizardDescriptor> result = new ArrayList<>();
 			collectWizards(rootCategory, result);
 			IWizardDescriptor[] wizards = result
 					.toArray(new IWizardDescriptor[result.size()]);

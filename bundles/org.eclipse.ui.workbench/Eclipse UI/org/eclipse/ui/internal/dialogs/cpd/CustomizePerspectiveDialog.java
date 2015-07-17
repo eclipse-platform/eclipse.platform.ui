@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 407522 - Perspective reset not working correctly
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040, 431992
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422040, 431992, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 456729, 404348, 421178, 420956, 424638, 460503
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
@@ -202,9 +202,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private DisplayItem views;
 
-	Map<String, ActionSet> idToActionSet = new HashMap<String, ActionSet>();
+	Map<String, ActionSet> idToActionSet = new HashMap<>();
 
-	private final List<ActionSet> actionSets = new ArrayList<ActionSet>();
+	private final List<ActionSet> actionSets = new ArrayList<>();
 
 	private IWorkbenchWindowConfigurer configurer;
 
@@ -282,7 +282,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		public DynamicContributionItem(IContributionItem item) {
 			super(WorkbenchMessages.HideItems_dynamicItemName, item);
-			preview = new ArrayList<MenuItem>();
+			preview = new ArrayList<>();
 		}
 
 		public void addCurrentItem(MenuItem item) {
@@ -396,7 +396,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		public Category(String label) {
 			treeManager.super(label == null ? null : DialogUtil
 					.removeAccel(removeShortcut(label)));
-			this.contributionItems = new ArrayList<ShortcutItem>();
+			this.contributionItems = new ArrayList<>();
 		}
 
 		public List<ShortcutItem> getContributionItems() {
@@ -473,7 +473,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		public ActionSet(ActionSetDescriptor descriptor, boolean active) {
 			this.descriptor = descriptor;
 			this.active = active;
-			this.contributionItems = new ArrayList<DisplayItem>();
+			this.contributionItems = new ArrayList<>();
 		}
 
 		public void addItem(DisplayItem item) {
@@ -1897,7 +1897,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void createMenuEntries(MMenu menu, DisplayItem parent) {
-		Map<IContributionItem, IContributionItem> findDynamics = new HashMap<IContributionItem, IContributionItem>();
+		Map<IContributionItem, IContributionItem> findDynamics = new HashMap<>();
 		DynamicContributionItem dynamicEntry = null;
 
 		if (menu.getParent() != null) {
@@ -2207,7 +2207,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		Map<String, Object> parameters = null;
 		List<MParameter> modelParms = item.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
-			parameters = new HashMap<String, Object>();
+			parameters = new HashMap<>();
 			for (MParameter mParm : modelParms) {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}
@@ -2269,9 +2269,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private static ArrayList<String> getVisibleIDs(DisplayItem root) {
 		if (root == null) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
-		ArrayList<String> ids = new ArrayList<String>(root.getChildrenCount());
+		ArrayList<String> ids = new ArrayList<>(root.getChildrenCount());
 		for (TreeItem treeItem : root.getChildren()) {
 			DisplayItem object = (DisplayItem) treeItem;
 			if (object instanceof ShortcutItem && object.getState()) {
@@ -2317,8 +2317,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private boolean updateHiddenElements(List<ActionSet> items, String currentHidden, String prefix) {
-		List<String> changedAndVisible = new ArrayList<String>();
-		List<String> changedAndInvisible = new ArrayList<String>();
+		List<String> changedAndVisible = new ArrayList<>();
+		List<String> changedAndInvisible = new ArrayList<>();
 		for (ActionSet actionSet : items) {
 			if (!actionSet.wasChanged()) {
 				continue;
@@ -2333,8 +2333,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private boolean updateHiddenElements(DisplayItem items, String currentHidden, String prefix) {
-		List<String> changedAndVisible = new ArrayList<String>();
-		List<String> changedAndInvisible = new ArrayList<String>();
+		List<String> changedAndVisible = new ArrayList<>();
+		List<String> changedAndInvisible = new ArrayList<>();
 		getChangedIds(items, changedAndInvisible, changedAndVisible);
 
 		return updateHiddenElements(currentHidden, prefix, changedAndVisible, changedAndInvisible);
@@ -2378,8 +2378,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		boolean requiresUpdate = false;
 
 		// Action Sets
-		ArrayList<ActionSetDescriptor> toAdd = new ArrayList<ActionSetDescriptor>();
-		ArrayList<ActionSetDescriptor> toRemove = new ArrayList<ActionSetDescriptor>();
+		ArrayList<ActionSetDescriptor> toAdd = new ArrayList<>();
+		ArrayList<ActionSetDescriptor> toRemove = new ArrayList<>();
 
 		for (ActionSet actionSet : actionSets) {
 			if (!actionSet.wasChanged()) {

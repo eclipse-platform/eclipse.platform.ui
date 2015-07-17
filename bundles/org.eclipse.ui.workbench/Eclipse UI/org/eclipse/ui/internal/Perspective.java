@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe, Versant GmbH - bug 215797
  *     Sascha Zak - bug 282874
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810, 440136
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 440136, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 404348, 421178, 456727
  *******************************************************************************/
 
@@ -42,8 +42,8 @@ public class Perspective {
 		this.page = page;
 		this.layout = layout;
 		descriptor = desc;
-		alwaysOnActionSets = new ArrayList<IActionSetDescriptor>(2);
-		alwaysOffActionSets = new ArrayList<IActionSetDescriptor>(2);
+		alwaysOnActionSets = new ArrayList<>(2);
+		alwaysOffActionSets = new ArrayList<>(2);
 	}
 
 	public void initActionSets() {
@@ -52,7 +52,7 @@ public class Perspective {
 
 			// read explicitly disabled sets.
 			String hiddenIDs = page.getHiddenItems();
-			List<String> alwaysOff = new ArrayList<String>();
+			List<String> alwaysOff = new ArrayList<>();
 
 			String[] hiddenIds = hiddenIDs.split(","); //$NON-NLS-1$
 			for (String id : hiddenIds) {
@@ -89,7 +89,7 @@ public class Perspective {
 	 *         empty but never null.
 	 */
 	private List<IActionSetDescriptor> createInitialActionSets(List<String> ids) {
-		List<IActionSetDescriptor> result = new ArrayList<IActionSetDescriptor>();
+		List<IActionSetDescriptor> result = new ArrayList<>();
 		ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		for (String id : ids) {
 			IActionSetDescriptor desc = reg.findActionSet(id);

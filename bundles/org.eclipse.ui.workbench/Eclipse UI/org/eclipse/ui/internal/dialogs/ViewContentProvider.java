@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430603, 450817
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430603, 450817, 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -35,7 +35,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 * Child cache. Map from Object->Object[]. Our hasChildren() method is
 	 * expensive so it's better to cache the results of getChildren().
 	 */
-	private Map<Object, Object[]> childMap = new HashMap<Object, Object[]>();
+	private Map<Object, Object[]> childMap = new HashMap<>();
 
 	private MApplication application;
 	private IViewRegistry viewRegistry;
@@ -107,7 +107,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 */
 	private Set<MPartDescriptor> determineViewsInCategory(String categoryDescription) {
 		List<MPartDescriptor> descriptors = application.getDescriptors();
-		Set<MPartDescriptor> categoryDescriptors = new HashSet<MPartDescriptor>();
+		Set<MPartDescriptor> categoryDescriptors = new HashSet<>();
 		for (MPartDescriptor descriptor : descriptors) {
 			if (isFilteredByActivity(descriptor.getElementId()) || isIntroView(descriptor.getElementId())) {
 				continue;
@@ -125,8 +125,8 @@ public class ViewContentProvider implements ITreeContentProvider {
 	 */
 	private Set<Object> determineTopLevelElements(Object element) {
 		List<MPartDescriptor> descriptors = ((MApplication) element).getDescriptors();
-		Set<String> categories = new HashSet<String>();
-		Set<MPartDescriptor> visibleViews = new HashSet<MPartDescriptor>();
+		Set<String> categories = new HashSet<>();
+		Set<MPartDescriptor> visibleViews = new HashSet<>();
 		for (MPartDescriptor descriptor : descriptors) {
 			// only process views and hide views which are filtered by
 			// activities
@@ -146,7 +146,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 			}
 		}
 
-		Set<Object> combinedTopElements = new HashSet<Object>();
+		Set<Object> combinedTopElements = new HashSet<>();
 		combinedTopElements.addAll(categories);
 		combinedTopElements.addAll(visibleViews);
 		return combinedTopElements;

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *     Carsten Pfeiffer, Gebit Solutions GmbH - bug 259536
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -1405,8 +1406,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 */
 	private IEditorDescriptor [] findRelatedObjects(IContentType type, String fileName,
 			RelatedRegistry registry) {
-		List<IEditorDescriptor> allRelated = new ArrayList<IEditorDescriptor>();
-		List<IEditorDescriptor> nonDefaultFileEditors = new ArrayList<IEditorDescriptor>();
+		List<IEditorDescriptor> allRelated = new ArrayList<>();
+		List<IEditorDescriptor> nonDefaultFileEditors = new ArrayList<>();
 
 		if (fileName != null) {
 			FileEditorMapping mapping = getMappingFor(fileName);

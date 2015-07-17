@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
@@ -144,7 +145,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 					text = WorkbenchMessages.HideItems_itemInUnavailableCommand;
 				} else {
 					//i.e. has children
-					Set<ActionSet> actionGroup = new LinkedHashSet<ActionSet>();
+					Set<ActionSet> actionGroup = new LinkedHashSet<>();
 					ItemDetailToolTip.collectDescendantCommandGroups(actionGroup, item,
 							filter);
 
@@ -251,7 +252,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 				// bindings
 				final Object highlight;
 				if (bindings.length == 0) {
-					Map<String, String> parameters = new HashMap<String, String>();
+					Map<String, String> parameters = new HashMap<>();
 
 					// If item is a shortcut, need to add a parameter to go
 					// to
@@ -404,7 +405,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 		Collection<?> allBindings = bindingManager
 				.getActiveBindingsDisregardingContextFlat();
 
-		List<Binding> foundBindings = new ArrayList<Binding>(2);
+		List<Binding> foundBindings = new ArrayList<>(2);
 
 		for (Iterator<?> i = allBindings.iterator(); i.hasNext();) {
 			Binding binding = (Binding) i.next();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
@@ -87,7 +88,7 @@ public final class BindingService implements IBindingService {
 
 	private BindingPersistence bp;
 
-	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
+	private Map<String, MBindingContext> bindingContexts = new HashMap<>();
 
 	private String[] activeSchemeIds;
 
@@ -206,7 +207,7 @@ public final class BindingService implements IBindingService {
 	@Override
 	public Map getPartialMatches(TriggerSequence trigger) {
 		final Collection<Binding> partialMatches = bindingService.getPartialMatches(trigger);
-		final Map<TriggerSequence, Binding> result = new HashMap<TriggerSequence, Binding>(
+		final Map<TriggerSequence, Binding> result = new HashMap<>(
 				partialMatches.size());
 
 		for (Binding binding : partialMatches) {
@@ -288,12 +289,12 @@ public final class BindingService implements IBindingService {
 
 		// weeds out any of the deleted system bindings using the binding
 		// manager
-		HashSet<Binding> activeBindings = new HashSet<Binding>(
+		HashSet<Binding> activeBindings = new HashSet<>(
 				manager.getActiveBindingsDisregardingContextFlat());
 
 		// get all of the (active) model bindings that point to the actual runtime
 		// bindings
-		HashMap<Binding, MKeyBinding> bindingToKey = new HashMap<Binding, MKeyBinding>();
+		HashMap<Binding, MKeyBinding> bindingToKey = new HashMap<>();
 		for (MBindingTable table : application.getBindingTables()) {
 			for (MKeyBinding modelBinding : table.getBindings()) {
 				final Object obj = modelBinding.getTransientData().get(
@@ -306,7 +307,7 @@ public final class BindingService implements IBindingService {
 
 		// go through each of the (active) bindings in the model to see if there are any
 		// bindings that we should remove
-		final HashSet<Binding> deleted = new HashSet<Binding>(bindingToKey.keySet());
+		final HashSet<Binding> deleted = new HashSet<>(bindingToKey.keySet());
 		deleted.removeAll(activeBindings);
 		for (Binding binding : deleted) {
 			if (binding.getType() == Binding.USER) {
@@ -380,7 +381,7 @@ public final class BindingService implements IBindingService {
 	}
 
 	private final String[] getSchemeIds(String schemeId) {
-		final List<String> strings = new ArrayList<String>();
+		final List<String> strings = new ArrayList<>();
 		while (schemeId != null) {
 			strings.add(schemeId);
 			try {

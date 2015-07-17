@@ -12,7 +12,7 @@
  *     Tristan Hume - <trishume@gmail.com> -
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708, 418661, 456897
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708, 418661, 456897, 472654
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *     Snjezana Peco <snjeza.peco@gmail.com> - Bug 405542
@@ -311,7 +311,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			super();
 			this.progressMonitor = progressMonitor;
 			this.maximumProgressCount = maximumProgressCount;
-			this.starting = new ArrayList<String>();
+			this.starting = new ArrayList<>();
 		}
 
 		@Override
@@ -1189,7 +1189,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 					for (int j = 0; j < pages.length; j++) {
 						List<EditorReference> editorReferences = ((WorkbenchPage) pages[j])
 								.getInternalEditorReferences();
-						List<EditorReference> referencesToClose = new ArrayList<EditorReference>();
+						List<EditorReference> referencesToClose = new ArrayList<>();
 						for (EditorReference reference : editorReferences) {
 							IEditorPart editor = reference.getEditor(false);
 							if (editor != null && !reference.persist() && shutdown) {
@@ -1363,7 +1363,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 			return true;
 		}
 
-		Set<IWorkbenchPart> dirtyParts = new HashSet<IWorkbenchPart>();
+		Set<IWorkbenchPart> dirtyParts = new HashSet<>();
 		for (IWorkbenchWindow window : windows) {
 			WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 			if (page != null) {
@@ -1375,7 +1375,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 		if (activeWindow == null) {
 			activeWindow = windows[0];
 		}
-		return WorkbenchPage.saveAll(new ArrayList<IWorkbenchPart>(dirtyParts),
+		return WorkbenchPage.saveAll(new ArrayList<>(dirtyParts),
 				confirm, closing, true, activeWindow, activeWindow);
 	}
 
@@ -1549,7 +1549,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 	@Override
 	public IWorkbenchWindow[] getWorkbenchWindows() {
-		List<IWorkbenchWindow> windows = new ArrayList<IWorkbenchWindow>();
+		List<IWorkbenchWindow> windows = new ArrayList<>();
 		for (MWindow window : application.getChildren()) {
 			IEclipseContext context = window.getContext();
 			if (context != null) {
@@ -2161,8 +2161,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 		WorkbenchPlugin.getDefault().initializeContext(e4Context);
 	}
 
-	private ArrayList<MCommand> commandsToRemove = new ArrayList<MCommand>();
-	private ArrayList<MCategory> categoriesToRemove = new ArrayList<MCategory>();
+	private ArrayList<MCommand> commandsToRemove = new ArrayList<>();
+	private ArrayList<MCategory> categoriesToRemove = new ArrayList<>();
 
 	private CommandService initializeCommandService(IEclipseContext appContext) {
 		CommandService service = new CommandService(commandManager, appContext);
@@ -2173,7 +2173,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		return service;
 	}
 
-	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
+	private Map<String, MBindingContext> bindingContexts = new HashMap<>();
 
 	public MBindingContext getBindingContext(String id) {
 		// cache
@@ -2748,7 +2748,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 		IExtensionPoint point = registry
 				.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_STARTUP);
 		IExtension[] extensions = point.getExtensions();
-		ArrayList<String> pluginIds = new ArrayList<String>(extensions.length);
+		ArrayList<String> pluginIds = new ArrayList<>(extensions.length);
 		for (IExtension extension : extensions) {
 			String id = extension.getNamespaceIdentifier();
 			if (!pluginIds.contains(id)) {
@@ -2971,7 +2971,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 			if (initOK[0] && runEventLoop) {
 				// Same registration as in E4Workbench
-				Hashtable<String, Object> properties = new Hashtable<String, Object>();
+				Hashtable<String, Object> properties = new Hashtable<>();
 				properties.put("id", getId()); //$NON-NLS-1$
 
 				workbenchService = WorkbenchPlugin.getDefault().getBundleContext()
@@ -3675,7 +3675,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 * Apply the given filter to the list of saveables
 	 */
 	private List<Saveable> getFilteredSaveables(ISaveableFilter filter, Saveable[] saveables) {
-		List<Saveable> toSave = new ArrayList<Saveable>();
+		List<Saveable> toSave = new ArrayList<>();
 		if (filter == null) {
 			for (int i = 0; i < saveables.length; i++) {
 				Saveable saveable = saveables[i];

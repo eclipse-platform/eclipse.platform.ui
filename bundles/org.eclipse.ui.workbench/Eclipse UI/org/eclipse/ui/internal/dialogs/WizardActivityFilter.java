@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -45,7 +46,7 @@ public class WizardActivityFilter extends ViewerFilter {
 	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		int size = elements.length;
-		ArrayList<Object> out = new ArrayList<Object>(size);
+		ArrayList<Object> out = new ArrayList<>(size);
 
 		for (int i = 0; i < size; ++i) {
 			Object element = elements[i];

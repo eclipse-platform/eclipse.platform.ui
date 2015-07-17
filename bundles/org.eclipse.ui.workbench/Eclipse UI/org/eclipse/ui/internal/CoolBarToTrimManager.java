@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 430116
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457237
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457237, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 420956, 457198, 395601, 445538
  ******************************************************************************/
 
@@ -287,7 +287,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public void dispose() {
-		ArrayList<MToolBarElement> toRemove = new ArrayList<MToolBarElement>();
+		ArrayList<MToolBarElement> toRemove = new ArrayList<>();
 		for (MTrimElement child : topTrim.getChildren()) {
 			if (child instanceof MToolBar) {
 				MToolBar toolbar = (MToolBar) child;
@@ -343,7 +343,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public IContributionItem[] getItems() {
-		ArrayList<IContributionItem> items = new ArrayList<IContributionItem>();
+		ArrayList<IContributionItem> items = new ArrayList<>();
 
 		List<MToolBar> toolBars = modelService.findElements(window, null, MToolBar.class, null);
 		for (final MToolBar tb : toolBars) {

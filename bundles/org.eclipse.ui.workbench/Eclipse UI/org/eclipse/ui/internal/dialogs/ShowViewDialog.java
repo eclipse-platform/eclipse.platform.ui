@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids - bug 128526, bug 128529
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988, 457434
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430988, 457434, 472654
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 455527
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
@@ -412,7 +412,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	 * Update the selection object.
 	 */
 	protected void updateSelection(SelectionChangedEvent event) {
-		ArrayList<MPartDescriptor> descs = new ArrayList<MPartDescriptor>();
+		ArrayList<MPartDescriptor> descs = new ArrayList<>();
 		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		for (Iterator<?> i = sel.iterator(); i.hasNext();) {
 			Object o = i.next();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -42,7 +43,7 @@ public class ModelMigrationProcessor {
 	 */
 	private void removeE4CommandsFromIDE(MApplication application) {
 		List<MCommand> commands = application.getCommands();
-		Set<MCommand> toBeRemoved = new HashSet<MCommand>();
+		Set<MCommand> toBeRemoved = new HashSet<>();
 		for (MCommand command : commands) {
 			final String elementId = command.getElementId();
 			if ("e4.exit".equals(elementId)) { //$NON-NLS-1$

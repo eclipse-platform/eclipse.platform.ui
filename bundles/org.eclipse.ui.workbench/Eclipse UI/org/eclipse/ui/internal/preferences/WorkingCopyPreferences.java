@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Timo Kinnunen <timo.kinnunen@gmail.com> - Bug 431924
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -52,7 +53,7 @@ public class WorkingCopyPreferences extends EventManager implements
 		super();
 		this.original = original;
 		this.manager = manager;
-		this.temporarySettings = new HashMap<String, Object>();
+		this.temporarySettings = new HashMap<>();
 	}
 
 	/*
@@ -468,7 +469,7 @@ public class WorkingCopyPreferences extends EventManager implements
 	@Override
 	public String[] keys() throws BackingStoreException {
 		checkRemoved();
-		HashSet<String> allKeys = new HashSet<String>(Arrays.asList(getOriginal().keys()));
+		HashSet<String> allKeys = new HashSet<>(Arrays.asList(getOriginal().keys()));
 		for (Entry<String, Object> entry : temporarySettings.entrySet()) {
 			String key = entry.getKey();
 			if (entry.getValue() != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 
 package org.eclipse.ui.internal.services;
@@ -57,11 +58,11 @@ public final class EvaluationService implements IEvaluationService {
 	private int notifying = 0;
 
 	private ListenerList serviceListeners = new ListenerList(ListenerList.IDENTITY);
-	ArrayList<ISourceProvider> sourceProviders = new ArrayList<ISourceProvider>();
-	LinkedList<EvaluationReference> refs = new LinkedList<EvaluationReference>();
+	ArrayList<ISourceProvider> sourceProviders = new ArrayList<>();
+	LinkedList<EvaluationReference> refs = new LinkedList<>();
 	private ISourceProviderListener contextUpdater;
 
-	private HashSet<String> ratVariables = new HashSet<String>();
+	private HashSet<String> ratVariables = new HashSet<>();
 	private RunAndTrack ratUpdater = new RunAndTrack() {
 		@Override
 		public boolean changed(IEclipseContext context) {
@@ -83,7 +84,7 @@ public final class EvaluationService implements IEvaluationService {
 		}
 	};
 
-	private HashSet<String> variableFilter = new HashSet<String>();
+	private HashSet<String> variableFilter = new HashSet<>();
 	private IEventBroker eventBroker;
 
 	public EvaluationService(IEclipseContext c) {
