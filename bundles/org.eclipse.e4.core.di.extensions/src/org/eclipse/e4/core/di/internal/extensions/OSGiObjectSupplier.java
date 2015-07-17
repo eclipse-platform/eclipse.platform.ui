@@ -1,11 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved.
+ * Copyright (c) 2013, 2015 Markus Alexander Kuppe and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *   Markus Alexander Kuppe - initial API and implementation
+ *   Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -29,7 +30,7 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 	/**
 	 * A Map of Requestor to BundleListener. Each Requestor will only ever request its own bundle and thus there is a 1:1 relationship between R and BL.
 	 */
-	private final Map<IRequestor, BundleListener> requestor2listener = new HashMap<IRequestor, BundleListener>();
+	private final Map<IRequestor, BundleListener> requestor2listener = new HashMap<>();
 
 	private final BundleContext localBundleContext = FrameworkUtil.getBundle(OSGiObjectSupplier.class).getBundleContext();
 

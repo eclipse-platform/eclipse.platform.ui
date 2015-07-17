@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2010 IBM Corporation and others.
+ *  Copyright (c) 2009, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
+ *      Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -27,7 +28,7 @@ public class DIEActivator implements BundleActivator {
 	private ServiceTracker<IPreferencesService, IPreferencesService> preferencesTracker;
 	private ServiceTracker<EventAdmin, EventAdmin> eventAdminTracker;
 
-	private Set<PreferencesObjectSupplier> preferenceSuppliers = new HashSet<PreferencesObjectSupplier>();
+	private Set<PreferencesObjectSupplier> preferenceSuppliers = new HashSet<>();
 
 	public DIEActivator() {
 		defaultInstance = this;
@@ -66,7 +67,7 @@ public class DIEActivator implements BundleActivator {
 		if (preferencesTracker == null) {
 			if (bundleContext == null)
 				return null;
-			preferencesTracker = new ServiceTracker<IPreferencesService, IPreferencesService>(bundleContext, IPreferencesService.class, null);
+			preferencesTracker = new ServiceTracker<>(bundleContext, IPreferencesService.class, null);
 			preferencesTracker.open();
 		}
 		return preferencesTracker.getService();
@@ -76,7 +77,7 @@ public class DIEActivator implements BundleActivator {
 		if (eventAdminTracker == null) {
 			if (bundleContext == null)
 				return null;
-			eventAdminTracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class, null);
+			eventAdminTracker = new ServiceTracker<>(bundleContext, EventAdmin.class, null);
 			eventAdminTracker.open();
 		}
 		return eventAdminTracker.getService();

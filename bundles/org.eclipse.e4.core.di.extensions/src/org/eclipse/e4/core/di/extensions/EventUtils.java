@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.core.di.extensions;
 
@@ -50,7 +51,7 @@ final public class EventUtils {
 		} else if (data instanceof Map<?, ?>) {
 			event = new Event(topic, (Map<String, ?>) data);
 		} else {
-			Dictionary<String, Object> d = new Hashtable<String, Object>(2);
+			Dictionary<String, Object> d = new Hashtable<>(2);
 			d.put(EventConstants.EVENT_TOPIC, topic);
 			if (data != null)
 				d.put(DATA, data);

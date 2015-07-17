@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin <steven@spungin.tv> - Bug 391061
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -70,7 +71,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 	}
 
 	// Hash (nodePath -> Hash (key -> list))
-	private Map<String, HashMap<String, List<PrefInjectionListener>>> listenerCache = new HashMap<String, HashMap<String, List<PrefInjectionListener>>>();
+	private Map<String, HashMap<String, List<PrefInjectionListener>>> listenerCache = new HashMap<>();
 
 	public PreferencesObjectSupplier() {
 		DIEActivator.getDefault().registerPreferencesSupplier(this);
@@ -181,12 +182,12 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 		synchronized (listenerCache) {
 			HashMap<String, List<PrefInjectionListener>> map = listenerCache.get(nodePath);
 			if (map == null) {
-				map = new HashMap<String, List<PrefInjectionListener>>();
+				map = new HashMap<>();
 				listenerCache.put(nodePath, map);
 			}
 			List<PrefInjectionListener> listeningRequestors = map.get(key);
 			if (listeningRequestors == null) {
-				listeningRequestors = new ArrayList<PrefInjectionListener>();
+				listeningRequestors = new ArrayList<>();
 				map.put(key, listeningRequestors);
 			}
 			listeningRequestors.add(listener);

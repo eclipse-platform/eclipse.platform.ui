@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     ARTAL Technologies <simon.chemouil@artal.fr> - Allow wildcards in topic names
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -58,7 +59,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
-	protected Map<String, Event> currentEvents = new HashMap<String, Event>();
+	protected Map<String, Event> currentEvents = new HashMap<>();
 
 	class DIEventHandler implements EventHandler {
 
@@ -132,7 +133,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 
 	}
 
-	private Map<Subscriber, ServiceRegistration<EventHandler>> registrations = new HashMap<Subscriber, ServiceRegistration<EventHandler>>();
+	private Map<Subscriber, ServiceRegistration<EventHandler>> registrations = new HashMap<>();
 
 	protected void addCurrentEvent(String topic, Event event) {
 		synchronized (currentEvents) {
@@ -181,7 +182,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			throw new InjectionException("Unable to subscribe to events: org.eclipse.e4.core.di.extensions bundle is not activated"); //$NON-NLS-1$
 
 		String[] topics = new String[] {topic};
-		Dictionary<String, Object> d = new Hashtable<String, Object>();
+		Dictionary<String, Object> d = new Hashtable<>();
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		EventHandler wrappedHandler = makeHandler(topic, requestor);
 		ServiceRegistration<EventHandler> registration = bundleContext.registerService(EventHandler.class, wrappedHandler, d);
