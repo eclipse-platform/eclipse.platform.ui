@@ -9,9 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,11 +30,13 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -52,6 +59,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	@Inject
 	MApplication application;
+
+	@Inject
+	Logger logger;
 
 	private Map<String, PerspectiveDescriptor> descriptors = new HashMap<>();
 
@@ -77,8 +87,19 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 					String label = perspective.getLocalizedLabel();
 					String originalId = getOriginalId(perspective.getElementId());
 					PerspectiveDescriptor originalDescriptor = descriptors.get(originalId);
-					PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label,
-							originalDescriptor);
+					PerspectiveDescriptor newDescriptor = new PerspectiveDescriptor(id, label, originalDescriptor);
+
+					if (perspective.getIconURI() != null) {
+						try {
+							ImageDescriptor img = ImageDescriptor
+									.createFromURL(new URI(perspective.getIconURI()).toURL());
+							newDescriptor.setImageDescriptor(img);
+						} catch (MalformedURLException | URISyntaxException e) {
+							logger.warn(e, MessageFormat.format("Error on applying configured perspective icon: {0}", //$NON-NLS-1$
+									perspective.getIconURI()));
+						}
+					}
+
 					descriptors.put(id, newDescriptor);
 				} else {
 					// A custom perspecitve with a name of a pre-defined perspective

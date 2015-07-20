@@ -12,6 +12,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431340, 431348, 426535, 433234, 431868, 472654
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442214
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 411639, 372799, 466230
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -20,6 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -3978,6 +3983,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		PerspectiveDescriptor pd = new PerspectiveDescriptor(perspId, label, null);
 		PerspectiveDescriptor newDesc = reg.createPerspective(newDescId, pd);
+		if (mperspective.getIconURI() != null) {
+			try {
+				ImageDescriptor img = ImageDescriptor.createFromURL(new URI(mperspective.getIconURI()).toURL());
+				newDesc.setImageDescriptor(img);
+			} catch (MalformedURLException | URISyntaxException e) {
+				WorkbenchPlugin.log(MessageFormat.format("Error on applying configured perspective icon: {0}", //$NON-NLS-1$
+						mperspective.getIconURI(), e));
+			}
+		}
+
 		mperspective.setElementId(newDesc.getId());
 		mperspective.setLabel(newDesc.getLabel());
 		sortedPerspectives.add(newDesc);

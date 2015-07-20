@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak (brockj_eclipse@ihug.com.au) - handler registration
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -126,6 +127,18 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 			image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 
 		return image;
+	}
+
+	/**
+	 * Set the {@link ImageDescriptor} that should be used to provide the
+	 * perspective icon. Needed for contributing perspectives via model
+	 * fragments.
+	 *
+	 * @param image
+	 *            The {@link ImageDescriptor} to use
+	 */
+	public void setImageDescriptor(ImageDescriptor image) {
+		this.image = image;
 	}
 
 	/*
