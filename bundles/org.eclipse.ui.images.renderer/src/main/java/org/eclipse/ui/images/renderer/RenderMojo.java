@@ -284,7 +284,7 @@ public class RenderMojo extends AbstractMojo {
         int remainingIcons = icons.size();
 
         // The number of icons to distribute to a rendering callable
-        final int threadExecSize = icons.size() / this.threads;
+        final int threadExecSize = Math.max(1, icons.size() / this.threads);
 
         // The current offset to start a batch, as they're distributed
         // between rendering callables
