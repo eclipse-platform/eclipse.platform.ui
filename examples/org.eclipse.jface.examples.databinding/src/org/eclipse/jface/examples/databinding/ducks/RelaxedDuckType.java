@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2014 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * RelaxedDuckType. Implements Duck Typing for Java.  ("If it walks like a duck,
@@ -34,7 +35,7 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
 				new Class[] {interfaceToImplement}, new RelaxedDuckType(object));
 	}
 
-    public static boolean includes(Object object, String method, Class[] args) {
+	public static boolean includes(Object object, String method, Class<?>[] args) {
         try {
             object.getClass().getMethod(method, args);
         } catch (NoSuchMethodException e) {
@@ -43,7 +44,9 @@ public class RelaxedDuckType extends DuckType implements InvocationHandler {
         return true;
     }
 
-    private static final HashMap NULL_VALUES = new HashMap(); {
+	private static final Map<Class<?>, Object> NULL_VALUES = new HashMap<>();
+
+	{
         NULL_VALUES.put(Boolean.TYPE, Boolean.FALSE);
         NULL_VALUES.put(Integer.TYPE, new Integer(0));
         NULL_VALUES.put(Float.TYPE, new Float(0));

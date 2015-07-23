@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class SWTUtil {
     /**
      * Stores a work queue for each display
      */
-    private static Map mapDisplayOntoWorkQueue = new HashMap();
+	private static Map<Display, WorkQueue> mapDisplayOntoWorkQueue = new HashMap<>();
 
     private SWTUtil() {
     }
@@ -111,7 +111,7 @@ public class SWTUtil {
         WorkQueue result;
         synchronized (mapDisplayOntoWorkQueue) {
             // Look for existing queue
-            result = (WorkQueue) mapDisplayOntoWorkQueue.get(d);
+			result = mapDisplayOntoWorkQueue.get(d);
 
             if (result == null) {
                 // If none, create new queue

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class LabelProviderTest {
 
 	private ListViewer list;
 
-	private WritableSet setOfRenamables;
+	private WritableSet<RenamableItem> setOfRenamables;
 
 	private Button addButton;
 
@@ -75,7 +75,7 @@ public class LabelProviderTest {
 		}
 	};
 
-	private IObservableValue selectedRenamable;
+	private IObservableValue<RenamableItem> selectedRenamable;
 
 	/**
 	 *
@@ -85,7 +85,7 @@ public class LabelProviderTest {
 		// Create shell
 		shell = new Shell(Display.getCurrent());
 		{ // Initialize shell
-			setOfRenamables = new WritableSet();
+			setOfRenamables = new WritableSet<>();
 
 			list = new ListViewer(shell);
 			ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
@@ -139,15 +139,14 @@ public class LabelProviderTest {
 				renameButton.setText("Rename"); //$NON-NLS-1$
 
 				selectedRenamable
-						.addValueChangeListener(new IValueChangeListener() {
+						.addValueChangeListener(new IValueChangeListener<RenamableItem>() {
 							@Override
-							public void handleValueChange(ValueChangeEvent event) {
-								boolean shouldEnable = selectedRenamable
-										.getValue() != null;
-								removeButton.setEnabled(shouldEnable);
-								renameButton.setEnabled(shouldEnable);
-							}
-						});
+					public void handleValueChange(ValueChangeEvent<? extends RenamableItem> event) {
+						boolean shouldEnable = selectedRenamable.getValue() != null;
+						removeButton.setEnabled(shouldEnable);
+						renameButton.setEnabled(shouldEnable);
+					}
+				});
 				removeButton.setEnabled(false);
 				renameButton.setEnabled(false);
 
@@ -175,7 +174,7 @@ public class LabelProviderTest {
 	 * @return
 	 */
 	protected RenamableItem getCurrentSelection() {
-		return (RenamableItem) selectedRenamable.getValue();
+		return selectedRenamable.getValue();
 	}
 
 	/**

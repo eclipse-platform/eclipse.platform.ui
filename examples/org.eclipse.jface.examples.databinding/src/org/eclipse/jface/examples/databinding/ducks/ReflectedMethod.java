@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2014 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2015 db4objects Inc.  http://www.db4o.com
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -32,7 +32,7 @@ public class ReflectedMethod {
      * @param methodName The name of the method.
      * @param paramTypes The method's parameter types.
      */
-    public ReflectedMethod(Object subject, String methodName, Class[] paramTypes) {
+	public ReflectedMethod(Object subject, String methodName, Class<?>[] paramTypes) {
         this.subject = subject;
         method = null;
         try {
@@ -78,7 +78,7 @@ public class ReflectedMethod {
 	 *
 	 * @return The return type or null if none.
 	 */
-	public Class getType() {
+	public Class<?> getType() {
 		return method.getReturnType();
 	}
 }

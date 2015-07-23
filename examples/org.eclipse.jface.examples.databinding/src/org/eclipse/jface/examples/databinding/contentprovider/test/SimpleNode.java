@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,9 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
  */
 public class SimpleNode {
 	private String nodeName;
-	private IObservableSet children;
+	private IObservableSet<?> children;
 
-	public SimpleNode(String nodeName, IObservableSet children) {
+	public SimpleNode(String nodeName, IObservableSet<?> children) {
 		super();
 		this.nodeName = nodeName;
 		this.children = children;
@@ -32,7 +32,7 @@ public class SimpleNode {
 		return nodeName;
 	}
 
-	public IObservableSet getChildren() {
+	public IObservableSet<?> getChildren() {
 		return children;
 	}
 

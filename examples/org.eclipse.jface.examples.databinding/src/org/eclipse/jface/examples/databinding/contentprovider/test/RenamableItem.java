@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @since 1.0
@@ -24,7 +25,7 @@ public class RenamableItem {
 	}
 
 	private String name;
-	private ArrayList listeners = new ArrayList();
+	private List<Listener> listeners = new ArrayList<>();
 
 	public RenamableItem() {
 		name = "RenamableItem"; //$NON-NLS-1$
@@ -41,7 +42,7 @@ public class RenamableItem {
 	public void setName(String newName) {
 		this.name = newName;
 
-		Listener[] l = (Listener[]) listeners.toArray(new Listener[listeners.size()]);
+		Listener[] l = listeners.toArray(new Listener[listeners.size()]);
 		for (int i = 0; i < l.length; i++) {
 			l[i].handleChanged(this);
 		}

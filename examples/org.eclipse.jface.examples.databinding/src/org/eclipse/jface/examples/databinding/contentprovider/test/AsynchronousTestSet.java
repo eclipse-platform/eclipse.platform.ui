@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
@@ -36,7 +37,7 @@ import org.eclipse.swt.widgets.Display;
  *
  * @since 1.0
  */
-public class AsynchronousTestSet extends ObservableSet {
+public class AsynchronousTestSet extends ObservableSet<Object> {
 
 	private static Random randomNumberGenerator = new Random();
 
@@ -58,10 +59,10 @@ public class AsynchronousTestSet extends ObservableSet {
 	 * List of all undisposed AsynchronousTestSet instances. Used for the
 	 * recomputeAll method.
 	 */
-	private static List allSets = new ArrayList();
+	private static List<Object> allSets = new ArrayList<>();
 
 	public AsynchronousTestSet() {
-		super(new HashSet(), Object.class);
+		super(new HashSet<>(), Object.class);
 		display = Display.getCurrent();
 		if (display == null) {
 			throw new IllegalStateException(
@@ -83,15 +84,15 @@ public class AsynchronousTestSet extends ObservableSet {
 	}
 
 	public static void recomputeAll() {
-		for (Iterator iter = allSets.iterator(); iter.hasNext();) {
+		for (Iterator<Object> iter = allSets.iterator(); iter.hasNext();) {
 			AsynchronousTestSet next = (AsynchronousTestSet) iter.next();
 
 			next.recompute();
 		}
 	}
 
-	public void remove(Collection toRemove) {
-		HashSet removed = new HashSet();
+	public void remove(Collection<Object> toRemove) {
+		Set<Object> removed = new HashSet<>();
 		removed.addAll(toRemove);
 		removed.retainAll(wrappedSet);
 
@@ -123,8 +124,8 @@ public class AsynchronousTestSet extends ObservableSet {
 					display.asyncExec(new Runnable() {
 						@Override
 						public void run() {
-							final HashSet toAdd = new HashSet();
-							final HashSet toRemove = new HashSet();
+							final Set<Object> toAdd = new HashSet<>();
+							final Set<Object> toRemove = new HashSet<>();
 
 							// Compute elements to add and remove (basically
 							// just fills the toAdd
@@ -144,7 +145,7 @@ public class AsynchronousTestSet extends ObservableSet {
 							}
 
 							if (removeCount > 0) {
-								Iterator oldElements = wrappedSet.iterator();
+								Iterator<Object> oldElements = wrappedSet.iterator();
 								for (int i = 0; i < removeCount
 										&& oldElements.hasNext(); i++) {
 									toRemove.add(oldElements.next());

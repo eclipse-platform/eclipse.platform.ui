@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,14 +66,14 @@ public class ModelObject {
 	}
 
 	protected Object[] append(Object[] array, Object object) {
-		List newList = new ArrayList(Arrays.asList(array));
+		List<Object> newList = new ArrayList<>(Arrays.asList(array));
 		newList.add(object);
 		return newList.toArray((Object[]) Array.newInstance(array.getClass()
 				.getComponentType(), newList.size()));
 	}
 
 	protected Object[] remove(Object[] array, Object object) {
-		List newList = new ArrayList(Arrays.asList(array));
+		List<Object> newList = new ArrayList<>(Arrays.asList(array));
 		newList.remove(object);
 		return newList.toArray((Object[]) Array.newInstance(array.getClass()
 				.getComponentType(), newList.size()));

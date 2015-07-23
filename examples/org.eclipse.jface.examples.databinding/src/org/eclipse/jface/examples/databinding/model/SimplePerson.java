@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2014 David Orme <djo@coconut-palm-software.com>
+ * Copyright (C) 2005, 2015 David Orme <djo@coconut-palm-software.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -26,7 +26,7 @@ public class SimplePerson extends ModelObject {
 	private String state = "";
 	private SimpleCart cart = new SimpleCart();
 
-	private List orders = new LinkedList();
+	private List<SimpleOrder> orders = new LinkedList<>();
 
 	public SimplePerson(String name, String address, String city, String state) {
 		this.name = name;
@@ -104,7 +104,7 @@ public class SimplePerson extends ModelObject {
 	/**
 	 * @return Returns the orders.
 	 */
-	public List getOrders() {
+	public List<SimpleOrder> getOrders() {
 		return orders;
 	}
 
