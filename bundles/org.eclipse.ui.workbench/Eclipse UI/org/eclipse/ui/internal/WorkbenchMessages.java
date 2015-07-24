@@ -28,7 +28,7 @@ public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
 
 
-	public static String ThemingDisabled;
+	public static String ThemingEnabled;
 
 	public static String ThemeChangeWarningText;
 
