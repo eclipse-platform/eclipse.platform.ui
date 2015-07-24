@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008 David Orme <djo@coconut-palm-software.com>
+ * Copyright (C) 2005, 2014 David Orme <djo@coconut-palm-software.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
