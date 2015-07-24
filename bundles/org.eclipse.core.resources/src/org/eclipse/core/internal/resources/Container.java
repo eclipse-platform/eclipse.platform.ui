@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -293,7 +294,7 @@ public abstract class Container extends Resource implements IContainer {
 		IHistoryStore historyStore = getLocalManager().getHistoryStore();
 		IPath basePath = getFullPath();
 		IWorkspaceRoot root = getWorkspace().getRoot();
-		Set<IFile> deletedFiles = new HashSet<IFile>();
+		Set<IFile> deletedFiles = new HashSet<>();
 
 		if (depth == IResource.DEPTH_ZERO) {
 			// this folder might have been a file in a past life

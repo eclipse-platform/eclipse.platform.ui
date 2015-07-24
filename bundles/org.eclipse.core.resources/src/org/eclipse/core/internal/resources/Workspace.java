@@ -11,6 +11,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -97,7 +98,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected final IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 	protected WorkspacePreferences description;
 	protected FileSystemResourceManager fileSystemManager;
-	protected final CopyOnWriteArrayList<ILifecycleListener> lifecycleListeners = new CopyOnWriteArrayList<ILifecycleListener>();
+	protected final CopyOnWriteArrayList<ILifecycleListener> lifecycleListeners = new CopyOnWriteArrayList<>();
 	protected LocalMetaArea localMetaArea;
 	/**
 	 * Helper class for performing validation of resource names and locations.
@@ -458,7 +459,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 							configs = getBuildOrder();
 						else {
 							// clean all accessible configurations
-							List<IBuildConfiguration> configArr = new ArrayList<IBuildConfiguration>();
+							List<IBuildConfiguration> configArr = new ArrayList<>();
 							IProject[] prjs = getRoot().getProjects();
 							for (int i = 0; i < prjs.length; i++)
 								if (prjs[i].isAccessible())
@@ -467,7 +468,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 					} else {
 						// Order the passed in build configurations + resolve references if requested
-						Set<IBuildConfiguration> refsList = new HashSet<IBuildConfiguration>();
+						Set<IBuildConfiguration> refsList = new HashSet<>();
 						for (int i = 0; i < configs.length; i++) {
 							// Check project + build configuration are accessible.
 							if (!configs[i].getProject().isAccessible() || !configs[i].getProject().hasBuildConfig(configs[i].getName()))
@@ -628,7 +629,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	private VertexOrder computeFullProjectOrder() {
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
-		SortedSet<IProject> allAccessibleProjects = new TreeSet<IProject>(new Comparator<IProject>() {
+		SortedSet<IProject> allAccessibleProjects = new TreeSet<>(new Comparator<IProject>() {
 			@Override
 			public int compare(IProject px, IProject py) {
 				return py.getName().compareTo(px.getName());
@@ -636,7 +637,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		});
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		// List<IProject[]> edges
-		List<IProject[]> edges = new ArrayList<IProject[]>(allProjects.length);
+		List<IProject[]> edges = new ArrayList<>(allProjects.length);
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
 			// ignore projects that are not accessible
@@ -690,14 +691,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// Order the set in descending alphabetical order of project name then build config name,
 		// as a secondary sort applied after sorting based on references, to achieve a stable
 		// ordering.
-		SortedSet<IBuildConfiguration> allAccessibleBuildConfigs = new TreeSet<IBuildConfiguration>(new BuildConfigurationComparator());
+		SortedSet<IBuildConfiguration> allAccessibleBuildConfigs = new TreeSet<>(new BuildConfigurationComparator());
 
 		// For each project's active build config, perform a depth first search in the reference graph
 		// rooted at that build config.
 		// This generates the required subset of the reference graph that is required to order all
 		// the dependencies of the active project buildConfigs.
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List<IBuildConfiguration[]> edges = new ArrayList<IBuildConfiguration[]>(allProjects.length);
+		List<IBuildConfiguration[]> edges = new ArrayList<>(allProjects.length);
 
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
@@ -709,7 +710,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// perform a depth first search rooted at it
 			if (!allAccessibleBuildConfigs.contains(project.internalGetActiveBuildConfig())) {
 				allAccessibleBuildConfigs.add(project.internalGetActiveBuildConfig());
-				Stack<IBuildConfiguration> stack = new Stack<IBuildConfiguration>();
+				Stack<IBuildConfiguration> stack = new Stack<>();
 				stack.push(project.internalGetActiveBuildConfig());
 
 				while (!stack.isEmpty()) {
@@ -770,10 +771,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	private VertexOrder computeFullBuildConfigOrder() {
 		// Compute the order for all accessible project buildConfigs
-		SortedSet<IBuildConfiguration> allAccessibleBuildConfigurations = new TreeSet<IBuildConfiguration>(new BuildConfigurationComparator());
+		SortedSet<IBuildConfiguration> allAccessibleBuildConfigurations = new TreeSet<>(new BuildConfigurationComparator());
 
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List<IBuildConfiguration[]> edges = new ArrayList<IBuildConfiguration[]>(allProjects.length);
+		List<IBuildConfiguration[]> edges = new ArrayList<>(allProjects.length);
 
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
@@ -845,9 +846,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// when there are cycles, we need to remove all knotted projects from
 		// r.projects to form result[0] and merge all knots to form result[1]
 		// Set<IProject> bad
-		Set<IProject> bad = new HashSet<IProject>();
+		Set<IProject> bad = new HashSet<>();
 		// Set<IProject> bad
-		Set<IProject> keepers = new HashSet<IProject>(Arrays.asList(r.projects));
+		Set<IProject> keepers = new HashSet<>(Arrays.asList(r.projects));
 		for (int i = 0; i < r.knots.length; i++) {
 			IProject[] knot = r.knots[i];
 			for (int j = 0; j < knot.length; j++) {
@@ -861,7 +862,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		IProject[] result2 = new IProject[bad.size()];
 		bad.toArray(result2);
 		// List<IProject> p
-		List<IProject> p = new LinkedList<IProject>();
+		List<IProject> p = new LinkedList<>();
 		p.addAll(Arrays.asList(r.projects));
 		for (Iterator<IProject> it = p.listIterator(); it.hasNext();) {
 			IProject project = it.next();
@@ -881,7 +882,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		VertexOrder fullProjectOrder = computeFullProjectOrder();
 
 		// Create a filter to remove all projects that are not in the list asked for
-		final Set<IProject> projectSet = new HashSet<IProject>(projects.length);
+		final Set<IProject> projectSet = new HashSet<>(projects.length);
 		projectSet.addAll(Arrays.asList(projects));
 		VertexFilter filter = new VertexFilter() {
 			@Override
@@ -933,7 +934,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		VertexOrder fullBuildConfigOrder = computeFullBuildConfigOrder();
 
 		// Create a filter to remove all project buildConfigs that are not in the list asked for
-		final Set<IBuildConfiguration> projectConfigSet = new HashSet<IBuildConfiguration>(buildConfigs.length);
+		final Set<IBuildConfiguration> projectConfigSet = new HashSet<>(buildConfigs.length);
 		projectConfigSet.addAll(Arrays.asList(buildConfigs));
 		VertexFilter filter = new VertexFilter() {
 			@Override
@@ -1545,7 +1546,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// see if a particular build order is specified
 		String[] order = description.getBuildOrder(false);
 		if (order != null) {
-			LinkedHashSet<IBuildConfiguration> configs = new LinkedHashSet<IBuildConfiguration>();
+			LinkedHashSet<IBuildConfiguration> configs = new LinkedHashSet<>();
 
 			// convert from project names to active project buildConfigs
 			// and eliminate non-existent and closed projects
@@ -1581,13 +1582,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	@Override
 	public Map<IProject, IProject[]> getDanglingReferences() {
 		IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		Map<IProject, IProject[]> result = new HashMap<IProject, IProject[]>(projects.length);
+		Map<IProject, IProject[]> result = new HashMap<>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];
 			if (!project.isAccessible())
 				continue;
 			IProject[] refs = project.internalGetDescription().getReferencedProjects(false);
-			List<IProject> dangling = new ArrayList<IProject>(refs.length);
+			List<IProject> dangling = new ArrayList<>(refs.length);
 			for (int j = 0; j < refs.length; j++)
 				if (!refs[i].exists())
 					dangling.add(refs[i]);

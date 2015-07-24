@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] add PT_VARIABLE_PROVIDERS
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -448,7 +449,7 @@ public final class ResourcesPlugin extends Plugin {
 		super.start(context);
 
 		// register debug options listener
-		Hashtable<String, String> properties = new Hashtable<String, String>(2);
+		Hashtable<String, String> properties = new Hashtable<>(2);
 		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, PI_RESOURCES);
 		debugRegistration = context.registerService(DebugOptionsListener.class, Policy.RESOURCES_DEBUG_OPTIONS_LISTENER, properties);
 
@@ -473,7 +474,7 @@ public final class ResourcesPlugin extends Plugin {
 	private void initializePreferenceLookupOrder() {
 		PreferencesService service = PreferencesService.getDefault();
 		String[] original = service.getDefaultDefaultLookupOrder();
-		List<String> newOrder = new ArrayList<String>();
+		List<String> newOrder = new ArrayList<>();
 		// put the project scope first on the list
 		newOrder.add(ProjectScope.SCOPE);
 		for (String entry : original)

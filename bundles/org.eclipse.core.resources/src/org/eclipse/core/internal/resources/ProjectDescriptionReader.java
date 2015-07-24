@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
- * Markus Schorn (Wind River) - [306575] Save snapshot location with project
- * James Blackburn (Broadcom Corp.) - ongoing development
+ *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
+ *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -544,7 +545,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				HashMap<IPath, LinkedList<FilterDescription>> map = ((HashMap<IPath, LinkedList<FilterDescription>>) objectStack.peek());
 				LinkedList<FilterDescription> list = map.get(filter.getResource().getProjectRelativePath());
 				if (list == null) {
-					list = new LinkedList<FilterDescription>();
+					list = new LinkedList<>();
 					map.put(filter.getResource().getProjectRelativePath(), list);
 				}
 				list.add(filter);
@@ -555,7 +556,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				HashMap<String, LinkedList<FilterDescription>> map = ((HashMap<String, LinkedList<FilterDescription>>) objectStack.peek());
 				LinkedList<FilterDescription> list = map.get(key);
 				if (list == null) {
-					list = new LinkedList<FilterDescription>();
+					list = new LinkedList<>();
 					map.put(key, list);
 				}
 				list.add(filter);
@@ -918,7 +919,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	public ProjectDescription read(InputSource input) {
 		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projRead_failureReadingProjectDesc, null);
-		objectStack = new Stack<Object>();
+		objectStack = new Stack<>();
 		state = S_INITIAL;
 		try {
 			createParser().parse(input, this);

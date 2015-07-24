@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -201,7 +202,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		// thread safety: (Concurrency001)
 		ObjectMap<QualifiedName, Object> temp = sessionProperties;
 		if (temp == null)
-			temp = new ObjectMap<QualifiedName, Object>(5);
+			temp = new ObjectMap<>(5);
 		else
 			temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 		return temp;
@@ -407,7 +408,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		} else {
 			ObjectMap<QualifiedName, Object> temp = sessionProperties;
 			if (temp == null)
-				temp = new ObjectMap<QualifiedName, Object>(5);
+				temp = new ObjectMap<>(5);
 			else
 				temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 			temp.put(name, value);
@@ -435,7 +436,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		} else {
 			//add sync info
 			if (syncInfo == null)
-				syncInfo = new ObjectMap<QualifiedName, Object>(5);
+				syncInfo = new ObjectMap<>(5);
 			syncInfo.put(id, value.clone());
 		}
 	}

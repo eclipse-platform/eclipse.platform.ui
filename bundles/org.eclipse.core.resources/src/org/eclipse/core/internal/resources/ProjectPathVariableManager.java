@@ -9,6 +9,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -69,7 +70,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 */
 	@Override
 	public String[] getPathVariableNames() {
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		HashMap<String, VariableDescription> map;
 		try {
 			map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
@@ -209,7 +210,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	public URI resolveVariable(String variable) {
-		LinkedList<String> variableStack = new LinkedList<String>();
+		LinkedList<String> variableStack = new LinkedList<>();
 
 		String value = resolveVariable(variable, variableStack);
 		if (value != null) {
@@ -224,7 +225,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 
 	public String resolveVariable(String value, LinkedList<String> variableStack) {
 		if (variableStack == null)
-			variableStack = new LinkedList<String>();
+			variableStack = new LinkedList<>();
 
 		String tmp = internalGetValue(value);
 		if (tmp == null) {

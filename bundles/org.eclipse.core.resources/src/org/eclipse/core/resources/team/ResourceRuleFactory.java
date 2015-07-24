@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.resources.team;
 
@@ -245,7 +246,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 		if (resources.length == 1)
 			return isReadOnly(resources[0]) ? parent(resources[0]) : null;
 		//need a lock on the parents of all read-only files
-		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
+		HashSet<ISchedulingRule> rules = new HashSet<>();
 		for (int i = 0; i < resources.length; i++)
 			if (isReadOnly(resources[i]))
 				rules.add(parent(resources[i]));

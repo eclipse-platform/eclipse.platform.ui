@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
- * Markus Schorn (Wind River) - [306575] Save snapshot location with project
- * James Blackburn (Broadcom Corp.) - ongoing development
+ *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
+ *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -223,13 +224,13 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			HashMap<IPath, LinkDescription> links = description.getLinks();
 			if (links != null) {
 				// ensure consistent order of map elements
-				List<LinkDescription> sorted = new ArrayList<LinkDescription>(links.values());
+				List<LinkDescription> sorted = new ArrayList<>(links.values());
 				Collections.sort(sorted);
 				write(LINKED_RESOURCES, sorted, writer);
 			}
 			HashMap<IPath, LinkedList<FilterDescription>> filters = description.getFilters();
 			if (filters != null) {
-				List<FilterDescription> sorted = new ArrayList<FilterDescription>();
+				List<FilterDescription> sorted = new ArrayList<>();
 				for (Iterator<LinkedList<FilterDescription>> it = filters.values().iterator(); it.hasNext();) {
 					List<FilterDescription> list = it.next();
 					sorted.addAll(list);
@@ -239,7 +240,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			}
 			HashMap<String, VariableDescription> variables = description.getVariables();
 			if (variables != null) {
-				List<VariableDescription> sorted = new ArrayList<VariableDescription>(variables.values());
+				List<VariableDescription> sorted = new ArrayList<>(variables.values());
 				Collections.sort(sorted);
 				write(VARIABLE_LIST, sorted, writer);
 			}
@@ -261,7 +262,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.startTag(name, null);
 		if (table != null) {
 			// ensure consistent order of map elements
-			List<String> sorted = new ArrayList<String>(table.keySet());
+			List<String> sorted = new ArrayList<>(table.keySet());
 			Collections.sort(sorted);
 
 			for (Iterator<String> it = sorted.iterator(); it.hasNext();) {

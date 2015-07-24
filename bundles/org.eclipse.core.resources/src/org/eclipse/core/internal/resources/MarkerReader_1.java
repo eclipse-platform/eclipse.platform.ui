@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -60,7 +61,7 @@ public class MarkerReader_1 extends MarkerReader {
 	@Override
 	public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
 		try {
-			List<String> readTypes = new ArrayList<String>(5);
+			List<String> readTypes = new ArrayList<>(5);
 			while (true) {
 				IPath path = new Path(input.readUTF());
 				int markersSize = input.readInt();
@@ -79,7 +80,7 @@ public class MarkerReader_1 extends MarkerReader {
 					// Iterate over all elements and add not null ones. This saves us from copying
 					// and shrinking the array.
 					IMarkerSetElement[] infos = markers.elements;
-					ArrayList<MarkerDelta> deltas = new ArrayList<MarkerDelta>(infos.length);
+					ArrayList<MarkerDelta> deltas = new ArrayList<>(infos.length);
 					for (int i = 0; i < infos.length; i++)
 						if (infos[i] != null)
 							deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) infos[i]));
@@ -95,7 +96,7 @@ public class MarkerReader_1 extends MarkerReader {
 		int attributesSize = input.readInt();
 		if (attributesSize == 0)
 			return null;
-		Map<String, Object> result = new MarkerAttributeMap<Object>(attributesSize);
+		Map<String, Object> result = new MarkerAttributeMap<>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			int type = input.readInt();

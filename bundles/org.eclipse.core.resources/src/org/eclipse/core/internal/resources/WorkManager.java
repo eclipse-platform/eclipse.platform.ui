@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -59,7 +60,7 @@ public class WorkManager implements IManager {
 	 * Indicates that the last checkIn failed, either due to cancelation or due to the
 	 * workspace tree being locked for modifications (during resource change events).
 	 */
-	private final ThreadLocal<Boolean> checkInFailed = new ThreadLocal<Boolean>();
+	private final ThreadLocal<Boolean> checkInFailed = new ThreadLocal<>();
 	/**
 	 * Indicates whether any operations have run that may require a build. 
 	 */

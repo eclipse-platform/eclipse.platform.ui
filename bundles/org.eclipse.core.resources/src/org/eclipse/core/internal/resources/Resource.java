@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -919,7 +920,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			IPath linkPath = link.getProjectRelativePath();
 			if (myPath.isPrefixOf(linkPath)) {
 				if (links == null)
-					links = new ArrayList<Resource>();
+					links = new ArrayList<>();
 				links.add(workspace.newResource(project.getFullPath().append(linkPath), link.getType()));
 			}
 		}
@@ -942,7 +943,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					IPath filterPath = it.next();
 					if (myPath.isPrefixOf(filterPath)) {
 						if (filters == null)
-							filters = new ArrayList<Resource>();
+							filters = new ArrayList<>();
 						filters.add(workspace.newResource(project.getFullPath().append(filterPath), IResource.FOLDER));
 					}
 				}
@@ -1981,8 +1982,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	private IFileInfo[] filterChildren(Project project, ProjectDescription description, IFileInfo[] list, boolean throwException) throws CoreException {
 		IPath relativePath = getProjectRelativePath();
-		LinkedList<Filter> currentIncludeFilters = new LinkedList<Filter>();
-		LinkedList<Filter> currentExcludeFilters = new LinkedList<Filter>();
+		LinkedList<Filter> currentIncludeFilters = new LinkedList<>();
+		LinkedList<Filter> currentExcludeFilters = new LinkedList<>();
 		LinkedList<FilterDescription> filters = null;
 
 		boolean firstSegment = true;

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -65,7 +66,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 
 	@Override
 	public IResource[] getMatchingResources(IResource[] resources) throws CoreException {
-		Set<IResource> result = new HashSet<IResource>();
+		Set<IResource> result = new HashSet<>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			EvaluationContext evalContext = createEvaluationContext(resource);
@@ -114,7 +115,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		label = extension.getLabel();
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		int count = elements.length;
-		ArrayList<String> extendsList = new ArrayList<String>(count);
+		ArrayList<String> extendsList = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
 			String name = element.getName();
@@ -132,7 +133,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 
 	@Override
 	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException {
-		List<ResourceTraversal> result = new ArrayList<ResourceTraversal>();
+		List<ResourceTraversal> result = new ArrayList<>();
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			if (getMatchingResources(traversal.getResources()).length > 0) {

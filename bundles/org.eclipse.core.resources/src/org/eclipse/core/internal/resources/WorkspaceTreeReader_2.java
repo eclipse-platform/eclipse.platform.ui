@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
  *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -88,20 +89,20 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			message = Messages.resources_reading;
 			monitor.beginTask(message, Policy.totalWork);
 
-			builderInfos = new ArrayList<BuilderPersistentInfo>(20);
+			builderInfos = new ArrayList<>(20);
 
 			// Read the version 2 part of the file, but don't set the builder info in
 			// the projects. Store it in builderInfos instead.
 			readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			HashMap<String, SavedState> savedStates = new HashMap<String, SavedState>(20);
-			List<SavedState> pluginsToBeLinked = new ArrayList<SavedState>(20);
+			HashMap<String, SavedState> savedStates = new HashMap<>(20);
+			List<SavedState> pluginsToBeLinked = new ArrayList<>(20);
 			readPluginsSavedStates(input, savedStates, pluginsToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			workspace.getSaveManager().setPluginsSavedState(savedStates);
 
 			int treeIndex = pluginsToBeLinked.size();
 
-			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
+			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<>(20);
 			readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			final ElementTree[] trees = readTrees(Path.ROOT, input, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
@@ -143,14 +144,14 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			message = Messages.resources_reading;
 			monitor.beginTask(message, 10);
 
-			builderInfos = new ArrayList<BuilderPersistentInfo>(20);
+			builderInfos = new ArrayList<>(20);
 
 			// Read the version 2 part of the file, but don't set the builder info in
 			// the projects. It is stored in builderInfos instead.
 
 			int treeIndex = 0;
-			
-			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
+
+			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<>(20);
 			readBuildersPersistentInfo(project, input, buildersToBeLinked, Policy.subMonitorFor(monitor, 1));
 
 			ElementTree[] trees = readTrees(project.getFullPath(), input, Policy.subMonitorFor(monitor, 8));
@@ -160,7 +161,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			if (input.available() > 0) {
 				treeIndex += buildersToBeLinked.size();
 
-				List<BuilderPersistentInfo> infos = new ArrayList<BuilderPersistentInfo>(5);
+				List<BuilderPersistentInfo> infos = new ArrayList<>(5);
 				readBuildersPersistentInfo(project, input, infos, Policy.subMonitorFor(monitor, 1));
 				linkBuildersToTrees(infos, trees, treeIndex, Policy.subMonitorFor(monitor, 1));
 
@@ -202,7 +203,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	 * Given a list of builder infos, group them by project and set them on the project.
 	 */
 	private void setBuilderInfos(List<BuilderPersistentInfo> infos) {
-		Map<String, List<BuilderPersistentInfo>> groupedInfos = new HashMap<String, List<BuilderPersistentInfo>>();
+		Map<String, List<BuilderPersistentInfo>> groupedInfos = new HashMap<>();
 		for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
 			BuilderPersistentInfo info = it.next();
 			if (!groupedInfos.containsKey(info.getProjectName()))

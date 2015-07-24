@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - Custom trigger builder #equals
  *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -48,7 +49,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 
 	private static final int ALL_TRIGGERS = MASK_AUTO | MASK_CLEAN | MASK_FULL | MASK_INCREMENTAL;
 
-	protected HashMap<String, String> arguments = new HashMap<String, String>(0);
+	protected HashMap<String, String> arguments = new HashMap<>(0);
 
 	/** Have we checked the supports configurations flag */
 	private boolean supportsConfigurationsCalculated;
@@ -225,7 +226,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	@Override
 	public void setArguments(Map<String, String> value) {
 		// copy parameter for safety's sake
-		arguments = value == null ? null : new HashMap<String, String>(value);
+		arguments = value == null ? null : new HashMap<>(value);
 	}
 
 	/**
@@ -241,7 +242,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 			if (value instanceof IncrementalProjectBuilder)
 				builder = (IncrementalProjectBuilder) value;
 			else
-				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>((Map<IBuildConfiguration, IncrementalProjectBuilder>) value);
+				builders = new HashMap<>((Map<IBuildConfiguration, IncrementalProjectBuilder>) value);
 		}
 	}
 
@@ -262,7 +263,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 
 		if (supportsConfigs()) {
 			if (builders == null)
-				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>(1);
+				builders = new HashMap<>(1);
 			builders.put(config, newBuilder);
 		} else
 			builder = newBuilder;

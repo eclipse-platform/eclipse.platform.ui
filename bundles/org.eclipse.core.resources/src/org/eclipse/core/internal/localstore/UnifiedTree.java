@@ -12,6 +12,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Martin Oberhuber (Wind River) - [292267] OutOfMemoryError due to leak in UnifiedTree
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -54,7 +55,7 @@ public class UnifiedTree {
 	protected IFileTree fileTree = null;
 
 	/** Spare node objects available for reuse */
-	protected ArrayList<UnifiedTreeNode> freeNodes = new ArrayList<UnifiedTreeNode>();
+	protected ArrayList<UnifiedTreeNode> freeNodes = new ArrayList<>();
 	/** tree's actual level */
 	protected int level;
 	/** our queue */
@@ -321,7 +322,7 @@ public class UnifiedTree {
 			return EMPTY_ITERATOR;
 
 		/* create an enumeration with node's children */
-		List<UnifiedTreeNode> result = new ArrayList<UnifiedTreeNode>(10);
+		List<UnifiedTreeNode> result = new ArrayList<>(10);
 		while (true) {
 			UnifiedTreeNode child = queue.elementAt(index);
 			if (isChildrenMarker(child))
@@ -365,12 +366,12 @@ public class UnifiedTree {
 	protected void initializeQueue() {
 		//initialize the queue
 		if (queue == null)
-			queue = new Queue<UnifiedTreeNode>(100, false);
+			queue = new Queue<>(100, false);
 		else
 			queue.reset();
 		//initialize the free nodes list
 		if (freeNodes == null)
-			freeNodes = new ArrayList<UnifiedTreeNode>(100);
+			freeNodes = new ArrayList<>(100);
 		else
 			freeNodes.clear();
 		addRootToQueue();

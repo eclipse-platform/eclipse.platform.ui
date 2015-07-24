@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 
 package org.eclipse.core.internal.resources;
@@ -94,7 +95,7 @@ class ComputeProjectOrder {
 			 * 
 			 * Element type: <code>Vertex</code>
 			 */
-			public List<Vertex> adjacent = new ArrayList<Vertex>(3);
+			public List<Vertex> adjacent = new ArrayList<>(3);
 
 			/**
 			 * Creates a new vertex with the given id.
@@ -111,14 +112,14 @@ class ComputeProjectOrder {
 		 * 
 		 * Element type: <code>Vertex</code>
 		 */
-		private List<Vertex> vertexList = new ArrayList<Vertex>(100);
+		private List<Vertex> vertexList = new ArrayList<>(100);
 
 		/**
 		 * Map from id to vertex.
 		 * 
 		 * Key type: <code>Object</code>; value type: <code>Vertex</code>
 		 */
-		private Map<Object, Vertex> vertexMap = new HashMap<Object, Vertex>(100);
+		private Map<Object, Vertex> vertexMap = new HashMap<>(100);
 
 		/**
 		 * DFS visit time. Non-negative.
@@ -275,7 +276,7 @@ class ComputeProjectOrder {
 			}
 			// find the roots of each component
 			// Map<Vertex,List<Object>> components
-			Map<Vertex, List<Object>> components = new HashMap<Vertex, List<Object>>();
+			Map<Vertex, List<Object>> components = new HashMap<>();
 			for (Iterator<Vertex> it = vertexList.iterator(); it.hasNext();) {
 				Vertex vertex = it.next();
 				if (vertex.predecessor == null) {
@@ -289,14 +290,14 @@ class ComputeProjectOrder {
 					}
 					List<Object> component = components.get(root);
 					if (component == null) {
-						component = new ArrayList<Object>(2);
+						component = new ArrayList<>(2);
 						component.add(root.id);
 						components.put(root, component);
 					}
 					component.add(vertex.id);
 				}
 			}
-			List<Object[]> result = new ArrayList<Object[]>(components.size());
+			List<Object[]> result = new ArrayList<>(components.size());
 			for (Iterator<List<Object>> it = components.values().iterator(); it.hasNext();) {
 				List<Object> component = it.next();
 				if (component.size() > 1) {
@@ -375,7 +376,7 @@ class ComputeProjectOrder {
 			// all vertex.predecessor initially null;
 			time = 0;
 			// for a stack, append to the end of an array-based list
-			List<Object> stack = new ArrayList<Object>(Math.max(1, vertexList.size()));
+			List<Object> stack = new ArrayList<>(Math.max(1, vertexList.size()));
 			Iterator<Vertex> allAdjacent = null;
 			Vertex vertex = null;
 			Iterator<Vertex> allV = vertexList.iterator();
@@ -599,10 +600,10 @@ class ComputeProjectOrder {
 		}
 
 		// and from the knots list
-		List<Object[]> reducedKnots = new ArrayList<Object[]>(order.knots.length);
+		List<Object[]> reducedKnots = new ArrayList<>(order.knots.length);
 		for (int i = 0; i < order.knots.length; i++) {
 			Object[] knot = order.knots[i];
-			List<Object> knotList = new ArrayList<Object>(knot.length);
+			List<Object> knotList = new ArrayList<>(knot.length);
 			for (int j = 0; j < knot.length; j++) {
 				Object vertex = knot[j];
 				if (!filter.matches(vertex)) {

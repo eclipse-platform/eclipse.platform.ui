@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -20,12 +21,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ChangeDescription {
 
-	private List<IResource> addedRoots = new ArrayList<IResource>();
-	private List<IResource> changedFiles = new ArrayList<IResource>();
-	private List<IResource> closedProjects = new ArrayList<IResource>();
-	private List<IResource> copiedRoots = new ArrayList<IResource>();
-	private List<IResource> movedRoots = new ArrayList<IResource>();
-	private List<IResource> removedRoots = new ArrayList<IResource>();
+	private List<IResource> addedRoots = new ArrayList<>();
+	private List<IResource> changedFiles = new ArrayList<>();
+	private List<IResource> closedProjects = new ArrayList<>();
+	private List<IResource> copiedRoots = new ArrayList<>();
+	private List<IResource> movedRoots = new ArrayList<>();
+	private List<IResource> removedRoots = new ArrayList<>();
 
 	private IResource createSourceResource(IResourceDelta delta) {
 		IPath sourcePath = delta.getMovedFromPath();
@@ -54,7 +55,7 @@ public class ChangeDescription {
 	}
 
 	public IResource[] getRootResources() {
-		Set<IResource> result = new HashSet<IResource>();
+		Set<IResource> result = new HashSet<>();
 		result.addAll(addedRoots);
 		result.addAll(changedFiles);
 		result.addAll(closedProjects);

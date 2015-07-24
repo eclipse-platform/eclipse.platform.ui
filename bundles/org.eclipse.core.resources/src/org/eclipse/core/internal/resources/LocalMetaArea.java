@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *     Broadcom Corporation - ongoing development
  *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -396,7 +397,7 @@ public class LocalMetaArea implements ICoreConstants {
 				description.setActiveBuildConfig(dataIn.readUTF());
 				// Build configuration references?
 				int numBuildConifgsWithRefs = dataIn.readInt();
-				HashMap<String, IBuildConfiguration[]> m = new HashMap<String, IBuildConfiguration[]>(numBuildConifgsWithRefs);
+				HashMap<String, IBuildConfiguration[]> m = new HashMap<>(numBuildConifgsWithRefs);
 				for (int i = 0; i < numBuildConifgsWithRefs; i++) {
 					String configName = dataIn.readUTF();
 					numRefs = dataIn.readInt();

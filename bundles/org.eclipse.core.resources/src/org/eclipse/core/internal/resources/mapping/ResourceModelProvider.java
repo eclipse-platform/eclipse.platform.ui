@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -15,7 +16,8 @@ import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A simple model provider that represents the resource model itself.
@@ -37,7 +39,7 @@ public final class ResourceModelProvider extends ModelProvider {
 	 */
 	@Override
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) {
-		Set<IAdaptable> result = new HashSet<IAdaptable>();
+		Set<IAdaptable> result = new HashSet<>();
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			IResource[] resources = traversal.getResources();
@@ -52,7 +54,7 @@ public final class ResourceModelProvider extends ModelProvider {
 						if (resource.getType() == IResource.FILE) {
 							result.add(resource);
 						} else {
-							result.add(new ShallowContainer((IContainer)resource));
+							result.add(new ShallowContainer((IContainer) resource));
 						}
 						break;
 					case IResource.DEPTH_ZERO :
@@ -69,7 +71,7 @@ public final class ResourceModelProvider extends ModelProvider {
 			if (element instanceof IResource) {
 				mappings[i++] = new SimpleResourceMapping((IResource) element);
 			} else {
-				mappings[i++] = new ShallowResourceMapping((ShallowContainer)element);
+				mappings[i++] = new ShallowResourceMapping((ShallowContainer) element);
 			}
 		}
 		return mappings;

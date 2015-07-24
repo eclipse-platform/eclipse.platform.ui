@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.properties;
 
@@ -30,7 +31,7 @@ public class PropertyManager2 implements IPropertyManager {
 	private static final int MAX_VALUE_SIZE = 2 * 1024;
 
 	class PropertyCopyVisitor extends Bucket.Visitor {
-		private List<PropertyEntry> changes = new ArrayList<PropertyEntry>();
+		private List<PropertyEntry> changes = new ArrayList<>();
 		private IPath destination;
 		private IPath source;
 
@@ -119,7 +120,7 @@ public class PropertyManager2 implements IPropertyManager {
 
 	@Override
 	public synchronized Map<QualifiedName, String> getProperties(IResource target) throws CoreException {
-		final Map<QualifiedName, String> result = new HashMap<QualifiedName, String>();
+		final Map<QualifiedName, String> result = new HashMap<>();
 		tree.accept(new PropertyBucket.Visitor() {
 			@Override
 			public int visit(Entry entry) {

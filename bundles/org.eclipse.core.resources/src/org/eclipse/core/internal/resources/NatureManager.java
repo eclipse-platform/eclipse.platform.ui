@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -29,7 +30,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	private Map<String, IProjectNatureDescriptor> descriptors;
 
 	//maps IProject -> String[] of enabled natures for that project
-	private final Map<Project, String[]> natureEnablements = new HashMap<Project, String[]>(20);
+	private final Map<Project, String[]> natureEnablements = new HashMap<>(20);
 
 	//maps String (builder ID) -> String (nature ID)
 	private Map<String, String> buildersToNatures;
@@ -57,9 +58,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 			return natureIds;
 
 		//set of the nature ids being validated (String (id))
-		HashSet<String> candidates = new HashSet<String>(count * 2);
+		HashSet<String> candidates = new HashSet<>(count * 2);
 		//table of String(set ID) -> ArrayList (nature IDs that belong to that set)
-		HashMap<String, ArrayList<String>> setsToNatures = new HashMap<String, ArrayList<String>>(count);
+		HashMap<String, ArrayList<String>> setsToNatures = new HashMap<>(count);
 		for (int i = 0; i < count; i++) {
 			String id = natureIds[i];
 			ProjectNatureDescriptor desc = (ProjectNatureDescriptor) getNatureDescriptor(id);
@@ -73,7 +74,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 				String set = setIds[j];
 				ArrayList<String> current = setsToNatures.get(set);
 				if (current == null) {
-					current = new ArrayList<String>(5);
+					current = new ArrayList<>(5);
 					setsToNatures.put(set, current);
 				}
 				current.add(id);
@@ -172,8 +173,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	public void configureNatures(Project project, ProjectDescription oldDescription, ProjectDescription newDescription, MultiStatus status) {
 		// Be careful not to rely on much state because (de)configuring a nature
 		// may well result in recursive calls to this method.
-		HashSet<String> oldNatures = new HashSet<String>(Arrays.asList(oldDescription.getNatureIds(false)));
-		HashSet<String> newNatures = new HashSet<String>(Arrays.asList(newDescription.getNatureIds(false)));
+		HashSet<String> oldNatures = new HashSet<>(Arrays.asList(oldDescription.getNatureIds(false)));
+		HashSet<String> newNatures = new HashSet<>(Arrays.asList(newDescription.getNatureIds(false)));
 		if (oldNatures.equals(newNatures))
 			return;
 		HashSet<String> deletions = (HashSet<String>) oldNatures.clone();
@@ -303,7 +304,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public synchronized String findNatureForBuilder(String builderID) {
 		if (buildersToNatures == null) {
-			buildersToNatures = new HashMap<String, String>(10);
+			buildersToNatures = new HashMap<>(10);
 			IProjectNatureDescriptor[] descs = getNatureDescriptors();
 			for (int i = 0; i < descs.length; i++) {
 				String natureId = descs[i].getNatureId();
@@ -447,7 +448,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new HashMap<String, IProjectNatureDescriptor>(extensions.length * 2 + 1);
+		descriptors = new HashMap<>(extensions.length * 2 + 1);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			IProjectNatureDescriptor desc = null;
 			try {
@@ -475,8 +476,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 		int count = natureIds.length;
 		if (count == 0)
 			return natureIds;
-		ArrayList<String> result = new ArrayList<String>(count);
-		HashSet<String> seen = new HashSet<String>(count);//for cycle and duplicate detection
+		ArrayList<String> result = new ArrayList<>(count);
+		HashSet<String> seen = new HashSet<>(count);//for cycle and duplicate detection
 		for (int i = 0; i < count; i++)
 			insert(result, seen, natureIds[i]);
 		//remove added prerequisites that didn't exist in original list
@@ -605,9 +606,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 
 		//set of the nature ids being validated (String (id))
-		HashSet<String> natures = new HashSet<String>(count * 2);
+		HashSet<String> natures = new HashSet<>(count * 2);
 		//set of nature sets for which a member nature has been found (String (id))
-		HashSet<String> sets = new HashSet<String>(count);
+		HashSet<String> sets = new HashSet<>(count);
 		for (int i = 0; i < count; i++) {
 			String id = natureIds[i];
 			ProjectNatureDescriptor desc = (ProjectNatureDescriptor) getNatureDescriptor(id);

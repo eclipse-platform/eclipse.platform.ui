@@ -12,6 +12,7 @@
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
  *                              - [462440] IFile#getContents methods should specify the status codes for its exceptions
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -72,7 +73,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		URI location = inputLocation;
 		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
 		final IWorkspaceRoot root = getWorkspace().getRoot();
-		final ArrayList<IPath> results = new ArrayList<IPath>();
+		final ArrayList<IPath> results = new ArrayList<>();
 		if (URIUtil.equals(location, locationURIFor(root, true))) {
 			//there can only be one resource at the workspace root's location
 			results.add(Path.ROOT);

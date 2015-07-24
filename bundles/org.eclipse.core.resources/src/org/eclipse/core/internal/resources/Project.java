@@ -12,6 +12,7 @@
  *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -477,7 +478,7 @@ public class Project extends Container implements IProject {
 	@Override
 	public IProject[] getReferencingProjects() {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List<IProject> result = new ArrayList<IProject>(projects.length);
+		List<IProject> result = new ArrayList<>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];
 			if (!project.isAccessible())
@@ -771,7 +772,7 @@ public class Project extends Container implements IProject {
 	public IBuildConfiguration[] internalGetReferencedBuildConfigs(String configName, boolean includeMissing) {
 		ProjectDescription description = internalGetDescription();
 		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(configName, false);
-		Collection<IBuildConfiguration> configs = new LinkedHashSet<IBuildConfiguration>(refs.length);
+		Collection<IBuildConfiguration> configs = new LinkedHashSet<>(refs.length);
 		for (int i = 0; i < refs.length; i++) {
 			try {
 				configs.add((((BuildConfiguration) refs[i]).getBuildConfig()));
@@ -1135,7 +1136,7 @@ public class Project extends Container implements IProject {
 		if (newLinks == null)
 			return status;
 		//sort links to avoid creating nested links before their parents
-		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<LinkDescription>(new Comparator<LinkDescription>() {
+		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<>(new Comparator<LinkDescription>() {
 			@Override
 			public int compare(LinkDescription arg0, LinkDescription arg1) {
 				int numberOfSegments0 = arg0.getProjectRelativePath().segmentCount();

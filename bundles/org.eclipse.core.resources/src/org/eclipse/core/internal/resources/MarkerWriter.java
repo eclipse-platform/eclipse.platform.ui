@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -151,7 +152,7 @@ public class MarkerWriter {
 		// always write out the count...even if its zero. this will help
 		// use pick up marker deletions from our snapshot.
 		output.writeInt(count);
-		List<String> writtenTypes = new ArrayList<String>();
+		List<String> writtenTypes = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++)
 			if (isPersistent[i])
 				write((MarkerInfo) elements[i], output, writtenTypes);

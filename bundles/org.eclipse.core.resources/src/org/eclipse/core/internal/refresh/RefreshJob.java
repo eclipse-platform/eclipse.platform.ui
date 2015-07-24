@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2014 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
@@ -44,7 +45,7 @@ public class RefreshJob extends WorkspaceJob {
 
 	public RefreshJob() {
 		super(Messages.refresh_jobName);
-		fRequests = new ArrayList<IResource>(1);
+		fRequests = new ArrayList<>(1);
 	}
 
 	/**

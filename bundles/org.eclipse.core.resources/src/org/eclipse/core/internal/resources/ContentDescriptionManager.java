@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Sergey Prigogin (Google) - [464072] Refresh on Access ignored during text search
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -50,7 +51,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			setUser(false);
 			setPriority(LONG);
 			setRule(workspace.getRoot());
-			toFlush = new ArrayList<IPath>(5);
+			toFlush = new ArrayList<>(5);
 		}
 
 		/* (non-Javadoc)

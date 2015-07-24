@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -96,7 +97,7 @@ public class MarkerManager implements IManager {
 		int size = markers.size();
 		if (size <= 0)
 			return NO_MARKER_INFO;
-		List<MarkerInfo> result = new ArrayList<MarkerInfo>(size);
+		List<MarkerInfo> result = new ArrayList<>(size);
 		IMarkerSetElement[] elements = markers.elements();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerInfo marker = (MarkerInfo) elements[i];
@@ -263,7 +264,7 @@ public class MarkerManager implements IManager {
 	 * for all types (i.e., <code>null</code> is a wildcard.
 	 */
 	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
-		ArrayList<IMarker> result = new ArrayList<IMarker>();
+		ArrayList<IMarker> result = new ArrayList<>();
 		doFindMarkers(target, result, type, includeSubtypes, depth);
 		if (result.size() == 0)
 			return NO_MARKERS;

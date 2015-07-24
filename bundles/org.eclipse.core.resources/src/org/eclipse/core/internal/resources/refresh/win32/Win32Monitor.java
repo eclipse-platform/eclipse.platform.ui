@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
@@ -226,7 +227,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 
 		protected void createFileHandleChain() {
-			fileHandleChain = new ArrayList<FileHandle>(1);
+			fileHandleChain = new ArrayList<>(1);
 			File file = new File(resource.getLocation().toOSString());
 			file = file.getParentFile();
 			while (file != null) {
@@ -336,7 +337,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		this.refreshResult = result;
 		setPriority(Job.DECORATE);
 		setSystem(true);
-		fHandleValueToHandle = new HashMap<Long, Handle>(1);
+		fHandleValueToHandle = new HashMap<>(1);
 		setHandleValueArrays(createHandleArrays());
 	}
 
@@ -472,7 +473,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 *                  a handle, not <code>null</code>
 	 */
 	protected void removeHandle(Handle handle) {
-		List<Handle> handles = new ArrayList<Handle>(1);
+		List<Handle> handles = new ArrayList<>(1);
 		handles.add(handle);
 		removeHandles(handles);
 	}
@@ -562,7 +563,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		if (resource == null) {
 			// resource == null means stop monitoring all resources
 			synchronized (fHandleValueToHandle) {
-				removeHandles(new ArrayList<Handle>(fHandleValueToHandle.values()));
+				removeHandles(new ArrayList<>(fHandleValueToHandle.values()));
 			}
 		} else {
 			Handle handle = getHandle(resource);

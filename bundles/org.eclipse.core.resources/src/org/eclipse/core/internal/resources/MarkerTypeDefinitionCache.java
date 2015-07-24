@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -31,7 +32,7 @@ public class MarkerTypeDefinitionCache {
 					String aType = element.getAttribute("type"); //$NON-NLS-1$
 					if (aType != null) {
 						if (superTypes == null)
-							superTypes = new HashSet<String>(8);
+							superTypes = new HashSet<>(8);
 						//note that all marker type names will be in the intern table
 						//already because there is invariably a constant to describe
 						//the type name
@@ -63,7 +64,7 @@ public class MarkerTypeDefinitionCache {
 	 */
 	public MarkerTypeDefinitionCache() {
 		loadDefinitions();
-		HashSet<String> toCompute = new HashSet<String>(definitions.keySet());
+		HashSet<String> toCompute = new HashSet<>(definitions.keySet());
 		for (Iterator<String> i = definitions.keySet().iterator(); i.hasNext();) {
 			String markerId = i.next();
 			if (toCompute.contains(markerId))
@@ -86,7 +87,7 @@ public class MarkerTypeDefinitionCache {
 			toCompute.remove(markerId);
 			return null;
 		}
-		Set<String> transitiveSuperTypes = new HashSet<String>(def.superTypes);
+		Set<String> transitiveSuperTypes = new HashSet<>(def.superTypes);
 		for (Iterator<String> it = def.superTypes.iterator(); it.hasNext();) {
 			String superId = it.next();
 			Set<String> toAdd = null;
@@ -129,7 +130,7 @@ public class MarkerTypeDefinitionCache {
 	private void loadDefinitions() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 		IExtension[] types = point.getExtensions();
-		definitions = new HashMap<String, MarkerTypeDefinition>(types.length);
+		definitions = new HashMap<>(types.length);
 		for (int i = 0; i < types.length; i++) {
 			String markerId = types[i].getUniqueIdentifier();
 			if (markerId != null)

@@ -11,6 +11,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *     Broadcom Corporation - build configurations and references
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -54,7 +55,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
 	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
 	/** Map from config name in this project -> build configurations in other projects */
-	protected HashMap<String, IBuildConfiguration[]> dynamicConfigRefs = new HashMap<String, IBuildConfiguration[]>(1);
+	protected HashMap<String, IBuildConfiguration[]> dynamicConfigRefs = new HashMap<>(1);
 
 	// Cache of the build configurations
 	protected volatile IBuildConfiguration[] cachedBuildConfigs;
@@ -122,7 +123,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns a copy of the given array of build configs with all duplicates removed
 	 */
 	private IBuildConfiguration[] copyAndRemoveDuplicates(IBuildConfiguration[] values) {
-		Set<IBuildConfiguration> set = new LinkedHashSet<IBuildConfiguration>(Arrays.asList(values));
+		Set<IBuildConfiguration> set = new LinkedHashSet<>(Arrays.asList(values));
 		return set.toArray(new IBuildConfiguration[set.size()]);
 	}
 
@@ -159,7 +160,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @return collection of build config references
 	 */
 	private Collection<BuildConfiguration> getBuildConfigReferencesFromProjects(IProject[] projects) {
-		List<BuildConfiguration> refs = new ArrayList<BuildConfiguration>(projects.length);
+		List<BuildConfiguration> refs = new ArrayList<>(projects.length);
 		for (int i = 0; i < projects.length; i++)
 			refs.add(new BuildConfiguration(projects[i], null));
 		return refs;
@@ -171,7 +172,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * @return List<IProject>
 	 */
 	private Collection<IProject> getProjectsFromBuildConfigRefs(IBuildConfiguration[] refs) {
-		LinkedHashSet<IProject> projects = new LinkedHashSet<IProject>(refs.length);
+		LinkedHashSet<IProject> projects = new LinkedHashSet<>(refs.length);
 		for (int i = 0; i < refs.length; i++)
 			projects.add(refs[i].getProject());
 		return projects;
@@ -221,7 +222,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
 		IBuildConfiguration[] refs = cachedConfigRefs.get(configName);
 		if (refs == null) {
-			Set<IBuildConfiguration> references = new LinkedHashSet<IBuildConfiguration>();
+			Set<IBuildConfiguration> references = new LinkedHashSet<>();
 			IBuildConfiguration[] dynamicBuildConfigs = dynamicConfigRefs.containsKey(configName) ? dynamicConfigRefs.get(configName) : EMPTY_BUILD_CONFIG_REFERENCE_ARRAY;
 			Collection<BuildConfiguration> dynamic = getBuildConfigReferencesFromProjects(dynamicRefs);
 			Collection<BuildConfiguration> statik = getBuildConfigReferencesFromProjects(staticRefs);
@@ -610,7 +611,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	public void setBuildConfigReferences(HashMap<String, IBuildConfiguration[]> refs) {
-		dynamicConfigRefs = new HashMap<String, IBuildConfiguration[]>(refs);
+		dynamicConfigRefs = new HashMap<>(refs);
 		clearCachedReferences(null);
 	}
 
@@ -634,7 +635,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	@Override
 	public void setBuildConfigs(String[] names) {
 		// Remove references for deleted buildConfigs
-		LinkedHashSet<String> buildConfigNames = new LinkedHashSet<String>();
+		LinkedHashSet<String> buildConfigNames = new LinkedHashSet<>();
 
 		if (names == null || names.length == 0) {
 			configNames = EMPTY_STRING_ARRAY;
@@ -700,7 +701,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (description != null) {
 			//addition or modification
 			if (tempMap == null)
-				tempMap = new HashMap<IPath, LinkDescription>(10);
+				tempMap = new HashMap<>(10);
 			else
 				//copy on write to protect against concurrent read
 				tempMap = (HashMap<IPath, LinkDescription>) tempMap.clone();
@@ -733,10 +734,10 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	synchronized public void addFilter(IPath path, FilterDescription description) {
 		Assert.isNotNull(description);
 		if (filterDescriptions == null)
-			filterDescriptions = new HashMap<IPath, LinkedList<FilterDescription>>(10);
+			filterDescriptions = new HashMap<>(10);
 		LinkedList<FilterDescription> descList = filterDescriptions.get(path);
 		if (descList == null) {
-			descList = new LinkedList<FilterDescription>();
+			descList = new LinkedList<>();
 			filterDescriptions.put(path, descList);
 		}
 		descList.add(description);
@@ -773,7 +774,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (description != null) {
 			// addition or modification
 			if (tempMap == null)
-				tempMap = new HashMap<String, VariableDescription>(10);
+				tempMap = new HashMap<>(10);
 			else
 				// copy on write to protect against concurrent read
 				tempMap = (HashMap<String, VariableDescription>) tempMap.clone();
@@ -809,7 +810,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		if (descriptions != null) {
 			// addition
 			if (filterDescriptions == null)
-				filterDescriptions = new HashMap<IPath, LinkedList<FilterDescription>>(10);
+				filterDescriptions = new HashMap<>(10);
 			Object oldValue = filterDescriptions.put(path, descriptions);
 			if (oldValue != null && descriptions.equals(oldValue)) {
 				//not actually changed anything
@@ -922,7 +923,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		}
 		if (configRefsHaveChanges(dynamicConfigRefs, description.dynamicConfigRefs)) {
 			changed = true;
-			dynamicConfigRefs = new HashMap<String, IBuildConfiguration[]>(description.dynamicConfigRefs);
+			dynamicConfigRefs = new HashMap<>(description.dynamicConfigRefs);
 		}
 		if (changed)
 			clearCachedReferences(null);

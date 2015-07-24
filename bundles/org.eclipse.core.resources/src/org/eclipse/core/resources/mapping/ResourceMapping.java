@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -110,7 +111,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 */
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, IProgressMonitor monitor) throws CoreException {
 		final ResourceTraversal[] traversals = getTraversals(ResourceMappingContext.LOCAL_CONTEXT, monitor);
-		ArrayList<IMarker> result = new ArrayList<IMarker>();
+		ArrayList<IMarker> result = new ArrayList<>();
 		for (int i = 0; i < traversals.length; i++)
 			traversals[i].doFindMarkers(result, type, includeSubtypes);
 		return result.toArray(new IMarker[result.size()]);
@@ -193,7 +194,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * @exception CoreException if the traversals could not be obtained.
 	 */
 	public abstract ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Override hashCode to use the model object.
 	 */

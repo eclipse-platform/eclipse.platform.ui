@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -55,7 +56,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 		Map<IPath, MarkerSet> markerDeltas = info.getMarkerDeltas();
 		if (markerDeltas == null || markerDeltas.size() == 0)
 			return NO_MARKER_DELTAS;
-		ArrayList<IMarkerDelta> matching = new ArrayList<IMarkerDelta>();
+		ArrayList<IMarkerDelta> matching = new ArrayList<>();
 		Iterator<MarkerSet> deltaSets = markerDeltas.values().iterator();
 		while (deltaSets.hasNext()) {
 			MarkerSet deltas = deltaSets.next();

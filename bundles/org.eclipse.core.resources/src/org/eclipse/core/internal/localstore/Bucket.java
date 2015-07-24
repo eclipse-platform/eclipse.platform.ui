@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -115,7 +116,7 @@ public abstract class Bucket {
 		public final static int STOP = 1;
 		// should stop looking at states for files in this container (or any of its children)
 		public final static int RETURN = 2;
-	
+
 		/**
 		 * Called after the bucket has been visited (and saved).
 		 * @throws CoreException
@@ -147,7 +148,7 @@ public abstract class Bucket {
 	 * where the key is the path of the object we are storing history for, and
 	 * the value is the history entry data (UUID,timestamp) pairs.
 	 */
-	private final Map<String,Object> entries;
+	private final Map<String, Object> entries;
 	/**
 	 * The file system location of this bucket index file.
 	 */
@@ -162,7 +163,7 @@ public abstract class Bucket {
 	protected String projectName;
 
 	public Bucket() {
-		this.entries = new HashMap<String,Object>();
+		this.entries = new HashMap<>();
 	}
 
 	/**
@@ -178,7 +179,7 @@ public abstract class Bucket {
 			return Visitor.CONTINUE;
 		try {
 			for (Iterator<Map.Entry<String, Object>> i = entries.entrySet().iterator(); i.hasNext();) {
-				Map.Entry<String,Object> mapEntry = i.next();
+				Map.Entry<String, Object> mapEntry = i.next();
 				IPath path = new Path(mapEntry.getKey());
 				// check whether the filter applies
 				int matchingSegments = filter.matchingFirstSegments(path);
@@ -347,8 +348,8 @@ public abstract class Bucket {
 			try {
 				destination.write(getVersion());
 				destination.writeInt(entries.size());
-				for (Iterator<Map.Entry<String,Object>> i = entries.entrySet().iterator(); i.hasNext();) {
-					Map.Entry<String,Object> entry = i.next();
+				for (Iterator<Map.Entry<String, Object>> i = entries.entrySet().iterator(); i.hasNext();) {
+					Map.Entry<String, Object> entry = i.next();
 					writeEntryKey(destination, entry.getKey());
 					writeEntryValue(destination, entry.getValue());
 				}

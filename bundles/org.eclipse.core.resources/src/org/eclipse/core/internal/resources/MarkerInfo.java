@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -116,7 +117,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	public Map<String, Object> getAttributes(boolean makeCopy) {
 		if (attributes == null)
 			return null;
-		return makeCopy ? new MarkerAttributeMap<Object>(attributes) : attributes;
+		return makeCopy ? new MarkerAttributeMap<>(attributes) : attributes;
 	}
 
 	public Object[] getAttributes(String[] attributeNames) {
@@ -151,7 +152,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (attributes == null) {
 			if (value == null)
 				return;
-			attributes = new MarkerAttributeMap<Object>();
+			attributes = new MarkerAttributeMap<>();
 			attributes.put(attributeName, value);
 		} else {
 			if (value == null) {
@@ -168,7 +169,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (map == null)
 			attributes = null;
 		else {
-			attributes = new MarkerAttributeMap<Object>(map.size());
+			attributes = new MarkerAttributeMap<>(map.size());
 			for (Iterator<String> i = map.keySet().iterator(); i.hasNext();) {
 				Object key = i.next();
 				Assert.isTrue(key instanceof String);

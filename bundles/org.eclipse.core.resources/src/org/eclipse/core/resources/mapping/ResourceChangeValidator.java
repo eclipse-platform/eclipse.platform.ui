@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -67,7 +68,7 @@ public final class ResourceChangeValidator {
 	}
 
 	private IStatus combineResults(IStatus[] result) {
-		List<IStatus> notOK = new ArrayList<IStatus>();
+		List<IStatus> notOK = new ArrayList<>();
 		for (int i = 0; i < result.length; i++) {
 			IStatus status = result[i];
 			if (!status.isOK()) {
@@ -95,7 +96,7 @@ public final class ResourceChangeValidator {
 
 	private ModelProvider[] getProviders(IResource[] resources) {
 		IModelProviderDescriptor[] descriptors = ModelProvider.getModelProviderDescriptors();
-		List<ModelProvider> result = new ArrayList<ModelProvider>();
+		List<ModelProvider> result = new ArrayList<>();
 		for (int i = 0; i < descriptors.length; i++) {
 			IModelProviderDescriptor descriptor = descriptors[i];
 			try {

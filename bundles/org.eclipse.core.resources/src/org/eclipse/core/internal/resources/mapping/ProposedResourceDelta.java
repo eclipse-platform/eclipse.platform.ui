@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -21,7 +22,7 @@ import org.eclipse.core.runtime.*;
 public final class ProposedResourceDelta extends PlatformObject implements IResourceDelta {
 	protected static int KIND_MASK = 0xFF;
 
-	private HashMap<String, ProposedResourceDelta> children = new HashMap<String, ProposedResourceDelta>(8);
+	private HashMap<String, ProposedResourceDelta> children = new HashMap<>(8);
 	private IPath movedFromPath;
 	private IPath movedToPath;
 	private IResource resource;
@@ -119,7 +120,7 @@ public final class ProposedResourceDelta extends PlatformObject implements IReso
 	 */
 	@Override
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags) {
-		List<ProposedResourceDelta> result = new ArrayList<ProposedResourceDelta>();
+		List<ProposedResourceDelta> result = new ArrayList<>();
 		for (Iterator<ProposedResourceDelta> iter = children.values().iterator(); iter.hasNext();) {
 			ProposedResourceDelta child = iter.next();
 			if ((child.getKind() & kindMask) != 0)

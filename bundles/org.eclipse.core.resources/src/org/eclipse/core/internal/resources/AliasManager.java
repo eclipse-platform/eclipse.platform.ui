@@ -11,6 +11,7 @@
  *     Bert Vingerhoets - fix for bug 169975
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Fix Concurency Exception
  *     Sergey Prigogin (Google) - [338010] Resource.createLink() does not preserve symbolic links
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -124,7 +125,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		/**
 		 * Map of FileStore->IResource OR FileStore->ArrayList of (IResource)
 		 */
-		private final SortedMap<IFileStore, Object> map = new TreeMap<IFileStore, Object>(getComparator());
+		private final SortedMap<IFileStore, Object> map = new TreeMap<>(getComparator());
 
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
@@ -139,7 +140,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			if (oldValue instanceof IResource) {
 				if (resource.equals(oldValue))
 					return false;//duplicate
-				ArrayList<Object> newValue = new ArrayList<Object>(2);
+				ArrayList<Object> newValue = new ArrayList<>(2);
 				newValue.add(oldValue);
 				newValue.add(resource);
 				map.put(location, newValue);
@@ -286,20 +287,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	/**
 	 * The set of IProjects that have aliases.
 	 */
-	protected final Set<IResource> aliasedProjects = new HashSet<IResource>();
+	protected final Set<IResource> aliasedProjects = new HashSet<>();
 
 	/**
 	 * A temporary set of aliases.  Used during computeAliases, but maintained
 	 * as a field as an optimization to prevent recreating the set.
 	 */
-	protected final HashSet<IResource> aliases = new HashSet<IResource>();
+	protected final HashSet<IResource> aliases = new HashSet<>();
 
 	/**
 	 * The set of resources that have had structure changes that might
 	 * invalidate the locations map or aliased projects set.  These will be
 	 * updated incrementally on the next alias request.
 	 */
-	private final Set<IResource> changedLinks = new HashSet<IResource>();
+	private final Set<IResource> changedLinks = new HashSet<>();
 
 	/**
 	 * This flag is true when projects have been created or deleted and the
@@ -445,7 +446,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * Returns all resources pointing to the given location, or an empty array if there are none.
 	 */
 	public IResource[] findResources(IFileStore location) {
-		final ArrayList<IResource> resources = new ArrayList<IResource>();
+		final ArrayList<IResource> resources = new ArrayList<>();
 		locationsMap.matchingResourcesDo(location, new Doit() {
 			@Override
 			public void doit(IResource resource) {

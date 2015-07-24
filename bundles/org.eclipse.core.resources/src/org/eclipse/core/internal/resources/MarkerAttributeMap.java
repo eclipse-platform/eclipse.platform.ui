@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -187,7 +188,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 */
 	@Override
 	public Set<String> keySet() {
-		Set<String> result = new HashSet<String>(size());
+		Set<String> result = new HashSet<>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
@@ -301,7 +302,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 * Creates a new hash map with the same contents as this map.
 	 */
 	private HashMap<String, V> toHashMap() {
-		HashMap<String, V> result = new HashMap<String, V>(size());
+		HashMap<String, V> result = new HashMap<>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
@@ -320,7 +321,7 @@ public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolPartici
 	 */
 	@Override
 	public Collection<V> values() {
-		Set<V> result = new HashSet<V>(size());
+		Set<V> result = new HashSet<>(size());
 		if (count == 0)
 			return result;
 		for (int i = 1; i < elements.length; i = i + 2) {

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -28,7 +29,7 @@ public class Synchronizer implements ISynchronizer {
 	protected SyncInfoWriter writer;
 
 	// Registry of sync partners. Set of qualified names.
-	protected Set<QualifiedName> registry = new HashSet<QualifiedName>(5);
+	protected Set<QualifiedName> registry = new HashSet<>(5);
 
 	public Synchronizer(Workspace workspace) {
 		super();

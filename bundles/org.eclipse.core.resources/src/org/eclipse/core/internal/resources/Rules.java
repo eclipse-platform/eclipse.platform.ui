@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -202,7 +203,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 			return factoryFor(resources[0]).validateEditRule(resources);
 		}
 		//gather rules for each resource from appropriate factory
-		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
+		HashSet<ISchedulingRule> rules = new HashSet<>();
 		IResource[] oneResource = new IResource[1];
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() == IResource.ROOT)

@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -52,7 +53,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 	}
 
 	public static LinkedList<FilterDescription> copy(LinkedList<FilterDescription> originalDescriptions, IResource resource) {
-		LinkedList<FilterDescription> copy = new LinkedList<FilterDescription>();
+		LinkedList<FilterDescription> copy = new LinkedList<>();
 		for (FilterDescription desc : originalDescriptions) {
 			FilterDescription newDesc = new FilterDescription(resource, desc.getType(), desc.getFileInfoMatcherDescription());
 			copy.add(newDesc);

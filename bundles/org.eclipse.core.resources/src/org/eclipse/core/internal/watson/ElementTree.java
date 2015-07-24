@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
@@ -267,7 +268,7 @@ public class ElementTree {
 	public static int findOldest(ElementTree[] trees) {
 
 		/* first put all the trees in a hashtable */
-		HashMap<ElementTree, ElementTree> candidates = new HashMap<ElementTree, ElementTree>((int) (trees.length * 1.5 + 1));
+		HashMap<ElementTree, ElementTree> candidates = new HashMap<>((int) (trees.length * 1.5 + 1));
 		for (int i = 0; i < trees.length; i++) {
 			candidates.put(trees[i], trees[i]);
 		}

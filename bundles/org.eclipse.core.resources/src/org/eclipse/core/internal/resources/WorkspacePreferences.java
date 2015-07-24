@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -54,7 +55,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * stringN" to a string array {"string1","string2",..."stringN"}.
 	 */
 	public static String[] convertStringToStringArray(String string, String separator) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (StringTokenizer tokenizer = new StringTokenizer(string, separator); tokenizer.hasMoreTokens();)
 			list.add(tokenizer.nextToken());
 		return list.toArray(new String[list.size()]);

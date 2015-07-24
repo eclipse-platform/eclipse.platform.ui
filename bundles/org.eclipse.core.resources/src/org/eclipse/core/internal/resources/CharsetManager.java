@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -37,7 +38,7 @@ public class CharsetManager implements IManager {
 	 */
 	private class CharsetManagerJob extends Job {
 		private static final int CHARSET_UPDATE_DELAY = 500;
-		private List<Map.Entry<IProject, Boolean>> asyncChanges = new ArrayList<Map.Entry<IProject, Boolean>>();
+		private List<Map.Entry<IProject, Boolean>> asyncChanges = new ArrayList<>();
 
 		public CharsetManagerJob() {
 			super(Messages.resources_charsetUpdating);
@@ -164,7 +165,7 @@ public class CharsetManager implements IManager {
 			IProject currentProject = (IProject) projectDelta.getResource();
 			Preferences projectRegularPrefs = getPreferences(currentProject, false, false, true);
 			Preferences projectDerivedPrefs = getPreferences(currentProject, false, true, true);
-			Map<Boolean, String[]> affectedResourcesMap = new HashMap<Boolean, String[]>();
+			Map<Boolean, String[]> affectedResourcesMap = new HashMap<>();
 			try {
 				// no regular preferences for this project
 				if (projectRegularPrefs == null)
@@ -234,7 +235,7 @@ public class CharsetManager implements IManager {
 				return;
 			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
 			// process each project in the delta
-			Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
+			Map<IProject, Boolean> projectsToSave = new HashMap<>();
 			for (int i = 0; i < projectDeltas.length; i++)
 				//nothing to do if a project has been added/removed/moved				
 				if (projectDeltas[i].getKind() == IResourceDelta.CHANGED && (projectDeltas[i].getFlags() & IResourceDelta.OPEN) == 0)
@@ -400,7 +401,7 @@ public class CharsetManager implements IManager {
 				prefsChanged = true;
 			}
 			if (prefsChanged) {
-				Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
+				Map<IProject, Boolean> projectsToSave = new HashMap<>();
 				// this is internal change so do not notify charset delta job
 				projectsToSave.put(project, Boolean.TRUE);
 				job.addChanges(projectsToSave);
@@ -484,7 +485,7 @@ public class CharsetManager implements IManager {
 				}
 			}
 			if (prefsChanged) {
-				Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
+				Map<IProject, Boolean> projectsToSave = new HashMap<>();
 				// this is internal change so do not notify charset delta job
 				projectsToSave.put(project, Boolean.TRUE);
 				job.addChanges(projectsToSave);

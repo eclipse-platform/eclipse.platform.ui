@@ -9,6 +9,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -26,7 +27,7 @@ class FilterTypeManager implements IManager {
 
 	private static final String FILTER_ELEMENT = "filterMatcher"; //$NON-NLS-1$
 
-	private HashMap<String, IFilterMatcherDescriptor> factories = new HashMap<String, IFilterMatcherDescriptor>();
+	private HashMap<String, IFilterMatcherDescriptor> factories = new HashMap<>();
 
 	public FilterTypeManager() {
 		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTER_MATCHERS);

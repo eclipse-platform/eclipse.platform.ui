@@ -8,9 +8,10 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Isaac Pacht (isaacp3@gmail.com) - fix for bug 206540
- * Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
- * James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
- * Broadcom Corporation - ongoing development
+ *     Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
+ *     James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
+ *     Broadcom Corporation - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -102,7 +103,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//the job for performing background autobuild
 	final AutoBuildJob autoBuildJob;
 	private boolean building = false;
-	private final Set<IProject> builtProjects = new HashSet<IProject>();
+	private final Set<IProject> builtProjects = new HashSet<>();
 
 	//the following four fields only apply for the lifetime of a single builder invocation.
 	protected InternalBuilder currentBuilder;
@@ -453,7 +454,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		IBuildConfiguration[] configs = project.getBuildConfigs();
 
 		/* build the new list */
-		ArrayList<BuilderPersistentInfo> newInfos = new ArrayList<BuilderPersistentInfo>(commands.length * configs.length);
+		ArrayList<BuilderPersistentInfo> newInfos = new ArrayList<>(commands.length * configs.length);
 		for (int i = 0; i < commands.length; i++) {
 			BuildCommand command = (BuildCommand) commands[i];
 			String builderName = command.getBuilderName();
@@ -1111,7 +1112,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		if (builderName == null) {
 			final ICommand[] commands;
 			if (project.isAccessible()) {
-				Set<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
+				Set<ISchedulingRule> rules = new HashSet<>();
 				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 				boolean hasNullBuildRule = false;
 				BuildContext context = new BuildContext(buildConfiguration);

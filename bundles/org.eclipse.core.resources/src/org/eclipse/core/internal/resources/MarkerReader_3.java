@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -62,7 +63,7 @@ public class MarkerReader_3 extends MarkerReader {
 	@Override
 	public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
 		try {
-			List<String> readTypes = new ArrayList<String>(5);
+			List<String> readTypes = new ArrayList<>(5);
 			while (true) {
 				IPath path = new Path(input.readUTF());
 				int markersSize = input.readInt();
@@ -81,7 +82,7 @@ public class MarkerReader_3 extends MarkerReader {
 					// and shrinking the array.
 					Resource resource = workspace.newResource(path, info.getType());
 					IMarkerSetElement[] infos = markers.elements;
-					ArrayList<MarkerDelta> deltas = new ArrayList<MarkerDelta>(infos.length);
+					ArrayList<MarkerDelta> deltas = new ArrayList<>(infos.length);
 					for (int i = 0; i < infos.length; i++)
 						if (infos[i] != null)
 							deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) infos[i]));
@@ -97,7 +98,7 @@ public class MarkerReader_3 extends MarkerReader {
 		int attributesSize = input.readShort();
 		if (attributesSize == 0)
 			return null;
-		Map<String, Object> result = new MarkerAttributeMap<Object>(attributesSize);
+		Map<String, Object> result = new MarkerAttributeMap<>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			byte type = input.readByte();
@@ -107,16 +108,16 @@ public class MarkerReader_3 extends MarkerReader {
 					int intValue = input.readInt();
 					//canonicalize well known values (marker severity, task priority)
 					switch (intValue) {
-						case 0:
+						case 0 :
 							value = MarkerInfo.INTEGER_ZERO;
 							break;
-						case 1:
+						case 1 :
 							value = MarkerInfo.INTEGER_ONE;
 							break;
-						case 2:
+						case 2 :
 							value = MarkerInfo.INTEGER_TWO;
 							break;
-						default:
+						default :
 							value = new Integer(intValue);
 					}
 					break;

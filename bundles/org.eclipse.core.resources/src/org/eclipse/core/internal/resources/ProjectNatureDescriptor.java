@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -118,10 +119,10 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		label = natureExtension.getLabel();
 		IConfigurationElement[] elements = natureExtension.getConfigurationElements();
 		int count = elements.length;
-		ArrayList<String> requiredList = new ArrayList<String>(count);
-		ArrayList<String> setList = new ArrayList<String>(count);
-		ArrayList<String> builderList = new ArrayList<String>(count);
-		ArrayList<String> contentTypeList = new ArrayList<String>(count);
+		ArrayList<String> requiredList = new ArrayList<>(count);
+		ArrayList<String> setList = new ArrayList<>(count);
+		ArrayList<String> builderList = new ArrayList<>(count);
+		ArrayList<String> contentTypeList = new ArrayList<>(count);
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
 			String name = element.getName();

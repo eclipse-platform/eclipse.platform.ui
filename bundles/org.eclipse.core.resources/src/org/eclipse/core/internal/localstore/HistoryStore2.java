@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.*;
 public class HistoryStore2 implements IHistoryStore {
 
 	class HistoryCopyVisitor extends Bucket.Visitor {
-		private List<HistoryEntry> changes = new ArrayList<HistoryEntry>();
+		private List<HistoryEntry> changes = new ArrayList<>();
 		private IPath destination;
 		private IPath source;
 
@@ -64,7 +65,7 @@ public class HistoryStore2 implements IHistoryStore {
 	}
 
 	private BlobStore blobStore;
-	private Set<UniversalUniqueIdentifier> blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
+	private Set<UniversalUniqueIdentifier> blobsToRemove = new HashSet<>();
 	final BucketTree tree;
 	private Workspace workspace;
 
@@ -105,7 +106,7 @@ public class HistoryStore2 implements IHistoryStore {
 
 	@Override
 	public synchronized Set<IPath> allFiles(IPath root, int depth, IProgressMonitor monitor) {
-		final Set<IPath> allFiles = new HashSet<IPath>();
+		final Set<IPath> allFiles = new HashSet<>();
 		try {
 			tree.accept(new Bucket.Visitor() {
 				@Override
@@ -201,7 +202,7 @@ public class HistoryStore2 implements IHistoryStore {
 			blobStore.deleteBlobs(blobsToRemove);
 			if (Policy.DEBUG_HISTORY)
 				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
-			blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
+			blobsToRemove = new HashSet<>();
 		}
 	}
 
@@ -369,7 +370,7 @@ public class HistoryStore2 implements IHistoryStore {
 				}
 			}, Path.ROOT, BucketTree.DEPTH_INFINITE);
 			blobStore.deleteBlobs(blobsToRemove);
-			blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
+			blobsToRemove = new HashSet<>();
 		} catch (Exception e) {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);

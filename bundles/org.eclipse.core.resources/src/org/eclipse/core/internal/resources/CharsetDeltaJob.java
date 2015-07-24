@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -44,10 +45,10 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		boolean isAffected(ResourceInfo info, IPathRequestor requestor);
 	}
 
-	private ThreadLocal<Boolean> disabled = new ThreadLocal<Boolean>();
+	private ThreadLocal<Boolean> disabled = new ThreadLocal<>();
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-	private Queue<ICharsetListenerFilter> work = new Queue<ICharsetListenerFilter>();
+	private Queue<ICharsetListenerFilter> work = new Queue<>();
 
 	Workspace workspace;
 

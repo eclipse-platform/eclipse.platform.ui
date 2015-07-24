@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -142,7 +143,7 @@ public class ProjectContentTypes {
 		String[] enabledNatures = workspace.getNatureManager().getEnabledNatures(project);
 		if (enabledNatures.length == 0)
 			return Collections.EMPTY_SET;
-		Set<String> related = new HashSet<String>(enabledNatures.length);
+		Set<String> related = new HashSet<>(enabledNatures.length);
 		for (int i = 0; i < enabledNatures.length; i++) {
 			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNatures[i]);
 			if (descriptor == null)

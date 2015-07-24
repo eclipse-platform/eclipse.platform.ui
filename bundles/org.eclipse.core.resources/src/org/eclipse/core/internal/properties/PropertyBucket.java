@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.properties;
 
@@ -214,7 +215,7 @@ public class PropertyBucket extends Bucket {
 	 */
 	private static final byte VERSION = 1;
 
-	private final List<String> qualifierIndex = new ArrayList<String>();
+	private final List<String> qualifierIndex = new ArrayList<>();
 
 	public PropertyBucket() {
 		super();

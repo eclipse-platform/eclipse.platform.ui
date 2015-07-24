@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -68,7 +69,7 @@ public class ObjectMap<K, V> implements Map<K, V>, IStringPoolParticipant {
 	 */
 	@Override
 	public Object clone() {
-		return new ObjectMap<K, V>(this);
+		return new ObjectMap<>(this);
 	}
 
 	/**
@@ -185,7 +186,7 @@ public class ObjectMap<K, V> implements Map<K, V>, IStringPoolParticipant {
 	 */
 	@Override
 	public Set<K> keySet() {
-		Set<K> result = new HashSet<K>(size());
+		Set<K> result = new HashSet<>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add((K) elements[i]);
@@ -301,7 +302,7 @@ public class ObjectMap<K, V> implements Map<K, V>, IStringPoolParticipant {
 	 * Creates a new hash map with the same contents as this map.
 	 */
 	private HashMap<K, V> toHashMap() {
-		HashMap<K, V> result = new HashMap<K, V>(size());
+		HashMap<K, V> result = new HashMap<>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.put((K) elements[i], (V) elements[i + 1]);
@@ -318,7 +319,7 @@ public class ObjectMap<K, V> implements Map<K, V>, IStringPoolParticipant {
 	 */
 	@Override
 	public Collection<V> values() {
-		Set<V> result = new HashSet<V>(size());
+		Set<V> result = new HashSet<>(size());
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add((V) elements[i]);

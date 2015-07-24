@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.propertytester;
 
@@ -142,7 +143,7 @@ public class StringMatcher {
 	 * Parses the pattern into segments separated by wildcard '*' characters.
 	 */
 	private void parseWildCards() {
-		if (pattern.startsWith("*"))//$NON-NLS-1$
+		if (pattern.startsWith("*")) //$NON-NLS-1$
 			hasLeadingStar = true;
 		if (pattern.endsWith("*")) {//$NON-NLS-1$
 			/* make sure it's not an escaped wildcard */
@@ -151,7 +152,7 @@ public class StringMatcher {
 			}
 		}
 
-		ArrayList<String> temp = new ArrayList<String>();
+		ArrayList<String> temp = new ArrayList<>();
 
 		int pos = 0;
 		StringBuffer buf = new StringBuffer();

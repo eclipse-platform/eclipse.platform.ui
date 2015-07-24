@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -140,7 +141,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	@Override
 	public String[] getPathVariableNames() {
-		List<String> result = new LinkedList<String>();
+		List<String> result = new LinkedList<>();
 		String[] names = preferences.propertyNames();
 		for (int i = 0; i < names.length; i++) {
 			if (names[i].startsWith(VARIABLE_PREFIX)) {

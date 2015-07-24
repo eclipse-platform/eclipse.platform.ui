@@ -12,6 +12,7 @@
  *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
  *     Broadcom Corporation - ongoing development
  *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -277,7 +278,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 
 		//trees for plugin saved states
-		ArrayList<ElementTree> trees = new ArrayList<ElementTree>();
+		ArrayList<ElementTree> trees = new ArrayList<>();
 		synchronized (savedStates) {
 			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
 				SavedState state = i.next();
@@ -334,7 +335,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * The keys are plugins and values are SaveContext objects.
 	 */
 	protected Map<String, SaveContext> computeSaveContexts(String[] pluginIds, int kind, IProject project) {
-		HashMap<String, SaveContext> result = new HashMap<String, SaveContext>(pluginIds.length);
+		HashMap<String, SaveContext> result = new HashMap<>(pluginIds.length);
 		for (int i = 0; i < pluginIds.length; i++) {
 			String pluginId = pluginIds[i];
 			try {
@@ -357,7 +358,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * saved states to be written out.
 	 */
 	protected Map<String, ElementTree> computeStatesToSave(Map<String, SaveContext> contexts, ElementTree current) {
-		HashMap<String, ElementTree> result = new HashMap<String, ElementTree>(savedStates.size() * 2);
+		HashMap<String, ElementTree> result = new HashMap<>(savedStates.size() * 2);
 		synchronized (savedStates) {
 			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
 				SavedState state = i.next();
@@ -605,7 +606,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	protected void removeUnusedSafeTables() {
-		List<String> valuables = new ArrayList<String>(10);
+		List<String> valuables = new ArrayList<>(10);
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		valuables.add(location.lastSegment()); // add master table
 		for (Enumeration<Object> e = masterTable.keys(); e.hasMoreElements();) {
@@ -624,7 +625,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected void removeUnusedTreeFiles() {
 		// root resource
-		List<String> valuables = new ArrayList<String>(10);
+		List<String> valuables = new ArrayList<>(10);
 		IPath location = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		valuables.add(location.lastSegment());
 		java.io.File target = location.toFile().getParentFile();
@@ -1540,11 +1541,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		ElementTree[] sorted = new ElementTree[numTrees];
 
 		/* first build a table of ElementTree -> List of Integers(indices in trees array) */
-		Map<ElementTree, List<Integer>> table = new HashMap<ElementTree, List<Integer>>(numTrees * 2 + 1);
+		Map<ElementTree, List<Integer>> table = new HashMap<>(numTrees * 2 + 1);
 		for (int i = 0; i < trees.length; i++) {
 			List<Integer> indices = table.get(trees[i]);
 			if (indices == null) {
-				indices = new ArrayList<Integer>(10);
+				indices = new ArrayList<>(10);
 				table.put(trees[i], indices);
 			}
 			indices.add(new Integer(i));
@@ -1647,8 +1648,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath markersTempLocation = workspace.getMetaArea().getBackupLocationFor(markersLocation);
 		IPath syncInfoLocation = workspace.getMetaArea().getSyncInfoLocationFor(root);
 		IPath syncInfoTempLocation = workspace.getMetaArea().getBackupLocationFor(syncInfoLocation);
-		final List<String> writtenTypes = new ArrayList<String>(5);
-		final List<QualifiedName> writtenPartners = new ArrayList<QualifiedName>(synchronizer.registry.size());
+		final List<String> writtenTypes = new ArrayList<>(5);
+		final List<QualifiedName> writtenPartners = new ArrayList<>(synchronizer.registry.size());
 		DataOutputStream o1 = null;
 		DataOutputStream o2 = null;
 		String message;
@@ -1970,7 +1971,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ElementTree current = workspace.getElementTree();
 				wasImmutable = current.isImmutable();
 				current.immutable();
-				ArrayList<ElementTree> trees = new ArrayList<ElementTree>(statesToSave.size() * 2); // pick a number
+				ArrayList<ElementTree> trees = new ArrayList<>(statesToSave.size() * 2); // pick a number
 				monitor.worked(Policy.totalWork * 10 / 100);
 
 				// write out the workspace fields
@@ -1988,11 +1989,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
 				IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
-				List<String> configNames = new ArrayList<String>(projects.length);
-				List<ElementTree> additionalTrees = new ArrayList<ElementTree>(projects.length * 2);
-				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
-				List<String> additionalConfigNames = new ArrayList<String>(projects.length);
+				List<BuilderPersistentInfo> builderInfos = new ArrayList<>(projects.length * 2);
+				List<String> configNames = new ArrayList<>(projects.length);
+				List<ElementTree> additionalTrees = new ArrayList<>(projects.length * 2);
+				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<>(projects.length * 2);
+				List<String> additionalConfigNames = new ArrayList<>(projects.length);
 				for (int i = 0; i < projects.length; i++)
 					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
 
@@ -2056,15 +2057,15 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ElementTree current = workspace.getElementTree();
 				wasImmutable = current.isImmutable();
 				current.immutable();
-				List<ElementTree> trees = new ArrayList<ElementTree>(2);
+				List<ElementTree> trees = new ArrayList<>(2);
 				monitor.worked(Policy.totalWork * 10 / 100);
 
 				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
-				List<String> configNames = new ArrayList<String>(5);
-				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(5);
-				List<String> additionalConfigNames = new ArrayList<String>(5);
-				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(5);
-				List<ElementTree> additionalTrees = new ArrayList<ElementTree>(5);
+				List<String> configNames = new ArrayList<>(5);
+				List<BuilderPersistentInfo> builderInfos = new ArrayList<>(5);
+				List<String> additionalConfigNames = new ArrayList<>(5);
+				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<>(5);
+				List<ElementTree> additionalTrees = new ArrayList<>(5);
 				getTreesToSave(project, trees, builderInfos, configNames, additionalTrees, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info

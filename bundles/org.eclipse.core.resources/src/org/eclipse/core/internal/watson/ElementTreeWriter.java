@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
@@ -89,11 +90,11 @@ public class ElementTreeWriter {
 		int[] order = new int[numTrees];
 
 		/* first build a table of ElementTree -> Vector of Integers(indices in trees array) */
-		HashMap<ElementTree, List<Integer>> table = new HashMap<ElementTree, List<Integer>>(numTrees * 2 + 1);
+		HashMap<ElementTree, List<Integer>> table = new HashMap<>(numTrees * 2 + 1);
 		for (int i = 0; i < trees.length; i++) {
 			List<Integer> indices = table.get(trees[i]);
 			if (indices == null) {
-				indices = new ArrayList<Integer>();
+				indices = new ArrayList<>();
 				table.put(trees[i], indices);
 			}
 			indices.add(new Integer(i));

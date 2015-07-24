@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
@@ -78,8 +79,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		this.refreshManager = manager;
 		setPriority(Job.DECORATE);
 		setSystem(true);
-		resourceRoots = new ArrayList<IResource>();
-		toRefresh = new ArrayList<IResource>();
+		resourceRoots = new ArrayList<>();
+		toRefresh = new ArrayList<>();
 	}
 
 	/**
