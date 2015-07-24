@@ -10,7 +10,6 @@
  *     Broadcom Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *******************************************************************************/
-
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
