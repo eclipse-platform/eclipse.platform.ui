@@ -63,7 +63,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.e4.ui.workbench.renderers.swt.DirectContributionItem;
+import org.eclipse.e4.ui.workbench.renderers.swt.AbstractContributionItem;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -978,7 +978,7 @@ public class MenuHelper {
 			// property listener is removed in
 			// DirectContributionItem#handleWidgetDispose()
 			action.addPropertyChangeListener(propertyListener);
-			toolItem.getTransientData().put(DirectContributionItem.DISPOSABLE, new Runnable() {
+			toolItem.getTransientData().put(AbstractContributionItem.DISPOSABLE, new Runnable() {
 						@Override
 						public void run() {
 							action.removePropertyChangeListener(propertyListener);

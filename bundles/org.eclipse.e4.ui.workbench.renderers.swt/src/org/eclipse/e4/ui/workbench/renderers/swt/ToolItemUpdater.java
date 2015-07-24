@@ -17,56 +17,30 @@ import org.eclipse.e4.ui.workbench.Selector;
 
 public class ToolItemUpdater {
 
-	private List<HandledContributionItem> itemsToCheck = new ArrayList<>();
-	private final List<HandledContributionItem> orphanedToolItems = new ArrayList<>();
+	private List<AbstractContributionItem> itemsToCheck = new ArrayList<>();
+	private final List<AbstractContributionItem> orphanedToolItems = new ArrayList<>();
 
-	private List<DirectContributionItem> directItemsToCheck = new ArrayList<>();
-	private final List<DirectContributionItem> directOrphanedToolItems = new ArrayList<>();
-
-	void registerItem(HandledContributionItem item) {
+	void registerItem(AbstractContributionItem item) {
 		if (!itemsToCheck.contains(item)) {
 			itemsToCheck.add(item);
 		}
 	}
 
-	void removeItem(HandledContributionItem item) {
+	void removeItem(AbstractContributionItem item) {
 		itemsToCheck.remove(item);
 	}
 
-	void registerItem(DirectContributionItem item) {
-		if (!directItemsToCheck.contains(item)) {
-			directItemsToCheck.add(item);
-		}
-	}
-
-	void removeItem(DirectContributionItem item) {
-		directItemsToCheck.remove(item);
-	}
-
 	public void updateContributionItems(Selector selector) {
-		for (final HandledContributionItem hci : itemsToCheck) {
-			if (hci.getModel() != null && hci.getModel().getParent() != null
-					&& selector.select(hci.getModel())) {
-				hci.updateItemEnablement();
+		for (final AbstractContributionItem ci : itemsToCheck) {
+			if (ci.getModel() != null && ci.getModel().getParent() != null && selector.select(ci.getModel())) {
+				ci.updateItemEnablement();
 			} else {
-				orphanedToolItems.add(hci);
+				orphanedToolItems.add(ci);
 			}
 		}
 		if (!orphanedToolItems.isEmpty()) {
 			itemsToCheck.removeAll(orphanedToolItems);
 			orphanedToolItems.clear();
-		}
-
-		for (final DirectContributionItem dci : directItemsToCheck) {
-			if (dci.getModel() != null && dci.getModel().getParent() != null && selector.select(dci.getModel())) {
-				dci.updateItemEnablement();
-			} else {
-				directOrphanedToolItems.add(dci);
-			}
-		}
-		if (!directOrphanedToolItems.isEmpty()) {
-			directItemsToCheck.removeAll(directOrphanedToolItems);
-			directOrphanedToolItems.clear();
 		}
 	}
 }
