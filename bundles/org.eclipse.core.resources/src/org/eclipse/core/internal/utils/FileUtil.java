@@ -102,7 +102,6 @@ public class FileUtil {
 			realPath = realPath.setDevice(device.toUpperCase());
 		}
 		IFileStore fileStore = null;
-		File file = null;
 		for (int i = 0; i < path.segmentCount(); i++) {
 			final String segment = path.segment(i);
 			if (i == 0 && path.isUNC()) {
@@ -112,9 +111,7 @@ public class FileUtil {
 				if (MACOSX) {
 					// IFileInfo.getName() may not return the real name of the file on Mac OS X.
 					// Obtain the real name of the file from a listing of its parent directory.
-					if (file == null)
-						file = realPath.toFile();
-					String[] names = file.list(new FilenameFilter() {
+					String[] names = realPath.toFile().list(new FilenameFilter() {
 						@Override
 						public boolean accept(File dir, String n) {
 							return n.equalsIgnoreCase(segment);
