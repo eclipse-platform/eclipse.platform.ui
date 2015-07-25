@@ -1,7 +1,7 @@
 org.eclipse.e4.tools
 ====================
 
-Provides the e4 wizards for new Eclipse 4 RCP applications, e4 based classses, application models and model fragments.
+Provides the e4 wizards for e4 based classses, application models and model fragments.
 
 For more information, refer to the [Eclipse e4 wiki page] [1].
 

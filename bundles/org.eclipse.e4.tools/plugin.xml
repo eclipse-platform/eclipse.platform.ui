@@ -18,17 +18,6 @@
             parentCategory="org.eclipse.e4.tools">
       </category>
       <wizard
-            category="org.eclipse.e4.tools"
-            class="org.eclipse.e4.internal.tools.wizards.project.E4NewProjectWizard"
-            icon="icons/full/etool16/newpprj_wiz.png"
-            id="org.eclipse.e4.tools.E4NewProjectWizard"
-            name="%wizard.name"
-            project="true">
-         <description>
-            %wizard.name.description
-         </description>
-      </wizard>
-      <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
             class="org.eclipse.e4.internal.tools.wizards.model.NewApplicationModelWizard"
             icon="icons/full/obj16/application_view_tile.png"

@@ -95,16 +95,6 @@ public class Messages extends NLS {
 	public static String NewToolControlClassWizard_CreateGUIMethod;
 	public static String NewToolControlClassWizard_CreateNewToolControl;
 	public static String NewToolControlClassWizard_NewToolControl;
-	public static String E4NewProjectWizard_About;
-	public static String E4NewProjectWizard_File;
-	public static String E4NewProjectWizard_Help;
-	public static String E4NewProjectWizard_InDialogs;
-	public static String E4NewProjectWizard_InDialogsAndWindows;
-	public static String E4NewProjectWizard_InWindows;
-	public static String E4NewProjectWizard_Open;
-	public static String E4NewProjectWizard_Quit;
-	public static String E4NewProjectWizard_SamplePart;
-	public static String E4NewProjectWizard_Save;
 	public static String ExtractContributionModelWizard_ExistingFragmentIsCorrupted;
 	static {
 		// initialize resource bundle
