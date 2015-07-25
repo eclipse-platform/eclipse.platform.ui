@@ -111,7 +111,7 @@ public class FileUtil {
 						}
 					});
 					String realName;
-					if (names.length == 0) {
+					if (names == null || names.length == 0) {
 						// The remainder of the path doesn't exist on the file system - copy from
 						// the original path.
 						realPath = realPath.append(path.removeFirstSegments(realPath.segmentCount()));
