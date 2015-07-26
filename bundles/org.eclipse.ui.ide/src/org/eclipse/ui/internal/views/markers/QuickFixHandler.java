@@ -91,7 +91,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 					if (markerResolution instanceof WorkbenchMarkerResolution) {
 						IMarker[] other = ((WorkbenchMarkerResolution)markerResolution).findOtherMarkers(allMarkers);
 						if (containsAllButFirst(other, selectedMarkers)) {
-							Collection<IMarker> markers = new LinkedHashSet<IMarker>(other.length + 1);
+							Collection<IMarker> markers = new LinkedHashSet<>(other.length + 1);
 							// Duplicates will not be added due to set
 							markers.add(firstSelectedMarker);
 							markers.addAll(Arrays.asList(other));
