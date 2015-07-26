@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		this.height = height;
 	}
 
-	public Control getControl(Hashtable resourceTable) {
+	public Control getControl(Hashtable<String, Object> resourceTable) {
 		Object obj = resourceTable.get(getObjectId());
 		if (obj instanceof Control) {
 			Control c = (Control)obj;
@@ -49,7 +49,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		return null;
 	}
 
-	protected Point getObjectSize(Hashtable resourceTable, int wHint) {
+	@Override
+	protected Point getObjectSize(Hashtable<String, Object> resourceTable, int wHint) {
 		Control control = getControl(resourceTable);
 		if (control==null)
 			return new Point(0,0);
@@ -64,7 +65,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		return size;
 	}
 
-	public void layout(GC gc, int width, Locator loc, Hashtable resourceTable,
+	@Override
+	public void layout(GC gc, int width, Locator loc, Hashtable<String, Object> resourceTable,
 			boolean selected) {
 		super.layout(gc, width, loc, resourceTable, selected);
 		Control control = getControl(resourceTable);
@@ -72,7 +74,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 			control.setBounds(getBounds());
 	}
 
-	public boolean setFocus(Hashtable resourceTable, boolean next) {
+	@Override
+	public boolean setFocus(Hashtable<String, Object> resourceTable, boolean next) {
 		Control c = getControl(resourceTable);
 		if (c!=null) {
 			return setFocus(c, next);
@@ -102,7 +105,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 		return c.setFocus();
 	}
 
-	public boolean isFocusSelectable(Hashtable resourceTable) {
+	@Override
+	public boolean isFocusSelectable(Hashtable<String, Object> resourceTable) {
 		Control c = getControl(resourceTable);
 		if (c!=null)
 			return true;

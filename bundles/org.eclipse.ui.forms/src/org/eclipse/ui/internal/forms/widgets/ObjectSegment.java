@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eclipse.ui.internal.forms.widgets;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 
 public abstract class ObjectSegment extends ParagraphSegment {
@@ -44,10 +46,11 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		this.objectId = objectId;
 	}
 
-	protected abstract Point getObjectSize(Hashtable resourceTable, int wHint);
+	protected abstract Point getObjectSize(Hashtable<String, Object> resourceTable, int wHint);
 
+	@Override
 	public boolean advanceLocator(GC gc, int wHint, Locator loc,
-			Hashtable objectTable, boolean computeHeightOnly) {
+			Hashtable<String, Object> objectTable, boolean computeHeightOnly) {
 		Point objectSize = getObjectSize(objectTable, wHint);
 		int iwidth = 0;
 		int iheight = 0;
@@ -76,11 +79,13 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		return newLine;
 	}
 
+	@Override
 	public boolean contains(int x, int y) {
 		if (bounds==null)
 			return false;
 		return bounds.contains(x, y);
 	}
+	@Override
 	public boolean intersects(Rectangle rect) {
 		if (bounds==null)
 			return false;
@@ -106,13 +111,13 @@ public abstract class ObjectSegment extends ParagraphSegment {
 	public void setNowrap(boolean nowrap) {
 		this.nowrap = nowrap;
 	}
-	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
+
+	@Override
+	public void paint(GC gc, boolean hover, Hashtable<String, Object> resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#layout(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.internal.forms.widgets.Locator, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
-	 */
-	public void layout(GC gc, int width, Locator loc, Hashtable resourceTable,
+	@Override
+	public void layout(GC gc, int width, Locator loc, Hashtable<String, Object> resourceTable,
 			boolean selected) {
 		Point size = getObjectSize(resourceTable, width);
 
@@ -141,10 +146,9 @@ public abstract class ObjectSegment extends ParagraphSegment {
 		loc.rowHeight = Math.max(loc.rowHeight, objHeight);
 		bounds = new Rectangle(ix, iy, objWidth, objHeight);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.forms.widgets.ParagraphSegment#computeSelection(org.eclipse.swt.graphics.GC, java.util.Hashtable, boolean, org.eclipse.ui.internal.forms.widgets.SelectionData)
-	 */
-	public void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData) {
+
+	@Override
+	public void computeSelection(GC gc, Hashtable<String, Object> resourceTable, SelectionData selData) {
 		// TODO we should add this to the selection
 		// if we want to support rich text
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 
 public class ImageHyperlinkSegment extends ImageSegment implements
 		IHyperlinkSegment {
@@ -24,24 +26,16 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	public ImageHyperlinkSegment() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setHref(java.lang.String)
-	 */
 	public void setHref(String href) {
 		this.href = href;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getHref()
-	 */
+	@Override
 	public String getHref() {
 		return href;
 	}
 
+	@Override
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
 			Rectangle repaintRegion) {
 		Rectangle bounds = getBounds();
@@ -58,29 +52,15 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#isWordWrapAllowed()
-	 */
 	public boolean isWordWrapAllowed() {
 		return !isNowrap();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setWordWrapAllowed(boolean)
-	 */
 	public void setWordWrapAllowed(boolean value) {
 		setNowrap(!value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getText()
-	 */
+	@Override
 	public String getText() {
 		return text!=null?text:""; //$NON-NLS-1$
 	}
@@ -92,6 +72,7 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 	/**
 	 * @return Returns the tooltipText.
 	 */
+	@Override
 	public String getTooltipText() {
 		return tooltipText;
 	}
@@ -104,15 +85,18 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		this.tooltipText = tooltipText;
 	}
 
+	@Override
 	public boolean isSelectable() {
 		return true;
 	}
 
-	public boolean isFocusSelectable(Hashtable resourceTable) {
+	@Override
+	public boolean isFocusSelectable(Hashtable<String, Object> resourceTable) {
 		return true;
 	}
 
-	public boolean setFocus(Hashtable resourceTable, boolean direction) {
+	@Override
+	public boolean setFocus(Hashtable<String, Object> resourceTable, boolean direction) {
 		return true;
 	}
 }

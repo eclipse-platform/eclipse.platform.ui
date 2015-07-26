@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public final class BusyIndicator extends Canvas {
 
 		dpy = getDisplay();
 		timer = new Runnable() {
+			@Override
 			public void run () {
 				if (isDisposed()) return;
 				redraw();
@@ -70,18 +71,21 @@ public final class BusyIndicator extends Canvas {
 		};
 
 		addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				onPaint(event);
 			}
 		});
 
 		addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				clearImages();
 			}
 		});
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 //		checkWidget();
 		Point size = new Point(0, 0);
@@ -100,9 +104,7 @@ public final class BusyIndicator extends Canvas {
 		return size;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
+	@Override
 	public boolean forceFocus() {
 		return false;
 	}

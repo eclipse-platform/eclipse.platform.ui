@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,8 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 public class SelectionData {
@@ -23,12 +24,12 @@ public class SelectionData {
 	public Color fg;
 	private Point start;
 	private Point stop;
-	private ArrayList segments;
+	private ArrayList<String> segments;
 	private boolean newLineNeeded;
 
 	public SelectionData(MouseEvent e) {
 		display = e.display;
-		segments = new ArrayList();
+		segments = new ArrayList<>();
 		start = new Point(e.x, e.y);
 		stop = new Point(e.x, e.y);
 		bg = e.display.getSystemColor(SWT.COLOR_LIST_SELECTION);
@@ -57,7 +58,7 @@ public class SelectionData {
 	public String getSelectionText() {
 		StringBuffer buf = new StringBuffer();
 		for (int i=0; i<segments.size(); i++) {
-			buf.append((String)segments.get(i));
+			buf.append(segments.get(i));
 		}
 		return buf.toString();
 	}
@@ -84,7 +85,7 @@ public class SelectionData {
 		return isInverted(rowHeight) ? start.x:stop.x;
 	}
 	private boolean isInverted(Locator locator) {
-		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
+		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return isInverted(rowHeight);
 	}
 	private boolean isInverted(int rowHeight) {
@@ -103,7 +104,7 @@ public class SelectionData {
 	public boolean isSelectedRow(Locator locator) {
 		if (!isEnclosed())
 			return false;
-		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
+		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return isSelectedRow(locator.y, rowHeight);
 	}
 	public boolean isSelectedRow(int y, int rowHeight) {
@@ -115,7 +116,7 @@ public class SelectionData {
 	public boolean isFirstSelectionRow(Locator locator) {
 		if (!isEnclosed())
 			return false;
-		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
+		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return (locator.y + rowHeight >= getTopOffset() &&
 				locator.y <= getTopOffset());
 	}
@@ -128,7 +129,7 @@ public class SelectionData {
 	public boolean isLastSelectionRow(Locator locator) {
 		if (!isEnclosed())
 			return false;
-		int rowHeight = ((int [])locator.heights.get(locator.rowCounter))[0];
+		int rowHeight = locator.heights.get(locator.rowCounter)[0];
 		return (locator.y + rowHeight >=getBottomOffset() &&
 				locator.y <= getBottomOffset());
 	}

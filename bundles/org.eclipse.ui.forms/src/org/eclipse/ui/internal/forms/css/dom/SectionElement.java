@@ -34,6 +34,7 @@ public class SectionElement extends CompositeElement {
 		titleBarGradientBackground = section.getTitleBarGradientBackground();
 	}
 
+	@Override
 	public void reset() {
 		super.reset();
 		Section section = (Section) getWidget();

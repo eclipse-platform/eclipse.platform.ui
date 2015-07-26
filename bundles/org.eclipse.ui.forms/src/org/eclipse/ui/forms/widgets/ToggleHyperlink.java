@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.internal.forms.Messages;
 /**
  * A custom selectable control that can be used to control areas that can be
@@ -48,6 +57,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	public ToggleHyperlink(Composite parent, int style) {
 		super(parent, style);
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				switch (e.type) {
 					case SWT.MouseEnter:
@@ -68,6 +78,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 		addListener(SWT.MouseExit, listener);
 		addListener(SWT.KeyDown, listener);
 		addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				setExpanded(!isExpanded());
 			}
@@ -117,6 +128,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * @deprecated use <code>getHoverDecorationColor</code>
 	 * @see #getHoverDecorationColor()
 	 */
+	@Deprecated
 	public Color geHoverDecorationColor() {
 		return hoverColor;
 	}
@@ -130,6 +142,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 * @param changed
 	 *            if true, flush any saved layout state
 	 */
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int width, height;
 		/*
@@ -165,24 +178,29 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	}
 	private void initAccessible() {
 		getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getHelp(AccessibleEvent e) {
 				e.result = getToolTipText();
 			}
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = Messages.ToggleHyperlink_accessibleName;
 			}
+			@Override
 			public void getDescription(AccessibleEvent e) {
 				getName(e);
 			}
 		});
 		getAccessible().addAccessibleControlListener(
 				new AccessibleControlAdapter() {
+					@Override
 					public void getChildAtPoint(AccessibleControlEvent e) {
 						Point testPoint = toControl(new Point(e.x, e.y));
 						if (getBounds().contains(testPoint)) {
 							e.childID = ACC.CHILDID_SELF;
 						}
 					}
+					@Override
 					public void getLocation(AccessibleControlEvent e) {
 						Rectangle location = getBounds();
 						Point pt = toDisplay(new Point(location.x, location.y));
@@ -191,26 +209,32 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 						e.width = location.width;
 						e.height = location.height;
 					}
+					@Override
 					public void getSelection (AccessibleControlEvent e) {
 						if (ToggleHyperlink.this.getSelection())
 							e.childID = ACC.CHILDID_SELF;
 					}
 
+					@Override
 					public void getFocus (AccessibleControlEvent e) {
 						if (ToggleHyperlink.this.getSelection())
 							e.childID = ACC.CHILDID_SELF;
 					}
+					@Override
 					public void getChildCount(AccessibleControlEvent e) {
 						e.detail = 0;
 					}
+					@Override
 					public void getRole(AccessibleControlEvent e) {
 						e.detail = ACC.ROLE_TREE;
 					}
+					@Override
 					public void getState(AccessibleControlEvent e) {
 						e.detail = ToggleHyperlink.this.isExpanded()
 								? ACC.STATE_EXPANDED
 								: ACC.STATE_COLLAPSED;
 					}
+					@Override
 					public void getValue(AccessibleControlEvent e) {
 						if (e.childID == ACC.CHILDID_SELF) {
 							String name = Messages.ToggleHyperlink_accessibleName;
@@ -227,6 +251,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 				});
 	}
 	// set bogus childIDs on link activation to ensure state is read on expand/collapse
+	@Override
 	void triggerAccessible() {
 		getAccessible().setFocus(getAccessibleChildID());
 	}

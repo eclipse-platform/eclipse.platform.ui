@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Display;
 
 public class ResourceManagerManger {
 
-	private HashMap resourceManagers;
+	private HashMap<Display, LocalResourceManager> resourceManagers;
 
 	public LocalResourceManager getResourceManager(Display display) {
 		if (resourceManagers == null) {
-			resourceManagers = new HashMap();
+			resourceManagers = new HashMap<>();
 		}
-		LocalResourceManager resources = (LocalResourceManager)resourceManagers.get(display);
+		LocalResourceManager resources = resourceManagers.get(display);
 		if (resources == null) {
 			pruneResourceManagers();
 			resources = new LocalResourceManager(JFaceResources.getResources(display));
@@ -43,9 +43,9 @@ public class ResourceManagerManger {
 	}
 
 	private void pruneResourceManagers() {
-		Set displays = resourceManagers.keySet();
-		for (Iterator iter = displays.iterator(); iter.hasNext();) {
-			Display display = (Display)iter.next();
+		Set<Display> displays = resourceManagers.keySet();
+		for (Iterator<Display> iter = displays.iterator(); iter.hasNext();) {
+			Display display = iter.next();
 			if (display.isDisposed()) {
 				resourceManagers.remove(display);
 				iter = displays.iterator();

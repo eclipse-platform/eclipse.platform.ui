@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import java.io.InputStream;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 /**
  * ScrolledFormText is a control that is capable of scrolling an instance of
  * the FormText class. It should be created in a parent that will allow it to
@@ -89,6 +91,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 * @param fg
 	 *            the foreground color
 	 */
+	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		if (content != null)
@@ -100,6 +103,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 * @param bg
 	 *            the background color
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		if (content != null)
@@ -112,6 +116,7 @@ public class ScrolledFormText extends SharedScrolledComposite {
 	 * @param c
 	 *            content control
 	 */
+	@Override
 	public final void setContent(Control c) {
 	}
 	/**

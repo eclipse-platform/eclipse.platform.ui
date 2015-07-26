@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  */
 
 public final class HyperlinkGroup extends HyperlinkSettings {
-	private ArrayList links = new ArrayList();
+	private ArrayList<Hyperlink> links = new ArrayList<>();
 	private Hyperlink lastActivated;
 	private Hyperlink lastEntered;
 	private GroupListener listener;
@@ -45,6 +45,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		private Color previousBackground;
 		private Color previousForeground;
 
+		@Override
 		public void handleEvent(Event e) {
 			switch (e.type) {
 				case SWT.MouseEnter :
@@ -82,9 +83,11 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
 				link.setUnderlined(false);
 		}
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 		}
 
+		@Override
 		public void linkEntered(HyperlinkEvent e) {
 			Hyperlink link = (Hyperlink) e.widget;
 			if (lastEntered != null) {
@@ -93,6 +96,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 			lastEntered = link;
 		}
 
+		@Override
 		public void linkExited(HyperlinkEvent e) {
 			linkExited((Hyperlink) e.widget);
 		}
@@ -146,6 +150,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * @param newActiveBackground
 	 *            the new active background
 	 */
+	@Override
 	public void setActiveBackground(Color newActiveBackground) {
 		super.setActiveBackground(newActiveBackground);
 		isActiveBackgroundSet = true;
@@ -157,6 +162,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * @param newActiveForeground
 	 *            the new active foreground
 	 */
+	@Override
 	public void setActiveForeground(Color newActiveForeground) {
 		super.setActiveForeground(newActiveForeground);
 		isActiveForegroundSet = true;
@@ -169,12 +175,13 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * @param bg
 	 *            the new background
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		isBackgroundSet = true;
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = (Hyperlink) links.get(i);
+				Hyperlink label = links.get(i);
 				label.setBackground(bg);
 			}
 		}
@@ -186,12 +193,13 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 * @param fg
 	 *            the new foreground
 	 */
+	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		isForegroundSet = true;
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = (Hyperlink) links.get(i);
+				Hyperlink label = links.get(i);
 				label.setForeground(fg);
 			}
 		}
@@ -203,11 +211,12 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	 *            the new hyperlink underline mode
 	 * @see HyperlinkSettings
 	 */
+	@Override
 	public void setHyperlinkUnderlineMode(int mode) {
 		super.setHyperlinkUnderlineMode(mode);
 		if (links != null) {
 			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = (Hyperlink) links.get(i);
+				Hyperlink label = links.get(i);
 				label.setUnderlined(mode == UNDERLINE_ALWAYS);
 			}
 		}

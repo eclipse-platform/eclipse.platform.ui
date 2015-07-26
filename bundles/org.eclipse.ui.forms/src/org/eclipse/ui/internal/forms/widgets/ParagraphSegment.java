@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.Hashtable;
 
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * @version 	1.0
@@ -29,7 +29,7 @@ public abstract class ParagraphSegment {
 	 * @param computeHeightOnly
 	 * @return <code>true</code> if text wrapped to the new line, <code>false</code> otherwise.
 	 */
-	public abstract boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable, boolean computeHeightOnly);
+	public abstract boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable<String, Object> objectTable, boolean computeHeightOnly);
 	/**
 	 * Computes bounding rectangles and row heights of this segments.
 	 * @param gc
@@ -38,7 +38,7 @@ public abstract class ParagraphSegment {
 	 * @param resourceTable
 	 * @param selected
 	 */
-	public abstract void layout(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected);
+	public abstract void layout(GC gc, int width, Locator loc, Hashtable<String, Object> resourceTable, boolean selected);
 	/**
 	 * Paints this segment.
 	 * @param gc
@@ -48,14 +48,14 @@ public abstract class ParagraphSegment {
 	 * @param selData
 	 * @param region
 	 */
-	public abstract void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle region);
+	public abstract void paint(GC gc, boolean hover, Hashtable<String, Object> resourceTable, boolean selected, SelectionData selData, Rectangle region);
 	/**
 	 * Paints this segment.
 	 * @param gc
 	 * @param resourceTable
 	 * @param selData
 	 */
-	public abstract void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData);
+	public abstract void computeSelection(GC gc, Hashtable<String, Object> resourceTable, SelectionData selData);
 	/**
 	 * Tests if the coordinates are contained in one of the
 	 * bounding rectangles of this segment.

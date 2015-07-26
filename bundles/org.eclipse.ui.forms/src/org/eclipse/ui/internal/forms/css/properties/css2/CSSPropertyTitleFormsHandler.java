@@ -24,6 +24,7 @@ public class CSSPropertyTitleFormsHandler extends AbstractCSSPropertySWTHandler 
 	private static final String BACKGROUND_COLOR_TITLEBAR_PROPERTY = "background-color-titlebar"; //$NON-NLS-1$
 	private static final String BORDER_COLOR_TITLEBAR_PROPERTY = "border-color-titlebar"; //$NON-NLS-1$
 
+	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
 
@@ -57,6 +58,7 @@ public class CSSPropertyTitleFormsHandler extends AbstractCSSPropertySWTHandler 
 		}
 	}
 
+	@Override
 	protected String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine)
 			throws Exception {
 

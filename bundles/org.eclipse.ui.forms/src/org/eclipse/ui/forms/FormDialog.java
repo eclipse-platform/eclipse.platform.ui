@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,22 +68,14 @@ public class FormDialog extends TrayDialog {
 		super(parentShellProvider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
-	 */
+	@Override
 	public boolean close() {
 		boolean rcode = super.close();
 		toolkit.dispose();
 		return rcode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		ScrolledForm sform = toolkit.createScrolledForm(parent);
@@ -94,11 +86,7 @@ public class FormDialog extends TrayDialog {
 		return sform;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		//Composite sep = new Composite(parent, SWT.NULL);

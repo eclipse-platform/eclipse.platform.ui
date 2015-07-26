@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 /**
  * A custom selectable control that can be used to control areas that can be
@@ -45,9 +46,11 @@ public class TreeNode extends ToggleHyperlink {
 		innerWidth = 10;
 		innerHeight = 10;
 	}
+	@Override
 	protected void paint(PaintEvent e) {
 		paintHyperlink(e.gc);
 	}
+	@Override
 	protected void paintHyperlink(GC gc) {
 		Rectangle box = getBoxBounds(gc);
 		gc.setForeground(getDisplay().getSystemColor(

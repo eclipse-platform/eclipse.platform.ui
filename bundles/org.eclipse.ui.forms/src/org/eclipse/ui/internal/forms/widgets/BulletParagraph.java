@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class BulletParagraph extends Paragraph {
 		super(addVerticalSpace);
 	}
 
+	@Override
 	public int getIndent() {
 		int ivalue = indent;
 		if (ivalue != -1)
@@ -92,31 +93,30 @@ public class BulletParagraph extends Paragraph {
 		this.bindent = bindent;
 	}
 
-	/*
-	 * @see IBulletParagraph#getBulletText()
-	 */
 	public String getBulletText() {
 		return text;
 	}
 
+	@Override
 	public void layout(GC gc, int width, Locator loc, int lineHeight,
-			Hashtable resourceTable, IHyperlinkSegment selectedLink) {
+			Hashtable<String, Object> resourceTable, IHyperlinkSegment selectedLink) {
 		computeRowHeights(gc, width, loc, lineHeight, resourceTable);
 		layoutBullet(gc, loc, lineHeight, resourceTable);
 		super.layout(gc, width, loc, lineHeight, resourceTable, selectedLink);
 	}
 
+	@Override
 	public void paint(GC gc, Rectangle repaintRegion,
-			Hashtable resourceTable, IHyperlinkSegment selectedLink,
+			Hashtable<String, Object> resourceTable, IHyperlinkSegment selectedLink,
 			SelectionData selData) {
 		paintBullet(gc, repaintRegion, resourceTable);
 		super.paint(gc, repaintRegion, resourceTable, selectedLink, selData);
 	}
 
 	private void layoutBullet(GC gc, Locator loc, int lineHeight,
-			Hashtable resourceTable) {
+			Hashtable<String, Object> resourceTable) {
 		int x = loc.x - getIndent() + getBulletIndent();
-		int rowHeight = ((int[]) loc.heights.get(0))[0];
+		int rowHeight = loc.heights.get(0)[0];
 		if (style == CIRCLE) {
 			int y = loc.y + rowHeight / 2 - CIRCLE_DIAM / 2;
 			bbounds = new Rectangle(x, y, CIRCLE_DIAM, CIRCLE_DIAM);
@@ -135,7 +135,7 @@ public class BulletParagraph extends Paragraph {
 	}
 
 	public void paintBullet(GC gc, Rectangle repaintRegion,
-			Hashtable resourceTable) {
+			Hashtable<String, Object> resourceTable) {
 		if (bbounds == null)
 			return;
 		int x = bbounds.x;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,9 +11,10 @@
 package org.eclipse.ui.forms;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.forms.widgets.*;
+import org.eclipse.ui.internal.forms.widgets.FormsResources;
 /**
  * Manages color and underline mode settings for a group of hyperlinks. The
  * class is extended by HyperlinkGroup but is otherwise not intended to be

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public interface IFormColors {
 	 * tool bar gradient is created starting from {@link #TB_BG} to
 	 * the section background color.
 	 */
+	@Deprecated
 	String TB_GBG = TB_BG;
 
 	/**

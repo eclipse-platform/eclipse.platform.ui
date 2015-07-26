@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class FormHeading extends Canvas {
 
 	private Image gradientImage;
 
-	Hashtable colors = new Hashtable();
+	Hashtable<String, Color> colors = new Hashtable<>();
 
 	private int flags;
 
@@ -101,9 +101,11 @@ public class FormHeading extends Canvas {
 
 	private class DefaultMessageToolTipManager implements
 			IMessageToolTipManager {
+		@Override
 		public void createToolTip(Control control, boolean imageLabel) {
 		}
 
+		@Override
 		public void update() {
 			String details = getMessageType() == 0 ? null : MessageManager
 					.createDetails(getChildrenMessages());
@@ -125,19 +127,23 @@ public class FormHeading extends Canvas {
 	}
 
 	private class FormHeadingLayout extends Layout implements ILayoutExtension {
+		@Override
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
 			return computeSize(composite, 5, SWT.DEFAULT, flushCache).x;
 		}
 
+		@Override
 		public int computeMaximumWidth(Composite composite, boolean flushCache) {
 			return computeSize(composite, SWT.DEFAULT, SWT.DEFAULT, flushCache).x;
 		}
 
+		@Override
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
 			return layout(composite, false, 0, 0, wHint, hHint, flushCache);
 		}
 
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle rect = composite.getClientArea();
 			layout(composite, true, rect.x, rect.y, rect.width, rect.height,
@@ -337,9 +343,7 @@ public class FormHeading extends Canvas {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
+	@Override
 	public boolean forceFocus() {
 		return false;
 	}
@@ -575,11 +579,13 @@ public class FormHeading extends Canvas {
 		super(parent, style);
 		setBackgroundMode(SWT.INHERIT_DEFAULT);
 		addListener(SWT.Paint, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				onPaint(e.gc);
 			}
 		});
 		addListener(SWT.Dispose, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				if (gradientImage != null) {
 					FormImages.getInstance().markFinished(gradientImage, getDisplay());
@@ -588,6 +594,7 @@ public class FormHeading extends Canvas {
 			}
 		});
 		addListener(SWT.Resize, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				if (gradientInfo != null
 						|| (backgroundImage != null && !isBackgroundImageTiled()))
@@ -595,19 +602,23 @@ public class FormHeading extends Canvas {
 			}
 		});
 		addMouseMoveListener(new MouseMoveListener() {
+			@Override
 			public void mouseMove(MouseEvent e) {
 				updateTitleRegionHoverState(e);
 			}
 		});
 		addMouseTrackListener(new MouseTrackListener() {
+			@Override
 			public void mouseEnter(MouseEvent e) {
 				updateTitleRegionHoverState(e);
 			}
 
+			@Override
 			public void mouseExit(MouseEvent e) {
 				titleRegion.setHoverState(TitleRegion.STATE_NORMAL);
 			}
 
+			@Override
 			public void mouseHover(MouseEvent e) {
 			}
 		});
@@ -618,6 +629,7 @@ public class FormHeading extends Canvas {
 	/**
 	 * Fully delegates the size computation to the internal layout manager.
 	 */
+	@Override
 	public final Point computeSize(int wHint, int hHint, boolean changed) {
 		return ((FormHeadingLayout) getLayout()).computeSize(this, wHint,
 				hHint, changed);
@@ -626,6 +638,7 @@ public class FormHeading extends Canvas {
 	/**
 	 * Prevents from changing the custom control layout.
 	 */
+	@Override
 	public final void setLayout(Layout layout) {
 	}
 
@@ -651,6 +664,7 @@ public class FormHeading extends Canvas {
 	/**
 	 * Sets the background color of the header.
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		internalSetBackground(bg);
@@ -668,6 +682,7 @@ public class FormHeading extends Canvas {
 	/**
 	 * Sets the foreground color of the header.
 	 */
+	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		titleRegion.setForeground(fg);
@@ -686,6 +701,7 @@ public class FormHeading extends Canvas {
 		titleRegion.setText(text);
 	}
 
+	@Override
 	public void setFont(Font font) {
 		super.setFont(font);
 		titleRegion.setFont(font);
@@ -752,6 +768,7 @@ public class FormHeading extends Canvas {
 		return (flags & BACKGROUND_IMAGE_TILED) != 0;
 	}
 
+	@Override
 	public void setBackgroundImage(Image image) {
 		super.setBackgroundImage(image);
 		if (image != null) {
@@ -773,6 +790,7 @@ public class FormHeading extends Canvas {
 			toolbar.setForeground(getForeground());
 			toolbar.setCursor(FormsResources.getHandCursor());
 			addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					if (toolBarManager != null) {
 						toolBarManager.dispose();
@@ -988,7 +1006,7 @@ public class FormHeading extends Canvas {
 	}
 
 	public Color getColor(String key) {
-		return (Color) colors.get(key);
+		return colors.get(key);
 	}
 
 	public boolean hasColor(String key) {

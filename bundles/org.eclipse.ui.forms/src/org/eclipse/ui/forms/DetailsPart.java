@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 /**
  * This managed form part handles the 'details' portion of the
@@ -40,7 +42,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private ScrolledPageBook pageBook;
 	private IFormPart masterPart;
 	private IStructuredSelection currentSelection;
-	private Hashtable pages;
+	private Hashtable<Object, PageBag> pages;
 	private IDetailsPageProvider pageProvider;
 	private int pageLimit=Integer.MAX_VALUE;
 
@@ -79,7 +81,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  */
 	public DetailsPart(IManagedForm mform, ScrolledPageBook pageBook) {
 		this.pageBook = pageBook;
-		pages = new Hashtable();
+		pages = new Hashtable<>();
 		initialize(mform);
 	}
 /**
@@ -120,6 +122,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  * @param onSave <code>true</code> if commit is requested as a result
  * of the 'save' action, <code>false</code> otherwise.
  */
+	@Override
 	public void commit(boolean onSave) {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
@@ -138,22 +141,16 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		}
 		return null;
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.IFormPart#dispose()
-	 */
+
+	@Override
 	public void dispose() {
-		for (Enumeration enm = pages.elements(); enm.hasMoreElements();) {
-			PageBag pageBag = (PageBag) enm.nextElement();
+		for (Enumeration<PageBag> enm = pages.elements(); enm.hasMoreElements();) {
+			PageBag pageBag = enm.nextElement();
 			pageBag.dispose();
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.IFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
+
+	@Override
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
@@ -161,6 +158,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  * Tests if the currently visible page is dirty.
  * @return <code>true</code> if the page is dirty, <code>false</code> otherwise.
  */
+	@Override
 	public boolean isDirty() {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
@@ -171,6 +169,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
  * Tests if the currently visible page is stale and needs refreshing.
  * @return <code>true</code> if the page is stale, <code>false</code> otherwise.
  */
+	@Override
 	public boolean isStale() {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
@@ -181,6 +180,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 /**
  * Refreshes the current page.
  */
+	@Override
 	public void refresh() {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
@@ -189,25 +189,19 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 /**
  * Sets the focus to the currently visible page.
  */
+	@Override
 	public void setFocus() {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
 			page.setFocus();
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
-	 */
+
+	@Override
 	public boolean setFormInput(Object input) {
 		return false;
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
+
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		this.masterPart = part;
 		if (currentSelection != null) {
@@ -221,7 +215,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private void update() {
 		Object key = null;
 		if (currentSelection != null) {
-			for (Iterator iter = currentSelection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = currentSelection.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (key == null)
 					key = getKey(obj);
@@ -245,7 +239,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		checkLimit();
 		final IDetailsPage oldPage = getCurrentPage();
 		if (key != null) {
-			PageBag pageBag = (PageBag)pages.get(key);
+			PageBag pageBag = pages.get(key);
 			IDetailsPage page = pageBag!=null?pageBag.getPage():null;
 			if (page==null) {
 				// try to get the page dynamically from the provider
@@ -259,6 +253,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 			if (page != null) {
 				final IDetailsPage fpage = page;
 				BusyIndicator.showWhile(pageBook.getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						if (!pageBook.hasPage(key)) {
 							Composite parent = pageBook.createPage(key);
@@ -289,9 +284,9 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 		// overflow
 		int currentTicket = PageBag.getCurrentTicket();
 		int cutoffTicket = currentTicket - getPageLimit();
-		for (Enumeration enm=pages.keys(); enm.hasMoreElements();) {
+		for (Enumeration<Object> enm=pages.keys(); enm.hasMoreElements();) {
 			Object key = enm.nextElement();
-			PageBag pageBag = (PageBag)pages.get(key);
+			PageBag pageBag = pages.get(key);
 			if (pageBag.getTicket()<=cutoffTicket) {
 				// candidate - see if it is active and not fixed
 				if (!pageBag.isFixed() && !pageBag.getPage().equals(getCurrentPage())) {

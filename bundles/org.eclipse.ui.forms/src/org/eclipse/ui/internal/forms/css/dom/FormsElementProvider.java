@@ -29,6 +29,7 @@ public class FormsElementProvider implements IElementProvider {
 
 	public static final IElementProvider INSTANCE = new FormsElementProvider();
 
+	@Override
 	public Element getElement(Object element, CSSEngine engine) {
 		if (element instanceof Section) {
 			return new SectionElement((Section) element, engine);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 		super.setContent(content);
 		content.setMenu(getMenu());
 		addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (!customMenu)
 					setMenu(null);
@@ -82,6 +83,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 *
 	 * @param menu
 	 */
+	@Override
 	public void setMenu(Menu menu) {
 		customMenu = true;
 		super.setMenu(menu);
@@ -111,6 +113,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * Sets the foreground color of the form. This color will also be used for
 	 * the body.
 	 */
+	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		if (content != null) {
@@ -123,6 +126,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * Sets the background color of the form. This color will also be used for
 	 * the body.
 	 */
+	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
 		if (content != null) {
@@ -135,6 +139,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * The form sets the content widget. This method should not be called by
 	 * classes that instantiate this widget.
 	 */
+	@Override
 	public final void setContent(Control c) {
 	}
 
@@ -175,6 +180,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 *
 	 * @return Returns the background image.
 	 */
+	@Override
 	public Image getBackgroundImage() {
 		return content.getBackgroundImage();
 	}
@@ -186,6 +192,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * @param backgroundImage
 	 *            The backgroundImage to set.
 	 */
+	@Override
 	public void setBackgroundImage(Image backgroundImage) {
 		content.setBackgroundImage(backgroundImage);
 	}
@@ -289,20 +296,10 @@ public class ScrolledForm extends SharedScrolledComposite {
 		this.setMessage(newMessage, newType, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
-	 */
 	public String getMessage() {
 		return content.getMessage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-	 */
 	public int getMessageType() {
 		return content.getMessageType();
 	}

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.forms.css.properties.css2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.Form;
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
@@ -40,7 +40,7 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 	// boolean)
 	public static final String TEXT_BACKGROUND_COLOR = "text-background-color"; //$NON-NLS-1$
 
-	private static final Map propertyToHeadProperty = new HashMap();
+	private static final Map<String, String> propertyToHeadProperty = new HashMap<>();
 
 	static {
 		propertyToHeadProperty.put(H_BOTTOM_KEYLINE_1, IFormColors.H_BOTTOM_KEYLINE1);
@@ -51,6 +51,7 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 		propertyToHeadProperty.put(TB_TOGGLE_HOVER, IFormColors.TB_TOGGLE_HOVER);
 	}
 
+	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
 		if (control instanceof Form) {
@@ -67,12 +68,10 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 					if (grad == null) {
 						return;
 					}
-					List values = grad.getValues();
-					List colors = new ArrayList(values.size());
-					for (Iterator it = values.iterator(); it.hasNext();) {
-						Object object = (Object) it.next();
-						if (object instanceof CSSValue) {
-							CSSValue cssValue = (CSSValue) object;
+					List<CSSPrimitiveValue> values = grad.getValues();
+					List<Color> colors = new ArrayList<>(values.size());
+					for (CSSPrimitiveValue cssValue : values) {
+						if (cssValue != null) {
 							if (cssValue.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 								Color color = (Color) engine.convert(cssValue, Color.class, form.getDisplay());
 								colors.add(color);
@@ -81,18 +80,18 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 					}
 
 					if (colors.size() > 0) {
-						List list = grad.getPercents();
+						List<Integer> list = grad.getPercents();
 						int[] percents = new int[list.size()];
 						for (int i = 0; i < percents.length; i++) {
-							percents[i] = ((Integer) list.get(i)).intValue();
+							percents[i] = list.get(i).intValue();
 						}
-						form.setTextBackground((Color[]) colors.toArray(new Color[0]), percents,
+						form.setTextBackground(colors.toArray(new Color[0]), percents,
 								grad.getVerticalGradient());
 					}
 				}
 
 			} else {
-				String headProperty = (String) propertyToHeadProperty.get(property);
+				String headProperty = propertyToHeadProperty.get(property);
 				if (headProperty != null) {
 					if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 						Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
@@ -103,6 +102,7 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 		}
 	}
 
+	@Override
 	protected String retrieveCSSProperty(Control control, String property, String pseudo, CSSEngine engine)
 			throws Exception {
 		return null;
