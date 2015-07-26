@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.ui.forms;singleton:=true
-Bundle-Version: 3.6.200.qualifier
+Bundle-Version: 3.7.0.qualifier
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.forms,
@@ -23,6 +23,6 @@ Import-Package: com.ibm.icu.text,
  javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.ui.internal.forms.FormsPlugin
