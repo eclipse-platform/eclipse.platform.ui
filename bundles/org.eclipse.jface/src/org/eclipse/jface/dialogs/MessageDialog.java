@@ -223,7 +223,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @param dialogButtonLabels
 	 *            varargs of Strings for the button labels in the button bar
 	 *
-	 * @since 3.11
+	 * @since 3.12
 	 */
 	public MessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
 			int dialogImageType, int defaultIndex, String... dialogButtonLabels) {
