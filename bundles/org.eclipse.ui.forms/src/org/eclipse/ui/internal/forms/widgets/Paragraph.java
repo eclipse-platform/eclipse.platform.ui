@@ -133,8 +133,7 @@ public class Paragraph {
 		ArrayList<int[]> heights = new ArrayList<>();
 		hloc.heights = heights;
 		hloc.rowCounter = 0;
-		for (int j = 0; j < segments.length; j++) {
-			ParagraphSegment segment = segments[j];
+		for (ParagraphSegment segment : segments) {
 			segment.advanceLocator(gc, width, hloc, resourceTable, true);
 		}
 		if (hloc.rowHeight == 0) {
@@ -159,8 +158,7 @@ public class Paragraph {
 			// compute heights
 			if (loc.heights == null)
 				computeRowHeights(gc, width, loc, lineHeight, resourceTable);
-			for (int j = 0; j < segments.length; j++) {
-				ParagraphSegment segment = segments[j];
+			for (ParagraphSegment segment : segments) {
 				boolean doSelect = false;
 				if (selectedLink != null && segment.equals(selectedLink))
 					doSelect = true;
@@ -178,8 +176,7 @@ public class Paragraph {
 			SelectionData selData) {
 		ParagraphSegment[] segments = getSegments();
 
-		for (int i = 0; i < segments.length; i++) {
-			ParagraphSegment segment = segments[i];
+		for (ParagraphSegment segment : segments) {
 			if (!segment.intersects(repaintRegion))
 				continue;
 			boolean doSelect = false;
@@ -193,8 +190,7 @@ public class Paragraph {
 			SelectionData selData) {
 		ParagraphSegment[] segments = getSegments();
 
-		for (int i = 0; i < segments.length; i++) {
-			ParagraphSegment segment = segments[i];
+		for (ParagraphSegment segment : segments) {
 			//boolean doSelect = false;
 			//if (selectedLink != null && segment.equals(selectedLink))
 				//doSelect = true;
@@ -206,8 +202,7 @@ public class Paragraph {
 		ParagraphSegment[] segments = getSegments();
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		for (int i = 0; i < segments.length; i++) {
-			ParagraphSegment segment = segments[i];
+		for (ParagraphSegment segment : segments) {
 			if (segment instanceof TextSegment) {
 				String text = ((TextSegment) segment).getText();
 				writer.print(text);

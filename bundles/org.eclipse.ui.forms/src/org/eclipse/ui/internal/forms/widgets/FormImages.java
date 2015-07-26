@@ -72,8 +72,8 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = 0;
-			for (int i = 0; i < fRGBs.length; i++)
-				hash = hash * 7 + fRGBs[i].hashCode();
+			for (RGB fRGB : fRGBs)
+				hash = hash * 7 + fRGB.hashCode();
 			hash = hash * 7 + fLength;
 			return hash;
 		}
@@ -158,8 +158,8 @@ public class FormImages {
 					// if the only thing that isn't the same is the background color
 					// still return true if it does not matter (percents add up to 100)
 					int sum = 0;
-					for (int i = 0; i < fPercents.length; i++)
-						sum += fPercents[i];
+					for (int fPercent : fPercents)
+						sum += fPercent;
 					if (sum >= 100)
 						return true;
 				}
@@ -171,8 +171,8 @@ public class FormImages {
 		public int hashCode() {
 			int hash = super.hashCode();
 			hash = hash * 7 + Boolean.valueOf(fVertical).hashCode();
-			for (int i = 0; i < fPercents.length; i++)
-				hash = hash * 7 + new Integer(fPercents[i]).hashCode();
+			for (int fPercent : fPercents)
+				hash = hash * 7 + new Integer(fPercent).hashCode();
 			return hash;
 		}
 
@@ -194,8 +194,8 @@ public class FormImages {
 			Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
 			drawTextGradient(gc, width, height, colors, fPercents, fVertical, bg);
 			gc.dispose();
-			for (int i = 0; i < colors.length; i++)
-				colors[i].dispose();
+			for (Color color : colors)
+				color.dispose();
 			if (bg != null)
 				bg.dispose();
 			return gradient;
@@ -350,8 +350,8 @@ public class FormImages {
 			int length, boolean vertical, Color bg, Display display) {
 		if (colors.length == 0)
 			return null;
-		for (int i = 0; i < colors.length; i++)
-			if (colors[i] == null || colors[i].isDisposed())
+		for (Color color : colors)
+			if (color == null || color.isDisposed())
 				return null;
 		if (bg != null && bg.isDisposed())
 			return null;

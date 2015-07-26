@@ -88,8 +88,8 @@ public class ControlSegment extends ObjectSegment implements IFocusSelectable {
 			Composite comp = (Composite)c;
 			Control [] tabList = comp.getTabList();
 			if (direction) {
-				for (int i=0; i<tabList.length; i++) {
-					if (setFocus(tabList[i], direction))
+				for (Control element : tabList) {
+					if (setFocus(element, direction))
 						return true;
 				}
 			}

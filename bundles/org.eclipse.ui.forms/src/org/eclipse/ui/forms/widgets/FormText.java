@@ -280,8 +280,7 @@ public class FormText extends Canvas {
 				if (segments.length > 0) {
 					selectableInTheLastRow = false;
 					int pwidth = 0;
-					for (int j = 0; j < segments.length; j++) {
-						ParagraphSegment segment = segments[j];
+					for (ParagraphSegment segment : segments) {
 						segment.advanceLocator(gc, wHint, loc, resourceTable, false);
 						if (wHint != SWT.DEFAULT) {
 							width = Math.max(width, loc.width);
@@ -750,12 +749,11 @@ public class FormText extends Canvas {
 				}
 			}
 		};
-		for (int i = 0; i < paragraphs.length; i++) {
-			Paragraph p = paragraphs[i];
+		for (Paragraph p : paragraphs) {
 			ParagraphSegment[] segments = p.getSegments();
-			for (int j = 0; j < segments.length; j++) {
-				if (segments[j] instanceof ControlSegment) {
-					ControlSegment cs = (ControlSegment) segments[j];
+			for (ParagraphSegment segment : segments) {
+				if (segment instanceof ControlSegment) {
+					ControlSegment cs = (ControlSegment) segment;
 					Control c = cs.getControl(resourceTable);
 					if (c != null) {
 						if (c.getData(CONTROL_KEY) == null) {
@@ -773,8 +771,8 @@ public class FormText extends Canvas {
 		if (c instanceof Composite) {
 			Composite parent = (Composite) c;
 			Control[] children = parent.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				attachTraverseListener(children[i], listener);
+			for (Control element : children) {
+				attachTraverseListener(element, listener);
 			}
 			if (c instanceof Canvas) {
 				// If Canvas, the control iteself can accept
@@ -1626,8 +1624,7 @@ public class FormText extends Canvas {
 		IHyperlinkSegment selectedLink = getSelectedLink();
 		if (getDisplay().getFocusControl() != this)
 			selectedLink = null;
-		for (int i = 0; i < paragraphs.length; i++) {
-			Paragraph p = paragraphs[i];
+		for (Paragraph p : paragraphs) {
 			p
 					.paint(textGC, repaintRegion, resourceTable, selectedLink,
 							selData);

@@ -112,9 +112,9 @@ public abstract class MasterDetailsBlock {
 		private void hookSashListeners() {
 			purgeSashes();
 			Control [] children = getChildren();
-			for (int i=0; i<children.length; i++) {
-				if (children[i] instanceof Sash) {
-					Sash sash = (Sash)children[i];
+			for (Control element : children) {
+				if (element instanceof Sash) {
+					Sash sash = (Sash)element;
 					if (sashes.contains(sash))
 						continue;
 					sash.addListener(SWT.Paint, listener);
@@ -211,9 +211,9 @@ public abstract class MasterDetailsBlock {
 	private void hookResizeListener() {
 		Listener listener = ((MDSashForm)sashForm).listener;
 		Control [] children = sashForm.getChildren();
-		for (int i=0; i<children.length; i++) {
-			if (children[i] instanceof Sash) continue;
-			children[i].addListener(SWT.Resize, listener);
+		for (Control element : children) {
+			if (element instanceof Sash) continue;
+			element.addListener(SWT.Resize, listener);
 		}
 	}
 

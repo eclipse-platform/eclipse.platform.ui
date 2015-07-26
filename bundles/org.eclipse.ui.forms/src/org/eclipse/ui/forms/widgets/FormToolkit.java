@@ -111,8 +111,8 @@ public class FormToolkit {
 		public void paintControl(PaintEvent event) {
 			Composite composite = (Composite) event.widget;
 			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Control c = children[i];
+			for (Control element : children) {
+				Control c = element;
 				boolean inactiveBorder = false;
 				boolean textBorder = false;
 				if (!c.isVisible())

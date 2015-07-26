@@ -41,8 +41,8 @@ public class FormFonts {
 
 		BoldFontDescriptor (Font font) {
 			fFontData = font.getFontData();
-			for (int i = 0; i < fFontData.length; i++) {
-				fFontData[i].setStyle(fFontData[i].getStyle() | SWT.BOLD);
+			for (FontData element : fFontData) {
+				element.setStyle(element.getStyle() | SWT.BOLD);
 			}
 		}
 
@@ -63,8 +63,8 @@ public class FormFonts {
 		@Override
 		public int hashCode() {
 			int hash = 0;
-			for (int i = 0; i < fFontData.length; i++)
-				hash = hash * 7 + fFontData[i].hashCode();
+			for (FontData element : fFontData)
+				hash = hash * 7 + element.hashCode();
 			return hash;
 		}
 

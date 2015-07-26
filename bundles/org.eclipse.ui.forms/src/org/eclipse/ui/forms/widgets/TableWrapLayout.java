@@ -340,8 +340,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			TableWrapData td = (TableWrapData) rowspan.child.getLayoutData();
 			int ngrowing = 0;
 			int[] affectedRows = new int[grid.size()];
-			for (int i = 0; i < growingRows.length; i++) {
-				int growingRow = growingRows[i];
+			for (int growingRow : growingRows) {
 				if (growingRow >= rowspan.row
 						&& growingRow < rowspan.row + td.rowspan) {
 					affectedRows[ngrowing++] = growingRow;
@@ -364,8 +363,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	boolean isGrowingColumn(int col) {
 		if (growingColumns == null)
 			return false;
-		for (int i = 0; i < growingColumns.length; i++) {
-			if (col == growingColumns[i])
+		for (int growingColumn : growingColumns) {
+			if (col == growingColumn)
 				return true;
 		}
 		return false;
@@ -871,8 +870,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	void initializeLayoutData(Composite composite) {
 		Control[] children = composite.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Control child = children[i];
+		for (Control child : children) {
 			if (child.getLayoutData() == null) {
 				child.setLayoutData(new TableWrapData());
 			}

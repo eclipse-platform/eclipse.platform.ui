@@ -594,9 +594,9 @@ public class FormTextModel {
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph p = paragraphs.get(i);
 			ParagraphSegment[] segments = p.getSegments();
-			for (int j = 0; j < segments.length; j++) {
-				if (segments[j] instanceof IFocusSelectable)
-					result.add(segments[j]);
+			for (ParagraphSegment segment : segments) {
+				if (segment instanceof IFocusSelectable)
+					result.add(segment);
 			}
 		}
 		selectableSegments = result
@@ -616,8 +616,7 @@ public class FormTextModel {
 
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
 		IFocusSelectable[] selectables = getFocusSelectableSegments();
-		for (int i = 0; i < selectables.length; i++) {
-			IFocusSelectable segment = selectables[i];
+		for (IFocusSelectable segment : selectables) {
 			if (segment instanceof IHyperlinkSegment) {
 				IHyperlinkSegment link = (IHyperlinkSegment)segment;
 				if (link.contains(x, y))
@@ -674,8 +673,8 @@ public class FormTextModel {
 	public boolean linkExists(IHyperlinkSegment link) {
 		if (selectableSegments==null)
 			return false;
-		for (int i=0; i<selectableSegments.length; i++) {
-			if (selectableSegments[i]==link)
+		for (IFocusSelectable selectableSegment : selectableSegments) {
+			if (selectableSegment==link)
 				return true;
 		}
 		return false;
