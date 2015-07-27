@@ -257,9 +257,6 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		}
 	}
 
-	/**
-	 * (non-Javadoc) Method declared on IDialogPage.
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);

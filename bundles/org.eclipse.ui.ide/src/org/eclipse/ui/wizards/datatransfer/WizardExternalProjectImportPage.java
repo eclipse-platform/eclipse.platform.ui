@@ -111,9 +111,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
     }
 
-    /** (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public void createControl(Composite parent) {
 

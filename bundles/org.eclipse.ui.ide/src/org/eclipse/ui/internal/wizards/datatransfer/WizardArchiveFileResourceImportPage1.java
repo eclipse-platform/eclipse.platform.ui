@@ -100,9 +100,6 @@ public class WizardArchiveFileResourceImportPage1 extends
         return true;
     }
 
-    /** (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public void createControl(Composite parent) {
         super.createControl(parent);

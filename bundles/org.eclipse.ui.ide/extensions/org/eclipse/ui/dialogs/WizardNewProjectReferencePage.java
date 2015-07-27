@@ -64,9 +64,6 @@ public class WizardNewProjectReferencePage extends WizardPage {
         super(pageName);
     }
 
-    /** (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public void createControl(Composite parent) {
 

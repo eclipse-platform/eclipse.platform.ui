@@ -112,9 +112,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 		this(pageName);
 	}
 
-	/** (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);

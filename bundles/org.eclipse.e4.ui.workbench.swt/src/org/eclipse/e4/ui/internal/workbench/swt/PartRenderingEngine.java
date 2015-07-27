@@ -753,13 +753,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return safeCreateGui(element, parent, parentContext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.workbench.IPresentationEngine#focusGui(org.eclipse.
-	 * e4.ui.model.application.ui.MUIElement)
-	 */
 	@Override
 	public void focusGui(MUIElement element) {
 		AbstractPartRenderer renderer = (AbstractPartRenderer) element
