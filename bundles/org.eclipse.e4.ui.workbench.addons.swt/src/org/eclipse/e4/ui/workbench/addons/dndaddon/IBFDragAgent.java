@@ -35,13 +35,6 @@ public class IBFDragAgent extends DragAgent {
 		super(manager);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#getElementToDrag(org.eclipse.e4.ui.
-	 * workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public MUIElement getElementToDrag(DnDInfo info) {
 		if (!(info.curCtrl instanceof ImageBasedFrame))
@@ -62,13 +55,6 @@ public class IBFDragAgent extends DragAgent {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragStart(org.eclipse.e4.ui.workbench
-	 * .addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragStart(DnDInfo info) {
 		super.dragStart(info);
@@ -102,13 +88,6 @@ public class IBFDragAgent extends DragAgent {
 		info.update();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#track(org.eclipse.e4.ui.workbench.addons
-	 * .dndaddon.DnDInfo)
-	 */
 	@Override
 	public void track(DnDInfo info) {
 		super.track(info);
@@ -124,12 +103,6 @@ public class IBFDragAgent extends DragAgent {
 			ds.setLocation(info.cursorPos.x - 5, info.cursorPos.y - 5);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragFinished(boolean,
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragFinished(boolean performDrop, DnDInfo info) {
 		dragElement.getTags().remove("LockVisibility");

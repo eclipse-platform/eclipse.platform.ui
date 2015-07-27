@@ -144,11 +144,6 @@ public class StackDropAgent extends DropAgent {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave()
-	 */
 	@Override
 	public void dragLeave(MUIElement dragElement, DnDInfo info) {
 		dndManager.clearOverlay();
@@ -166,11 +161,6 @@ public class StackDropAgent extends DropAgent {
 		super.dragLeave(dragElement, info);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave()
-	 */
 	@Override
 	public boolean track(MUIElement dragElement, DnDInfo info) {
 		if (!tabArea.contains(info.cursorPos) || dropStack == null || !dropStack.isToBeRendered())

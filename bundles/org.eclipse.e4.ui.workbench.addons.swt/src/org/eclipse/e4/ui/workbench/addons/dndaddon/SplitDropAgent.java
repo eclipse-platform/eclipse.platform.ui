@@ -108,12 +108,6 @@ public class SplitDropAgent extends DropAgent {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragEnter(org.eclipse.e4.ui.model.
-	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragEnter(MUIElement dragElement, DnDInfo info) {
 		super.dragEnter(dragElement, info);
@@ -159,12 +153,6 @@ public class SplitDropAgent extends DropAgent {
 		showFeedback(curDockLocation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave(org.eclipse.e4.ui.model.
-	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public void dragLeave(MUIElement dragElement, DnDInfo info) {
 		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE)
@@ -186,13 +174,6 @@ public class SplitDropAgent extends DropAgent {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#track(org.eclipse.e4.ui.model.application
-	 * .ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
-	 */
 	@Override
 	public boolean track(MUIElement dragElement, DnDInfo info) {
 		if (!clientBounds.contains(info.cursorPos))
