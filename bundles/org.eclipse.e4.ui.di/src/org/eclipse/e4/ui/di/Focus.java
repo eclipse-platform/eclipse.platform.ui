@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473637
  *******************************************************************************/
 package org.eclipse.e4.ui.di;
 
@@ -21,9 +22,10 @@ import java.lang.annotation.Target;
  * method to be invoked when it has been granted focus.
  * <p>
  * This annotation must not be applied to more than one method on a class. If
- * multiple methods of the class are tagged with this this annotation, only one
- * of them will be called to grant focus to the part.
+ * multiple methods of the class are tagged with this annotation, only one of
+ * them will be called to grant focus to the part.
  * </p>
+ *
  * @since 1.0
  */
 @Documented
