@@ -16,6 +16,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.e4.internal.tools.wizards.model.FragmentExtractHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -32,6 +33,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -284,9 +287,61 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
+	/**
+	 * Test for BR 470999
+	 */
+	public void testExtractResolveCommandsWithTwoHandlerWithSameCommand() {
+		createHandler();
+		createHandler2();
+		final MCommand command = createCommandLinkedWithHandler(handler1);
+		handler2.setCommand(command);
+		final HashMap<MCommand, MCommand> importCommands = new HashMap<MCommand, MCommand>();
+
+		FragmentExtractHelper.resolveCommandImports(handler1, importCommands);
+		FragmentExtractHelper.resolveCommandImports(handler2, importCommands);
+
+		assertEquals(1, importCommands.size());
+		final MCommand resolvedCommand = importCommands.values().iterator().next();
+		assertSame(resolvedCommand, handler1.getCommand());
+		assertSame(resolvedCommand, handler2.getCommand());
+	}
+
+	@Test
+	/**
+	 * Test for BR 470999
+	 */
+	public void testExtractResolveCommandsWithTwoHandledItemsWithSameCommand() {
+		final MHandledItem handledItem1 = createHandledItem();
+		final MHandledItem handledItem2 = createHandledItem();
+		final MCommand command = createCommand();
+		handledItem1.setCommand(command);
+		handledItem2.setCommand(command);
+		final HashMap<MCommand, MCommand> importCommands = new HashMap<MCommand, MCommand>();
+
+		FragmentExtractHelper.resolveCommandImports(handledItem1, importCommands);
+		FragmentExtractHelper.resolveCommandImports(handledItem2, importCommands);
+
+		assertEquals(1, importCommands.size());
+		final MCommand resolvedCommand = importCommands.values().iterator().next();
+		assertSame(resolvedCommand, handledItem1.getCommand());
+		assertSame(resolvedCommand, handledItem2.getCommand());
+	}
+
+	/**
+	 * @return
+	 *
+	 */
+	private MHandledItem createHandledItem() {
+		final MHandledItem handledItem = MMenuFactory.INSTANCE.createHandledMenuItem();
+		handledItem.setElementId(HANDLER1ID);
+		application.getSnippets().add(handledItem);
+		return handledItem;
+	}
+
+	@Test
 	@Ignore
 	/**
-	 * Test for BR 470998 and 470999, ignored until it is fixed
+	 * Test for BR 470998, ignored until it is fixed
 	 */
 	public void testExtractTwoHandlerWithSameCommand() {
 		createHandler();
@@ -297,17 +352,20 @@ public class FragmentExtractHelperTest {
 		elementsToExtract.add(handler1);
 		elementsToExtract.add(handler2);
 		final MModelFragments initialModel = FragmentExtractHelper.createInitialModel(elementsToExtract);
-		assertEquals(2, initialModel.getFragments().size());
+		assertEquals(1, initialModel.getFragments().size());
 		assertEquals(1, initialModel.getImports().size());
 		final MModelFragment modelFragment = initialModel.getFragments().get(0);
 		assertEquals(1, modelFragment.getElements().size());
-		final MModelFragment modelFragment2 = initialModel.getFragments().get(0);
-		assertEquals(1, modelFragment2.getElements().size());
 
-		assertTrue(initialModel.getImports().contains(((MHandler) modelFragment.getElements().get(0)).getCommand()));
-		assertTrue(initialModel.getImports().contains(((MHandler) modelFragment2.getElements().get(0)).getCommand()));
-		assertExtractedElement(handler1, modelFragment.getElements().get(0));
-		assertExtractedElement(handler2, modelFragment.getElements().get(1));
+		final MCommand importedCommand = (MCommand) initialModel.getImports().get(0);
+		final MHandler importedHandler1 = (MHandler) modelFragment.getElements().get(0);
+		final MHandler importedHandler2 = (MHandler) modelFragment.getElements().get(1);
+
+		assertSame(importedCommand, importedHandler1.getCommand());
+		assertSame(importedCommand, importedHandler2.getCommand());
+
+		assertExtractedElement(handler1, importedHandler1);
+		assertExtractedElement(handler2, importedHandler2);
 		assertExtractedImport(command, initialModel.getImports().get(0));
 	}
 

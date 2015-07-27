@@ -13,6 +13,8 @@ package org.eclipse.e4.internal.tools.wizards.model;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -36,11 +38,10 @@ public class FragmentExtractHelper {
 	 *
 	 * @param moe
 	 *            elements to resolved referenced commands for
-	 * @param mModelFragments
-	 *            the target {@link MModelFragments}
+	 * @param importCommands
+	 *            already imported Commands
 	 */
-	public static void resolveCommandImports(MApplicationElement moe, MModelFragments mModelFragments) {
-		final HashMap<String, MCommand> importCommands = new HashMap<String, MCommand>();
+	public static void resolveCommandImports(MApplicationElement moe, Map<MCommand, MCommand> importCommands) {
 		if (moe instanceof MHandler) {
 
 			final MHandler mhandler = (MHandler) moe;
@@ -48,12 +49,12 @@ public class FragmentExtractHelper {
 			if (command == null) {
 				return;
 			}
-			final MCommand existImportCommand = importCommands.get(command.getElementId());
+			final MCommand existImportCommand = importCommands.get(command);
 			if (existImportCommand == null) {
 				final MApplicationElement copy = (MApplicationElement) EcoreUtil.copy((EObject) command);
 				mhandler.setCommand((MCommand) copy);
-				importCommands.put(copy.getElementId(), (MCommand) copy);
-				mModelFragments.getImports().add(copy);
+				importCommands.put(command, (MCommand) copy);
+
 			} else {
 				mhandler.setCommand(existImportCommand);
 			}
@@ -63,12 +64,11 @@ public class FragmentExtractHelper {
 			if (command == null) {
 				return;
 			}
-			final MCommand existImportCommand = importCommands.get(command.getElementId());
+			final MCommand existImportCommand = importCommands.get(command);
 			if (existImportCommand == null) {
 				final MApplicationElement copy = (MApplicationElement) EcoreUtil.copy((EObject) command);
 				mh.setCommand((MCommand) copy);
-				importCommands.put(copy.getElementId(), command);
-				mModelFragments.getImports().add(copy);
+				importCommands.put(command, (MCommand) copy);
 			} else {
 				mh.setCommand(existImportCommand);
 			}
@@ -80,17 +80,18 @@ public class FragmentExtractHelper {
 	 *            the {@link MApplicationElement}s to be extracted
 	 */
 	public static MModelFragments createInitialModel(List<MApplicationElement> extractedElements) {
-		final MModelFragments createModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
+		final MModelFragments mModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
+		final HashMap<MCommand, MCommand> importCommands = new HashMap<MCommand, MCommand>();
 		for (final MApplicationElement moe : extractedElements) {
 			final EObject eObject = (EObject) moe;
 			final TreeIterator<EObject> eAllContents = eObject.eAllContents();
 			boolean hasNext = eAllContents.hasNext();
 			if (!hasNext) {
-				FragmentExtractHelper.resolveCommandImports(moe, createModelFragments);
+				FragmentExtractHelper.resolveCommandImports(moe, importCommands);
 			}
 			while (hasNext) {
 				final MApplicationElement next = (MApplicationElement) eAllContents.next();
-				FragmentExtractHelper.resolveCommandImports(next, createModelFragments);
+				FragmentExtractHelper.resolveCommandImports(next, importCommands);
 				hasNext = eAllContents.hasNext();
 			}
 			final MStringModelFragment createStringModelFragment = MFragmentFactory.INSTANCE
@@ -102,9 +103,15 @@ public class FragmentExtractHelper {
 			createStringModelFragment.getElements().add(e);
 			createStringModelFragment.setFeaturename(featurename);
 
-			createModelFragments.getFragments().add(createStringModelFragment);
+			mModelFragments.getFragments().add(createStringModelFragment);
 		}
-		return createModelFragments;
+
+		final Set<MCommand> keySet = importCommands.keySet();
+		for (final MCommand key : keySet) {
+			mModelFragments.getImports().add(importCommands.get(key));
+		}
+
+		return mModelFragments;
 	}
 
 }
