@@ -25,9 +25,6 @@ public class LegacyAnimations extends Animations {
 	/** Default c'tor */
 	public LegacyAnimations() {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.tweaklets.Animations#getFeedback()
-	 */
 	@Override
 	public RectangleAnimationFeedbackBase createFeedback(Shell shell) {
 		return new LegacyAnimationFeedback(shell, null, null);

@@ -108,9 +108,6 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
         return children.size();
     }
 
-    /* (non-Javadoc)
-     * @see IAdaptable#getAdapter
-     */
     @Override
 	public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class) {
@@ -119,9 +116,6 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see IWorkbenchAdapter
-     */
     @Override
 	public Object[] getChildren(Object o) {
         // @issue suspicious - does not reference parameter

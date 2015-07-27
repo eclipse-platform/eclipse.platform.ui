@@ -43,17 +43,11 @@ public class ImportWizardRegistry extends AbstractExtensionWizardRegistry {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry#getExtensionPoint()
-	 */
 	@Override
 	protected String getExtensionPoint() {
 		return IWorkbenchRegistryConstants.PL_IMPORT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry#getPlugin()
-	 */
 	@Override
 	protected String getPlugin() {
 		return PlatformUI.PLUGIN_ID;

@@ -315,9 +315,6 @@ public class TrimCommonUIHandle extends Composite {
     	setCursor(dragCursor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
-	 */
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		Point ctrlPrefSize = trim.getControl().computeSize(wHint, hHint);
@@ -466,9 +463,6 @@ public class TrimCommonUIHandle extends Composite {
 		trim.handleClose();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Widget#dispose()
-     */
     @Override
 	public void dispose() {
         if (radioButtons != null) {

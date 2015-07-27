@@ -158,9 +158,6 @@ public abstract class BaseSelectionListenerAction extends Action implements
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
     @Override
 	public void runWithEvent(Event event) {
         // Set the running flag during the run so that selection changes are deferred.

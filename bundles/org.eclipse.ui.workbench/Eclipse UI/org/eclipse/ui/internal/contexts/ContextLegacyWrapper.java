@@ -63,11 +63,6 @@ public class ContextLegacyWrapper implements IContext {
 		this.contextManager = contextManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#addContextListener(org.eclipse.ui.contexts.IContextListener)
-	 */
 	@Override
 	public void addContextListener(IContextListener contextListener) {
 		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(
@@ -81,32 +76,17 @@ public class ContextLegacyWrapper implements IContext {
 		contextManager.addContextManagerListener(wrapper);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Comparable#compareTo(T)
-	 */
 	@Override
 	public int compareTo(Object o) {
 		return Util
 				.compare(wrappedContext, ((ContextLegacyWrapper) o).wrappedContext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return wrappedContext.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#getName()
-	 */
 	@Override
 	public String getName() throws NotDefinedException {
 		try {
@@ -116,11 +96,6 @@ public class ContextLegacyWrapper implements IContext {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#getParentId()
-	 */
 	@Override
 	public String getParentId() throws NotDefinedException {
 		try {
@@ -130,32 +105,17 @@ public class ContextLegacyWrapper implements IContext {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#isDefined()
-	 */
 	@Override
 	public boolean isDefined() {
 		return wrappedContext.isDefined();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return contextManager.getActiveContextIds().contains(
 				wrappedContext.getId());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContext#removeContextListener(org.eclipse.ui.contexts.IContextListener)
-	 */
 	@Override
 	public void removeContextListener(IContextListener contextListener) {
 		final LegacyContextListenerWrapper wrapper = new LegacyContextListenerWrapper(

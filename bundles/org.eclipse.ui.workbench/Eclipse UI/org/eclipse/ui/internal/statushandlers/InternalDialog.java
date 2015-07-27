@@ -193,9 +193,6 @@ public class InternalDialog extends TrayDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared in Window.
-	 */
 	@Override
 	final protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -214,11 +211,6 @@ public class InternalDialog extends TrayDialog {
 		button.setLayoutData(data);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		createTitleArea(parent);
@@ -228,11 +220,6 @@ public class InternalDialog extends TrayDialog {
 		return parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
@@ -323,11 +310,6 @@ public class InternalDialog extends TrayDialog {
 		this.supportTray = supportTray;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
 	@Override
 	public int open() {
 		boolean modalitySwitch = getBooleanValue(IStatusDialogConstants.MODALITY_SWITCH);
@@ -348,9 +330,6 @@ public class InternalDialog extends TrayDialog {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.TrayDialog#closeTray()
-	 */
 	@Override
 	public void closeTray() throws IllegalStateException {
 		if (getTray() != null) {
@@ -482,13 +461,6 @@ public class InternalDialog extends TrayDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#getInitialLocation(org.eclipse.swt.graphics
-	 * .Point)
-	 */
 	@Override
 	public Point getInitialLocation(Point initialSize) {
 		// TODO Auto-generated method stub
@@ -869,37 +841,17 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private void initContentProvider() {
 		IContentProvider provider = new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 				// Nothing of interest here
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements
-			 * (java.lang.Object)
-			 */
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return ((Collection) dialogState
 						.get(IStatusDialogConstants.STATUS_ADAPTERS)).toArray();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org
-			 * .eclipse.jface.viewers.Viewer, java.lang.Object,
-			 * java.lang.Object)
-			 */
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {

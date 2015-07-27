@@ -141,11 +141,6 @@ public class CommandAction extends Action {
 		parameterizedCommand = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(Event event) {
 		if (handlerService == null) {
@@ -164,11 +159,6 @@ public class CommandAction extends Action {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		// hopefully this is never called

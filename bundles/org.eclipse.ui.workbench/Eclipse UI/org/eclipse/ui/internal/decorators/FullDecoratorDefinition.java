@@ -88,9 +88,6 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         return decorator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
-     */
     @Override
 	protected void refreshDecorator() {
         //Only do something if disabled so as to prevent
@@ -150,18 +147,12 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         return decorator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#internalGetLabelProvider()
-     */
     @Override
 	protected IBaseLabelProvider internalGetLabelProvider()
             throws CoreException {
         return internalGetDecorator();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#isFull()
-     */
     @Override
 	public boolean isFull() {
         return true;

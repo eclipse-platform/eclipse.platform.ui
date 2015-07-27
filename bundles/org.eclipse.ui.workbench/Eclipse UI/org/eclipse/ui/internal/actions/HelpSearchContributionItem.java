@@ -60,9 +60,6 @@ public class HelpSearchContributionItem extends ControlContribution {
 		this.window = window;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.NONE);
@@ -93,9 +90,6 @@ public class HelpSearchContributionItem extends ControlContribution {
 		return combo;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ControlContribution#computeWidth(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	protected int computeWidth(Control control) {
 		return control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;

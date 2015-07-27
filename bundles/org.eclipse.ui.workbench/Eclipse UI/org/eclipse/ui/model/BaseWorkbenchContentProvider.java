@@ -34,9 +34,6 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContentProvider.
-     */
     @Override
 	public void dispose() {
         // do nothing
@@ -56,9 +53,6 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
         return Util.getAdapter(element, IWorkbenchAdapter.class);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ITreeContentProvider.
-     */
     @Override
 	public Object[] getChildren(Object element) {
         IWorkbenchAdapter adapter = getAdapter(element);
@@ -68,17 +62,11 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
         return new Object[0];
     }
 
-    /* (non-Javadoc)
-     * Method declared on IStructuredContentProvider.
-     */
     @Override
 	public Object[] getElements(Object element) {
         return getChildren(element);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ITreeContentProvider.
-     */
     @Override
 	public Object getParent(Object element) {
         IWorkbenchAdapter adapter = getAdapter(element);
@@ -88,17 +76,11 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on ITreeContentProvider.
-     */
     @Override
 	public boolean hasChildren(Object element) {
         return getChildren(element).length > 0;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContentProvider.
-     */
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // do nothing

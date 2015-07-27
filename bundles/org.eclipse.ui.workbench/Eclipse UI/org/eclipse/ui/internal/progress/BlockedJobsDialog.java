@@ -76,21 +76,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	private class BlockedUIElement extends JobTreeElement {
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
-		 */
 		@Override
 		Object[] getChildren() {
 			return ProgressManagerUtil.EMPTY_OBJECT_ARRAY;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
-		 */
 		@Override
 		String getDisplayString() {
 			if (blockedTaskName == null || blockedTaskName.length() == 0) {
@@ -99,61 +89,31 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			return blockedTaskName;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayImage()
-		 */
 		@Override
 		public Image getDisplayImage() {
 			return JFaceResources.getImage(ProgressManager.WAITING_JOB_KEY);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
-		 */
 		@Override
 		boolean hasChildren() {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
-		 */
 		@Override
 		boolean isActive() {
 			return true;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
-		 */
 		@Override
 		boolean isJobInfo() {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#cancel()
-		 */
 		@Override
 		public void cancel() {
 			blockingMonitor.setCanceled(true);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.progress.JobTreeElement#isCancellable()
-		 */
 		@Override
 		public boolean isCancellable() {
 			return true;
@@ -203,11 +163,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			// create the job that will open the dialog after a delay.
 			WorkbenchJob dialogJob = new WorkbenchJob(
 					WorkbenchMessages.EventLoopProgressMonitor_OpenDialogJobName) {
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					if (singleton == null) {
@@ -297,12 +252,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
 		viewer.setComparator(new ViewerComparator() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public int compare(Viewer testViewer, Object e1, Object e2) {
 				return ((Comparable) e1).compareTo(e2);
@@ -328,11 +277,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private ProgressViewerContentProvider getContentProvider() {
 		return new ProgressViewerContentProvider(viewer, true, false) {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.ui.internal.progress.ProgressViewerContentProvider#getElements(java.lang.Object)
-			 */
 			@Override
 			public Object[] getElements(Object inputElement) {
 				Object[] elements = super.getElements(inputElement);
@@ -371,11 +315,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -401,11 +340,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		messageLabel.setText(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
-	 */
 	@Override
 	protected Image getImage() {
 		return getInfoImage();
@@ -436,11 +370,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		return close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#close()
-	 */
 	@Override
 	public boolean close() {
 		// Clear the singleton first
@@ -449,11 +378,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		return super.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createButtonBar(Composite parent) {
 		// Do nothing here as we want no buttons

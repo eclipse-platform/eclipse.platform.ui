@@ -156,13 +156,6 @@ public class InstallationDialog extends TrayDialog implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -174,23 +167,11 @@ public class InstallationDialog extends TrayDialog implements
 				WorkbenchMessages.InstallationDialog_ShellTitle, productName));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -330,13 +311,6 @@ public class InstallationDialog extends TrayDialog implements
 		lastSelectedTabId = pageId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
-	 * .swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// The button manager will handle the correct sizing of the buttons.

@@ -96,9 +96,6 @@ public class DialogPageContextComputer implements IContextComputer {
         addContexts(object, event);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContextComputer.
-     */
     @Override
 	public Object[] computeContexts(HelpEvent event) {
         contextList = new ArrayList();
@@ -116,9 +113,6 @@ public class DialogPageContextComputer implements IContextComputer {
         return contextList.toArray();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContextComputer.
-     */
     @Override
 	public Object[] getLocalContexts(HelpEvent event) {
         return new Object[] { context };

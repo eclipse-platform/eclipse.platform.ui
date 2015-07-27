@@ -32,25 +32,16 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
         this.store = toConvert;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#attachListener()
-     */
     @Override
 	protected void attachListener() {
         store.addPropertyChangeListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.PropertyMapAdapter#detachListener()
-     */
     @Override
 	protected void detachListener() {
         store.removePropertyChangeListener(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.IPropertyMap#keySet()
-     */
     @Override
 	public Set keySet() {
         Set result = new HashSet();
@@ -66,9 +57,6 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.IPropertyMap#getValue(java.lang.String, java.lang.Class)
-     */
     @Override
 	public Object getValue(String propertyId, Class propertyType) {
         if (propertyType.isAssignableFrom(String.class)) {
@@ -98,17 +86,11 @@ public final class PreferencesAdapter extends PropertyMapAdapter {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.IPropertyMap#propertyExists(java.lang.String)
-     */
     @Override
 	public boolean propertyExists(String propertyId) {
         return store.contains(propertyId);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.preferences.IPropertyMap#setValue(java.lang.String, java.lang.Object)
-     */
     @Override
 	public void setValue(String propertyId, Object newValue) {
         if (newValue instanceof String) {

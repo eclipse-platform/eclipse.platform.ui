@@ -155,9 +155,6 @@ public class NewWizardAction extends Action implements
 		this.windowTitle = windowTitle;
 	}
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         if (workbenchWindow == null) {
@@ -213,10 +210,6 @@ public class NewWizardAction extends Action implements
         dialog.open();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     * @since 3.0
-     */
     @Override
 	public void dispose() {
         if (workbenchWindow == null) {

@@ -109,13 +109,6 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.
-	 * menus.UIElement, java.util.Map)
-	 */
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		if (handler instanceof IElementUpdater) {
@@ -133,35 +126,16 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.core.commands.IHandler#addHandlerListener(org.eclipse.core
-	 * .commands.IHandlerListener)
-	 */
 	@Override
 	public void addHandlerListener(IHandlerListener handlerListener) {
 		handler.addHandlerListener(handlerListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#dispose()
-	 */
 	@Override
 	public void dispose() {
 		handler.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
-	 * ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (logExecute) {
@@ -173,43 +147,21 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		return handler.isEnabled();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#isHandled()
-	 */
 	@Override
 	public boolean isHandled() {
 		return handler.isHandled();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.core.commands.IHandler#removeHandlerListener(org.eclipse.
-	 * core.commands.IHandlerListener)
-	 */
 	@Override
 	public void removeHandlerListener(IHandlerListener handlerListener) {
 		handler.removeHandlerListener(handlerListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
-	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		if (logSetEnabled) {

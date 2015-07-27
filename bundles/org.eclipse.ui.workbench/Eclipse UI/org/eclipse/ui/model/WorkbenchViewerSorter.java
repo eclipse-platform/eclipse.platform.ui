@@ -42,9 +42,6 @@ public class WorkbenchViewerSorter extends ViewerSorter {
         super(collator);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ViewerSorter.
-     */
     @Override
 	public boolean isSorterProperty(Object element, String propertyId) {
         return propertyId.equals(IBasicPropertyConstants.P_TEXT);

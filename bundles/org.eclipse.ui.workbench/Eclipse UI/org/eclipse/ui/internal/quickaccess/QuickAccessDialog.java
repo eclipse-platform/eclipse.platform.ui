@@ -266,13 +266,6 @@ public class QuickAccessDialog extends PopupDialog {
 		return filterText;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt
-	 * .widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);

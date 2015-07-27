@@ -495,9 +495,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
-	 */
 	@Override
 	public void setEnabled(Object evaluationContext) {
 		if (!(evaluationContext instanceof IEvaluationContext)) {
@@ -724,23 +721,14 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		return buffer.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		if (currentPart != null && partRef.getPart(false) == currentPart) {
@@ -748,37 +736,22 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
 	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}

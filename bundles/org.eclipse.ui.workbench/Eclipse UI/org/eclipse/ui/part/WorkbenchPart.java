@@ -86,16 +86,6 @@ public abstract class WorkbenchPart extends EventManager implements
         addListenerObject(l);
     }
 
-    /* (non-Javadoc)
-     * Creates the SWT controls for this workbench part.
-     * <p>
-     * Subclasses must implement this method.  For a detailed description of the
-     * requirements see <code>IWorkbenchPart</code>
-     * </p>
-     *
-     * @param parent the parent control
-     * @see IWorkbenchPart
-     */
     @Override
 	public abstract void createPartControl(Composite parent);
 
@@ -208,17 +198,6 @@ public abstract class WorkbenchPart extends EventManager implements
         removeListenerObject(l);
     }
 
-    /* (non-Javadoc)
-     * Asks this part to take focus within the workbench. Parts must
-     * assign focus to one of the controls contained in the part's
-     * parent composite.
-     * <p>
-     * Subclasses must implement this method.  For a detailed description of the
-     * requirements see <code>IWorkbenchPart</code>
-     * </p>
-     *
-     * @see IWorkbenchPart
-     */
     @Override
 	public abstract void setFocus();
 

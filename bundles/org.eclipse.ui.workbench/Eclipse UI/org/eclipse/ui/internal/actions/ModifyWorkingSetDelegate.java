@@ -156,30 +156,17 @@ public class ModifyWorkingSetDelegate extends
 	public ModifyWorkingSetDelegate() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		contextMenuCreator.createMenu();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
-	 */
 	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (event.type == SWT.KeyDown || event.type == SWT.KeyUp)
 			run(action);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
@@ -187,11 +174,6 @@ public class ModifyWorkingSetDelegate extends
 				.addPropertyChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getWindow().getWorkbench().getWorkingSetManager()
@@ -325,12 +307,6 @@ public class ModifyWorkingSetDelegate extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.actions.AbstractWorkingSetPulldownDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction actionProxy, ISelection selection) {
 		super.selectionChanged(actionProxy, selection);
@@ -353,12 +329,6 @@ public class ModifyWorkingSetDelegate extends
 			actionProxy.setEnabled(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
@@ -367,9 +337,6 @@ public class ModifyWorkingSetDelegate extends
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void init(IAction action) {
 		this.actionProxy = action;

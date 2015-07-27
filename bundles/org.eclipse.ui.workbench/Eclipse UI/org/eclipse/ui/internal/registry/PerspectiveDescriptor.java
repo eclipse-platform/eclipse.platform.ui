@@ -85,11 +85,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		return configElement == null ? null : RegistryReader.getDescription(configElement);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPerspectiveDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
@@ -103,11 +98,6 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		return originalId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPerspectiveDescriptor#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		if (image != null)
@@ -141,32 +131,17 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		this.image = image;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPerspectiveDescriptor#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return configElement == null ? label : configElement
 				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return configElement == null ? pluginId : configElement.getNamespaceIdentifier();

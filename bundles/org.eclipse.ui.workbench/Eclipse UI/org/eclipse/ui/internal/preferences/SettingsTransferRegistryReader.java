@@ -60,11 +60,6 @@ public class SettingsTransferRegistryReader extends RegistryReader {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
 	@Override
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(

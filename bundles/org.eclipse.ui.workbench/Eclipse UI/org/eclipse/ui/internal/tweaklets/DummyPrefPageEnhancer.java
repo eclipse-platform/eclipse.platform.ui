@@ -19,57 +19,25 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class DummyPrefPageEnhancer extends PreferencePageEnhancer {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#createContents
-	 * (org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#setSelection
-	 * (java.lang.Object)
-	 */
 	@Override
 	public void setSelection(Object selection) {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performOK()
-	 */
 	@Override
 	public void performOK() {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performCancel()
-	 */
 	@Override
 	public void performCancel() {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer#performDefaults
-	 * ()
-	 */
 	@Override
 	public void performDefaults() {
 

@@ -63,46 +63,20 @@ final class HandlerActivation implements IHandlerActivation {
 		proxy.activation = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
-	 */
 	@Override
 	public void clearResult() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
-	 */
 	@Override
 	public Expression getExpression() {
 		return activeWhen;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
-	 * ()
-	 */
 	@Override
 	public int getSourcePriority() {
 		return sourcePriority;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
-	 * eclipse.core.expressions.IEvaluationContext)
-	 */
 	@Override
 	public boolean evaluate(IEvaluationContext context) {
 		if (activeWhen == null) {
@@ -125,23 +99,11 @@ final class HandlerActivation implements IHandlerActivation {
 		return active;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
-	 * )
-	 */
 	@Override
 	public void setResult(boolean result) {
 		active = result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(Object o) {
 		HandlerActivation activation = (HandlerActivation) o;
@@ -181,74 +143,37 @@ final class HandlerActivation implements IHandlerActivation {
 		return difference;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.handlers.IHandlerActivation#clearActive()
-	 */
 	@Override
 	public void clearActive() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.handlers.IHandlerActivation#getCommandId()
-	 */
 	@Override
 	public String getCommandId() {
 		return commandId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.handlers.IHandlerActivation#getDepth()
-	 */
 	@Override
 	public int getDepth() {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandler()
-	 */
 	@Override
 	public IHandler getHandler() {
 		return handler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.handlers.IHandlerActivation#getHandlerService()
-	 */
 	@Override
 	public IHandlerService getHandlerService() {
 		return (IHandlerService) context.get(IHandlerService.class.getName());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.handlers.IHandlerActivation#isActive(org.eclipse.core.
-	 * expressions.IEvaluationContext)
-	 */
 	@Override
 	public boolean isActive(IEvaluationContext context) {
 		return active;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "EHA: " + active + ":" + sourcePriority + ":" + commandId + ": " + proxy //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

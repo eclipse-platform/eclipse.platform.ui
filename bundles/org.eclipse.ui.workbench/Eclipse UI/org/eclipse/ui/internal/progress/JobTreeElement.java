@@ -84,11 +84,6 @@ public abstract class JobTreeElement implements Comparable {
 	 */
 	abstract boolean isJobInfo();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(Object arg0) {
 		if (arg0 instanceof JobTreeElement)

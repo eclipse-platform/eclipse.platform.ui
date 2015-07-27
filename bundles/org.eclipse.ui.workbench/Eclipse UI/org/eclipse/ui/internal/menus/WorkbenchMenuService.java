@@ -91,37 +91,18 @@ public class WorkbenchMenuService implements IMenuService {
 		persistence = new MenuPersistence(e4Context.get(MApplication.class), e4Context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse
-	 * .ui.ISourceProvider)
-	 */
 	@Override
 	public void addSourceProvider(ISourceProvider provider) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.
-	 * eclipse.ui.ISourceProvider)
-	 */
 	@Override
 	public void removeSourceProvider(ISourceProvider provider) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		persistence.dispose();
@@ -131,13 +112,6 @@ public class WorkbenchMenuService implements IMenuService {
 		return location.getScheme().startsWith("toolbar"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.menus.IMenuService#addContributionFactory(org.eclipse.
-	 * ui.menus.AbstractContributionFactory)
-	 */
 	@Override
 	public void addContributionFactory(final AbstractContributionFactory factory) {
 		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
@@ -214,13 +188,6 @@ public class WorkbenchMenuService implements IMenuService {
 		app.getToolBarContributions().add(toolBarContribution);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse
-	 * .ui.menus.AbstractContributionFactory)
-	 */
 	@Override
 	public void removeContributionFactory(AbstractContributionFactory factory) {
 		Object contribution;
@@ -277,13 +244,6 @@ public class WorkbenchMenuService implements IMenuService {
 		return window;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.menus.IMenuService#populateContributionManager(org.eclipse
-	 * .jface.action.ContributionManager, java.lang.String)
-	 */
 	@Override
 	public void populateContributionManager(ContributionManager mgr, String location) {
 		MApplicationElement model = getPartToExtend();
@@ -463,13 +423,6 @@ public class WorkbenchMenuService implements IMenuService {
 		return (MPart) e4Context.getActiveLeaf().get(IServiceConstants.ACTIVE_PART);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.menus.IMenuService#releaseContributions(org.eclipse.jface
-	 * .action.ContributionManager)
-	 */
 	@Override
 	public void releaseContributions(ContributionManager mgr) {
 		if (mgr instanceof MenuManager) {
@@ -553,11 +506,6 @@ public class WorkbenchMenuService implements IMenuService {
 		mMenu.getTransientData().remove(ModelUtils.CONTAINING_PARENT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.menus.IMenuService#getCurrentState()
-	 */
 	@Override
 	public IEvaluationContext getCurrentState() {
 		if (legacyContext == null) {

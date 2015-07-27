@@ -81,11 +81,6 @@ public class SupportTray extends DialogTray implements
 
 	private StatusAdapter lastSelectedStatus;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.DialogTray#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -317,11 +312,6 @@ public class SupportTray extends DialogTray implements
 		return provider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		lastSelectedStatus = getStatusAdapterFromEvent(event);

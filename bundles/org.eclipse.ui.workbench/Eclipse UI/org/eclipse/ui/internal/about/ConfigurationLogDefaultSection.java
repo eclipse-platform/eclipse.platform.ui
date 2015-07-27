@@ -47,9 +47,6 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
     private static final String ECLIPSE_PROPERTY_PREFIX = "eclipse."; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.about.ISystemSummarySection#write(java.io.PrintWriter)
-     */
     @Override
 	public void write(PrintWriter writer) {
         appendProperties(writer);

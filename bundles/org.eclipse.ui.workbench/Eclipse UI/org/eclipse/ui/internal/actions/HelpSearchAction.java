@@ -70,9 +70,6 @@ public class HelpSearchAction extends Action implements IWorkbenchAction {
 				IWorkbenchHelpContextIds.HELP_SEARCH_ACTION);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         if (workbenchWindow == null) {
@@ -88,9 +85,6 @@ public class HelpSearchAction extends Action implements IWorkbenchAction {
         });
     }
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     */
     @Override
 	public void dispose() {
         workbenchWindow = null;

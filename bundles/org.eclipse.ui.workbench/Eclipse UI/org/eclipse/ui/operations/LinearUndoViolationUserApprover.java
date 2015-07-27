@@ -61,14 +61,6 @@ public final class LinearUndoViolationUserApprover extends
 		this.context = context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.LinearUndoViolationDetector#allowLinearRedoViolation(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IUndoContext,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
@@ -114,14 +106,6 @@ public final class LinearUndoViolationUserApprover extends
 		return Status.CANCEL_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.LinearUndoViolationDetector#allowLinearUndoViolation(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IUndoContext,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
 			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {

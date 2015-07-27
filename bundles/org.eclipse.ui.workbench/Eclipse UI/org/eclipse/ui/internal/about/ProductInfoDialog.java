@@ -81,13 +81,6 @@ public abstract class ProductInfoDialog extends InstallationDialog {
 		createButtons(page);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);

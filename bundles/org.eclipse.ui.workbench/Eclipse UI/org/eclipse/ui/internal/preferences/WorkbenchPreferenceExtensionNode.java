@@ -127,9 +127,6 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 		keywordLabelCache = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceNode#disposeResources()
-	 */
 	@Override
 	public void disposeResources() {
         if (image != null) {
@@ -139,9 +136,6 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
         super.disposeResources();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelImage()
-	 */
 	@Override
 	public Image getLabelImage() {
         if (image == null) {
@@ -154,9 +148,6 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
     }
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
-	 */
 	@Override
 	public String getLabelText() {
 		return getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
@@ -190,25 +181,16 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 		return configurationElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return pluginId;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IComparableContribution#getAdapter(java.lang.Class)
-     */
     @Override
 	public Object getAdapter(Class adapter)
     {
@@ -217,18 +199,12 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IComparableContribution#getLabel()
-     */
     @Override
 	public String getLabel()
     {
         return getLabelText();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IComparableContribution#getPriority()
-     */
     @Override
 	public int getPriority()
     {

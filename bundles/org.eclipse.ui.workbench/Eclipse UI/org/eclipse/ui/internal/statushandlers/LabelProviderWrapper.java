@@ -53,35 +53,16 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		ResourceManager manager = new LocalResourceManager(JFaceResources
 				.getResources());
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse
-		 * .jface.viewers.ILabelProviderListener)
-		 */
 		@Override
 		public void addListener(ILabelProviderListener listener) {
 			// Do nothing
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 			manager.dispose();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
-		 * .lang.Object, int)
-		 */
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			Image result = null;
@@ -99,13 +80,6 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			return result;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
-		 * lang.Object, int)
-		 */
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			StatusAdapter statusAdapter = (StatusAdapter) element;
@@ -160,25 +134,11 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java
-		 * .lang.Object, java.lang.String)
-		 */
 		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
-		 * .jface.viewers.ILabelProviderListener)
-		 */
 		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			// Do nothing
@@ -202,37 +162,16 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		this.dialogState = dialogState;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang
-	 * .Object, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		return labelProvider.getColumnImage(element, columnIndex);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
-	 * .Object, int)
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		return getLabelProvider().getColumnText(element, columnIndex);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.
-	 * jface.viewers.ILabelProviderListener)
-	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 		getLabelProvider().addListener(listener);
@@ -253,25 +192,11 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang
-	 * .Object, java.lang.String)
-	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return getLabelProvider().isLabelProperty(element, property);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
-	 * .jface.viewers.ILabelProviderListener)
-	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		getLabelProvider().removeListener(listener);
@@ -511,13 +436,6 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.
-	 * viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Viewer testViewer, Object o1, Object o2) {
 		if (o1 instanceof StatusAdapter && o2 instanceof StatusAdapter) {

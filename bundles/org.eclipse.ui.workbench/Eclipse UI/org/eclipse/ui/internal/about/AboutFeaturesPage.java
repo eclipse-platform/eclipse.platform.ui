@@ -485,11 +485,6 @@ public class AboutFeaturesPage extends ProductInfoPage {
 				info.getVersion(), info.getId() };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.about.TableListPage#getSelectionValue()
-	 */
 	protected Collection getSelectionValue() {
 		if (table == null || table.isDisposed())
 			return null;
@@ -526,9 +521,6 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {

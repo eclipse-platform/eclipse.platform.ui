@@ -38,12 +38,6 @@ public final class ServiceLocator implements IDisposable, INestable,
 			key = serviceInterface;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
-		 */
 		@Override
 		public Object getService(Class api) {
 			if (key.equals(api)) {
@@ -52,12 +46,6 @@ public final class ServiceLocator implements IDisposable, INestable,
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
-		 */
 		@Override
 		public boolean hasService(Class api) {
 			if (key.equals(api)) {

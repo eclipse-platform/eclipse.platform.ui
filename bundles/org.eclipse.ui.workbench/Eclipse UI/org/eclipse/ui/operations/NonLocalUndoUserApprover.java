@@ -100,13 +100,6 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		this.elements = affectedObjects;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {
@@ -122,13 +115,6 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo, WorkbenchMessages.Workbench_redoToolTip);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable uiInfo) {

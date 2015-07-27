@@ -30,21 +30,11 @@ public abstract class AbstractWebBrowser implements IWebBrowser {
 		this.id = id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.browser.IWebBrowser#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.browser.IWebBrowser#close()
-	 */
 	@Override
 	public boolean close() {
 		return false;

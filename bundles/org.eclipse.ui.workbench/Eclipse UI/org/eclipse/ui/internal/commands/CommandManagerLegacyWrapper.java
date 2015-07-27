@@ -157,11 +157,6 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
-	 */
 	@Override
 	public final void bindingManagerChanged(final BindingManagerEvent event) {
 		final boolean schemeDefinitionsChanged = event.getScheme() != null;
@@ -192,11 +187,6 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 				null, null, previousSchemes));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.commands.ICommandManagerListener#commandManagerChanged(org.eclipse.commands.CommandManagerEvent)
-	 */
 	@Override
 	public final void commandManagerChanged(
 			final org.eclipse.core.commands.CommandManagerEvent event) {
@@ -302,11 +292,6 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		return new CommandLegacyWrapper(command, bindingManager);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.ICommandManager#getDefinedCategoryIds()
-	 */
 	@Override
 	public Set getDefinedCategoryIds() {
 		return commandManager.getDefinedCategoryIds();

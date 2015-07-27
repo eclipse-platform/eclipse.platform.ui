@@ -303,14 +303,6 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		return method;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org
-	 * .eclipse.core.runtime.IConfigurationElement, java.lang.String,
-	 * java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
@@ -318,9 +310,6 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		methodName = data.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (display!=null && !display.isDisposed()) {

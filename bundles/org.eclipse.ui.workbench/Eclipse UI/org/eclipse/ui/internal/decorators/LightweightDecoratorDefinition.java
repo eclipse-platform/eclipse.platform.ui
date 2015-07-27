@@ -131,9 +131,6 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 						}
 					}
 
-					/*
-					 * (non-Javadoc) Method declared on ISafeRunnable.
-					 */
 					@Override
 					public void handleException(Throwable e) {
 						// Do nothing as Core will handle the logging
@@ -174,22 +171,12 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		return definingElement.getAttribute(ATT_ICON);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#internalGetLabelProvider()
-	 */
 	@Override
 	protected IBaseLabelProvider internalGetLabelProvider()
 			throws CoreException {
 		return internalGetDecorator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#isFull()
-	 */
 	@Override
 	public boolean isFull() {
 		return false;
@@ -288,11 +275,6 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		return decorator;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
-	 */
 	@Override
 	protected void refreshDecorator() {
 		// Only do something if disabled so as to prevent
@@ -304,21 +286,11 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.IObjectContributor#isApplicableTo(java.lang.Object)
-	 */
 	@Override
 	public boolean isApplicableTo(Object object) {
 		return isEnabledFor(object);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.IObjectContributor#canAdapt()
-	 */
 	@Override
 	public boolean canAdapt() {
 		return isAdaptable();
@@ -337,11 +309,6 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		return objectClasses;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#initializeEnablement()
-	 */
 	@Override
 	protected void initializeEnablement() {
 		super.initializeEnablement();

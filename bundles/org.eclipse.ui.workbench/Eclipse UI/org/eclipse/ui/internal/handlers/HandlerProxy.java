@@ -446,12 +446,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement,
-	 *      java.util.Map)
-	 */
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		if (checkedState != null) {
@@ -477,9 +471,6 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 		cs.refreshElements(commandId, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.IStateListener#handleStateChange(org.eclipse.core.commands.State, java.lang.Object)
-	 */
 	@Override
 	public void handleStateChange(State state, Object oldValue) {
 		if (state.getId().equals(RegistryToggleState.STATE_ID)) {

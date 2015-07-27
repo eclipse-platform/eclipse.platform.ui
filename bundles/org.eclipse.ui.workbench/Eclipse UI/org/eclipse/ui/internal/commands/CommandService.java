@@ -239,12 +239,6 @@ public final class CommandService implements ICommandService, IUpdateService {
 	 */
 	private Map commandCallbacks = new HashMap();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.ICommandService#refreshElements(java.lang.String,
-	 *      java.util.Map)
-	 */
 	@Override
 	public final void refreshElements(String commandId, Map filter) {
 		Command cmd = getCommand(commandId);
@@ -298,12 +292,6 @@ public final class CommandService implements ICommandService, IUpdateService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.ICommandService#registerElementForCommand(org.eclipse.core.commands.ParameterizedCommand,
-	 *      org.eclipse.ui.menus.UIElement)
-	 */
 	@Override
 	public final IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
@@ -324,11 +312,6 @@ public final class CommandService implements ICommandService, IUpdateService {
 		return ref;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.ICommandService#registerElement(org.eclipse.ui.commands.IElementReference)
-	 */
 	@Override
 	public void registerElement(IElementReference elementReference) {
 		List parameterizedCommands = (List) commandCallbacks
@@ -352,11 +335,6 @@ public final class CommandService implements ICommandService, IUpdateService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
-	 */
 	@Override
 	public void unregisterElement(IElementReference elementReference) {
 		if (commandCallbacks == null)
@@ -378,13 +356,6 @@ public final class CommandService implements ICommandService, IUpdateService {
 		return commandPersistence;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService#
-	 * registerElementForUpdate(org.eclipse.core.commands.ParameterizedCommand,
-	 * org.eclipse.e4.ui.model.application.ui.MUILabel)
-	 */
 	@Override
 	public Runnable registerElementForUpdate(ParameterizedCommand parameterizedCommand,
 			final MItem item) {

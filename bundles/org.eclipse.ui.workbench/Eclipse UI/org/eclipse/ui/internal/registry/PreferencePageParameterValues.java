@@ -47,11 +47,6 @@ public final class PreferencePageParameterValues implements IParameterValues {
 		Platform.getExtensionRegistry().addRegistryChangeListener(
 				new IRegistryChangeListener() {
 
-					/*
-					 * (non-Javadoc)
-					 *
-					 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-					 */
 					@Override
 					public void registryChanged(IRegistryChangeEvent event) {
 						if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,

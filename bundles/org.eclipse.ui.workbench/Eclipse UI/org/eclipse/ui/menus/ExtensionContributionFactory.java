@@ -48,21 +48,11 @@ public abstract class ExtensionContributionFactory extends
 		super(null, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.menus.AbstractContributionFactory#getLocation()
-	 */
 	@Override
 	public final String getLocation() {
 		return locationURI;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.menus.AbstractContributionFactory#getNamespace()
-	 */
 	@Override
 	public final String getNamespace() {
 		return namespace;

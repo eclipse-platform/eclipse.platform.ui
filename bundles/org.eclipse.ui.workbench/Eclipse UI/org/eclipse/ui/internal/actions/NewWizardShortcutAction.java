@@ -76,9 +76,6 @@ public class NewWizardShortcutAction extends Action implements
 		return wizardElement;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#run()
-     */
     @Override
 	public void run() {
         // create instance of target wizard
@@ -137,9 +134,6 @@ public class NewWizardShortcutAction extends Action implements
 		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
     	IPluginContribution contribution = getPluginContribution();
@@ -149,9 +143,6 @@ public class NewWizardShortcutAction extends Action implements
     	return wizardElement.getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
     	IPluginContribution contribution = getPluginContribution();

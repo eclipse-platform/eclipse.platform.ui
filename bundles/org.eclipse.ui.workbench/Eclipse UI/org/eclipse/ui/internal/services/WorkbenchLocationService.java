@@ -45,79 +45,36 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 		this.level = level;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.ui.internal.services.IWorkbenchLocationService#
-	 * getMultiPageEditorSite()
-	 */
 	@Override
 	public IEditorSite getMultiPageEditorSite() {
 		return mpepSite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPageSite()
-	 */
 	@Override
 	public IPageSite getPageSite() {
 		return pageSite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getPartSite()
-	 */
 	@Override
 	public IWorkbenchPartSite getPartSite() {
 		return partSite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceScope
-	 * ()
-	 */
 	@Override
 	public String getServiceScope() {
 		return serviceScope;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbench()
-	 */
 	@Override
 	public IWorkbench getWorkbench() {
 		return workbench;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IWorkbenchLocationService#getWorkbenchWindow
-	 * ()
-	 */
 	@Override
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return window;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public void dispose() {
 		mpepSite = null;
@@ -128,9 +85,6 @@ public class WorkbenchLocationService implements IWorkbenchLocationService,
 		window = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.services.IWorkbenchLocationService#getServiceLevel()
-	 */
 	@Override
 	public int getServiceLevel() {
 		return level;

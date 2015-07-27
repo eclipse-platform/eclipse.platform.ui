@@ -28,12 +28,6 @@ public class ActivityPropertyTester extends PropertyTester {
 	private static final String PROPERTY_IS_ACTIVITY_ENABLED = "isActivityEnabled"; //$NON-NLS-1$
 	private static final String PROPERTY_IS_CATEGORY_ENABLED = "isCategoryEnabled"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.expressions.PropertyTester#test(java.lang.Object,
-	 *      java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {

@@ -79,13 +79,6 @@ public final class RadioState extends PersistentState implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.commands.PersistentState#load(org.eclipse.jface.preference
-	 * .IPreferenceStore, java.lang.String)
-	 */
 	@Override
 	public void load(IPreferenceStore store, String preferenceKey) {
 		if (!shouldPersist())
@@ -95,13 +88,6 @@ public final class RadioState extends PersistentState implements
 			setValue(value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.commands.PersistentState#save(org.eclipse.jface.preference
-	 * .IPreferenceStore, java.lang.String)
-	 */
 	@Override
 	public void save(IPreferenceStore store, String preferenceKey) {
 		if (!shouldPersist())
@@ -112,11 +98,6 @@ public final class RadioState extends PersistentState implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.State#setValue(java.lang.Object)
-	 */
 	@Override
 	public void setValue(Object value) {
 		if (!(value instanceof String))

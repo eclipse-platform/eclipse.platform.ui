@@ -47,17 +47,11 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	private IExtensionChangeHandler handler = new IExtensionChangeHandler() {
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
-         */
         @Override
 		public void addExtension(IExtensionTracker tracker,IExtension extension) {
             //Do nothing
         }
 
-        /* (non-Javadoc)
-         * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
-         */
         @Override
 		public void removeExtension(IExtension source, Object[] objects) {
 			for (int i = 0; i < objects.length; i++) {
@@ -90,9 +84,6 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		return instance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(int, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
@@ -100,17 +91,11 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 				.createBrowser(style, browserId, name, tooltip);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#createBrowser(java.lang.String)
-	 */
 	@Override
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return getActiveSupport().createBrowser(browserId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#isInternalWebBrowserAvailable()
-	 */
 	@Override
 	public boolean isInternalWebBrowserAvailable() {
 		return getActiveSupport().isInternalWebBrowserAvailable();
@@ -138,11 +123,6 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 	private void loadActiveSupport() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Runnable#run()
-			 */
 			@Override
 			public void run() {
                 IConfigurationElement[] elements = Platform

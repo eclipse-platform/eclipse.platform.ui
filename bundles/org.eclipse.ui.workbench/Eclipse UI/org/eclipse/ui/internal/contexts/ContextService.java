@@ -84,20 +84,12 @@ public final class ContextService implements IContextService {
 		this.contextPersistence = new ContextPersistence(contextManager);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.contexts.IContextService#deferUpdates(boolean)
-	 */
 	@Override
 	public void deferUpdates(boolean defer) {
 		contextManager.deferUpdates(defer);
 		contextService.deferUpdates(defer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String)
-	 */
 	@Override
 	public final IContextActivation activateContext(final String contextId) {
 		return activateContext(contextId, null);
@@ -154,12 +146,6 @@ public final class ContextService implements IContextService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
-	 *      org.eclipse.core.expressions.Expression)
-	 */
 	@Override
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression) {
@@ -177,56 +163,29 @@ public final class ContextService implements IContextService {
 		return activation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
-	 *      org.eclipse.core.expressions.Expression, boolean)
-	 */
 	@Override
 	public IContextActivation activateContext(String contextId,
 			Expression expression, boolean global) {
 		return activateContext(contextId, expression);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#activateContext(java.lang.String,
-	 *      org.eclipse.core.expressions.Expression, int)
-	 */
 	@Override
 	public final IContextActivation activateContext(final String contextId,
 			final Expression expression, final int sourcePriority) {
 		return activateContext(contextId, expression);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#addContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
-	 */
 	@Override
 	public final void addContextManagerListener(
 			final IContextManagerListener listener) {
 		contextManager.addContextManagerListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
-	 */
 	@Override
 	public final void addSourceProvider(final ISourceProvider provider) {
 		contextAuthority.addSourceProvider(provider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#deactivateContext(org.eclipse.ui.contexts.IContextActivation)
-	 */
 	@Override
 	public final void deactivateContext(final IContextActivation activation) {
 		if (activation != null && activation.getContextService() == this) {
@@ -243,11 +202,6 @@ public final class ContextService implements IContextService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#deactivateContexts(java.util.Collection)
-	 */
 	@Override
 	public final void deactivateContexts(final Collection activations) {
 		final Iterator activationItr = activations.iterator();
@@ -258,114 +212,58 @@ public final class ContextService implements IContextService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
 	@Override
 	public final void dispose() {
 		contextPersistence.dispose();
 		contextAuthority.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#getActiveContextIds()
-	 */
 	@Override
 	public final Collection getActiveContextIds() {
 		return contextService.getActiveContextIds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#getContext(java.lang.String)
-	 */
 	@Override
 	public final Context getContext(final String contextId) {
 		return contextService.getContext(contextId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
-	 */
 	@Override
 	public final Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContexts()
-	 */
 	@Override
 	public final Context[] getDefinedContexts() {
 		return contextManager.getDefinedContexts();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#getShellType(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public final int getShellType(final Shell shell) {
 		return contextAuthority.getShellType(shell);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#readRegistry()
-	 */
 	@Override
 	public final void readRegistry() {
 		// contextPersistence.read();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#registerShell(org.eclipse.swt.widgets.Shell,
-	 *      int)
-	 */
 	@Override
 	public final boolean registerShell(final Shell shell, final int type) {
 		return contextAuthority.registerShell(shell, type);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#removeContextManagerListener(org.eclipse.core.commands.contexts.IContextManagerListener)
-	 */
 	@Override
 	public final void removeContextManagerListener(
 			final IContextManagerListener listener) {
 		contextManager.removeContextManagerListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
-	 */
 	@Override
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		contextAuthority.removeSourceProvider(provider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.contexts.IContextService#unregisterShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public final boolean unregisterShell(final Shell shell) {
 		return contextAuthority.unregisterShell(shell);

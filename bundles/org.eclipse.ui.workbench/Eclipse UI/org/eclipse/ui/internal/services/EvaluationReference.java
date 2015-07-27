@@ -49,46 +49,20 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 		this.sourcePriority = SourcePriorityNameMapping.computeSourcePriority(expression);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#clearResult()
-	 */
 	@Override
 	public void clearResult() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getExpression()
-	 */
 	@Override
 	public Expression getExpression() {
 		return expression;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#getSourcePriority
-	 * ()
-	 */
 	@Override
 	public int getSourcePriority() {
 		return sourcePriority;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#evaluate(org.
-	 * eclipse.core.expressions.IEvaluationContext)
-	 */
 	@Override
 	public boolean evaluate(IEvaluationContext context) {
 		if (expression == null) {
@@ -103,25 +77,11 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 		return cache;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.services.IEvaluationResultCache#setResult(boolean
-	 * )
-	 */
 	@Override
 	public void setResult(boolean result) {
 		cache = result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.core.services.context.IRunAndTrack#notify(org.eclipse.
-	 * e4.core.services.context.ContextChangeEvent)
-	 */
 	@Override
 	public boolean changed(IEclipseContext context) {
 		if (!participating) {
@@ -153,21 +113,11 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 		hasRun = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.services.IEvaluationReference#getListener()
-	 */
 	@Override
 	public IPropertyChangeListener getListener() {
 		return listener;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.services.IEvaluationReference#getProperty()
-	 */
 	@Override
 	public String getProperty() {
 		return property;

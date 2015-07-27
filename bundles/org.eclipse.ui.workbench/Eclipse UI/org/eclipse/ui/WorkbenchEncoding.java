@@ -63,11 +63,6 @@ public class WorkbenchEncoding {
 			encodings = definedEncodings;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-		 */
 		@Override
 		protected boolean readElement(IConfigurationElement element) {
 			String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);

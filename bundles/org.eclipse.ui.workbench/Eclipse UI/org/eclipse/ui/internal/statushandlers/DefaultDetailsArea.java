@@ -92,14 +92,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				.intValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea
-	 * (org.eclipse.swt.widgets.Composite,
-	 * org.eclipse.ui.statushandlers.StatusAdapter)
-	 */
 	@Override
 	public Control createSupportArea(Composite parent,
 			StatusAdapter statusAdapter) {
@@ -279,13 +271,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		copyAction.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
 		copyAction.addSelectionListener(new SelectionAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
-			 * .swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				copyToClipboard();

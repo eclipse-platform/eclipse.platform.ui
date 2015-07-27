@@ -29,11 +29,6 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 public class PropertyDialogHandler extends AbstractHandler {
 
 	private String initialPageId = null;
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		PreferenceDialog dialog;

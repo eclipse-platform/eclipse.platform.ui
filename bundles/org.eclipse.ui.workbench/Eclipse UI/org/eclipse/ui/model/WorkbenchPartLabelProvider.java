@@ -47,9 +47,6 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelProvider
-     */
     @Override
 	public final Image getImage(Object element) {
         if (element instanceof IWorkbenchPart) {
@@ -77,9 +74,6 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ILabelProvider
-     */
     @Override
 	public final String getText(Object element) {
         if (element instanceof IWorkbenchPart) {
@@ -118,11 +112,6 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         return getText(element);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.LabelProvider#dispose()
-     *
-     * @since 3.2
-     */
     @Override
 	public void dispose() {
     	resourceManager.dispose();

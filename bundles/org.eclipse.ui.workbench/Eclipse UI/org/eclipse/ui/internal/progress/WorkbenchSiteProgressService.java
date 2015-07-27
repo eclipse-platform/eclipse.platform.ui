@@ -113,11 +113,6 @@ public class WorkbenchSiteProgressService implements
             return waitCursor;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-         */
         @Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			Control control = (Control) site.getModel().getWidget();
@@ -181,55 +176,28 @@ public class WorkbenchSiteProgressService implements
         waitCursor = null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IProgressService#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
-     */
     @Override
 	public void busyCursorWhile(IRunnableWithProgress runnable)
             throws InvocationTargetException, InterruptedException {
         getWorkbenchProgressService().busyCursorWhile(runnable);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#schedule(org.eclipse.core.runtime.jobs.Job,
-     *      long, boolean)
-     */
     @Override
 	public void schedule(Job job, long delay, boolean useHalfBusyCursor) {
         job.addJobChangeListener(getJobChangeListener(useHalfBusyCursor));
         job.schedule(delay);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#schedule(org.eclipse.core.runtime.jobs.Job,
-     *      int)
-     */
     @Override
 	public void schedule(Job job, long delay) {
         schedule(job, delay, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#schedule(org.eclipse.core.runtime.jobs.Job)
-     */
     @Override
 	public void schedule(Job job) {
         schedule(job, 0L, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusyForFamily(java.lang.Object)
-     */
     @Override
 	public void showBusyForFamily(Object family) {
         ProgressManager.getInstance().addListenerToFamily(family, this);
@@ -244,25 +212,11 @@ public class WorkbenchSiteProgressService implements
 	public IJobChangeListener getJobChangeListener(final boolean useHalfBusyCursor) {
 		return new JobChangeAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org
-			 * .eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
 			@Override
 			public void aboutToRun(IJobChangeEvent event) {
 				incrementBusy(event.getJob(), useHalfBusyCursor);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse
-			 * .core.runtime.jobs.IJobChangeEvent)
-			 */
 			@Override
 			public void done(IJobChangeEvent event) {
 				Job job = event.getJob();
@@ -272,11 +226,6 @@ public class WorkbenchSiteProgressService implements
 		};
 	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.internal.progress.IJobBusyListener#decrementBusy(org.eclipse.core.runtime.jobs.Job)
-     */
     @Override
 	public void decrementBusy(Job job) {
 		Object halfBusyCursorState;
@@ -299,11 +248,6 @@ public class WorkbenchSiteProgressService implements
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.internal.progress.IJobBusyListener#incrementBusy(org.eclipse.core.runtime.jobs.Job)
-     */
     @Override
 	public void incrementBusy(Job job) {
 		incrementBusy(job, false);
@@ -340,11 +284,6 @@ public class WorkbenchSiteProgressService implements
         incrementBusy();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#warnOfContentChange()
-     */
     @Override
 	public void warnOfContentChange() {
 		MPart part = site.getModel();
@@ -353,12 +292,6 @@ public class WorkbenchSiteProgressService implements
 		}
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
-     *      org.eclipse.core.runtime.jobs.Job)
-     */
     @Override
 	public void showInDialog(Shell shell, Job job) {
         getWorkbenchProgressService().showInDialog(shell, job);
@@ -373,12 +306,6 @@ public class WorkbenchSiteProgressService implements
         return site.getWorkbenchWindow().getWorkbench().getProgressService();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean,
-     *      org.eclipse.jface.operation.IRunnableWithProgress)
-     */
     @Override
 	public void run(boolean fork, boolean cancelable,
             IRunnableWithProgress runnable) throws InvocationTargetException,
@@ -386,10 +313,6 @@ public class WorkbenchSiteProgressService implements
         getWorkbenchProgressService().run(fork, cancelable, runnable);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableContext, org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.core.runtime.jobs.ISchedulingRule)
-     */
     @Override
 	public void runInUI(IRunnableContext context,
             IRunnableWithProgress runnable, ISchedulingRule rule)
@@ -397,33 +320,21 @@ public class WorkbenchSiteProgressService implements
         getWorkbenchProgressService().runInUI(context, runnable, rule);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
-     */
     @Override
 	public int getLongOperationTime() {
         return getWorkbenchProgressService().getLongOperationTime();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IProgressService#registerIconForFamily(org.eclipse.jface.resource.ImageDescriptor, java.lang.Object)
-     */
     @Override
 	public void registerIconForFamily(ImageDescriptor icon, Object family) {
         getWorkbenchProgressService().registerIconForFamily(icon, family);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IProgressService#getIconFor(org.eclipse.core.runtime.jobs.Job)
-     */
     @Override
 	public Image getIconFor(Job job) {
         return getWorkbenchProgressService().getIconFor(job);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusy(boolean)
-     */
     @Override
 	public void incrementBusy() {
 		synchronized (busyLock) {
@@ -439,9 +350,6 @@ public class WorkbenchSiteProgressService implements
 			updateJob.cancel();
 		}
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusy(boolean)
-	 */
 	@Override
 	public void decrementBusy() {
 		synchronized (busyLock) {

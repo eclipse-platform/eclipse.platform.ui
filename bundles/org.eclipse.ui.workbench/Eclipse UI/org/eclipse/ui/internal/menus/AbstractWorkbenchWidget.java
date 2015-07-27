@@ -25,54 +25,36 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
  */
 public class AbstractWorkbenchWidget implements IWorkbenchWidget {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow workbenchWindow) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.IWidget#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void fill(Composite parent) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
 	@Override
 	public void fill(Menu parent, int index) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.ToolBar, int)
-	 */
 	@Override
 	public void fill(ToolBar parent, int index) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.IWidget#fill(org.eclipse.swt.widgets.CoolBar, int)
-	 */
 	@Override
 	public void fill(CoolBar parent, int index) {
 		// TODO Auto-generated method stub

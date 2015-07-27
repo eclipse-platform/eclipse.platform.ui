@@ -61,13 +61,6 @@ public class ContributionFactoryGenerator extends ContextFunction {
 		return factoryImpl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.core.contexts.ContextFunction#compute(org.eclipse.e4.core
-	 * .contexts.IEclipseContext)
-	 */
 	@Override
 	public Object compute(IEclipseContext context, String contextKey) {
 		AbstractContributionFactory factory = getFactory();

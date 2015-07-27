@@ -391,25 +391,16 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         return this.program;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorDescriptor#isInternal
-     */
     @Override
 	public boolean isInternal() {
         return getOpenMode() == OPEN_INTERNAL;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace
-     */
     @Override
 	public boolean isOpenInPlace() {
         return getOpenMode() == OPEN_INPLACE;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorDescriptor#isOpenExternal
-     */
     @Override
 	public boolean isOpenExternal() {
         return getOpenMode() == OPEN_EXTERNAL;
@@ -607,25 +598,16 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         return "EditorDescriptor(id=" + getId() + ", label=" + getLabel() + ")"; //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return getPluginID();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorDescriptor#getEditorManagementPolicy()
-     */
     @Override
 	public IEditorMatchingStrategy getEditorMatchingStrategy() {
         if (matchingStrategy == null && !matchingStrategyChecked) {

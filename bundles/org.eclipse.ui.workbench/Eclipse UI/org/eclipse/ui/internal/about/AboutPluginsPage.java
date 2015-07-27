@@ -149,13 +149,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 				setPriority(Job.DECORATE);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see
-			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
-			 * runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				while (true) {
@@ -179,13 +172,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 			}
 		};
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java
-		 * .lang.Object, int)
-		 */
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
@@ -209,13 +195,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.
-		 * lang.Object, int)
-		 */
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof AboutBundleData) {
@@ -511,11 +490,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.about.ProductInfoPage#getId()
-	 */
 	@Override
 	String getId() {
 		return ID;
@@ -622,13 +596,6 @@ class TableComparator extends ViewerComparator {
 	private boolean ascending = true;
 	private boolean lastAscending = true;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.
-	 * viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if (sortColumn == 0 && e1 instanceof AboutBundleData

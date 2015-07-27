@@ -82,11 +82,6 @@ public class LegacyEditorActionBarExpression extends Expression {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.expressions.Expression#evaluate(org.eclipse.core.expressions.IEvaluationContext)
-	 */
 	@Override
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		final Object variable = context

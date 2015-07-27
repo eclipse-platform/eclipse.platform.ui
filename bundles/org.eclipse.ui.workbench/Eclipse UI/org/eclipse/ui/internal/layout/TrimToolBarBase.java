@@ -405,9 +405,6 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 		handleClose();
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.widgets.Widget#dispose()
-     */
     public void dispose() {
     	if (getControl() == null || getControl().isDisposed())
     		return;
@@ -436,17 +433,11 @@ public abstract class TrimToolBarBase implements IWindowTrim {
         menu.setVisible(true);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#dock(int)
-	 */
 	@Override
 	public void dock(int dropSide) {
 		createControl(dropSide);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		if (frame == null)
@@ -455,64 +446,40 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 		return frame.getComposite();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getDisplayName()
-	 */
 	@Override
 	public String getDisplayName() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getHeightHint()
-	 */
 	@Override
 	public int getHeightHint() {
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getValidSides()
-	 */
 	@Override
 	public int getValidSides() {
 		return SWT.BOTTOM | SWT.TOP | SWT.LEFT | SWT.RIGHT;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#getWidthHint()
-	 */
 	@Override
 	public int getWidthHint() {
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#handleClose()
-	 */
 	@Override
 	public void handleClose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#isCloseable()
-	 */
 	@Override
 	public boolean isCloseable() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.layout.IWindowTrim#isResizeable()
-	 */
 	@Override
 	public boolean isResizeable() {
 		return false;

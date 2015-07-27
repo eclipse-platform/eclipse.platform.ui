@@ -123,9 +123,6 @@ final class WidgetProxy implements IWorkbenchWidget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.menus.IWorkbenchWidget#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
 	@Override
 	public void init(IWorkbenchWindow workbenchWindow) {
 		if (loadWidget()) {

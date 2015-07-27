@@ -30,11 +30,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public class OpenInNewWindowHandler extends AbstractHandler {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil

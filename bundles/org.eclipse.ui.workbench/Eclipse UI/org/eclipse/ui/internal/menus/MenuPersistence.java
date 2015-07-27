@@ -73,11 +73,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		contributorFilter = Pattern.compile(filterRegex);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.services.RegistryPersistence#dispose()
-	 */
 	@Override
 	public void dispose() {
 		ControlContributionRegistry.clear();
@@ -88,13 +83,6 @@ final public class MenuPersistence extends RegistryPersistence {
 		cacheEntries.clear();
 		super.dispose();
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.e4.ui.tests.workbench.RegistryPersistence#isChangeImportant
-	 * (org.eclipse.core.runtime.IRegistryChangeEvent)
-	 */
 	@Override
 	protected boolean isChangeImportant(IRegistryChangeEvent event) {
 		// TODO Auto-generated method stub

@@ -79,9 +79,6 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 		return text;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAction.
-	 */
 	@Override
 	public void run() {
 		if (workbenchWindow == null) {
@@ -98,9 +95,6 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 		});
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ActionFactory.IWorkbenchAction.
-	 */
 	@Override
 	public void dispose() {
 		workbenchWindow = null;

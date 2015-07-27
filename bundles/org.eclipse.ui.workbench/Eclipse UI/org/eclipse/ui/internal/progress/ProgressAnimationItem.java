@@ -278,11 +278,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 		toolbar.getAccessible().addAccessibleListener(currentAccessibleListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.progress.AnimationItem#createAnimationItem(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createAnimationItem(Composite parent) {
 
@@ -365,21 +360,11 @@ public class ProgressAnimationItem extends AnimationItem implements
 		return (flags & SWT.HORIZONTAL) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.progress.AnimationItem#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return top;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.progress.AnimationItem#animationDone()
-	 */
 	@Override
 	void animationDone() {
 		super.animationDone();
@@ -398,11 +383,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 		return animationRunning;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.progress.AnimationItem#animationStart()
-	 */
 	@Override
 	void animationStart() {
 		super.animationStart();

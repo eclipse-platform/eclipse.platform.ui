@@ -49,21 +49,11 @@ public class ActivityLabelProvider extends LabelProvider {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-     */
     @Override
 	public Image getImage(Object element) {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-     */
     @Override
 	public String getText(Object element) {
         if (element instanceof String) {

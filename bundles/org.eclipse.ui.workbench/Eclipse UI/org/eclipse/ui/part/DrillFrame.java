@@ -12,11 +12,11 @@ package org.eclipse.ui.part;
 
 import java.util.List;
 
-/* (non-Javadoc)
- * A <code>DrillFrame</code> is used to record the input element and
+/* A <code>DrillFrame</code> is used to record the input element and
  * selection state for one frame in a <code>DrillDownTreeViewer</code>.
  * This class is not intended for use beyond the package.
  */
+
 /* package */class DrillFrame {
     Object fElement;
 

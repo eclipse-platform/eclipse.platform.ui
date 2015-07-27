@@ -245,9 +245,6 @@ final class Category implements ICategory {
         return string;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.ICategory#getDescription()
-     */
     @Override
 	public String getDescription() throws NotDefinedException {
         if (!defined) {

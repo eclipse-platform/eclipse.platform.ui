@@ -47,11 +47,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		this.support = support;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.browser.IWebBrowser#openURL(java.net.URL)
-	 */
 	@Override
 	public void openURL(URL url) throws PartInitException {
 		// format the href for an html file (file:///<filename.html>
@@ -117,11 +112,6 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.browser.IWebBrowser#close()
-	 */
 	@Override
 	public boolean close() {
 		support.unregisterBrowser(this);

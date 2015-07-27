@@ -911,9 +911,6 @@ public final class MutableActivityManager extends AbstractActivityManager
         activityRegistry.removeActivityRegistryListener(activityRegistryListener);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
 	@Override
 	synchronized public Object clone() {
         MutableActivityManager clone = new MutableActivityManager(advisor, activityRegistry);
@@ -931,9 +928,6 @@ public final class MutableActivityManager extends AbstractActivityManager
         if (deferredIdentifierJob == null) {
             deferredIdentifierJob = new Job("Identifier Update Job") { //$NON-NLS-1$
 
-                /* (non-Javadoc)
-                 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-                 */
                 @Override
 				protected IStatus run(IProgressMonitor monitor) {
                     while (!deferredIdentifiers.isEmpty()) {

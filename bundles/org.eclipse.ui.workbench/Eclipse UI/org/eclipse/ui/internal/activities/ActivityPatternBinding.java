@@ -118,11 +118,6 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
         return activityId;
     }
 
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.activities.IActivityPatternBinding#getPattern()
-	 */
     @Override
 	public Pattern getPattern() {
     	if (pattern == null) {
@@ -131,10 +126,6 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     	return pattern;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.activities.IActivityPatternBinding#getString()
-     */
     @Override
 	public String getString() {
     	if (isEqualityPattern) {
@@ -143,9 +134,6 @@ public final class ActivityPatternBinding implements IActivityPatternBinding {
     	return getPattern().pattern();
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivityPatternBinding#isEqualityPattern()
-	 */
 	@Override
 	public boolean isEqualityPattern() {
 		return isEqualityPattern;

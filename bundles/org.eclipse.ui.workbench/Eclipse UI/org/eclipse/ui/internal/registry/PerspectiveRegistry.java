@@ -118,13 +118,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IPerspectiveRegistry#clonePerspective(java.lang.String,
-	 * java.lang.String, org.eclipse.ui.IPerspectiveDescriptor)
-	 */
 	@Override
 	public IPerspectiveDescriptor clonePerspective(String id, String label,
 			IPerspectiveDescriptor desc) throws IllegalArgumentException {
@@ -133,13 +126,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IPerspectiveRegistry#deletePerspective(org.eclipse.ui.
-	 * IPerspectiveDescriptor)
-	 */
 	@Override
 	public void deletePerspective(IPerspectiveDescriptor toDelete) {
 		PerspectiveDescriptor perspective = (PerspectiveDescriptor) toDelete;
@@ -169,13 +155,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithId(java.lang.String
-	 * )
-	 */
 	@Override
 	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId) {
 		return findPerspectiveWithId(perspectiveId, true);
@@ -190,13 +169,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		return candidate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithLabel(java.lang
-	 * .String)
-	 */
 	@Override
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
 		for (IPerspectiveDescriptor descriptor : descriptors.values()) {
@@ -210,11 +182,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPerspectiveRegistry#getDefaultPerspective()
-	 */
 	@Override
 	public String getDefaultPerspective() {
 		String defaultId = PrefUtil.getAPIPreferenceStore().getString(
@@ -229,11 +196,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		return defaultId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
-	 */
 	@Override
 	public IPerspectiveDescriptor[] getPerspectives() {
 		Collection<?> descs = WorkbenchActivityHelper.restrictCollection(descriptors.values(),
@@ -271,13 +233,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IPerspectiveRegistry#revertPerspective(org.eclipse.ui.
-	 * IPerspectiveDescriptor)
-	 */
 	@Override
 	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
 		PerspectiveDescriptor perspective = (PerspectiveDescriptor) perspToRevert;
@@ -298,25 +253,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 		// preferenceListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#
-	 * removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
-	 */
 	@Override
 	public void removeExtension(IExtension source, Object[] objects) {
 		// TODO compat: what do we do about disappearing extensions
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.core.runtime.dynamicHelpers.IExtensionChangeHandler#addExtension
-	 * (org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
-	 * org.eclipse.core.runtime.IExtension)
-	 */
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension addedExtension) {
 		// TODO compat: what do we do about appeaering extensions

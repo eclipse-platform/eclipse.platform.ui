@@ -382,12 +382,6 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker,
-	 *      org.eclipse.core.runtime.IExtension)
-	 */
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		// Do nothing as this is handled by the DecoratorManager

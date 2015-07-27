@@ -20,28 +20,15 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class AllowGrabFocus extends GrabFocus {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.tweaklets.GrabFocusManager#allowGrabFocus(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public boolean grabFocusAllowed(IWorkbenchPart part) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.tweaklets.GrabFocusManager#init(Display)
-	 */
 	@Override
 	public void init(Display display) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.tweaklets.GrabFocusManager#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}

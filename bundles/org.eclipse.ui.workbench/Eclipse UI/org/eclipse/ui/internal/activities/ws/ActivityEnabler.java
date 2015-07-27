@@ -67,11 +67,6 @@ public class ActivityEnabler {
 
 	private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			Object element = ((IStructuredSelection) event.getSelection())
@@ -95,11 +90,6 @@ public class ActivityEnabler {
 	 */
 	private ICheckStateListener checkListener = new ICheckStateListener() {
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-		 */
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			Set checked = new HashSet(Arrays.asList(dualViewer
@@ -309,11 +299,6 @@ public class ActivityEnabler {
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(ActivityMessages.ActivityEnabler_selectAll);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toggleTreeEnablement(true);
@@ -324,11 +309,6 @@ public class ActivityEnabler {
 		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
 		deselectAllButton.setText(ActivityMessages.ActivityEnabler_deselectAll);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toggleTreeEnablement(false);

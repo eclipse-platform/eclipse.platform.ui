@@ -165,11 +165,6 @@ public final class ContextManagerLegacyWrapper implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.core.commands.contexts.ContextManagerEvent)
-	 */
 	@Override
 	public void contextManagerChanged(
 			org.eclipse.core.commands.contexts.ContextManagerEvent contextManagerEvent) {

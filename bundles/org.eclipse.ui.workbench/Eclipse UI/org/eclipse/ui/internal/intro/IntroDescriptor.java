@@ -48,9 +48,6 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.intro.IIntroDescriptor#createIntro()
-     */
     @Override
 	public IIntroPart createIntro() throws CoreException {
     	return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
@@ -63,17 +60,11 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
     	return (IntroContentDetector) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IIntroDescriptor#getId()
-     */
     @Override
 	public String getId() {
         return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IIntroDescriptor#getImageDescriptor()
-     */
     @Override
 	public ImageDescriptor getImageDescriptor() {
         if (imageDescriptor != null) {
@@ -89,17 +80,11 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
         return imageDescriptor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
     @Override
 	public String getLocalId() {
         return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
     @Override
 	public String getPluginId() {
         return element.getNamespace();
@@ -115,9 +100,6 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
     	return element;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.intro.IIntroDescriptor#getLabelOverride()
-	 */
 	@Override
 	public String getLabelOverride() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);

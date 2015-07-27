@@ -13,7 +13,6 @@ package org.eclipse.ui.part;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -81,9 +80,6 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * or overload getTitle instead of using setContentDescription.
      */
     private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
-         */
         @Override
 		public void propertyChanged(Object source, int propId) {
             if (propId == IWorkbenchPartConstants.PROP_TITLE) {
@@ -101,51 +97,42 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
         addPropertyListener(compatibilityTitleListener);
     }
 
-    /* (non-Javadoc)
-     * Saves the contents of this editor.
-     * <p>
-     * Subclasses must override this method to implement the open-save-close lifecycle
-     * for an editor.  For greater details, see <code>IEditorPart</code>
-     * </p>
-     *
-     * @see IEditorPart
-     */
+	/*
+	 * Saves the contents of this editor.
+	 * <p>
+	 * Subclasses must override this method to implement the open-save-close
+	 * lifecycle for an editor. For greater details, see
+	 * <code>IEditorPart</code>
+	 * </p>
+	 *
+	 * @see IEditorPart
+	 */
     @Override
 	public abstract void doSave(IProgressMonitor monitor);
 
-    /* (non-Javadoc)
-     * Saves the contents of this editor to another object.
-     * <p>
-     * Subclasses must override this method to implement the open-save-close lifecycle
-     * for an editor.  For greater details, see <code>IEditorPart</code>
-     * </p>
-     *
-     * @see IEditorPart
-     */
+	/*
+	 * Saves the contents of this editor to another object.
+	 * <p>
+	 * Subclasses must override this method to implement the open-save-close
+	 * lifecycle for an editor. For greater details, see
+	 * <code>IEditorPart</code>
+	 * </p>
+	 *
+	 * @see IEditorPart
+	 */
     @Override
 	public abstract void doSaveAs();
 
-    /* (non-Javadoc)
-     * Method declared on IEditorPart.
-     */
     @Override
 	public IEditorInput getEditorInput() {
         return editorInput;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IEditorPart.
-     */
     @Override
 	public IEditorSite getEditorSite() {
         return (IEditorSite) getSite();
     }
 
-    /* (non-Javadoc)
-     * Gets the title tool tip text of this part.
-     *
-     * @return the tool tip text
-     */
     @Override
 	public String getTitleToolTip() {
         if (editorInput == null) {
@@ -154,7 +141,8 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 		return editorInput.getToolTipText();
     }
 
-    /* (non-Javadoc)
+
+    /*
      * Initializes the editor part with a site and input.
      * <p>
      * Subclasses of <code>EditorPart</code> must implement this method.  Within
@@ -172,8 +160,8 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 	public abstract void init(IEditorSite site, IEditorInput input)
             throws PartInitException;
 
-    /* (non-Javadoc)
-     * Returns whether the contents of this editor have changed since the last save
+
+    /* Returns whether the contents of this editor have changed since the last save
      * operation.
      * <p>
      * Subclasses must override this method to implement the open-save-close lifecycle
@@ -185,20 +173,21 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     @Override
 	public abstract boolean isDirty();
 
-    /* (non-Javadoc)
-     * Returns whether the "save as" operation is supported by this editor.
-     * <p>
-     * Subclasses must override this method to implement the open-save-close lifecycle
-     * for an editor.  For greater details, see <code>IEditorPart</code>
-     * </p>
-     *
-     * @see IEditorPart
-     */
+
+    /*
+	 * Returns whether the "save as" operation is supported by this editor. 
+	 * <p>
+	 * Subclasses must override this method to implement the open-save-close
+	 * lifecycle for an editor. For greater details, see
+	 * <code>IEditorPart</code> 
+	 * </p>
+	 *
+	 * @see IEditorPart
+	 */
     @Override
 	public abstract boolean isSaveAsAllowed();
 
-    /* (non-Javadoc)
-     * Returns whether the contents of this editor should be saved when the editor
+    /* Returns whether the contents of this editor should be saved when the editor
      * is closed.
      * <p>
      * This method returns <code>true</code> if and only if the editor is dirty
@@ -254,9 +243,6 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
         firePropertyChange(PROP_INPUT);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
-     */
     @Override
 	protected void setContentDescription(String description) {
         if (compatibilityTitleListener != null) {
@@ -267,9 +253,6 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
         super.setContentDescription(description);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
-     */
     @Override
 	protected void setPartName(String partName) {
         if (compatibilityTitleListener != null) {
@@ -280,9 +263,6 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
         super.setPartName(partName);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
     @Override
 	public void setInitializationData(IConfigurationElement cfig,
             String propertyName, Object data) {

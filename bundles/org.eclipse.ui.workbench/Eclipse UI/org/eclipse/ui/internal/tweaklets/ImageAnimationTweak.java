@@ -25,9 +25,6 @@ public class ImageAnimationTweak extends Animations {
 	/** Default c'tor */
 	public ImageAnimationTweak() {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.tweaklets.Animations#getFeedback()
-	 */
 	@Override
 	public RectangleAnimationFeedbackBase createFeedback(Shell shell) {
 		return new RectangleAnimationImageFeedback(shell, null, null);

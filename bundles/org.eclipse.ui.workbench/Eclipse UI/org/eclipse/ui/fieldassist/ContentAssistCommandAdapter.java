@@ -272,14 +272,6 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		return dec;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * Overridden to hide and show the content assist decoration
-	 *
-	 * @see org.eclipse.jface.fieldassist.ContentProposalAdapter#setEnabled(boolean)
-	 * @since 3.3
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

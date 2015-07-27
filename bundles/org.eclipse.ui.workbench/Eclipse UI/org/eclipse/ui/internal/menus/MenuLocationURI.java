@@ -72,9 +72,6 @@ public class MenuLocationURI {
 		return vals.length==0?Util.ZERO_LENGTH_STRING:vals[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return rawString;

@@ -57,11 +57,6 @@ final class LegacyCommandListenerWrapper implements ICommandListener {
 		this.bindingManager = bindingManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.commands.ICommandListener#commandChanged(org.eclipse.commands.CommandEvent)
-	 */
 	@Override
 	public final void commandChanged(final CommandEvent commandEvent) {
 		final ICommand command = new CommandLegacyWrapper(commandEvent.getCommand(),

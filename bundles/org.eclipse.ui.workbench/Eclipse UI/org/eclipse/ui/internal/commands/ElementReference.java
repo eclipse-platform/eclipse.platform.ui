@@ -49,27 +49,16 @@ public class ElementReference implements IElementReference {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.commands.IElementReference#getElement()
-	 */
 	@Override
 	public UIElement getElement() {
 		return element;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.commands.IElementReference#getCommandId()
-	 */
 	@Override
 	public String getCommandId() {
 		return commandId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.commands.IElementReference#getParameters()
-	 */
 	@Override
 	public Map getParameters() {
 		return parameters;

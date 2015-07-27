@@ -81,11 +81,6 @@ public final class AboutSystemPage extends ProductInfoPage {
 				WorkbenchMessages.AboutSystemDialog_copyToClipboardName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.about.ProductInfoPage#getId()
-	 */
 	@Override
 	String getId() {
 		return ID;
@@ -111,11 +106,6 @@ public final class AboutSystemPage extends ProductInfoPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-	 */
 	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {

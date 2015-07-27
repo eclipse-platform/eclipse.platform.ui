@@ -116,10 +116,6 @@ public class OpenInNewWindowAction extends Action implements
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on ActionFactory.IWorkbenchAction.
-     * @since 3.0
-     */
     @Override
 	public void dispose() {
         workbenchWindow = null;
