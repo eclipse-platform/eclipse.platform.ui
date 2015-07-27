@@ -120,6 +120,9 @@ class BookmarkContentProvider implements IStructuredContentProvider,
         }
     }
 
+	/*
+	 * Method declared on ITreeContentProvider,
+	 */
     public Object getParent(Object element) {
         return input;
     }

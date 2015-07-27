@@ -96,6 +96,12 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 		return file.hashCode();
 	}
 
+	/*
+	 * The <code>FileEditorInput</code> implementation of this
+	 * <code>Object</code> method bases the equality of two
+	 * <code>FileEditorInput</code> objects on the equality of their underlying
+	 * <code>IFile</code> resources.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

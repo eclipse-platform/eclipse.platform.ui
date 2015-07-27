@@ -239,6 +239,11 @@ public class BuildAction extends WorkspaceAction {
         return store.getBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD);
     }
 
+	/*
+	 * This override allows the user to save the contents of selected open
+	 * editors so that the updated contents will be used for building. The build
+	 * is run as a background job.
+	 */
     @Override
 	public void run() {
 		final List<?> buildConfigurations = getBuildConfigurationsToBuild();
