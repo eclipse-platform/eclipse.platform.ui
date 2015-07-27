@@ -14,7 +14,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -143,9 +142,6 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
 				.size()));
 	}
 
-    /* (non-javadoc)
-     * For debugging purposes only.
-     */
     @Override
 	public String toString() {
         return children.toString();

@@ -134,9 +134,6 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
         return StructuredSelection.EMPTY;
     }
 
-    /* (non-JavaDoc)
-     * Method declaed on <code>ISelectionProvider</code>.
-     */
     @Override
 	public void removeSelectionChangedListener(
             ISelectionChangedListener listener) {

@@ -171,9 +171,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		destinationNameField.add(value);
 	}
 
-	/**
-	 * (non-Javadoc) Method declared on IDialogPage.
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);

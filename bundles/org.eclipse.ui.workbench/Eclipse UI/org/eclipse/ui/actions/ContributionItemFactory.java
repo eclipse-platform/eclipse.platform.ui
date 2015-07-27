@@ -99,7 +99,6 @@ public abstract class ContributionItemFactory {
 			"pinEditor") { //$NON-NLS-1$
 		private static final String COMMAND_ID = IWorkbenchCommandConstants.WINDOW_PIN_EDITOR;
 
-		/* (non-javadoc) method declared on ContributionItemFactory */
 		@Override
 		public IContributionItem create(final IWorkbenchWindow window) {
 			if (window == null) {
@@ -132,7 +131,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory OPEN_WINDOWS = new ContributionItemFactory(
             "openWindows") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
@@ -151,7 +150,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory VIEWS_SHORTLIST = new ContributionItemFactory(
             "viewsShortlist") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
@@ -170,7 +169,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory VIEWS_SHOW_IN = new ContributionItemFactory(
             "viewsShowIn") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
@@ -192,7 +191,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory REOPEN_EDITORS = new ContributionItemFactory(
             "reopenEditors") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
@@ -213,7 +212,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory PERSPECTIVES_SHORTLIST = new ContributionItemFactory(
             "perspectivesShortlist") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
@@ -233,7 +232,7 @@ public abstract class ContributionItemFactory {
      */
     public static final ContributionItemFactory NEW_WIZARD_SHORTLIST = new ContributionItemFactory(
             "newWizardShortlist") { //$NON-NLS-1$
-        /* (non-javadoc) method declared on ContributionItemFactory */
+
         @Override
 		public IContributionItem create(IWorkbenchWindow window) {
             if (window == null) {
