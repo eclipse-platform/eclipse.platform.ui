@@ -138,11 +138,6 @@ public final class Category extends NamedHandleObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.common.HandleObject#toString()
-	 */
 	@Override
 	public String toString() {
 		if (string == null) {
@@ -161,11 +156,6 @@ public final class Category extends NamedHandleObject {
 		return string;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.common.HandleObject#undefine()
-	 */
 	@Override
 	public void undefine() {
 		string = null;

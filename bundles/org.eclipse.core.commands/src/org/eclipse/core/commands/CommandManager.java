@@ -337,11 +337,6 @@ public final class CommandManager extends HandleObjectManager implements
 		executionListeners.add(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.ICategoryListener#categoryChanged(org.eclipse.core.commands.CategoryEvent)
-	 */
 	@Override
 	public final void categoryChanged(CategoryEvent categoryEvent) {
 		if (categoryEvent.isDefinedChanged()) {
@@ -360,11 +355,6 @@ public final class CommandManager extends HandleObjectManager implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.commands.ICommandListener#commandChanged(org.eclipse.commands.CommandEvent)
-	 */
 	@Override
 	public final void commandChanged(final CommandEvent commandEvent) {
 		if (commandEvent.isDefinedChanged()) {

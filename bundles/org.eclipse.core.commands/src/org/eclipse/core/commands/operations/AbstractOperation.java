@@ -50,13 +50,6 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		this.label = label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#addContext(org.eclipse.core.commands.operations.IUndoContext)
-	 *
-	 * <p> Subclasses may override this method. </p>
-	 */
 	@Override
 	public void addContext(IUndoContext context) {
 		if (!contexts.contains(context)) {
@@ -64,61 +57,26 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 *
-	 */
 	@Override
 	public boolean canExecute() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 */
 	@Override
 	public boolean canRedo() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 */
 	@Override
 	public boolean canUndo() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 */
 	@Override
 	public void dispose() {
 		// nothing to dispose.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 
@@ -127,13 +85,6 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		return contexts.toArray(new IUndoContext[contexts.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getLabel()
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 */
 	@Override
 	public String getLabel() {
 		return label;
@@ -150,11 +101,6 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		label = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#hasContext(org.eclipse.core.commands.operations.IUndoContext)
-	 */
 	@Override
 	public final boolean hasContext(IUndoContext context) {
 		Assert.isNotNull(context);
@@ -170,34 +116,15 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#removeContext(org.eclipse.core.commands.operations.IUndoContext)
-	 *      <p> Default implementation. Subclasses may override this method.
-	 *      </p>
-	 */
 
 	@Override
 	public void removeContext(IUndoContext context) {
 		contexts.remove(context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
 

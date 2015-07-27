@@ -63,22 +63,12 @@ public final class TriggeredOperations extends AbstractOperation implements
 		this.history = history;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#add(org.eclipse.core.commands.operations.IUndoableOperation)
-	 */
 	@Override
 	public void add(IUndoableOperation operation) {
 		children.add(operation);
 		recomputeContexts();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#remove(org.eclipse.core.commands.operations.IUndoableOperation)
-	 */
 	@Override
 	public void remove(IUndoableOperation operation) {
 		if (operation == triggeringOperation) {
@@ -151,12 +141,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (triggeringOperation != null) {
@@ -177,12 +161,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public IStatus redo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
@@ -210,12 +188,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		if (triggeringOperation != null) {
@@ -242,11 +214,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
-	 */
 	@Override
 	public boolean canUndo() {
 		if (triggeringOperation != null) {
@@ -255,11 +222,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
-	 */
 	@Override
 	public boolean canExecute() {
 		if (triggeringOperation != null) {
@@ -268,11 +230,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
-	 */
 	@Override
 	public boolean canRedo() {
 		if (triggeringOperation != null) {
@@ -338,11 +295,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return triggeringOperation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#getAffectedObjects()
-	 */
 	@Override
 	public Object[] getAffectedObjects() {
 		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
@@ -351,11 +303,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IAdvancedModelOperation#aboutToNotify(org.eclipse.core.commands.operations.OperationHistoryEvent)
-	 */
 	@Override
 	public void aboutToNotify(OperationHistoryEvent event) {
 		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
@@ -363,11 +310,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) throws ExecutionException {
 		if (triggeringOperation instanceof IAdvancedUndoableOperation) {
@@ -381,11 +323,6 @@ public final class TriggeredOperations extends AbstractOperation implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) throws ExecutionException {
 		if (triggeringOperation instanceof IAdvancedUndoableOperation) {

@@ -55,11 +55,6 @@ public final class ObjectUndoContext extends UndoContext {
 		this.label = label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (label != null) {
@@ -109,12 +104,6 @@ public final class ObjectUndoContext extends UndoContext {
 		children.remove(context);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext
-	 *      context)
-	 */
 	@Override
 	public boolean matches(IUndoContext context) {
 		// Check first for explicit matches that have been assigned.

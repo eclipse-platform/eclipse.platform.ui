@@ -93,13 +93,6 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 			IUndoableOperation operation, IUndoContext context,
 			IOperationHistory history, IAdaptable info);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public final IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
@@ -117,13 +110,6 @@ public abstract class LinearUndoViolationDetector implements IOperationApprover 
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IOperationHistory,
-	 *      org.eclipse.core.runtime.IAdaptable)
-	 */
 
 	@Override
 	public final IStatus proceedUndoing(IUndoableOperation operation,
