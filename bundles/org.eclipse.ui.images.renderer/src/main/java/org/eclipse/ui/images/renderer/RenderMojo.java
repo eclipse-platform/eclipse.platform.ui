@@ -292,7 +292,7 @@ public class RenderMojo extends AbstractMojo {
 
         // A list of callables used to render icons on multiple threads
         // Each callable gets a set of icons to render
-        List<Callable<Object>> tasks = new ArrayList<Callable<Object>>(
+        List<Callable<Object>> tasks = new ArrayList<>(
                 this.threads);
 
         // Distribute the rasterization operations between multiple threads
@@ -467,7 +467,7 @@ public class RenderMojo extends AbstractMojo {
     private void init(int threads, double scale) {
         this.threads = threads;
         this.outputScale = Math.max(1, scale);
-        icons = new ArrayList<IconEntry>();
+        icons = new ArrayList<>();
         execPool = Executors.newFixedThreadPool(threads);
         counter = new AtomicInteger();
     }
