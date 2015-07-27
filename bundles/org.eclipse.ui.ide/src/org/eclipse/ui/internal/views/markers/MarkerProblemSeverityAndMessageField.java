@@ -27,12 +27,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
 public class MarkerProblemSeverityAndMessageField extends
 		MarkerDescriptionField {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.provisional.views.markers.MarkerItem,
-	 *      org.eclipse.ui.provisional.views.markers.MarkerItem)
-	 */
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 
@@ -75,11 +69,6 @@ public class MarkerProblemSeverityAndMessageField extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	public void update(ViewerCell cell) {
 		super.update(cell);

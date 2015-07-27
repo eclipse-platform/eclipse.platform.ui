@@ -35,11 +35,6 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 	 */
 	public final static FileStoreStructureProvider INSTANCE = new FileStoreStructureProvider();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public List getChildren(Object element) {
 		try {
@@ -61,11 +56,6 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getContents(java.lang.Object)
-	 */
 	@Override
 	public InputStream getContents(Object element) {
 		try {
@@ -77,31 +67,16 @@ public class FileStoreStructureProvider implements IImportStructureProvider {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getFullPath(java.lang.Object)
-	 */
 	@Override
 	public String getFullPath(Object element) {
 		return ((IFileStore) element).toURI().getSchemeSpecificPart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#getLabel(java.lang.Object)
-	 */
 	@Override
 	public String getLabel(Object element) {
 		return ((IFileStore) element).getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.wizards.datatransfer.IImportStructureProvider#isFolder(java.lang.Object)
-	 */
 	@Override
 	public boolean isFolder(Object element) {
 		return ((IFileStore) element).fetchInfo().isDirectory();

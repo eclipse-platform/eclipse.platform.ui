@@ -223,9 +223,6 @@ public class OpenWithMenu extends ContributionItem {
         menuItem.addListener(SWT.Selection, listener);
     }
 
-    /* (non-Javadoc)
-     * Fills the menu with perspective items.
-     */
     @Override
 	public void fill(Menu menu, int index) {
 		final IFile file = getFileResource();
@@ -304,9 +301,6 @@ public class OpenWithMenu extends ContributionItem {
         return null;
     }
 
-    /* (non-Javadoc)
-     * Returns whether this menu is dynamic.
-     */
     @Override
 	public boolean isDynamic() {
         return true;

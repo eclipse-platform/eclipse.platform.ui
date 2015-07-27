@@ -53,43 +53,23 @@ class DeltaMarkerEntry extends MarkerEntry {
 		return value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
-	 */
 	@Override
 	long getCreationTime() {
 			//return markerDelta.getCreationTime();
 			return super.getCreationTime();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getID()
-	 */
 	@Override
 	long getID() {
 		return markerDelta.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
-	 */
 	@Override
 	String getMarkerTypeName() {
 		return MarkerTypesModel.getInstance().getType(markerDelta.getType())
 				.getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
-	 */
 	@Override
 	public String getPath() {
 		String folder = getAttributeValue(MarkerViewUtil.PATH_ATTRIBUTE, null);

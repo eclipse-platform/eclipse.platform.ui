@@ -47,13 +47,6 @@ class UIUpdateJob extends WorkbenchJob {
 		updating = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
-	 * IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		if(monitor.isCanceled()){
@@ -142,11 +135,6 @@ class UIUpdateJob extends WorkbenchJob {
 		return updating;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-	 */
 	@Override
 	public boolean shouldRun() {
 		if (!PlatformUI.isWorkbenchRunning()) {
@@ -155,11 +143,6 @@ class UIUpdateJob extends WorkbenchJob {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-	 */
 	@Override
 	public boolean belongsTo(Object family) {
 		if (family.equals(view.MARKERSVIEW_UPDATE_JOB_FAMILY)) {

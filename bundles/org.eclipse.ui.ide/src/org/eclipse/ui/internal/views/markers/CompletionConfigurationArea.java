@@ -40,20 +40,12 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void apply(MarkerFieldFilter filter) {
 		((CompletionFieldFilter) filter).setCompletion(completionState);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 
@@ -65,11 +57,6 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 		completeButton = new Button(parent, SWT.CHECK);
 		completeButton.setText(MarkerMessages.filtersDialog_statusComplete);
 		completeButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateCompletion(CompletionFieldFilter.COMPLETED,
@@ -81,11 +68,6 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 		incompleteButton = new Button(parent, SWT.CHECK);
 		incompleteButton.setText(MarkerMessages.filtersDialog_statusIncomplete);
 		incompleteButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateCompletion(CompletionFieldFilter.NOT_COMPLETED,
@@ -111,11 +93,6 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void initialize(MarkerFieldFilter filter) {
 		completionState = ((CompletionFieldFilter) filter).getCompletion();
@@ -127,9 +104,6 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		return MarkerMessages.filtersDialog_completionTitle;

@@ -45,9 +45,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		super();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
 	@Override
 	public void dispose() {
 		if (viewer != null) {
@@ -66,9 +63,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IContentProvider.
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		super.inputChanged(viewer, oldInput, newInput);
@@ -100,9 +94,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IResourceChangeListener.
-	 */
 	@Override
 	public final void resourceChanged(final IResourceChangeEvent event) {
 
@@ -135,9 +126,6 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 			runUpdates(runnables);
 		} else {
 			ctrl.getDisplay().asyncExec(new Runnable(){
-				/* (non-Javadoc)
-				 * @see java.lang.Runnable#run()
-				 */
 				@Override
 				public void run() {
 					//Abort if this happens after disposes

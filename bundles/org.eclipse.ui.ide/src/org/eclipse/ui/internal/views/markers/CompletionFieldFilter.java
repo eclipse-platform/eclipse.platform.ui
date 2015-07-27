@@ -41,9 +41,6 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void loadSettings(IMemento memento) {
 		Integer completionValue = memento.getInteger(COMPLETION_ATTRIBUTE);
@@ -53,9 +50,6 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
-	 */
 	@Override
 	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
 
@@ -67,9 +61,6 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
-	 */
 	@Override
 	public void initialize(ProblemFilter problemFilter) {
 		//Problem filters have no completion value
@@ -77,18 +68,12 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveSettings(IMemento memento) {
 		memento.putInteger(COMPLETION_ATTRIBUTE, completion);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
-	 */
 	@Override
 	public boolean select(MarkerItem item) {
 
@@ -126,9 +111,6 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.views.markers.MarkerFieldFilter)
-	 */
 	@Override
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
 		super.populateWorkingCopy(copy);

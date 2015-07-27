@@ -112,11 +112,6 @@ public class WorkspaceUndoMonitor {
 	 */
 	private IResourceChangeListener getResourceChangeListener() {
 		return new IResourceChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-			 */
 			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
 				// If there is an operation in progress, this event is to be
@@ -145,11 +140,6 @@ public class WorkspaceUndoMonitor {
 	private IOperationHistoryListener getOperationHistoryListener() {
 		return new IOperationHistoryListener() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.core.commands.operations.IOperationHistoryListener#historyNotification(org.eclipse.core.commands.operations.OperationHistoryEvent)
-			 */
 			@Override
 			public void historyNotification(OperationHistoryEvent event) {
 				// We only care about events that have the workspace undo

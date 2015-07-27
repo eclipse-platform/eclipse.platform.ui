@@ -23,11 +23,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class MarkerTypeField extends MarkerField {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
-	 */
 	@Override
 	public String getValue(MarkerItem item) {
 		return ((MarkerSupportItem) item).getMarkerTypeName();

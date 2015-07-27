@@ -84,11 +84,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 			selectButton.setLayoutData(layoutData);
 			selectButton.addSelectionListener(new SelectionAdapter() {
-				/*
-				 * (non-Javadoc)
-				 *
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 
@@ -196,11 +191,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
-	 */
 	@Override
 	public void applyToGroup(MarkerFieldFilterGroup group) {
 		group.setScope(scope);
@@ -208,11 +198,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 
@@ -250,11 +235,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		button.setSelection(value == scope);
 		button.addSelectionListener(new SelectionAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				scope = value;
@@ -270,21 +250,11 @@ class ScopeArea extends GroupFilterConfigurationArea {
 	private void setScope(int value){
 		scope = value;
 	}
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#getTitle()
-	 */
 	@Override
 	public String getTitle() {
 		return MarkerMessages.filtersDialog_scopeTitle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
-	 */
 	@Override
 	public void initializeFromGroup(MarkerFieldFilterGroup group) {
 		buttons[scope].setSelection(false);
@@ -293,22 +263,12 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		workingSetArea.setWorkingSet(group.getWorkingSet());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void apply(MarkerFieldFilter filter) {
 		// Do nothing as this is a group level setting
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void initialize(MarkerFieldFilter filter) {
 		// Do nothing as this is a group level setting

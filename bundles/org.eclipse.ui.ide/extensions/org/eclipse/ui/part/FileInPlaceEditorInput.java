@@ -104,9 +104,6 @@ public class FileInPlaceEditorInput extends FileEditorInput implements
         super(file);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IInPlaceEditorInput#setInPlaceEditor(org.eclipse.ui.IInPlaceEditor)
-     */
     @Override
 	public void setInPlaceEditor(IInPlaceEditor editor) {
         if (embeddedEditor != editor) {

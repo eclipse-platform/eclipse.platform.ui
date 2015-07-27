@@ -38,41 +38,21 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 		setScope(filter.getOnResource());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#getID()
-	 */
 	@Override
 	public String getID() {
 		return problemFilter.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#getName()
-	 */
 	@Override
 	public String getName() {
 		return problemFilter.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#isSystem()
-	 */
 	@Override
 	public boolean isSystem() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#makeWorkingCopy()
-	 */
 	@Override
 	MarkerFieldFilterGroup makeWorkingCopy() {
 
@@ -84,11 +64,6 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup#calculateFilters()
-	 */
 	@Override
 	protected void calculateFilters() {
 		super.calculateFilters();

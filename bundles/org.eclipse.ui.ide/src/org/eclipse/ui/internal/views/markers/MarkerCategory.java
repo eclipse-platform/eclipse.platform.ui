@@ -50,12 +50,6 @@ class MarkerCategory extends MarkerSupportItem {
 		name = categoryName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
-	 */
 	@Override
 	MarkerSupportItem[] getChildren() {
 		if (children == null) {
@@ -70,24 +64,11 @@ class MarkerCategory extends MarkerSupportItem {
 		return children;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildrenCount
-	 * ()
-	 */
 	@Override
 	int getChildrenCount() {
 		return end - start + 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
-	 */
 	@Override
 	String getDescription() {
 		//see Bug 294959
@@ -148,21 +129,11 @@ class MarkerCategory extends MarkerSupportItem {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
-	 */
 	@Override
 	MarkerSupportItem getParent() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
-	 */
 	@Override
 	boolean isConcrete() {
 		return false;
@@ -179,9 +150,6 @@ class MarkerCategory extends MarkerSupportItem {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -192,9 +160,6 @@ class MarkerCategory extends MarkerSupportItem {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

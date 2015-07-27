@@ -459,10 +459,6 @@ public class WizardFileSystemResourceExportPage1 extends
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ui.dialogs.WizardDataTransferPage#validateSourceGroup()
-     */
     @Override
 	protected boolean validateSourceGroup() {
     	// there must be some resources selected for Export

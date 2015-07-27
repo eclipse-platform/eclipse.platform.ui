@@ -78,9 +78,6 @@ public class ExternalProjectImportWizard extends Wizard implements
 		setDialogSettings(wizardSettings);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizard.
-     */
     @Override
 	public void addPages() {
         super.addPages();
@@ -89,9 +86,6 @@ public class ExternalProjectImportWizard extends Wizard implements
         addPage(mainPage);
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWorkbenchWizard.
-     */
     @Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
@@ -100,18 +94,12 @@ public class ExternalProjectImportWizard extends Wizard implements
         this.currentSelection = currentSelection;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizard.
-     */
     @Override
 	public boolean performCancel() {
     	mainPage.performCancel();
         return true;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IWizard.
-     */
     @Override
 	public boolean performFinish() {
         return mainPage.createProjects();

@@ -77,13 +77,6 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.ide.undo.ResourceDescription#createResource(org.eclipse
-	 * .core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IResource createResource(IProgressMonitor monitor)
 			throws CoreException {
@@ -93,11 +86,6 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		return resource;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.ide.undo.ResourceDescription#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return parent == null || parent.exists();
@@ -138,11 +126,6 @@ abstract class AbstractResourceDescription extends ResourceDescription {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.ide.undo.ResourceDescription#verifyExistence(boolean)
-	 */
 	@Override
 	public boolean verifyExistence(boolean checkMembers) {
 		IContainer p = parent;

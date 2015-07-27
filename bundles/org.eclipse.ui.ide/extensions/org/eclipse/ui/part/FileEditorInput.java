@@ -91,21 +91,11 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Object.
-	 */
 	@Override
 	public int hashCode() {
 		return file.hashCode();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Object.
-	 *
-	 * The <code>FileEditorInput</code> implementation of this <code>Object</code>
-	 * method bases the equality of two <code>FileEditorInput</code> objects on the
-	 * equality of their underlying <code>IFile</code> resources.
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -118,33 +108,21 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 		return file.equals(other.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
 	@Override
 	public boolean exists() {
 		return file.exists();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IPersistableElement.
-	 */
 	@Override
 	public String getFactoryId() {
 		return FileEditorInputFactory.getFactoryId();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IFileEditorInput.
-	 */
 	@Override
 	public IFile getFile() {
 		return file;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		IContentType contentType = IDE.getContentType(file);
@@ -152,41 +130,26 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 				.getImageDescriptor(file.getName(), contentType);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
 	@Override
 	public String getName() {
 		return file.getName();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
 	@Override
 	public IPersistableElement getPersistable() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IStorageEditorInput.
-	 */
 	@Override
 	public IStorage getStorage() {
 		return file;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
 	@Override
 	public String getToolTipText() {
 		return file.getFullPath().makeRelative().toString();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IPersistableElement.
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		FileEditorInputFactory.saveState(memento, this);
@@ -194,18 +157,12 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IURIEditorInput#getURI()
-	 */
 	@Override
 	public URI getURI() {
 		return file.getLocationURI();
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPathEditorInput#getPath()
-	 */
 	@Override
 	public IPath getPath() {
 		IPath location = file.getLocation();
@@ -234,9 +191,6 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getClass().getName() + "(" + getFile().getFullPath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$

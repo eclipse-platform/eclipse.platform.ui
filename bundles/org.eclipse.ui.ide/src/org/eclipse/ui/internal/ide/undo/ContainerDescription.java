@@ -193,12 +193,6 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void recordStateFromHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
@@ -276,11 +270,6 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	protected void restoreResourceAttributes(IResource resource)
 			throws CoreException {
@@ -312,11 +301,6 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 		this.filters = filters;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#verifyExistence(boolean)
-	 */
 	@Override
 	public boolean verifyExistence(boolean checkMembers) {
 		boolean existence = super.verifyExistence(checkMembers);

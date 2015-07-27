@@ -67,11 +67,6 @@ public class FolderDescription extends ContainerDescription {
 		this.location = linkLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#createResourceHandle()
-	 */
 	@Override
 	public IResource createResourceHandle() {
 		IWorkspaceRoot workspaceRoot = getWorkspace().getRoot();
@@ -79,12 +74,6 @@ public class FolderDescription extends ContainerDescription {
 		return workspaceRoot.getFolder(folderPath);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {

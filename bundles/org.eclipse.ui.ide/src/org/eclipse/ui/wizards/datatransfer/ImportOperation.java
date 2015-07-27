@@ -371,10 +371,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkbenchModifyOperation.
-     * Imports the specified file system objects from the file system.
-     */
     @Override
 	protected void execute(IProgressMonitor progressMonitor) {
 

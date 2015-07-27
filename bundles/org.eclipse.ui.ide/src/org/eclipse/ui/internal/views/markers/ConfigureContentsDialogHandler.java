@@ -23,11 +23,6 @@ import org.eclipse.ui.views.markers.MarkerViewHandler;
  */
 public class ConfigureContentsDialogHandler extends MarkerViewHandler implements IHandler {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) {
 		ExtendedMarkersView view = getView(event);

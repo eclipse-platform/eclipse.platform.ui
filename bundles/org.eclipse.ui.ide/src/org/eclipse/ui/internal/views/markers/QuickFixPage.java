@@ -193,11 +193,6 @@ public class QuickFixPage extends WizardPage {
 		selectAll.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 
 		selectAll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(true);
@@ -211,11 +206,6 @@ public class QuickFixPage extends WizardPage {
 				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 
 		deselectAll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				markersTable.setAllChecked(false);
@@ -233,32 +223,16 @@ public class QuickFixPage extends WizardPage {
 		resolutionsList= new TableViewer(control, SWT.BORDER | SWT.SINGLE
 				| SWT.V_SCROLL);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
 			@Override
 			public Object[] getElements(Object inputElement) {
 				return resolutions.keySet().toArray();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
@@ -267,22 +241,11 @@ public class QuickFixPage extends WizardPage {
 		});
 
 		resolutionsList.setLabelProvider(new LabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
 			@Override
 			public String getText(Object element) {
 				return ((IMarkerResolution) element).getLabel();
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-			 * @since 3.7
-			 */
 			@Override
 			public Image getImage(Object element) {
 				return element instanceof IMarkerResolution2 ? ((IMarkerResolution2)element).getImage() : null;
@@ -292,12 +255,6 @@ public class QuickFixPage extends WizardPage {
 		resolutionsList.setInput(this);
 
 		resolutionsList.setComparator(new ViewerComparator() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				return ((IMarkerResolution) e1).getLabel().compareTo(
@@ -307,11 +264,6 @@ public class QuickFixPage extends WizardPage {
 
 		resolutionsList
 				.addSelectionChangedListener(new ISelectionChangedListener() {
-					/*
-					 * (non-Javadoc)
-					 *
-					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-					 */
 					@Override
 					public void selectionChanged(SelectionChangedEvent event) {
 						markersTable.refresh();
@@ -332,21 +284,11 @@ public class QuickFixPage extends WizardPage {
 		createTableColumns();
 
 		markersTable.setContentProvider(new IStructuredContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
 			@Override
 			public Object[] getElements(Object inputElement) {
 				IMarkerResolution selected = getSelectedResolution();
@@ -360,12 +302,6 @@ public class QuickFixPage extends WizardPage {
 				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
@@ -375,12 +311,6 @@ public class QuickFixPage extends WizardPage {
 
 		markersTable.setLabelProvider(new ITableLabelProvider() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
-			 *      int)
-			 */
 			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == 0)
@@ -389,12 +319,6 @@ public class QuickFixPage extends WizardPage {
 				return null;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-			 *      int)
-			 */
 			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				IMarker marker =(IMarker) element;
@@ -420,44 +344,23 @@ public class QuickFixPage extends WizardPage {
 				return lineNumberString;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-			 */
 			@Override
 			public void addListener(ILabelProviderListener listener) {
 				// do nothing
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-			 */
 			@Override
 			public void dispose() {
 				// do nothing
 
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-			 *      java.lang.String)
-			 */
 			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-			 */
 			@Override
 			public void removeListener(ILabelProviderListener listener) {
 				// do nothing
@@ -466,11 +369,6 @@ public class QuickFixPage extends WizardPage {
 		});
 
 		markersTable.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked() == true) {

@@ -30,11 +30,6 @@ public class AllMarkersView extends MarkerSupportView {
 		super(MarkerSupportRegistry.ALL_MARKERS_GENERATOR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getUndoContext()
-	 * @since 3.7
-	 */
 	@Override
 	protected IUndoContext getUndoContext() {
 		ObjectUndoContext context= new ObjectUndoContext(new Object(), "All Markers Context"); //$NON-NLS-1$

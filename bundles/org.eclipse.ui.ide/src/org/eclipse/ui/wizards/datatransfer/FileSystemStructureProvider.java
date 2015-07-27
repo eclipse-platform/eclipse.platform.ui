@@ -37,9 +37,6 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         super();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IImportStructureProvider
-     */
     @Override
 	public List getChildren(Object element) {
         File folder = (File) element;
@@ -54,9 +51,6 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         return result;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IImportStructureProvider
-     */
     @Override
 	public InputStream getContents(Object element) {
         try {
@@ -67,17 +61,11 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IImportStructureProvider
-     */
     @Override
 	public String getFullPath(Object element) {
         return ((File) element).getPath();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IImportStructureProvider
-     */
     @Override
 	public String getLabel(Object element) {
 
@@ -90,9 +78,6 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
         return name;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IImportStructureProvider
-     */
     @Override
 	public boolean isFolder(Object element) {
         return ((File) element).isDirectory();

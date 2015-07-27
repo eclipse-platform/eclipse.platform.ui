@@ -67,9 +67,6 @@ class TaskSorter extends ViewerComparator {
         resetState();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ViewerSorter.
-     */
     /**
      * Compares two markers, sorting first by the main column of this sorter,
      * then by subsequent columns, depending on the column sort order.
@@ -140,9 +137,6 @@ class TaskSorter extends ViewerComparator {
                 directions.length);
     }
 
-    /* (non-Javadoc)
-     * Method declared on ViewerSorter.
-     */
     /**
      * Compares two markers, based only on the value of the specified column.
      */

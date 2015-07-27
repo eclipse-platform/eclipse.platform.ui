@@ -363,9 +363,6 @@ class FiltersDialog extends TrayDialog {
         initTypes();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected void buttonPressed(int buttonId) {
         if (RESET_ID == buttonId) {
@@ -392,9 +389,6 @@ class FiltersDialog extends TrayDialog {
         updateEnabledState();
     }
 
-    /* (non-Javadoc)
-     * Method declared on Window.
-     */
     @Override
 	protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -482,9 +476,6 @@ class FiltersDialog extends TrayDialog {
         return combo;
     }
 
-    /* (non-Javadoc)
-     * Method declared on Dialog.
-     */
     @Override
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);

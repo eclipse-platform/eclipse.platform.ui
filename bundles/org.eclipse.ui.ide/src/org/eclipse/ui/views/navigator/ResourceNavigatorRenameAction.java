@@ -44,9 +44,6 @@ public class ResourceNavigatorRenameAction extends RenameResourceAction {
         this.viewer = treeViewer;
     }
 
-    /* (non-Javadoc)
-     * Run the action to completion using the supplied path.
-     */
     @Override
 	protected void runWithNewPath(IPath path, IResource resource) {
         IWorkspaceRoot root = resource.getProject().getWorkspace().getRoot();

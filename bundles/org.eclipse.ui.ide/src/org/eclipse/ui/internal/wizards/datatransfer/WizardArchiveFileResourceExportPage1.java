@@ -380,9 +380,6 @@ public class WizardArchiveFileResourceExportPage1 extends
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
-     */
     @Override
 	protected String destinationEmptyMessage() {
         return DataTransferMessages.ArchiveExport_destinationEmpty;

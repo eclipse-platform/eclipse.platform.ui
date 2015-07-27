@@ -47,11 +47,6 @@ public class SeverityAndDescriptionConfigurationArea extends
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void apply(MarkerFieldFilter filter) {
 		super.apply(filter);
@@ -80,11 +75,6 @@ public class SeverityAndDescriptionConfigurationArea extends
 		errorButton = new Button(severityComposite, SWT.CHECK);
 		errorButton.setText(MarkerMessages.filtersDialog_severityError);
 		errorButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
@@ -99,11 +89,6 @@ public class SeverityAndDescriptionConfigurationArea extends
 		warningButton = new Button(severityComposite, SWT.CHECK);
 		warningButton.setText(MarkerMessages.filtersDialog_severityWarning);
 		warningButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
@@ -115,11 +100,6 @@ public class SeverityAndDescriptionConfigurationArea extends
 		infoButton = new Button(severityComposite, SWT.CHECK);
 		infoButton.setText(MarkerMessages.filtersDialog_severityInfo);
 		infoButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeverities(
@@ -130,11 +110,6 @@ public class SeverityAndDescriptionConfigurationArea extends
 		return severityComposite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
-	 */
 	@Override
 	public void initialize(MarkerFieldFilter filter) {
 		super.initialize(filter);

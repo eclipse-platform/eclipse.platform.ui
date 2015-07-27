@@ -129,21 +129,11 @@ public class BookmarkPropertiesDialog extends DialogMarkerProperties {
         return super.getInitialAttributes();
     }
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getModifyOperationTitle()
-     *
-     * @since 3.3
-     */
 	@Override
 	protected String getModifyOperationTitle() {
 		return BookmarkMessages.ModifyBookmark_undoText;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties.getCreateOperationTitle()
-     *
-     * @since 3.3
-     */
 	@Override
 	protected String getCreateOperationTitle() {
 		return BookmarkMessages.CreateBookmark_undoText;

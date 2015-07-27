@@ -19,20 +19,12 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * IWorkbenchAdapter adapter for the IWorkspace object.
  */
 public class WorkbenchWorkspace extends WorkbenchAdapter {
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
     @Override
 	public Object[] getChildren(Object o) {
         IWorkspace workspace = (IWorkspace) o;
         return workspace.getRoot().getProjects();
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-     */
     @Override
 	public ImageDescriptor getImageDescriptor(Object object) {
         return null;

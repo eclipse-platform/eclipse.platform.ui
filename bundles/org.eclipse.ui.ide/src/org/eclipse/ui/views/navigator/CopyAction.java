@@ -96,9 +96,6 @@ import org.eclipse.ui.part.ResourceTransfer;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.action.Action#run()
-     */
     @Override
 	public void run() {
     	 /**
@@ -179,9 +176,6 @@ import org.eclipse.ui.part.ResourceTransfer;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
-     */
     @Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 

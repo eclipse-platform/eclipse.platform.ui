@@ -46,9 +46,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
         this.resourceFilter = filter;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContentProvider.
-     */
     @Override
 	public void dispose() {
     }
@@ -77,9 +74,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
         return definedFilters;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IStructuredContentProvider.
-     */
     @Override
 	public Object[] getElements(Object inputElement) {
         return getDefinedFilters().toArray();
@@ -94,9 +88,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
         return this.resourceFilter.getPatterns();
     }
 
-    /* (non-Javadoc)
-     * Method declared on IContentProvider.
-     */
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }

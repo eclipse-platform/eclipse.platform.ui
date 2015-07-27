@@ -20,51 +20,26 @@ import org.eclipse.ui.internal.ide.Policy;
  */
 public class FieldCategory extends AbstractField {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return MarkerMessages.description_type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
-	 */
 	@Override
 	public Image getDescriptionImage() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
-	 */
 	@Override
 	public String getColumnHeaderText() {
 		return getDescription();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
-	 */
 	@Override
 	public Image getColumnHeaderImage() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
-	 */
 	@Override
 	public String getValue(Object obj) {
 
@@ -98,42 +73,21 @@ public class FieldCategory extends AbstractField {
 		return Util.EMPTY_STRING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object obj) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
-	 *      java.lang.Object)
-	 */
 	@Override
 	public int compare(Object obj1, Object obj2) {
 		return getValue(obj1).compareTo(getValue(obj2));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
-	 */
 	@Override
 	public int getDefaultDirection() {
 		return TableComparator.ASCENDING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
-	 */
 	@Override
 	public int getPreferredWidth() {
 		return 200;

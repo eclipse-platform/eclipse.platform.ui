@@ -48,9 +48,6 @@ public class FileEditorInputFactory implements IElementFactory {
     public FileEditorInputFactory() {
     }
 
-    /* (non-Javadoc)
-     * Method declared on IElementFactory.
-     */
     @Override
 	public IAdaptable createElement(IMemento memento) {
         // Get the file name.

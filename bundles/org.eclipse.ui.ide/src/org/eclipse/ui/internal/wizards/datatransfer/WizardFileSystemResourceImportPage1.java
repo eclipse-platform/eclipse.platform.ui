@@ -271,9 +271,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     }
 
-    /* (non-Javadoc)
-     * Method declared on IDialogPage.
-     */
     @Override
 	public void createControl(Composite parent) {
         super.createControl(parent);
@@ -1191,9 +1188,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on IDialogPage. Set the selection up when it becomes visible.
-     */
     @Override
 	public void setVisible(boolean visible) {
         super.setVisible(visible);

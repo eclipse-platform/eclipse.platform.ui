@@ -50,33 +50,21 @@ public class ScrubLocalAction extends WorkspaceAction {
 				IIDEHelpContextIds.SCRUB_LOCAL_ACTION);
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getOperationMessage() {
         return IDEWorkbenchMessages.ScrubLocalAction_progress;
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getProblemsMessage() {
         return IDEWorkbenchMessages.ScrubLocalAction_problemsMessage;
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected String getProblemsTitle() {
         return IDEWorkbenchMessages.ScrubLocalAction_problemsTitle;
     }
 
-    /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
     @Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
             throws CoreException {

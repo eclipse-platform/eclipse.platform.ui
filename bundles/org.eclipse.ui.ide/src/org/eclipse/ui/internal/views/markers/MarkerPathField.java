@@ -24,12 +24,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
  */
 public class MarkerPathField extends MarkerField {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
-	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
-	 */
 	@Override
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		if (item1.getMarker() == null || item2.getMarker() == null)
@@ -38,21 +32,11 @@ public class MarkerPathField extends MarkerField {
 		return item1.getPath().compareTo(item2.getPath());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public int getDefaultColumnWidth(Control control) {
 		return 20 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
-	 */
 	@Override
 	public String getValue(MarkerItem item) {
 		return TextProcessor.process(item.getPath());

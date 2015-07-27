@@ -34,20 +34,11 @@ public class TasksView extends MarkerSupportView {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
-	 * @since 3.7
-	 */
 	@Override
 	protected IUndoContext getUndoContext() {
 		return WorkspaceUndoUtil.getTasksUndoContext();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getDeleteOperationName(org.eclipse.core.resources.IMarker[])
-	 * @since 3.7
-	 */
 	@Override
 	protected String getDeleteOperationName(IMarker[] markers) {
 		Assert.isLegal(markers.length > 0);

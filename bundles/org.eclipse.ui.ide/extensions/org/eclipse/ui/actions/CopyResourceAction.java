@@ -230,9 +230,6 @@ public class CopyResourceAction extends SelectionListenerAction implements
         return null;
     }
 
-    /* (non-Javadoc)
-     * Method declared on IAction.
-     */
     @Override
 	public void run() {
         try {

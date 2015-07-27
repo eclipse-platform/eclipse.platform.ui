@@ -90,9 +90,6 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
     }
 
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		super.dragOperationChanged(event);

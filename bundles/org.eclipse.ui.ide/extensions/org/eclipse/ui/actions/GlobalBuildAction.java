@@ -170,11 +170,6 @@ public class GlobalBuildAction extends Action implements
      */
     /* package */void doBuildOperation() {
         Job buildJob = new Job(IDEWorkbenchMessages.GlobalBuildAction_jobTitle) {
-            /*
-             * (non-Javadoc)
-             *
-             * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-             */
             @Override
 			protected IStatus run(IProgressMonitor monitor) {
                 monitor.beginTask(getOperationMessage(), 100);
@@ -189,11 +184,6 @@ public class GlobalBuildAction extends Action implements
                 return Status.OK_STATUS;
             }
 
-            /*
-             * (non-Javadoc)
-             *
-             * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-             */
             @Override
 			public boolean belongsTo(Object family) {
                 return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
@@ -211,12 +201,6 @@ public class GlobalBuildAction extends Action implements
         return ResourcesPlugin.getWorkspace().getRoot().getProjects();
     }
 
-    /*
-     * (non-Javadoc) Method declared on IAction.
-     *
-     * Builds all projects within the workspace. Saves all editors prior to
-     * build depending on user's preference.
-     */
     @Override
 	public void run() {
         if (workbenchWindow == null) {
@@ -268,11 +252,6 @@ public class GlobalBuildAction extends Action implements
         return false;
     }
 
-    /*
-     * (non-Javadoc) Method declared on ActionFactory.IWorkbenchAction.
-     *
-     * @since 3.0
-     */
     @Override
 	public void dispose() {
         if (workbenchWindow == null) {
