@@ -36,42 +36,46 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MessageDialog extends IconAndMessageDialog {
     /**
-     * Constant for no image (value 0).
-     *
-     * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
-     */
+	 * Constant for no image (value 0).
+	 *
+	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
+	 */
     public final static int NONE = 0;
 
     /**
-     * Constant for the error image, or a simple dialog with the error image and a single OK button (value 1).
-     *
-     * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
-     * @see #open(int, Shell, String, String, int)
-     */
+	 * Constant for the error image, or a simple dialog with the error image and
+	 * a single OK button (value 1).
+	 *
+	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
+	 * @see #open(int, Shell, String, String, int)
+	 */
     public final static int ERROR = 1;
 
     /**
-     * Constant for the info image, or a simple dialog with the info image and a single OK button (value 2).
-     *
-     * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
-     * @see #open(int, Shell, String, String, int)
-     */
+	 * Constant for the info image, or a simple dialog with the info image and a
+	 * single OK button (value 2).
+	 *
+	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
+	 * @see #open(int, Shell, String, String, int)
+	 */
     public final static int INFORMATION = 2;
 
     /**
-     * Constant for the question image, or a simple dialog with the question image and Yes/No buttons (value 3).
-     *
-     * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
-     * @see #open(int, Shell, String, String, int)
-     */
+	 * Constant for the question image, or a simple dialog with the question
+	 * image and Yes/No buttons (value 3).
+	 *
+	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
+	 * @see #open(int, Shell, String, String, int)
+	 */
     public final static int QUESTION = 3;
 
     /**
-     * Constant for the warning image, or a simple dialog with the warning image and a single OK button (value 4).
-     *
-     * @see #MessageDialog(Shell, String, Image, String, int, String[], int)
-     * @see #open(int, Shell, String, String, int)
-     */
+	 * Constant for the warning image, or a simple dialog with the warning image
+	 * and a single OK button (value 4).
+	 *
+	 * @see #MessageDialog(Shell, String, Image, String, int, int, String...)
+	 * @see #open(int, Shell, String, String, int)
+	 */
     public final static int WARNING = 4;
 
     /**
@@ -172,10 +176,9 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *            the index in the button label array of the default button
 	 *
 	 */
-    public MessageDialog(Shell parentShell, String dialogTitle,
-            Image dialogTitleImage, String dialogMessage, int dialogImageType,
-            String[] dialogButtonLabels, int defaultIndex) {
-        super(parentShell);
+	public MessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
+			int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
+		super(parentShell);
 		init(dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, defaultIndex, dialogButtonLabels);
 	}
 
@@ -415,7 +418,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @since 3.5
 	 */
 	public static boolean open(int kind, Shell parent, String title, String message, int style) {
-		MessageDialog dialog = new MessageDialog(parent, title, null, message, kind, getButtonLabels(kind), 0);
+		MessageDialog dialog = new MessageDialog(parent, title, null, message, kind, 0, getButtonLabels(kind));
 		style &= SWT.SHEET;
 		dialog.setShellStyle(dialog.getShellStyle() | style);
 		return dialog.open() == 0;
