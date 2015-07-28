@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.e4.ui.workbench" version="2">
+    <resource path="src/org/eclipse/e4/ui/workbench/modeling/EModelService.java" type="org.eclipse.e4.ui.workbench.modeling.EModelService">
+        <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EModelService.move(MUIElement, MElementContainer&lt;MUIElement&gt;)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EModelService.move(MUIElement, MElementContainer&lt;MUIElement&gt;, boolean)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EModelService.move(MUIElement, MElementContainer&lt;MUIElement&gt;, int)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.e4.ui.workbench.modeling.EModelService.move(MUIElement, MElementContainer&lt;MUIElement&gt;, int, boolean)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
