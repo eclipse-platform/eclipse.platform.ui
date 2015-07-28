@@ -46,6 +46,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(ProgressMessages.JobsViewPreferenceDialog_Title);
@@ -54,6 +55,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite top = (Composite) super.createDialogArea(parent);
 
@@ -79,6 +81,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		runInBackground.store();
 		showSystemJob.store();
@@ -88,6 +91,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.preferences.ViewSettingsDialog#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		runInBackground.loadDefault();
 		showSystemJob.loadDefault();

@@ -94,6 +94,7 @@ public class ProgressRegion {
 			 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int,
 			 *      boolean)
 			 */
+			@Override
 			public Point computeSize(int wHint, int hHint, boolean changed) {
 				Point size = super.computeSize(wHint, hHint, changed);
 				if (isHorizontal(side))
@@ -136,7 +137,8 @@ public class ProgressRegion {
             /* (non-Javadoc)
              * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationDone()
              */
-            public void animationDone() {
+            @Override
+			public void animationDone() {
                 //Add an extra refresh to the viewer in case
                 //of stale input if the controls are not disposed
                 if (viewer.getControl().isDisposed()) {
@@ -148,7 +150,8 @@ public class ProgressRegion {
             /* (non-Javadoc)
              * @see org.eclipse.ui.internal.progress.AnimationItem.IAnimationContainer#animationStart()
              */
-            public void animationStart() {
+            @Override
+			public void animationStart() {
                 // Nothing by default here.
 
             }
@@ -169,7 +172,8 @@ public class ProgressRegion {
              *
              * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
              */
-            public void mouseDoubleClick(MouseEvent e) {
+            @Override
+			public void mouseDoubleClick(MouseEvent e) {
                 processDoubleClick();
             }
         });
@@ -182,7 +186,8 @@ public class ProgressRegion {
         viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
         viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
         viewer.addFilter(new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element) {
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof JobInfo) {
                     JobInfo info= (JobInfo)element;
                     if (info.isBlocked() || info.getJob().getState() == Job.WAITING) {
