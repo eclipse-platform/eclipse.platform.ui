@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     - Fix for bug 23025 - SaveAsDialog should not assume what is being saved is an IFile
  *    Benjamin Muskalla <b.muskalla@gmx.net>
  *     - Fix for bug 82541 - [Dialogs] SaveAsDialog should better handle closed projects
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472784
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -216,14 +217,15 @@ public class SaveAsDialog extends TitleAreaDialog {
         // If the path already exists then confirm overwrite.
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
         if (file.exists()) {
-            String[] buttons = new String[] { IDialogConstants.YES_LABEL,
-                    IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
             String question = NLS.bind(
 					IDEWorkbenchMessages.SaveAsDialog_overwriteQuestion, path
 							.toString());
 			MessageDialog d = new MessageDialog(getShell(),
                     IDEWorkbenchMessages.Question,
-                    null, question, MessageDialog.QUESTION, buttons, 0) {
+                    null, question, MessageDialog.QUESTION, 0,
+                    IDialogConstants.YES_LABEL,
+                    IDialogConstants.NO_LABEL,
+                    IDialogConstants.CANCEL_LABEL) {
 				@Override
 				protected int getShellStyle() {
 					return super.getShellStyle() | SWT.SHEET;

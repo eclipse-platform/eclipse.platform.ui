@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430694, 472784
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -432,10 +432,10 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 							NLS.bind(
 									IDEWorkbenchMessages.WizardNewFolderCreationPage_createLinkLocationQuestion, linkTargetPath),
 							MessageDialog.QUESTION_WITH_CANCEL,
-							new String[] { IDialogConstants.YES_LABEL,
-				                    IDialogConstants.NO_LABEL,
-				                    IDialogConstants.CANCEL_LABEL },
-							0);
+							0,
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL);
 					int result = dlg.open();
 					if (result == Window.OK) {
 						store.mkdir(0, new NullProgressMonitor());

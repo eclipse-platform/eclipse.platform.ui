@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alexander Fedorov <Alexander.Fedorov@borland.com>
- *     		- Bug 172000 [Wizards] WizardNewFileCreationPage should support overwriting existing resources
+ *     Alexander Fedorov <Alexander.Fedorov@borland.com> - Bug 172000
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472784
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -397,11 +397,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 								null,
 								NLS.bind(
 										IDEWorkbenchMessages.WizardNewFileCreationPage_createLinkLocationQuestion, linkTargetPath),
-								MessageDialog.QUESTION_WITH_CANCEL,
-								new String[] { IDialogConstants.YES_LABEL,
-					                    IDialogConstants.NO_LABEL,
-					                    IDialogConstants.CANCEL_LABEL },
-								0);
+								MessageDialog.QUESTION_WITH_CANCEL, 0, IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL);
 						int result = dlg.open();
 						if (result == Window.OK) {
 							store.getParent().mkdir(0, new NullProgressMonitor());
