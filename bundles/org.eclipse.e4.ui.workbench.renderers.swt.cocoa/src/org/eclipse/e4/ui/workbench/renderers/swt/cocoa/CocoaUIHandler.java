@@ -18,6 +18,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -38,12 +40,14 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -53,18 +57,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.renderers.swt.HandledMenuItemRenderer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.cocoa.NSButton;
-import org.eclipse.swt.internal.cocoa.NSControl;
-import org.eclipse.swt.internal.cocoa.NSString;
-import org.eclipse.swt.internal.cocoa.NSToolbar;
-import org.eclipse.swt.internal.cocoa.NSWindow;
-import org.eclipse.swt.internal.cocoa.OS;
+import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -599,7 +597,7 @@ public class CocoaUIHandler {
 			EHandlerService service = (EHandlerService) lclContext.get(EHandlerService.class.getName());
 			ParameterizedCommand cmd = hmi.getWbCommand();
 			if (cmd == null) {
-				cmd = HandledMenuItemRenderer.generateParameterizedCommand(hmi, lclContext);
+				cmd = generateParameterizedCommand(hmi);
 			}
 			lclContext.set(MItem.class.getName(), item);
 			service.executeHandler(cmd);
@@ -812,5 +810,19 @@ public class CocoaUIHandler {
 			return new Long(value);
 		else
 			return new Integer((int) value);
+	}
+
+	private ParameterizedCommand generateParameterizedCommand(final MHandledItem item) {
+		Map<String, Object> parameters = null;
+		List<MParameter> modelParms = item.getParameters();
+		if (modelParms != null && !modelParms.isEmpty()) {
+			parameters = new HashMap<String, Object>();
+			for (MParameter mParm : modelParms) {
+				parameters.put(mParm.getName(), mParm.getValue());
+			}
+		}
+		ParameterizedCommand cmd = commandService.createCommand(item.getCommand().getElementId(), parameters);
+		item.setWbCommand(cmd);
+		return cmd;
 	}
 }
