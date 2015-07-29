@@ -233,9 +233,16 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			public void widgetSelected(SelectionEvent e) {
 				// scroll lock if vertical scroll bar dragged, OR selection on
 				// vertical bar used
-				if (e.detail == SWT.TOP || e.detail == SWT.HOME || e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
+				if (e.detail == SWT.TOP || e.detail == SWT.HOME) {
 					// selecting TOP or HOME should lock
 					setScrollLock(true);
+				} else if (e.detail == SWT.ARROW_UP || e.detail == SWT.PAGE_UP) {
+					// selecting TOP or HOME should lock if not end of document
+					if (checkEndOfDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
 				} else if (e.detail == SWT.END || e.detail == SWT.BOTTOM) {
 					// selecting BOTTOM or END from vertical scroll makes it
 					// reveal the end
@@ -256,8 +263,14 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// lock the scroll if PAGE_UP ,HOME or TOP selected
-				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.HOME || e.keyCode == SWT.TOP || e.keyCode == SWT.ARROW_UP) {
+				if (e.keyCode == SWT.HOME || e.keyCode == SWT.TOP) {
 					setScrollLock(true);
+				} else if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.ARROW_UP) {
+					if (checkEndOfDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
 				} else if (e.keyCode == SWT.END || e.keyCode == SWT.BOTTOM) {
 					setScrollLock(false);// selecting END makes it reveal the
 											// end
@@ -275,7 +288,11 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 						setScrollLock(false);
 					}
 				} else if (!userHoldsScrollLock.get()) {
-					setScrollLock(true);
+					if (checkEndOfDocument()) {
+						setScrollLock(false);
+					} else {
+						setScrollLock(true);
+					}
 				}
 			}
 		});
