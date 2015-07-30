@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 441150, 444410
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 441150, 444410, 472654
  *     Simon Scholz <Lars.Vogel@vogella.com> - Bug 429729
  *     Mike Leneweit <mike-le@web.de> - Bug 444410
  *******************************************************************************/
@@ -96,7 +96,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	private static String ShellMaximizedTag = "shellMaximized"; //$NON-NLS-1$
 
 	private class WindowSizeUpdateJob implements Runnable {
-		public List<MWindow> windowsToUpdate = new ArrayList<MWindow>();
+		public List<MWindow> windowsToUpdate = new ArrayList<>();
 
 		@Override
 		public void run() {
@@ -408,7 +408,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 			@Override
 			public Save[] promptToSave(Collection<MPart> dirtyParts) {
-				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
+				List<MPart> parts = new ArrayList<>(dirtyParts);
 				Shell shell = (Shell) context
 						.get(IServiceConstants.ACTIVE_SHELL);
 				Save[] response = new Save[dirtyParts.size()];
@@ -630,7 +630,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		if (wbwModel instanceof MTrimmedWindow) {
 			Shell shell = (Shell) wbwModel.getWidget();
 			MTrimmedWindow tWindow = (MTrimmedWindow) wbwModel;
-			List<MTrimBar> trimBars = new ArrayList<MTrimBar>(
+			List<MTrimBar> trimBars = new ArrayList<>(
 					tWindow.getTrimBars());
 			for (MTrimBar trimBar : trimBars) {
 				renderer.createGui(trimBar, shell, wbwModel.getContext());
@@ -792,7 +792,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	protected static class ThemeDefinitionChangedHandler {
-		protected Set<Resource> unusedResources = new HashSet<Resource>();
+		protected Set<Resource> unusedResources = new HashSet<>();
 
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(IEventBroker.DATA);
@@ -801,7 +801,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				return;
 			}
 
-			Set<CSSEngine> engines = new HashSet<CSSEngine>();
+			Set<CSSEngine> engines = new HashSet<>();
 
 			// In theory we can have multiple engines since API allows it.
 			// It doesn't hurt to be prepared for such case

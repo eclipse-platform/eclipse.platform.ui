@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -173,7 +174,7 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		Map<String, Object> parameters = null;
 		List<MParameter> modelParms = item.getParameters();
 		if (modelParms != null && !modelParms.isEmpty()) {
-			parameters = new HashMap<String, Object>();
+			parameters = new HashMap<>();
 			for (MParameter mParm : modelParms) {
 				parameters.put(mParm.getName(), mParm.getValue());
 			}

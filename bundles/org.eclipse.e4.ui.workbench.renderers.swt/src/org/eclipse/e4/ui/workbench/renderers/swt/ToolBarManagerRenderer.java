@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 410426
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 426535, 433234, 431868
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 426535, 433234, 431868, 472654
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 431778
  *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 457198
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 431990
@@ -98,15 +98,15 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
 	private static final String DISPOSE_ADDED = "ToolBarManagerRenderer.disposeAdded"; //$NON-NLS-1$
 
-	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
-	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<ToolBarManager, MToolBar>();
+	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<>();
+	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<>();
 
-	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<MToolBarElement, IContributionItem>();
-	private Map<IContributionItem, MToolBarElement> contributionToModel = new HashMap<IContributionItem, MToolBarElement>();
+	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<>();
+	private Map<IContributionItem, MToolBarElement> contributionToModel = new HashMap<>();
 
-	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new HashMap<MToolBarElement, ToolBarContributionRecord>();
+	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new HashMap<>();
 
-	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<MToolBarElement, ArrayList<ToolBarContributionRecord>>();
+	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<>();
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
 
@@ -266,7 +266,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	private HashSet<String> updateVariables = new HashSet<String>();
+	private HashSet<String> updateVariables = new HashSet<>();
 
 	@Inject
 	@Optional
@@ -406,7 +406,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			addCleanupDisposeListener(toolbarModel, manager.getControl());
 		}
 
-		final ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
+		final ArrayList<MToolBarContribution> toContribute = new ArrayList<>();
 		ContributionsAnalyzer.XXXgatherToolBarContributions(toolbarModel,
 				application.getToolBarContributions(), elementId, toContribute);
 		generateContributions(toolbarModel, toContribute);
@@ -438,7 +438,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		ToolBarManager manager = getManager(toolbarModel);
 		boolean done = toContribute.size() == 0;
 		while (!done) {
-			ArrayList<MToolBarContribution> curList = new ArrayList<MToolBarContribution>(toContribute);
+			ArrayList<MToolBarContribution> curList = new ArrayList<>(toContribute);
 			int retryCount = toContribute.size();
 			toContribute.clear();
 
@@ -879,7 +879,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public ArrayList<ToolBarContributionRecord> getList(MToolBarElement item) {
 		ArrayList<ToolBarContributionRecord> tmp = sharedElementToRecord.get(item);
 		if (tmp == null) {
-			tmp = new ArrayList<ToolBarContributionRecord>();
+			tmp = new ArrayList<>();
 			sharedElementToRecord.put(item, tmp);
 		}
 		return tmp;
@@ -907,7 +907,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	public void reconcileManagerToModel(IToolBarManager menuManager, MToolBar toolBar) {
 		List<MToolBarElement> modelChildren = toolBar.getChildren();
-		HashSet<MToolItem> oldModelItems = new HashSet<MToolItem>();
+		HashSet<MToolItem> oldModelItems = new HashSet<>();
 		for (MToolBarElement itemModel : modelChildren) {
 			if (OpaqueElementUtil.isOpaqueToolItem(itemModel)) {
 				oldModelItems.add((MToolItem) itemModel);

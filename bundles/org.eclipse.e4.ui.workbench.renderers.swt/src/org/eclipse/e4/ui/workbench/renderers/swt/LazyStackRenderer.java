@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441150
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441150, 472654
  *     Fabio Zadrozny (fabiofz@gmail.com) - Bug 436763
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 457939
  *******************************************************************************/
@@ -284,7 +284,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				showElementRecursive(curSel);
 		} else if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
-			List<MUIElement> kids = new ArrayList<MUIElement>(
+			List<MUIElement> kids = new ArrayList<>(
 					container.getChildren());
 			for (MUIElement childElement : kids) {
 				showElementRecursive(childElement);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -57,7 +58,7 @@ public class SashLayout extends Layout {
 		}
 	}
 
-	List<SashRect> sashes = new ArrayList<SashRect>();
+	List<SashRect> sashes = new ArrayList<>();
 
 	boolean draggingSashes = false;
 	List<SashRect> sashesToDrag;
@@ -233,7 +234,7 @@ public class SashLayout extends Layout {
 	}
 
 	protected List<SashRect> getSashRects(int x, int y) {
-		List<SashRect> srs = new ArrayList<SashRect>();
+		List<SashRect> srs = new ArrayList<>();
 		Rectangle target = new Rectangle(x - 5, y - 5, 10, 10);
 		for (SashRect sr : sashes) {
 			if (!sr.container.getTags().contains(IPresentationEngine.NO_MOVE)
@@ -326,7 +327,7 @@ public class SashLayout extends Layout {
 	}
 
 	private List<MUIElement> getVisibleChildren(MGenericTile<?> sashContainer) {
-		List<MUIElement> visKids = new ArrayList<MUIElement>();
+		List<MUIElement> visKids = new ArrayList<>();
 		for (MUIElement child : sashContainer.getChildren()) {
 			if (child.isToBeRendered() && child.isVisible())
 				visKids.add(child);

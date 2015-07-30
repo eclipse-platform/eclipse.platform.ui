@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -43,8 +44,8 @@ public class ContributionRecord {
 
 	MMenu menuModel;
 	private MMenuContribution menuContribution;
-	private ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
-	private HashSet<MMenuElement> sharedElements = new HashSet<MMenuElement>();
+	private ArrayList<MMenuElement> generatedElements = new ArrayList<>();
+	private HashSet<MMenuElement> sharedElements = new HashSet<>();
 	private MenuManagerRenderer renderer;
 	boolean isVisible = true;
 	private IEclipseContext infoContext;
@@ -89,7 +90,7 @@ public class ContributionRecord {
 	public void updateVisibility(IEclipseContext context) {
 		ExpressionContext exprContext = new ExpressionContext(context);
 		updateIsVisible(exprContext);
-		HashSet<ContributionRecord> recentlyUpdated = new HashSet<ContributionRecord>();
+		HashSet<ContributionRecord> recentlyUpdated = new HashSet<>();
 		recentlyUpdated.add(this);
 		boolean changed = false;
 		for (MMenuElement item : generatedElements) {
@@ -212,7 +213,7 @@ public class ContributionRecord {
 		if (menuContribution.getTransientData().get(FACTORY) != null) {
 			copyElements = mergeFactoryIntoModel();
 		} else {
-			copyElements = new ArrayList<MMenuElement>();
+			copyElements = new ArrayList<>();
 			for (MMenuElement item : menuContribution.getChildren()) {
 				MMenuElement copy = (MMenuElement) EcoreUtil
 						.copy((EObject) item);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tristan Hume - <trishume@gmail.com> -
- *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
- *     		Implemented workbench auto-save to correctly restore state in case of crash.
+ *     Tristan Hume - <trishume@gmail.com> - Bug 2369
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.core.commands.ExpressionContext;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -42,7 +40,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	private MApplication application;
 
 	private class LayoutJob implements Runnable {
-		public List<MTrimBar> barsToLayout = new ArrayList<MTrimBar>();
+		public List<MTrimBar> barsToLayout = new ArrayList<>();
 
 		@Override
 		public void run() {
@@ -138,7 +136,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		ExpressionContext eContext = new ExpressionContext(ctx);
 		MElementContainer<?> trimObj = me;
 		MTrimBar trimModel = (MTrimBar) trimObj;
-		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
+		ArrayList<MTrimContribution> toContribute = new ArrayList<>();
 		ContributionsAnalyzer.gatherTrimContributions(trimModel,
 				application.getTrimContributions(), trimModel.getElementId(),
 				toContribute, eContext);
@@ -148,7 +146,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	private void addTrimContributions(final MTrimBar trimModel,
 			ArrayList<MTrimContribution> toContribute, IEclipseContext ctx,
 			final ExpressionContext eContext) {
-		HashSet<String> existingToolbarIds = new HashSet<String>();
+		HashSet<String> existingToolbarIds = new HashSet<>();
 
 		MTrimmedWindow topWin = (MTrimmedWindow) modelService
 				.getTopLevelWindowFor(trimModel);
@@ -163,13 +161,13 @@ public class TrimBarRenderer extends SWTPartRenderer {
 
 		boolean done = toContribute.size() == 0;
 		while (!done) {
-			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(
+			ArrayList<MTrimContribution> curList = new ArrayList<>(
 					toContribute);
 			int retryCount = toContribute.size();
 			toContribute.clear();
 
 			for (final MTrimContribution contribution : curList) {
-				final ArrayList<MTrimElement> toRemove = new ArrayList<MTrimElement>();
+				final ArrayList<MTrimElement> toRemove = new ArrayList<>();
 				if (!ContributionsAnalyzer.processAddition(trimModel,
 						contribution, toRemove, existingToolbarIds)) {
 					toContribute.add(contribution);

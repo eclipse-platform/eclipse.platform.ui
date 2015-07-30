@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Maxime Porhel <maxime.porhel@obeo.fr> Obeo - Bug 410426
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -39,8 +40,8 @@ public class ToolBarContributionRecord {
 
 	MToolBar toolbarModel;
 	MToolBarContribution toolbarContribution;
-	ArrayList<MToolBarElement> generatedElements = new ArrayList<MToolBarElement>();
-	HashSet<MToolBarElement> sharedElements = new HashSet<MToolBarElement>();
+	ArrayList<MToolBarElement> generatedElements = new ArrayList<>();
+	HashSet<MToolBarElement> sharedElements = new HashSet<>();
 	ToolBarManagerRenderer renderer;
 	boolean isVisible = true;
 	private IEclipseContext infoContext;
@@ -63,7 +64,7 @@ public class ToolBarContributionRecord {
 	public void updateVisibility(IEclipseContext context) {
 		ExpressionContext exprContext = new ExpressionContext(context);
 		updateIsVisible(exprContext);
-		HashSet<ToolBarContributionRecord> recentlyUpdated = new HashSet<ToolBarContributionRecord>();
+		HashSet<ToolBarContributionRecord> recentlyUpdated = new HashSet<>();
 		recentlyUpdated.add(this);
 		boolean changed = false;
 		for (MToolBarElement item : generatedElements) {
@@ -175,7 +176,7 @@ public class ToolBarContributionRecord {
 		if (toolbarContribution.getTransientData().get(FACTORY) != null) {
 			copyElements = mergeFactoryIntoModel();
 		} else {
-			copyElements = new ArrayList<MToolBarElement>();
+			copyElements = new ArrayList<>();
 			for (MToolBarElement item : toolbarContribution.getChildren()) {
 				MToolBarElement copy = (MToolBarElement) EcoreUtil
 						.copy((EObject) item);

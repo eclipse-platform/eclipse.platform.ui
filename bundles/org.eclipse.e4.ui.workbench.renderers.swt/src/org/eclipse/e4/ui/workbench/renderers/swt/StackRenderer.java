@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -209,7 +209,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private boolean ignoreTabSelChanges;
 
 	List<CTabItem> getItemsToSet(MPart part) {
-		List<CTabItem> itemsToSet = new ArrayList<CTabItem>();
+		List<CTabItem> itemsToSet = new ArrayList<>();
 
 		MUIElement partParent = part.getParent();
 		if (partParent instanceof MPartStack) {
@@ -528,7 +528,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				MPartStack pStack = (MPartStack) (partParent instanceof MPartStack ? partParent
 						: null);
 
-				List<String> tags = new ArrayList<String>();
+				List<String> tags = new ArrayList<>();
 				tags.add(CSSConstants.CSS_ACTIVE_CLASS);
 				List<MUIElement> activeElements = modelService.findElements(
 						modelService.getTopLevelWindowFor(newActivePart), null,
@@ -1537,12 +1537,12 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private List<MPart> getCloseableSideParts(MPart part, boolean left) {
 		MElementContainer<MUIElement> container = getParent(part);
 		if (container == null) {
-			return new ArrayList<MPart>();
+			return new ArrayList<>();
 		}
 
 		int thisPartIdx = getPartIndex(part, container);
 		if (thisPartIdx == -1) {
-			return new ArrayList<MPart>();
+			return new ArrayList<>();
 		}
 		List<MUIElement> children = container.getChildren();
 		final int start = left ? 0 : thisPartIdx + 1;
@@ -1574,7 +1574,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private List<MPart> getCloseableSiblingParts(MPart part) {
 		MElementContainer<MUIElement> container = getParent(part);
 		if (container == null) {
-			return new ArrayList<MPart>();
+			return new ArrayList<>();
 		}
 
 		List<MUIElement> children = container.getChildren();
@@ -1585,7 +1585,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			final int start, final int end) {
 		// broken out from closeSiblingParts so it can be used to determine how
 		// many closeable siblings are available
-		List<MPart> closeableSiblings = new ArrayList<MPart>();
+		List<MPart> closeableSiblings = new ArrayList<>();
 		for (int i = start; i < end; i++) {
 			MUIElement child = children.get(i);
 			// If the element isn't showing skip it
@@ -1657,7 +1657,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		ISaveHandler saveHandler = getContextForParent(part).get(
 				ISaveHandler.class);
 		if (saveHandler != null) {
-			final List<MPart> toPrompt = new ArrayList<MPart>(others);
+			final List<MPart> toPrompt = new ArrayList<>(others);
 			toPrompt.retainAll(partService.getDirtyParts());
 
 			boolean cancel = false;

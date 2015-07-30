@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ragnar Nevries <r.eclipse@nevri.es> - Bug 443514
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	private static final String ICON_URI_FOR_PART = "IconUriForPart"; //$NON-NLS-1$
 
-	private Map<String, Image> imageMap = new HashMap<String, Image>();
+	private Map<String, Image> imageMap = new HashMap<>();
 
 	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.gif"; //$NON-NLS-1$
 	private Image pinImage;

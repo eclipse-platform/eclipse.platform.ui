@@ -10,6 +10,7 @@
  *     Christian Walther (Indel AG) - Bug 399458: Fix layout overlap in line-wrapped trim bar
  *     Christian Walther (Indel AG) - Bug 389012: Fix division by zero in TrimBarLayout
  *     Marc-Andre Laperle (Ericsson) - Bug 466233: Toolbar items are wrongly rendered into a "drop-down"
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -32,8 +33,8 @@ import org.eclipse.swt.widgets.ToolBar;
 
 public class TrimBarLayout extends Layout {
 	class TrimLine {
-		Map<Control, Point> sizeMap = new HashMap<Control, Point>();
-		List<Control> ctrls = new ArrayList<Control>();
+		Map<Control, Point> sizeMap = new HashMap<>();
+		List<Control> ctrls = new ArrayList<>();
 		int spacerCount = 0;
 		int extraSpace = 0;
 		int major = 0;
@@ -67,7 +68,7 @@ public class TrimBarLayout extends Layout {
 		}
 	}
 
-	private List<TrimLine> lines = new ArrayList<TrimLine>();
+	private List<TrimLine> lines = new ArrayList<>();
 
 	public static String SPACER = "stretch"; //$NON-NLS-1$
 	public static String GLUE = "glue"; //$NON-NLS-1$

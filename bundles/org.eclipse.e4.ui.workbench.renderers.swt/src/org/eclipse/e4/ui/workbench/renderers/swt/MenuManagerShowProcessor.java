@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Marco Descher <marco@descher.at> - Bug 389063,398865,398866,403081,403083
  *     Bruce Skingle <Bruce.Skingle@immutify.com> - Bug 442570
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -68,7 +69,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 	@Optional
 	private Logger logger;
 
-	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<Menu, Runnable>();
+	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<>();
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
@@ -147,7 +148,7 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 				IEclipseContext dynamicMenuContext = EclipseContextFactory
 						.create();
-				ArrayList<MMenuElement> mel = new ArrayList<MMenuElement>();
+				ArrayList<MMenuElement> mel = new ArrayList<>();
 				dynamicMenuContext.set(List.class, mel);
 				IEclipseContext parentContext = modelService
 						.getContainingContext(currentMenuElement);
