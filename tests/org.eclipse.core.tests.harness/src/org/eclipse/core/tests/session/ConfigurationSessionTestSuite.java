@@ -18,8 +18,10 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -59,6 +61,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded";
 	private static final String PROP_SHARED_CONFIG_AREA = "osgi.sharedConfiguration.area";
 	private Collection<String> bundles = new ArrayList<>();
+	private Map<String, String> configIniValues = new HashMap<>();
 	private boolean cascaded;
 
 	// by default we clean-up after ourselves
@@ -92,6 +95,10 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		bundles.addAll(getURLs(id));
 	}
 
+	public void setConfigIniValue(String key, String value) {
+		configIniValues.put(key, value);
+	}
+
 	private void createConfigINI() throws IOException {
 		Assert.assertTrue("1.0", !bundles.isEmpty());
 		Properties contents = new Properties();
@@ -111,6 +118,9 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			contents.put(PROP_SHARED_CONFIG_AREA, Platform.getConfigurationLocation().getURL().toExternalForm());
 		}
 		contents.put(PROP_CONFIG_AREA_READ_ONLY, Boolean.toString(readOnly));
+		for (Map.Entry<String, String> entry : configIniValues.entrySet()) {
+			contents.put(entry.getKey(), entry.getValue());
+		}
 		// save the properties
 		File configINI = configurationPath.append("config.ini").toFile();
 		OutputStream out = null;
