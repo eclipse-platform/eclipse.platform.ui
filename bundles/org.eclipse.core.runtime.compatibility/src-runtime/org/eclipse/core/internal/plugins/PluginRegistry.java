@@ -23,7 +23,7 @@ import org.osgi.framework.*;
 public class PluginRegistry implements IPluginRegistry {
 	private IExtensionRegistry extRegistry;
 	private RegistryListener listener;
-	
+
 	protected WeakHashMap descriptors = new WeakHashMap();	//key is a bundle object, value is a pluginDescriptor. The synchornization is required
 
 	public PluginRegistry() {
@@ -34,10 +34,12 @@ public class PluginRegistry implements IPluginRegistry {
 
 	public void close() {
 		InternalPlatform.getDefault().getBundleContext().removeBundleListener(listener);
-		listener = null; 
-		descriptors = null;
+		listener = null;
+		synchronized(this){
+			descriptors = null;
+		}
 	}
-	
+
 	/**
 	 * @deprecated Marking as deprecated to remove the warnings
 	 */
@@ -93,7 +95,7 @@ public class PluginRegistry implements IPluginRegistry {
 	public IExtensionPoint[] getExtensionPoints() {
 		return extRegistry.getExtensionPoints();
 	}
-	
+
 	/**
 	 * @deprecated Marking as deprecated to remove the warnings
 	 */
@@ -105,10 +107,13 @@ public class PluginRegistry implements IPluginRegistry {
 	}
 
 	private PluginDescriptor getPluginDescriptor(Bundle bundle) {
-		if (InternalPlatform.getDefault().isFragment(bundle) || descriptors == null) {
+		if (InternalPlatform.getDefault().isFragment(bundle)) {
 			return null;
 		}
-		synchronized(descriptors) {
+		synchronized(this) {
+			if(descriptors == null){
+				return null;
+			}
 			PluginDescriptor correspondingDescriptor = (PluginDescriptor) descriptors.get(bundle);
 			if (bundle != null) {
 				// we haven't created a plugin descriptor yet or it was for a different bundle
@@ -125,7 +130,7 @@ public class PluginRegistry implements IPluginRegistry {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @deprecated Marking as deprecated to remove the warnings
 	 */
@@ -142,10 +147,10 @@ public class PluginRegistry implements IPluginRegistry {
 		}
 		if (added == bundles.length)
 			return results;
-		
+
 		if (added == 0)
 			return new IPluginDescriptor[0];
-		
+
 		IPluginDescriptor[] toReturn = new IPluginDescriptor[added];
 		System.arraycopy(results, 0, toReturn, 0, added);
 		return toReturn;
@@ -158,7 +163,7 @@ public class PluginRegistry implements IPluginRegistry {
 		Bundle[] bundles = InternalPlatform.getDefault().getBundles(pluginId, version.toString());
 		if (bundles == null)
 			return null;
-		
+
 		return getPluginDescriptor(bundles[0]);
 	}
 
@@ -185,10 +190,10 @@ public class PluginRegistry implements IPluginRegistry {
 
 	public class RegistryListener implements BundleListener {
 		public void bundleChanged(BundleEvent event) {
-			if (descriptors == null)
-				return;
-			
-			synchronized(descriptors) {
+			synchronized(PluginRegistry.this) {
+				if (descriptors == null){
+					return;
+				}
 				if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
 					descriptors.remove(event.getBundle());
 				}
