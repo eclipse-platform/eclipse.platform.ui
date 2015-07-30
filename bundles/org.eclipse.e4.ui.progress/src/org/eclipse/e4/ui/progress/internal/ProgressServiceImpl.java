@@ -122,11 +122,6 @@ public class ProgressServiceImpl implements IProgressService {
 		return null;
 	}
 
-	/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.ui.progress.IProgressService#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
-		 */
 	@Override
 	public void busyCursorWhile(final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
@@ -162,12 +157,6 @@ public class ProgressServiceImpl implements IProgressService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean,
-	 *      org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
 	@Override
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
@@ -185,12 +174,6 @@ public class ProgressServiceImpl implements IProgressService {
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
-	 *      org.eclipse.core.runtime.jobs.Job)
-	 */
 	@Override
 	public void showInDialog(Shell shell, Job job) {
 		if (shouldRunInBackground()) {
@@ -308,11 +291,6 @@ public class ProgressServiceImpl implements IProgressService {
 
 		final Job updateJob = new UIJob(
 				ProgressMessages.ProgressManager_openJobName) {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				setUserInterfaceActive(true);
