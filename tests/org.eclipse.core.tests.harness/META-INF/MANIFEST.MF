@@ -7,10 +7,10 @@ Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.core.tests.harness,
  org.eclipse.core.tests.session,
  org.eclipse.core.tests.session.samples
-Require-Bundle: org.eclipse.core.runtime.compatibility,
- org.junit,
+Require-Bundle: org.junit,
  org.eclipse.pde.junit.runtime,
- org.eclipse.test.performance;resolution:=optional
+ org.eclipse.test.performance;resolution:=optional,
+ org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.xml.parsers,

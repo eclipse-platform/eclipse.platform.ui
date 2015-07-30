@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 467667
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
@@ -20,10 +21,11 @@ import junit.textui.TestRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 
-public class EclipseTestHarnessApplication implements IPlatformRunnable {
+public class EclipseTestHarnessApplication implements IApplication {
 	protected List<String> tests;
 
 	/** command line arguments made available to all tests. */
@@ -128,20 +130,6 @@ public class EclipseTestHarnessApplication implements IPlatformRunnable {
 		return passThruArgs;
 	}
 
-	/**
-	 * Runs a set of tests as defined by the given command line args.
-	 * This is the platform application entry point.
-	 * @see IPlatformRunnable
-	 */
-	@Override
-	public Object run(Object userArgs) throws Exception {
-		args = processCommandLine((String[]) userArgs);
-		for (Iterator<String> i = tests.iterator(); i.hasNext();) {
-			run(i.next());
-		}
-		return null;
-	}
-
 	protected Object run(String testName) throws Exception {
 		Object testObject = findTestFor(testName);
 		if (testObject == null) {
@@ -164,5 +152,24 @@ public class EclipseTestHarnessApplication implements IPlatformRunnable {
 
 	protected void run(Test suite) throws Exception {
 		TestRunner.run(suite);
+	}
+
+	/**
+	 * Runs a set of tests as defined by the given command line args. This is
+	 * the platform application entry point.
+	 */
+	@Override
+	public Object start(IApplicationContext context) throws Exception {
+		args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		processCommandLine(args);
+		for (Iterator<String> i = tests.iterator(); i.hasNext();) {
+			run(i.next());
+		}
+		return null;
+	}
+
+	@Override
+	public void stop() {
+		// Nothing to do here
 	}
 }
