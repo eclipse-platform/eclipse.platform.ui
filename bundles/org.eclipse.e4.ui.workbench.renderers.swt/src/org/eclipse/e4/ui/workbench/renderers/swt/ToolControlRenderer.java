@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sopot Cela <sopotcela@gmail.com> - Bug 431868
+ *     Sopot Cela <sopotcela@gmail.com> - Bug 431868, 472761
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431868
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -125,8 +125,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 			sep.setWidth(newCtrl.getSize().x);
 		}
 
-		setCSSInfo(toolControl, newCtrl);
-
+		bindWidget(toolControl, newCtrl);
 		boolean vertical = false;
 		MUIElement parentElement = element.getParent();
 		if (parentElement instanceof MTrimBar) {
@@ -135,7 +134,9 @@ public class ToolControlRenderer extends SWTPartRenderer {
 					|| bar.getSide() == SideValue.RIGHT;
 		}
 		CSSRenderingUtils cssUtils = parentContext.get(CSSRenderingUtils.class);
-		newCtrl = cssUtils.frameMeIfPossible(newCtrl, null, vertical, true);
+		MUIElement modelElement = (MUIElement) newCtrl.getData(AbstractPartRenderer.OWNING_ME);
+		boolean draggable = ((modelElement != null) && (modelElement.getTags().contains(IPresentationEngine.DRAGGABLE)));
+		newCtrl = cssUtils.frameMeIfPossible(newCtrl, null, vertical, draggable);
 
 		boolean hideable = isHideable(toolControl);
 		boolean showRestoreMenu = isRestoreMenuShowable(toolControl);
