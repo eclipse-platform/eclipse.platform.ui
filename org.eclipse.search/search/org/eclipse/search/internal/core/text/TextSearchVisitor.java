@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobGroup;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -408,15 +407,8 @@ public class TextSearchVisitor {
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
 			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
 		} catch (CoreException e) {
-			if (fIsLightweightAutoRefresh && IResourceStatus.FAILED_READ_LOCAL == e.getStatus().getCode()) {
-				// Check if read failed because the file no longer exists
-				try {
-					file.refreshLocal(IResource.DEPTH_ZERO, monitor);
-					if (!file.exists())
-						return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-				} catch (CoreException ex) {
-					// Report original CoreException
-				}
+			if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
+				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
 			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
 			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
