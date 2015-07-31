@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474061
  *******************************************************************************/
 package org.eclipse.jface.layout;
 import org.eclipse.jface.util.Geometry;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Scrollable;
 
 /* package */class LayoutGenerator {
@@ -119,6 +121,12 @@ import org.eclipse.swt.widgets.Scrollable;
         }
 
         boolean wrapping = hasStyle(control, SWT.WRAP);
+
+		// Links are always wrapping, even though they don't use the SWT.WRAP
+		// flag
+		if (control instanceof Link) {
+			wrapping = true;
+		}
 
         // Assume any control with the H_SCROLL or V_SCROLL flags are
         // horizontally or vertically
