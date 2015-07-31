@@ -22,6 +22,7 @@ import org.eclipse.e4.internal.tools.wizards.model.FragmentExtractHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -100,7 +101,6 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
-	@Ignore
 	/**
 	 * Test for BR 405159, ignored until it is fixed
 	 */
@@ -132,7 +132,6 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
-	@Ignore
 	/**
 	 * Test for BR 446206, ignored until it is fixed
 	 */
@@ -150,7 +149,7 @@ public class FragmentExtractHelperTest {
 		final MCommand extractedCommand = (MCommand) modelFragment.getElements().get(0);
 		assertSame(importedCategory, extractedCommand.getCategory());
 		assertExtractedElement(command, modelFragment.getElements().get(0));
-		assertExtractedElement(category, initialModel.getImports().get(0));
+		assertExtractedImport(category, initialModel.getImports().get(0));
 	}
 
 	private MCategory createCategoryForCommand(MCommand command) {
@@ -295,13 +294,13 @@ public class FragmentExtractHelperTest {
 		createHandler2();
 		final MCommand command = createCommandLinkedWithHandler(handler1);
 		handler2.setCommand(command);
-		final HashMap<MCommand, MCommand> importCommands = new HashMap<MCommand, MCommand>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
 
-		FragmentExtractHelper.resolveCommandImports(handler1, importCommands);
-		FragmentExtractHelper.resolveCommandImports(handler2, importCommands);
+		FragmentExtractHelper.resolveImports(handler1, importCommands);
+		FragmentExtractHelper.resolveImports(handler2, importCommands);
 
 		assertEquals(1, importCommands.size());
-		final MCommand resolvedCommand = importCommands.values().iterator().next();
+		final MApplicationElement resolvedCommand = importCommands.values().iterator().next();
 		assertSame(resolvedCommand, handler1.getCommand());
 		assertSame(resolvedCommand, handler2.getCommand());
 	}
@@ -316,15 +315,46 @@ public class FragmentExtractHelperTest {
 		final MCommand command = createCommand();
 		handledItem1.setCommand(command);
 		handledItem2.setCommand(command);
-		final HashMap<MCommand, MCommand> importCommands = new HashMap<MCommand, MCommand>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
 
-		FragmentExtractHelper.resolveCommandImports(handledItem1, importCommands);
-		FragmentExtractHelper.resolveCommandImports(handledItem2, importCommands);
+		FragmentExtractHelper.resolveImports(handledItem1, importCommands);
+		FragmentExtractHelper.resolveImports(handledItem2, importCommands);
 
 		assertEquals(1, importCommands.size());
-		final MCommand resolvedCommand = importCommands.values().iterator().next();
+		final MApplicationElement resolvedCommand = importCommands.values().iterator().next();
 		assertSame(resolvedCommand, handledItem1.getCommand());
 		assertSame(resolvedCommand, handledItem2.getCommand());
+	}
+
+	@Test
+	/**
+	 * Test for referenced BindingContexts BR 474037
+	 */
+	public void testExtractTwoPartsWithTwoBindingContexts() {
+		final MBindingContext bindingContext1 = MCommandsFactory.INSTANCE.createBindingContext();
+		final MBindingContext bindingContext2 = MCommandsFactory.INSTANCE.createBindingContext();
+
+		final MPart part = MBasicFactory.INSTANCE.createPart();
+		part.getBindingContexts().add(bindingContext1);
+		part.getBindingContexts().add(bindingContext2);
+
+		final MPart part2 = MBasicFactory.INSTANCE.createPart();
+		part2.getBindingContexts().add(bindingContext1);
+
+
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
+
+		FragmentExtractHelper.resolveImports(part, importCommands);
+		FragmentExtractHelper.resolveImports(part2, importCommands);
+
+		assertEquals(2, importCommands.size());
+		final MApplicationElement resolvedBindingContext = importCommands.values().iterator().next();
+		final MApplicationElement resolvedBindingContext2 = importCommands.values().iterator().next();
+		assertTrue(part.getBindingContexts().contains(resolvedBindingContext));
+		assertTrue(part.getBindingContexts().contains(resolvedBindingContext2));
+		assertTrue(part2.getBindingContexts().contains(resolvedBindingContext));
+		assertEquals(2, part.getBindingContexts().size());
+		assertEquals(1, part2.getBindingContexts().size());
 	}
 
 	/**
