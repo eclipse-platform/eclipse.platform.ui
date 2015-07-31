@@ -84,10 +84,10 @@ import org.w3c.dom.NodeList;
  */
 public abstract class TargetPlatformContributionCollector extends ClassContributionCollector {
 
-	CopyOnWriteArrayList<Entry> cacheEntry = new CopyOnWriteArrayList<Entry>();
-	HashSet<String> cacheBundleId = new HashSet<String>();
-	HashSet<String> cachePackage = new HashSet<String>();
-	HashSet<String> cacheLocation = new HashSet<String>();
+	CopyOnWriteArrayList<Entry> cacheEntry = new CopyOnWriteArrayList<>();
+	HashSet<String> cacheBundleId = new HashSet<>();
+	HashSet<String> cachePackage = new HashSet<>();
+	HashSet<String> cacheLocation = new HashSet<>();
 	private Pattern patternFile;
 	protected String cacheName;
 	protected boolean stopFiltering;
@@ -249,7 +249,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 */
 	public Collection<String> getBundleIds() {
 		reloadCache(false, null);
-		return new ArrayList<String>(cacheBundleId);
+		return new ArrayList<>(cacheBundleId);
 	}
 
 	/**
@@ -258,7 +258,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 */
 	public Collection<String> getPackages() {
 		reloadCache(false, null);
-		return new ArrayList<String>(cachePackage);
+		return new ArrayList<>(cachePackage);
 	}
 
 	/**
@@ -267,7 +267,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 */
 	public Collection<String> getLocations() {
 		reloadCache(false, null);
-		return new ArrayList<String>(cacheLocation);
+		return new ArrayList<>(cacheLocation);
 	}
 
 	/**
@@ -587,7 +587,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	 * A cache of the output directories for install locations (if install
 	 * location has a classpath file with appropriate output entries)
 	 */
-	static private HashMap<String, List<String>> outputDirectories = new HashMap<String, List<String>>();
+	static private HashMap<String, List<String>> outputDirectories = new HashMap<>();
 
 	// Returns the Eclipse output directories for an install location. The
 	// directories are relative to the install location.
@@ -595,7 +595,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 	static private List<String> getOutputDirectories(String installLocation) {
 		List<String> ret = outputDirectories.get(installLocation);
 		if (ret == null) {
-			ret = new ArrayList<String>();
+			ret = new ArrayList<>();
 			outputDirectories.put(installLocation, ret);
 			try {
 				final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()

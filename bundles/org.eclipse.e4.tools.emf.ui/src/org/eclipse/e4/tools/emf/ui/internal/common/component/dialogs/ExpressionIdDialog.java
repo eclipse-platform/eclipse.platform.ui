@@ -122,7 +122,7 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 	}
 
 	private List<IConfigurationElement> getElements(IExtensionLookup lookup) {
-		final List<IConfigurationElement> list = new ArrayList<IConfigurationElement>();
+		final List<IConfigurationElement> list = new ArrayList<>();
 		for (final IExtension ext : lookup.findExtensions("org.eclipse.core.expressions.definitions", liveModel)) { //$NON-NLS-1$
 			for (final IConfigurationElement el : ext.getConfigurationElements()) {
 				list.add(el);

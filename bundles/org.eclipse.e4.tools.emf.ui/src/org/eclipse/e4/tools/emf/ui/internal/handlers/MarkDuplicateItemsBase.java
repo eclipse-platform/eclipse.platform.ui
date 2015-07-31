@@ -40,7 +40,7 @@ public class MarkDuplicateItemsBase extends AbstractHandler {
 
 	static Collection<EObject> getDuplicateList(String attName, Collection<EObject> all) {
 		Map<String, List<EObject>> map = getDuplicateMap(attName, all);
-		List<EObject> duplicates = new ArrayList<EObject>();
+		List<EObject> duplicates = new ArrayList<>();
 		for (String key : map.keySet()) {
 			List<EObject> list = map.get(key);
 			if (list.size() > 1) {
@@ -51,7 +51,7 @@ public class MarkDuplicateItemsBase extends AbstractHandler {
 	}
 
 	static Map<String, List<EObject>> getDuplicateMap(String attName, Collection<EObject> selected) {
-		ConcurrentHashMap<String, List<EObject>> map = new ConcurrentHashMap<String, List<EObject>>();
+		ConcurrentHashMap<String, List<EObject>> map = new ConcurrentHashMap<>();
 		for (Iterator<?> it = selected.iterator(); it.hasNext();) {
 			Object object = it.next();
 			if (object instanceof EObject) {
@@ -67,7 +67,7 @@ public class MarkDuplicateItemsBase extends AbstractHandler {
 					}
 					List<EObject> list = map.get(attValue);
 					if (list == null) {
-						list = new ArrayList<EObject>();
+						list = new ArrayList<>();
 						map.put(attValue, list);
 					}
 					list.add(item);

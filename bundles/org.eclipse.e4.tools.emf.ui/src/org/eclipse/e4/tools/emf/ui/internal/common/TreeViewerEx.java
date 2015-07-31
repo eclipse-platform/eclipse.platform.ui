@@ -46,7 +46,7 @@ public class TreeViewerEx extends TreeViewer {
 				try {
 					// restore Nodes from XmiIds
 					E4XMIResource xmiResource = (E4XMIResource) ((EObject) modelProvider.getRoot().get(0)).eResource();
-					ArrayList<Object> newElements = new ArrayList<Object>();
+					ArrayList<Object> newElements = new ArrayList<>();
 					ObservableListTreeContentProvider provider = (ObservableListTreeContentProvider) getContentProvider();
 					Object[] children = new Object[] { modelProvider.getRoot().get(0) };
 					for (String id : elementsIds) {
@@ -57,7 +57,7 @@ public class TreeViewerEx extends TreeViewer {
 							getFirstMatchingItem(eObject, provider, children);
 						}
 					}
-					ArrayList<Object> newSelected = new ArrayList<Object>();
+					ArrayList<Object> newSelected = new ArrayList<>();
 					for (String id : selectedIds) {
 						EObject eObject = xmiResource.getEObject(id);
 						if (eObject != null) {
@@ -88,8 +88,8 @@ public class TreeViewerEx extends TreeViewer {
 					Object[] elements = getExpandedElements();
 					List<?> selected = ((IStructuredSelection) getSelection()).toList();
 					E4XMIResource xmiResource = (E4XMIResource) ((EObject) modelProvider.getRoot().get(0)).eResource();
-					elementsIds = new ArrayList<String>();
-					selectedIds = new ArrayList<String>();
+					elementsIds = new ArrayList<>();
+					selectedIds = new ArrayList<>();
 					for (Object obj : elements) {
 						if (obj instanceof EObject) {
 							elementsIds.add(xmiResource.getID((EObject) obj));

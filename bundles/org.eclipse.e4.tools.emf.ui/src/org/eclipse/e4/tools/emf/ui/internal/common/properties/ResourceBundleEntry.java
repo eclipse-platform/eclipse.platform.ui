@@ -15,5 +15,5 @@ import java.util.TreeMap;
 
 public class ResourceBundleEntry {
 	public String key;
-	public SortedMap<String, String> translations = new TreeMap<String, String>();
+	public SortedMap<String, String> translations = new TreeMap<>();
 }

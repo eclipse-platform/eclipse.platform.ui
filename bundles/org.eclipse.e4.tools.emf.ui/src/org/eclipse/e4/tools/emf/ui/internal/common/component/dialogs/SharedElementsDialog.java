@@ -109,13 +109,13 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 		});
 
 		if (resource.getRoot().get(0) instanceof MApplication) {
-			final List<MUIElement> list = new ArrayList<MUIElement>();
+			final List<MUIElement> list = new ArrayList<>();
 			for (final MWindow m : ((MApplication) resource.getRoot().get(0)).getChildren()) {
 				list.addAll(filter(m.getSharedElements()));
 			}
 			viewer.setInput(list);
 		} else if (resource.getRoot().get(0) instanceof MModelFragments) {
-			final List<MApplicationElement> list = new ArrayList<MApplicationElement>();
+			final List<MApplicationElement> list = new ArrayList<>();
 			for (final MModelFragment f : ((MModelFragments) resource.getRoot().get(0)).getFragments()) {
 				if (f instanceof MStringModelFragment) {
 					if (((MStringModelFragment) f).getFeaturename().equals("sharedElements")) { //$NON-NLS-1$
@@ -159,7 +159,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 	}
 
 	private static <T> List<T> filter(List<T> o) {
-		final List<T> rv = new ArrayList<T>();
+		final List<T> rv = new ArrayList<>();
 		for (final T i : o) {
 			if (i instanceof MPart || i instanceof MPartSashContainer || i instanceof MArea || i instanceof MPartStack) {
 				rv.add(i);

@@ -32,7 +32,7 @@ public class WizardDialogEditor extends WindowEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final List<Action> actions = new ArrayList<Action>();
+		final List<Action> actions = new ArrayList<>();
 
 		final MWizardDialog dialog = (MWizardDialog) element;
 		if (dialog.getMainMenu() == null) {

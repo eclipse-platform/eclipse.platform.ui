@@ -205,7 +205,7 @@ public class TableViewerUtil {
 	}
 
 	static public ArrayList<TableColumn> getColumnsInDisplayOrder(TableViewer viewer) {
-		final ArrayList<TableColumn> allCols = new ArrayList<TableColumn>(Arrays.asList(viewer.getTable().getColumns()));
+		final ArrayList<TableColumn> allCols = new ArrayList<>(Arrays.asList(viewer.getTable().getColumns()));
 		final int[] order = viewer.getTable().getColumnOrder();
 		Collections.sort(allCols, new Comparator<TableColumn>() {
 

@@ -57,7 +57,7 @@ class RefactorParticipantDelegate {
 		final FileTextSearchScope scope = FileTextSearchScope.newWorkspaceScope(
 			filenames, false);
 
-		final Map<IFile, TextFileChange> changes = new HashMap<IFile, TextFileChange>();
+		final Map<IFile, TextFileChange> changes = new HashMap<>();
 		final TextSearchRequestor searchRequestor = new TextSearchRequestor() {
 
 			@Override

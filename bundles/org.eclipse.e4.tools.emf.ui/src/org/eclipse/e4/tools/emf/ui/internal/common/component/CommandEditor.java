@@ -64,7 +64,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 	private MessageFormat newCommandParameterName;
 
 	private final IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(),
@@ -279,7 +279,7 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

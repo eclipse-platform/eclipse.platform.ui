@@ -82,7 +82,7 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 				return getChildren(project);
 			}
 			final IResource resource = (IResource) parentElement;
-			final ArrayList<Object> list = new ArrayList<Object>();
+			final ArrayList<Object> list = new ArrayList<>();
 			IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 
 				@Override

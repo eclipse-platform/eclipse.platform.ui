@@ -142,7 +142,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			}
 		});
 
-		final List<FeatureClass> list = new ArrayList<FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 

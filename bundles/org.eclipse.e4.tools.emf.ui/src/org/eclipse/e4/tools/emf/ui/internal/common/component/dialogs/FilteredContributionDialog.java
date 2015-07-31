@@ -709,7 +709,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			return;
 		}
 
-		final ArrayList<String> sorted = new ArrayList<String>(bundleIds);
+		final ArrayList<String> sorted = new ArrayList<>(bundleIds);
 		Collections.sort(sorted);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
@@ -729,7 +729,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Window.OK) {
-			final ArrayList<String> result = new ArrayList<String>();
+			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
 			setFilterBundles(result);
 			refreshSearch();
@@ -749,7 +749,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			return;
 		}
 
-		final ArrayList<String> sorted = new ArrayList<String>(packages);
+		final ArrayList<String> sorted = new ArrayList<>(packages);
 		Collections.sort(sorted);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
@@ -765,7 +765,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Window.OK) {
-			final ArrayList<String> result = new ArrayList<String>();
+			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
 			setFilterBundles(result);
 			refreshSearch();
@@ -798,7 +798,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		}
 
 		// add all parent paths
-		final HashSet<String> parentLocations = new HashSet<String>();
+		final HashSet<String> parentLocations = new HashSet<>();
 		for (String location : locations) {
 			if (location.endsWith(".jar")) { //$NON-NLS-1$
 				final int index = location.lastIndexOf(File.separator);
@@ -811,7 +811,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		}
 
-		final ArrayList<String> sorted = new ArrayList<String>(parentLocations);
+		final ArrayList<String> sorted = new ArrayList<>(parentLocations);
 		Collections.sort(sorted);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
@@ -827,7 +827,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			}
 		};
 		if (dlg.open() == Window.OK) {
-			final ArrayList<String> result = new ArrayList<String>();
+			final ArrayList<String> result = new ArrayList<>();
 			result.add(dlg.getFirstSelection());
 			setFilterBundles(result);
 			refreshSearch();

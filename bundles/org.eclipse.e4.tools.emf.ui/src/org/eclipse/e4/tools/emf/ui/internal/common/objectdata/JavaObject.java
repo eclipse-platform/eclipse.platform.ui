@@ -24,7 +24,7 @@ public class JavaObject {
 	}
 
 	private void initAttributes() {
-		attributes = new ArrayList<JavaAttribute>();
+		attributes = new ArrayList<>();
 
 		if (instance == null) {
 			return;

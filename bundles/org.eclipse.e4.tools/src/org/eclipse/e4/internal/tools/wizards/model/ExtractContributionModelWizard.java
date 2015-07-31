@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class ExtractContributionModelWizard extends BaseApplicationModelWizard {
 
-	private final List<MApplicationElement> oes = new ArrayList<MApplicationElement>();
+	private final List<MApplicationElement> oes = new ArrayList<>();
 
 	public ExtractContributionModelWizard(MApplicationElement oe) {
 		super();

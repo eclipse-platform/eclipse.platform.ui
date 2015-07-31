@@ -90,9 +90,9 @@ public class ResourceService implements IResourceService {
 	public static class ResourcePool implements IDiposeableResourcePool {
 		private IResourceService resourceService;
 
-		private List<IPooledResource<Image>> pooledImages = new ArrayList<IPooledResource<Image>>();
-		private List<IPooledResource<Font>> pooledFonts = new ArrayList<IPooledResource<Font>>();
-		private List<IPooledResource<Color>> pooledColors = new ArrayList<IPooledResource<Color>>();
+		private List<IPooledResource<Image>> pooledImages = new ArrayList<>();
+		private List<IPooledResource<Font>> pooledFonts = new ArrayList<>();
+		private List<IPooledResource<Color>> pooledColors = new ArrayList<>();
 		private final Display display;
 
 		@Inject
@@ -223,27 +223,27 @@ public class ResourceService implements IResourceService {
 
 		public Map<String, PooledResource<Color>> getColorPool() {
 			if (colorPool == null) {
-				colorPool = new HashMap<String, ResourceService.PooledResource<Color>>();
+				colorPool = new HashMap<>();
 			}
 			return colorPool;
 		}
 
 		public Map<String, PooledResource<Image>> getImagePool() {
 			if (imagePool == null) {
-				imagePool = new HashMap<String, ResourceService.PooledResource<Image>>();
+				imagePool = new HashMap<>();
 			}
 			return imagePool;
 		}
 
 		public Map<String, PooledResource<Font>> getFontPool() {
 			if (fontPool == null) {
-				fontPool = new HashMap<String, ResourceService.PooledResource<Font>>();
+				fontPool = new HashMap<>();
 			}
 			return fontPool;
 		}
 	}
 
-	private final Map<Display, DisplayPool> displayPool = new HashMap<Display, ResourceService.DisplayPool>();
+	private final Map<Display, DisplayPool> displayPool = new HashMap<>();
 	// private Map<String, IResourceProviderService> imagekey2providers = new
 	// HashMap<String, IResourceProviderService>();
 	// private Map<String, IResourceProviderService> fontkey2providers = new
@@ -286,7 +286,7 @@ public class ResourceService implements IResourceService {
 		if (resource != null && resource.getResource() != null) {
 			resource.count++;
 		} else {
-			resource = new PooledResource<R>(display, this, key,
+			resource = new PooledResource<>(display, this, key,
 				(R) lookupResource(display, key, type));
 
 			if (p == null) {

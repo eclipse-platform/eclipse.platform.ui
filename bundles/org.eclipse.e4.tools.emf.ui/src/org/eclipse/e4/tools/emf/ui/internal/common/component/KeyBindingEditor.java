@@ -74,7 +74,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private StackLayout stackLayout;
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	private final IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
@@ -304,7 +304,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

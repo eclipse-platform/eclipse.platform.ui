@@ -186,7 +186,7 @@ public class ExportIdsHandler {
 				l.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 3, 1));
 			}
 
-			List<Entry> entries = new ArrayList<ExportIdsHandler.Entry>();
+			List<Entry> entries = new ArrayList<>();
 			TreeIterator<EObject> it = EcoreUtil.getAllContents(list);
 
 			while (it.hasNext()) {

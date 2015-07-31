@@ -73,7 +73,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private final IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties
 			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -85,7 +85,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@PostConstruct
 	public void init() {
-		final List<FeatureClass> list = new ArrayList<FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<>();
 		Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 		list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
 				FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
@@ -277,7 +277,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 				}
 			});
 
-			final List<FeatureClass> list = new ArrayList<FeatureClass>();
+			final List<FeatureClass> list = new ArrayList<>();
 			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT,
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
@@ -330,7 +330,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		Collections.sort(l, new Comparator<Action>() {
 			@Override

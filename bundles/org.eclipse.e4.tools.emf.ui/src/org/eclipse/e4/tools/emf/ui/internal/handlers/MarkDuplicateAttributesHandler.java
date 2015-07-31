@@ -32,7 +32,7 @@ public class MarkDuplicateAttributesHandler extends MarkDuplicateItemsBase {
 
 	@Execute
 	public void execute(@Named(VIEWER_KEY) IViewEObjects viewer, IEclipseContext context, final Messages Messages) {
-		final HashSet<String> set = new HashSet<String>();
+		final HashSet<String> set = new HashSet<>();
 		Collection<EObject> allEObjects = viewer.getAllEObjects();
 		for (EObject obj : allEObjects) {
 			for (EAttribute attribute : obj.eClass().getEAllAttributes()) {

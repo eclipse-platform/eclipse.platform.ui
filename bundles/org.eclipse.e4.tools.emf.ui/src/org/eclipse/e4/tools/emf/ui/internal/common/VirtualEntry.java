@@ -57,7 +57,7 @@ public abstract class VirtualEntry<M> {
 
 	@SuppressWarnings("unchecked")
 	private List<Object> cleanedList(IObservableList list) {
-		List<Object> l = new ArrayList<Object>(list.size());
+		List<Object> l = new ArrayList<>(list.size());
 
 		for (Object o : list) {
 			if (accepted((M) o)) {

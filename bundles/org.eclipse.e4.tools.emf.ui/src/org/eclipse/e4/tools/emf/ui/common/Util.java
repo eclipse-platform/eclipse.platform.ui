@@ -82,7 +82,7 @@ public class Util {
 			final String prefix = (projectName + "." + className).toLowerCase(); //$NON-NLS-1$
 
 			final TreeIterator<EObject> it = resource.getAllContents();
-			final SortedSet<Integer> numbers = new TreeSet<Integer>();
+			final SortedSet<Integer> numbers = new TreeSet<>();
 
 			while (it.hasNext()) {
 				final EObject tmp = it.next();
@@ -118,7 +118,7 @@ public class Util {
 	}
 
 	public static List<InternalPackage> loadPackages() {
-		final List<InternalPackage> packs = new ArrayList<InternalPackage>();
+		final List<InternalPackage> packs = new ArrayList<>();
 
 		for (final Entry<String, Object> regEntry : EPackage.Registry.INSTANCE.entrySet()) {
 			if (regEntry.getValue() instanceof EPackage) {
@@ -237,7 +237,7 @@ public class Util {
 
 	public static class InternalPackage {
 		public final EPackage ePackage;
-		public List<InternalClass> classes = new ArrayList<InternalClass>();
+		public List<InternalClass> classes = new ArrayList<>();
 
 		public InternalPackage(EPackage ePackage) {
 			this.ePackage = ePackage;
@@ -249,7 +249,7 @@ public class Util {
 		}
 
 		public List<EClass> getAllClasses() {
-			final ArrayList<EClass> rv = new ArrayList<EClass>(classes.size());
+			final ArrayList<EClass> rv = new ArrayList<>(classes.size());
 			for (final InternalClass c : classes) {
 				rv.add(c.eClass);
 			}
@@ -260,7 +260,7 @@ public class Util {
 	public static class InternalClass {
 		public final InternalPackage pack;
 		public final EClass eClass;
-		public List<InternalFeature> features = new ArrayList<InternalFeature>();
+		public List<InternalFeature> features = new ArrayList<>();
 
 		public InternalClass(InternalPackage pack, EClass eClass) {
 			this.eClass = eClass;

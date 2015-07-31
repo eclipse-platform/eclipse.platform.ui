@@ -40,7 +40,7 @@ public class E4ToolItemMenu {
 
 	public static final String SEPARATOR = "~separator~"; //$NON-NLS-1$
 	private final IEclipseContext context;
-	private final ArrayList<String> commandIds = new ArrayList<String>();
+	private final ArrayList<String> commandIds = new ArrayList<>();
 	private final Menu menu;
 	private final ECommandService commandService;
 	private final EHandlerService handlerService;

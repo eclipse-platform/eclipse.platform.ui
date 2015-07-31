@@ -29,7 +29,7 @@ public class EMFDocumentResourceMediator {
 	private IModelResource modelResource;
 	private Document document;
 	private boolean updateFromEMF;
-	private List<Diagnostic> errorList = new ArrayList<Diagnostic>();
+	private List<Diagnostic> errorList = new ArrayList<>();
 	private Runnable documentValidationChanged;
 
 	public EMFDocumentResourceMediator(final IModelResource modelResource) {

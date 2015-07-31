@@ -119,7 +119,7 @@ public class ListTab implements IViewEObjects {
 
 	static final String ELIPSIS = "..."; //$NON-NLS-1$
 
-	ConcurrentHashMap<String, List<EObject>> mapId_Object = new ConcurrentHashMap<String, List<EObject>>();
+	ConcurrentHashMap<String, List<EObject>> mapId_Object = new ConcurrentHashMap<>();
 
 	@Inject
 	private IEclipseContext context;
@@ -154,9 +154,9 @@ public class ListTab implements IViewEObjects {
 
 	protected Image imgMarkedItem;
 
-	LinkedHashMap<String, EAttributeTableViewerColumn> defaultColumns = new LinkedHashMap<String, EAttributeTableViewerColumn>();
-	LinkedHashMap<String, EAttributeTableViewerColumn> optionalColumns = new LinkedHashMap<String, EAttributeTableViewerColumn>();
-	LinkedHashMap<String, TableColumn> requiredColumns = new LinkedHashMap<String, TableColumn>();
+	LinkedHashMap<String, EAttributeTableViewerColumn> defaultColumns = new LinkedHashMap<>();
+	LinkedHashMap<String, EAttributeTableViewerColumn> optionalColumns = new LinkedHashMap<>();
+	LinkedHashMap<String, TableColumn> requiredColumns = new LinkedHashMap<>();
 	private TableViewerColumn colItem;
 	private TableViewerColumn colGo;
 	private TableViewerColumn colGoXmi;
@@ -486,7 +486,7 @@ public class ListTab implements IViewEObjects {
 			final E4ToolItemMenu tiCommands = new E4ToolItemMenu(toolBar, context);
 			tiCommands.getToolItem().setImage(imageCache.create("/icons/full/obj16/command.gif")); //$NON-NLS-1$
 
-			final ArrayList<String> commandIds = new ArrayList<String>();
+			final ArrayList<String> commandIds = new ArrayList<>();
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_attributes"); //$NON-NLS-1$
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_ids"); //$NON-NLS-1$
 			commandIds.add("org.eclipse.e4.tools.emf.ui.command.mark_duplicate_labels"); //$NON-NLS-1$
@@ -690,7 +690,7 @@ public class ListTab implements IViewEObjects {
 
 	@Override
 	public List<EObject> getAllEObjects() {
-		final ArrayList<EObject> list = new ArrayList<EObject>();
+		final ArrayList<EObject> list = new ArrayList<>();
 		final TreeIterator<Object> itTree = EcoreUtil.getAllContents(modelResource.getRoot());
 		while (itTree.hasNext()) {
 			final Object object = itTree.next();
@@ -705,7 +705,7 @@ public class ListTab implements IViewEObjects {
 
 	@Override
 	public Collection<EObject> getSelectedEObjects() {
-		final ArrayList<EObject> selected = new ArrayList<EObject>();
+		final ArrayList<EObject> selected = new ArrayList<>();
 		for (final Object item : ((IStructuredSelection) tvResults.getSelection()).toList()) {
 			if (item instanceof EObject) {
 				selected.add((EObject) item);
@@ -728,14 +728,14 @@ public class ListTab implements IViewEObjects {
 
 	private TitleAreaFilterDialogWithEmptyOptions createEObjectAttributePicker(final String title) {
 		// Get Attribute Names
-		final HashSet<String> set = new HashSet<String>();
+		final HashSet<String> set = new HashSet<>();
 		final Collection<EObject> allEObjects = getAllEObjects();
 		for (final EObject obj : allEObjects) {
 			for (final EAttribute attribute : obj.eClass().getEAllAttributes()) {
 				set.add(attribute.getName());
 			}
 		}
-		final ArrayList<String> sorted = new ArrayList<String>(set);
+		final ArrayList<String> sorted = new ArrayList<>(set);
 		Collections.sort(sorted);
 
 		// Select Attribute
@@ -766,13 +766,13 @@ public class ListTab implements IViewEObjects {
 
 	private TitleAreaFilterDialog createElementTypePicker(final String title) {
 		// Get Attribute Names
-		final HashSet<String> set = new HashSet<String>();
+		final HashSet<String> set = new HashSet<>();
 		final Collection<EObject> allEObjects = getAllEObjects();
 		for (final EObject obj : allEObjects) {
 			set.add(obj.eClass().getName());
 		}
 
-		final ArrayList<String> sorted = new ArrayList<String>(set);
+		final ArrayList<String> sorted = new ArrayList<>(set);
 		Collections.sort(sorted);
 
 		final ILabelProvider renderer = new LabelProvider() {
@@ -890,7 +890,7 @@ public class ListTab implements IViewEObjects {
 		filterByAttrName = null;
 		filterByAttrEmptyOption = null;
 		mapId_Object.clear();
-		final ArrayList<EObject> filtered = new ArrayList<EObject>();
+		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (object.eClass().getName().equals(filterByItemName)) {
 				filtered.add(object);
@@ -918,7 +918,7 @@ public class ListTab implements IViewEObjects {
 		filterByAttrEmptyOption = emptyOption;
 		filterByItemName = null;
 		mapId_Object.clear();
-		final ArrayList<EObject> filtered = new ArrayList<EObject>();
+		final ArrayList<EObject> filtered = new ArrayList<>();
 		for (final EObject object : getAllEObjects()) {
 			if (EmfUtil.getAttribute(object, filterByAttrName) != null) {
 				filtered.add(object);

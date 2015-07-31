@@ -27,7 +27,7 @@ import org.eclipse.jface.wizard.WizardPage;
  */
 public class DynamicWizard extends Wizard {
 
-	protected ArrayList<IWizardPage> pages = new ArrayList<IWizardPage>();
+	protected ArrayList<IWizardPage> pages = new ArrayList<>();
 	private String message;
 
 	public DynamicWizard() {

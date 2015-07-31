@@ -106,7 +106,7 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 			}
 		});
 
-		final List<EObject> commands = new ArrayList<EObject>();
+		final List<EObject> commands = new ArrayList<>();
 		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
 		while (it.hasNext()) {
 			final EObject o = it.next();

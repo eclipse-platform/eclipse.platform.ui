@@ -183,7 +183,7 @@ public class ModelImportPage1 extends WizardPage {
 	}
 
 	public IConfigurationElement[] getConfigurationElements() {
-		ArrayList<IConfigurationElement> result = new ArrayList<IConfigurationElement>();
+		ArrayList<IConfigurationElement> result = new ArrayList<>();
 		for (Object element : checkedElements) {
 			if (element instanceof IConfigurationElement) {
 				result.add((IConfigurationElement) element);

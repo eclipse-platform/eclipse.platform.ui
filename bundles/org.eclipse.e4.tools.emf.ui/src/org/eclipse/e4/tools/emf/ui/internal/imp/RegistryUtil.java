@@ -106,7 +106,7 @@ public class RegistryUtil {
 
 	private static MCommand[] getCommands(IConfigurationElement[] elements, MApplication application) {
 
-		final ArrayList<MCommand> result = new ArrayList<MCommand>();
+		final ArrayList<MCommand> result = new ArrayList<>();
 
 		final MCommandsFactory commandsFactory = MCommandsFactory.INSTANCE;
 
@@ -136,7 +136,7 @@ public class RegistryUtil {
 
 	private static MPerspective[] getPerspectives(IConfigurationElement[] elements) {
 
-		final ArrayList<MPerspective> result = new ArrayList<MPerspective>();
+		final ArrayList<MPerspective> result = new ArrayList<>();
 
 		final MAdvancedFactory factory = MAdvancedFactory.INSTANCE;
 
@@ -155,7 +155,7 @@ public class RegistryUtil {
 
 	private static MCategory[] getCategories(IConfigurationElement[] elements) {
 
-		final ArrayList<MCategory> result = new ArrayList<MCategory>();
+		final ArrayList<MCategory> result = new ArrayList<>();
 
 		final MCommandsFactory commandsFactory = MCommandsFactory.INSTANCE;
 
@@ -174,7 +174,7 @@ public class RegistryUtil {
 
 	private static MPart[] getViews(IConfigurationElement[] elements) {
 
-		final ArrayList<MPart> result = new ArrayList<MPart>();
+		final ArrayList<MPart> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MPart part = (MPart) EcoreUtil.create(BasicPackageImpl.Literals.PART);
 			part.setElementId(element.getAttribute(ID));
@@ -210,7 +210,7 @@ public class RegistryUtil {
 	}
 
 	private static MPart[] getViewsAsCompatibilityViews(IConfigurationElement[] elements) {
-		final ArrayList<MPart> result = new ArrayList<MPart>();
+		final ArrayList<MPart> result = new ArrayList<>();
 		final MPart[] parts = getViews(elements);
 		for (final MPart part : parts) {
 			part.setContributionURI(COMPATIBILITY_VIEW);
@@ -220,7 +220,7 @@ public class RegistryUtil {
 	}
 
 	private static MPartDescriptor[] getPartDescriptorsAsCompatibilyViews(IConfigurationElement[] elements) {
-		final ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		final ArrayList<MPartDescriptor> result = new ArrayList<>();
 		final MPartDescriptor[] parts = getViewPartDescriptors(elements);
 		for (final MPartDescriptor part : parts) {
 			part.setContributionURI(COMPATIBILITY_VIEW);
@@ -231,7 +231,7 @@ public class RegistryUtil {
 
 	private static MPart[] getEditors(IConfigurationElement[] elements) {
 
-		final ArrayList<MPart> result = new ArrayList<MPart>();
+		final ArrayList<MPart> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			if ("editor".equals(element.getName())) /* Sanity Check */{ //$NON-NLS-1$
 				final MPart part = (MPart) EcoreUtil.create(BasicPackageImpl.Literals.PART);
@@ -257,7 +257,7 @@ public class RegistryUtil {
 
 	private static MPartDescriptor[] getEditorPartDescriptors(IConfigurationElement[] elements) {
 
-		final ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		final ArrayList<MPartDescriptor> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MPartDescriptor part = (MPartDescriptor) EcoreUtil
 				.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
@@ -290,7 +290,7 @@ public class RegistryUtil {
 
 	private static MPartDescriptor[] getViewPartDescriptors(IConfigurationElement[] elements) {
 
-		final ArrayList<MPartDescriptor> result = new ArrayList<MPartDescriptor>();
+		final ArrayList<MPartDescriptor> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MPartDescriptor part = (MPartDescriptor) EcoreUtil
 				.create(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.Literals.PART_DESCRIPTOR);
@@ -316,7 +316,7 @@ public class RegistryUtil {
 
 	private static MHandler[] getHandlers(IConfigurationElement[] elements, MApplication application) {
 
-		final ArrayList<MHandler> result = new ArrayList<MHandler>();
+		final ArrayList<MHandler> result = new ArrayList<>();
 		for (final IConfigurationElement element : elements) {
 			final MHandler hand = MCommandsFactory.INSTANCE.createHandler();
 			hand.setElementId(element.getAttribute(ID));
@@ -369,7 +369,7 @@ public class RegistryUtil {
 			return new String[] { "No " + IExtensionLookup.class.getName() + " service found." }; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		final ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<>();
 
 		final IExtension[] extensions = service.findExtensions(extensionPoint, isLive);
 		for (final IExtension extension : extensions) {
@@ -401,7 +401,7 @@ public class RegistryUtil {
 			return new IConfigurationElement[0];
 		}
 
-		final ArrayList<IConfigurationElement> result = new ArrayList<IConfigurationElement>();
+		final ArrayList<IConfigurationElement> result = new ArrayList<>();
 
 		final IExtension[] extensions = service.findExtensions(struct.getExtensionPoint(), isLive);
 		for (final IExtension extension : extensions) {

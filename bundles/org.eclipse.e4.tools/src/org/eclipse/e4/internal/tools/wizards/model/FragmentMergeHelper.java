@@ -41,7 +41,7 @@ public class FragmentMergeHelper {
 	 */
 	public static void merge(MModelFragments sourceFragments, MModelFragments targetFragments) {
 		targetFragments.getFragments().addAll(sourceFragments.getFragments());
-		final List<MApplicationElement> sourceImports = new ArrayList<MApplicationElement>();
+		final List<MApplicationElement> sourceImports = new ArrayList<>();
 
 		consolidateImports(targetFragments);
 

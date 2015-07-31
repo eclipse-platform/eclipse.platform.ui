@@ -60,7 +60,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 	private final IListProperty BINDING_CONTEXT__CHILDREN = EMFProperties
 			.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	@Inject
 	public BindingContextEditor() {
@@ -234,7 +234,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

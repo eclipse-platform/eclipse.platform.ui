@@ -448,7 +448,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final List<Action> actions = new ArrayList<Action>();
+		final List<Action> actions = new ArrayList<>();
 
 		final MWindow window = (MWindow) element;
 		if (window.getMainMenu() == null) {

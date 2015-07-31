@@ -131,7 +131,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 		eClassViewer.setContentProvider(new ArrayContentProvider());
-		final List<EClass> eClassList = new ArrayList<EClass>();
+		final List<EClass> eClassList = new ArrayList<>();
 		for (final InternalPackage p : Util.loadPackages()) {
 			eClassList.addAll(p.getAllClasses());
 		}
@@ -154,7 +154,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 
-		final ArrayList<String> vals = new ArrayList<String>();
+		final ArrayList<String> vals = new ArrayList<>();
 		for (final EClass item : eClassList) {
 			vals.add(item.getName());
 		}

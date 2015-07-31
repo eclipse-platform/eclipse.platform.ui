@@ -52,7 +52,7 @@ public final class WorkbenchLogger extends Logger {
 	 */
 	private static FrameworkLogEntry getLog(IStatus status) {
 		final Throwable t = status.getException();
-		final ArrayList<FrameworkLogEntry> childlist = new ArrayList<FrameworkLogEntry>();
+		final ArrayList<FrameworkLogEntry> childlist = new ArrayList<>();
 
 		final int stackCode = t instanceof CoreException ? 1 : 0;
 		// ensure a substatus inside a CoreException is properly logged

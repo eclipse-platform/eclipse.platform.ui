@@ -46,7 +46,7 @@ public class ToolsServicesActivator implements BundleActivator {
 			if (bundleContext == null) {
 				return null;
 			}
-			pkgAdminTracker = new ServiceTracker<PackageAdmin, PackageAdmin>(bundleContext,
+			pkgAdminTracker = new ServiceTracker<>(bundleContext,
 				PackageAdmin.class, null);
 			pkgAdminTracker.open();
 		}
@@ -58,7 +58,7 @@ public class ToolsServicesActivator implements BundleActivator {
 			if (bundleContext == null) {
 				return null;
 			}
-			logTracker = new ServiceTracker<LogService, LogService>(bundleContext,
+			logTracker = new ServiceTracker<>(bundleContext,
 				LogService.class, null);
 			logTracker.open();
 		}

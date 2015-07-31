@@ -59,7 +59,7 @@ public class MenuIdDialog extends AbstractIdDialog<MMenuContribution, MMenu> {
 	@Override
 	protected List<MMenu> getViewerInput() {
 
-		List<MMenu> result = new ArrayList<MMenu>();
+		List<MMenu> result = new ArrayList<>();
 
 		if (resource.getRoot().get(0) instanceof MApplication) {
 			// include Window main-menu instances

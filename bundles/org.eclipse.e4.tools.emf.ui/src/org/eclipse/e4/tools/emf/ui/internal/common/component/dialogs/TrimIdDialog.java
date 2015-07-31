@@ -55,7 +55,7 @@ public class TrimIdDialog extends AbstractIdDialog<MTrimContribution, MTrimBar> 
 
 	@Override
 	protected List<MTrimBar> getViewerInput() {
-		List<MTrimBar> result = new ArrayList<MTrimBar>();
+		List<MTrimBar> result = new ArrayList<>();
 
 		if (resource.getRoot().get(0) instanceof MApplication) {
 

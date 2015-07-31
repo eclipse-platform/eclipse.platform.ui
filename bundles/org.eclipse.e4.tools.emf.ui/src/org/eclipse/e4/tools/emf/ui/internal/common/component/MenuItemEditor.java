@@ -302,7 +302,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 					return super.getText(element);
 				}
 			});
-			final List<Object> list = new ArrayList<Object>();
+			final List<Object> list = new ArrayList<>();
 			list.add(Messages.MenuItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
 			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION,
@@ -382,7 +382,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
 			l.add(addExpression);
 		}

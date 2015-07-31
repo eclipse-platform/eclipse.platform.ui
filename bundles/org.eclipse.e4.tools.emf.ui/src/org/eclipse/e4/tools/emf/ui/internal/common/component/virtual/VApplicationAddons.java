@@ -47,7 +47,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
 
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	@Inject
 	public VApplicationAddons() {
@@ -145,7 +145,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}

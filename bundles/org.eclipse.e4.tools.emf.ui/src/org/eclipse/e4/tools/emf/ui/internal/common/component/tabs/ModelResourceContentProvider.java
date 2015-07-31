@@ -73,7 +73,7 @@ public class ModelResourceContentProvider implements IStructuredContentProvider 
 
 	@Override
 	public void inputChanged(final Viewer viewer, Object oldInput, Object newInput) {
-		ArrayList<EObject> list = new ArrayList<EObject>();
+		ArrayList<EObject> list = new ArrayList<>();
 		IModelResource modelProvider = (IModelResource) newInput;
 		if (newInput != oldInput && newInput != null) {
 			// ((EObject)

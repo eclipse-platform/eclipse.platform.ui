@@ -31,11 +31,11 @@ public class RefactorModel {
 
 	int fIndex = 0;
 	IProject fNewProject;
-	List<String> fNewTexts = new ArrayList<String>();
+	List<String> fNewTexts = new ArrayList<>();
 
 	IProject fOldProject;
 
-	List<String> fOldTexts = new ArrayList<String>();
+	List<String> fOldTexts = new ArrayList<>();
 
 	private RefactoringParticipant fParticipant;
 

@@ -72,7 +72,7 @@ public class FragmentExtractHelper {
 	 */
 	public static MModelFragments createInitialModel(List<MApplicationElement> extractedElements) {
 		final MModelFragments mModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
-		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<>();
 		for (final MApplicationElement moe : extractedElements) {
 			final EObject eObject = (EObject) moe;
 			final TreeIterator<EObject> eAllContents = eObject.eAllContents();

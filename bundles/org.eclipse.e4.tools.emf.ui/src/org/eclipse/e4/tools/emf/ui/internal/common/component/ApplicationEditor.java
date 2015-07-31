@@ -119,7 +119,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	@Optional
 	private IProject project;
 
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	@Inject
 	public ApplicationEditor() {
@@ -657,7 +657,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				menuViewer.setLabelProvider(new HiearchyLabelProvider());
 				menuViewer.setContentProvider(new ArrayContentProvider());
 
-				final List<MMenu> menuList = new ArrayList<MMenu>();
+				final List<MMenu> menuList = new ArrayList<>();
 				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
 				while (it.hasNext()) {
 					final EObject o = it.next();
@@ -747,7 +747,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				toolbarViewer.setLabelProvider(new HiearchyLabelProvider());
 				toolbarViewer.setContentProvider(new ArrayContentProvider());
 
-				final List<MToolBar> toolbarList = new ArrayList<MToolBar>();
+				final List<MToolBar> toolbarList = new ArrayList<>();
 				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
 				while (it.hasNext()) {
 					final EObject o = it.next();
@@ -796,7 +796,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				img = elementEditor.getImage(o);
 			}
 
-			final List<String> parentPath = new ArrayList<String>();
+			final List<String> parentPath = new ArrayList<>();
 			while (o.eContainer() != null) {
 				o = o.eContainer();
 				elementEditor = getEditor().getEditor(o.eClass());

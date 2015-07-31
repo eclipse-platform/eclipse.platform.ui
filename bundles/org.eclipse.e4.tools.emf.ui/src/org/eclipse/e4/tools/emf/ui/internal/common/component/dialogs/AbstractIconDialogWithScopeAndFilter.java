@@ -398,7 +398,7 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 				projects = Arrays.asList(filter.project.getWorkspace().getRoot().getProjects());
 			} else if (filter.getSearchScope().contains(ResourceSearchScope.PROJECT)) {
 				if (filter.getSearchScope().contains(ResourceSearchScope.REFERENCES)) {
-					projects = new ArrayList<IProject>();
+					projects = new ArrayList<>();
 					projects.add(filter.project);
 					try {
 						for (final IProject ref : filter.project.getReferencedProjects()) {

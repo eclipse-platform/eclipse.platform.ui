@@ -49,7 +49,7 @@ public class BundleImageCache {
 		this.display = display;
 		this.classloader = classloader;
 		this.context = context;
-		images = new ArrayList<Image>();
+		images = new ArrayList<>();
 	}
 
 	/**

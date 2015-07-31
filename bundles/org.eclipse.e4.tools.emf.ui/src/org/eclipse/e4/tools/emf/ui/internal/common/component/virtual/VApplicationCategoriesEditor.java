@@ -49,8 +49,8 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
 
-	private final List<Action> actions = new ArrayList<Action>();
-	private final List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
+	private final List<Action> actionsImport = new ArrayList<>();
 
 	@Inject
 	public VApplicationCategoriesEditor() {
@@ -165,14 +165,14 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actionsImport);
 		return l;
 	}

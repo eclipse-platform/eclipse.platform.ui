@@ -55,8 +55,8 @@ public class ParameterIdSelectionDialog extends AbstractIdDialog<MParameter, MCo
 
 	/** The parameter, which {@link MParameter#getName() name} feature has to be modified. */
 	protected MParameter parameter;
-	protected Set<EStructuralFeature> parametersFeatures = new HashSet<EStructuralFeature>();
-	protected Set<EStructuralFeature> commandsFeatures = new HashSet<EStructuralFeature>();
+	protected Set<EStructuralFeature> parametersFeatures = new HashSet<>();
+	protected Set<EStructuralFeature> commandsFeatures = new HashSet<>();
 
 	@Inject
 	public ParameterIdSelectionDialog(Shell parentShell, IModelResource resource, MParameter parameter,

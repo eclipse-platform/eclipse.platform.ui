@@ -83,8 +83,8 @@ public class CompositePartEditor extends AbstractComponentEditor {
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
 			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
-	private final List<Action> actions = new ArrayList<Action>();
-	private final List<Action> actionsImport = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
+	private final List<Action> actionsImport = new ArrayList<>();
 
 	@Inject
 	@Optional
@@ -329,7 +329,7 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			childrenDropDown.setLabelProvider(new FeatureClassLabelProvider(getEditor()));
 			childrenDropDown.setContentProvider(ArrayContentProvider.getInstance());
 
-			final List<FeatureClass> eClassList = new ArrayList<FeatureClass>();
+			final List<FeatureClass> eClassList = new ArrayList<>();
 			eClassList.add(new FeatureClass("PartSashContainer", BasicPackageImpl.Literals.PART_SASH_CONTAINER)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("PartStack", BasicPackageImpl.Literals.PART_STACK)); //$NON-NLS-1$
 			eClassList.add(new FeatureClass("Part", BasicPackageImpl.Literals.PART)); //$NON-NLS-1$
@@ -532,14 +532,14 @@ public class CompositePartEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		return l;
 	}
 
 	@Override
 	public List<Action> getActionsImport(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActionsImport(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActionsImport(element));
 		l.addAll(actionsImport);
 		return l;
 	}

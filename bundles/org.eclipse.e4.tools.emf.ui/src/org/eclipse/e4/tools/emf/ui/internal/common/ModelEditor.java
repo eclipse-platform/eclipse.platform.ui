@@ -278,12 +278,12 @@ public class ModelEditor implements IGotoObject {
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
 
-	private final Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
-	private final Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
-	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<Class<?>, List<AbstractElementEditorContribution>>();
-	private final List<FeaturePath> labelFeaturePaths = new ArrayList<FeaturePath>();
-	private final List<IEditorFeature> editorFeatures = new ArrayList<IEditorFeature>();
-	private final List<IContributionClassCreator> contributionCreator = new ArrayList<IContributionClassCreator>();
+	private final Map<EClass, AbstractComponentEditor> editorMap = new HashMap<>();
+	private final Map<String, AbstractComponentEditor> virtualEditors = new HashMap<>();
+	private final Map<Class<?>, List<AbstractElementEditorContribution>> tabContributions = new HashMap<>();
+	private final List<FeaturePath> labelFeaturePaths = new ArrayList<>();
+	private final List<IEditorFeature> editorFeatures = new ArrayList<>();
+	private final List<IContributionClassCreator> contributionCreator = new ArrayList<>();
 
 	private TreeViewer viewer;
 	private final IModelResource modelProvider;
@@ -506,7 +506,7 @@ public class ModelEditor implements IGotoObject {
 			MApplicationElement m = findModelElement(control);
 			final MApplicationElement o = m;
 			if (m != null) {
-				final List<MApplicationElement> l = new ArrayList<MApplicationElement>();
+				final List<MApplicationElement> l = new ArrayList<>();
 				do {
 					l.add(m);
 					m = (MApplicationElement) ((EObject) m).eContainer();
@@ -582,7 +582,7 @@ public class ModelEditor implements IGotoObject {
 			@Override
 			public void keyReleased(final KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
-					final List<EObject> list = new ArrayList<EObject>();
+					final List<EObject> list = new ArrayList<>();
 					final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 					for (final Object o : ((StructuredSelection) selection).toList()) {
 						if (o instanceof EObject) {
@@ -706,9 +706,9 @@ public class ModelEditor implements IGotoObject {
 
 						// Build Add Child menu
 						if (editor != null) {
-							actions = new ArrayList<Action>(editor.getActions(s.getFirstElement()));
+							actions = new ArrayList<>(editor.getActions(s.getFirstElement()));
 						} else {
-							actions = new ArrayList<Action>();
+							actions = new ArrayList<>();
 						}
 
 						if (actions.size() > 0) {
@@ -722,9 +722,9 @@ public class ModelEditor implements IGotoObject {
 
 						// Build import menu
 						if (editor != null) {
-							actions = new ArrayList<Action>(editor.getActionsImport(s.getFirstElement()));
+							actions = new ArrayList<>(editor.getActionsImport(s.getFirstElement()));
 						} else {
-							actions = new ArrayList<Action>();
+							actions = new ArrayList<>();
 						}
 
 						if (actions.size() > 0) {
@@ -759,7 +759,7 @@ public class ModelEditor implements IGotoObject {
 								.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
 							@Override
 							public void run() {
-								final ArrayList<MApplicationElement> maes = new ArrayList<MApplicationElement>();
+								final ArrayList<MApplicationElement> maes = new ArrayList<>();
 								for (final Object objSelect : listOfSelections) {
 									EObject container = null;
 									if (objSelect instanceof VirtualEntry<?>) {
@@ -1064,7 +1064,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	public List<FeatureClass> getFeatureClasses(EClass eClass, EStructuralFeature feature) {
-		final List<FeatureClass> list = new ArrayList<IEditorFeature.FeatureClass>();
+		final List<FeatureClass> list = new ArrayList<>();
 
 		for (final IEditorFeature f : editorFeatures) {
 			list.addAll(f.getFeatureClasses(eClass, feature));
@@ -1284,7 +1284,7 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	public List<AbstractElementEditorContribution> getTabContributionsForClass(Class<?> clazz) {
-		final List<AbstractElementEditorContribution> ret = new ArrayList<AbstractElementEditorContribution>();
+		final List<AbstractElementEditorContribution> ret = new ArrayList<>();
 		for (final Class<?> clasz : tabContributions.keySet()) {
 			if (clasz.isAssignableFrom(clazz)) {
 				ret.addAll(tabContributions.get(clasz));

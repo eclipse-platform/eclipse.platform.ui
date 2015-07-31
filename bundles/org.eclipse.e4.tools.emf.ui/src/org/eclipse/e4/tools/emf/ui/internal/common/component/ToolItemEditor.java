@@ -311,7 +311,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 					return super.getText(element);
 				}
 			});
-			final List<Object> list = new ArrayList<Object>();
+			final List<Object> list = new ArrayList<>();
 			list.add(Messages.ToolItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
 			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));

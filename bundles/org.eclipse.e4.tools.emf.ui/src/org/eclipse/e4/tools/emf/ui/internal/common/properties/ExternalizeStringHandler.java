@@ -148,12 +148,12 @@ public class ExternalizeStringHandler {
 				});
 			}
 
-			List<Entry> entries = new ArrayList<ExternalizeStringHandler.Entry>();
+			List<Entry> entries = new ArrayList<>();
 			TreeIterator<EObject> it = EcoreUtil.getAllContents(list);
 
-			List<String> ids = new ArrayList<String>();
+			List<String> ids = new ArrayList<>();
 
-			List<EStructuralFeature> translatedFeatures = new ArrayList<EStructuralFeature>();
+			List<EStructuralFeature> translatedFeatures = new ArrayList<>();
 			translatedFeatures.add(UiPackageImpl.Literals.UI_LABEL__LABEL);
 			translatedFeatures.add(UiPackageImpl.Literals.UI_LABEL__TOOLTIP);
 			translatedFeatures.add(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME);

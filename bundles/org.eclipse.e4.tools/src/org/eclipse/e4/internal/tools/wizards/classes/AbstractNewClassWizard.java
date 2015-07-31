@@ -169,8 +169,8 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 			final IRequiredBundleDescription[] arTmp = description.getRequiredBundles();
 			final IPackageImportDescription[] currentImportPacks = description.getPackageImports();
 			final Set<String> requiredImportPacks = getImportedPackages();
-			final List<IRequiredBundleDescription> descs = new ArrayList<IRequiredBundleDescription>();
-			final List<IPackageImportDescription> imDescs = new ArrayList<IPackageImportDescription>();
+			final List<IRequiredBundleDescription> descs = new ArrayList<>();
+			final List<IPackageImportDescription> imDescs = new ArrayList<>();
 
 			if (arTmp != null) {
 				descs.addAll(Arrays.asList(arTmp));
@@ -235,13 +235,13 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	// }
 
 	protected Set<String> getRequiredBundles() {
-		final Set<String> rv = new HashSet<String>();
+		final Set<String> rv = new HashSet<>();
 		//		rv.add("javax.inject"); //$NON-NLS-1$
 		return rv;
 	}
 
 	protected Set<String> getImportedPackages() {
-		final Set<String> rv = new HashSet<String>();
+		final Set<String> rv = new HashSet<>();
 		rv.add("javax.inject;version=\"1.0.0\""); //$NON-NLS-1$
 		return rv;
 	}

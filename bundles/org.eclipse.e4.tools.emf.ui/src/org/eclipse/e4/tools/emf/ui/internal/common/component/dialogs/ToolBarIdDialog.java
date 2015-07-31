@@ -57,7 +57,7 @@ public class ToolBarIdDialog extends AbstractIdDialog<MToolBarContribution, MToo
 
 	@Override
 	protected List<MToolBar> getViewerInput() {
-		List<MToolBar> result = new ArrayList<MToolBar>();
+		List<MToolBar> result = new ArrayList<>();
 		if (resource.getRoot().get(0) instanceof MApplication) {
 
 			MApplication ma = ((MApplication) resource.getRoot().get(0));

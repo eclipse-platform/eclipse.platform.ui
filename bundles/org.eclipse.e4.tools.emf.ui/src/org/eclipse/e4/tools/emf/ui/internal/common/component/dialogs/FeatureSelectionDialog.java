@@ -406,7 +406,7 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		 * @return an array of words
 		 */
 		private String[] getWords(String text) {
-			final List<String> words = new ArrayList<String>();
+			final List<String> words = new ArrayList<>();
 			// Break the text up into words, separating based on whitespace and
 			// common punctuation.
 			// Previously used String.split(..., "\\W"), where "\W" is a regular

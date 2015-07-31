@@ -145,7 +145,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 
 						// Save the contents of the resource to the file system.
 						//
-						final Map<Object, Object> options = new HashMap<Object, Object>();
+						final Map<Object, Object> options = new HashMap<>();
 						resource.save(options);
 						adjustBuildPropertiesFile(modelFile);
 						adjustDependencies(modelFile);

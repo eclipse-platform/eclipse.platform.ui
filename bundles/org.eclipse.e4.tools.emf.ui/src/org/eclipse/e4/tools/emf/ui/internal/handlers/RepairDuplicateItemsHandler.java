@@ -50,7 +50,7 @@ public class RepairDuplicateItemsHandler extends MarkDuplicateItemsBase {
 			Entry<String, List<EObject>> entry = it.next();
 			List<EObject> listDups = entry.getValue();
 			if (listDups.size() > 1) {
-				ArrayList<EObject> toFix = new ArrayList<EObject>(listDups.subList(1, listDups.size()));
+				ArrayList<EObject> toFix = new ArrayList<>(listDups.subList(1, listDups.size()));
 				Iterator<EObject> itToFix = toFix.iterator();
 				while (itToFix.hasNext()) {
 					EObject eObject = itToFix.next();
@@ -81,7 +81,7 @@ public class RepairDuplicateItemsHandler extends MarkDuplicateItemsBase {
 					// Note: If the compound command cannot execute, we
 					// must revert these changes
 					listDups.remove(eObject);
-					List<EObject> newList = new ArrayList<EObject>();
+					List<EObject> newList = new ArrayList<>();
 					newList.add(eObject);
 					map.put(value, newList);
 					// Note: end

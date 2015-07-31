@@ -56,7 +56,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 							return SetCommand.UNSET_VALUE;
 						}
 						if (eAttribute.isMany()) {
-							final List<Object> result = new ArrayList<Object>();
+							final List<Object> result = new ArrayList<>();
 
 							for (final String element : value.split(" ")) { //$NON-NLS-1$
 								result.add(eFactory.createFromString(eDataType, element));

@@ -103,7 +103,7 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 			}
 		});
 
-		final List<EObject> categories = new ArrayList<EObject>();
+		final List<EObject> categories = new ArrayList<>();
 		final TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
 		while (it.hasNext()) {
 			final EObject o = it.next();

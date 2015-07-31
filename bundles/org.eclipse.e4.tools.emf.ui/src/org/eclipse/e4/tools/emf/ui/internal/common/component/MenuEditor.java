@@ -100,7 +100,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	private final IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties
 			.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 	private StackLayout stackLayout;
-	private final List<Action> actions = new ArrayList<Action>();
+	private final List<Action> actions = new ArrayList<>();
 
 	@Inject
 	@Optional
@@ -335,7 +335,7 @@ public class MenuEditor extends AbstractComponentEditor {
 					return super.getText(element);
 				}
 			});
-			final List<Object> list = new ArrayList<Object>();
+			final List<Object> list = new ArrayList<>();
 			list.add(Messages.MenuItemEditor_NoExpression);
 			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
 			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION,
@@ -489,7 +489,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 	@Override
 	public List<Action> getActions(Object element) {
-		final ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
 		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
 			l.add(addExpression);

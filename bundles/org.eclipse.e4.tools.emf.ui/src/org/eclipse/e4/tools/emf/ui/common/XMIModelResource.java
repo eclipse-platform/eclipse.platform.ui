@@ -45,7 +45,7 @@ import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 public class XMIModelResource implements IModelResource {
 	private final EditingDomain editingDomain;
 	private final Resource resource;
-	private final List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
+	private final List<ModelListener> listeners = new ArrayList<>();
 
 	private IObservableList list;
 
@@ -84,7 +84,7 @@ public class XMIModelResource implements IModelResource {
 	@Override
 	public void replaceRoot(EObject eObject) {
 		E4XMIResource resource = (E4XMIResource) eObject.eResource();
-		final Map<EObject, String> idMap = new HashMap<EObject, String>();
+		final Map<EObject, String> idMap = new HashMap<>();
 		idMap.put(eObject, resource.getID(eObject));
 
 		final TreeIterator<EObject> it = EcoreUtil.getAllContents(eObject, true);
@@ -145,7 +145,7 @@ public class XMIModelResource implements IModelResource {
 
 	@Override
 	public IStatus save() {
-		final Map<String, String> map = new HashMap<String, String>();
+		final Map<String, String> map = new HashMap<>();
 		try {
 			resource.save(map);
 
