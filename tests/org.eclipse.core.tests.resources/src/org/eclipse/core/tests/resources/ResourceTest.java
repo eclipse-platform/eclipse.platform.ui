@@ -22,15 +22,13 @@ import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.CoreTest;
+import org.eclipse.core.tests.harness.FileSystemHelper;
 
 /**
  * Superclass for tests that use the Eclipse Platform workspace.
  */
 public abstract class ResourceTest extends CoreTest {
-	/** delta change listener if requested */
-	public static IResourceChangeListener deltaListener;
-
 	//nature that installs and runs a builder (regression test for bug 29116)
 	protected static final String NATURE_29116 = "org.eclipse.core.tests.resources.nature29116";
 
@@ -966,10 +964,6 @@ public abstract class ResourceTest extends CoreTest {
 	@Override
 	protected void setUp() throws Exception {
 		assertNotNull("Workspace was not setup", getWorkspace());
-		if (EclipseTestHarnessApplication.deltasEnabled() && deltaListener == null) {
-			deltaListener = new DeltaDebugListener();
-			getWorkspace().addResourceChangeListener(deltaListener);
-		}
 	}
 
 	@Override
