@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -38,7 +39,7 @@ public class ValueChangeEvent<T> extends ObservableEvent {
 	 * Description of the change to the source observable value. Listeners must
 	 * not change this field.
 	 */
-	public ValueDiff<? extends T> diff;
+	public ValueDiff<T> diff;
 
 	/**
 	 * Creates a new value change event.
@@ -48,7 +49,7 @@ public class ValueChangeEvent<T> extends ObservableEvent {
 	 * @param diff
 	 *            the value change
 	 */
-	public ValueChangeEvent(IObservableValue<T> source, ValueDiff<? extends T> diff) {
+	public ValueChangeEvent(IObservableValue<T> source, ValueDiff<T> diff) {
 		super(source);
 		this.diff = diff;
 	}

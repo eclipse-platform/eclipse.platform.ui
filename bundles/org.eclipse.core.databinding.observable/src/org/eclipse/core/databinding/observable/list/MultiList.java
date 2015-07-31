@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 222289)
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -244,7 +245,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 				"MultiList received a ListChangeEvent from an observable list that is not one of its sources."); //$NON-NLS-1$
 	}
 
-	private ListDiff<? extends E> offsetListDiff(int offset, ListDiff<? extends E> diff) {
+	private ListDiff<E> offsetListDiff(int offset, ListDiff<? extends E> diff) {
 		List<ListDiffEntry<E>> differences = offsetListDiffEntries(offset, diff.getDifferences());
 		return Diffs.createListDiff(differences);
 	}

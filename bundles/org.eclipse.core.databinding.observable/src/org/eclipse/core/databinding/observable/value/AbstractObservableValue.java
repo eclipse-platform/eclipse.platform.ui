@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Matthew Hall - bugs 208332, 263691
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -75,7 +76,7 @@ abstract public class AbstractObservableValue<T> extends AbstractObservable
 		throw new UnsupportedOperationException();
 	}
 
-	protected void fireValueChange(ValueDiff<? extends T> diff) {
+	protected void fireValueChange(ValueDiff<T> diff) {
 		// fire general change event first
 		super.fireChange();
 		fireEvent(new ValueChangeEvent<>(this, diff));

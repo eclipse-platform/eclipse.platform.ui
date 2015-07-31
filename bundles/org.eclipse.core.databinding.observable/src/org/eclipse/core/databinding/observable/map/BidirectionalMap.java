@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 233306
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.map;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
@@ -37,7 +39,7 @@ public class BidirectionalMap<K, V> extends ObservableMap<K, V> {
 	private IMapChangeListener<K, V> mapListener = new IMapChangeListener<K, V>() {
 		@Override
 		public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
-			fireMapChange(event.diff);
+			fireMapChange(Diffs.unmodifiableDiff(event.diff));
 		}
 	};
 

@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Matthew Hall - bugs 226289, 274450
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -89,7 +90,7 @@ public class ObservableMap<K, V> extends AbstractObservable implements IObservab
 		ObservableTracker.getterCalled(this);
 	}
 
-	protected void fireMapChange(MapDiff<? extends K, ? extends V> diff) {
+	protected void fireMapChange(MapDiff<K, V> diff) {
 		checkRealm();
 
 		// fire general change event first

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 226216
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -35,6 +36,182 @@ import org.eclipse.core.internal.databinding.observable.Util;
  *
  */
 public class Diffs {
+	private static final class UnmodifiableListDiff<E> extends ListDiff<E> {
+		private ListDiff<? extends E> toWrap;
+
+		public UnmodifiableListDiff(ListDiff<? extends E> diff) {
+			this.toWrap = diff;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public ListDiffEntry<E>[] getDifferences() {
+			ListDiffEntry<? extends E>[] original = toWrap.getDifferences();
+			ListDiffEntry<?>[] result = new ListDiffEntry<?>[original.length];
+
+			for (int idx = 0; idx < original.length; idx++) {
+				result[idx] = original[idx];
+			}
+			return (ListDiffEntry<E>[]) result;
+		}
+	}
+
+	private static final class UnmodifiableSetDiff<E> extends SetDiff<E> {
+		private SetDiff<? extends E> toWrap;
+
+		public UnmodifiableSetDiff(SetDiff<? extends E> diff) {
+			toWrap = diff;
+		}
+
+		@Override
+		public Set<E> getAdditions() {
+			return Collections.unmodifiableSet(toWrap.getAdditions());
+		}
+
+		@Override
+		public Set<E> getRemovals() {
+			return Collections.unmodifiableSet(toWrap.getRemovals());
+		}
+	}
+
+	private static final class UnmodifiableMapDiff<K, V> extends MapDiff<K, V> {
+		private MapDiff<? extends K, ? extends V> toWrap;
+
+		public UnmodifiableMapDiff(MapDiff<? extends K, ? extends V> diff) {
+			toWrap = diff;
+		}
+
+		@Override
+		public Set<K> getAddedKeys() {
+			return Collections.unmodifiableSet(toWrap.getAddedKeys());
+		}
+
+		@Override
+		public Set<K> getRemovedKeys() {
+			return Collections.unmodifiableSet(toWrap.getRemovedKeys());
+		}
+
+		@Override
+		public Set<K> getChangedKeys() {
+			return Collections.unmodifiableSet(toWrap.getChangedKeys());
+		}
+
+		@Override
+		public V getOldValue(Object key) {
+			return toWrap.getOldValue(key);
+		}
+
+		@Override
+		public V getNewValue(Object key) {
+			return toWrap.getNewValue(key);
+		}
+	}
+
+	private static final class UnmodifiableValueDiff<E> extends ValueDiff<E> {
+		private ValueDiff<? extends E> toWrap;
+
+		public UnmodifiableValueDiff(ValueDiff<? extends E> diff) {
+			toWrap = diff;
+		}
+
+		@Override
+		public E getOldValue() {
+			return toWrap.getOldValue();
+		}
+
+		@Override
+		public E getNewValue() {
+			return toWrap.getNewValue();
+		}
+	}
+
+	/**
+	 * Returns an unmodifiable wrapper on top of the given diff. The returned
+	 * diff will suppress any attempt to modify the collections it returns.
+	 * Diffs are normally unmodifiable anyway, so this method is mainly used as
+	 * a type-safe way to convert a {@code ListDiff<? extends E>} into a
+	 * {@code ListDiff<E>}.
+	 *
+	 * @param diff
+	 *            the diff to convert
+	 * @return an unmodifiable wrapper on top of the given diff
+	 * @since 1.6
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> ListDiff<E> unmodifiableDiff(ListDiff<? extends E> diff) {
+		// If the diff is already unmodifiable, there's no need to wrap it again
+		if (diff instanceof UnmodifiableListDiff) {
+			return (ListDiff<E>) diff;
+		}
+
+		return new UnmodifiableListDiff<E>(diff);
+	}
+
+	/**
+	 * Returns an unmodifiable wrapper on top of the given diff. The returned
+	 * diff will suppress any attempt to modify the collections it returns.
+	 * Diffs are normally unmodifiable anyway, so this method is mainly used as
+	 * a type-safe way to convert a {@code SetDiff<? extends E>} into a
+	 * {@code SetDiff<E>}.
+	 *
+	 * @param diff
+	 *            the diff to convert
+	 * @return an unmodifiable wrapper on top of the given diff
+	 * @since 1.6
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> SetDiff<E> unmodifiableDiff(SetDiff<? extends E> diff) {
+		// If the diff is already unmodifiable, there's no need to wrap it again
+		if (diff instanceof UnmodifiableSetDiff) {
+			return (SetDiff<E>) diff;
+		}
+
+		return new UnmodifiableSetDiff<E>(diff);
+	}
+
+	/**
+	 * Returns an unmodifiable wrapper on top of the given diff. The returned
+	 * diff will suppress any attempt to modify the collections it returns.
+	 * Diffs are normally unmodifiable anyway, so this method is mainly used as
+	 * a type-safe way to convert a {@code MapDiff<? extends K, ? extends V>}
+	 * into a {@code MapDiff<K,V>}.
+	 *
+	 * @param diff
+	 *            the diff to convert
+	 * @return an unmodifiable wrapper on top of the given diff
+	 * @since 1.6
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K, V> MapDiff<K, V> unmodifiableDiff(MapDiff<? extends K, ? extends V> diff) {
+		// If the diff is already unmodifiable, there's no need to wrap it again
+		if (diff instanceof UnmodifiableMapDiff) {
+			return (MapDiff<K, V>) diff;
+		}
+
+		return new UnmodifiableMapDiff<K, V>(diff);
+	}
+
+	/**
+	 * Returns an unmodifiable wrapper on top of the given diff. The returned
+	 * diff will suppress any attempt to modify the collections it returns.
+	 * Diffs are normally unmodifiable anyway, so this method is mainly used as
+	 * a type-safe way to convert a {@code ValueDiff<? extends V>} into a
+	 * {@code ValueDiff<V>}.
+	 *
+	 * @param diff
+	 *            the diff to convert
+	 * @return an unmodifiable wrapper on top of the given diff
+	 * @since 1.6
+	 */
+	@SuppressWarnings("unchecked")
+	public static <V> ValueDiff<V> unmodifiableDiff(ValueDiff<? extends V> diff) {
+		// If the diff is already unmodifiable, there's no need to wrap it again
+		if (diff instanceof UnmodifiableValueDiff) {
+			return (ValueDiff<V>) diff;
+		}
+
+		return new UnmodifiableValueDiff<V>(diff);
+	}
 
 	/**
 	 * Returns a {@link ListDiff} describing the change between the specified
@@ -48,6 +225,7 @@ public class Diffs {
 	 * @param newList
 	 *            the new list state
 	 * @return the differences between oldList and newList
+	 * @since 1.6
 	 */
 	public static <E> ListDiff<E> computeListDiff(List<? extends E> oldList, List<? extends E> newList) {
 		List<ListDiffEntry<E>> diffEntries = new ArrayList<>();
@@ -359,17 +537,17 @@ public class Diffs {
 			}
 
 			@Override
-			public Set<? extends K> getAddedKeys() {
+			public Set<K> getAddedKeys() {
 				return getLazyDiff().getAddedKeys();
 			}
 
 			@Override
-			public Set<? extends K> getRemovedKeys() {
+			public Set<K> getRemovedKeys() {
 				return getLazyDiff().getRemovedKeys();
 			}
 
 			@Override
-			public Set<? extends K> getChangedKeys() {
+			public Set<K> getChangedKeys() {
 				return getLazyDiff().getChangedKeys();
 			}
 
@@ -706,19 +884,22 @@ public class Diffs {
 	 * @param newValues
 	 * @return a map diff
 	 */
-	public static <K, V> MapDiff<K, V> createMapDiff(final Set<? extends K> addedKeys,
-			final Set<? extends K> removedKeys, final Set<? extends K> changedKeys,
-			final Map<? extends K, ? extends V> oldValues, final Map<? extends K, ? extends V> newValues) {
-		return new MapDiff<K, V>() {
+	public static <K, V> MapDiff<K, V> createMapDiff(Set<? extends K> addedKeys, Set<? extends K> removedKeys,
+			Set<? extends K> changedKeys, final Map<? extends K, ? extends V> oldValues,
+			final Map<? extends K, ? extends V> newValues) {
+		final Set<K> finalAddedKeys = Collections.unmodifiableSet(addedKeys);
+		final Set<K> finalRemovedKeys = Collections.unmodifiableSet(removedKeys);
+		final Set<K> finalChangedKeys = Collections.unmodifiableSet(changedKeys);
 
+		return new MapDiff<K, V>() {
 			@Override
-			public Set<? extends K> getAddedKeys() {
-				return addedKeys;
+			public Set<K> getAddedKeys() {
+				return finalAddedKeys;
 			}
 
 			@Override
-			public Set<? extends K> getChangedKeys() {
-				return changedKeys;
+			public Set<K> getChangedKeys() {
+				return finalChangedKeys;
 			}
 
 			@Override
@@ -732,8 +913,8 @@ public class Diffs {
 			}
 
 			@Override
-			public Set<? extends K> getRemovedKeys() {
-				return removedKeys;
+			public Set<K> getRemovedKeys() {
+				return finalRemovedKeys;
 			}
 		};
 	}

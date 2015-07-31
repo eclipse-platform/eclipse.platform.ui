@@ -10,6 +10,7 @@
  *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022, 251424
  *     Ovidio Mallo - bug 241318
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -49,7 +50,7 @@ public class DetailObservableSet<M, E> extends ObservableSet<E>implements IObser
 		@Override
 		public void handleSetChange(SetChangeEvent<? extends E> event) {
 			if (!updating) {
-				fireSetChange(event.diff);
+				fireSetChange(Diffs.<E> unmodifiableDiff(event.diff));
 			}
 		}
 	};

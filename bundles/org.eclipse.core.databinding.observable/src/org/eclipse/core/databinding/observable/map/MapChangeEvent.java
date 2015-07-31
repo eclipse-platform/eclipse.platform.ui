@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -38,7 +39,7 @@ public class MapChangeEvent<K, V> extends ObservableEvent {
 	 * Description of the change to the source observable map. Listeners must
 	 * not change this field.
 	 */
-	public MapDiff<? extends K, ? extends V> diff;
+	public MapDiff<K, V> diff;
 
 	/**
 	 * Creates a new map change event
@@ -48,7 +49,7 @@ public class MapChangeEvent<K, V> extends ObservableEvent {
 	 * @param diff
 	 *            the map change
 	 */
-	public MapChangeEvent(IObservableMap<K, V> source, MapDiff<? extends K, ? extends V> diff) {
+	public MapChangeEvent(IObservableMap<K, V> source, MapDiff<K, V> diff) {
 		super(source);
 		this.diff = diff;
 	}

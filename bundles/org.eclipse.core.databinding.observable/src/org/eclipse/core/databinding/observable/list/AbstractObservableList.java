@@ -11,6 +11,7 @@
  *     Matthew Hall - bugs 118516, 208858, 208332, 247367, 146397, 249526,
  *                    349038
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -121,7 +122,7 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 		}
 	}
 
-	protected void fireListChange(ListDiff<? extends E> diff) {
+	protected void fireListChange(ListDiff<E> diff) {
 		// fire general change event first
 		fireChange();
 		changeSupport.fireEvent(new ListChangeEvent<E>(this, diff));

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 251884, 194734, 301774
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -293,17 +294,17 @@ public abstract class MapDiff<K, V> implements IDiff {
 	/**
 	 * @return the set of keys which were added
 	 */
-	public abstract Set<? extends K> getAddedKeys();
+	public abstract Set<K> getAddedKeys();
 
 	/**
 	 * @return the set of keys which were removed
 	 */
-	public abstract Set<? extends K> getRemovedKeys();
+	public abstract Set<K> getRemovedKeys();
 
 	/**
 	 * @return the set of keys for which the value has changed
 	 */
-	public abstract Set<? extends K> getChangedKeys();
+	public abstract Set<K> getChangedKeys();
 
 	/**
 	 * Returns the old value for the given key, which must be an element of

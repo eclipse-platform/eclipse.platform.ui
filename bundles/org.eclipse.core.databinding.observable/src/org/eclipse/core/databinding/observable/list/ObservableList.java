@@ -10,6 +10,7 @@
  *     Brad Reynolds - bugs 164653, 167204
  *     Matthew Hall - bugs 208858, 208332, 274450
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -75,7 +76,7 @@ public abstract class ObservableList<E> extends AbstractObservable implements
 		removeListener(ListChangeEvent.TYPE, listener);
 	}
 
-	protected void fireListChange(ListDiff<? extends E> diff) {
+	protected void fireListChange(ListDiff<E> diff) {
 		// fire general change event first
 		super.fireChange();
 		fireEvent(new ListChangeEvent<E>(this, diff));

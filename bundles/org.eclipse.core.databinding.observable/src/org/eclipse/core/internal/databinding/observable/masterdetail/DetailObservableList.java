@@ -11,6 +11,7 @@
  *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022, 251424
  *     Ovidio Mallo - bug 241318
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -50,7 +51,7 @@ public class DetailObservableList<M, E> extends ObservableList<E>implements IObs
 		@Override
 		public void handleListChange(ListChangeEvent<? extends E> event) {
 			if (!updating) {
-				fireListChange(event.diff);
+				fireListChange(Diffs.unmodifiableDiff(event.diff));
 			}
 		}
 	};

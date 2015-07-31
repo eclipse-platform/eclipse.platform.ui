@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 208332, 194734
  *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 474065
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -73,7 +74,7 @@ public abstract class AbstractObservableSet<E> extends AbstractObservable
 
 	protected abstract Set<E> getWrappedSet();
 
-	protected void fireSetChange(SetDiff<? extends E> diff) {
+	protected void fireSetChange(SetDiff<E> diff) {
 		// fire general change event first
 		super.fireChange();
 
