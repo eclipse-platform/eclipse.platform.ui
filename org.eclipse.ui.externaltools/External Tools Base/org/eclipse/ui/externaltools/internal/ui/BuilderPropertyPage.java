@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -874,8 +874,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			String val = command.getArguments().get(COMMAND_ENABLED);
 			if(val != null) {
 				//null means enabled, see #doPerformOk
-				Boolean enabled = new Boolean(val);
-				return enabled.booleanValue();
+				return Boolean.parseBoolean(val);
 			}
 		} else if (element instanceof ILaunchConfiguration) {
 			try {
@@ -996,8 +995,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				Map<String, String> args = command.getArguments();
 				String val = args.get(COMMAND_ENABLED);
 				if(val != null) {
-					Boolean enabled = new Boolean(val);
-					if (!enabled.booleanValue()) {
+					if (!Boolean.parseBoolean(val)) {
 						ILaunchConfiguration config= disableCommand(command);
 						if (config != null) {
 							data= BuilderUtils.commandFromLaunchConfig(project,config);

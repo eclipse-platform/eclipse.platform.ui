@@ -902,7 +902,7 @@ public class PDAVirtualMachine {
     void debugEventStop(Args args) {
         String event = args.getNextStringArg();
         int stop = args.getNextIntArg();
-        fEventStops.put(event, new Boolean(stop > 0));
+        fEventStops.put(event, Boolean.valueOf(stop > 0));
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
@@ -1051,7 +1051,7 @@ public class PDAVirtualMachine {
         int line = args.getNextIntArg();
         int stopVM = args.getNextIntArg();
 
-        fBreakpoints.put(new Integer(line), new Boolean(stopVM != 0));
+        fBreakpoints.put(new Integer(line), Boolean.valueOf(stopVM != 0));
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 

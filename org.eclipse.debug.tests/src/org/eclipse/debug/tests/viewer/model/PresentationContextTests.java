@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Wind River Systems and others.
+ * Copyright (c) 2008, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class PresentationContextTests extends TestCase {
 		PresentationContext context = new PresentationContext("test"); //$NON-NLS-1$
 		context.setProperty("string", "string"); //$NON-NLS-1$ //$NON-NLS-2$
 		context.setProperty("integer", new Integer(1)); //$NON-NLS-1$
-		context.setProperty("boolean", new Boolean(true)); //$NON-NLS-1$
+		context.setProperty("boolean", Boolean.TRUE); //$NON-NLS-1$
 		context.setProperty("persistable", ResourcesPlugin.getWorkspace().getRoot().getAdapter(IPersistableElement.class)); //$NON-NLS-1$
 
 		final XMLMemento memento = XMLMemento.createWriteRoot("TEST"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public class PresentationContextTests extends TestCase {
         context.initProperties(memento);
 		assertEquals("Wrong value restored", "string", context.getProperty("string")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong value restored", new Integer(1), context.getProperty("integer")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("Wrong value restored", new Boolean(true), context.getProperty("boolean")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Wrong value restored", Boolean.TRUE, context.getProperty("boolean")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong value restored", ResourcesPlugin.getWorkspace().getRoot(), context.getProperty("persistable")); //$NON-NLS-1$ //$NON-NLS-2$
         context.dispose();
     }
