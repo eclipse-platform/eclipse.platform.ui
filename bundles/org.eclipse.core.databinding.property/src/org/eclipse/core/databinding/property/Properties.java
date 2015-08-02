@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 263868, 264954
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,18 +45,17 @@ public class Properties {
 	 * each property in the given array.
 	 *
 	 * @param domainSet
-	 *            the set of elements whose properties will be observed
 	 * @param properties
-	 *            array of value properties to observe on each element in the
-	 *            domain set.
 	 * @return an array of observable maps where each map observes the
-	 *         corresponding value property of the given domain set.
+	 *         corresponding value property of the given domain set
 	 */
-	public static IObservableMap[] observeEach(IObservableSet domainSet,
-			IValueProperty[] properties) {
-		IObservableMap[] maps = new IObservableMap[properties.length];
-		for (int i = 0; i < maps.length; i++)
+	public static <S, E> IObservableMap<E, ?>[] observeEach(IObservableSet<E> domainSet,
+			IValueProperty<? super E, ?>[] properties) {
+		@SuppressWarnings("unchecked")
+		IObservableMap<E, ?>[] maps = new IObservableMap[properties.length];
+		for (int i = 0; i < maps.length; i++) {
 			maps[i] = properties[i].observeDetail(domainSet);
+		}
 		return maps;
 	}
 
@@ -68,17 +69,19 @@ public class Properties {
 	 *            the map of elements whose properties will be observed
 	 * @param properties
 	 *            array of value properties to observe on each element in the
-	 *            domain map's {@link Map#values() values} collection.
-	 * @return an array of observable maps where each maps observes the
+	 *            domain map's {@link Map#values() values} collection
+	 * @return a list of observable maps where each maps observes the
 	 *         corresponding value property on all elements in the given domain
 	 *         map's {@link Map#values() values} collection, for each property
-	 *         in the given array.
+	 *         in the given array
+	 * @since 1.6
 	 */
-	public static IObservableMap[] observeEach(IObservableMap domainMap,
-			IValueProperty[] properties) {
-		IObservableMap[] maps = new IObservableMap[properties.length];
-		for (int i = 0; i < maps.length; i++)
-			maps[i] = properties[i].observeDetail(domainMap);
+	public static <K, V> List<IObservableMap<K, ?>> observeEach(IObservableMap<K, V> domainMap,
+			List<IValueProperty<? super V, ?>> properties) {
+		List<IObservableMap<K, ?>> maps = new ArrayList<IObservableMap<K, ?>>(properties.size());
+		for (IValueProperty<? super V, ?> property : properties) {
+			maps.add(property.observeDetail(domainMap));
+		}
 		return maps;
 	}
 
@@ -92,8 +95,8 @@ public class Properties {
 	 * @return a value property which takes the source object itself as the
 	 *         property value.
 	 */
-	public static IValueProperty selfValue(Object valueType) {
-		return new SelfValueProperty(valueType);
+	public static <T> IValueProperty<T, T> selfValue(Object valueType) {
+		return new SelfValueProperty<T>(valueType);
 	}
 
 	/**
@@ -106,8 +109,8 @@ public class Properties {
 	 * @return a list property which takes the source object (a {@link List}) as
 	 *         the property list.
 	 */
-	public static IListProperty selfList(Object elementType) {
-		return new SelfListProperty(elementType);
+	public static <E> IListProperty<List<E>, E> selfList(Object elementType) {
+		return new SelfListProperty<E>(elementType);
 	}
 
 	/**
@@ -120,8 +123,8 @@ public class Properties {
 	 * @return a set property which takes the source object (a {@link Set}) as
 	 *         the property set.
 	 */
-	public static ISetProperty selfSet(Object elementType) {
-		return new SelfSetProperty(elementType);
+	public static <E> ISetProperty<Set<E>, E> selfSet(Object elementType) {
+		return new SelfSetProperty<E>(elementType);
 	}
 
 	/**
@@ -136,8 +139,8 @@ public class Properties {
 	 * @return a map property which takes the source object (a {@link Map} as
 	 *         the property map.
 	 */
-	public static IMapProperty selfMap(Object keyType, Object valueType) {
-		return new SelfMapProperty(keyType, valueType);
+	public static <K, V> IMapProperty<Map<K, V>, K, V> selfMap(Object keyType, Object valueType) {
+		return new SelfMapProperty<K, V>(keyType, valueType);
 	}
 
 	/**
@@ -155,7 +158,7 @@ public class Properties {
 	 * @return a value property which observes the value of an
 	 *         {@link IObservableValue}.
 	 */
-	public static IValueProperty observableValue(Object valueType) {
-		return new ObservableValueProperty(valueType);
+	public static <T> IValueProperty<IObservableValue<T>, T> observableValue(Object valueType) {
+		return new ObservableValueProperty<T>(valueType);
 	}
 }

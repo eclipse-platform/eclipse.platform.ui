@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 278550
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
@@ -24,19 +25,26 @@ import org.eclipse.core.databinding.property.set.SetProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <M>
+ *            type of the property of the source object this type being the type
+ *            that has the set as a property
+ * @param <T>
+ *            type of the elements in the set, being the type of the value of
+ *            the detail property
  * @since 3.3
  *
  */
-public class ValuePropertyDetailSet extends SetProperty {
-	private IValueProperty masterProperty;
-	private ISetProperty detailProperty;
+public class ValuePropertyDetailSet<S, M, T> extends SetProperty<S, T> {
+	private IValueProperty<S, M> masterProperty;
+	private ISetProperty<? super M, T> detailProperty;
 
 	/**
 	 * @param masterProperty
 	 * @param detailProperty
 	 */
-	public ValuePropertyDetailSet(IValueProperty masterProperty,
-			ISetProperty detailProperty) {
+	public ValuePropertyDetailSet(IValueProperty<S, M> masterProperty, ISetProperty<? super M, T> detailProperty) {
 		this.masterProperty = masterProperty;
 		this.detailProperty = detailProperty;
 	}
@@ -47,26 +55,26 @@ public class ValuePropertyDetailSet extends SetProperty {
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
-		Object masterValue = masterProperty.getValue(source);
+	protected Set<T> doGetSet(S source) {
+		M masterValue = masterProperty.getValue(source);
 		return detailProperty.getSet(masterValue);
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
-		Object masterValue = masterProperty.getValue(source);
+	protected void doSetSet(S source, Set<T> set) {
+		M masterValue = masterProperty.getValue(source);
 		detailProperty.setSet(masterValue, set);
 	}
 
 	@Override
-	protected void doUpdateSet(Object source, SetDiff diff) {
-		Object masterValue = masterProperty.getValue(source);
+	protected void doUpdateSet(S source, SetDiff<T> diff) {
+		M masterValue = masterProperty.getValue(source);
 		detailProperty.updateSet(masterValue, diff);
 	}
 
 	@Override
-	public IObservableSet observe(Realm realm, Object source) {
-		IObservableValue masterValue;
+	public IObservableSet<T> observe(Realm realm, S source) {
+		IObservableValue<M> masterValue;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -75,14 +83,14 @@ public class ValuePropertyDetailSet extends SetProperty {
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
+		IObservableSet<T> detailSet = detailProperty.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
 		return detailSet;
 	}
 
 	@Override
-	public IObservableSet observeDetail(IObservableValue master) {
-		IObservableValue masterValue;
+	public <U extends S> IObservableSet<T> observeDetail(IObservableValue<U> master) {
+		IObservableValue<M> masterValue;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -91,7 +99,7 @@ public class ValuePropertyDetailSet extends SetProperty {
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
+		IObservableSet<T> detailSet = detailProperty.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
 		return detailSet;
 	}

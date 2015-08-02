@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 265727)
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -24,16 +25,20 @@ import org.eclipse.core.internal.databinding.property.PropertyObservableUtil;
  * A set property for observing the union of multiple set properties a combined
  * set.
  *
+ * @param <S>
+ *            type of the source object
+ * @param <E>
+ *            type of the elements in the set
  * @since 1.2
  */
-public class UnionSetProperty extends SetProperty {
-	private final ISetProperty[] properties;
+public class UnionSetProperty<S, E> extends SetProperty<S, E> {
+	private final ISetProperty<S, E>[] properties;
 	private final Object elementType;
 
 	/**
 	 * @param properties
 	 */
-	public UnionSetProperty(ISetProperty[] properties) {
+	public UnionSetProperty(ISetProperty<S, E>[] properties) {
 		this(properties, null);
 	}
 
@@ -41,7 +46,7 @@ public class UnionSetProperty extends SetProperty {
 	 * @param properties
 	 * @param elementType
 	 */
-	public UnionSetProperty(ISetProperty[] properties, Object elementType) {
+	public UnionSetProperty(ISetProperty<S, E>[] properties, Object elementType) {
 		this.properties = properties;
 		this.elementType = elementType;
 	}
@@ -52,34 +57,34 @@ public class UnionSetProperty extends SetProperty {
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
-		Set set = new HashSet();
+	protected Set<E> doGetSet(S source) {
+		Set<E> set = new HashSet<>();
 		for (int i = 0; i < properties.length; i++)
 			set.addAll(properties[i].getSet(source));
 		return set;
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
-		throw new UnsupportedOperationException(
-				"UnionSetProperty is unmodifiable"); //$NON-NLS-1$
+	protected void doSetSet(S source, Set<E> set) {
+		throw new UnsupportedOperationException("UnionSetProperty is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
-	protected void doUpdateSet(Object source, SetDiff diff) {
-		throw new UnsupportedOperationException(
-				"UnionSetProperty is unmodifiable"); //$NON-NLS-1$
+	protected void doUpdateSet(S source, SetDiff<E> diff) {
+		throw new UnsupportedOperationException("UnionSetProperty is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
-	public IObservableSet observe(Realm realm, Object source) {
-		IObservableSet[] sets = new IObservableSet[properties.length];
-		for (int i = 0; i < sets.length; i++)
-			sets[i] = properties[i].observe(realm, source);
-		IObservableSet unionSet = new UnionSet(sets, elementType);
+	public IObservableSet<E> observe(Realm realm, S source) {
+		Set<IObservableSet<? extends E>> sets = new HashSet<IObservableSet<? extends E>>(properties.length);
+		for (ISetProperty<S, E> property : properties) {
+			sets.add(property.observe(realm, source));
+		}
+		IObservableSet<E> unionSet = new UnionSet<>(sets, elementType);
 
-		for (int i = 0; i < sets.length; i++)
-			PropertyObservableUtil.cascadeDispose(unionSet, sets[i]);
+		for (IObservableSet<? extends E> set : sets) {
+			PropertyObservableUtil.cascadeDispose(unionSet, set);
+		}
 
 		return unionSet;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
  *     Matthew Hall - bug 264306
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -22,12 +23,16 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <E>
+ *            type of the elements in the set
  * @since 1.2
  *
  */
-public abstract class DelegatingSetProperty extends SetProperty {
+public abstract class DelegatingSetProperty<S, E> extends SetProperty<S, E> {
 	private final Object elementType;
-	private final ISetProperty nullProperty = new NullSetProperty();
+	private final ISetProperty<S, E> nullProperty = new NullSetProperty();
 
 	protected DelegatingSetProperty() {
 		this(null);
@@ -46,10 +51,10 @@ public abstract class DelegatingSetProperty extends SetProperty {
 	 *            the property source (may be null)
 	 * @return the property to delegate to for the specified source object.
 	 */
-	protected final ISetProperty getDelegate(Object source) {
+	protected final ISetProperty<S, E> getDelegate(S source) {
 		if (source == null)
 			return nullProperty;
-		ISetProperty delegate = doGetDelegate(source);
+		ISetProperty<S, E> delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;
 		return delegate;
@@ -64,7 +69,7 @@ public abstract class DelegatingSetProperty extends SetProperty {
 	 *            the property source
 	 * @return the property to delegate to for the specified source object.
 	 */
-	protected abstract ISetProperty doGetDelegate(Object source);
+	protected abstract ISetProperty<S, E> doGetDelegate(S source);
 
 	@Override
 	public Object getElementType() {
@@ -72,56 +77,55 @@ public abstract class DelegatingSetProperty extends SetProperty {
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
+	protected Set<E> doGetSet(S source) {
 		return getDelegate(source).getSet(source);
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set) {
+	protected void doSetSet(S source, Set<E> set) {
 		getDelegate(source).setSet(source, set);
 	}
 
 	@Override
-	protected void doUpdateSet(Object source, SetDiff diff) {
+	protected void doUpdateSet(S source, SetDiff<E> diff) {
 		getDelegate(source).updateSet(source, diff);
 	}
 
 	@Override
-	public IObservableSet observe(Object source) {
+	public IObservableSet<E> observe(S source) {
 		return getDelegate(source).observe(source);
 	}
 
 	@Override
-	public IObservableSet observe(Realm realm, Object source) {
+	public IObservableSet<E> observe(Realm realm, S source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
-	private class NullSetProperty extends SimpleSetProperty {
+	private class NullSetProperty extends SimpleSetProperty<S, E> {
 		@Override
 		public Object getElementType() {
 			return elementType;
 		}
 
 		@Override
-		protected Set doGetSet(Object source) {
-			return Collections.EMPTY_SET;
+		protected Set<E> doGetSet(S source) {
+			return Collections.emptySet();
 		}
 
 		@Override
-		protected void doSetSet(Object source, Set set, SetDiff diff) {
+		protected void doSetSet(S source, Set<E> set, SetDiff<E> diff) {
 		}
 
 		@Override
-		protected void doSetSet(Object source, Set set) {
+		protected void doSetSet(S source, Set<E> set) {
 		}
 
 		@Override
-		protected void doUpdateSet(Object source, SetDiff diff) {
+		protected void doUpdateSet(S source, SetDiff<E> diff) {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, SetDiff<E>> listener) {
 			return null;
 		}
 	}

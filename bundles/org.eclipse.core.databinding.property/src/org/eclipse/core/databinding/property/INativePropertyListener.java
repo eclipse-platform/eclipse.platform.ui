@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 265561, 278311
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -23,6 +24,8 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * source objects are parlayed to the {@link ISimplePropertyListener} provided
  * to the method that constructed this native listener instance.
  *
+ * @param <S>
+ *            type of the source object
  * @since 1.2
  * @see NativePropertyListener
  * @see SimpleValueProperty#adaptListener(ISimplePropertyListener)
@@ -30,7 +33,7 @@ import org.eclipse.core.databinding.property.value.SimpleValueProperty;
  * @see SimpleSetProperty#adaptListener(ISimplePropertyListener)
  * @see SimpleMapProperty#adaptListener(ISimplePropertyListener)
  */
-public interface INativePropertyListener {
+public interface INativePropertyListener<S> {
 	/**
 	 * Adds the receiver as a listener for property events on the specified
 	 * property source.
@@ -39,7 +42,7 @@ public interface INativePropertyListener {
 	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public void addTo(Object source);
+	public void addTo(S source);
 
 	/**
 	 * Removes the receiver as a listener for property events on the specified
@@ -49,5 +52,5 @@ public interface INativePropertyListener {
 	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public void removeFrom(Object source);
+	public void removeFrom(S source);
 }
