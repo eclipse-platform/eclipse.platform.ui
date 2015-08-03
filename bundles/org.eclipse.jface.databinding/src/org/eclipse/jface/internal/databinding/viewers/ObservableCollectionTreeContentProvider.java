@@ -217,6 +217,10 @@ public abstract class ObservableCollectionTreeContentProvider implements
 				asyncUpdateRunnable = new Runnable() {
 					@Override
 					public void run() {
+						// If we've been disposed, exit early
+						if (knownElements == null) {
+							return;
+						}
 						asyncUpdatePending = false;
 						if (realizedElements != null) {
 							realizedElements.addAll(knownElements);
