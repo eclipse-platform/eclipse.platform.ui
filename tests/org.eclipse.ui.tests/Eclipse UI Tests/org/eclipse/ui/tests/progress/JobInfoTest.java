@@ -8,19 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin W. Kirst <martin.kirst@s1998.tu-chemnitz.de> - jUnit test for Bug 361121 [Progress] DetailedProgressViewer's comparator violates its general contract
+ *     Red Hat Inc. - Bug 474132
  ******************************************************************************/
 
 package org.eclipse.ui.tests.progress;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.JobInfo;
+import org.junit.Before;
+import org.junit.Test;
 
-public class JobInfoTest extends TestCase {
+public class JobInfoTest {
 
 
 	/**
@@ -42,11 +46,8 @@ public class JobInfoTest extends TestCase {
 
 	private List jobinfos = new ArrayList();
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		int counter = 0;
 		counter = createAndAddJobInfos(false, false, ABOUT_TO_RUN, counter);
 		counter = createAndAddJobInfos(false, true,  ABOUT_TO_RUN, counter);
@@ -79,6 +80,7 @@ public class JobInfoTest extends TestCase {
 	 * Test that {@link org.eclipse.ui.internal.progress.JobInfo#compareTo(Object)}
 	 * is valid implemented and complies to the interface method contract.
 	 */
+	@Test
 	public void testCompareToContractCompliance() {
 		for(int xi = 0; xi<this.jobinfos.size(); xi++) {
 			JobInfo x = (JobInfo) jobinfos.get(xi);
