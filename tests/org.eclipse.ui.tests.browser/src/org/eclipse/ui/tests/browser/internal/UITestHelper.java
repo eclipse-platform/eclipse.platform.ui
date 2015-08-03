@@ -13,11 +13,13 @@ package org.eclipse.ui.tests.browser.internal;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IAdaptable;
-
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
@@ -25,20 +27,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import junit.framework.Assert;
 
 public class UITestHelper {
 	private static class PreferenceDialogWrapper extends PreferenceDialog {
@@ -94,7 +90,7 @@ public class UITestHelper {
 		// fill the manager with contributions from the matching contributors
 		PropertyPageContributorManager.getManager().contribute(manager, element);
 
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter)element.getAdapter(IWorkbenchAdapter.class);
+		IWorkbenchAdapter adapter = element.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null) {
 			name = adapter.getLabel(element);
 		}

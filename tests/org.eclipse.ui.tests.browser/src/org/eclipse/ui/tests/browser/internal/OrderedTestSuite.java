@@ -13,8 +13,8 @@ package org.eclipse.ui.tests.browser.internal;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Vector;
+
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 class OrderedTestSuite extends TestSuite{
