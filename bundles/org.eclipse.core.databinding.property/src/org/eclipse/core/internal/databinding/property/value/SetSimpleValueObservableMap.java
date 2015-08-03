@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 262269, 266754, 265561, 262287, 268688
  *     Ovidio Mallo - bug 299619
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -19,8 +20,8 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
@@ -30,16 +31,22 @@ import org.eclipse.core.internal.databinding.identity.IdentitySet;
 import org.eclipse.core.internal.databinding.property.Util;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <K>
+ *            type of the keys to the map
+ * @param <V>
+ *            type of the values in the map
  * @since 1.2
  */
-public class SetSimpleValueObservableMap extends ComputedObservableMap
-		implements IPropertyObservable {
-	private SimpleValueProperty detailProperty;
+public class SetSimpleValueObservableMap<S, K extends S, V> extends ComputedObservableMap<K, V>
+		implements IPropertyObservable<SimpleValueProperty<S, V>> {
+	private SimpleValueProperty<S, V> detailProperty;
 
-	private INativePropertyListener listener;
+	private INativePropertyListener<S> listener;
 
-	private Map cachedValues;
-	private Set staleKeys;
+	private Map<K, V> cachedValues;
+	private Set<K> staleKeys;
 
 	private boolean updating;
 
@@ -47,8 +54,8 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	 * @param keySet
 	 * @param valueProperty
 	 */
-	public SetSimpleValueObservableMap(IObservableSet keySet,
-			SimpleValueProperty valueProperty) {
+	public SetSimpleValueObservableMap(IObservableSet<K> keySet,
+			SimpleValueProperty<S, V> valueProperty) {
 		super(keySet, valueProperty.getValueType());
 		this.detailProperty = valueProperty;
 	}
@@ -56,31 +63,31 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	@Override
 	protected void firstListenerAdded() {
 		if (listener == null) {
-			listener = detailProperty
-					.adaptListener(new ISimplePropertyListener() {
-						@Override
-						public void handleEvent(final SimplePropertyEvent event) {
-							if (!isDisposed() && !updating) {
-								getRealm().exec(new Runnable() {
-									@Override
-									public void run() {
-										if (event.type == SimplePropertyEvent.CHANGE) {
-											notifyIfChanged(event.getSource());
-										} else if (event.type == SimplePropertyEvent.STALE) {
-											boolean wasStale = !staleKeys
-													.isEmpty();
-											staleKeys.add(event.getSource());
-											if (!wasStale)
-												fireStale();
-										}
-									}
-								});
+			listener = detailProperty.adaptListener(new ISimplePropertyListener<S, ValueDiff<? extends V>>() {
+				@Override
+				public void handleEvent(final SimplePropertyEvent<S, ValueDiff<? extends V>> event) {
+					if (!isDisposed() && !updating) {
+						getRealm().exec(new Runnable() {
+							@Override
+							public void run() {
+								@SuppressWarnings("unchecked")
+								K source = (K) event.getSource();
+								if (event.type == SimplePropertyEvent.CHANGE) {
+									notifyIfChanged(source);
+								} else if (event.type == SimplePropertyEvent.STALE) {
+									boolean wasStale = !staleKeys.isEmpty();
+									staleKeys.add(source);
+									if (!wasStale)
+										fireStale();
+								}
 							}
-						}
-					});
+						});
+					}
+				}
+			});
 		}
-		cachedValues = new IdentityMap();
-		staleKeys = new IdentitySet();
+		cachedValues = new IdentityMap<>();
+		staleKeys = new IdentitySet<>();
 		super.firstListenerAdded();
 	}
 
@@ -94,7 +101,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	@Override
-	protected void hookListener(Object addedKey) {
+	protected void hookListener(K addedKey) {
 		if (cachedValues != null) {
 			cachedValues.put(addedKey, detailProperty.getValue(addedKey));
 			if (listener != null)
@@ -103,7 +110,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	@Override
-	protected void unhookListener(Object removedKey) {
+	protected void unhookListener(K removedKey) {
 		if (cachedValues != null) {
 			if (listener != null)
 				listener.removeFrom(removedKey);
@@ -113,13 +120,16 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	@Override
-	protected Object doGet(Object key) {
-		return detailProperty.getValue(key);
+	@SuppressWarnings("unchecked")
+	protected V doGet(Object key) {
+		// NOTE/TODO: This is unsafe and will cause ClassCastExceptions
+		// if this map is queried with keys that are not of type S
+		return detailProperty.getValue((S) key);
 	}
 
 	@Override
-	protected Object doPut(Object key, Object value) {
-		Object oldValue = detailProperty.getValue(key);
+	protected V doPut(K key, V value) {
+		V oldValue = detailProperty.getValue(key);
 
 		updating = true;
 		try {
@@ -133,10 +143,10 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 		return oldValue;
 	}
 
-	private void notifyIfChanged(Object key) {
+	private void notifyIfChanged(K key) {
 		if (cachedValues != null) {
-			Object oldValue = cachedValues.get(key);
-			Object newValue = detailProperty.getValue(key);
+			V oldValue = cachedValues.get(key);
+			V newValue = detailProperty.getValue(key);
 			if (!Util.equals(oldValue, newValue) || staleKeys.contains(key)) {
 				cachedValues.put(key, newValue);
 				staleKeys.remove(key);
@@ -152,7 +162,7 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	@Override
-	public IProperty getProperty() {
+	public SimpleValueProperty<S, V> getProperty() {
 		return detailProperty;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
  *     Matthew Hall - bug 264306
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -22,11 +23,15 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <E>
+ *            type of the elements in the list
  * @since 1.2
  *
  */
-public abstract class DelegatingListProperty extends ListProperty {
-	private final IListProperty nullProperty;
+public abstract class DelegatingListProperty<S, E> extends ListProperty<S, E> {
+	private final IListProperty<S, E> nullProperty;
 	private final Object elementType;
 
 	protected DelegatingListProperty() {
@@ -47,10 +52,10 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 *            the property source (may be null)
 	 * @return the property to delegate to for the specified source object.
 	 */
-	public final IListProperty getDelegate(Object source) {
+	public final IListProperty<S, E> getDelegate(S source) {
 		if (source == null)
 			return nullProperty;
-		IListProperty delegate = doGetDelegate(source);
+		IListProperty<S, E> delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;
 		return delegate;
@@ -65,7 +70,7 @@ public abstract class DelegatingListProperty extends ListProperty {
 	 *            the property source
 	 * @return the property to delegate to for the specified source object.
 	 */
-	protected abstract IListProperty doGetDelegate(Object source);
+	protected abstract IListProperty<S, E> doGetDelegate(S source);
 
 	@Override
 	public Object getElementType() {
@@ -73,56 +78,55 @@ public abstract class DelegatingListProperty extends ListProperty {
 	}
 
 	@Override
-	protected List doGetList(Object source) {
+	protected List<E> doGetList(S source) {
 		return getDelegate(source).getList(source);
 	}
 
 	@Override
-	protected void doSetList(Object source, List list) {
+	protected void doSetList(S source, List<E> list) {
 		getDelegate(source).setList(source, list);
 	}
 
 	@Override
-	protected void doUpdateList(Object source, ListDiff diff) {
+	protected void doUpdateList(S source, ListDiff<E> diff) {
 		getDelegate(source).updateList(source, diff);
 	}
 
 	@Override
-	public IObservableList observe(Object source) {
+	public IObservableList<E> observe(S source) {
 		return getDelegate(source).observe(source);
 	}
 
 	@Override
-	public IObservableList observe(Realm realm, Object source) {
+	public IObservableList<E> observe(Realm realm, S source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
-	private class NullListProperty extends SimpleListProperty {
+	private class NullListProperty extends SimpleListProperty<S, E> {
 		@Override
 		public Object getElementType() {
 			return elementType;
 		}
 
 		@Override
-		protected List doGetList(Object source) {
-			return Collections.EMPTY_LIST;
+		protected List<E> doGetList(S source) {
+			return Collections.emptyList();
 		}
 
 		@Override
-		protected void doSetList(Object source, List list, ListDiff diff) {
+		protected void doSetList(S source, List<E> list, ListDiff<E> diff) {
 		}
 
 		@Override
-		protected void doSetList(Object source, List list) {
+		protected void doSetList(S source, List<E> list) {
 		}
 
 		@Override
-		protected void doUpdateList(Object source, ListDiff diff) {
+		protected void doUpdateList(S source, ListDiff<E> diff) {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, ListDiff<E>> listener) {
 			return null;
 		}
 	}

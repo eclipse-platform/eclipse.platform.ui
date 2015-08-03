@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 247997, 265561
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -17,6 +18,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.internal.databinding.property.value.ListSimpleValueObservableList;
@@ -31,23 +33,27 @@ import org.eclipse.core.internal.databinding.property.value.SimplePropertyObserv
  * <p>
  * Subclasses must implement these methods:
  * <ul>
- * <li> {@link #getValueType()}
- * <li> {@link #doGetValue(Object)}
- * <li> {@link #doSetValue(Object, Object)}
- * <li> {@link #adaptListener(ISimplePropertyListener)}
+ * <li>{@link #getValueType()}
+ * <li>{@link #doGetValue(Object)}
+ * <li>{@link #doSetValue(Object, Object)}
+ * <li>{@link #adaptListener(ISimplePropertyListener)}
  * </ul>
  * <p>
  * In addition, we recommended overriding {@link #toString()} to return a
  * description suitable for debugging purposes.
  *
+ * @param <S>
+ *            type of the source object
+ * @param <T>
+ *            type of the value of the property
  * @since 1.2
  */
-public abstract class SimpleValueProperty extends ValueProperty {
+public abstract class SimpleValueProperty<S, T> extends ValueProperty<S, T> {
 	@Override
-	protected abstract Object doGetValue(Object source);
+	protected abstract T doGetValue(S source);
 
 	@Override
-	protected abstract void doSetValue(Object source, Object value);
+	protected abstract void doSetValue(S source, T value);
 
 	/**
 	 * Returns a listener capable of adding or removing itself as a listener on
@@ -65,26 +71,26 @@ public abstract class SimpleValueProperty extends ValueProperty {
 	 *         APIs for this property.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public abstract INativePropertyListener adaptListener(
-			ISimplePropertyListener listener);
+	public abstract INativePropertyListener<S> adaptListener(
+			ISimplePropertyListener<S, ValueDiff<? extends T>> listener);
 
 	@Override
-	public IObservableValue observe(Realm realm, Object source) {
-		return new SimplePropertyObservableValue(realm, source, this);
+	public IObservableValue<T> observe(Realm realm, S source) {
+		return new SimplePropertyObservableValue<>(realm, source, this);
 	}
 
 	@Override
-	public IObservableList observeDetail(IObservableList master) {
-		return new ListSimpleValueObservableList(master, this);
+	public <U extends S> IObservableList<T> observeDetail(IObservableList<U> master) {
+		return new ListSimpleValueObservableList<>(master, this);
 	}
 
 	@Override
-	public IObservableMap observeDetail(IObservableSet master) {
-		return new SetSimpleValueObservableMap(master, this);
+	public <U extends S> IObservableMap<U, T> observeDetail(IObservableSet<U> master) {
+		return new SetSimpleValueObservableMap<>(master, this);
 	}
 
 	@Override
-	public IObservableMap observeDetail(IObservableMap master) {
-		return new MapSimpleValueObservableMap(master, this);
+	public <K, V extends S> IObservableMap<K, T> observeDetail(IObservableMap<K, V> master) {
+		return new MapSimpleValueObservableMap<>(master, this);
 	}
 }

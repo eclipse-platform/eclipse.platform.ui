@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
  *     Matthew Hall - bug 268203
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.set;
@@ -20,10 +21,12 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 
 /**
+ * @param <E>
+ *            type of the elements in the set
  * @since 3.3
  *
  */
-public final class SelfSetProperty extends SimpleSetProperty {
+public final class SelfSetProperty<E> extends SimpleSetProperty<Set<E>, E> {
 	private final Object elementType;
 
 	/**
@@ -39,25 +42,25 @@ public final class SelfSetProperty extends SimpleSetProperty {
 	}
 
 	@Override
-	protected Set doGetSet(Object source) {
-		return (Set) source;
+	protected Set<E> doGetSet(Set<E> source) {
+		return source;
 	}
 
 	@Override
-	protected void doSetSet(Object source, Set set, SetDiff diff) {
-		diff.applyTo((Set) source);
+	protected void doSetSet(Set<E> source, Set<E> set, SetDiff<E> diff) {
+		diff.applyTo(source);
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<Set<E>> adaptListener(ISimplePropertyListener<Set<E>, SetDiff<E>> listener) {
 		return null; // no listener API
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source,
+			INativePropertyListener<Set<E>> listener) {
 	}
 
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
+	protected void doRemoveListener(Set<E> source,
+			INativePropertyListener<Set<E>> listener) {
 	}
 }

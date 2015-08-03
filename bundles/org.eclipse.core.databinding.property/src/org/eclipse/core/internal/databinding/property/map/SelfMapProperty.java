@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
  *     Matthew Hall - bug 268203
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -20,10 +21,14 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
+ * @param <K>
+ *            type of the keys to the map
+ * @param <V>
+ *            type of the values in the map
  * @since 3.3
  *
  */
-public final class SelfMapProperty extends SimpleMapProperty {
+public final class SelfMapProperty<K, V> extends SimpleMapProperty<Map<K, V>, K, V> {
 	private final Object keyType;
 	private final Object valueType;
 
@@ -47,30 +52,29 @@ public final class SelfMapProperty extends SimpleMapProperty {
 	}
 
 	@Override
-	protected Map doGetMap(Object source) {
-		return (Map) source;
+	protected Map<K, V> doGetMap(Map<K, V> source) {
+		return source;
 	}
 
 	@Override
-	protected void doSetMap(Object source, Map map, MapDiff diff) {
+	protected void doSetMap(Map<K, V> source, Map<K, V> map, MapDiff<K, V> diff) {
 		doUpdateMap(source, diff);
 	}
 
 	@Override
-	protected void doUpdateMap(Object source, MapDiff diff) {
-		diff.applyTo((Map) source);
+	protected void doUpdateMap(Map<K, V> source, MapDiff<K, V> diff) {
+		diff.applyTo(source);
 	}
 
 	@Override
-	public INativePropertyListener adaptListener(
-			ISimplePropertyListener listener) {
+	public INativePropertyListener<Map<K, V>> adaptListener(
+			ISimplePropertyListener<Map<K, V>, MapDiff<K, V>> listener) {
 		return null; // no listener API
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener listener) {
+	protected void doAddListener(Object source, INativePropertyListener<Map<K, V>> listener) {
 	}
 
-	protected void doRemoveListener(Object source,
-			INativePropertyListener listener) {
+	protected void doRemoveListener(Object source, INativePropertyListener<Map<K, V>> listener) {
 	}
 }

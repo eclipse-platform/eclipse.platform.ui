@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 247997)
  *     Matthew Hall - bug 264306
+ *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -22,13 +23,19 @@ import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 
 /**
+ * @param <S>
+ *            type of the source object
+ * @param <K>
+ *            type of the keys to the map
+ * @param <V>
+ *            type of the values in the map
  * @since 1.2
  *
  */
-public abstract class DelegatingMapProperty extends MapProperty {
+public abstract class DelegatingMapProperty<S, K, V> extends MapProperty<S, K, V> {
 	private final Object keyType;
 	private final Object valueType;
-	private final IMapProperty nullProperty = new NullMapProperty();
+	private final IMapProperty<S, K, V> nullProperty = new NullMapProperty();
 
 	protected DelegatingMapProperty() {
 		this(null, null);
@@ -48,10 +55,10 @@ public abstract class DelegatingMapProperty extends MapProperty {
 	 *            the property source (may be null)
 	 * @return the property to delegate to for the specified source object.
 	 */
-	public final IMapProperty getDelegate(Object source) {
+	public final IMapProperty<S, K, V> getDelegate(S source) {
 		if (source == null)
 			return nullProperty;
-		IMapProperty delegate = doGetDelegate(source);
+		IMapProperty<S, K, V> delegate = doGetDelegate(source);
 		if (delegate == null)
 			delegate = nullProperty;
 		return delegate;
@@ -66,7 +73,7 @@ public abstract class DelegatingMapProperty extends MapProperty {
 	 *            the property source
 	 * @return the property to delegate to for the specified source object.
 	 */
-	protected abstract IMapProperty doGetDelegate(Object source);
+	protected abstract IMapProperty<S, K, V> doGetDelegate(S source);
 
 	@Override
 	public Object getKeyType() {
@@ -79,51 +86,50 @@ public abstract class DelegatingMapProperty extends MapProperty {
 	}
 
 	@Override
-	protected Map doGetMap(Object source) {
+	protected Map<K, V> doGetMap(S source) {
 		return getDelegate(source).getMap(source);
 	}
 
 	@Override
-	protected void doSetMap(Object source, Map map) {
+	protected void doSetMap(S source, Map<K, V> map) {
 		getDelegate(source).setMap(source, map);
 	}
 
 	@Override
-	protected void doUpdateMap(Object source, MapDiff diff) {
+	protected void doUpdateMap(S source, MapDiff<K, V> diff) {
 		getDelegate(source).updateMap(source, diff);
 	}
 
 	@Override
-	public IObservableMap observe(Object source) {
+	public IObservableMap<K, V> observe(S source) {
 		return getDelegate(source).observe(source);
 	}
 
 	@Override
-	public IObservableMap observe(Realm realm, Object source) {
+	public IObservableMap<K, V> observe(Realm realm, S source) {
 		return getDelegate(source).observe(realm, source);
 	}
 
-	private class NullMapProperty extends SimpleMapProperty {
+	private class NullMapProperty extends SimpleMapProperty<S, K, V> {
 		@Override
-		protected Map doGetMap(Object source) {
-			return Collections.EMPTY_MAP;
+		protected Map<K, V> doGetMap(Object source) {
+			return Collections.emptyMap();
 		}
 
 		@Override
-		protected void doSetMap(Object source, Map map, MapDiff diff) {
+		protected void doSetMap(S source, Map<K, V> map, MapDiff<K, V> diff) {
 		}
 
 		@Override
-		protected void doSetMap(Object source, Map map) {
+		protected void doSetMap(S source, Map<K, V> map) {
 		}
 
 		@Override
-		protected void doUpdateMap(Object source, MapDiff diff) {
+		protected void doUpdateMap(S source, MapDiff<K, V> diff) {
 		}
 
 		@Override
-		public INativePropertyListener adaptListener(
-				ISimplePropertyListener listener) {
+		public INativePropertyListener<S> adaptListener(ISimplePropertyListener<S, MapDiff<K, V>> listener) {
 			return null;
 		}
 
