@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2011 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774, 303847
  *     Ovidio Mallo - bug 332367
- *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -30,32 +29,27 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
+import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.IPropertyObservable;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.SimplePropertyEvent;
 import org.eclipse.core.databinding.property.map.SimpleMapProperty;
 
 /**
- * @param <S>
- *            type of the source object
- * @param <K>
- *            type of the keys to the map
- * @param <V>
- *            type of the values in the map
  * @since 1.2
  */
-public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<K, V>
-		implements IPropertyObservable<SimpleMapProperty<S, K, V>> {
-	private S source;
-	private SimpleMapProperty<S, K, V> property;
+public class SimplePropertyObservableMap extends AbstractObservableMap
+		implements IPropertyObservable {
+	private Object source;
+	private SimpleMapProperty property;
 
 	private volatile boolean updating = false;
 
 	private volatile int modCount = 0;
 
-	private INativePropertyListener<S> listener;
+	private INativePropertyListener listener;
 
-	private Map<K, V> cachedMap;
+	private Map cachedMap;
 	private boolean stale;
 
 	/**
@@ -63,7 +57,8 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	 * @param source
 	 * @param property
 	 */
-	public SimplePropertyObservableMap(Realm realm, S source, SimpleMapProperty<S, K, V> property) {
+	public SimplePropertyObservableMap(Realm realm, Object source,
+			SimpleMapProperty property) {
 		super(realm);
 		this.source = source;
 		this.property = property;
@@ -85,38 +80,43 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 
 	@Override
 	protected void firstListenerAdded() {
-		if (!isDisposed() && listener == null) {
-			listener = property.adaptListener(new ISimplePropertyListener<S, MapDiff<K, V>>() {
-				@Override
-				public void handleEvent(final SimplePropertyEvent<S, MapDiff<K, V>> event) {
-					if (!isDisposed() && !updating) {
-						getRealm().exec(new Runnable() {
+		if (!isDisposed()) {
+			if (listener == null) {
+				listener = property
+						.adaptListener(new ISimplePropertyListener() {
 							@Override
-							public void run() {
-								if (event.type == SimplePropertyEvent.CHANGE) {
-									modCount++;
-									notifyIfChanged(event.diff);
-								} else if (event.type == SimplePropertyEvent.STALE && !stale) {
-									stale = true;
-									fireStale();
+							public void handleEvent(
+									final SimplePropertyEvent event) {
+								if (!isDisposed() && !updating) {
+									getRealm().exec(new Runnable() {
+										@Override
+										public void run() {
+											if (event.type == SimplePropertyEvent.CHANGE) {
+												modCount++;
+												notifyIfChanged((MapDiff) event.diff);
+											} else if (event.type == SimplePropertyEvent.STALE
+													&& !stale) {
+												stale = true;
+												fireStale();
+											}
+										}
+									});
 								}
 							}
 						});
-					}
+			}
+
+			getRealm().exec(new Runnable() {
+				@Override
+				public void run() {
+					cachedMap = new HashMap(getMap());
+					stale = false;
+
+					if (listener != null)
+						listener.addTo(source);
 				}
 			});
 		}
-
-		getRealm().exec(new Runnable() {
-			@Override
-			public void run() {
-				cachedMap = new HashMap<>(getMap());
-				stale = false;
-
-				if (listener != null)
-					listener.addTo(source);
-			}
-		});
 	}
 
 	@Override
@@ -131,13 +131,13 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 
 	// Queries
 
-	private Map<K, V> getMap() {
+	private Map getMap() {
 		return property.getMap(source);
 	}
 
 	// Single change operations
 
-	private void updateMap(Map<K, V> map, MapDiff<K, V> diff) {
+	private void updateMap(Map map, MapDiff diff) {
 		if (!diff.isEmpty()) {
 			boolean wasUpdating = updating;
 			updating = true;
@@ -155,14 +155,14 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	private EntrySet es = new EntrySet();
 
 	@Override
-	public Set<Map.Entry<K, V>> entrySet() {
+	public Set entrySet() {
 		getterCalled();
 		return es;
 	}
 
-	private class EntrySet extends AbstractSet<Map.Entry<K, V>> {
+	private class EntrySet extends AbstractSet {
 		@Override
-		public Iterator<Map.Entry<K, V>> iterator() {
+		public Iterator iterator() {
 			return new EntrySetIterator();
 		}
 
@@ -172,11 +172,11 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		}
 	}
 
-	private class EntrySetIterator implements Iterator<Map.Entry<K, V>> {
+	private class EntrySetIterator implements Iterator {
 		private volatile int expectedModCount = modCount;
-		Map<K, V> map = new HashMap<>(getMap());
-		Iterator<Map.Entry<K, V>> iterator = map.entrySet().iterator();
-		Map.Entry<K, V> last = null;
+		Map map = new HashMap(getMap());
+		Iterator iterator = map.entrySet().iterator();
+		Map.Entry last = null;
 
 		@Override
 		public boolean hasNext() {
@@ -186,10 +186,10 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		}
 
 		@Override
-		public Map.Entry<K, V> next() {
+		public Object next() {
 			getterCalled();
 			checkForComodification();
-			last = iterator.next();
+			last = (Map.Entry) iterator.next();
 			return last;
 		}
 
@@ -198,7 +198,8 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 			getterCalled();
 			checkForComodification();
 
-			MapDiff<K, V> diff = Diffs.createMapDiffSingleRemove(last.getKey(), last.getValue());
+			MapDiff diff = Diffs.createMapDiffSingleRemove(last.getKey(),
+					last.getValue());
 			updateMap(map, diff);
 
 			iterator.remove(); // stay in sync
@@ -214,7 +215,7 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	}
 
 	@Override
-	public Set<K> keySet() {
+	public Set keySet() {
 		getterCalled();
 		// AbstractMap depends on entrySet() to fulfil keySet() API, so all
 		// getterCalled() and comodification checks will still be handled
@@ -229,23 +230,23 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	}
 
 	@Override
-	public V get(Object key) {
+	public Object get(Object key) {
 		getterCalled();
 
 		return getMap().get(key);
 	}
 
 	@Override
-	public V put(K key, V value) {
+	public Object put(Object key, Object value) {
 		checkRealm();
 
-		Map<K, V> map = getMap();
+		Map map = getMap();
 
 		boolean add = !map.containsKey(key);
 
-		V oldValue = map.get(key);
+		Object oldValue = map.get(key);
 
-		MapDiff<K, V> diff;
+		MapDiff diff;
 		if (add)
 			diff = Diffs.createMapDiffSingleAdd(key, value);
 		else
@@ -257,18 +258,19 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	}
 
 	@Override
-	public void putAll(Map<? extends K, ? extends V> m) {
+	public void putAll(Map m) {
 		checkRealm();
 
-		Map<K, V> map = getMap();
+		Map map = getMap();
 
-		Map<K, V> oldValues = new HashMap<K, V>();
-		Map<K, V> newValues = new HashMap<K, V>();
-		Set<K> changedKeys = new HashSet<K>();
-		Set<K> addedKeys = new HashSet<K>();
-		for (Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
-			K key = entry.getKey();
-			V newValue = entry.getValue();
+		Map oldValues = new HashMap();
+		Map newValues = new HashMap();
+		Set changedKeys = new HashSet();
+		Set addedKeys = new HashSet();
+		for (Iterator it = m.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Object key = entry.getKey();
+			Object newValue = entry.getValue();
 			if (map.containsKey(key)) {
 				changedKeys.add(key);
 				oldValues.put(key, map.get(key));
@@ -278,25 +280,22 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 			newValues.put(key, newValue);
 		}
 
-		MapDiff<K, V> diff = Diffs.createMapDiff(addedKeys, Collections.<K> emptySet(), changedKeys, oldValues,
-				newValues);
+		MapDiff diff = Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET,
+				changedKeys, oldValues, newValues);
 		updateMap(map, diff);
 	}
 
 	@Override
-	public V remove(Object key) {
+	public Object remove(Object key) {
 		checkRealm();
 
-		Map<K, V> map = getMap();
+		Map map = getMap();
 		if (!map.containsKey(key))
 			return null;
 
-		V oldValue = map.get(key);
+		Object oldValue = map.get(key);
 
-		@SuppressWarnings("unchecked")
-		// if we contain this key, then it is of
-		// type K
-		MapDiff<K, V> diff = Diffs.createMapDiffSingleRemove((K) key, oldValue);
+		MapDiff diff = Diffs.createMapDiffSingleRemove(key, oldValue);
 		updateMap(map, diff);
 
 		return oldValue;
@@ -306,26 +305,26 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	public void clear() {
 		getterCalled();
 
-		Map<K, V> map = getMap();
+		Map map = getMap();
 		if (map.isEmpty())
 			return;
 
-		MapDiff<K, V> diff = Diffs.createMapDiffRemoveAll(new HashMap<K, V>(map));
+		MapDiff diff = Diffs.createMapDiffRemoveAll(new HashMap(map));
 		updateMap(map, diff);
 	}
 
 	@Override
-	public Collection<V> values() {
+	public Collection values() {
 		getterCalled();
 		// AbstractMap depends on entrySet() to fulfil values() API, so all
 		// getterCalled() and comodification checks will still be handled
 		return super.values();
 	}
 
-	private void notifyIfChanged(MapDiff<K, V> diff) {
+	private void notifyIfChanged(MapDiff diff) {
 		if (hasListeners()) {
-			Map<K, V> oldMap = cachedMap;
-			Map<K, V> newMap = cachedMap = new HashMap<K, V>(getMap());
+			Map oldMap = cachedMap;
+			Map newMap = cachedMap = new HashMap(getMap());
 			if (diff == null)
 				diff = Diffs.computeMapDiff(oldMap, newMap);
 			if (!diff.isEmpty() || stale) {
@@ -347,7 +346,7 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 	}
 
 	@Override
-	public SimpleMapProperty<S, K, V> getProperty() {
+	public IProperty getProperty() {
 		return property;
 	}
 

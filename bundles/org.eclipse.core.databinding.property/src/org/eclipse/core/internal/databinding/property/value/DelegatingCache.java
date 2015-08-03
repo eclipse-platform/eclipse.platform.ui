@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Matthew Hall and others.
+ * Copyright (c) 2009 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 262269, 281727, 278550
- *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -35,37 +34,40 @@ import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
  * @since 3.3
  *
  */
-abstract class DelegatingCache<S, K extends S, V> {
+abstract class DelegatingCache {
 	private Realm realm;
-	private DelegatingValueProperty<S, V> detailProperty;
-	private IObservableSet<K> elements;
-	private Map<IValueProperty<S, V>, DelegateCache> delegateCaches;
+	private DelegatingValueProperty detailProperty;
+	private IObservableSet elements;
+	private Map delegateCaches;
 
-	private class DelegateCache implements IMapChangeListener<K, V> {
-		private final IValueProperty<S, V> delegate;
-		private final IObservableSet<K> masterElements;
-		private final IObservableMap<K, V> masterElementValues;
-		private final Map<K, V> cachedValues;
+	private class DelegateCache implements IMapChangeListener {
+		private final IValueProperty delegate;
+		private final IObservableSet masterElements;
+		private final IObservableMap masterElementValues;
+		private final Map cachedValues;
 
-		DelegateCache(IValueProperty<S, V> delegate) {
+		DelegateCache(IValueProperty delegate) {
 			this.delegate = delegate;
 			ObservableTracker.setIgnore(true);
 			try {
-				this.masterElements = new IdentityObservableSet<>(realm, elements.getElementType());
-				this.masterElementValues = delegate.observeDetail(masterElements);
+				this.masterElements = new IdentityObservableSet(realm, elements
+						.getElementType());
+				this.masterElementValues = delegate
+						.observeDetail(masterElements);
 			} finally {
 				ObservableTracker.setIgnore(false);
 			}
-			this.cachedValues = new IdentityMap<>();
+			this.cachedValues = new IdentityMap();
 
 			masterElementValues.addMapChangeListener(this);
 		}
 
-		void add(K masterElement) {
+		void add(Object masterElement) {
 			boolean wasEmpty = masterElements.isEmpty();
 
 			masterElements.add(masterElement);
-			cachedValues.put(masterElement, masterElementValues.get(masterElement));
+			cachedValues.put(masterElement, masterElementValues
+					.get(masterElement));
 
 			if (wasEmpty)
 				delegateCaches.put(delegate, this);
@@ -78,12 +80,13 @@ abstract class DelegatingCache<S, K extends S, V> {
 				dispose();
 		}
 
-		V get(Object masterElement) {
+		Object get(Object masterElement) {
 			return cachedValues.get(masterElement);
 		}
 
-		V put(K masterElement, V detailValue) {
-			V oldValue = masterElementValues.put(masterElement, detailValue);
+		Object put(Object masterElement, Object detailValue) {
+			Object oldValue = masterElementValues.put(masterElement,
+					detailValue);
 			notifyIfChanged(masterElement);
 			return oldValue;
 		}
@@ -93,24 +96,25 @@ abstract class DelegatingCache<S, K extends S, V> {
 		}
 
 		@Override
-		public void handleMapChange(MapChangeEvent<? extends K, ? extends V> event) {
-			Set<? extends K> changedKeys = event.diff.getChangedKeys();
-			for (K next : changedKeys) {
-				notifyIfChanged(next);
-			}
+		public void handleMapChange(MapChangeEvent event) {
+			Set changedKeys = event.diff.getChangedKeys();
+			for (Iterator it = changedKeys.iterator(); it.hasNext();)
+				notifyIfChanged(it.next());
 		}
 
-		private void notifyIfChanged(K masterElement) {
-			V oldValue = cachedValues.get(masterElement);
-			V newValue = masterElementValues.get(masterElement);
+		private void notifyIfChanged(Object masterElement) {
+			Object oldValue = cachedValues.get(masterElement);
+			Object newValue = masterElementValues.get(masterElement);
 			if (oldValue != newValue) {
 				cachedValues.put(masterElement, newValue);
 				handleValueChange(masterElement, oldValue, newValue);
 			}
 		}
 
-		void handleValueChange(K masterElement, V oldValue, V newValue) {
-			DelegatingCache.this.handleValueChange(masterElement, oldValue, newValue);
+		void handleValueChange(Object masterElement, Object oldValue,
+				Object newValue) {
+			DelegatingCache.this.handleValueChange(masterElement, oldValue,
+					newValue);
 		}
 
 		void dispose() {
@@ -121,27 +125,31 @@ abstract class DelegatingCache<S, K extends S, V> {
 		}
 	}
 
-	DelegatingCache(Realm realm, DelegatingValueProperty<S, V> detailProperty) {
+	DelegatingCache(Realm realm, DelegatingValueProperty detailProperty) {
 		this.realm = realm;
 		this.detailProperty = detailProperty;
 
 		ObservableTracker.setIgnore(true);
 		try {
-			this.elements = new IdentityObservableSet<>(realm, null);
+			this.elements = new IdentityObservableSet(realm, null);
 		} finally {
 			ObservableTracker.setIgnore(false);
 		}
 
-		this.delegateCaches = new IdentityMap<>();
+		this.delegateCaches = new IdentityMap();
 
-		elements.addSetChangeListener(new ISetChangeListener<K>() {
+		elements.addSetChangeListener(new ISetChangeListener() {
 			@Override
-			public void handleSetChange(SetChangeEvent<? extends K> event) {
-				for (K element : event.diff.getRemovals()) {
+			public void handleSetChange(SetChangeEvent event) {
+				for (Iterator it = event.diff.getRemovals().iterator(); it
+						.hasNext();) {
+					Object element = it.next();
 					getCache(element).remove(element);
 
 				}
-				for (K element : event.diff.getAdditions()) {
+				for (Iterator it = event.diff.getAdditions().iterator(); it
+						.hasNext();) {
+					Object element = it.next();
 					getCache(element).add(element);
 				}
 			}
@@ -149,44 +157,40 @@ abstract class DelegatingCache<S, K extends S, V> {
 	}
 
 	private DelegateCache getCache(Object masterElement) {
-		// NOTE: This is unsafe. This method can be invoked with something other
-		// than an element of type S, in which case getDelegate(...) will most
-		// likely throw a ClassCastException. This should really be redesigned
-		// such that getDelegete will never be invoked for an element which
-		// isn't actually part of the cache.
-		@SuppressWarnings("unchecked")
-		IValueProperty<S, V> delegate = detailProperty.getDelegate((S) masterElement);
+		IValueProperty delegate = detailProperty.getDelegate(masterElement);
 		if (delegateCaches.containsKey(delegate)) {
-			return delegateCaches.get(delegate);
+			return (DelegateCache) delegateCaches.get(delegate);
 		}
 		return new DelegateCache(delegate);
 	}
 
-	V get(Object element) {
+	Object get(Object element) {
 		return getCache(element).get(element);
 	}
 
-	V put(K element, V value) {
+	Object put(Object element, Object value) {
 		return getCache(element).put(element, value);
 	}
 
 	boolean containsValue(Object value) {
-		for (DelegateCache cache : delegateCaches.values()) {
+		for (Iterator it = delegateCaches.values().iterator(); it.hasNext();) {
+			DelegateCache cache = (DelegateCache) it.next();
 			if (cache.containsValue(value))
 				return true;
 		}
 		return false;
 	}
 
-	void addAll(Collection<? extends K> elements) {
+	void addAll(Collection elements) {
 		this.elements.addAll(elements);
 	}
 
-	void retainAll(Collection<?> elements) {
+	void retainAll(Collection elements) {
 		this.elements.retainAll(elements);
 	}
 
-	abstract void handleValueChange(K masterElement, V oldValue, V newValue);
+	abstract void handleValueChange(Object masterElement, Object oldValue,
+			Object newValue);
 
 	void dispose() {
 		if (elements != null) {
@@ -196,8 +200,8 @@ abstract class DelegatingCache<S, K extends S, V> {
 		}
 
 		if (delegateCaches != null) {
-			for (Iterator<DelegateCache> it = delegateCaches.values().iterator(); it.hasNext();) {
-				DelegateCache cache = it.next();
+			for (Iterator it = delegateCaches.values().iterator(); it.hasNext();) {
+				DelegateCache cache = (DelegateCache) it.next();
 				cache.dispose();
 			}
 			delegateCaches.clear();

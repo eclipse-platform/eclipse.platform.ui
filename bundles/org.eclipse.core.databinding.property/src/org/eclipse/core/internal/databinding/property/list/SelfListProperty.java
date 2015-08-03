@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Matthew Hall and others.
+ * Copyright (c) 2009, 2010 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263868)
  *     Matthew Hall - bug 268203
- *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.list;
@@ -21,12 +20,10 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.list.SimpleListProperty;
 
 /**
- * @param <E>
- *            type of the elements in the list
  * @since 3.3
  *
  */
-public class SelfListProperty<E> extends SimpleListProperty<List<E>, E> {
+public class SelfListProperty extends SimpleListProperty {
 	private final Object elementType;
 
 	/**
@@ -42,28 +39,30 @@ public class SelfListProperty<E> extends SimpleListProperty<List<E>, E> {
 	}
 
 	@Override
-	protected List<E> doGetList(List<E> source) {
-		return source;
+	protected List doGetList(Object source) {
+		return (List) source;
 	}
 
 	@Override
-	protected void doSetList(List<E> source, List<E> list, ListDiff<E> diff) {
+	protected void doSetList(Object source, List list, ListDiff diff) {
 		doUpdateList(source, diff);
 	}
 
 	@Override
-	protected void doUpdateList(List<E> source, ListDiff<E> diff) {
-		diff.applyTo(source);
+	protected void doUpdateList(Object source, ListDiff diff) {
+		diff.applyTo((List) source);
 	}
 
 	@Override
-	public INativePropertyListener<List<E>> adaptListener(ISimplePropertyListener<List<E>, ListDiff<E>> listener) {
+	public INativePropertyListener adaptListener(
+			ISimplePropertyListener listener) {
 		return null; // no listener API
 	}
 
-	protected void doAddListener(Object source, INativePropertyListener<List<E>> listener) {
+	protected void doAddListener(Object source, INativePropertyListener listener) {
 	}
 
-	protected void doRemoveListener(Object source, INativePropertyListener<List<E>> listener) {
+	protected void doRemoveListener(Object source,
+			INativePropertyListener listener) {
 	}
 }

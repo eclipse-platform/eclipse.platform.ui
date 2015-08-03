@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2010 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 195222, 278550
- *     Stefan Xenos <sxenos@gmail.com> - Bug 335792
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
@@ -23,26 +22,20 @@ import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.property.value.ValueProperty;
 
 /**
- * @param <S>
- *            type of the source object
- * @param <M>
- *            type of the property of the source object this type being the type
- *            that has the detail property as a property
- * @param <T>
- *            type of this value property, being the same as the type of the
- *            value of the detail property
  * @since 1.2
  *
  */
-public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implements IValueProperty<S, T> {
-	private IValueProperty<S, M> masterProperty;
-	private IValueProperty<? super M, T> detailProperty;
+public class ValuePropertyDetailValue extends ValueProperty implements
+		IValueProperty {
+	private IValueProperty masterProperty;
+	private IValueProperty detailProperty;
 
 	/**
 	 * @param masterProperty
 	 * @param detailProperty
 	 */
-	public ValuePropertyDetailValue(IValueProperty<S, M> masterProperty, IValueProperty<? super M, T> detailProperty) {
+	public ValuePropertyDetailValue(IValueProperty masterProperty,
+			IValueProperty detailProperty) {
 		this.masterProperty = masterProperty;
 		this.detailProperty = detailProperty;
 	}
@@ -53,20 +46,20 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 	}
 
 	@Override
-	protected T doGetValue(S source) {
-		M masterValue = masterProperty.getValue(source);
+	protected Object doGetValue(Object source) {
+		Object masterValue = masterProperty.getValue(source);
 		return detailProperty.getValue(masterValue);
 	}
 
 	@Override
-	protected void doSetValue(S source, T value) {
-		M masterValue = masterProperty.getValue(source);
+	protected void doSetValue(Object source, Object value) {
+		Object masterValue = masterProperty.getValue(source);
 		detailProperty.setValue(masterValue, value);
 	}
 
 	@Override
-	public IObservableValue<T> observe(Realm realm, S source) {
-		IObservableValue<M> masterValue;
+	public IObservableValue observe(Realm realm, Object source) {
+		IObservableValue masterValue;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -75,14 +68,15 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableValue<T> detailValue = detailProperty.observeDetail(masterValue);
+		IObservableValue detailValue = detailProperty
+				.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
 		return detailValue;
 	}
 
 	@Override
-	public <V extends S> IObservableValue<T> observeDetail(IObservableValue<V> master) {
-		IObservableValue<M> masterValue;
+	public IObservableValue observeDetail(IObservableValue master) {
+		IObservableValue masterValue;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -91,14 +85,15 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableValue<T> detailValue = detailProperty.observeDetail(masterValue);
+		IObservableValue detailValue = detailProperty
+				.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
 		return detailValue;
 	}
 
 	@Override
-	public <V extends S> IObservableList<T> observeDetail(IObservableList<V> master) {
-		IObservableList<M> masterList;
+	public IObservableList observeDetail(IObservableList master) {
+		IObservableList masterList;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -107,14 +102,14 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableList<T> detailList = detailProperty.observeDetail(masterList);
+		IObservableList detailList = detailProperty.observeDetail(masterList);
 		PropertyObservableUtil.cascadeDispose(detailList, masterList);
 		return detailList;
 	}
 
 	@Override
-	public <V extends S> IObservableMap<V, T> observeDetail(IObservableSet<V> master) {
-		IObservableMap<V, M> masterMap;
+	public IObservableMap observeDetail(IObservableSet master) {
+		IObservableMap masterMap;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -123,14 +118,14 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableMap<V, T> detailMap = detailProperty.observeDetail(masterMap);
+		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
 		return detailMap;
 	}
 
 	@Override
-	public <K, V extends S> IObservableMap<K, T> observeDetail(IObservableMap<K, V> master) {
-		IObservableMap<K, M> masterMap;
+	public IObservableMap observeDetail(IObservableMap master) {
+		IObservableMap masterMap;
 
 		ObservableTracker.setIgnore(true);
 		try {
@@ -139,7 +134,7 @@ public class ValuePropertyDetailValue<S, M, T> extends ValueProperty<S, T>implem
 			ObservableTracker.setIgnore(false);
 		}
 
-		IObservableMap<K, T> detailMap = detailProperty.observeDetail(masterMap);
+		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
 		return detailMap;
 	}
