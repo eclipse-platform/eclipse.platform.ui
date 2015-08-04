@@ -295,17 +295,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 
 	@Override
 	public void aboutToNotify(OperationHistoryEvent event) {
-		switch(event.getEventType()) {
-			case OperationHistoryEvent.ABOUT_TO_EXECUTE:
-			case OperationHistoryEvent.ABOUT_TO_UNDO:
-			case OperationHistoryEvent.ABOUT_TO_REDO:
-			case OperationHistoryEvent.DONE:
-			case OperationHistoryEvent.UNDONE:
-			case OperationHistoryEvent.REDONE:
-			case OperationHistoryEvent.OPERATION_NOT_OK:
-				ResourcesPlugin.getWorkspace().checkpoint(false);
-				break;
-		}
+		// nothing to do
 	}
 
 	@Override
