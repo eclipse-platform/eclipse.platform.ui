@@ -10,7 +10,6 @@
  *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466
  *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
  *     Holger Voormann - fix for bug 364324 (http://eclip.se/364324)
- *     Alex Blewitt - Bug 474070 
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -459,8 +458,8 @@ public class SearchData extends ActivitiesData {
 
 	private ISearchQuery createSearchQuery() {
 		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
-		boolean fieldSearch = fieldSearchStr != null ? Boolean.parseBoolean(
-				fieldSearchStr) : false;
+		boolean fieldSearch = fieldSearchStr != null ? new Boolean(
+				fieldSearchStr).booleanValue() : false;
 		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList<String>(), //$NON-NLS-1$
 				getLocale());
 	}
