@@ -92,7 +92,8 @@ public class EModelServiceInsertTest extends TestCase {
 		return app;
 	}
 
-	private void testInsert(MApplication app, String relToId, int where, float ratio) {
+	private void testInsert(MApplication app, String relToId, int where,
+			int ratio) {
 		EModelService modelService = (EModelService) app.getContext().get(
 				EModelService.class.getName());
 		assertNotNull(modelService);
@@ -129,41 +130,41 @@ public class EModelServiceInsertTest extends TestCase {
 
 	public void testSimpleInsertAbove() {
 		MApplication application = createSimpleApplication();
-		testInsert(application, "theStack", EModelService.ABOVE, .25f);
+		testInsert(application, "theStack", EModelService.ABOVE, 25);
 	}
 
 	public void testSimpleInsertBelow() {
 		MApplication application = createSimpleApplication();
-		testInsert(application, "theStack", EModelService.BELOW, .25f);
+		testInsert(application, "theStack", EModelService.BELOW, 25);
 	}
 
 	public void testSimpleInsertLeftOf() {
 		MApplication application = createSimpleApplication();
-		testInsert(application, "theStack", EModelService.LEFT_OF, .25f);
+		testInsert(application, "theStack", EModelService.LEFT_OF, 25);
 	}
 
 	public void testSimpleInsertRightOf() {
 		MApplication application = createSimpleApplication();
-		testInsert(application, "theStack", EModelService.RIGHT_OF, .25f);
+		testInsert(application, "theStack", EModelService.RIGHT_OF, 25);
 	}
 
 	public void testInsertAbove() {
 		MApplication application = createApplication();
-		testInsert(application, "theStack", EModelService.ABOVE, .35f);
+		testInsert(application, "theStack", EModelService.ABOVE, 35);
 	}
 
 	public void testInsertBelow() {
 		MApplication application = createApplication();
-		testInsert(application, "theStack", EModelService.BELOW, .35f);
+		testInsert(application, "theStack", EModelService.BELOW, 35);
 	}
 
 	public void testInsertLeftOf() {
 		MApplication application = createApplication();
-		testInsert(application, "theStack", EModelService.LEFT_OF, .35f);
+		testInsert(application, "theStack", EModelService.LEFT_OF, 35);
 	}
 
 	public void testInsertRightOf() {
 		MApplication application = createApplication();
-		testInsert(application, "theStack", EModelService.RIGHT_OF, .35f);
+		testInsert(application, "theStack", EModelService.RIGHT_OF, 35);
 	}
 }
