@@ -72,7 +72,7 @@ create_wiki_section "4.5.1" 4.5.1
 create_wiki_section "4.5.2" 4.5.2
 
 
-echo "= Work targeting Eclipse 4.5 ="
+echo "= Work targeting Eclipse 4.6 ="
 
 echo ""
 
