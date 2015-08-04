@@ -29,11 +29,11 @@
 		<tycho.scmUrl>scm:git:http://git.eclipse.org/gitroot/e4/org.eclipse.e4.tools</tycho.scmUrl>
 	</properties>
 
-  <!-- 
-    To build individual bundles, we specify a repository where to find parent pom, 
+  <!--
+    To build individual bundles, we specify a repository where to find parent pom,
     in case it is not in local maven cache already
-    and that parent pom also has fuller individual-bundle profile 
-    defined that is combined with this one. --> 
+    and that parent pom also has fuller individual-bundle profile
+    defined that is combined with this one. -->
   <profiles>
     <profile>
       <id>build-individual-bundles</id>
@@ -59,6 +59,7 @@
     <module>./bundles/org.eclipse.e4.tools.emf.editor3x</module>
     <module>./bundles/org.eclipse.e4.tools.emf.ui</module>
     <module>./bundles/org.eclipse.e4.tools.jdt.templates</module>
+    <module>./tests/org.eclipse.e4.tools.test</module>
     <module>./features/org.eclipse.e4.core.tools.feature</module>
   </modules>
 
