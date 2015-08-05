@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sopot Cela <scela@redhat.com> - Bug 474183
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -3278,6 +3279,10 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 		trim.getChildren().add(toolBar);
+
+		// dummy control is used to keep the toolbar visible
+		MToolControl dummyToolControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		toolBar.getChildren().add(dummyToolControl);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
