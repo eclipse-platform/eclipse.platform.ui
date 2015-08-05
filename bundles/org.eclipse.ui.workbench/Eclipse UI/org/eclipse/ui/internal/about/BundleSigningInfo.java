@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474273
  *******************************************************************************/
 
 package org.eclipse.ui.internal.about;
@@ -21,14 +22,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -63,9 +64,6 @@ public class BundleSigningInfo {
 	private Text date;
 	private StyledText certificate;
 	private AboutBundleData data;
-
-	public BundleSigningInfo() {
-	}
 
 	public void setData(AboutBundleData data) {
 		this.data = data;
@@ -156,12 +154,11 @@ public class BundleSigningInfo {
 		}
 
 		final AboutBundleData myData = data;
-		final Job signerJob = new Job(NLS.bind(
+		final Job signerJob = Job.create(NLS.bind(
 				WorkbenchMessages.BundleSigningTray_Determine_Signer_For,
-				myData.getId())) {
-
+				myData.getId()), new IJobFunction() {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public IStatus run(IProgressMonitor monitor) {
 				try {
 					if (myData != data)
 						return Status.OK_STATUS;
@@ -229,25 +226,23 @@ public class BundleSigningInfo {
 				}
 				return Status.OK_STATUS;
 			}
-		};
+		});
 		signerJob.setSystem(true);
 		signerJob.belongsTo(signerJob);
 		signerJob.schedule();
 
-		Job cleanup = new Job(
-				WorkbenchMessages.BundleSigningTray_Unget_Signing_Service) {
-
+		Job cleanup = Job.create(WorkbenchMessages.BundleSigningTray_Unget_Signing_Service, new IJobFunction() {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public IStatus run(IProgressMonitor monitor) {
 				try {
-					getJobManager().join(signerJob, monitor);
+					Job.getJobManager().join(signerJob, monitor);
 				} catch (OperationCanceledException e) {
 				} catch (InterruptedException e) {
 				}
 				bundleContext.ungetService(factoryRef);
 				return Status.OK_STATUS;
 			}
-		};
+		});
 		cleanup.setSystem(true);
 		cleanup.schedule();
 

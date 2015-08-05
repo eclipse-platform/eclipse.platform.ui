@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 409996 - 'Restore Defaults' does not work properly on Project Properties > Resource tab
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472784
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472784, 474273
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -229,9 +230,9 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 
 		final String finalEncoding = encoding;
 
-		Job charsetJob = new Job(IDEWorkbenchMessages.IDEEncoding_EncodingJob) {
+		Job charsetJob = Job.create(IDEWorkbenchMessages.IDEEncoding_EncodingJob, new IJobFunction() {
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public IStatus run(IProgressMonitor monitor) {
 				try {
 					if (!hasSameEncoding) {
 						if (resource instanceof IContainer) {
@@ -265,7 +266,7 @@ public final class ResourceEncodingFieldEditor extends AbstractEncodingFieldEdit
 					return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(), e);
 				}
 			}
-		};
+		});
 
 		charsetJob.schedule();
 

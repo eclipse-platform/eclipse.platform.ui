@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474273
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
@@ -15,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -142,8 +144,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 	private void fetchConfigurationInfo(final Text text) {
 		text.setText(WorkbenchMessages.AboutSystemPage_RetrievingSystemInfo);
-		Job job = new Job(
-				WorkbenchMessages.AboutSystemPage_FetchJobTitle) {
+		Job job = Job.create(WorkbenchMessages.AboutSystemPage_FetchJobTitle, new IJobFunction() {
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				final String info = ConfigurationInfo.getSystemSummary();
@@ -159,7 +160,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 				}
 				return Status.OK_STATUS;
 			}
-		};
+		});
 		job.schedule();
 	}
 }
