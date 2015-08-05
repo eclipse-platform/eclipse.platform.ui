@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 460683
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -24,6 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -72,7 +75,16 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(job.getName());
-
+		shell.addTraverseListener(new TraverseListener() {
+			@Override
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					cancelPressed();
+					e.detail = SWT.TRAVERSE_NONE;
+					e.doit = true;
+				}
+			}
+		});
 	}
 
 	@Override

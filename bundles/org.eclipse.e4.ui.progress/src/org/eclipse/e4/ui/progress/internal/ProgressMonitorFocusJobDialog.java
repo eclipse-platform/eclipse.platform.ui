@@ -28,6 +28,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -74,7 +76,16 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(job.getName());
-
+		shell.addTraverseListener(new TraverseListener() {
+			@Override
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					cancelPressed();
+					e.detail = SWT.TRAVERSE_NONE;
+					e.doit = true;
+				}
+			}
+		});
 	}
 
 	@Override
