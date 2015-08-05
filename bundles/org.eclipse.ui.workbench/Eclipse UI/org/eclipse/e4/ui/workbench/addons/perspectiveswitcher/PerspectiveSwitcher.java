@@ -319,7 +319,7 @@ public class PerspectiveSwitcher {
 			@Override
 			public void paintControl(PaintEvent e) {
 				if (borderColor == null || borderColor.isDisposed()) {
-					borderColor = e.display.getSystemColor(SWT.COLOR_BLACK);
+					borderColor = e.display.getSystemColor(SWT.COLOR_GRAY);
 				}
 				e.gc.setForeground(borderColor);
 				Rectangle bounds = ((Control) e.widget).getBounds();
@@ -883,7 +883,7 @@ public class PerspectiveSwitcher {
 		GC gc = e.gc;
 		Point size = comp.getSize();
 		if (curveColor == null || curveColor.isDisposed()) {
-			curveColor = e.display.getSystemColor(SWT.COLOR_BLACK);
+			curveColor = e.display.getSystemColor(SWT.COLOR_GRAY);
 		}
 		int h = size.y;
 		int[] simpleCurve = new int[] { 0, h - 1, 1, h - 1, 2, h - 2, 2, 1, 3, 0 };
