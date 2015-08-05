@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474276
  *******************************************************************************/
 package org.eclipse.core.runtime.jobs;
 
@@ -24,7 +25,7 @@ public interface IJobFunction {
 	 * Executes this job.  Returns the result of the execution.
 	 * <p>
 	 * The provided monitor can be used to report progress and respond to
-	 * cancellation.  If the progress monitor has been canceled, the job
+	 * cancelation.  If the progress monitor has been canceled, the job
 	 * should finish its execution at the earliest convenience and return a result
 	 * status of severity {@link IStatus#CANCEL}.  The singleton
 	 * cancel status {@link Status#CANCEL_STATUS} can be used for
