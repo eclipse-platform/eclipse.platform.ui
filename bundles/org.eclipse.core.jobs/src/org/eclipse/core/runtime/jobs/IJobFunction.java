@@ -42,8 +42,11 @@ public interface IJobFunction {
 	 * the method <code>done</code>.
 	 *
 	 * @param monitor the monitor to be used for reporting progress and
-	 * responding to cancelation. The monitor is never <code>null</code>
-	 * @return resulting status of the run. The result must not be <code>null</code>
+	 *     responding to cancellation. The monitor is never {@code null}.
+	 *     It is the caller's responsibility to call {@link IProgressMonitor#done()}
+	 *     after this method returns or throws an exception.
+
+	 * @return resulting status of the run. The result must not be {@code null}
 	 * @see Job#ASYNC_FINISH
 	 * @see Job#done(IStatus)
 	 */

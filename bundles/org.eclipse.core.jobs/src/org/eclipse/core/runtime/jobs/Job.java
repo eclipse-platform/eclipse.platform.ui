@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,15 +158,79 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return new Job(name) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				return function.run(monitor);
+				try {
+					return function.run(monitor);
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					monitor.done();
+				}
 			}
 		};
 	}
 
 	/**
-	 * Creates a new job with the specified name.  The job name is a human-readable
-	 * value that is displayed to users.  The name does not need to be unique, but it
-	 * must not be <code>null</code>.
+	 * Creates a new Job that will execute the provided runnable when it runs.
+	 *
+	 * @param name the name of the job
+	 * @param runnable the runnable to execute
+	 * @return a job that encapsulates the provided runnable
+	 * @see ICoreRunnable
+	 * @since 3.7
+	 */
+	public static Job create(String name, final ICoreRunnable runnable) {
+		return new Job(name) {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					runnable.run(monitor);
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+	}
+
+	/**
+	 * Creates a new system {@link Job} with the given name that will execute
+	 * the provided runnable when it runs.
+	 *
+	 * @param name the name of the job
+	 * @param runnable the runnable to execute
+	 * @return a job that encapsulates the provided runnable
+	 * @see ICoreRunnable
+	 * @see Job#setSystem(boolean)
+	 * @since 3.7
+	 */
+	public static Job createSystem(String name, final ICoreRunnable runnable) {
+		Job job = create(name, runnable);
+		job.setSystem(true);
+		return job;
+	}
+
+	/**
+	 * Creates a new system {@link Job} that will execute the provided runnable
+	 * when it runs.
+	 *
+	 * @param runnable the runnable to execute
+	 * @return a job that encapsulates the provided runnable
+	 * @see ICoreRunnable
+	 * @see Job#setSystem(boolean)
+	 * @since 3.7
+	 */
+	public static Job createSystem(final ICoreRunnable runnable) {
+		return createSystem("", runnable); //$NON-NLS-1$
+	}
+
+	/**
+	 * Creates a new job with the specified name. The job name is a
+	 * human-readable value that is displayed to users. The name does not need
+	 * to be unique, but it must not be <code>null</code>.
 	 *
 	 * @param name the name of the job.
 	 */
