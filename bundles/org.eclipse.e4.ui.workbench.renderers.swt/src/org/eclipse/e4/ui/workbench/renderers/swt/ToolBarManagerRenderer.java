@@ -13,6 +13,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 457198
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 431990
  *     Sopot Cela <scela@redhat.com> - Bug 472761
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 473184
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -379,7 +380,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		Control renderedCtrl = newTB;
 		MUIElement parentElement = element.getParent();
 		if (parentElement instanceof MTrimBar) {
-			element.getTags().add(IPresentationEngine.DRAGGABLE);
+			if (!element.getTags().contains(IPresentationEngine.NO_MOVE)) {
+				element.getTags().add(IPresentationEngine.DRAGGABLE);
+			}
 
 			setCSSInfo(element, newTB);
 
