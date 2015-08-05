@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.junit.Test;
 
-public class DisposingReferencedContextTest extends TestCase {
+public class DisposingReferencedContextTest {
 
 	static class MandatoryTarget {
 		@Inject @Named("object")
@@ -29,8 +31,9 @@ public class DisposingReferencedContextTest extends TestCase {
 
 		@Inject
 		void setActiveContext(@Named(EclipseContext.ACTIVE_CHILD) IEclipseContext partContext) {
-			if (partContext != null)
+			if (partContext != null) {
 				partContext.get("someVar");
+			}
 		}
 	}
 
@@ -40,23 +43,28 @@ public class DisposingReferencedContextTest extends TestCase {
 
 		@Inject
 		void setActiveContext(@Optional @Named(EclipseContext.ACTIVE_CHILD) IEclipseContext partContext) {
-			if (partContext != null)
+			if (partContext != null) {
 				partContext.get("someVar");
+			}
 		}
 	}
 
+	@Test
 	public void testContextDisposeCausesCompleteUninjection_Mandatory_True() {
 		testContextDisposeCausesCompleteUninjection_Mandatory(true);
 	}
 
+	@Test
 	public void testContextDisposeCausesCompleteUninjection_Mandatory_False() {
 		testContextDisposeCausesCompleteUninjection_Mandatory(false);
 	}
 
+	@Test
 	public void testContextDisposeCausesCompleteUninjection_Optional_True() {
 		testContextDisposeCausesCompleteUninjection_Optional(true);
 	}
 
+	@Test
 	public void testContextDisposeCausesCompleteUninjection_Optional_False() {
 		testContextDisposeCausesCompleteUninjection_Optional(false);
 	}

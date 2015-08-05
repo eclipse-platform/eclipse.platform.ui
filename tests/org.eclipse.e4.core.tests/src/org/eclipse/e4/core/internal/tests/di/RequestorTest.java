@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,23 +7,29 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
-import java.lang.reflect.Field;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.lang.reflect.Field;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.internal.contexts.ContextObjectSupplier;
 import org.eclipse.e4.core.internal.di.FieldRequestor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RequestorTest extends TestCase {
+public class RequestorTest {
 	public Object field;
 	public IEclipseContext context;
 
+	@Test
 	public void testHashCode() throws Exception {
 		Field field = getClass().getField("field");
 		assertNotNull(field);
@@ -36,15 +42,13 @@ public class RequestorTest extends TestCase {
 		assertEquals(hash, requestor.hashCode());
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		context = EclipseContextFactory.create(getName());
+	@Before
+	public void setUp() throws Exception {
+		context = EclipseContextFactory.create("RequestorTest");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		context.dispose();
 	}
 

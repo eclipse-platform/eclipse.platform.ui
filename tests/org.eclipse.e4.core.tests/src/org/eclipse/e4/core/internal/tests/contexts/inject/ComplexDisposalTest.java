@@ -7,26 +7,28 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
 /**
  * See bug 296337: duplicate disposal of an object
  */
-public class ComplexDisposalTest extends TestCase {
+public class ComplexDisposalTest {
 
-	public static class Test {
+	public static class MyTest {
 		private int count = 0;
 
 		@Inject
@@ -46,17 +48,18 @@ public class ComplexDisposalTest extends TestCase {
 	public static class TestFunction extends ContextFunction {
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
-			return ContextInjectionFactory.make(Test.class, context);
+			return ContextInjectionFactory.make(MyTest.class, context);
 		}
 	}
 
+	@Test
 	public void testU() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
-		parentContext.set(Test.class.getName(), new TestFunction());
+		parentContext.set(MyTest.class.getName(), new TestFunction());
 		IEclipseContext context = parentContext.createChild();
 
-		Test test = (Test) context.get(Test.class.getName());
+		MyTest test = (MyTest) context.get(MyTest.class.getName());
 
 		assertEquals(0, test.getCount());
 		context.dispose();
@@ -65,12 +68,13 @@ public class ComplexDisposalTest extends TestCase {
 		assertEquals("Parent context disposed, @PreDestroy should not have been called again", 1, test.getCount());
 	}
 
+	@Test
 	public void testV() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		IEclipseContext context = parentContext.createChild();
 
-		Test test = ContextInjectionFactory.make(Test.class, context);
+		MyTest test = ContextInjectionFactory.make(MyTest.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
@@ -79,12 +83,13 @@ public class ComplexDisposalTest extends TestCase {
 		assertEquals("Parent context disposed, @PreDestroy should not have been called again", 1, test.getCount());
 	}
 
+	@Test
 	public void testW() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		IEclipseContext context = parentContext.createChild();
 
-		Test test = new Test();
+		MyTest test = new MyTest();
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());

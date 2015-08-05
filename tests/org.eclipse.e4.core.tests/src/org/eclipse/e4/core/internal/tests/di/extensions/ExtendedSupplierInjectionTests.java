@@ -7,16 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -28,12 +30,14 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.internal.di.osgi.ProviderHelper;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest.EventAdminHelper;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 
-public class ExtendedSupplierInjectionTests extends TestCase {
+public class ExtendedSupplierInjectionTests {
 	static final String TOPIC = "org/eclipse/e4/core/tests/di/extensions/ExtendedSupplierInjectionTests";
 	static final String TOPIC_430041 = "org/eclipse/e4/core/tests/di/extensions/ExtendedSupplierInjectionTests430041";
 
@@ -72,7 +76,7 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 
 	private EventAdminHelper helper;
 
-	@Override
+	@Before
 	public void setUp() {
 		InjectionEventTest.ensureEventAdminStarted();
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass())
@@ -84,6 +88,7 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 	}
 
 	/* Ensure extended suppliers are looked up first */
+	@Test
 	public void testBug398728() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Object.class, new Object());
@@ -101,6 +106,7 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 		assertEquals("event1data", target.injectedObject);
 	}
 
+	@Test
 	public void testBug430041() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Object.class, new Object());
@@ -128,6 +134,7 @@ public class ExtendedSupplierInjectionTests extends TestCase {
 	}
 
 	/** bug 428837: ensure suppliers are ranked by service.ranking */
+	@Test
 	public void testSupplierOrdering() {
 		BundleContext bc = FrameworkUtil.getBundle(getClass())
 				.getBundleContext();

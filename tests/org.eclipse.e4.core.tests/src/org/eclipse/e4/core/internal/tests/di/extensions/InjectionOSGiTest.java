@@ -1,17 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2013 Markus Alexander Kuppe and others. All rights reserved.
+ * Copyright (c) 2013, 2015 Markus Alexander Kuppe and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *   Markus Alexander Kuppe - initial API and implementation
+ *   Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -19,11 +24,14 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.OSGiBundle;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 
-public class InjectionOSGiTest extends TestCase {
+public class InjectionOSGiTest {
 
 	// classed used as a user of the @OSGiBundle annotation
 	static class InjectionTarget {
@@ -69,8 +77,8 @@ public class InjectionOSGiTest extends TestCase {
 	private InjectionTarget target;
 	private Bundle bundle;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		bundle.start();
 
 		final BundleContext bundleContext = CoreTestsActivator
@@ -79,14 +87,10 @@ public class InjectionOSGiTest extends TestCase {
 				.getServiceContext(bundleContext);
 
 		ContextInjectionFactory.uninject(target, localContext);
-
-		super.tearDown();
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		final BundleContext bundleContext = CoreTestsActivator
 				.getDefault().getBundleContext();
 		bundle = bundleContext.getBundle();
@@ -98,10 +102,12 @@ public class InjectionOSGiTest extends TestCase {
 				localContext);
 	}
 
+	@Test
 	public void testInject() {
 		assertTrue(target.hasContext());
 	}
 
+	@Test
 	public void testUnInject() throws BundleException, InterruptedException {
 		// inject
 		assertTrue(target.hasContext());
@@ -123,6 +129,7 @@ public class InjectionOSGiTest extends TestCase {
 		assertNotSame(firstContext, secondContext);
 	}
 
+	@Test
 	public void testBundleInject() throws BundleException {
 		// inject
 		assertNotNull(target.getBundle());

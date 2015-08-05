@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.manual;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -20,14 +24,13 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Creatable;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Manual test to observe error reporting. The JUnits in this
  * test are expected to produce exceptions in the output stream.
  */
-public class InjectionErrorReportingTest extends TestCase {
+public class InjectionErrorReportingTest {
 	static class TestData {
 	}
 
@@ -121,6 +124,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message for an unresolved method argument
 	 */
+	@Test
 	public void testMethodInjectionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -139,6 +143,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message in case method call throws an exception
 	 */
+	@Test
 	public void testMethodInjectionNullError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -157,6 +162,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message for an unresolved constructor argument
 	 */
+	@Test
 	public void testConstructorInjectionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -174,6 +180,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message for an exception in the injected constructor
 	 */
+	@Test
 	public void testConstructorCastError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -191,6 +198,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message for an unresolved field value
 	 */
+	@Test
 	public void testFieldInjectionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -209,6 +217,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message in case @PostConstruct method call throws an exception
 	 */
+	@Test
 	public void testPostConstructError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -226,6 +235,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	/**
 	 * Shows the error message in case @PreDestory method call throws an exception
 	 */
+	@Test
 	public void testPreDestoryError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestData methodValue = new TestData();
@@ -247,6 +257,7 @@ public class InjectionErrorReportingTest extends TestCase {
 	 * the fix for bug 457687 now exposes java.lang.Errors (such as
 	 * StackOverflowError) rather than wrapping them in an InjectionException.
 	 */
+	@Test
 	public void testRecursionError() {
 		IEclipseContext context = EclipseContextFactory.create();
 		boolean exception = false;

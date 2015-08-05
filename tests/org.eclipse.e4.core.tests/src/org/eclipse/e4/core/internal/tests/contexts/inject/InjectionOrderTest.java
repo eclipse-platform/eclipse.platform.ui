@@ -7,20 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
-public class InjectionOrderTest extends TestCase {
+public class InjectionOrderTest {
 
 	public static class InjectTargetMethod {
 
@@ -60,6 +62,7 @@ public class InjectionOrderTest extends TestCase {
 	 * See bug 304859.
 	 * </p>
 	 */
+	@Test
 	public void testDisposeMethod() throws Exception {
 		// create a context
 		IEclipseContext appContext = EclipseContextFactory.create();
@@ -84,6 +87,7 @@ public class InjectionOrderTest extends TestCase {
 	 * See bug 304859.
 	 * </p>
 	 */
+	@Test
 	public void testDisposeField() throws Exception {
 		// create a context
 		IEclipseContext appContext = EclipseContextFactory.create();

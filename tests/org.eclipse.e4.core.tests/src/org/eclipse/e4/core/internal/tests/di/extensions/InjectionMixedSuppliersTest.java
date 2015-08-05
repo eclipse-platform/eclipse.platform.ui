@@ -7,15 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
+
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -24,9 +25,10 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
+import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class InjectionMixedSuppliersTest extends TestCase {
+public class InjectionMixedSuppliersTest {
 
 	static class InjectTarget {
 		public String pref;
@@ -39,6 +41,7 @@ public class InjectionMixedSuppliersTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testPreferencesQualifier() throws BackingStoreException, InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		setPreference("injectedPrefs", "abc");

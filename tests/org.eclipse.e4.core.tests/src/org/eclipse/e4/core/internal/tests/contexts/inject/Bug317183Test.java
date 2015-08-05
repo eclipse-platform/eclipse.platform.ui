@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.junit.Test;
 
-public class Bug317183Test extends TestCase {
+public class Bug317183Test {
 
+	@Test
 	public void testX() {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		IEclipseContext windowContext = appContext.createChild();
@@ -37,6 +40,7 @@ public class Bug317183Test extends TestCase {
 		assertTrue(impl.called); // this fails
 	}
 
+	@Test
 	public void testY() {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		IEclipseContext windowContext = appContext.createChild();

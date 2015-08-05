@@ -1,18 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015  Dirk Fauth and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
+ ******************************************************************************/
+
 package org.eclipse.e4.core.internal.tests.nls;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.e4.core.services.translation.TranslationService;
+import org.junit.Before;
+import org.junit.Test;
 
-public class MessageRegistryTest extends TestCase {
+public class MessageRegistryTest {
 
 	static class TestObject {
 		@Inject
@@ -33,12 +48,13 @@ public class MessageRegistryTest extends TestCase {
 
 	private IEclipseContext context;
 
-	@Override
+	@Before
 	public void setUp() {
 		this.context = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		ContextInjectionFactory.setDefault(context);
 	}
 
+	@Test
 	public void testRegisterLocalizationByProperty() {
 		// ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -54,6 +70,7 @@ public class MessageRegistryTest extends TestCase {
 		assertEquals("BundleMessage", control.getLocalizableValue());
 	}
 
+	@Test
 	public void testRegisterLocalizationByMethod() {
 		// ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -69,6 +86,7 @@ public class MessageRegistryTest extends TestCase {
 		assertEquals("BundleMessage", control.getLocalizableValue());
 	}
 
+	@Test
 	public void testRegisterLocalizationByPropertyAndChangeLocale() {
 		// ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -89,6 +107,7 @@ public class MessageRegistryTest extends TestCase {
 		assertEquals("BundleNachricht", control.getLocalizableValue());
 	}
 
+	@Test
 	public void testRegisterLocalizationByMethodAndChangeLocale() {
 		// ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);

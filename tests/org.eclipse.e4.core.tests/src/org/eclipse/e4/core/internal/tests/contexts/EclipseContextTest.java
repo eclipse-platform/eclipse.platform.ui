@@ -7,10 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -18,9 +22,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 
-public class EclipseContextTest extends TestCase {
+public class EclipseContextTest {
 
 	private static class ComputedValueBar extends ContextFunction {
 		@Override
@@ -34,14 +40,14 @@ public class EclipseContextTest extends TestCase {
 
 	private int runCounter;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		parentContext = EclipseContextFactory.create(getName() + "-parent");
-		context = parentContext.createChild(getName());
+	@Before
+	public void setUp() throws Exception {
+		parentContext = EclipseContextFactory.create("EclipseContextTest" + "-parent");
+		context = parentContext.createChild("EclipseContextTest");
 		runCounter = 0;
 	}
 
+	@Test
 	public void testContainsKey() {
 		assertFalse("1.0", context.containsKey("function"));
 		assertFalse("1.1", context.containsKey("separator"));
@@ -57,6 +63,7 @@ public class EclipseContextTest extends TestCase {
 		assertFalse("4.0", context.containsKey("separator"));
 	}
 
+	@Test
 	public void testGet() {
 		assertNull(context.get("foo"));
 		context.set("foo", "bar");
@@ -72,6 +79,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals("baz", context.get("foo"));
 	}
 
+	@Test
 	public void testGetLocal() {
 		assertNull(context.getLocal("foo"));
 		context.set("foo", "bar");
@@ -90,6 +98,7 @@ public class EclipseContextTest extends TestCase {
 	/**
 	 * Tests that a context no longer looks up values from its parent when disposed.
 	 */
+	@Test
 	public void testDisposeRemovesParentReference() {
 		assertNull(context.get("foo"));
 		parentContext.set("foo", "bar");
@@ -103,6 +112,7 @@ public class EclipseContextTest extends TestCase {
 	 * Tests handling of a context function defined in the parent that uses values defined in the
 	 * child
 	 */
+	@Test
 	public void testContextFunctionInParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
@@ -124,6 +134,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(11, ((Integer) child.get("sum")).intValue());
 	}
 
+	@Test
 	public void testRunAndTrack() {
 		final Object[] value = new Object[1];
 		context.runAndTrack(new RunAndTrack() {
@@ -167,6 +178,7 @@ public class EclipseContextTest extends TestCase {
 	/**
 	 * Tests registering a single run and track instance multiple times with the same context.
 	 */
+	@Test
 	public void testRegisterRunAndTrackTwice() {
 		final Object[] value = new Object[1];
 		RunAndTrack runnable = new RunAndTrack() {
@@ -190,6 +202,7 @@ public class EclipseContextTest extends TestCase {
 
 	}
 
+	@Test
 	public void testRunAndTrackMultipleValues() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		final IEclipseContext child = parent.createChild("ChildContext");
@@ -218,6 +231,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 	}
 
+	@Test
 	public void testModify() {
 		IEclipseContext grandParent = EclipseContextFactory.create();
 		IEclipseContext parent = grandParent.createChild();
@@ -299,6 +313,7 @@ public class EclipseContextTest extends TestCase {
 		assertTrue(exception);
 	}
 
+	@Test
 	public void testRemoveValueComputationOnDispose() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild("ChildContext");
@@ -312,6 +327,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(0, listenersCount(parent));
 	}
 
+	@Test
 	public void testNullInheritance() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild("ChildContext");
@@ -320,6 +336,7 @@ public class EclipseContextTest extends TestCase {
 		assertNull(child.get("x"));
 	}
 
+	@Test
 	public void testGetCFNotAValue() {
 		IEclipseContext context = EclipseContextFactory.create("ParentContext");
 		context.set("x", new ContextFunction() {
@@ -345,6 +362,7 @@ public class EclipseContextTest extends TestCase {
 		context.dispose();
 	}
 
+	@Test
 	public void testGetCFNotAValueToParent() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild();
@@ -368,6 +386,7 @@ public class EclipseContextTest extends TestCase {
 		parent.dispose();
 	}
 
+	@Test
 	public void testContextFunctionOrdering() {
 		IEclipseContext osgiContext = EclipseContextFactory.getServiceContext(FrameworkUtil.getBundle(getClass()).getBundleContext());
 		assertEquals("High",osgiContext.get("test.contextfunction.ranking"));

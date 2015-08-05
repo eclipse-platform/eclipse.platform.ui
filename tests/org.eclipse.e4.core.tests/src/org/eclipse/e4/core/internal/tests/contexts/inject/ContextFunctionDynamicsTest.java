@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
-public class ContextFunctionDynamicsTest extends TestCase {
+public class ContextFunctionDynamicsTest {
 
 	private static final String SELECTION = "selection"; //$NON-NLS-1$
 
@@ -38,6 +41,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 	/**
 	 * Changing context function should update injected values
 	 */
+	@Test
 	public void testChangeICF() throws Exception {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
@@ -67,6 +71,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 	/**
 	 * Overriding context function with a regular value on a child node
 	 */
+	@Test
 	public void testOverrideICF() throws Exception {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
@@ -93,6 +98,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 	/**
 	 * Tests updates in a chain of 4 contexts
 	 */
+	@Test
 	public void testLongChain() throws Exception {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
@@ -137,6 +143,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 
 
 
+	@Test
 	public void testBug315109() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		IEclipseContext windowContext = appContext.createChild();

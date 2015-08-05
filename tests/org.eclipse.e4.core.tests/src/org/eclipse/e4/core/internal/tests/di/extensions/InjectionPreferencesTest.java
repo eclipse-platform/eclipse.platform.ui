@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import junit.framework.TestCase;
+import javax.inject.Inject;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -22,12 +25,13 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
+import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Note: we do not support byte arrays at this time.
  */
-public class InjectionPreferencesTest extends TestCase {
+public class InjectionPreferencesTest {
 
 	static final private String TEST_PREFS_KEY = "testPreferencesQualifier";
 	static final private String TEST_PREFS_NODE = "org.eclipse.e4.core.tests.ext";
@@ -144,6 +148,7 @@ public class InjectionPreferencesTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testPreferencesQualifier() throws BackingStoreException {
 		setPreference(TEST_PREFS_KEY, "abc");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "123");
@@ -176,6 +181,7 @@ public class InjectionPreferencesTest extends TestCase {
 		assertEquals("xyz", target.prefOptional2);
 	}
 
+	@Test
 	public void testBaseTypeConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
@@ -193,8 +199,8 @@ public class InjectionPreferencesTest extends TestCase {
 
 		assertEquals(12, target.intField);
 		assertEquals(true, target.booleanField);
-		assertEquals(12.35345345345d, target.doubleField);
-		assertEquals(5.13f, target.floatField);
+		assertEquals(12.35345345345d, target.doubleField, 0);
+		assertEquals(5.13f, target.floatField, 0);
 		assertEquals(131232343453453L, target.longField);
 //		assertNotNull(target.byteArrayField);
 //		assertEquals(4, target.byteArrayField.length);
@@ -217,6 +223,7 @@ public class InjectionPreferencesTest extends TestCase {
 		assertEquals(false, target.booleanArg);
 	}
 
+	@Test
 	public void testAutoConversion() throws BackingStoreException {
 		// setup preferences
 		String nodePath = CoreTestsActivator.getDefault().getBundleContext().getBundle().getSymbolicName();
@@ -267,6 +274,7 @@ public class InjectionPreferencesTest extends TestCase {
 		node.flush();
 	}
 
+	@Test
 	public void testPreferencesConstructor() throws BackingStoreException {
 		setPreference(TEST_PREFS_KEY, "abc");
 		setPreference(TEST_PREFS_KEY, TEST_PREFS_NODE, "123");

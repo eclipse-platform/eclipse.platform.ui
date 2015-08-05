@@ -7,8 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -16,13 +23,12 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
-public class ExtraDependenciesTest extends TestCase {
+public class ExtraDependenciesTest {
 
 	static public class TestObject {
 
@@ -41,10 +47,11 @@ public class ExtraDependenciesTest extends TestCase {
 				return;
 			}
 			IEclipseContext otherContext = (IEclipseContext) context.get("otherContext");
-			if (otherContext == null)
+			if (otherContext == null) {
 				other = null;
-			else
+			} else {
 				other = (String) otherContext.get("arg3");
+			}
 		}
 
 		@PreDestroy
@@ -53,6 +60,7 @@ public class ExtraDependenciesTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testExtraDependencies() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("arg1", "abc");

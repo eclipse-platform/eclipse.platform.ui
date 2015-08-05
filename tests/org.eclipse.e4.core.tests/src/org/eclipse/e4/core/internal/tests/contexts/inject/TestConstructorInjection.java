@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 
 import javax.inject.Inject;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
-public class TestConstructorInjection extends TestCase {
+public class TestConstructorInjection {
 
 	static class TestConstructorObject {
 
@@ -58,8 +64,9 @@ public class TestConstructorInjection extends TestCase {
 			this.i = i;
 			this.b = b;
 			// the constructor should be called first
-			if ((c != null) || (d != null) || (f != null))
+			if ((c != null) || (d != null) || (f != null)) {
 				orderCorrect = false;
+			}
 		}
 
 		@Inject
@@ -68,8 +75,9 @@ public class TestConstructorInjection extends TestCase {
 			this.d = d;
 			this.f = f;
 			// the method injection after constructor and field injection
-			if ((c == null) || (i == null) || (b == null))
+			if ((c == null) || (i == null) || (b == null)) {
 				orderCorrect = false;
+			}
 		}
 
 		public void nonInjectedMethod(Double d) {
@@ -82,6 +90,7 @@ public class TestConstructorInjection extends TestCase {
 		}
 	}
 
+	@Test
 	public void testConstructorInjection() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		Integer intValue = new Integer(123);

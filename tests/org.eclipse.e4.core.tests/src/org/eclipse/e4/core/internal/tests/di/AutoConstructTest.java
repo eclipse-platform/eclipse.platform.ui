@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.junit.Test;
 
-public class AutoConstructTest extends TestCase {
+public class AutoConstructTest {
 
 	@Creatable
 	static class Dependent1 {
@@ -54,6 +57,7 @@ public class AutoConstructTest extends TestCase {
 	/**
 	 * Checks that only classes with @Creatable are auto-constructed
 	 */
+	@Test
 	public void testCreatable() {
 		IEclipseContext context = EclipseContextFactory.create();
 		Consumer1 consumer1 = ContextInjectionFactory.make(Consumer1.class,

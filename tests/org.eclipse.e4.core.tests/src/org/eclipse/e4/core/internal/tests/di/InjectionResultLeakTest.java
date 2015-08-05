@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import junit.framework.TestCase;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
 /**
  * Test that we don't hold on to the values calculated during injection.
@@ -26,7 +32,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
  * so this test might not work on all VMs or might become invalid on
  * future VMs.
  */
-public class InjectionResultLeakTest extends TestCase {
+public class InjectionResultLeakTest {
 
 	static class PartConsumer {
 		Object part;
@@ -37,6 +43,7 @@ public class InjectionResultLeakTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLeaks() {
 		IEclipseContext context = EclipseContextFactory.create();
 		WeakReference<?> ref;

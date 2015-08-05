@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -23,11 +23,13 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.junit.Test;
+
 
 /**
  * Testing provider interface
  */
-public class ProviderInjectionTest extends TestCase {
+public class ProviderInjectionTest {
 
 	static public class TestData {
 
@@ -60,18 +62,7 @@ public class ProviderInjectionTest extends TestCase {
 		}
 	}
 
-	public static Test suite() {
-		return new TestSuite(ProviderInjectionTest.class);
-	}
-
-	public ProviderInjectionTest() {
-		super();
-	}
-
-	public ProviderInjectionTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public synchronized void testInvokeWithProvider() {
 
 		// create context
@@ -87,6 +78,7 @@ public class ProviderInjectionTest extends TestCase {
 		assertEquals("abc", userObject.provider.get().data);
 	}
 
+	@Test
 	public synchronized void testConstructorWithProvider() {
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();

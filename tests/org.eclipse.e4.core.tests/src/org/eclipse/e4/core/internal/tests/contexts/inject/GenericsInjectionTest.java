@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,22 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
 /**
  * Tests for the generics context injection functionality
  */
-public class GenericsInjectionTest extends TestCase {
+public class GenericsInjectionTest {
 
 	static public class Animal {
 	}
@@ -54,6 +56,7 @@ public class GenericsInjectionTest extends TestCase {
 		}
 	}
 
+	@Test
 	public synchronized void testNamedInjection() {
 		Animal testAnimal = new Animal();
 		Bird testBird = new Bird();
@@ -72,6 +75,7 @@ public class GenericsInjectionTest extends TestCase {
 		assertEquals(testBirdHouse, userObject.field);
 	}
 
+	@Test
 	public synchronized void testGenericInjection() {
 		Animal testAnimal = new Animal();
 		Bird testBird = new Bird();
@@ -102,6 +106,7 @@ public class GenericsInjectionTest extends TestCase {
 		public Interface<Object> field;
 	}
 
+	@Test
 	public void testInterfaceGenericInjection() {
 		Implementation implementation = new Implementation();
 		// create context
@@ -126,6 +131,7 @@ public class GenericsInjectionTest extends TestCase {
 		public Superclass<Object> field;
 	}
 
+	@Test
 	public void testClassGenericInjection() {
 		Subclass implementation = new Subclass();
 		// create context

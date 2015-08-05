@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,42 +7,35 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
 /**
  * Tests for the basic context injection functionality
  */
-public class AnnotationsInjectionTest extends TestCase {
+public class AnnotationsInjectionTest {
 
-	public static Test suite() {
-		return new TestSuite(AnnotationsInjectionTest.class);
-	}
 
-	public AnnotationsInjectionTest() {
-		super();
-	}
-
-	public AnnotationsInjectionTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testContextSetOneArg() {
 		class TestData {
 			// empty
@@ -79,6 +72,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(1, object.contextSetCalled);
 	}
 
+	@Test
 	public void testPostConstruct() {
 		class TestData {
 			// empty
@@ -117,6 +111,7 @@ public class AnnotationsInjectionTest extends TestCase {
 	/**
 	 * Tests basic context injection
 	 */
+	@Test
 	public synchronized void testInjection() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -154,6 +149,7 @@ public class AnnotationsInjectionTest extends TestCase {
 	/**
 	 * Tests that fields are injected before methods.
 	 */
+	@Test
 	public void testFieldMethodOrder() {
 		final AssertionFailedError[] error = new AssertionFailedError[1];
 		class TestData {
@@ -181,23 +177,27 @@ public class AnnotationsInjectionTest extends TestCase {
 		context.set("valueMethod", methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
-		if (error[0] != null)
+		if (error[0] != null) {
 			throw error[0];
+		}
 		assertEquals(fieldValue, object.injectedField);
 		assertEquals(methodValue, object.methodValue);
 
 		// removing method value, the field should still have value
 		context.remove("valueMethod");
-		if (error[0] != null)
+		if (error[0] != null) {
 			throw error[0];
+		}
 		assertEquals(fieldValue, object.injectedField);
 		assertNull(object.methodValue);
 
 		context.dispose();
-		if (error[0] != null)
+		if (error[0] != null) {
 			throw error[0];
+		}
 	}
 
+	@Test
 	public void testOptionalInjection() {
 		Integer testInt = new Integer(123);
 		IEclipseContext context = EclipseContextFactory.create();
@@ -229,6 +229,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(testFloat, userObject.f);
 	}
 
+	@Test
 	public void testOptionalInvoke() {
 
 		class TestObject {
@@ -260,6 +261,7 @@ public class AnnotationsInjectionTest extends TestCase {
 	/**
 	 * Tests that a class with multiple inherited post-construct / pre-destroy methods.
 	 */
+	@Test
 	public void testInheritedSpecialMethods() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Integer.class.getName(), new Integer(123));
@@ -287,6 +289,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(1, userObject.overriddenPreDestroyCount);
 	}
 
+	@Test
 	public void testInvoke() {
 		class TestData {
 			public String value;
@@ -319,6 +322,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals("abc", object.myString);
 	}
 
+	@Test
 	public void testPreDestroy() {
 		class TestData {
 			// empty

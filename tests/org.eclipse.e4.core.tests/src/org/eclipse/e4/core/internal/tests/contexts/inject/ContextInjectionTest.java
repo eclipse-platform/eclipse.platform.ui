@@ -7,41 +7,33 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.junit.Test;
 
 /**
  * Tests for the basic context injection functionality
  */
-public class ContextInjectionTest extends TestCase {
+public class ContextInjectionTest {
 
-	public static Test suite() {
-		return new TestSuite(ContextInjectionTest.class);
-	}
-
-	public ContextInjectionTest() {
-		super();
-	}
-
-	public ContextInjectionTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Test trivial method injection and finalize method with context as an argument
 	 */
+	@Test
 	public void testContextSetOneArg() {
 		class TestData {
 		}
@@ -80,6 +72,7 @@ public class ContextInjectionTest extends TestCase {
 	/**
 	 * Test filnalize method - no args
 	 */
+	@Test
 	public void testContextSetZeroArgs() {
 		class TestData {
 		}
@@ -118,6 +111,7 @@ public class ContextInjectionTest extends TestCase {
 	/**
 	 * Tests basic context injection
 	 */
+	@Test
 	public synchronized void testInjection() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -155,6 +149,7 @@ public class ContextInjectionTest extends TestCase {
 	/**
 	 * Tests injection of objects from parent context
 	 */
+	@Test
 	public synchronized void testInjectionFromParent() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -195,6 +190,7 @@ public class ContextInjectionTest extends TestCase {
 	/**
 	 * Tests injection into classes with inheritance
 	 */
+	@Test
 	public synchronized void testInjectionAndInheritance() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -277,6 +273,7 @@ public class ContextInjectionTest extends TestCase {
 	/**
 	 * Tests injection of similar, but not overridden methods
 	 */
+	@Test
 	public synchronized void testInjectionCloseOverride() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -305,7 +302,8 @@ public class ContextInjectionTest extends TestCase {
 		assertTrue(userObject.finishOverrideCalled);
 	}
 
-    public void testBug374421() {
+    @Test
+	public void testBug374421() {
     	try {
 	        IEclipseContext context = EclipseContextFactory.create();
 	        context.runAndTrack(new RunAndTrack() {

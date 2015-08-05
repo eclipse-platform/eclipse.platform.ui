@@ -6,10 +6,11 @@
  *
  * Contributors:
  *   Markus Alexander Kuppe - initial API and implementation
+ *   Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -17,11 +18,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.extensions.OSGiBundle;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
-import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
 
-public class InjectionOSGiHandlerTest extends TestCase {
+public class InjectionOSGiHandlerTest {
 
 	public static class TestHandler {
 
@@ -35,14 +35,6 @@ public class InjectionOSGiHandlerTest extends TestCase {
 		public BundleContext getCtx() {
 			return ctx;
 		}
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Override
-	@Before
-	public void setUp() throws Exception {
 	}
 
 	@Test

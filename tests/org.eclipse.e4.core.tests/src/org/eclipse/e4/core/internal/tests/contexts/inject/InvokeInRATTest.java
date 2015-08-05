@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
-import javax.inject.Named;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -20,11 +21,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
 /**
  * Tests for the context injection functionality using 2 contexts
  */
-public class InvokeInRATTest extends TestCase {
+public class InvokeInRATTest {
 
 	static class TestHandler {
 
@@ -38,6 +40,7 @@ public class InvokeInRATTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testStaticInvoke() {
 		IEclipseContext context = EclipseContextFactory.create();
 		final int[] count = new int[1];

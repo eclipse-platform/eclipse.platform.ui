@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,29 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
 /**
  * Tests for the context injection functionality using 2 contexts
  */
-public class InjectStaticContextTest extends TestCase {
+public class InjectStaticContextTest {
 	static class TestClass {
 		public IEclipseContext injectedContext;
 		public String aString;
@@ -91,6 +94,7 @@ public class InjectStaticContextTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testStaticMake() {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("a", "abc");
@@ -162,6 +166,7 @@ public class InjectStaticContextTest extends TestCase {
 		assertEquals(1, testObject.preDestroyCalled);
 	}
 
+	@Test
 	public void testStaticInvoke() {
 		IEclipseContext parentContext = EclipseContextFactory.create("main");
 		parentContext.set("a", "abc");

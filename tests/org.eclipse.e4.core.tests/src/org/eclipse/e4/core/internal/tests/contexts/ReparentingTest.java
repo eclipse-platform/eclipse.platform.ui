@@ -7,9 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,31 +26,19 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectSuperClass;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
 /**
  * Test for changing a context's parent.
  */
-public class ReparentingTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(ReparentingTest.class);
-	}
+public class ReparentingTest {
 
-	public ReparentingTest() {
-		super();
-	}
-
-	public ReparentingTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests handling of a context function defined in the parent when the parent is changed to no
 	 * longer have the function.
 	 */
+	@Test
 	public void testContextFunctionInParentRemove() {
 		IEclipseContext parent = EclipseContextFactory.create("parent");
 		final IEclipseContext child = parent.createChild("child");
@@ -64,6 +58,7 @@ public class ReparentingTest extends TestCase {
 	 * Tests handling of a context function defined in the parent when the parent is changed to have
 	 * the function
 	 */
+	@Test
 	public void testContextFunctionInParentAdd() {
 		// setup
 		IEclipseContext parent = EclipseContextFactory.create();
@@ -87,6 +82,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}
 
+	@Test
 	public void testContextFunctionNullBecomeParent() {
 		final IEclipseContext child = EclipseContextFactory.create();
 		child.set("sum", new AddContextFunction());
@@ -99,6 +95,7 @@ public class ReparentingTest extends TestCase {
 
 	}
 
+	@Test
 	public void testContextFunctionParentBecomeNull() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
@@ -110,6 +107,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(0, ((Integer) child.get("sum")).intValue());
 	}
 
+	@Test
 	public void testContextFunctionSwitchParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
@@ -127,6 +125,7 @@ public class ReparentingTest extends TestCase {
 	/**
 	 * Tests a child switching from a null parent to a non-null parent.
 	 */
+	@Test
 	public void testRunAndTrackNullBecomesParent() {
 		final String[] value = new String[1];
 		final IEclipseContext child = EclipseContextFactory.create();
@@ -147,6 +146,7 @@ public class ReparentingTest extends TestCase {
 	/**
 	 * Tests a child switching from a non-null parent to a null parent.
 	 */
+	@Test
 	public void testRunAndTrackParentBecomeNull() {
 		final String[] value = new String[1];
 		IEclipseContext parent = EclipseContextFactory.create();
@@ -164,6 +164,7 @@ public class ReparentingTest extends TestCase {
 		assertNull(value[0]);
 	}
 
+	@Test
 	public void testRunAndTrackSwitchParent() {
 		final String[] value = new String[1];
 		IEclipseContext parent = EclipseContextFactory.create();
@@ -187,6 +188,7 @@ public class ReparentingTest extends TestCase {
 	 * Tests an object consuming simple values from a parent context, and a parent change causes a
 	 * change in simple values. TODO: Still fails
 	 */
+	@Test
 	public void testInjectSwitchParent() {
 
 		IEclipseContext oldParent = EclipseContextFactory.create();
@@ -214,6 +216,7 @@ public class ReparentingTest extends TestCase {
 	 * Tests an object consuming services from a grandparent. A parent switch where the grandparent
 	 * stays unchanged should ideally not cause changes for the injected object.
 	 */
+	@Test
 	public void testInjectSwitchParentSameGrandparent() {
 		IEclipseContext grandpa = EclipseContextFactory.create();
 		grandpa.set("String", "field");
@@ -232,6 +235,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(1, object.setStringCalled);
 	}
 
+	@Test
 	public void testUpdateSameParent() {
 		final Boolean[] called = new Boolean[1] ;
 		IEclipseContext parent = EclipseContextFactory.create("parent");
@@ -262,6 +266,7 @@ public class ReparentingTest extends TestCase {
 		// empty
 	}
 
+	@Test
 	public void testUpdateSameParentCalculated() {
 		final int[] testServiceCount = new int[1];
 		testServiceCount[0] = 0;
@@ -282,6 +287,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(1, testServiceCount[0]);
 	}
 
+	@Test
 	public void testBug468048_contextFunction() {
 		IEclipseContext p1 = EclipseContextFactory.create("parent1");
 		p1.set("sample", new ContextFunction() {
@@ -307,6 +313,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(Integer.valueOf(2), leaf.get("sample"));
 	}
 
+	@Test
 	public void testBug468048_injection() {
 		IEclipseContext p1 = EclipseContextFactory.create("parent1");
 		p1.set("sample", new ContextFunction() {

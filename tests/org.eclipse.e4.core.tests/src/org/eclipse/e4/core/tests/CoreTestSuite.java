@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.internal.tests.contexts.ActivationTest;
 import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
@@ -56,63 +54,66 @@ import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiHandlerTest
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
 import org.eclipse.e4.core.internal.tests.nls.NLSTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class CoreTestSuite extends TestSuite {
-	public static Test suite() {
-		return new CoreTestSuite();
-	}
-
-	public CoreTestSuite() {
-		addTestSuite(ExtendedSupplierInjectionTests.class);
-		addTestSuite(InjectionPreferencesTest.class);
-		addTestSuite(InjectionMixedSuppliersTest.class);
-		addTestSuite(InjectionEventTest.class);
-		addTestSuite(InjectionOSGiTest.class);
-		addTestSuite(InjectionOSGiHandlerTest.class);
+@RunWith(Suite.class)
+	@Suite.SuiteClasses({
+		ExtendedSupplierInjectionTests.class,
+		InjectionPreferencesTest.class,
+		InjectionMixedSuppliersTest.class,
+		InjectionEventTest.class,
+		InjectionOSGiTest.class,
+		InjectionOSGiHandlerTest.class,
 
 		// DI
-		addTestSuite(InjectionOrderTest.class);
-		addTestSuite(InvokeTest.class);
-		addTestSuite(InjectBaseTypeTest.class);
-		addTestSuite(InvokeTestMissingAnnotation.class);
-		addTestSuite(InjectionResultLeakTest.class);
-		addTest(AtInjectTest.suite());
-		addTestSuite(AutoConstructTest.class);
+		InjectionOrderTest.class,
+		InvokeTest.class,
+		InjectBaseTypeTest.class,
+		InvokeTestMissingAnnotation.class,
+		InjectionResultLeakTest.class,
+		AtInjectTest.class,
+		AutoConstructTest.class,
 
 		// Contexts
-		addTestSuite(EclipseContextTest.class);
-		addTestSuite(ContextInjectionTest.class);
-		addTestSuite(ContextInjectionDisposeTest.class);
-		addTestSuite(ContextInjectionFactoryTest.class);
-		addTestSuite(ContextDynamicTest.class);
-		addTestSuite(ReparentingTest.class);
-		addTestSuite(RunAndTrackTest.class);
-		addTestSuite(ParentContextDisposalTest.class);
-		addTestSuite(ComplexDisposalTest.class);
-		addTestSuite(DisposeClassLinkTest.class);
-		addTestSuite(InjectStaticContextTest.class);
-		addTestSuite(ActivationTest.class);
+		EclipseContextTest.class,
+		ContextInjectionTest.class,
+		ContextInjectionDisposeTest.class,
+		ContextInjectionFactoryTest.class,
+		ContextDynamicTest.class,
+		ReparentingTest.class,
+		RunAndTrackTest.class,
+		ParentContextDisposalTest.class,
+		ComplexDisposalTest.class,
+		DisposeClassLinkTest.class,
+		InjectStaticContextTest.class,
+		ActivationTest.class,
 
 		// Contexts injection
-		addTestSuite(AnnotationsInjectionTest.class);
-		addTestSuite(TestConstructorInjection.class);
-		addTestSuite(ServiceContextTest.class);
-		addTestSuite(ProviderInjectionTest.class);
-		addTestSuite(InjectionUpdateTest.class);
-		addTestSuite(DisposingReferencedContextTest.class);
-		addTestSuite(InjectionOrderTest.class);
-		addTestSuite(GroupedUpdatesTest.class);
-		addTestSuite(ExtraDependenciesTest.class);
-		addTestSuite(ContextFunctionDynamicsTest.class);
-		addTestSuite(InjectArraysTest.class);
-		addTestSuite(InvokeInRATTest.class);
-		addTestSuite(Bug317183Test.class);
-		addTestSuite(DependenciesLeakTest.class);
-		addTestSuite(ActivationInjectionTest.class);
-		addTestSuite(GenericsInjectionTest.class);
-		addTestSuite(RecursiveObjectCreationTest.class);
+		AnnotationsInjectionTest.class,
+		TestConstructorInjection.class,
+		ServiceContextTest.class,
+		ProviderInjectionTest.class,
+		InjectionUpdateTest.class,
+		DisposingReferencedContextTest.class,
+		InjectionOrderTest.class,
+		GroupedUpdatesTest.class,
+		ExtraDependenciesTest.class,
+		ContextFunctionDynamicsTest.class,
+		InjectArraysTest.class,
+		InvokeInRATTest.class,
+		Bug317183Test.class,
+		DependenciesLeakTest.class,
+		ActivationInjectionTest.class,
+		GenericsInjectionTest.class,
+		RecursiveObjectCreationTest.class,
 
 		// NLS
-		addTestSuite(NLSTest.class);
+		NLSTest.class,
+	})
+	public class CoreTestSuite
+
+	{
+
 	}
-}
+

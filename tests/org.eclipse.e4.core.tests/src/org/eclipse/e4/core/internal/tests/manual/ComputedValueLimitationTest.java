@@ -7,19 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.manual;
 
-import javax.inject.Inject;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
+
 
 /**
  * This is a demo of a scenario when computed values don't work. The basic idea here is that a
@@ -32,15 +33,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * We use a system timer here as an external input, but it can be pretty much anything not stored
  * directly in the context.
  */
-public class ComputedValueLimitationTest extends TestCase {
+public class ComputedValueLimitationTest {
 
-	public ComputedValueLimitationTest() {
-		super();
-	}
-
-	public ComputedValueLimitationTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Used as an injection target
@@ -83,11 +77,13 @@ public class ComputedValueLimitationTest extends TestCase {
 		}
 	}
 
+	@Test
 	public synchronized void testInjection() {
 
 		IEclipseContext context = EclipseContextFactory.create();
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++) {
 			context.set("arg" + Integer.toString(i), Integer.toString(i));
+		}
 		context.set("computed", new CalcColor());
 
 		UserObject userObject = new UserObject();
@@ -107,6 +103,7 @@ public class ComputedValueLimitationTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testVolatileFunction() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("time", new Time());
@@ -118,10 +115,6 @@ public class ComputedValueLimitationTest extends TestCase {
 		}
 		long newTime = ((Long) context.get("time")).longValue();
 		assertTrue(time != newTime);
-	}
-
-	public static Test suite() {
-		return new TestSuite(ComputedValueLimitationTest.class);
 	}
 
 }

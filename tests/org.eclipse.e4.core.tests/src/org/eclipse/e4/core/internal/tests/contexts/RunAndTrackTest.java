@@ -7,26 +7,31 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Tests for {@link org.eclipse.e4.core.RunAndTrack.context.IRunAndTrack}.
  */
-public class RunAndTrackTest extends TestCase {
+public class RunAndTrackTest {
 
 	private static final class TestRAT extends RunAndTrack {
 
@@ -111,16 +116,16 @@ public class RunAndTrackTest extends TestCase {
 		return contexts;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		for (Iterator<IEclipseContext> i = createdContexts.iterator(); i.hasNext();) {
 			IEclipseContext context = i.next();
 			context.dispose();
 		}
 		createdContexts.clear();
-		super.tearDown();
 	}
 
+	@Test
 	public void testActiveChain() throws Exception {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
@@ -129,6 +134,7 @@ public class RunAndTrackTest extends TestCase {
 		assertEquals("part0", workbenchContext.get(ACTIVE_PART));
 	}
 
+	@Test
 	public void testActiveChange() throws Exception {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
@@ -147,6 +153,7 @@ public class RunAndTrackTest extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testRunAndTrackComplex() throws Exception {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
@@ -203,6 +210,7 @@ public class RunAndTrackTest extends TestCase {
 		assertEquals("problemViews0", packageStack[0].get(ACTIVE_PART_ID));
 	}
 
+	@Test
 	public void testRunAndTrackSimple() throws Exception {
 		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
@@ -233,6 +241,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is == to child value
 	 */
+	@Test
 	public void testSetHiddenValueToChildObject() {
 		final String newRootValue = "child";
 
@@ -242,6 +251,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is != to child value
 	 */
+	@Test
 	public void testSetHiddenValueToDifferentObject() {
 		final String newRootValue = "other";
 
@@ -251,6 +261,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is != to child value (but is .equals())
 	 */
+	@Test
 	public void testSetHiddenValueToObjectEqualToChild() {
 		// avoid compiler's pushing all my strings into a single string pool
 		final String newRootValue = new String("child");
@@ -261,6 +272,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is == to root value
 	 */
+	@Test
 	public void testSetHiddenValueToRootObject() {
 		final String newRootValue = "root";
 
@@ -270,6 +282,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is != to root value (but is .equals())
 	 */
+	@Test
 	public void testSetHiddenValueToEqualRootObject() {
 		// avoid compiler's pushing all my strings into a single string pool
 		final String newRootValue = new String("root");
@@ -280,6 +293,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test how a RAT responds to a change hidden from it; changed value is == to root value
 	 */
+	@Test
 	public void testSetHiddenValueToNull() {
 		final String newRootValue = null;
 
@@ -346,6 +360,7 @@ public class RunAndTrackTest extends TestCase {
 	 * Test that a variable change in a context hidden from a RAT in
 	 * a child context does not re-run the RAT.
 	 */
+	@Test
 	public void testRemoveHiddenVariable() {
 		doHiddenValueChangeTest(new ITestAction() {
 
@@ -361,6 +376,7 @@ public class RunAndTrackTest extends TestCase {
 	 * Test that setting a context variable to it's existing
 	 * value does not re-run dependent RATs
 	 */
+	@Test
 	public void testSetContextVarToSameObject() {
 		doSingleContextChangeTest(new ITestAction() {
 			@Override
@@ -374,6 +390,7 @@ public class RunAndTrackTest extends TestCase {
 	 * Test that setting a context variable to a value that {@link Object#equals(Object) equals}
 	 * the current value, but is same object DOES re-run dependent RATs.
 	 */
+	@Test
 	public void testSetContextVarToEqualObject() {
 		doSingleContextChangeTest(new ITestAction() {
 			@Override
@@ -387,6 +404,7 @@ public class RunAndTrackTest extends TestCase {
 	 * Test that setting a context variable to a different object, not equal to the
 	 * current value re-runs dependent RATs.
 	 */
+	@Test
 	public void testSetContextVarToOtherObject() {
 		doSingleContextChangeTest(new ITestAction() {
 			@Override
@@ -399,6 +417,7 @@ public class RunAndTrackTest extends TestCase {
 	/**
 	 * Test that removing a context variable re-runs dependent RATs.
 	 */
+	@Test
 	public void testRemoveContextVar() {
 		doSingleContextChangeTest(new ITestAction() {
 			@Override

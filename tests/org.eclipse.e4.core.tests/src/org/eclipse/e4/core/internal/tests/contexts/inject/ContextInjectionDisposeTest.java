@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,38 +7,31 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
 /**
- * Tests for injection handling of context dispose, and handling disposal of injected objects.
+ * Tests for injection handling of context dispose, and handling disposal of
+ * injected objects.
  */
-public class ContextInjectionDisposeTest extends TestCase {
+public class ContextInjectionDisposeTest {
 
-	public static Test suite() {
-		return new TestSuite(ContextInjectionDisposeTest.class);
-	}
-
-	public ContextInjectionDisposeTest() {
-		super();
-	}
-
-	public ContextInjectionDisposeTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testContextDisposedNoArg() {
 		class Injected {
 
@@ -61,6 +54,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertTrue(object.disposeInvoked);
 	}
 
+	@Test
 	public void testDisposeContext() {
 		class Injected {
 			boolean disposeInvoked = false;
@@ -90,13 +84,15 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertEquals(fieldValue, object.Field);
 		assertEquals(methodValue, object.methodValue);
 
-		// disposing context calls @PreDestory, but does not clear injected values
+		// disposing context calls @PreDestory, but does not clear injected
+		// values
 		context.dispose();
 		assertNotNull(object.Field);
 		assertNotNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
 	}
 
+	@Test
 	public void testReleaseObject() {
 		class Injected {
 			boolean disposeInvoked = false;

@@ -7,21 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
-
+import org.junit.Test;
 /**
  * Checks that injected objects that do not have normal links
  * established to the context are still notified on context
@@ -30,9 +32,9 @@ import org.eclipse.e4.core.di.extensions.EventTopic;
  * or constructor injection was used.)
  * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=301462 .
  */
-public class DisposeClassLinkTest extends TestCase {
+public class DisposeClassLinkTest {
 
-	public static class Test {
+	public static class MyTest {
 		private int count = 0;
 
 		public int getCount() {
@@ -79,19 +81,21 @@ public class DisposeClassLinkTest extends TestCase {
 	    }
 	}
 
+	@Test
 	public void testMake() throws Exception {
 		IEclipseContext context = EclipseContextFactory.create();
-		Test test = ContextInjectionFactory.make(Test.class, context);
+		MyTest test = ContextInjectionFactory.make(MyTest.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
 		assertEquals(1, test.getCount());
 	}
 
+	@Test
 	public void testDisposeParent() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		IEclipseContext context = parentContext.createChild();
-		Test test = ContextInjectionFactory.make(Test.class, context);
+		MyTest test = ContextInjectionFactory.make(MyTest.class, context);
 
 		assertEquals(0, test.getCount());
 		context.dispose();
@@ -100,10 +104,11 @@ public class DisposeClassLinkTest extends TestCase {
 		assertEquals(1, test.getCount());
 	}
 
+	@Test
 	public void testInject() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		IEclipseContext context = parentContext.createChild();
-		Test test = new Test();
+		MyTest test = new MyTest();
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());
@@ -111,10 +116,11 @@ public class DisposeClassLinkTest extends TestCase {
 		assertEquals(1, test.getCount());
 	}
 
+	@Test
 	public void testDisposeParentFirst() throws Exception {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		IEclipseContext context = parentContext.createChild();
-		Test test = new Test();
+		MyTest test = new MyTest();
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());
@@ -124,6 +130,7 @@ public class DisposeClassLinkTest extends TestCase {
 		assertEquals(1, test.getCount());
 	}
 
+	@Test
 	public void testInjectedWithContext() throws Exception {
 	    IEclipseContext context = EclipseContextFactory.create();
 
@@ -140,6 +147,7 @@ public class DisposeClassLinkTest extends TestCase {
 	    assertEquals("@PreDestroy should have been called during uninjection", 1, obj.preDestroy);
 	}
 
+	@Test
 	public void testBug430041() {
 		IEclipseContext context = EclipseContextFactory.create();
 		TestBug430041 obj = ContextInjectionFactory.make(TestBug430041.class, context);

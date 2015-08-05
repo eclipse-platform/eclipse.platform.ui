@@ -7,32 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectBasic;
+import org.junit.Test;
 
 /**
  * Tests for the basic context functionality
  */
-public class ContextDynamicTest extends TestCase {
+public class ContextDynamicTest {
 
-	public ContextDynamicTest() {
-		super();
-	}
 
-	public ContextDynamicTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testReplaceFunctionWithStaticValue() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		IEclipseContext context = parent.createChild();
@@ -53,6 +48,7 @@ public class ContextDynamicTest extends TestCase {
 	/**
 	 * Tests objects being added and removed from the context
 	 */
+	@Test
 	public synchronized void testAddRemove() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -115,6 +111,7 @@ public class ContextDynamicTest extends TestCase {
 	/**
 	 * Tests objects being added and removed from the context
 	 */
+	@Test
 	public synchronized void testParentAddRemove() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
@@ -173,10 +170,6 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testDouble2, userObject.d);
 		assertEquals(testFloat, userObject.f);
 		assertNull(userObject.c);
-	}
-
-	public static Test suite() {
-		return new TestSuite(ContextDynamicTest.class);
 	}
 
 }

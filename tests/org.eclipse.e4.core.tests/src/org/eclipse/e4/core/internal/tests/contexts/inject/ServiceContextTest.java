@@ -7,16 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -25,6 +29,9 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.debug.DebugOptions;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -33,7 +40,7 @@ import org.osgi.framework.ServiceRegistration;
 /**
  * Tests for contexts used in OSGi services.
  */
-public class ServiceContextTest extends TestCase {
+public class ServiceContextTest {
 	class Crayon {
 		@Inject
 		IPaletteService palette;
@@ -41,10 +48,11 @@ public class ServiceContextTest extends TestCase {
 		String msg;
 
 		public void draw() {
-			if (palette == null)
+			if (palette == null) {
 				msg = "I'm out of ink!";
-			else
+			} else {
 				msg = "My ink is  " + palette.getColor();
+			}
 		}
 	}
 
@@ -74,26 +82,25 @@ public class ServiceContextTest extends TestCase {
 		PrintService printer;
 
 		public void print(String message) {
-			if (printer != null)
+			if (printer != null) {
 				printer.print(message);
+			}
 		}
 	}
 
 	private IEclipseContext context;
 	private final List<ServiceRegistration<?>> registrations = new ArrayList<ServiceRegistration<?>>();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		//don't use the global shared service context to avoid contamination across tests
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 		context = EclipseContextFactory.getServiceContext(bundleContext);
 		registrations.clear();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		// Consumers must not dispose OSGi context as it is reused
 		//context.dispose();
 		for (ServiceRegistration<?> reg : registrations) {
@@ -107,6 +114,7 @@ public class ServiceContextTest extends TestCase {
 		context = null;
 	}
 
+	@Test
 	public void testDeclarativeService() {
 		assertTrue(context.containsKey("sum"));
 		assertEquals(0, context.get("sum"));
@@ -122,12 +130,14 @@ public class ServiceContextTest extends TestCase {
 	/**
 	 * Tests accessing OSGi services through a child context that is not aware of them.
 	 */
+	@Test
 	public void testServiceContextAsParent() {
 		IEclipseContext child = context.createChild( "child");
 		DebugOptions service = (DebugOptions) child.get(DebugOptions.class.getName());
 		assertNotNull(service);
 	}
 
+	@Test
 	public void testServiceInjection() {
 		ServiceRegistration<?> reg1 = null;
 		ServiceRegistration<?> reg2 = null;
@@ -172,6 +182,7 @@ public class ServiceContextTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testServiceAddition() {
 		ServiceRegistration<?> reg1 = null;
 		try {
@@ -199,6 +210,7 @@ public class ServiceContextTest extends TestCase {
 	/**
 	 * Tests that OSGi services are released when their context is disposed.
 	 */
+	@Test
 	public void testServiceRemovalOnContextDispose() {
 		StringPrintService stringPrint1 = new StringPrintService();
 		BundleContext bundleContext = CoreTestsActivator.getDefault()
@@ -230,6 +242,7 @@ public class ServiceContextTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRecursiveServiceRemoval() {
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 		ServiceRegistration<?> reg1 = bundleContext.registerService(PrintService.SERVICE_NAME, new StringPrintService(), null);
@@ -252,6 +265,7 @@ public class ServiceContextTest extends TestCase {
 		reg1.unregister();
 	}
 
+	@Test
 	public void testServiceExample() {
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 		ServiceRegistration<?> reg = bundleContext.registerService(IPaletteService.class.getName(), new PaletteImpl(Color.BLUE), null);

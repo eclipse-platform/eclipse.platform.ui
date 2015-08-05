@@ -7,26 +7,31 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests updates of injected values and calls to runnables
  */
-public class InjectionUpdateTest extends TestCase {
+public class InjectionUpdateTest {
 
 	private IEclipseContext c1; // common root
 	private IEclipseContext c21; // dependents of root - path 1
@@ -49,10 +54,8 @@ public class InjectionUpdateTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		c1 = EclipseContextFactory.create("c1");
 		c1.set("id", "c1");
 
@@ -65,6 +68,7 @@ public class InjectionUpdateTest extends TestCase {
 		c1.set("c22", c22);
 	}
 
+	@Test
 	public void testPropagation() {
 		c1.set("base", "abc");
 
@@ -123,6 +127,7 @@ public class InjectionUpdateTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNestedUpdatesPostConstruct() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		appContext.set(InjectTarget.class.getName(), new ContextFunction() {
@@ -159,6 +164,7 @@ public class InjectionUpdateTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNestedUpdatesConstructor() throws Exception {
 		IEclipseContext appContext = EclipseContextFactory.create();
 		appContext.set(InjectTarget2.class.getName(), new ContextFunction() {

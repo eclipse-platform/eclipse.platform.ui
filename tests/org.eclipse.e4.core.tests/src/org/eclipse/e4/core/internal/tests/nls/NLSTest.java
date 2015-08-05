@@ -1,10 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2014, 2015  Dirk Fauth and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
+ ******************************************************************************/
+
 package org.eclipse.e4.core.internal.tests.nls;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -12,8 +25,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class NLSTest extends TestCase {
+public class NLSTest {
 
 	static class TestSimpleObject {
 		@Inject
@@ -48,7 +64,7 @@ public class NLSTest extends TestCase {
 	private IEclipseContext context;
 	private Locale beforeLocale;
 
-	@Override
+	@Before
 	public void setUp() {
 		this.context = EclipseContextFactory.getServiceContext(CoreTestsActivator.getDefault().getBundleContext());
 		ContextInjectionFactory.setDefault(context);
@@ -58,11 +74,12 @@ public class NLSTest extends TestCase {
 		Locale.setDefault(new Locale("en"));
 	}
 
-	@Override
+	@After
 	public void tearDown() {
 		Locale.setDefault(beforeLocale);
 	}
 
+	@Test
 	public void testSimpleMessages() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -98,6 +115,7 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testSimpleMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
@@ -136,6 +154,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testSimpleMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -179,6 +198,7 @@ public class NLSTest extends TestCase {
 		assertEquals("SimpleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testSimpleMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -220,6 +240,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testMessages() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -255,6 +276,7 @@ public class NLSTest extends TestCase {
 		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
@@ -293,6 +315,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -336,6 +359,7 @@ public class NLSTest extends TestCase {
 		assertEquals("MessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -377,6 +401,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testBundleMessages() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -412,6 +437,7 @@ public class NLSTest extends TestCase {
 		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testBundleMessagesDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
@@ -450,6 +476,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testBundleMessagesSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -493,6 +520,7 @@ public class NLSTest extends TestCase {
 		assertEquals("BundleMessageCamelCaseAndUnderscoreDeUnderscorifiedAndDeCamelCasified", messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testBundleMessagesUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -534,6 +562,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testClassBasedResourceBundle() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -571,6 +600,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testClassBasedResourceBundleDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
@@ -609,6 +639,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testClassBasedResourceBundleSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -654,6 +685,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testClassBasedResourceBundleUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -695,6 +727,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testResourcesBundle() {
 		//ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -732,6 +765,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testResourcesBundleDifferentLocale() {
 		//set Locale to de
 		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
@@ -770,6 +804,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testResourcesBundleSkipDefaultLocaleForEquinoxRoot() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));
@@ -815,6 +850,7 @@ public class NLSTest extends TestCase {
 				messages.messageNine_Sub);
 	}
 
+	@Test
 	public void testResourcesBundleUseDefaultLocaleForInvalidLocale() {
 		//change the default Locale for this testcase
 		Locale.setDefault(new Locale("de"));

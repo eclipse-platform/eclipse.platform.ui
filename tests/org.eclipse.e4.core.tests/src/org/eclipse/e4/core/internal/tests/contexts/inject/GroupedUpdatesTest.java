@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
+import org.junit.Test;
 
-public class GroupedUpdatesTest extends TestCase {
+public class GroupedUpdatesTest {
 
 
 	static class InjectTarget {
@@ -66,6 +68,7 @@ public class GroupedUpdatesTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNoGrouping() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("string1", "x");
@@ -87,6 +90,7 @@ public class GroupedUpdatesTest extends TestCase {
 		assertEquals(1, target.countSecondary);
 	}
 
+	@Test
 	public void testGrouping() {
 		final IEclipseContext context = EclipseContextFactory.create();
 		context.set("string1", "x");

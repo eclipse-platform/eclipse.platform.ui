@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.Active;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -22,8 +23,9 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
-public class ActivationInjectionTest extends TestCase {
+public class ActivationInjectionTest {
 
 	static public class TestRAT extends ContextFunction {
 		@Override
@@ -49,6 +51,7 @@ public class ActivationInjectionTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testContextActivation() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 		rootContext.set("testRAT", new TestRAT());
@@ -105,6 +108,7 @@ public class ActivationInjectionTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testActivationInjection() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 
@@ -153,6 +157,7 @@ public class ActivationInjectionTest extends TestCase {
 		public Integer number;
 	}
 
+	@Test
 	public void testInjection() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 

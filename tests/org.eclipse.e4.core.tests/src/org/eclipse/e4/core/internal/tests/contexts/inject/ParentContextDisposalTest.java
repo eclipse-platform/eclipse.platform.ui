@@ -7,21 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
+
+import static org.junit.Assert.assertEquals;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.junit.Test;
 
-public class ParentContextDisposalTest extends TestCase {
+public class ParentContextDisposalTest {
 	static class Target {
 		int pc = 0;
 		int pd = 0;
@@ -41,6 +43,7 @@ public class ParentContextDisposalTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testParentContextDisposal() {
 		IEclipseContext context = EclipseContextFactory.create();
 		IEclipseContext child = context.createChild();

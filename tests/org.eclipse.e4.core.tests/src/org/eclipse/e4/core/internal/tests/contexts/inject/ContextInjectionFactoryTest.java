@@ -7,18 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ContextInjectionFactoryTest extends TestCase {
+public class ContextInjectionFactoryTest {
 
 	static class TestObject {
 
@@ -57,14 +63,13 @@ public class ContextInjectionFactoryTest extends TestCase {
 	private TestObject testObject;
 	private IEclipseContext context;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		testObject = new TestObject();
 		context = EclipseContextFactory.create();
 	}
 
+	@Test
 	public void testInvoke() throws Exception {
 		ContextInjectionFactory.invoke(testObject, Execute.class, context, null);
 
@@ -72,6 +77,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 		assertEquals(0, testObject.getExecutedWithParams());
 	}
 
+	@Test
 	public void testInvokeWithParameters() throws Exception {
 		context.set(String.class.getName(), "");
 
@@ -84,6 +90,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 	/**
 	 * If no other constructors are available, the default constructor should be used
 	 */
+	@Test
 	public void testConstructorInjectionBasic() {
 		IEclipseContext context = EclipseContextFactory.create();
 		// add an extra argument for the inner class constructors

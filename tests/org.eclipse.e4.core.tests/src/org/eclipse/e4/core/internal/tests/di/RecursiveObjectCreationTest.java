@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
+import org.junit.Test;
 
-public class RecursiveObjectCreationTest extends TestCase {
+public class RecursiveObjectCreationTest {
 
 	static public class CheckSelfInject {
 
@@ -35,6 +38,7 @@ public class RecursiveObjectCreationTest extends TestCase {
 	/**
 	 * Checks a simple case of constructor needing the same class
 	 */
+	@Test
 	public void testSelfInject() {
 		IEclipseContext context = EclipseContextFactory.create();
 		boolean exceptionReceived = false;
@@ -74,6 +78,7 @@ public class RecursiveObjectCreationTest extends TestCase {
 	/**
 	 * Checks inner class using outer class which is still being created
 	 */
+	@Test
 	public void testNested() {
 		IEclipseContext context = EclipseContextFactory.create();
 		boolean exceptionReceived = false;

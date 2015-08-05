@@ -7,8 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di.extensions;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
@@ -16,8 +22,6 @@ import java.util.Hashtable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -28,6 +32,8 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -36,7 +42,7 @@ import org.osgi.service.event.EventAdmin;
 import org.osgi.service.event.EventConstants;
 
 // TBD add auto-conversion?
-public class InjectionEventTest extends TestCase {
+public class InjectionEventTest {
 
 	static protected boolean testFailed = false;
 
@@ -58,16 +64,18 @@ public class InjectionEventTest extends TestCase {
 
 		@Inject @Optional
 		public void receivedEvent1(@EventTopic("e4/test/event1") String string1) {
-			if (!valid)
+			if (!valid) {
 				testFailed = true;
+			}
 			counter1++;
 			this.string1 = string1;
 		}
 
 		@Inject
 		public void receivedOptionalEvent(MyBinding myBinding, @Optional @EventTopic("e4/test/event3") String string3) {
-			if (!valid)
+			if (!valid) {
 				testFailed = true;
+			}
 			counter3++;
 			this.myBinding = myBinding;
 			this.string3 = string3;
@@ -121,15 +129,15 @@ public class InjectionEventTest extends TestCase {
 
 	private EventAdminHelper helper;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		ensureEventAdminStarted();
 		BundleContext bundleContext = CoreTestsActivator.getDefault().getBundleContext();
 		IEclipseContext localContext = EclipseContextFactory.getServiceContext(bundleContext);
 		helper = ContextInjectionFactory.make(EventAdminHelper.class, localContext);
 	}
 
+	@Test
 	public void testEventInjection() throws InvocationTargetException, InstantiationException {
 
 		IInjector injector = InjectorFactory.getDefault();
@@ -182,6 +190,7 @@ public class InjectionEventTest extends TestCase {
 		assertNotNull(target.myBinding);
 	}
 
+	@Test
 	public void testInjectType() {
 		IEclipseContext context = EclipseContextFactory.create();
 		InjectTargetEvent target = ContextInjectionFactory.make(InjectTargetEvent.class, context);
@@ -208,6 +217,7 @@ public class InjectionEventTest extends TestCase {
 	// NOTE: this test relies on GC being actually done on the test object.
 	// Java does not guarantee that to happen, so, if this test starts to fail
 	// intermittently, feel free to comment it
+	@Test
 	public void testEventInjectionUnsubscribe() throws InvocationTargetException, InstantiationException {
 		IInjector injector = InjectorFactory.getDefault();
 		injector.addBinding(MyBinding.class);
@@ -220,6 +230,7 @@ public class InjectionEventTest extends TestCase {
 		assertFalse(testFailed); // target would have asserted if it is still subscribed
 	}
 
+	@Test
 	public void testInjectWildCard() {
 		IEclipseContext context = EclipseContextFactory.create();
 		InjectStarEvent target = ContextInjectionFactory.make(InjectStarEvent.class, context);
@@ -260,8 +271,9 @@ public class InjectionEventTest extends TestCase {
 		if (CoreTestsActivator.getDefault().getEventAdmin() == null) {
 			Bundle[] bundles = CoreTestsActivator.getDefault().getBundleContext().getBundles();
 			for (Bundle bundle : bundles) {
-				if (!"org.eclipse.equinox.event".equals(bundle.getSymbolicName()))
+				if (!"org.eclipse.equinox.event".equals(bundle.getSymbolicName())) {
 					continue;
+				}
 				try {
 					bundle.start(Bundle.START_TRANSIENT);
 				} catch (BundleException e) {

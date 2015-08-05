@@ -1,23 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Stefan M�cke - initial API and implementation
+ *     Stefan Mücke - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DependenciesLeakTest extends TestCase {
+public class DependenciesLeakTest {
 
 	final static String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
 
@@ -40,13 +44,14 @@ public class DependenciesLeakTest extends TestCase {
 	private IEclipseContext perspectiveContext;
 	private IEclipseContext partContext;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		windowContext = EclipseContextFactory.create("Window");
 		perspectiveContext = windowContext.createChild("Perspective");
 		partContext = perspectiveContext.createChild("Part");
 	}
 
+	@Test
 	public void testBug() {
 		// register a handler
 		Object handler = "<foo.bar.handler>";
@@ -72,6 +77,7 @@ public class DependenciesLeakTest extends TestCase {
 		assertNoListeners(partContext);
 	}
 
+	@Test
 	public void testInvalidateDirectly() {
 		windowContext.set("x", 42);
 		windowContext.set("y", 11);

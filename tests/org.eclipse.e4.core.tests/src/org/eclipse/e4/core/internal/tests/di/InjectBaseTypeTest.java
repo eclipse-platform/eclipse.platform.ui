@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,20 +10,21 @@
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.junit.Test;
 
 /**
  * Checks conversion of primitive types
  */
-public class InjectBaseTypeTest extends TestCase {
+public class InjectBaseTypeTest {
 
 	static class TestClass {
 		@Inject @Named("test_int")
@@ -66,6 +67,7 @@ public class InjectBaseTypeTest extends TestCase {
 
 	}
 
+	@Test
 	public void testPrimitiveTypes() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("test_int", 12);
@@ -82,8 +84,8 @@ public class InjectBaseTypeTest extends TestCase {
 		assertEquals(12, testClass.intField);
 		assertEquals(0, testClass.intFieldOptional);
 		assertEquals(124564523466L, testClass.longField);
-		assertEquals(12.34f, testClass.floatField);
-		assertEquals(12.34534534563463466546d, testClass.doubleField);
+		assertEquals(12.34f, testClass.floatField, 0);
+		assertEquals(12.34534534563463466546d, testClass.doubleField, 0);
 		assertEquals((short)10, testClass.shortField);
 		assertEquals((byte)55, testClass.byteField);
 		assertEquals(true, testClass.booleanField);
@@ -101,8 +103,8 @@ public class InjectBaseTypeTest extends TestCase {
 		assertEquals(12, testClass.intField);
 		assertEquals(0, testClass.intFieldOptional); // optional
 		assertEquals(124564523466L, testClass.longField);
-		assertEquals(12.34f, testClass.floatField);
-		assertEquals(12.34534534563463466546d, testClass.doubleField);
+		assertEquals(12.34f, testClass.floatField, 0);
+		assertEquals(12.34534534563463466546d, testClass.doubleField, 0);
 		assertEquals((short)10, testClass.shortField);
 		assertEquals((byte)55, testClass.byteField);
 		assertEquals(false, testClass.booleanField); // optional

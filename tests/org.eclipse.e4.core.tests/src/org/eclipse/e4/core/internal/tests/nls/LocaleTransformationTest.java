@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Dirk Fauth and others.
+ * Copyright (c) 2014, 2015  Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,18 @@
  *
  * Contributors:
  *     Dirk Fauth <dirk.fauth@googlemail.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.nls;
 
-import java.util.Locale;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.Locale;
 
 import org.eclipse.e4.core.internal.services.ResourceBundleHelper;
 import org.junit.Test;
 
-public class LocaleTransformationTest extends TestCase {
+public class LocaleTransformationTest {
 
 	@Test
 	public void testValidLanguageCountryVariant() {

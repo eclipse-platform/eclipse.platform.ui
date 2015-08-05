@@ -7,21 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
  ******************************************************************************/
 
 package org.eclipse.e4.core.internal.tests.contexts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.junit.Test;
 
-public class ActivationTest extends TestCase {
+public class ActivationTest {
 
 	static public class TestRAT extends ContextFunction {
 		@Override
@@ -32,6 +35,7 @@ public class ActivationTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testContextActivation() {
 		IEclipseContext rootContext = EclipseContextFactory.create("root");
 		rootContext.set("testRAT", new TestRAT());
@@ -110,6 +114,7 @@ public class ActivationTest extends TestCase {
 		assertEquals("child22", child2.get("testRAT"));
 	}
 
+	@Test
 	public void testGetActive() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 
@@ -140,6 +145,7 @@ public class ActivationTest extends TestCase {
 		assertEquals("5", child2.getActive("var"));
 	}
 
+	@Test
 	public void testGetActiveBug384425() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 
@@ -161,6 +167,7 @@ public class ActivationTest extends TestCase {
 		assertNull(child2.getActive("var"));
 	}
 
+	@Test
 	public void testGetActiveRAT() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 
@@ -200,6 +207,7 @@ public class ActivationTest extends TestCase {
 		assertEquals("2", result[0]);
 	}
 
+	@Test
 	public void testGetActiveRATNumberOfCalls() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 
@@ -256,6 +264,7 @@ public class ActivationTest extends TestCase {
 	 * A variation of {@link #testGetActiveRATNumberOfCalls()} that
 	 * uses distinct values in the leaf contexts.
 	 */
+	@Test
 	public void testGetActiveRATNumberOfCalls2() {
 		IEclipseContext root = EclipseContextFactory.create("root");
 
