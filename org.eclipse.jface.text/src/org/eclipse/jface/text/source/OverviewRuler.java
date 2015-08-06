@@ -637,10 +637,12 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			fBuffer= null;
 		}
 
-		fConfiguredAnnotationTypes.clear();
-		fAllowedAnnotationTypes.clear();
-		fConfiguredHeaderAnnotationTypes.clear();
-		fAllowedHeaderAnnotationTypes.clear();
+		synchronized (fRunnableLock){
+			fConfiguredAnnotationTypes.clear();
+			fAllowedAnnotationTypes.clear();
+			fConfiguredHeaderAnnotationTypes.clear();
+			fAllowedHeaderAnnotationTypes.clear();
+		}
 		fAnnotationTypes2Colors.clear();
 		fAnnotationsSortedByLayer.clear();
 		fLayersSortedByLayer.clear();
@@ -1150,16 +1152,20 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#addAnnotationType(java.lang.Object)
 	 */
 	public void addAnnotationType(Object annotationType) {
-		fConfiguredAnnotationTypes.add(annotationType);
-		fAllowedAnnotationTypes.clear();
+		synchronized (fRunnableLock){
+			fConfiguredAnnotationTypes.add(annotationType);
+			fAllowedAnnotationTypes.clear();
+		}
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeAnnotationType(java.lang.Object)
 	 */
 	public void removeAnnotationType(Object annotationType) {
-		fConfiguredAnnotationTypes.remove(annotationType);
-		fAllowedAnnotationTypes.clear();
+		synchronized (fRunnableLock){
+			fConfiguredAnnotationTypes.remove(annotationType);
+			fAllowedAnnotationTypes.clear();
+		}
 	}
 
 	/*
@@ -1227,12 +1233,15 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @since 3.0
 	 */
 	private boolean contains(Object annotationType, Map allowed, Set configured) {
-		Boolean cached= (Boolean) allowed.get(annotationType);
-		if (cached != null)
-			return cached.booleanValue();
-
-		boolean covered= isCovered(annotationType, configured);
-		allowed.put(annotationType, covered ? Boolean.TRUE : Boolean.FALSE);
+		boolean covered;
+		synchronized (fRunnableLock){
+			Boolean cached= (Boolean) allowed.get(annotationType);
+			if (cached != null)
+				return cached.booleanValue();
+	
+			covered = isCovered(annotationType, configured);
+			allowed.put(annotationType, covered ? Boolean.TRUE : Boolean.FALSE);
+		}
 		return covered;
 	}
 
@@ -1431,16 +1440,20 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#addHeaderAnnotationType(java.lang.Object)
 	 */
 	public void addHeaderAnnotationType(Object annotationType) {
-		fConfiguredHeaderAnnotationTypes.add(annotationType);
-		fAllowedHeaderAnnotationTypes.clear();
+		synchronized (fRunnableLock) {
+			fConfiguredHeaderAnnotationTypes.add(annotationType);
+			fAllowedHeaderAnnotationTypes.clear();
+		}
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeHeaderAnnotationType(java.lang.Object)
 	 */
 	public void removeHeaderAnnotationType(Object annotationType) {
-		fConfiguredHeaderAnnotationTypes.remove(annotationType);
-		fAllowedHeaderAnnotationTypes.clear();
+		synchronized (fRunnableLock) {
+			fConfiguredHeaderAnnotationTypes.remove(annotationType);
+			fAllowedHeaderAnnotationTypes.clear();
+		}
 	}
 
 	/**
