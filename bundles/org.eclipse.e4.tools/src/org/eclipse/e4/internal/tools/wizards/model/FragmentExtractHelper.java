@@ -73,6 +73,7 @@ public class FragmentExtractHelper {
 	public static MModelFragments createInitialModel(List<MApplicationElement> extractedElements) {
 		final MModelFragments mModelFragments = MFragmentFactory.INSTANCE.createModelFragments();
 		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<>();
+		final HashMap<String, MStringModelFragment> createdFragments = new HashMap<>();
 		for (final MApplicationElement moe : extractedElements) {
 			final EObject eObject = (EObject) moe;
 			final TreeIterator<EObject> eAllContents = eObject.eAllContents();
@@ -85,16 +86,20 @@ public class FragmentExtractHelper {
 				FragmentExtractHelper.resolveImports(next, importCommands);
 				hasNext = eAllContents.hasNext();
 			}
-			final MStringModelFragment createStringModelFragment = MFragmentFactory.INSTANCE
-					.createStringModelFragment();
-			final MApplicationElement e = (MApplicationElement) EcoreUtil.copy((EObject) moe);
+			final MApplicationElement copy = (MApplicationElement) EcoreUtil.copy((EObject) moe);
 			final String featurename = ((EObject) moe).eContainmentFeature().getName();
-			createStringModelFragment
-			.setParentElementId(((MApplicationElement) ((EObject) moe).eContainer()).getElementId());
-			createStringModelFragment.getElements().add(e);
-			createStringModelFragment.setFeaturename(featurename);
+			final String containerID = ((MApplicationElement) ((EObject) moe).eContainer()).getElementId();
+			final String combinedID = containerID + featurename;
+			MStringModelFragment modelFragment = createdFragments.get(combinedID);
+			if (modelFragment == null) {
+				modelFragment = MFragmentFactory.INSTANCE.createStringModelFragment();
+				modelFragment.setParentElementId(containerID);
+				modelFragment.setFeaturename(featurename);
+				createdFragments.put(combinedID, modelFragment);
+				mModelFragments.getFragments().add(modelFragment);
+			}
+			modelFragment.getElements().add(copy);
 
-			mModelFragments.getFragments().add(createStringModelFragment);
 		}
 
 		final Set<MApplicationElement> keySet = importCommands.keySet();

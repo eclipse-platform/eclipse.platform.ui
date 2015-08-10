@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.eclipse.e4.internal.tools.wizards.model.FragmentExtractHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -43,7 +44,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -58,6 +58,7 @@ public class FragmentExtractHelperTest {
 	private static final String HANDLER1ID = "handler1id"; //$NON-NLS-1$
 	private static final String COMMANDID = "commandid"; //$NON-NLS-1$
 	private static final String HANDLER2ID = "handler2id"; //$NON-NLS-1$
+	private static final String APPLICATIONID = "applicationid"; //$NON-NLS-1$
 	private MPart part1;
 	private MWindow window;
 	private MPart part2;
@@ -70,6 +71,7 @@ public class FragmentExtractHelperTest {
 	@Before
 	public void setup() {
 		application = MApplicationFactory.INSTANCE.createApplication();
+		application.setElementId(APPLICATIONID);
 	}
 
 	@Test
@@ -174,7 +176,7 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
-	@Ignore
+
 	/**
 	 * Test for BR 470998, ignored until it is fixed
 	 */
@@ -190,7 +192,7 @@ public class FragmentExtractHelperTest {
 		final MModelFragment modelFragment = initialModel.getFragments().get(0);
 		assertEquals(2, modelFragment.getElements().size());
 		assertExtractedElement(part1, modelFragment.getElements().get(0));
-		assertExtractedElement(part2, initialModel.getFragments().get(1).getElements().get(0));
+		assertExtractedElement(part2, modelFragment.getElements().get(1));
 	}
 
 	@Test
@@ -251,7 +253,7 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
-	@Ignore
+
 	/**
 	 * Test for BR 470998, ignored until it is fixed
 	 */
@@ -267,7 +269,7 @@ public class FragmentExtractHelperTest {
 		assertEquals(1, initialModel.getFragments().size());
 		assertEquals(2, initialModel.getImports().size());
 		final MModelFragment modelFragment = initialModel.getFragments().get(0);
-		assertEquals(1, modelFragment.getElements().size());
+		assertEquals(2, modelFragment.getElements().size());
 
 		assertTrue(initialModel.getImports().contains(((MHandler) modelFragment.getElements().get(0)).getCommand()));
 		assertTrue(initialModel.getImports().contains(((MHandler) modelFragment.getElements().get(1)).getCommand()));
@@ -342,7 +344,7 @@ public class FragmentExtractHelperTest {
 		part2.getBindingContexts().add(bindingContext1);
 
 
-		final HashMap<MApplicationElement, MApplicationElement> importCommands = new HashMap<MApplicationElement, MApplicationElement>();
+		final HashMap<MApplicationElement, MApplicationElement> importCommands = new LinkedHashMap<MApplicationElement, MApplicationElement>();
 
 		FragmentExtractHelper.resolveImports(part, importCommands);
 		FragmentExtractHelper.resolveImports(part2, importCommands);
@@ -369,7 +371,6 @@ public class FragmentExtractHelperTest {
 	}
 
 	@Test
-	@Ignore
 	/**
 	 * Test for BR 470998, ignored until it is fixed
 	 */
@@ -385,7 +386,7 @@ public class FragmentExtractHelperTest {
 		assertEquals(1, initialModel.getFragments().size());
 		assertEquals(1, initialModel.getImports().size());
 		final MModelFragment modelFragment = initialModel.getFragments().get(0);
-		assertEquals(1, modelFragment.getElements().size());
+		assertEquals(2, modelFragment.getElements().size());
 
 		final MCommand importedCommand = (MCommand) initialModel.getImports().get(0);
 		final MHandler importedHandler1 = (MHandler) modelFragment.getElements().get(0);
