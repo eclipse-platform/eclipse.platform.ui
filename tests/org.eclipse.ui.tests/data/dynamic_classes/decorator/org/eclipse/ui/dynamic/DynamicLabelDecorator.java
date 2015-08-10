@@ -26,42 +26,30 @@ public class DynamicLabelDecorator implements ILabelDecorator {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
-	 */
+	@Override
 	public Image decorateImage(Image image, Object element) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public String decorateText(String text, Object element) {
 		return text + " F1 ";
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 }

@@ -27,9 +27,7 @@ public class DynamicStartup implements IStartup {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IStartup#earlyStartup()
-	 */
+	@Override
 	public void earlyStartup() {
 		history = new Throwable();
 		history.fillInStackTrace();

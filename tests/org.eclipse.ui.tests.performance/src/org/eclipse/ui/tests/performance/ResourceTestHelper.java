@@ -66,6 +66,7 @@ public class ResourceTestHelper {
 	public static void write(String dest, final String content) throws IOException, CoreException {
 		InputStream stream= new InputStream() {
 			private Reader fReader= new StringReader(content);
+			@Override
 			public int read() throws IOException {
 				return fReader.read();
 			}

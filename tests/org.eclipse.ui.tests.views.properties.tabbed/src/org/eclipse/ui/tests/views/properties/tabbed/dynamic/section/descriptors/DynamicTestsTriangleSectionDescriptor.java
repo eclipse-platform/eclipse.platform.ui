@@ -35,18 +35,22 @@ public class DynamicTestsTriangleSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsTriangleSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsTriangleSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsTriangleSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "ShapeTab"; //$NON-NLS-1$
 	}

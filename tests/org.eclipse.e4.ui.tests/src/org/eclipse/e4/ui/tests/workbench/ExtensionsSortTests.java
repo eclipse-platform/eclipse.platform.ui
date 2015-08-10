@@ -34,11 +34,6 @@ public class ExtensionsSortTests extends TestCase {
 	Bundle intermediate;
 	Bundle leaf;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		BundleContext context = FrameworkUtil.getBundle(getClass())
@@ -96,11 +91,6 @@ public class ExtensionsSortTests extends TestCase {
 		return Integer.MIN_VALUE; // keep JDT happy
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		if (root != null) {

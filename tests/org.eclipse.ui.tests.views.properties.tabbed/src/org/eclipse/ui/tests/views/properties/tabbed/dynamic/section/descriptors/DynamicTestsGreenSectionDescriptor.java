@@ -35,18 +35,22 @@ public class DynamicTestsGreenSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsGreenSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsGreenSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsGreenSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "ColorTab"; //$NON-NLS-1$
 	}

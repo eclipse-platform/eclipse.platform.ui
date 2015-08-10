@@ -91,6 +91,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			return fgColor;
 		}
 
+		@Override
 		public String toString() {
 			return name + " " + cupYear + " " + baseName;
 		}
@@ -104,6 +105,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			this.useColor = useColor;
 		}
 
+		@Override
 		public void update(ViewerCell cell) {
 			// NOTE: this method is not called in the current performance
 			// test so its contents has no effect on the performance results.
@@ -118,16 +120,19 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			}
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof CountryEntry)
 				return ((CountryEntry)element).getImage();
 			return null;
 		}
 
+		@Override
 		public StyledString getStyledText(Object element) {
 			return new StyledString(element.toString(), useColor ? StyledString.COUNTER_STYLER : null);
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			return null;
 		}
@@ -154,7 +159,8 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		this.colors = colors;
 	}
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
 		if (styled)
 			fViewer.setLabelProvider(getDecoratingStyledCellLabelProvider(colors));
 		else
@@ -164,6 +170,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		fShell.setFocus();
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 				startMeasuring();
 				for (int i = 0; i < ITEM_COUNT / 5; i++) {
@@ -183,25 +190,31 @@ public class LabelProviderTest extends BasicPerformanceTest {
 
 		viewer.setContentProvider(new ITreeContentProvider() {
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return entries;
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return entries;
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
@@ -212,6 +225,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		return viewer;
 	}
 
+	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 
@@ -233,6 +247,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		fShell.open();
 	}
 
+	@Override
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
 		if (fShell != null) {
@@ -244,9 +259,11 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private DecoratingStyledCellLabelProvider getDecoratingStyledCellLabelProvider(boolean useColor) {
 		// create our own context to avoid using default context
 		IDecorationContext context = new IDecorationContext() {
+				@Override
 				public String[] getProperties() {
 					return null;
 				}
+				@Override
 				public Object getProperty(String property) {
 					return null;
 				}
@@ -261,33 +278,41 @@ public class LabelProviderTest extends BasicPerformanceTest {
 
 	private class TestLabelDecorator implements ILabelDecorator, IColorDecorator {
 
+		@Override
 		public Image decorateImage(Image image, Object element) {
 			return image;
 		}
 
+		@Override
 		public String decorateText(String text, Object element) {
 			return text;
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 
+		@Override
 		public Color decorateBackground(Object element) {
 			if (element instanceof CountryEntry)
 				return ((CountryEntry)element).getBackgroundColor();
 			return null;
 		}
 
+		@Override
 		public Color decorateForeground(Object element) {
 			if (element instanceof CountryEntry)
 				return ((CountryEntry)element).getForegroundColor();
@@ -298,26 +323,32 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	DecoratingLabelProvider getDecoratingLabelProvider(boolean useColor) {
 		return new DecoratingLabelProvider(new ILabelProvider() {
 
+			@Override
 			public Image getImage(Object element) {
 				if (element instanceof CountryEntry)
 					return ((CountryEntry)element).getImage();
 				return null;
 			}
 
+			@Override
 			public String getText(Object element) {
 				return element.toString();
 			}
 
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
 
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		}, useColor ? getDecorator() : null);

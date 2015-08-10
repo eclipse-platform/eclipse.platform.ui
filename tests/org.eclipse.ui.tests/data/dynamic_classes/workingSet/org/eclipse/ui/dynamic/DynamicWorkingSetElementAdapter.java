@@ -25,65 +25,79 @@ import org.eclipse.ui.intro.IIntroSite;
 public class DynamicWorkingSetElementAdapter implements
 		IWorkingSetElementAdapter {
 
+	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		return new IAdaptable[] {new IIntroPart() {
 
+			@Override
 			public void addPropertyListener(IPropertyListener listener) {
 			}
 
+			@Override
 			public void createPartControl(Composite parent) {
 
 			}
 
+			@Override
 			public void dispose() {
 
 			}
 
+			@Override
 			public IIntroSite getIntroSite() {
 				return null;
 			}
 
+			@Override
 			public String getTitle() {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public Image getTitleImage() {
 
 				return null;
 			}
 
+			@Override
 			public void init(IIntroSite site, IMemento memento)
 					throws PartInitException {
 
 
 			}
 
+			@Override
 			public void removePropertyListener(IPropertyListener listener) {
 
 
 			}
 
+			@Override
 			public void saveState(IMemento memento) {
 
 
 			}
 
+			@Override
 			public void setFocus() {
 
 
 			}
 
+			@Override
 			public void standbyStateChanged(boolean standby) {
 
 
 			}
 
+			@Override
 			public Object getAdapter(Class adapter) {
 				return null;
 			}}};
 	}
 
+	@Override
 	public void dispose() {
 
 	}

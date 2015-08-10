@@ -31,6 +31,7 @@ public class TextTestsLabelSection extends AbstractPropertySection {
 		label = "A simple section for a selected word \"" + word + "\".";//$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage aTabbedPropertySheetPage) {
 		super.createControls(parent, aTabbedPropertySheetPage);

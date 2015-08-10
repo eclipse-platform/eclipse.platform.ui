@@ -21,7 +21,8 @@ public class Project
         super(name);
     }
 
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         return PlatformUI.getWorkbench().getSharedImages().getImage(
             SharedImages.IMG_OBJ_PROJECT);
     }

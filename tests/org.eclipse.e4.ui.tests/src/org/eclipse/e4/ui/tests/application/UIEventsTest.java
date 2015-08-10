@@ -52,6 +52,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		boolean[] hasFired;
 
 		EventHandler attListener = new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				assertTrue(event.getTopic().equals(topic),
 						"Incorrect Topic: " + event.getTopic()); //$NON-NLS-1$
@@ -339,6 +340,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		final boolean seen[] = { false };
 		childEB.subscribe(testTopic, new EventHandler() {
+			@Override
 			public void handleEvent(Event event) {
 				seen[0] = true;
 			}

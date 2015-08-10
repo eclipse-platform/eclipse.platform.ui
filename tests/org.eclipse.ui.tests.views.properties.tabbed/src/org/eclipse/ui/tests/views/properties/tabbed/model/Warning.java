@@ -21,7 +21,8 @@ public class Warning
         super(name);
     }
 
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         return PlatformUI.getWorkbench().getSharedImages().getImage(
             ISharedImages.IMG_OBJS_WARN_TSK);
     }

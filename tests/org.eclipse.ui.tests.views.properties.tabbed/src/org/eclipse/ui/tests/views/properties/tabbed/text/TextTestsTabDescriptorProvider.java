@@ -27,6 +27,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
  */
 public class TextTestsTabDescriptorProvider implements ITabDescriptorProvider {
 
+	@Override
 	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
 		if (selection instanceof ITextSelection) {

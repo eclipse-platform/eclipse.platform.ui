@@ -27,11 +27,6 @@ public abstract class StringToNumberValidatorTestHarness extends TestCase {
 	private NumberFormat numberFormat;
 	private IValidator validator;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

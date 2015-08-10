@@ -3787,10 +3787,12 @@ public class EPartServiceTest extends UITest {
 
 		window.getContext().set(ISaveHandler.class.getName(),
 				new PartServiceSaveHandler() {
+					@Override
 					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						return null;
 					}
 
+					@Override
 					public Save promptToSave(MPart saveablePart) {
 						return returnValue;
 					}
@@ -4112,6 +4114,7 @@ public class EPartServiceTest extends UITest {
 
 		window.getContext().set(ISaveHandler.class.getName(),
 				new PartServiceSaveHandler() {
+					@Override
 					public Save[] promptToSave(Collection<MPart> saveableParts) {
 						int index = 0;
 						Save[] prompt = new Save[saveableParts.size()];
@@ -4124,6 +4127,7 @@ public class EPartServiceTest extends UITest {
 						return prompt;
 					}
 
+					@Override
 					public Save promptToSave(MPart saveablePart) {
 						return null;
 					}
@@ -10161,12 +10165,14 @@ public class EPartServiceTest extends UITest {
 
 		applicationContext.set(ISaveHandler.class.getName(),
 				new PartServiceSaveHandler() {
+					@Override
 					public Save[] promptToSave(Collection<MPart> saveablePart) {
 						Save[] ret = new Save[saveablePart.size()];
 						Arrays.fill(ret, ISaveHandler.Save.YES);
 						return ret;
 					}
 
+					@Override
 					public Save promptToSave(MPart saveablePart) {
 						return ISaveHandler.Save.YES;
 					}
@@ -10244,6 +10250,7 @@ public class EPartServiceTest extends UITest {
 			return visibleParts;
 		}
 
+		@Override
 		public void partActivated(MPart part) {
 			if (valid && part == null) {
 				valid = false;
@@ -10252,6 +10259,7 @@ public class EPartServiceTest extends UITest {
 			activatedParts.add(part);
 		}
 
+		@Override
 		public void partBroughtToTop(MPart part) {
 			if (valid && part == null) {
 				valid = false;
@@ -10260,6 +10268,7 @@ public class EPartServiceTest extends UITest {
 			broughtToTopParts.add(part);
 		}
 
+		@Override
 		public void partDeactivated(MPart part) {
 			if (valid && part == null) {
 				valid = false;
@@ -10268,6 +10277,7 @@ public class EPartServiceTest extends UITest {
 			deactivatedParts.add(part);
 		}
 
+		@Override
 		public void partHidden(MPart part) {
 			if (valid && part == null) {
 				valid = false;
@@ -10276,6 +10286,7 @@ public class EPartServiceTest extends UITest {
 			hiddenParts.add(part);
 		}
 
+		@Override
 		public void partVisible(MPart part) {
 			if (valid && part == null) {
 				valid = false;
@@ -10288,22 +10299,27 @@ public class EPartServiceTest extends UITest {
 
 	class ExceptionListener implements IPartListener {
 
+		@Override
 		public void partActivated(MPart part) {
 			throw new RuntimeException();
 		}
 
+		@Override
 		public void partBroughtToTop(MPart part) {
 			throw new RuntimeException();
 		}
 
+		@Override
 		public void partDeactivated(MPart part) {
 			throw new RuntimeException();
 		}
 
+		@Override
 		public void partHidden(MPart part) {
 			throw new RuntimeException();
 		}
 
+		@Override
 		public void partVisible(MPart part) {
 			throw new RuntimeException();
 		}

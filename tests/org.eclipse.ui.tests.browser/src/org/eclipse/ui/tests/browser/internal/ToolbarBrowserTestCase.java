@@ -47,6 +47,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 	public void test00Open() throws Exception {
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		dialog = new Dialog(shell) {
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite composite = (Composite) super.createDialogArea(parent);
 
@@ -130,6 +131,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 	public void test14ProtectedMethods() {
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		dialog = new Dialog(shell) {
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite composite = (Composite) super.createDialogArea(parent);
 
@@ -151,6 +153,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 
 	public void test15Listeners() {
 		BrowserViewer.IBackNextListener listener = new BrowserViewer.IBackNextListener() {
+			@Override
 			public void updateBackNextBusy() {
 				// ignore
 			}
@@ -161,10 +164,12 @@ public class ToolbarBrowserTestCase extends TestCase {
 
 	public void test16Listeners() {
 		BrowserViewer.ILocationListener listener = new BrowserViewer.ILocationListener() {
+			@Override
 			public void locationChanged(String url) {
 				// ignore
 			}
 
+			@Override
 			public void historyChanged(String[] history2) {
 				// ignore
 			}
@@ -177,6 +182,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 	void runLoopTimer(final int seconds) {
 		final boolean[] exit = {false};
 		new Thread() {
+			@Override
 			public void run() {
 				try {
 					Thread.sleep(seconds * 1000);
@@ -188,6 +194,7 @@ public class ToolbarBrowserTestCase extends TestCase {
 				Display display = Display.getDefault();
 				if (!display.isDisposed()) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!shell.isDisposed()) shell.redraw();
 						}

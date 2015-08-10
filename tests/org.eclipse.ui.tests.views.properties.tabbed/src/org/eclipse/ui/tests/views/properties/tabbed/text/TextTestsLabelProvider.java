@@ -28,6 +28,7 @@ public class TextTestsLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object obj) {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE);
@@ -36,6 +37,7 @@ public class TextTestsLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof ITextSelection) {
 			ITextSelection textSelection = (ITextSelection) obj;

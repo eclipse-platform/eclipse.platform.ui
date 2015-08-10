@@ -38,6 +38,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 
 	private TextTestsView textTestsView;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
@@ -67,6 +68,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 		textTestsView = (TextTestsView) view;
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 

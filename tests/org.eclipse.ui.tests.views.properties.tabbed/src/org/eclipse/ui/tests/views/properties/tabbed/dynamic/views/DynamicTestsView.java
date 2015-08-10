@@ -42,12 +42,14 @@ public class DynamicTestsView extends ViewPart implements
 
 	class DynamicTestsViewLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage(Object obj) {
 			DynamicTestsElement element = ((DynamicTestsTreeNode) obj)
 					.getDynamicTestsElement();
 			return element.getImage();
 		}
 
+		@Override
 		public String getText(Object obj) {
 			DynamicTestsElement element = ((DynamicTestsTreeNode) obj)
 					.getDynamicTestsElement();
@@ -72,6 +74,7 @@ public class DynamicTestsView extends ViewPart implements
 
 	private TreeViewer viewer;
 
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new DynamicTestsViewContentProvider(this));
@@ -81,6 +84,7 @@ public class DynamicTestsView extends ViewPart implements
 		getSite().setSelectionProvider(viewer);
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			if (tabbedPropertySheetPage == null) {
@@ -91,6 +95,7 @@ public class DynamicTestsView extends ViewPart implements
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public String getContributorId() {
 		if (staticAction.isChecked()) {
 			return DYNAMIC_TESTS_VIEW_STATIC;
@@ -143,6 +148,7 @@ public class DynamicTestsView extends ViewPart implements
 		}
 
 		staticAction = new Action(staticText, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				if (isChecked()) {
 					getViewSite().getActionBars().getStatusLineManager()
@@ -159,6 +165,7 @@ public class DynamicTestsView extends ViewPart implements
 
 		dynamicSectionsAction = new Action(dynamicSectionsText,
 				IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				if (isChecked()) {
 					getViewSite().getActionBars().getStatusLineManager()
@@ -174,6 +181,7 @@ public class DynamicTestsView extends ViewPart implements
 		dynamicSectionsAction.setDisabledImageDescriptor(imageDescriptor);
 
 		dynamicTabsAction = new Action(dynamicTabsText, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				if (isChecked()) {
 					getViewSite().getActionBars().getStatusLineManager()
@@ -199,6 +207,7 @@ public class DynamicTestsView extends ViewPart implements
 				staticText);
 	}
 
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

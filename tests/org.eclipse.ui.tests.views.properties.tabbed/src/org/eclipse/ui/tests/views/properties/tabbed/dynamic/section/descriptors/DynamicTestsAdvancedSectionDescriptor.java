@@ -37,24 +37,29 @@ public class DynamicTestsAdvancedSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public int getEnablesFor() {
 		return 1;
 	}
 
+	@Override
 	public String getId() {
 		return "AdvancedSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public List getInputTypes() {
 		List list = new ArrayList();
 		list.add(DynamicTestsElement.class.getName());
 		return list;
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new AdvancedPropertySection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "AdvancedTab"; //$NON-NLS-1$
 	}

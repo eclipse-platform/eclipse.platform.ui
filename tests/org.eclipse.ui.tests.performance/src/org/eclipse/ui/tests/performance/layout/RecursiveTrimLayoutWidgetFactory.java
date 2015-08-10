@@ -27,26 +27,20 @@ public class RecursiveTrimLayoutWidgetFactory extends TestWidgetFactory {
 
     private Shell shell;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getName()
-     */
-    public String getName() {
+    @Override
+	public String getName() {
         return "Massively Recursive TrimLayout";
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
-     */
-    public void done() throws CoreException, WorkbenchException {
+    @Override
+	public void done() throws CoreException, WorkbenchException {
         super.done();
 
         shell.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#init()
-     */
-    public void init() throws CoreException, WorkbenchException {
+    @Override
+	public void init() throws CoreException, WorkbenchException {
         super.init();
 
 		Display display = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay();
@@ -110,10 +104,8 @@ public class RecursiveTrimLayoutWidgetFactory extends TestWidgetFactory {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getControl()
-     */
-    public Composite getControl() throws CoreException, WorkbenchException {
+    @Override
+	public Composite getControl() throws CoreException, WorkbenchException {
 		return shell;
     }
 

@@ -40,11 +40,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	private Composite composite;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#createControls(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControls(Composite parent) {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		composite = toolkit.createComposite(parent);
@@ -118,11 +114,7 @@ public class InformationItem implements IOverrideTestsItem {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (composite != null && !composite.isDisposed()) {
 			composite.dispose();
@@ -130,34 +122,23 @@ public class InformationItem implements IOverrideTestsItem {
 		}
 	}
 
+	@Override
 	public Composite getComposite() {
 		return composite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getElement()
-	 */
+	@Override
 	public Class getElement() {
 		return Information.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJS_INFO_TSK);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getText()
-	 */
+	@Override
 	public String getText() {
 		return "Information"; //$NON-NLS-1$
 	}

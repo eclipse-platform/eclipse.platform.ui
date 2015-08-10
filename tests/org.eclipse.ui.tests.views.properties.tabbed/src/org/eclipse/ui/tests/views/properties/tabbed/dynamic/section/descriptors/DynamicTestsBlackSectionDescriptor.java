@@ -35,18 +35,22 @@ public class DynamicTestsBlackSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsBlackSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsBlackSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsBlackSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "BlackTab"; //$NON-NLS-1$
 	}

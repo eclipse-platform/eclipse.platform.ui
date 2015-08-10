@@ -27,35 +27,25 @@ public class DynamicLightweightLabelDecorator implements
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object, org.eclipse.jface.viewers.IDecoration)
-	 */
+	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		decoration.addSuffix("Light");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 }

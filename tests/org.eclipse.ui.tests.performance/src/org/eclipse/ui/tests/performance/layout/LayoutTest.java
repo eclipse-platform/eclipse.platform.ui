@@ -48,6 +48,7 @@ public class LayoutTest extends BasicPerformanceTest {
 	/**
 	 * Run the test
 	 */
+	@Override
 	protected void runTest() throws CoreException, WorkbenchException {
 
 		widgetFactory.init();

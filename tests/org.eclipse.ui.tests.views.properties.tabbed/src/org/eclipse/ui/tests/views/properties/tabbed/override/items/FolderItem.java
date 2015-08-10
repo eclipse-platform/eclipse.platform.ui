@@ -24,30 +24,18 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.Folder;
  */
 public class FolderItem extends InformationItem {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getElement()
-	 */
+	@Override
 	public Class getElement() {
 		return Folder.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FOLDER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getText()
-	 */
+	@Override
 	public String getText() {
 		return "Folder"; //$NON-NLS-1$
 	}

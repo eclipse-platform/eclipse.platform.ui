@@ -39,41 +39,25 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 
 	private int selectedTabItem;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
-	 */
+	@Override
 	public boolean appliesTo(Element element) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#createControls(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControls(Composite parent) {
 		this.composite = parent;
 		OverrideTestsTabItem activeTab = (OverrideTestsTabItem) (getTabs()[selectedTabItem]);
 		activeTab.getItem().createControls(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#dispose()
-	 */
+	@Override
 	public void dispose() {
 		OverrideTestsTabItem activeTab = (OverrideTestsTabItem) (getTabs()[selectedTabItem]);
 		activeTab.getItem().dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#getTabs()
-	 */
+	@Override
 	public ITabItem[] getTabs() {
 		IOverrideTestsItem[] items = getItems();
 		OverrideTestsTabItem[] tabs = new OverrideTestsTabItem[items.length];
@@ -88,11 +72,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 		return tabs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#selectionChanged(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
-	 */
+	@Override
 	public void selectionChanged(Element element) {
 		ITabItem[] tabs = getTabs();
 		for (int i = 0; i < tabs.length; i++) {
@@ -103,11 +83,7 @@ public abstract class AbstractTabList implements IOverrideTestsTabList {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#selectTab(int)
-	 */
+	@Override
 	public void selectTab(int index) {
 		if (selectedTabItem == index) {
 			return;

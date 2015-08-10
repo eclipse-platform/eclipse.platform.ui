@@ -17,10 +17,12 @@ package org.eclipse.ui.tests.views.properties.tabbed.dynamic.sections;
  */
 public class DynamicTestsStarSection extends DynamicTestsAbstractLabelSection {
 
+	@Override
 	public String getGroup() {
 		return "Star"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getLabel() {
 		return "A section for star elements."; //$NON-NLS-1$
 	}

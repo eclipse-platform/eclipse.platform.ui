@@ -97,6 +97,7 @@ public class TreeAddTest extends TreeTest {
 		openBrowser();
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 
 				TestTreeElement input = new TestTreeElement(0, null);

@@ -21,7 +21,8 @@ public class Information
         super(name);
     }
 
-    public Image getImage() {
+    @Override
+	public Image getImage() {
         return PlatformUI.getWorkbench().getSharedImages().getImage(
             ISharedImages.IMG_OBJS_INFO_TSK);
     }

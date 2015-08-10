@@ -52,6 +52,7 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 	public void testRefresh() throws Throwable {
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 				Class missing = null;
 				ArrayList images = new ArrayList();

@@ -35,7 +35,8 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
         this.closeAll = closeAll;
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
 

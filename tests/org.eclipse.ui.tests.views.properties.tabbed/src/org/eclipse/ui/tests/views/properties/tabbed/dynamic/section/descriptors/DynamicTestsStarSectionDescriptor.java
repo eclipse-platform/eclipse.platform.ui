@@ -35,18 +35,22 @@ public class DynamicTestsStarSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsStarSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsStarSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsStarSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "StarTab"; //$NON-NLS-1$
 	}

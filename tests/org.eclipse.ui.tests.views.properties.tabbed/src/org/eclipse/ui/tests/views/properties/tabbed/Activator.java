@@ -33,7 +33,8 @@ public class Activator
     /**
      * This method is called upon plug-in activation
      */
-    public void start(BundleContext context)
+    @Override
+	public void start(BundleContext context)
         throws Exception {
         super.start(context);
     }
@@ -41,7 +42,8 @@ public class Activator
     /**
      * This method is called when the plug-in is stopped
      */
-    public void stop(BundleContext context)
+    @Override
+	public void stop(BundleContext context)
         throws Exception {
         super.stop(context);
         plugin = null;

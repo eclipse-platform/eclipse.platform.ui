@@ -38,15 +38,18 @@ public class TestsViewContentProvider
 
     private TreeNode invisibleRoot;
 
-    public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
         //
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         //
     }
 
-    public Object[] getElements(Object parent) {
+    @Override
+	public Object[] getElements(Object parent) {
         if (parent.equals(this.view.getViewSite())) {
             if (invisibleRoot == null)
                 initialize();
@@ -55,21 +58,24 @@ public class TestsViewContentProvider
         return getChildren(parent);
     }
 
-    public Object getParent(Object child) {
+    @Override
+	public Object getParent(Object child) {
         if (child instanceof TreeNode) {
             return ((TreeNode) child).getParent();
         }
         return null;
     }
 
-    public Object[] getChildren(Object parent) {
+    @Override
+	public Object[] getChildren(Object parent) {
         if (parent instanceof TreeNode) {
             return ((TreeNode) parent).getChildren();
         }
         return new Object[0];
     }
 
-    public boolean hasChildren(Object parent) {
+    @Override
+	public boolean hasChildren(Object parent) {
         if (parent instanceof TreeNode)
             return ((TreeNode) parent).hasChildren();
         return false;

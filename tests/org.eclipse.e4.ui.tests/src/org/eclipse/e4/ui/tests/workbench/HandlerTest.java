@@ -54,22 +54,12 @@ public class HandlerTest extends TestCase {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		appContext.dispose();

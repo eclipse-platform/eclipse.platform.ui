@@ -63,6 +63,7 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell(display));
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 
 				char[] chars = new char[10000];

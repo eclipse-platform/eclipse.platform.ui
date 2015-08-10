@@ -24,11 +24,6 @@ public class StringToShortConverterTest extends TestCase {
 	private NumberFormat numberFormat;
 	private StringToShortConverter converter;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

@@ -27,11 +27,7 @@ public class EmptyItem implements IOverrideTestsItem {
 
 	private Composite composite;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#createControls(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControls(Composite parent) {
 		TabbedPropertySheetWidgetFactory factory = new TabbedPropertySheetWidgetFactory();
 		composite = factory.createFlatFormComposite(parent);
@@ -40,11 +36,7 @@ public class EmptyItem implements IOverrideTestsItem {
 		label.setLayoutData(new FormData());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (composite != null && !composite.isDisposed()) {
 			composite.dispose();
@@ -52,38 +44,22 @@ public class EmptyItem implements IOverrideTestsItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getComposite()
-	 */
+	@Override
 	public Composite getComposite() {
 		return composite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getElement()
-	 */
+	@Override
 	public Class getElement() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTestsItem#getText()
-	 */
+	@Override
 	public String getText() {
 		return "Empty Item"; //$NON-NLS-1$
 	}

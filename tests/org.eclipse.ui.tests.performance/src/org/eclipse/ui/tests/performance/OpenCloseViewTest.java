@@ -30,7 +30,8 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         this.viewId = viewId;
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         IWorkbenchWindow window = openTestWindow();
         final IWorkbenchPage page = window.getActivePage();
 

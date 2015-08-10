@@ -46,11 +46,6 @@ public class TestActionProviderNested extends CommonActionProvider {
 
 		openAction = new Action() {
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
 			@Override
 			public void run() {
 
@@ -79,11 +74,6 @@ public class TestActionProviderNested extends CommonActionProvider {
 		menu.insertAfter(ICommonMenuConstants.GROUP_ADDITIONS, action);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-	 */
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);

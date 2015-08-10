@@ -43,31 +43,23 @@ public class PerformanceEditorPart extends EditorPart {
         super();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void doSave(IProgressMonitor monitor) {
+    @Override
+	public void doSave(IProgressMonitor monitor) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-     */
-    public void doSaveAs() {
+    @Override
+	public void doSaveAs() {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-     */
-    public void init(IEditorSite site, IEditorInput input)
+    @Override
+	public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
         super.setSite(site);
         super.setInput(input);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISaveablePart#isDirty()
-     */
-    public boolean isDirty() {
+    @Override
+	public boolean isDirty() {
         return dirty;
     }
 
@@ -75,32 +67,24 @@ public class PerformanceEditorPart extends EditorPart {
         this.dirty = dirty;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-     */
-    public boolean isSaveAsAllowed() {
+    @Override
+	public boolean isSaveAsAllowed() {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-     */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         control = new Label(parent, SWT.NONE);
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-     */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         control.setFocus();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-     */
-    public void setInitializationData(IConfigurationElement cfig,
+    @Override
+	public void setInitializationData(IConfigurationElement cfig,
             String propertyName, Object data) {
         super.setInitializationData(cfig, propertyName, data);
 
@@ -113,10 +97,8 @@ public class PerformanceEditorPart extends EditorPart {
 
         }
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-     */
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         Object object = null;
         if (useOutline && adapter.equals(IContentOutlinePage.class)) {
             object = new ContentOutlinePage() {

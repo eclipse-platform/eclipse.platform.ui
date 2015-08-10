@@ -35,12 +35,14 @@ public class TestsView
     class ViewLabelProvider
         extends LabelProvider {
 
-        public String getText(Object obj) {
+        @Override
+		public String getText(Object obj) {
             Element element = (Element) ((TreeNode) obj).getValue();
             return element.getName();
         }
 
-        public Image getImage(Object obj) {
+        @Override
+		public Image getImage(Object obj) {
             Element element = (Element) ((TreeNode) obj).getValue();
             return element.getImage();
         }
@@ -57,7 +59,8 @@ public class TestsView
      * This is a callback that will allow us to create the viewer and initialize
      * it.
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
         viewer.setContentProvider(new TestsViewContentProvider(this));
         viewer.setLabelProvider(new ViewLabelProvider());
@@ -68,11 +71,13 @@ public class TestsView
     /**
      * Passing the focus request to the viewer's control.
      */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         viewer.getControl().setFocus();
     }
 
-    public Object getAdapter(Class adapter) {
+    @Override
+	public Object getAdapter(Class adapter) {
         if (adapter == IPropertySheetPage.class) {
             if (tabbedPropertySheetPage == null) {
                 tabbedPropertySheetPage = new TabbedPropertySheetPage(this);
@@ -82,7 +87,8 @@ public class TestsView
         return super.getAdapter(adapter);
     }
 
-    public String getContributorId() {
+    @Override
+	public String getContributorId() {
         return TESTS_VIEW_ID;
     }
 

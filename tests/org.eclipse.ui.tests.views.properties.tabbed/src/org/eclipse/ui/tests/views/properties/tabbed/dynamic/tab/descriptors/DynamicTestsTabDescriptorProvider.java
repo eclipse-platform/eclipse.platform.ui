@@ -23,6 +23,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
 public class DynamicTestsTabDescriptorProvider implements
 		ITabDescriptorProvider {
 
+	@Override
 	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
 		return new ITabDescriptor[] { new DynamicTestsElementTabDescriptor(),

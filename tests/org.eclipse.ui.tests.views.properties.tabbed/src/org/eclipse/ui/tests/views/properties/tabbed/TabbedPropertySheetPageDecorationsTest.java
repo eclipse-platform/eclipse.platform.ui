@@ -34,7 +34,8 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
 
     private TreeNode[] treeNodes;
 
-    protected void setUp()
+    @Override
+	protected void setUp()
         throws Exception {
         super.setUp();
 
@@ -73,7 +74,8 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
         assertEquals(treeNodes.length, 8);
     }
 
-    protected void tearDown()
+    @Override
+	protected void tearDown()
         throws Exception {
         super.tearDown();
 

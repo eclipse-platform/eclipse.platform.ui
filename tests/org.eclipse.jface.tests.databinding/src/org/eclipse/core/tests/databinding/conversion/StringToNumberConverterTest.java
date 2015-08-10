@@ -29,11 +29,6 @@ public class StringToNumberConverterTest extends TestCase {
 	private NumberFormat numberFormat;
 	private NumberFormat numberIntegerFormat;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

@@ -18,33 +18,25 @@ import org.eclipse.ui.IWorkingSetUpdater;
  */
 public class DynamicWorkingSetUpdater implements IWorkingSetUpdater {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetUpdater#add(org.eclipse.ui.IWorkingSet)
-	 */
+	@Override
 	public void add(IWorkingSet workingSet) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetUpdater#remove(org.eclipse.ui.IWorkingSet)
-	 */
+	@Override
 	public boolean remove(IWorkingSet workingSet) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetUpdater#contains(org.eclipse.ui.IWorkingSet)
-	 */
+	@Override
 	public boolean contains(IWorkingSet workingSet) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetUpdater#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 

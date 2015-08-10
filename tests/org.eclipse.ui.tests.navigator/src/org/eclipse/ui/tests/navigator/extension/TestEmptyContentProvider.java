@@ -24,9 +24,6 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 		_throw = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (_throw)
@@ -34,9 +31,6 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 		return NO_CHILDREN;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object element) {
 		if (_throw)
@@ -44,9 +38,6 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		if (_throw)
@@ -54,9 +45,6 @@ public class TestEmptyContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (_throw)

@@ -28,6 +28,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 	 * in the workbench UI.
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
+	@Override
 	public void run(IAction action) {
 		MessageDialog.openInformation(
 			window.getShell(),
@@ -42,6 +43,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 	 * the delegate has been created.
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
@@ -50,6 +52,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 	 * resources we previously allocated.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
+	@Override
 	public void dispose() {
 	}
 
@@ -58,6 +61,7 @@ public class SampleAction implements IWorkbenchWindowActionDelegate {
 	 * be able to provide parent shell for the message dialog.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}

@@ -40,20 +40,12 @@ public class AdvancedTabList extends AbstractTabList {
 
 	private IOverrideTestsItem[] items;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.AbstractTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
-	 */
+	@Override
 	public boolean appliesTo(Element element) {
 		return ((element instanceof File) || (element instanceof Folder));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#getItems()
-	 */
+	@Override
 	public IOverrideTestsItem[] getItems() {
 		if (items == null) {
 			items = new IOverrideTestsItem[] { new FileItem(), new FolderItem() };

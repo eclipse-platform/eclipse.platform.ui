@@ -57,11 +57,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.tests.performance.ViewerTest#createViewer(org.eclipse.swt.widgets.Shell)
-	 */
+	@Override
 	protected StructuredViewer createViewer(Shell shell) {
 		viewer = new TestTableViewer(shell);
 		contentProvider = new RefreshTestContentProvider(
@@ -80,6 +76,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		openBrowser();
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 				startMeasuring();
 				viewer.refresh();
@@ -103,6 +100,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		viewer.setSorter(new ViewerSorter());
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 				startMeasuring();
 				viewer.refresh();
@@ -127,6 +125,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		viewer.setSorter(sorter);
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 				contentProvider.refreshElements();
 				startMeasuring();
@@ -152,6 +151,7 @@ public class TableViewerRefreshTest extends ViewerTest {
 		openBrowser();
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 
 				TableItem[] items = viewer.getTable().getItems();

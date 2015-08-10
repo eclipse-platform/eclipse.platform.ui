@@ -26,11 +26,6 @@ public class IdentityConverterTest extends TestCase {
 
 	private IdentityConverter c;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		c = new IdentityConverter(Integer.TYPE, Integer.TYPE);

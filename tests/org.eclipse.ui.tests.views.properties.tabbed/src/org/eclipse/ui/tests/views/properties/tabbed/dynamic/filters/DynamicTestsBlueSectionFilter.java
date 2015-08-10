@@ -20,6 +20,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsCo
 public class DynamicTestsBlueSectionFilter extends
 		DynamicTestsElementSectionFilter {
 
+	@Override
 	protected boolean appliesToColor(DynamicTestsColor color) {
 		return DynamicTestsColor.BLUE.equals(color);
 	}

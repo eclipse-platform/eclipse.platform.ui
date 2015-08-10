@@ -60,6 +60,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	}
 
 	public static class CResource implements IAdaptable {
+		@Override
 		public Object getAdapter(Class adapter) {
 			if(adapter == IContributorResourceAdapter.class) {
 				return new ResourceAdapter();
@@ -69,6 +70,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	}
 
 	public static class CFile implements IAdaptable {
+		@Override
 		public Object getAdapter(Class adapter) {
 			if(adapter == IContributorResourceAdapter.class) {
 				return new ResourceAdapter();
@@ -79,6 +81,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 
 	// Returns a contribution adapter that doesn't handle ResourceMappings
 	public static class CResourceOnly implements IAdaptable {
+		@Override
 		public Object getAdapter(Class adapter) {
 			if(adapter == IContributorResourceAdapter.class) {
 				return new ResourceOnlyAdapter();
@@ -96,6 +99,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	// Default contributor adapter
 
 	public static class ResourceAdapter implements IContributorResourceAdapter2 {
+		@Override
 		public IResource getAdaptedResource(IAdaptable adaptable) {
 			if(adaptable instanceof CResource) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -105,7 +109,8 @@ public class ObjectContributionClasses implements IAdapterFactory {
 			}
 			return null;
 		}
-        public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
+        @Override
+		public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
             return (ResourceMapping)getAdaptedResource(adaptable).getAdapter(ResourceMapping.class);
         }
 	}
@@ -113,6 +118,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	// Contributor adapter that doesn't handle resource mappings
 
 	public static class ResourceOnlyAdapter implements IContributorResourceAdapter {
+		@Override
 		public IResource getAdaptedResource(IAdaptable adaptable) {
 			if(adaptable instanceof CResourceOnly) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -123,6 +129,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 
 	// Adapter methods
 
+	@Override
 	public Object getAdapter(final Object adaptableObject, Class adapterType) {
 		if(adapterType == IContributorResourceAdapter.class) {
 			return new ResourceAdapter();
@@ -138,17 +145,21 @@ public class ObjectContributionClasses implements IAdapterFactory {
 		}
         if(adapterType == ResourceMapping.class) {
             return new ResourceMapping() {
-                public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
+                @Override
+				public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
                     return new ResourceTraversal[] {
                             new ResourceTraversal(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, IResource.DEPTH_INFINITE, IResource.NONE)
                     };
                 }
-                public IProject[] getProjects() {
+                @Override
+				public IProject[] getProjects() {
                     return ResourcesPlugin.getWorkspace().getRoot().getProjects();
                 }
-                public Object getModelObject() {
+                @Override
+				public Object getModelObject() {
                     return adaptableObject;
                 }
+				@Override
 				public String getModelProviderId() {
 					return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 				}
@@ -158,6 +169,7 @@ public class ObjectContributionClasses implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { ICommon.class, IResource.class, IFile.class, IContributorResourceAdapter.class, ResourceMapping.class};
 	}

@@ -24,193 +24,145 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  */
 public class DynamicWorkingSetPage implements IWorkingSetPage {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
-	 */
+	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
-	 */
+	@Override
 	public IWorkingSet getSelection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
-	 */
+	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#getName()
-	 */
+	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
-	 */
+	@Override
 	public IWizardPage getNextPage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#getPreviousPage()
-	 */
+	@Override
 	public IWizardPage getPreviousPage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#getWizard()
-	 */
+	@Override
 	public IWizard getWizard() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
-	 */
+	@Override
 	public boolean isPageComplete() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#setPreviousPage(org.eclipse.jface.wizard.IWizardPage)
-	 */
+	@Override
 	public void setPreviousPage(IWizardPage page) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
-	 */
+	@Override
 	public void setWizard(IWizard newWizard) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
-	 */
+	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getMessage()
-	 */
+	@Override
 	public String getMessage() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
-	 */
+	@Override
 	public String getTitle() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#performHelp()
-	 */
+	@Override
 	public void performHelp() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setDescription(java.lang.String)
-	 */
+	@Override
 	public void setDescription(String description) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
-	 */
+	@Override
 	public void setImageDescriptor(ImageDescriptor image) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setTitle(java.lang.String)
-	 */
+	@Override
 	public void setTitle(String title) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		// TODO Auto-generated method stub
 

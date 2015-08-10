@@ -58,11 +58,6 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 
 	private String propertyName;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

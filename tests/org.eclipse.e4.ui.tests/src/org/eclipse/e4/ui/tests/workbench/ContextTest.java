@@ -28,22 +28,12 @@ public class ContextTest extends TestCase {
 	private static final String DIALOG_AND_WINDOW_ID = "org.eclipse.ui.contexts.dialogAndWindow";
 	private IEclipseContext appContext;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		appContext.dispose();

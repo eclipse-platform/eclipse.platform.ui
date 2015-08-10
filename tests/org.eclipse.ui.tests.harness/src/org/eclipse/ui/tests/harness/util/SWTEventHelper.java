@@ -122,6 +122,7 @@ public class SWTEventHelper {
 	private static void postEvent(final Display display, final Event event,
 			boolean runEventQueue) {
 		DisplayHelper helper = new DisplayHelper() {
+			@Override
 			public boolean condition() {
 				return display.post(event);
 			}
@@ -189,6 +190,7 @@ public class SWTEventHelper {
 		}
 
 		startControl.addDragDetectListener(new DragDetectListener() {
+			@Override
 			public void dragDetected(DragDetectEvent e) {
 				_dragDetected = true;
 			}

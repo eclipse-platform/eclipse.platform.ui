@@ -33,21 +33,13 @@ import org.eclipse.ui.tests.views.properties.tabbed.override.items.WarningItem;
  */
 public class BasicTabFolder extends AbstractTabFolder {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see asd.views.folders.AbstractSampleViewFolder#appliesTo(asd.views.elements.ISampleViewElement)
-	 */
+	@Override
 	public boolean appliesTo(Element element) {
 		return ((element instanceof Information) ||
 				(element instanceof Warning) || (element instanceof Error));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see asd.views.folders.IAaaFolder#getAaaItem()
-	 */
+	@Override
 	public IOverrideTestsItem[] getItem() {
 		return new IOverrideTestsItem[] { new InformationItem(),
 				new WarningItem(), new ErrorItem() };

@@ -62,6 +62,7 @@ public class ResizeTest extends BasicPerformanceTest {
 	/**
 	 * Run the test
 	 */
+	@Override
 	protected void runTest() throws CoreException, WorkbenchException {
 
 		tagIfNecessary(tagString, Dimension.ELAPSED_PROCESS);

@@ -26,9 +26,7 @@ public class DynamicPropertyPage extends PropertyPage {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		return parent;
 	}

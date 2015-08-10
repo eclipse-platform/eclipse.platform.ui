@@ -72,6 +72,7 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	 *
 	 * @generated
 	 */
+	@Override
 	public MTestHarness createTestHarness() {
 		TestHarnessImpl testHarness = new TestHarnessImpl();
 		return testHarness;
@@ -82,6 +83,7 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	 *
 	 * @generated
 	 */
+	@Override
 	public MTestPackage getTestPackage() {
 		return (MTestPackage) getEPackage();
 	}

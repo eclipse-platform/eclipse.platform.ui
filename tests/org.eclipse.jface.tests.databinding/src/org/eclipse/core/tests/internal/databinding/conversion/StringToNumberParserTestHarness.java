@@ -169,42 +169,22 @@ public abstract class StringToNumberParserTestHarness extends TestCase {
 
 			private static final long serialVersionUID = 1L;
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Number#doubleValue()
-			 */
 			@Override
 			public double doubleValue() {
 				count++;
 				return value;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Number#floatValue()
-			 */
 			@Override
 			public float floatValue() {
 				return 0;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Number#intValue()
-			 */
 			@Override
 			public int intValue() {
 				return 0;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see java.lang.Number#longValue()
-			 */
 			@Override
 			public long longValue() {
 				return 0;

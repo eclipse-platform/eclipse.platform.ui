@@ -20,6 +20,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsSh
 public class DynamicTestsTriangleSectionFilter extends
 		DynamicTestsElementSectionFilter {
 
+	@Override
 	protected boolean appliesToShape(DynamicTestsShape shape) {
 		return DynamicTestsShape.TRIANGLE.equals(shape);
 	}

@@ -18,10 +18,12 @@ package org.eclipse.ui.tests.views.properties.tabbed.dynamic.sections;
 public class DynamicTestsTriangleSection extends
 		DynamicTestsAbstractLabelSection {
 
+	@Override
 	public String getGroup() {
 		return "Shape"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getLabel() {
 		return "A section for triangle elements."; //$NON-NLS-1$
 	}

@@ -42,21 +42,13 @@ public class BasicTabList extends AbstractTabList {
 
 	private IOverrideTestsItem[] overrideTestsItems;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.AbstractTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
-	 */
+	@Override
 	public boolean appliesTo(Element element) {
 		return ((element instanceof Information) ||
 				(element instanceof Warning) || (element instanceof Error));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#getItems()
-	 */
+	@Override
 	public IOverrideTestsItem[] getItems() {
 		if (overrideTestsItems == null) {
 			overrideTestsItems = new IOverrideTestsItem[] {

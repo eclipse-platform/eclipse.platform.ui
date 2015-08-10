@@ -40,12 +40,7 @@ public class OverrideTestsSection extends
 		AbstractOverridableTabListPropertySection {
 	private OverrideTestsTabListsContentsManager contentsManager;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#createControls(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-	 */
+	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
@@ -53,11 +48,7 @@ public class OverrideTestsSection extends
 				tabbedPropertySheetPage, this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (contentsManager != null) {
 			contentsManager.dispose();
@@ -65,11 +56,7 @@ public class OverrideTestsSection extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractOverridableTabListPropertySection#getTabs()
-	 */
+	@Override
 	public ITabItem[] getTabs() {
 		if (contentsManager != null) {
 			return contentsManager.getTabs();
@@ -77,23 +64,14 @@ public class OverrideTestsSection extends
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractOverridableTabListPropertySection#selectTab(int)
-	 */
+	@Override
 	public void selectTab(int index) {
 		if (contentsManager != null) {
 			contentsManager.selectTab(index);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#setInput(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		if (contentsManager != null) {
@@ -101,11 +79,7 @@ public class OverrideTestsSection extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.views.properties.tabbed.AbstractPropertySection#shouldUseExtraSpace()
-	 */
+	@Override
 	public boolean shouldUseExtraSpace() {
 		return true;
 	}

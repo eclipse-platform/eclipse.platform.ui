@@ -37,20 +37,24 @@ public class DynamicTestsElementSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsElementSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public List getInputTypes() {
 		List list = new ArrayList();
 		list.add(DynamicTestsElement.class.getName());
 		return list;
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsElementSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "ElementTab"; //$NON-NLS-1$
 	}

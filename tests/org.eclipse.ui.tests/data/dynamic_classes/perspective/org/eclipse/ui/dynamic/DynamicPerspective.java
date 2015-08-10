@@ -25,9 +25,7 @@ public class DynamicPerspective implements IPerspectiveFactory {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
-	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		layout.addView(IPageLayout.ID_OUTLINE, IPageLayout.LEFT, .25f, IPageLayout.ID_EDITOR_AREA);
 	}

@@ -29,7 +29,8 @@ public class LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object obj) {
+    @Override
+	public Image getImage(Object obj) {
         if (obj == null || obj.equals(StructuredSelection.EMPTY)) {
             return null;
         }
@@ -47,7 +48,8 @@ public class LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object obj) {
+    @Override
+	public String getText(Object obj) {
         if (obj == null || obj.equals(StructuredSelection.EMPTY)) {
             return null;
         }

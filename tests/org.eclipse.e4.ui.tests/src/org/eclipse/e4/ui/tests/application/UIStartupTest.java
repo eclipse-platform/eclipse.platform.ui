@@ -103,20 +103,24 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNull(context.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
+	@Override
 	public void testGetFirstPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				UIStartupTest.super.testGetFirstPart_GetContext();
 			}
 		});
 	}
 
+	@Override
 	public void testGetSecondPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				UIStartupTest.super.testGetSecondPart_GetContext();
 			}
@@ -156,30 +160,36 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	protected IEclipseContext createApplicationContext() {
 		final IEclipseContext[] contexts = new IEclipseContext[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				contexts[0] = UIStartupTest.super.createApplicationContext();
 				contexts[0].set(IResourceUtilities.class.getName(),
 						new ResourceUtility());
 				contexts[0].set(IStylingEngine.class.getName(),
 						new IStylingEngine() {
+							@Override
 							public void style(Object widget) {
 								// no-op
 							}
 
+							@Override
 							public void setId(Object widget, String id) {
 								// no-op
 							}
 
+							@Override
 							public void setClassname(Object widget,
 									String classname) {
 								// no-op
 							}
 
+							@Override
 							public CSSStyleDeclaration getStyle(Object widget) {
 								// TODO Auto-generated method stub
 								return null;
 							}
 
+							@Override
 							public void setClassnameAndId(Object widget,
 									String classname, String id) {
 								// no-op
@@ -190,8 +200,10 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		return contexts[0];
 	}
 
+	@Override
 	protected void createGUI(final MUIElement uiRoot) {
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
+			@Override
 			public void run() {
 				UIStartupTest.super.createGUI(uiRoot);
 			}

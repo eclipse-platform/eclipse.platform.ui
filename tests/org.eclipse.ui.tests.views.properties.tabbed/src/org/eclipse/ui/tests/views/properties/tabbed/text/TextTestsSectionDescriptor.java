@@ -30,14 +30,17 @@ public class TextTestsSectionDescriptor extends AbstractSectionDescriptor {
 		this.tabId = aTabId;
 	}
 
+	@Override
 	public String getId() {
 		return word + "@" + Integer.toHexString(word.hashCode());
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new TextTestsLabelSection(word);
 	}
 
+	@Override
 	public String getTargetTab() {
 		return tabId;
 	}

@@ -33,26 +33,32 @@ public class RefreshTestTreeContentProvider implements ITreeContentProvider {
         super();
     }
 
-    public Object[] getChildren(Object parentElement) {
+    @Override
+	public Object[] getChildren(Object parentElement) {
        return ((TestTreeElement)parentElement).children;
     }
 
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         return ((TestTreeElement)element).parent;
     }
 
-    public boolean hasChildren(Object element) {
+    @Override
+	public boolean hasChildren(Object element) {
         return ((TestTreeElement)element).children.length > 0;
     }
 
-    public Object[] getElements(Object inputElement) {
+    @Override
+	public Object[] getElements(Object inputElement) {
        return elements;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
     }
 

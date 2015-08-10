@@ -65,12 +65,14 @@ public class FastTreeTest extends TreeAddTest {
 	 * @param count
 	 * @throws CoreException
 	 */
+	@Override
 	protected void doTestAdd(final int increment, final int total,final boolean preSort)
 			throws CoreException {
 
 		openBrowser();
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 
 				TestTreeElement input = new TestTreeElement(0, null);

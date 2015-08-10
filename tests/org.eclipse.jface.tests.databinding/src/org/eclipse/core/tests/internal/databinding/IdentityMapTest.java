@@ -42,14 +42,17 @@ public class IdentityMapTest extends TestCase {
 		key = new Object();
 		value = new Object();
 		entry = new Map.Entry() {
+			@Override
 			public Object getKey() {
 				return key;
 			}
 
+			@Override
 			public Object getValue() {
 				return value;
 			}
 
+			@Override
 			public Object setValue(Object arg0) {
 				throw new UnsupportedOperationException();
 			}

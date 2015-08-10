@@ -48,6 +48,7 @@ public class DynamicTestsElementSectionFilter implements IFilter {
 		return true;
 	}
 
+	@Override
 	public boolean select(Object object) {
 		if (object instanceof DynamicTestsTreeNode) {
 			DynamicTestsElement element = ((DynamicTestsTreeNode) object)

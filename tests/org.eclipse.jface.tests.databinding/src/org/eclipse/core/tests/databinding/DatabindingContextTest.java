@@ -34,12 +34,6 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -47,13 +41,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown
-	 * ()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		if (dbc != null) {

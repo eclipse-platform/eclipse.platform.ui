@@ -23,26 +23,17 @@ import com.ibm.icu.text.NumberFormat;
 public class NumberToIntegerValidatorTest extends
 		NumberToNumberValidatorTestHarness {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetOutOfRangeNumber()
-	 */
 	@Override
 	protected Number doGetOutOfRangeNumber() {
 		return new Long((long) Integer.MAX_VALUE + 1);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToBoxedTypeValidator(java.lang.Class)
-	 */
 	@Override
 	protected NumberToNumberValidator doGetToBoxedTypeValidator(Class fromType) {
 		NumberToIntegerConverter converter = new NumberToIntegerConverter(NumberFormat.getInstance(), fromType, false);
 		return new NumberToIntegerValidator(converter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.tests.internal.databinding.validation.NumberToNumberValidatorTestHarness#doGetToPrimitiveValidator(java.lang.Class)
-	 */
 	@Override
 	protected NumberToNumberValidator doGetToPrimitiveValidator(Class fromType) {
 		NumberToIntegerConverter converter = new NumberToIntegerConverter(NumberFormat.getInstance(), fromType, true);

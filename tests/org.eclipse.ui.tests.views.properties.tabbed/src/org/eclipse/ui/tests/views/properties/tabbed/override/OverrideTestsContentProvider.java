@@ -29,20 +29,12 @@ public class OverrideTestsContentProvider implements IStructuredContentProvider 
 
 	private Element[] elements;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		// not implemented
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+	@Override
 	public Object[] getElements(Object parent) {
 		if (elements == null) {
 			elements = new Element[] { new Information("Information"), //$NON-NLS-1$
@@ -52,12 +44,7 @@ public class OverrideTestsContentProvider implements IStructuredContentProvider 
 		return elements;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		// not implemented
 	}

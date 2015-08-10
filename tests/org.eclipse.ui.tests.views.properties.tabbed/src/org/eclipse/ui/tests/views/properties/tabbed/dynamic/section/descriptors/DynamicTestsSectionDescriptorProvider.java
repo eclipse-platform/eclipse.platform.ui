@@ -22,6 +22,7 @@ import org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider;
 public class DynamicTestsSectionDescriptorProvider implements
 		ISectionDescriptorProvider {
 
+	@Override
 	public ISectionDescriptor[] getSectionDescriptors() {
 		return new ISectionDescriptor[] {
 				new DynamicTestsStarSectionDescriptor(

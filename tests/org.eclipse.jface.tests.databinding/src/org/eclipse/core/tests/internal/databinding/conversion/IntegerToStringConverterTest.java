@@ -23,11 +23,6 @@ import com.ibm.icu.text.NumberFormat;
 public class IntegerToStringConverterTest extends TestCase {
 	private NumberFormat integerFormat;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

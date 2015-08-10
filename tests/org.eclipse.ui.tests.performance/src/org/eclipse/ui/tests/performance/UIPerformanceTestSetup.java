@@ -44,6 +44,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 	/*
 	 * @see junit.extensions.TestSetup#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow activeWindow= workbench.getActiveWorkbenchWindow();
@@ -65,6 +66,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 	/*
 	 * @see junit.extensions.TestSetup#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		// do nothing, the set up workspace will be used by the open editor tests
 

@@ -66,6 +66,7 @@ public class DynamicTestsShape {
 		this.shape = aShape;
 	}
 
+	@Override
 	public String toString() {
 		return getShape();
 	}

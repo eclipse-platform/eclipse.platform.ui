@@ -29,14 +29,17 @@ public class TextTestsTabDescriptor extends AbstractTabDescriptor {
 		getSectionDescriptors().add(new TextTestsSectionDescriptor2(aWord, getId()));
 	}
 
+	@Override
 	public String getCategory() {
 		return "default"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getId() {
 		return word + "@" + Integer.toHexString(word.hashCode());
 	}
 
+	@Override
 	public String getLabel() {
 		return word;
 	}

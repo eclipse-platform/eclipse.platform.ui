@@ -66,6 +66,7 @@ public class ShrinkingTreeTest extends TreeTest {
 			throws CoreException {
 
 		exercise(new TestRunnable() {
+			@Override
 			public void run() {
 
 				TestTreeElement input = new TestTreeElement(0, null);

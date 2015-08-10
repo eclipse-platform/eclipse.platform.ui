@@ -31,9 +31,11 @@ public class TextTestsSectionDescriptor2 extends TextTestsSectionDescriptor {
 	 * org.eclipse.ui.views.properties.tabbed.AbstractSectionDescriptor#getFilter
 	 * ()
 	 */
+	@Override
 	public IFilter getFilter() {
 		return new IFilter() {
 
+			@Override
 			public boolean select(Object toTest) {
 				return false;
 			}

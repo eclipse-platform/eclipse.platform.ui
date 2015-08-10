@@ -82,7 +82,8 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		final String [] items = getItems(count);
 
         exercise(new TestRunnable() {
-            public void run() {
+            @Override
+			public void run() {
     			list.removeAll();
     			startMeasuring();
     			for (int j = 0; j < items.length; j++) {
@@ -105,7 +106,8 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		openBrowser();
 		final String [] items = getItems(count);
         exercise(new TestRunnable() {
-            public void run() {
+            @Override
+			public void run() {
     			list.removeAll();
     			startMeasuring();
     			list.setItems(items);

@@ -26,11 +26,13 @@ public class GenerateIdentifiersTest extends BasicPerformanceTest {
         this.count = numberOfIdentifiers;
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
 
         exercise(new TestRunnable() {
-            public void run() throws Exception {
+            @Override
+			public void run() throws Exception {
                 // construct the Identifiers to test
                 final String [] ids = new String[count];
                 for (int i = 0; i < ids.length; i++) {

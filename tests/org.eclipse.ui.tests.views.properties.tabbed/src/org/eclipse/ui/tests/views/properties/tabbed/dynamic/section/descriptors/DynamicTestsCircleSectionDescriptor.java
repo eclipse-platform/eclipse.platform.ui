@@ -35,18 +35,22 @@ public class DynamicTestsCircleSectionDescriptor extends
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsCircleSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsCircleSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsCircleSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "ShapeTab"; //$NON-NLS-1$
 	}

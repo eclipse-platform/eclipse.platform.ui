@@ -28,14 +28,17 @@ public class DynamicTestsElementTabDescriptor extends AbstractTabDescriptor {
 						new DynamicTestsTypeMapper()));
 	}
 
+	@Override
 	public String getCategory() {
 		return "default"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getId() {
 		return "ElementTab"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getLabel() {
 		return "Element"; //$NON-NLS-1$
 	}

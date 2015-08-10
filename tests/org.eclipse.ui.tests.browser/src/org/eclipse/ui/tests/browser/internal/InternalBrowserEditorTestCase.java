@@ -42,6 +42,7 @@ public class InternalBrowserEditorTestCase extends TestCase {
 	void runLoopTimer(final int seconds) {
 		final boolean[] exit = {false};
 		new Thread() {
+			@Override
 			public void run() {
 				try {
 					Thread.sleep(seconds * 1000);
@@ -53,6 +54,7 @@ public class InternalBrowserEditorTestCase extends TestCase {
 				Display display = Display.getDefault();
 				if (!display.isDisposed()) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!shell.isDisposed()) shell.redraw();
 						}

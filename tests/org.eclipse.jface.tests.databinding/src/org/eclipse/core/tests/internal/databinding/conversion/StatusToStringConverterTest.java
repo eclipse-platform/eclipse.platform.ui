@@ -23,9 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 public class StatusToStringConverterTest extends TestCase {
 	private StatusToStringConverter converter;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

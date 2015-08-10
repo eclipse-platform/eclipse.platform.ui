@@ -34,18 +34,22 @@ public class DynamicTestsRedSectionDescriptor extends AbstractSectionDescriptor 
 		super(typeMapper);
 	}
 
+	@Override
 	public IFilter getFilter() {
 		return new DynamicTestsRedSectionFilter();
 	}
 
+	@Override
 	public String getId() {
 		return "DynamicTestsRedSection"; //$NON-NLS-1$
 	}
 
+	@Override
 	public ISection getSectionClass() {
 		return new DynamicTestsRedSection();
 	}
 
+	@Override
 	public String getTargetTab() {
 		return "ColorTab"; //$NON-NLS-1$
 	}

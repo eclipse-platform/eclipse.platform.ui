@@ -36,18 +36,22 @@ public class DynamicTestsShapeTabDescriptor extends AbstractTabDescriptor {
 						new DynamicTestsTypeMapper()));
 	}
 
+	@Override
 	public String getAfterTab() {
 		return "ColorTab"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getCategory() {
 		return "default"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getId() {
 		return "ShapeTab"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getLabel() {
 		return "Shape"; //$NON-NLS-1$
 	}

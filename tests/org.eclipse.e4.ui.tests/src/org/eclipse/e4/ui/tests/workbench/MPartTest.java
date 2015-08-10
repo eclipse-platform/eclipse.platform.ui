@@ -31,11 +31,6 @@ public class MPartTest extends TestCase {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
@@ -43,11 +38,6 @@ public class MPartTest extends TestCase {
 				PartRenderingEngine.engineURI);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		if (wb != null) {

@@ -144,6 +144,7 @@ public class StackRendererTest extends TestCase {
 			methods = new ArrayList<String>();
 		}
 
+		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
 			if (isTabItemForPart(args[0])) {

@@ -70,7 +70,8 @@ public class EmptyPerspective implements IPerspectiveFactory {
      *
      * @param factory the factory used to add views to the perspective
      */
-    public void createInitialLayout(IPageLayout layout) {
+    @Override
+	public void createInitialLayout(IPageLayout layout) {
     	setLastPerspective(layout.getDescriptor().getId());
         // do no layout, this is the empty perspective
     }

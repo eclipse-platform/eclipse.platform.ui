@@ -31,6 +31,7 @@ public class HeadlessPhotoDemoTest extends HeadlessApplicationTest {
 		return (MPart) findElement("ExifView");
 	}
 
+	@Override
 	protected IPresentationEngine createPresentationEngine(
 			String renderingEngineURI) throws Exception {
 		HeadlessContextPresentationEngine engine = (HeadlessContextPresentationEngine) super

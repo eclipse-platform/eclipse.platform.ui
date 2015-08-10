@@ -37,11 +37,7 @@ public class EmptyTabList extends AbstractTabList {
 
 	private IOverrideTestsItem[] sampleViewItems;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.AbstractTabList#appliesTo(org.eclipse.ui.tests.views.properties.tabbed.model.Element)
-	 */
+	@Override
 	public boolean appliesTo(Element element) {
 		if (element == null) {
 			return true;
@@ -49,11 +45,7 @@ public class EmptyTabList extends AbstractTabList {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.tablist.IOverrideTestsTabList#getItems()
-	 */
+	@Override
 	public IOverrideTestsItem[] getItems() {
 		if (sampleViewItems == null) {
 			sampleViewItems = new IOverrideTestsItem[] { new EmptyItem() };

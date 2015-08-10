@@ -41,6 +41,7 @@ public class UITestHelper {
 		public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
 			super(parentShell, manager);
 		}
+		@Override
 		protected boolean showPage(IPreferenceNode node) {
 			return super.showPage(node);
 		}
@@ -50,6 +51,7 @@ public class UITestHelper {
 		public PropertyDialogWrapper(Shell parentShell, PreferenceManager manager, ISelection selection) {
 			super(parentShell, manager, selection);
 		}
+		@Override
 		protected boolean showPage(IPreferenceNode node) {
 			return super.showPage(node);
 		}

@@ -289,6 +289,7 @@ public class MutableObservableCollectionContractTest extends
 		collection.add(element);
 
 		assertDoesNotContainDuringChangeEvent(new Runnable() {
+			@Override
 			public void run() {
 				collection.clear();
 			}
@@ -390,6 +391,7 @@ public class MutableObservableCollectionContractTest extends
 			return this;
 		}
 
+		@Override
 		public void handleChange(ChangeEvent event) {
 			contains = collection.contains(element);
 		}

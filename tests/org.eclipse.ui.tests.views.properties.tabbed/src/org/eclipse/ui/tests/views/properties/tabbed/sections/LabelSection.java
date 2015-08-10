@@ -27,7 +27,8 @@ public class LabelSection
         label = "A simple section.";//$NON-NLS-1$
     }
 
-    public void createControls(Composite parent,
+    @Override
+	public void createControls(Composite parent,
             TabbedPropertySheetPage aTabbedPropertySheetPage) {
         super.createControls(parent, aTabbedPropertySheetPage);
         Composite composite = getWidgetFactory()

@@ -35,11 +35,6 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableList model;
 	private DataBindingContext dbc;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -136,9 +131,6 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 		UpdateListStrategy strategy = new UpdateListStrategy() {
 			int count;
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.databinding.UpdateListStrategy#doRemove(org.eclipse.core.databinding.observable.list.IObservableList, int)
-			 */
 			@Override
 			protected IStatus doRemove(IObservableList observableList, int index) {
 				super.doRemove(observableList, index);

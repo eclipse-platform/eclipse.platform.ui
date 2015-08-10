@@ -30,12 +30,6 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 	private Event event;
 	private int eventCount;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.e4.ui.tests.application.HeadlessApplicationElementTest#
-	 * createApplicationElement(org.eclipse.e4.core.contexts.IEclipseContext)
-	 */
 	@Override
 	protected MApplicationElement createApplicationElement(
 			IEclipseContext appContext) throws Exception {
@@ -44,6 +38,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		return application;
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		IEventBroker appEB = applicationContext.get(IEventBroker.class);
@@ -51,6 +46,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		eventCount = 0;
 		appEB.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS,
 				new EventHandler() {
+					@Override
 					public void handleEvent(Event event) {
 						eventCount++;
 						UIEventTypesTest.this.event = event;
@@ -58,6 +54,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 				});
 		appEB.subscribe(UIEvents.ApplicationElement.TOPIC_ELEMENTID,
 				new EventHandler() {
+					@Override
 					public void handleEvent(Event event) {
 						eventCount++;
 						UIEventTypesTest.this.event = event;

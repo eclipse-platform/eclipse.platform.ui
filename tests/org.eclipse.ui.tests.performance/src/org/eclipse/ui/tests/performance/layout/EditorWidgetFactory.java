@@ -56,17 +56,13 @@ public class EditorWidgetFactory extends TestWidgetFactory {
 		return (Composite) modelPart.getWidget();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getName()
-     */
-    public String getName() {
+    @Override
+	public String getName() {
         return "editor " + filename + (editorId != null ? editorId : "");
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#init()
-     */
-    public void init() throws CoreException, WorkbenchException {
+    @Override
+	public void init() throws CoreException, WorkbenchException {
 
 		// Open an editor in a new window.
         window = PlatformUI.getWorkbench().openWorkbenchWindow(EmptyPerspective.PERSP_ID, UITestCase.getPageInput());
@@ -85,17 +81,13 @@ public class EditorWidgetFactory extends TestWidgetFactory {
         ctrl = getControl(part);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#getControl()
-     */
-    public Composite getControl() throws CoreException, WorkbenchException {
+    @Override
+	public Composite getControl() throws CoreException, WorkbenchException {
         return ctrl;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.tests.performance.layout.TestWidgetFactory#done()
-     */
-    public void done() throws CoreException, WorkbenchException {
+    @Override
+	public void done() throws CoreException, WorkbenchException {
     	window.close();
     	super.done();
     }

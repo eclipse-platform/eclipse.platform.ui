@@ -47,7 +47,8 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         this.id = id;
     }
 
-    protected void runTest() throws Throwable {
+    @Override
+	protected void runTest() throws Throwable {
         // Get the two perspectives to switch between.
         final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry();
@@ -83,7 +84,8 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
         tagIfNecessary("UI - Open/Close " + perspective1.getLabel() + " Perspective", Dimension.ELAPSED_PROCESS);
 
         exercise(new TestRunnable() {
-            public void run() throws Exception {
+            @Override
+			public void run() throws Exception {
                 processEvents();
                 EditorTestHelper.calmDown(500, 30000, 500);
 

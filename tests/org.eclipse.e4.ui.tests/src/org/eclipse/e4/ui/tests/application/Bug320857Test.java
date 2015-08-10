@@ -114,6 +114,7 @@ public class Bug320857Test extends TestCase {
 
 		applicationContext.set(Bug320857.class.getName(),
 				new ContextFunction() {
+					@Override
 					public Object compute(IEclipseContext context,
 							String contextKey) {
 						return ContextInjectionFactory.make(Bug320857.class,

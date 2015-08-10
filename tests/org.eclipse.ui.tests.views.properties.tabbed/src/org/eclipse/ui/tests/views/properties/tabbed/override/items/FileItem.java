@@ -24,30 +24,18 @@ import org.eclipse.ui.tests.views.properties.tabbed.model.File;
  */
 public class FileItem extends InformationItem {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getElement()
-	 */
+	@Override
 	public Class getElement() {
 		return File.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.tests.views.properties.tabbed.override.items.InformationItem#getText()
-	 */
+	@Override
 	public String getText() {
 		return "File"; //$NON-NLS-1$
 	}
