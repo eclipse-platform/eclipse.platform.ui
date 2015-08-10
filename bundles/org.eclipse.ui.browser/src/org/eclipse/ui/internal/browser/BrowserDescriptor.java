@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,35 +23,32 @@ public class BrowserDescriptor implements IBrowserDescriptor {
 	protected String location;
 	protected String parameters;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IWebBrowser#getName()
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptor#getLocation()
-	 */
+	@Override
 	public String getLocation() {
 		return location;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptor#getParameters()
-	 */
+	@Override
 	public String getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public void delete() {
 		BrowserManager.getInstance().removeWebBrowser(this);
 	}
 
+	@Override
 	public boolean isWorkingCopy() {
 		return false;
 	}
 
+	@Override
 	public IBrowserDescriptorWorkingCopy getWorkingCopy() {
 		return new BrowserDescriptorWorkingCopy(this);
 	}
@@ -74,6 +71,7 @@ public class BrowserDescriptor implements IBrowserDescriptor {
 		parameters = memento.getString(MEMENTO_PARAMETERS);
 	}
 
+	@Override
 	public String toString() {
 		return "External Web browser: " + getName() + " / " + getLocation() + " / " + getParameters();   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}

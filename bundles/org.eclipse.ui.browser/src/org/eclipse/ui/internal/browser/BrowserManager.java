@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class BrowserManager extends Observable {
 	private BrowserManager() {
 		pcl = new IEclipsePreferences.IPreferenceChangeListener() {
 
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				String property = event.getKey();
 				if (!ignorePreferenceChanges && property.equals("browsers")) { //$NON-NLS-1$
@@ -85,7 +86,7 @@ public class BrowserManager extends Observable {
 	public List<IBrowserDescriptor> getWebBrowsers() {
 		if (browsers == null)
 			loadBrowsers();
-		return new ArrayList<IBrowserDescriptor>(browsers);
+		return new ArrayList<>(browsers);
 	}
 
 	public void loadBrowsers() {
@@ -94,7 +95,7 @@ public class BrowserManager extends Observable {
 		String xmlString = Platform.getPreferencesService().getString
 		    (WebBrowserUIPlugin.PLUGIN_ID,  "browsers", null, null); //$NON-NLS-1$
 		if (xmlString != null && xmlString.length() > 0) {
-			browsers = new ArrayList<IBrowserDescriptor>();
+			browsers = new ArrayList<>();
 
 			try {
 				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes("utf-8")); //$NON-NLS-1$
@@ -171,7 +172,7 @@ public class BrowserManager extends Observable {
 	}
 
 	protected void setupDefaultBrowsers() {
-		browsers = new ArrayList<IBrowserDescriptor>();
+		browsers = new ArrayList<>();
 
 		// add system browser
 		if (WebBrowserUtil.canUseSystemBrowser()) {

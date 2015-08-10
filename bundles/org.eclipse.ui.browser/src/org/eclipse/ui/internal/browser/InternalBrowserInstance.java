@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,14 +51,17 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 	protected void hookPart(final IWorkbenchPage page, IWorkbenchPart part2) {
 		this.part = part2;
 		listener = new IPartListener() {
+			@Override
 			public void partActivated(IWorkbenchPart part3) {
 				// ignore
 			}
 
+			@Override
 			public void partBroughtToTop(IWorkbenchPart part3) {
 				// ignore
 			}
 
+			@Override
 			public void partClosed(IWorkbenchPart part3) {
 				if (part3.equals(InternalBrowserInstance.this.part)) {
 					InternalBrowserInstance.this.part = null;
@@ -68,10 +71,12 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 				}
 			}
 
+			@Override
 			public void partDeactivated(IWorkbenchPart part3) {
 				// ignore
 			}
 
+			@Override
 			public void partOpened(IWorkbenchPart part3) {
 				// ignore
 			}

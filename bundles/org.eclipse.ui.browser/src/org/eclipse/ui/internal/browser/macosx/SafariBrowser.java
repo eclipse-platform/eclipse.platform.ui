@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,12 +30,13 @@ public class SafariBrowser extends DefaultBrowser {
 	 * @param url
 	 * @return String[]
 	 */
+	@Override
 	protected String[] prepareCommand(String path, String url) {
 		if (url != null && url.toLowerCase().startsWith("file:")) { //$NON-NLS-1$
 			url = url.substring(5);
 		}
 
-		ArrayList<String> tokenList = new ArrayList<String>();
+		ArrayList<String> tokenList = new ArrayList<>();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(path.trim(),
 			"\"", true); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,7 @@ public class ToolbarLayout extends Layout {
 	private static final int EXTRA_BUSY_SPACING = 2;
 	private static final int MARGIN = 2;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
-	 */
+	@Override
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (hHint != SWT.DEFAULT)
 			return new Point(wHint, hHint);
@@ -42,9 +40,7 @@ public class ToolbarLayout extends Layout {
 		return new Point(wHint, h + MARGIN * 2);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
-	 */
+	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		Control[] children = composite.getChildren();
 		Rectangle r = composite.getClientArea();

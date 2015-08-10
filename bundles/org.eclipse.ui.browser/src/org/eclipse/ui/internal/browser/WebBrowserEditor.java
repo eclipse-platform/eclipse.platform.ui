@@ -66,6 +66,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	/*
 	 * Creates the SWT controls for this workbench part.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		WebBrowserEditorInput input = getWebBrowserEditorInput();
 
@@ -89,6 +90,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 
 		if (!lockName) {
 			PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					if (BrowserViewer.PROPERTY_TITLE.equals(event.getPropertyName())) {
 						setPartName((String) event.getNewValue());
@@ -99,6 +101,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (image != null && !image.isDisposed())
 			image.dispose();
@@ -113,16 +116,12 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		return disposed;
 	}
 
-	/* (non-Javadoc)
-	 * Saves the contents of this editor.
-	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * Saves the contents of this editor to another object.
-	 */
+	@Override
 	public void doSaveAs() {
 		// do nothing
 	}
@@ -167,9 +166,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		return pasteAction;
 	}
 
-	/* (non-Javadoc)
-	 * Initializes the editor part with a site and input.
-	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		Trace.trace(Trace.FINEST, "Opening browser: " + input); //$NON-NLS-1$
 		if (input instanceof IPathEditorInput) {
@@ -237,17 +234,12 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		setInput(input);
 	}
 
-	/* (non-Javadoc)
-	 * Returns whether the contents of this editor have changed since the last save
-	 * operation.
-	 */
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Returns whether the "save as" operation is supported by this editor.
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -285,6 +277,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	/*
 	 * Asks this part to take focus within the workbench.
 	 */
+	@Override
 	public void setFocus() {
 		if (webBrowser != null)
 			webBrowser.setFocus();
@@ -293,9 +286,11 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	/**
 	 * Close the editor correctly.
 	 */
+	@Override
 	public boolean close() {
         final boolean [] result = new boolean[1];
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				result[0] = getEditorSite().getPage().closeEditor(WebBrowserEditor.this, false);
 			}
@@ -303,15 +298,18 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
         return result[0];
 	}
 
-    public IActionBars getActionBars() {
+    @Override
+	public IActionBars getActionBars() {
         return getEditorSite().getActionBars();
     }
 
-    public void openInExternalBrowser(String url) {
+    @Override
+	public void openInExternalBrowser(String url) {
         final IEditorInput input = getEditorInput();
         final String id = getEditorSite().getId();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 doOpenExternalEditor(id, input);
             }
         };

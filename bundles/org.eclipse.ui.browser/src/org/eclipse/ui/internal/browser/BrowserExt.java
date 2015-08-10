@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,10 +39,12 @@ public class BrowserExt implements IBrowserExt {
 	 *
 	 * @return java.lang.String
 	 */
+	@Override
 	public String getId() {
 		return element.getAttribute("id"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		String label = element.getAttribute("name"); //$NON-NLS-1$
 		if (label == null)
@@ -50,14 +52,17 @@ public class BrowserExt implements IBrowserExt {
 		return label;
 	}
 
+	@Override
 	public String getParameters() {
 		return element.getAttribute("parameters"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getExecutable() {
 		return element.getAttribute("executable"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getOS() {
 		String os = element.getAttribute("os"); //$NON-NLS-1$
 		if (os == null)
@@ -65,8 +70,9 @@ public class BrowserExt implements IBrowserExt {
 		return os;
 	}
 
+	@Override
 	public String[] getDefaultLocations() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		IConfigurationElement[] children = element.getChildren("location"); //$NON-NLS-1$
 		if (children != null) {
 			int size = children.length;
@@ -106,6 +112,7 @@ public class BrowserExt implements IBrowserExt {
 	 *         required native browser required by browser adapters that it
 	 *         creates is not installed
 	 */
+	@Override
 	public boolean isAvailable() {
 		if (delegate == null && (element.getAttribute(ATTR_FACTORY_CLASS) == null
 				|| element.getAttribute(ATTR_FACTORY_CLASS).length() == 0))
@@ -127,6 +134,7 @@ public class BrowserExt implements IBrowserExt {
 	 *
 	 * @return instance of IBrowser
 	 */
+	@Override
 	public IWebBrowser createBrowser(String id, String location,
 			String parameters) {
 		try {
@@ -145,6 +153,7 @@ public class BrowserExt implements IBrowserExt {
 	 *
 	 * @return java.lang.String
 	 */
+	@Override
 	public String toString() {
 		String s = "BrowserExt: " + getId() + ", " + getName() + ", " + getOS()  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				+ ", " + getExecutable() + ", " + getParameters() + ", ";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$

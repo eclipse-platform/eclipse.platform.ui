@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,8 @@ public class BrowserText {
             super(parent, style);
         }
 
-        public void reflow(boolean flushCache) {
+        @Override
+		public void reflow(boolean flushCache) {
             updateWidth(this);
             super.reflow(flushCache);
         }
@@ -92,9 +93,11 @@ public class BrowserText {
         link.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         link.setToolTipText(Messages.BrowserText_tooltip);
         link.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 BusyIndicator.showWhile(link.getDisplay(), new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         doOpenExternal();
                     }
                 });
@@ -115,7 +118,8 @@ public class BrowserText {
         button = new Button(parent, SWT.PUSH);
         updateButtonText();
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 toggleException();
             }
         });

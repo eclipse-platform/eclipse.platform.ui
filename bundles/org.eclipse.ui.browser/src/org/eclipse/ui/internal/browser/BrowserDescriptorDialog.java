@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		setShellStyle( getShellStyle() | SWT.RESIZE );
 	}
 
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 
@@ -103,6 +104,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		text.setLayoutData(data);
 		if (listener != null)
 			text.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					listener.valueChanged(text.getText());
 				}
@@ -110,9 +112,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		return text;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -123,6 +123,7 @@ public class BrowserDescriptorDialog extends Dialog {
 
 		SWTUtil.createLabel(composite, Messages.name).setFont(font);
 		browserNameTextfield = createText(composite, browser.getName(), new StringModifyListener() {
+			@Override
 			public void valueChanged(String s) {
 				browser.setName(s);
 				validateFields();
@@ -134,6 +135,7 @@ public class BrowserDescriptorDialog extends Dialog {
 
 		SWTUtil.createLabel(composite, Messages.location).setFont(font);
 		browserLocationTextfield = createText(composite, browser.getLocation(), new StringModifyListener() {
+			@Override
 			public void valueChanged(String s) {
 				browser.setLocation(s);
 				validateFields();
@@ -144,6 +146,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		browseButton = SWTUtil.createButton(composite, Messages.browse);
 		browseButton.setFont(font);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
 				dialog.setText(Messages.browseMessage);
@@ -160,6 +163,7 @@ public class BrowserDescriptorDialog extends Dialog {
 
 		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
 		browserParametersTextfield = createText(composite, browser.getParameters(), new StringModifyListener() {
+			@Override
 			public void valueChanged(String s) {
 				browser.setParameters(s);
 			}
@@ -176,9 +180,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
+	@Override
 	protected void okPressed() {
 		// do simple field validation to at least ensure target directory entered is valid pathname
 		try {
@@ -205,6 +207,7 @@ public class BrowserDescriptorDialog extends Dialog {
 			okButton.setEnabled(curIsEnabled);
 	}
 
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Control buttonControl = super.createButtonBar(parent);
 		validateFields();

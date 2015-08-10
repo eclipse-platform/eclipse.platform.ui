@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class BusyIndicator extends Canvas {
 		images = ImageResource.getBusyImages();
 
 		addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				onPaint(event);
 			}
@@ -48,6 +49,7 @@ public class BusyIndicator extends Canvas {
 		image = images[0];
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return new Point(25, 25);
 	}
@@ -62,11 +64,13 @@ public class BusyIndicator extends Canvas {
 		stop = false;
 		busyThread = new Thread() {
 			protected int count;
+			@Override
 			public void run() {
 				try {
 					count = 1;
 					while (!stop) {
 						Display.getDefault().syncExec(new Runnable() {
+							@Override
 							public void run() {
 								if (!stop) {
 									if (count < 13)
@@ -85,6 +89,7 @@ public class BusyIndicator extends Canvas {
 					}
 					if (busyThread == null)
 						Display.getDefault().syncExec(new Thread() {
+							@Override
 							public void run() {
 								setImage(images[0]);
 							}
@@ -100,6 +105,7 @@ public class BusyIndicator extends Canvas {
 		busyThread.start();
 	}
 
+	@Override
 	public void dispose() {
 		stop = true;
 		busyThread = null;

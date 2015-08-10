@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 		super(WebBrowserUtil.encodeStyle(id, style), style, name, tooltip);
 	}
 
+	@Override
 	public void openURL(URL url) throws PartInitException {
         IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
         final IWorkbenchPage page = workbenchWindow.getActivePage();
@@ -48,6 +49,7 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
         }
 	}
 
+	@Override
 	public boolean close() {
         return ((WebBrowserView)part).close();
 	}

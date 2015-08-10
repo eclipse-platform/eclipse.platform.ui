@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,40 +26,34 @@ public class BrowserDescriptorWorkingCopy extends BrowserDescriptor implements I
 		setInternal(browser);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptorWorkingCopy#setName(java.lang.String)
-	 */
+	@Override
 	public void setName(String name) {
 		if (name == null)
 			throw new IllegalArgumentException();
 		this.name = name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptorWorkingCopy#setLocation(java.lang.String)
-	 */
+	@Override
 	public void setLocation(String location) {
 		this.location = location;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptorWorkingCopy#setParameters(java.lang.String)
-	 */
+	@Override
 	public void setParameters(String params) {
 		this.parameters = params;
 	}
 
+	@Override
 	public boolean isWorkingCopy() {
 		return true;
 	}
 
+	@Override
 	public IBrowserDescriptorWorkingCopy getWorkingCopy() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.browser.IBrowserDescriptorWorkingCopy#save()
-	 */
+	@Override
 	public IBrowserDescriptor save() {
 		if (browser != null) {
 			browser.setInternal(this);

@@ -25,6 +25,7 @@ public class BrowserLauncher implements IEditorLauncher {
 		// do nothing
 	}
 
+	@Override
 	public void open(IPath file) {
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		try {
