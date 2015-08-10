@@ -103,10 +103,12 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 				 */
 				private static final long serialVersionUID = 1L;
 
+				@Override
 				protected boolean isInstance(Object object) {
 					return super.isInstance(object) && (clazz == null || clazz.isInstance(object));
 				}
 
+				@Override
 				protected T validate(int index, T object) {
 					if( isInstance(object) ) {
 						return object;

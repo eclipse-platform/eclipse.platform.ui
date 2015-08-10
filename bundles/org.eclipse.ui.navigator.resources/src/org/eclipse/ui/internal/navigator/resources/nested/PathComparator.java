@@ -21,11 +21,6 @@ import org.eclipse.core.runtime.IPath;
  */
 public class PathComparator implements Comparator<IPath> {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(IPath arg0, IPath arg1) {
 		return arg0.toString().compareTo(arg1.toString());

@@ -258,6 +258,7 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(

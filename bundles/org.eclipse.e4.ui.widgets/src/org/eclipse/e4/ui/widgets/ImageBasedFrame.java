@@ -63,12 +63,14 @@ public class ImageBasedFrame extends Canvas {
 		this.draggable = draggable;
 
 		addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				drawFrame(e);
 			}
 		});
 
 		addListener(SWT.MouseExit, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				ImageBasedFrame frame = (ImageBasedFrame) event.widget;
 				frame.setCursor(null);
@@ -76,6 +78,7 @@ public class ImageBasedFrame extends Canvas {
 		});
 
 		addMouseMoveListener(new MouseMoveListener() {
+			@Override
 			public void mouseMove(MouseEvent e) {
 				// Compute the display location for the handle
 				// Note that this is an empty rect if !draggable
@@ -95,10 +98,12 @@ public class ImageBasedFrame extends Canvas {
 		toWrap.pack(true);
 
 		toWrap.addControlListener(new ControlListener() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				pack(true);
 			}
 
+			@Override
 			public void controlMoved(ControlEvent e) {
 				// Bug 463245 - The framed control should always stay at the same location
 				setFramedControlLocation();

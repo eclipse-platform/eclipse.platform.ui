@@ -219,6 +219,7 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	@Override
 	public void updateLocalization() {
 		if (eNotificationRequired()) {
 			eNotify(new ENotificationImpl(

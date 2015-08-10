@@ -196,6 +196,7 @@ public class CocoaUIHandler {
 
 		final Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				allocateDelegate(display);
 
@@ -236,6 +237,7 @@ public class CocoaUIHandler {
 			invokeMethod(OS.class, "object_setInstanceVariable", //$NON-NLS-1$
 					new Object[] { idValue, SWT_OBJECT, wrapPointer(delegateJniRef) });
 			display.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					// TODO Auto-generated method stub
 					if (delegateJniRef != 0) {
@@ -499,6 +501,7 @@ public class CocoaUIHandler {
 			MenuItem item = findMenuItemById(topLevelMenu, menuItemId);
 			if (item != null) {
 				item.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						if (runCommand(commandId) || runAction(commandId)) {
 							e.doit = false;

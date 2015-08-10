@@ -400,6 +400,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * @deprecated Please use {@link #executeWithChecks(ExecutionEvent)}
 	 *             instead.
 	 */
+	@Deprecated
 	public final Object execute(final ExecutionEvent event) throws ExecutionException, NotHandledException {
 		if (shouldFireEvents) {
 			firePreExecute(event);
