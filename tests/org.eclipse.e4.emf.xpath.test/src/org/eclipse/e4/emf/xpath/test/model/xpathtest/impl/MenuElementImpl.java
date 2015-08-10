@@ -91,6 +91,7 @@ public class MenuElementImpl extends EObjectImpl implements MenuElement {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -100,6 +101,7 @@ public class MenuElementImpl extends EObjectImpl implements MenuElement {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;
@@ -112,6 +114,7 @@ public class MenuElementImpl extends EObjectImpl implements MenuElement {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -121,6 +124,7 @@ public class MenuElementImpl extends EObjectImpl implements MenuElement {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setLabel(String newLabel) {
 		String oldLabel = label;
 		label = newLabel;

@@ -95,6 +95,7 @@ public class RootImpl extends EObjectImpl implements Root {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Node> getNodes() {
 		if (nodes == null) {
 			nodes = new EObjectContainmentEList<>(Node.class, this, XpathtestPackage.ROOT__NODES);
@@ -107,6 +108,7 @@ public class RootImpl extends EObjectImpl implements Root {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -116,6 +118,7 @@ public class RootImpl extends EObjectImpl implements Root {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;
