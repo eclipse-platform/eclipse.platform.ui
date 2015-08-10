@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -34,12 +35,10 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -86,31 +85,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	protected Label parameters;
 
 	protected IBrowserDescriptor checkedBrowser;
-
-	class BrowserContentProvider implements IStructuredContentProvider {
-		@Override
-		public Object[] getElements(Object inputElement) {
-			List<IBrowserDescriptor> list = new ArrayList<>();
-			Iterator<IBrowserDescriptor> iterator = BrowserManager.getInstance().getWebBrowsers()
-					.iterator();
-			while (iterator.hasNext()) {
-				IBrowserDescriptor browser = iterator
-						.next();
-				list.add(browser);
-			}
-			return list.toArray();
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// do nothing
-		}
-
-		@Override
-		public void dispose() {
-			// do nothing
-		}
-	}
 
 	class BrowserTableLabelProvider implements ITableLabelProvider {
 		@Override
@@ -223,9 +197,9 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		table.setLayout(tableLayout);
 
 		tableViewer = new CheckboxTableViewer(table);
-		tableViewer.setContentProvider(new BrowserContentProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new BrowserTableLabelProvider());
-		tableViewer.setInput("root"); //$NON-NLS-1$
+		tableViewer.setInput(BrowserManager.getInstance().getWebBrowsers());
 
 		// uncheck any other elements that might be checked and leave only the
 		// element checked to remain checked since one can only chose one

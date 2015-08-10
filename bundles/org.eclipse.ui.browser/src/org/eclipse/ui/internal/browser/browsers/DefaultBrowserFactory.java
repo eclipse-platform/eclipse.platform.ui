@@ -16,9 +16,7 @@ import org.eclipse.ui.browser.IWebBrowser;
  * Produces Custom Browser
  */
 public class DefaultBrowserFactory extends BrowserFactory {
-	/**
-	 * @see org.eclipse.ui.browser.provisional.BrowserFactory#createBrowser()
-	 */
+
 	@Override
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		return new DefaultBrowser(id, location, parameters);

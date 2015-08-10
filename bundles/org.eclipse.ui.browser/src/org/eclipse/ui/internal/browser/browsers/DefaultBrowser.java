@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PartInitException;
@@ -35,9 +35,6 @@ public class DefaultBrowser extends AbstractWebBrowser {
 		this.parameters = parameters;
 	}
 
-	/**
-	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
-	 */
 	@Override
 	public void openURL(URL url2) throws PartInitException {
 		String url = url2.toExternalForm();
