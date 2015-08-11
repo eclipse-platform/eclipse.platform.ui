@@ -8,8 +8,8 @@
 
   Contributors:
      Igor Fedorenko - initial implementation
-     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457867
-     Mickael Istria (Red Hat Inc.) - Bug 457868:configure test
+     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457867, 474544
+     Mickael Istria (Red Hat Inc.) - Bug 457868
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -20,7 +20,7 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.tests.navigator</artifactId>
-  <version>3.4.300-SNAPSHOT</version>
+  <version>3.5.0-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
