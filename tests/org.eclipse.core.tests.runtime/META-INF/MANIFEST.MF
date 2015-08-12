@@ -11,13 +11,12 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.runtime,
  org.eclipse.core.tests.runtime.compatibility,
  org.eclipse.core.tests.runtime.jobs,
- org.eclipse.core.tests.runtime.model,
  org.eclipse.core.tests.runtime.perf,
  org.eclipse.core.tests.runtime.session
 Require-Bundle: org.eclipse.core.tests.harness;bundle-version="3.4.0",
  org.junit,
  org.eclipse.test.performance;resolution:=optional,
- org.eclipse.core.runtime.compatibility
+ org.eclipse.core.runtime;bundle-version="3.11.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Plugin-Class: org.eclipse.core.tests.runtime.RuntimeTestsPlugin
