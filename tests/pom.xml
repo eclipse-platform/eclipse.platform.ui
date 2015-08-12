@@ -28,7 +28,6 @@
     <module>org.eclipse.core.expressions.tests</module>
     <module>org.eclipse.core.tests.harness</module>
     <module>org.eclipse.core.tests.runtime</module>
-    <module>org.eclipse.core.tests.runtime</module>
    </modules>
 
 </project>
