@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434611, 472654
+ *     Manumitting Technologies Inc - Bug 380609
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -592,7 +594,11 @@ public class ModelServiceImpl implements EModelService {
 	public void insert(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			int where, float ratio) {
 		assert (toInsert != null && relTo != null);
-		assert (ratio > 0 && ratio < 100);
+		if (ratio >= 1) {
+			warn("EModelService#insert() expects the ratio to be between (0,100)"); //$NON-NLS-1$
+			ratio = ratio / 100; // reduce it
+		}
+		assert(ratio > 0 && ratio < 1);
 
 		// determine insertion order
 		boolean insertBefore = where == ABOVE || where == LEFT_OF;
@@ -1008,5 +1014,12 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		return hostWindow.getSharedElements().contains(curElement);
+	}
+
+	private void warn(String message) {
+		Logger logger = appContext.get(Logger.class);
+		if (logger != null) {
+			logger.warn(message);
+		}
 	}
 }
