@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 469057
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 469057
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 469057, 474836
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
@@ -62,6 +62,21 @@ public class PatternFilter extends ViewerFilter {
 	private boolean useEarlyReturnIfMatcherIsNull = true;
 
 	private static Object[] EMPTY = new Object[0];
+
+	public PatternFilter() {
+	}
+
+	/**
+	 * Constructor to specify the includeLeadingWildcard flag.
+	 *
+	 * @param includeLeadingWildcard
+	 *            flag
+	 *
+	 * @since 1.1.0
+	 */
+	public PatternFilter(boolean includeLeadingWildcard) {
+		this.includeLeadingWildcard = includeLeadingWildcard;
+	}
 
 	@Override
 	public final Object[] filter(Viewer viewer, Object parent, Object[] elements) {
