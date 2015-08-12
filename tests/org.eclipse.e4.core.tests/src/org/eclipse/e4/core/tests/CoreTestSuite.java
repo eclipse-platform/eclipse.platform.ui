@@ -57,8 +57,11 @@ import org.eclipse.e4.core.internal.tests.nls.NLSTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.Test;
+
 @RunWith(Suite.class)
-	@Suite.SuiteClasses({
+@Suite.SuiteClasses({
 		ExtendedSupplierInjectionTests.class,
 		InjectionPreferencesTest.class,
 		InjectionMixedSuppliersTest.class,
@@ -111,9 +114,8 @@ import org.junit.runners.Suite;
 		// NLS
 		NLSTest.class,
 	})
-	public class CoreTestSuite
-
-	{
-
+public class CoreTestSuite {
+	public static Test suite() {
+		return new JUnit4TestAdapter(CoreTestSuite.class);
 	}
-
+}

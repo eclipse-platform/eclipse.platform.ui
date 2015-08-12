@@ -10,9 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.atinject.tck.Tck;
 import org.atinject.tck.auto.Car;
 import org.atinject.tck.auto.Convertible;
@@ -27,8 +24,13 @@ import org.atinject.tck.auto.accessories.Cupholder;
 import org.atinject.tck.auto.accessories.SpareTire;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectorFactory;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
 
-public class AtInjectTest extends TestSuite {
+import junit.framework.Test;
+
+@RunWith(AllTests.class)
+public class AtInjectTest {
 
 	public static Test suite() {
 		IInjector injector = InjectorFactory.getDefault();
