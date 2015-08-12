@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -116,7 +116,7 @@ public abstract class AbstractCommandSelectionDialog extends SaveDialogBoundsSet
 		}
 		viewer.setInput(commands);
 
-		final PatternFilter filter = new PatternFilter() {
+		final PatternFilter filter = new PatternFilter(true) {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

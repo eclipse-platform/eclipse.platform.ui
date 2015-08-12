@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -79,8 +79,8 @@ public class ExpressionIdDialog extends SaveDialogBoundsSettingsDialog {
 
 		final Text idField = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		idField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		final PatternFilter filter = new PatternFilter(true) {
 
-		final PatternFilter filter = new PatternFilter() {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

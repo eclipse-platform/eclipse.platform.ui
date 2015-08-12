@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
@@ -122,7 +122,7 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 		final Text idField = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		idField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		final PatternFilter filter = new PatternFilter() {
+		final PatternFilter filter = new PatternFilter(true) {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

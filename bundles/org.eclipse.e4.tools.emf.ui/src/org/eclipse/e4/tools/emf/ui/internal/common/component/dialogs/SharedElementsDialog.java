@@ -18,9 +18,9 @@ import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -132,7 +132,7 @@ public class SharedElementsDialog extends SaveDialogBoundsSettingsDialog {
 			viewer.setInput(list);
 		}
 
-		final PatternFilter filter = new PatternFilter() {
+		final PatternFilter filter = new PatternFilter(true) {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

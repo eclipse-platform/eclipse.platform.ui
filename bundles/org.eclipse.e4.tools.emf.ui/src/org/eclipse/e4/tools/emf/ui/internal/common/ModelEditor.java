@@ -69,7 +69,6 @@ import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
@@ -150,6 +149,8 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.dialogs.filteredtree.FilteredTree;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -166,7 +167,6 @@ import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -1089,7 +1089,7 @@ public class ModelEditor implements IGotoObject {
 				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) {
 			final FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL
-					| SWT.V_SCROLL, new PatternFilter(), false);
+ | SWT.V_SCROLL, new PatternFilter(true));
 			tempViewer = viewParent.getViewer();
 		} else {
 			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL,

@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -113,7 +113,7 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 		}
 		viewer.setInput(categories);
 
-		final PatternFilter filter = new PatternFilter() {
+		final PatternFilter filter = new PatternFilter(true) {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
 				return viewer instanceof AbstractTreeViewer && super.isParentMatch(viewer, element);

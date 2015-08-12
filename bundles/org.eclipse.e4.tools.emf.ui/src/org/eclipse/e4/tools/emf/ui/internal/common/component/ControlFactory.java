@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.AbstractPickList.PickListFeatures;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
@@ -44,6 +43,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportE
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
