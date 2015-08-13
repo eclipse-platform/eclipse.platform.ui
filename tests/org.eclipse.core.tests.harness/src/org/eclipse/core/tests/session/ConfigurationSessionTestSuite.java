@@ -42,7 +42,6 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	public static String[] MINIMAL_BUNDLE_SET = {"org.eclipse.equinox.common@2:start", //
 			"org.eclipse.core.runtime@:start", //
 			"org.eclipse.core.jobs", //
-			"org.eclipse.core.runtime.compatibility.registry", //
 			"org.eclipse.equinox.registry", //
 			"org.eclipse.equinox.preferences", //
 			"org.eclipse.core.contenttype", //

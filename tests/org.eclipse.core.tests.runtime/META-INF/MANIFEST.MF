@@ -9,7 +9,6 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.internal.registry,
  org.eclipse.core.tests.internal.runtime,
  org.eclipse.core.tests.runtime,
- org.eclipse.core.tests.runtime.compatibility,
  org.eclipse.core.tests.runtime.jobs,
  org.eclipse.core.tests.runtime.perf,
  org.eclipse.core.tests.runtime.session
