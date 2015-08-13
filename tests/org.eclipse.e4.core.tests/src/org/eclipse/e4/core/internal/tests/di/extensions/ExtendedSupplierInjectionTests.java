@@ -146,7 +146,7 @@ public class ExtendedSupplierInjectionTests {
 				return null;
 			}
 		};
-		Dictionary<String, Object> properties = new Hashtable<String, Object>();
+		Dictionary<String, Object> properties = new Hashtable<>();
 		properties.put(ExtendedObjectSupplier.SERVICE_CONTEXT_KEY,
 				EventTopic.class.getName());
 		properties.put(Constants.SERVICE_RANKING, 100);

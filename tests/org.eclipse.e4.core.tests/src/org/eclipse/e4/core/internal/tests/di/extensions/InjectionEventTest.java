@@ -201,7 +201,7 @@ public class InjectionEventTest {
 
 		// send event
 		String eventTopic = "e4/test/eventInjection";
-		Dictionary<String, Object> d = new Hashtable<String, Object>();
+		Dictionary<String, Object> d = new Hashtable<>();
 		d.put(EventConstants.EVENT_TOPIC, eventTopic);
 		d.put("data1", new Integer(5));
 		d.put("data2", "sample");
@@ -241,7 +241,7 @@ public class InjectionEventTest {
 
 		// send event
 		String eventTopic = "e4/test/eventInjection";
-		Dictionary<String, Object> d = new Hashtable<String, Object>();
+		Dictionary<String, Object> d = new Hashtable<>();
 		d.put(EventConstants.EVENT_TOPIC, eventTopic);
 		d.put("data1", new Integer(5));
 		d.put("data2", "sample");

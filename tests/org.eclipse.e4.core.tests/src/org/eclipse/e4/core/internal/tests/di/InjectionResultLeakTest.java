@@ -50,7 +50,7 @@ public class InjectionResultLeakTest {
 
 		{ // scope the "part" object to help GC
 			Object part = new Object();
-			ref = new WeakReference<Object>(part);
+			ref = new WeakReference<>(part);
 			assertEquals(part, ref.get());
 
 			context.set("testGC", part);

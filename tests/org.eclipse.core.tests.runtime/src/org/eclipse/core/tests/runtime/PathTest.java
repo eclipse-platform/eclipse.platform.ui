@@ -677,9 +677,9 @@ public class PathTest extends RuntimeTest {
 	}
 
 	public void testMakeUNC() {
-		ArrayList<Path> inputs = new ArrayList<Path>();
-		ArrayList<String> expected = new ArrayList<String>();
-		ArrayList<String> expectedNon = new ArrayList<String>();
+		ArrayList<Path> inputs = new ArrayList<>();
+		ArrayList<String> expected = new ArrayList<>();
+		ArrayList<String> expectedNon = new ArrayList<>();
 
 		inputs.add(Path.ROOT);
 		expected.add("//");

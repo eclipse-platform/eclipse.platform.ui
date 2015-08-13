@@ -70,7 +70,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test with 6 threads competing for 3 locks from a set of 6.
 	 */
 	public void testComplex() {
-		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<RandomTestRunnable>();
+		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();
 		OrderedLock lock1 = lockManager.newLock();
 		OrderedLock lock2 = lockManager.newLock();
@@ -108,7 +108,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test simplest deadlock case (2 threads, 2 locks).
 	 */
 	public void testSimpleDeadlock() {
-		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<RandomTestRunnable>();
+		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager localManager = new LockManager();
 		OrderedLock lock1 = localManager.newLock();
 		OrderedLock lock2 = localManager.newLock();
@@ -140,7 +140,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * Test a more complicated scenario with 3 threads and 3 locks.
 	 */
 	public void testThreeLocks() {
-		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<RandomTestRunnable>();
+		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();
 		OrderedLock lock1 = lockManager.newLock();
 		OrderedLock lock2 = lockManager.newLock();
@@ -965,7 +965,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 * 60 threads are competing for 6 locks (need to acquire 3 locks at the same time).
 	 */
 	public void testVeryComplex() {
-		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<RandomTestRunnable>();
+		ArrayList<RandomTestRunnable> allRunnables = new ArrayList<>();
 		LockManager lockManager = new LockManager();
 		OrderedLock lock1 = lockManager.newLock();
 		OrderedLock lock2 = lockManager.newLock();

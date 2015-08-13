@@ -41,14 +41,14 @@ public class PreferencesServiceTest extends RuntimeTest {
 			super();
 			this.node = node;
 			this.excludes = excludes;
-			this.expected = new HashSet<String>();
+			this.expected = new HashSet<>();
 		}
 
 		public ExportVerifier(IEclipsePreferences node, IPreferenceFilter[] transfers) {
 			super();
 			this.node = node;
 			this.transfers = transfers;
-			this.expected = new HashSet<String>();
+			this.expected = new HashSet<>();
 			this.useTransfers = true;
 		}
 
@@ -404,7 +404,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		String defaultValue = getUniqueString() + '1';
 		String actual = null;
 
-		List<IScopeContext[]> list = new ArrayList<IScopeContext[]>();
+		List<IScopeContext[]> list = new ArrayList<>();
 		list.add(null);
 		list.add(new IScopeContext[] {});
 		list.add(new IScopeContext[] {null});
@@ -863,7 +863,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter filter = new IPreferenceFilter() {
 			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
-				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -954,7 +954,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter[] filters = new IPreferenceFilter[] {new IPreferenceFilter() {
 			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
-				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -977,7 +977,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter transfer = new IPreferenceFilter() {
 			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
-				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<>();
 				result.put(VALID_QUALIFIER, null);
 				return result;
 			}
@@ -1071,7 +1071,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferenceFilter transfer = new IPreferenceFilter() {
 			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
-				Map<String, PreferenceFilterEntry[]> result = new HashMap<String, PreferenceFilterEntry[]>();
+				Map<String, PreferenceFilterEntry[]> result = new HashMap<>();
 				result.put(QUALIFIER, null);
 				return result;
 			}
@@ -1117,7 +1117,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 			@Override
 			public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 				if (result == null) {
-					result = new HashMap<String, PreferenceFilterEntry[]>();
+					result = new HashMap<>();
 					result.put(VALID_QUALIFIER, new PreferenceFilterEntry[] {new PreferenceFilterEntry(COMMON_PREFIX, "prefix")});
 				}
 				return result;

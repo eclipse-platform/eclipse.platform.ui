@@ -342,7 +342,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		runRuleSequence();
 
 		//next test in a job with no rule of its own
-		final List<AssertionFailedError> errors = new ArrayList<AssertionFailedError>();
+		final List<AssertionFailedError> errors = new ArrayList<>();
 		Job sequenceJob = new Job("testCurrentRule") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -567,7 +567,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//try finding all jobs by supplying the NULL parameter
 		//note that this might find other jobs that are running as a side-effect of the test
 		//suites running, such as snapshot
-		HashSet<Job> allJobs = new HashSet<Job>();
+		HashSet<Job> allJobs = new HashSet<>();
 		allJobs.addAll(Arrays.asList(jobs));
 		Job[] result = manager.find(null);
 		assertTrue("1.0", result.length >= NUM_JOBS);

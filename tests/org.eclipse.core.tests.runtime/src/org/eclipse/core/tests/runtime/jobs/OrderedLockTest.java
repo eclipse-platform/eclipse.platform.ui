@@ -46,7 +46,7 @@ public class OrderedLockTest extends TestCase {
 	}
 
 	public void testComplex() {
-		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<LockAcquiringRunnable>();
+		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<>();
 		LockManager manager = new LockManager();
 		OrderedLock lock1 = manager.newLock();
 		OrderedLock lock2 = manager.newLock();
@@ -69,7 +69,7 @@ public class OrderedLockTest extends TestCase {
 	}
 
 	public void testSimple() {
-		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<LockAcquiringRunnable>();
+		ArrayList<LockAcquiringRunnable> allRunnables = new ArrayList<>();
 		LockManager manager = new LockManager();
 		OrderedLock lock1 = manager.newLock();
 		OrderedLock lock2 = manager.newLock();

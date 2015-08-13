@@ -44,7 +44,7 @@ public class FileLocatorTest extends CoreTest {
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {fragment});
 
 		IPath path = new Path(searchLocation);
-		Map<String, String> map = new HashMap<String, String>(1);
+		Map<String, String> map = new HashMap<>(1);
 		map.put("$nl$", nl);
 
 		URL oneSolution = FileLocator.find(bundle, path, map);

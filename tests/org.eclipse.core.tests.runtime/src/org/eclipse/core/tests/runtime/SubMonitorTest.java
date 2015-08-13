@@ -331,7 +331,7 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	private String[] runChildTest(int depth, TestProgressMonitor root, IProgressMonitor child, int ticks) {
-		ArrayList<String> results = new ArrayList<String>();
+		ArrayList<String> results = new ArrayList<>();
 		child.beginTask("beginTask" + depth, ticks);
 		results.add(root.getTaskName());
 		child.subTask("subTask" + depth);
@@ -348,7 +348,7 @@ public class SubMonitorTest extends TestCase {
 
 		int[] styles = new int[] {SubMonitor.SUPPRESS_NONE, SubMonitor.SUPPRESS_BEGINTASK, SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_SETTASKNAME | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_ALL_LABELS};
 
-		HashMap<String, String[]> expected = new HashMap<String, String[]>();
+		HashMap<String, String[]> expected = new HashMap<>();
 		expected.put("style 5 below style 7", new String[] {"", "", ""});
 		expected.put("style 7 below style 5", new String[] {"beginTask0", "", "beginTask0"});
 		expected.put("style 7 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
@@ -421,7 +421,7 @@ public class SubMonitorTest extends TestCase {
 		expected.put("style 4 as top-level monitor", new String[] {"beginTask0", "subTask0", "beginTask0"});
 		expected.put("style 7 below style 7", new String[] {"", "", ""});
 		expected.put("style 7 below style 6", new String[] {"", "subTask0", ""});
-		HashMap<String, String[]> results = new HashMap<String, String[]>();
+		HashMap<String, String[]> results = new HashMap<>();
 
 		for (int i = 0; i < styles.length; i++) {
 			int style = styles[i];

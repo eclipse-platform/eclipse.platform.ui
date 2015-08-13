@@ -65,14 +65,14 @@ public class CoreTestsActivator implements BundleActivator {
 
 	private void registerContextFunctions() {
 		{
-			Dictionary<String, Object> properties = new Hashtable<String, Object>();
+			Dictionary<String, Object> properties = new Hashtable<>();
 			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
 			properties.put(Constants.SERVICE_RANKING, 0);
 			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionLow(), properties);
 		}
 
 		{
-			Dictionary<String, Object> properties = new Hashtable<String, Object>();
+			Dictionary<String, Object> properties = new Hashtable<>();
 			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
 			properties.put(Constants.SERVICE_RANKING, 100);
 			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);
@@ -87,7 +87,7 @@ public class CoreTestsActivator implements BundleActivator {
 		if (preferencesTracker == null) {
 			if (bundleContext == null)
 				return null;
-			preferencesTracker = new ServiceTracker<IPreferencesService, IPreferencesService>(bundleContext, IPreferencesService.class.getName(), null);
+			preferencesTracker = new ServiceTracker<>(bundleContext, IPreferencesService.class.getName(), null);
 			preferencesTracker.open();
 		}
 		return preferencesTracker.getService();
@@ -95,7 +95,7 @@ public class CoreTestsActivator implements BundleActivator {
 
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker<DebugOptions, DebugOptions>(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker = new ServiceTracker<>(bundleContext, DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
 		DebugOptions options = debugTracker.getService();
@@ -110,7 +110,7 @@ public class CoreTestsActivator implements BundleActivator {
 		if (eventAdminTracker == null) {
 			if (bundleContext == null)
 				return null;
-			eventAdminTracker = new ServiceTracker<EventAdmin, EventAdmin>(bundleContext, EventAdmin.class.getName(), null);
+			eventAdminTracker = new ServiceTracker<>(bundleContext, EventAdmin.class.getName(), null);
 			eventAdminTracker.open();
 		}
 		return eventAdminTracker.getService();

@@ -328,14 +328,14 @@ public class PreferencesTest extends RuntimeTest {
 		}
 		assertEquals("1.2", keys.length, ps.propertyNames().length);
 
-		Set<String> s1 = new HashSet<String>(Arrays.asList(keys));
-		Set<String> s2 = new HashSet<String>(Arrays.asList(ps.propertyNames()));
+		Set<String> s1 = new HashSet<>(Arrays.asList(keys));
+		Set<String> s2 = new HashSet<>(Arrays.asList(ps.propertyNames()));
 		assertEquals("1.3", s1, s2);
 
 		// setting to default does remove name from set
 		for (int i = 0; i < keys.length; i++) {
 			ps.setToDefault(keys[i]);
-			Set<String> s = new HashSet<String>(Arrays.asList(ps.propertyNames()));
+			Set<String> s = new HashSet<>(Arrays.asList(ps.propertyNames()));
 			assertTrue("1.4", !s.contains(keys[i]));
 		}
 		assertEquals("1.5", 0, ps.propertyNames().length);
@@ -396,14 +396,14 @@ public class PreferencesTest extends RuntimeTest {
 		}
 		assertEquals("1.2", keys.length, ps.defaultPropertyNames().length);
 
-		Set<String> s1 = new HashSet<String>(Arrays.asList(keys));
-		Set<String> s2 = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+		Set<String> s1 = new HashSet<>(Arrays.asList(keys));
+		Set<String> s2 = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 		assertEquals("1.3", s1, s2);
 
 		// setting to default does not remove name from set
 		for (int i = 0; i < keys.length; i++) {
 			ps.setToDefault(keys[i]);
-			Set<String> s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			Set<String> s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.4", s.contains(keys[i]));
 		}
 		assertEquals("1.5", keys.length, ps.defaultPropertyNames().length);
@@ -411,27 +411,27 @@ public class PreferencesTest extends RuntimeTest {
 		// setting to default-default does not remove name from set either
 		for (int i = 0; i < keys.length; i++) {
 			ps.setDefault(keys[i], Preferences.STRING_DEFAULT_DEFAULT);
-			Set<String> s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			Set<String> s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.1", s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.BOOLEAN_DEFAULT_DEFAULT);
-			s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.2", s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.INT_DEFAULT_DEFAULT);
-			s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.3", s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.LONG_DEFAULT_DEFAULT);
-			s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.4", s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.FLOAT_DEFAULT_DEFAULT);
-			s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.5", s.contains(keys[i]));
 
 			ps.setDefault(keys[i], Preferences.DOUBLE_DEFAULT_DEFAULT);
-			s = new HashSet<String>(Arrays.asList(ps.defaultPropertyNames()));
+			s = new HashSet<>(Arrays.asList(ps.defaultPropertyNames()));
 			assertTrue("1.6.6", s.contains(keys[i]));
 		}
 		assertEquals("1.7", keys.length, ps.defaultPropertyNames().length);
@@ -628,8 +628,8 @@ public class PreferencesTest extends RuntimeTest {
 		assertEquals("1.5", 1.0, ps2.getDouble("d1"), 1e-20);
 		assertEquals("1.6", "x", ps2.getString("s1"));
 
-		Set<String> s1 = new HashSet<String>(Arrays.asList(keys));
-		Set<String> s2 = new HashSet<String>(Arrays.asList(ps2.propertyNames()));
+		Set<String> s1 = new HashSet<>(Arrays.asList(keys));
+		Set<String> s2 = new HashSet<>(Arrays.asList(ps2.propertyNames()));
 		assertEquals("1.7", s1, s2);
 
 		// load discards current values
@@ -639,8 +639,8 @@ public class PreferencesTest extends RuntimeTest {
 		try {
 			ps3.load(in);
 			assertEquals("1.8", "x", ps3.getString("s1"));
-			Set<String> k1 = new HashSet<String>(Arrays.asList(keys));
-			Set<String> k2 = new HashSet<String>(Arrays.asList(ps3.propertyNames()));
+			Set<String> k1 = new HashSet<>(Arrays.asList(keys));
+			Set<String> k2 = new HashSet<>(Arrays.asList(ps3.propertyNames()));
 			assertEquals("1.9", k1, k2);
 		} catch (IOException e) {
 			assertTrue("1.10", false);

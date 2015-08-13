@@ -54,7 +54,7 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	 *            The job family to search for, or null for all jobs.
 	 */
 	protected List<Job> getRunningJobs(Object family) {
-		List<Job> jobs = new ArrayList<Job>();
+		List<Job> jobs = new ArrayList<>();
 		jobs.addAll(Arrays.asList(Job.getJobManager().find(family)));
 		for (Iterator<Job> iterator = jobs.iterator(); iterator.hasNext();) {
 			Job job = iterator.next();
@@ -69,14 +69,14 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 		if (families == null) {
 			return getRunningJobs(null);
 		}
-		List<Job> j = new ArrayList<Job>();
+		List<Job> j = new ArrayList<>();
 		for (String family : families)
 			j.addAll(getRunningJobs(family));
 		return j;
 	}
 
 	protected List<Job> getFinishedJobs(Job[] jobs) {
-		List<Job> joblist = new ArrayList<Job>(Arrays.asList(jobs));
+		List<Job> joblist = new ArrayList<>(Arrays.asList(jobs));
 		for (Iterator<Job> iterator = joblist.iterator(); iterator.hasNext();) {
 			Job job = iterator.next();
 			if (job.getState() != Job.NONE) {
@@ -87,7 +87,7 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	}
 
 	protected void waitForJobsCompletion(Job[] jobs, int waitTime) {
-		List<Job> jobList = new ArrayList<Job>(Arrays.asList(jobs));
+		List<Job> jobList = new ArrayList<>(Arrays.asList(jobs));
 		int i = 0;
 		int tickLength = 10;
 		int ticks = waitTime / tickLength;

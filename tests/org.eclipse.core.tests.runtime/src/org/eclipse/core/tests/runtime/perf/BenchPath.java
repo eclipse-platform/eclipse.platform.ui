@@ -41,7 +41,7 @@ public class BenchPath extends RuntimeTest {
 	public void testHash() {
 		final int REPEAT = 500000;
 		final IPath[] paths = generateVariousPaths();
-		final HashMap<IPath, String> map = new HashMap<IPath, String>(32);
+		final HashMap<IPath, String> map = new HashMap<>(32);
 		for (int i = 0; i < paths.length; i++)
 			map.put(paths[i], "");
 		final int numPaths = paths.length;

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceStorage;
 
 public class TestNodeStorage extends AbstractPreferenceStorage {
 
-	private Map<String, Properties> storage = new HashMap<String, Properties>();
+	private Map<String, Properties> storage = new HashMap<>();
 
 	@Override
 	public Properties load(String nodePath) {

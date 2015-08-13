@@ -113,9 +113,9 @@ public class PlatformTest extends RuntimeTest {
 	}
 
 	public void testRunnable() {
-		final Vector<Throwable> exceptions = new Vector<Throwable>();
+		final Vector<Throwable> exceptions = new Vector<>();
 
-		final List<IStatus> collected = new ArrayList<IStatus>();
+		final List<IStatus> collected = new ArrayList<>();
 
 		// add a log listener to ensure that we report using the right plug-in id
 		ILogListener logListener = new ILogListener() {

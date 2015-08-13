@@ -55,9 +55,9 @@ public class Bug_211799 extends AbstractJobManagerTest {
 	long counter = 0;
 	Exception failure = null;
 	final int JOBS_TO_SCHEDULE = 500;
-	LinkedList<Long> list = new LinkedList<Long>();
+	LinkedList<Long> list = new LinkedList<>();
 
-	List<Long> runList = new ArrayList<Long>(JOBS_TO_SCHEDULE);
+	List<Long> runList = new ArrayList<>(JOBS_TO_SCHEDULE);
 
 	public void testBug() {
 		for (int i = 0; i < JOBS_TO_SCHEDULE; i++) {

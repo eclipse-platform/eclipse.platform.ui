@@ -323,7 +323,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	private byte[][] getByteValues() {
-		ArrayList<byte[]> result = new ArrayList<byte[]>();
+		ArrayList<byte[]> result = new ArrayList<>();
 		result.add(new byte[0]);
 		result.add(new byte[] {127});
 		result.add(new byte[] {-128});
@@ -627,7 +627,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testRemoveNode() {
 		Preferences root = getScopeRoot();
-		ArrayList<Preferences> list = new ArrayList<Preferences>();
+		ArrayList<Preferences> list = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
 			list.add(root.node(getUniqueString()));
 
@@ -917,8 +917,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 
 	public void testAccept() {
 		IEclipsePreferences scopeRoot = getScopeRoot();
-		ArrayList<String> expected = new ArrayList<String>();
-		final ArrayList<String> actual = new ArrayList<String>();
+		ArrayList<String> expected = new ArrayList<>();
+		final ArrayList<String> actual = new ArrayList<>();
 
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			@Override
@@ -937,7 +937,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		expected.add(scopeRoot.absolutePath());
 		assertEquals("0.1", expected.toArray(new String[0]), actual.toArray(new String[0]), false);
 
-		Set<String> children = new HashSet<String>();
+		Set<String> children = new HashSet<>();
 		children.add(getUniqueString());
 		children.add(getUniqueString());
 		children.add(getUniqueString());
@@ -1169,7 +1169,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	}
 
 	public static Collection<String> read(IPath location) throws IOException {
-		Collection<String> result = new ArrayList<String>();
+		Collection<String> result = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new FileReader(location.toFile()));
 		String line;
 		try {
@@ -1221,7 +1221,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			}
 		}
 
-		List<Info> list = new ArrayList<Info>();
+		List<Info> list = new ArrayList<>();
 		list.add(new Info("", "a", "a"));
 		list.add(new Info("", "/a", "///a"));
 		list.add(new Info("a", "b", "a/b"));
@@ -1291,7 +1291,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			}
 		}
 
-		ArrayList<Item> list = new ArrayList<Item>();
+		ArrayList<Item> list = new ArrayList<>();
 		list.add(new Item(null, "a", "a"));
 		list.add(new Item(null, "/a", "///a"));
 		list.add(new Item("a", "b", "a/b"));

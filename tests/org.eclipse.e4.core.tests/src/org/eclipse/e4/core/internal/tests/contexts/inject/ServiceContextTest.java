@@ -89,7 +89,7 @@ public class ServiceContextTest {
 	}
 
 	private IEclipseContext context;
-	private final List<ServiceRegistration<?>> registrations = new ArrayList<ServiceRegistration<?>>();
+	private final List<ServiceRegistration<?>> registrations = new ArrayList<>();
 
 	@Before
 	public void setUp() throws Exception {

@@ -665,7 +665,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final Object SYNC = new Object();
 		final int count = 100;
 		final Integer[] started = new Integer[] {new Integer(0)};
-		final List<Job> jobs = new ArrayList<Job>();
+		final List<Job> jobs = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob" + i) {
 				@Override
@@ -735,7 +735,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule_A = new PathRule(getName() + "_ruleA");
 		final Object SYNC_A = new Object();
 		final Integer[] started_A = new Integer[] {new Integer(0)};
-		final List<Job> jobs_A = new ArrayList<Job>();
+		final List<Job> jobs_A = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_A_" + i) {
 				@Override
@@ -791,7 +791,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final Object SYNC_B = new Object();
 
 		final Integer[] started_B = new Integer[] {new Integer(0)};
-		final List<Job> jobs_B = new ArrayList<Job>();
+		final List<Job> jobs_B = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_B_" + i) {
 				@Override
@@ -897,7 +897,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		barrier.setStatus(TestBarrier.STATUS_START);
 
-		List<Job> jobs = new ArrayList<Job>();
+		List<Job> jobs = new ArrayList<>();
 		jobs.add(yieldA);
 		jobs.add(yieldB);
 

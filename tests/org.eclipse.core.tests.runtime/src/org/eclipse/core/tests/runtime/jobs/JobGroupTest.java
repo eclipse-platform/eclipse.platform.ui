@@ -62,7 +62,7 @@ public class JobGroupTest extends AbstractJobTest {
 			public void run() {
 				barrier.setStatus(TestBarrier.STATUS_RUNNING);
 				while (jobGroup.getState() != JobGroup.NONE) {
-					List<TestJob> runningJobs = new ArrayList<TestJob>();
+					List<TestJob> runningJobs = new ArrayList<>();
 					for (Job job : jobGroup.getActiveJobs()) {
 						if (job.getState() == Job.RUNNING)
 							runningJobs.add((TestJob) job);
@@ -288,7 +288,7 @@ public class JobGroupTest extends AbstractJobTest {
 		// Try finding all jobs by supplying the NULL parameter.
 		// Note: Running the test framework may cause other system jobs to run,
 		// so check that the jobs started by this test are a subset of all running jobs.
-		HashSet<Job> testJobs = new HashSet<Job>();
+		HashSet<Job> testJobs = new HashSet<>();
 		testJobs.addAll(Arrays.asList(jobs));
 		Job[] allJobs = manager.find(null);
 		assertTrue("1.0", allJobs.length >= NUM_JOBS);
@@ -1346,7 +1346,7 @@ public class JobGroupTest extends AbstractJobTest {
 		final JobGroup jobGroup = new JobGroup(GROUP_NAME, 1, NUM_GROUP_JOBS);
 
 		// Record job completion events for all jobs in this job group.
-		final List<IJobChangeEvent> events = new ArrayList<IJobChangeEvent>(NUM_GROUP_JOBS);
+		final List<IJobChangeEvent> events = new ArrayList<>(NUM_GROUP_JOBS);
 		IJobChangeListener listener = new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {

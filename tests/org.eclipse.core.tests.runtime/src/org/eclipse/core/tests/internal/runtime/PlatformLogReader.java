@@ -68,7 +68,7 @@ public class PlatformLogReader {
 	 * is returned.
 	 */
 	public synchronized IStatus[] readLogFile(String path) {
-		list = new ArrayList<IStatus>();
+		list = new ArrayList<>();
 		InputStream input = null;
 		try {
 			input = new FileInputStream(path);
