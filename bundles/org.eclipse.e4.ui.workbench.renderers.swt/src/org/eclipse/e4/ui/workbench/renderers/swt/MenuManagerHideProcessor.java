@@ -83,16 +83,6 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 						.get(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
 
 				toBeHidden.put((MDynamicMenuContribution) currentMenuElement, mel);
-
-				// make existing entries for this dynamic contribution item
-				// invisible if there are any
-				if (mel != null && mel.size() > 0) {
-
-					for (MMenuElement item : mel) {
-						item.setVisible(false);
-					}
-				}
-				currentMenuElement.getTransientData().remove(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
 			}
 		}
 
@@ -117,6 +107,16 @@ public class MenuManagerHideProcessor implements IMenuListener2 {
 						if (mel != null && mel.size() > 0) {
 							renderer.removeDynamicMenuContributions(menuManager, menuModel, mel);
 						}
+
+						// make existing entries for this dynamic contribution
+						// item invisible if there are any
+						if (mel != null && mel.size() > 0) {
+							for (MMenuElement item : mel) {
+								item.setVisible(false);
+							}
+						}
+						currentMenuElement.getTransientData()
+								.remove(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
 					}
 				}
 			});
