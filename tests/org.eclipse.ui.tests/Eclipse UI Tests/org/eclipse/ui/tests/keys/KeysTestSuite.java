@@ -10,53 +10,43 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Tests for all areas of the key support for the platform.
  */
-public class KeysTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	BindingInteractionsTest.class,
+	BindingManagerTest.class,
+	BindingPersistenceTest.class,
+	// TODO This no longer works due to focus issues related to key bindings
+	//Bug36420Test.class,
+	Bug36537Test.class,
+	//		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
+	//		Bug40023Test.class,
+	Bug42024Test.class,
+	Bug42035Test.class,
+	//		TODO Logging piece of fix did not go in M4.
+	//		Bug42627Test.class,
+	Bug43168Test.class,
+	Bug43321Test.class,
+	Bug43538Test.class,
+	Bug43597Test.class,
+	Bug43610Test.class,
+	Bug43800Test.class,
+	KeysCsvTest.class,
+	//		TODO disabled since it refers to the Java builder and nature,
+	//      which are not available in an RCP build
+	//		Bug44460Test.class,
+	/* TODO disabled as it fails on the Mac.
+	 * Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
+	 */
+	//Bug53489Test.class,
+	Bug189167Test.class,
+	KeysPreferenceModelTest.class
+ })
+public class KeysTestSuite {
 
-    /**
-     * Returns the suite. This is required to use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new KeysTestSuite();
-    }
-
-    /**
-     * Construct the test suite.
-     */
-    public KeysTestSuite() {
-    	super(KeysTestSuite.class.getName());
-    	addTest(new TestSuite(BindingInteractionsTest.class));
-    	addTest(new TestSuite(BindingManagerTest.class));
-        addTest(new TestSuite(BindingPersistenceTest.class));
-        // TODO This no longer works due to focus issues related to key bindings
-        //addTest(new TestSuite(Bug36420Test.class));
-        addTest(new TestSuite(Bug36537Test.class));
-        //		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
-        //		addTest(new TestSuite(Bug40023Test.class));
-        addTest(new TestSuite(Bug42024Test.class));
-        addTest(new TestSuite(Bug42035Test.class));
-        //		TODO Logging piece of fix did not go in M4.
-        //		addTest(new TestSuite(Bug42627Test.class));
-        addTest(new TestSuite(Bug43168Test.class));
-        addTest(new TestSuite(Bug43321Test.class));
-        addTest(new TestSuite(Bug43538Test.class));
-        addTest(new TestSuite(Bug43597Test.class));
-        addTest(new TestSuite(Bug43610Test.class));
-        addTest(new TestSuite(Bug43800Test.class));
-        addTest(new TestSuite(KeysCsvTest.class));
-        //		TODO disabled since it refers to the Java builder and nature,
-        //      which are not available in an RCP build
-        //		addTest(new TestSuite(Bug44460Test.class));
-        /* TODO disabled as it fails on the Mac.
-         * Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
-         */
-        //addTest(new TestSuite(Bug53489Test.class));
-        addTest(new TestSuite(Bug189167Test.class));
-        addTest(new TestSuite(KeysPreferenceModelTest.class));
-    }
 }

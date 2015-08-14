@@ -23,12 +23,12 @@ import org.junit.runners.Suite;
  *
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ 
-	ProgressContantsTest.class, 
-	ProgressViewTests.class, 
-	JobInfoTest.class, 
+@Suite.SuiteClasses({
+	ProgressContantsTest.class,
+	ProgressViewTests.class,
+	JobInfoTest.class,
 	JobInfoTestOrdering.class,
-	ProgressAnimationItemTest.class 
+	ProgressAnimationItemTest.class
 })
 public class ProgressTestSuite {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,36 +7,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474132
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
 import org.eclipse.ui.tests.propertyPages.PropertyPageEnablementTest;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Test suite for preferences.
  */
-public class PreferencesTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new PreferencesTestSuite();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public PreferencesTestSuite() {
-		addTest(new TestSuite(FontPreferenceTestCase.class));
-		addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
-		addTest(new TestSuite(ScopedPreferenceStoreTestCase.class));
-		addTest(new TestSuite(WorkingCopyPreferencesTestCase.class));
-		addTest(new TestSuite(PropertyPageEnablementTest.class));
-		addTest(new TestSuite(ListenerRemovalTestCase.class));
-		addTest(new TestSuite(PreferencesDialogTest.class));
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	FontPreferenceTestCase.class,
+	DeprecatedFontPreferenceTestCase.class,
+	ScopedPreferenceStoreTestCase.class,
+	WorkingCopyPreferencesTestCase.class,
+	PropertyPageEnablementTest.class,
+	ListenerRemovalTestCase.class,
+	PreferencesDialogTest.class})
+public class PreferencesTestSuite {
 }

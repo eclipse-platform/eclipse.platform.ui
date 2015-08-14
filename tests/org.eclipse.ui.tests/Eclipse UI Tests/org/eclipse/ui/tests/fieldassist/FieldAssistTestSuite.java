@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,31 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474132
  *******************************************************************************/
 
 package org.eclipse.ui.tests.fieldassist;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Tests for the platform operations support.
  */
-public class FieldAssistTestSuite extends TestSuite {
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static final Test suite() {
-		return new FieldAssistTestSuite();
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+ FieldAssistAPITest.class
+//temporarily disabling tests, see bug 275393
+		// aComboContentAssistCommandAdapterTest.class,
+		// aTextContentAssistCommandAdapterTest.class
 
-	/**
-	 * Construct the test suite.
-	 */
-	public FieldAssistTestSuite() {
-		addTest(new TestSuite(FieldAssistAPITest.class));
-		// temporarily disabling tests, see bug 275393
-		// addTest(new TestSuite(ComboContentAssistCommandAdapterTest.class));
-		// addTest(new TestSuite(TextContentAssistCommandAdapterTest.class));
-	}
+})
+public class FieldAssistTestSuite {
 }
