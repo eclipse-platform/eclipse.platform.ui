@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474132
  *******************************************************************************/
 package org.eclipse.ui.tests.services;
+
+import org.junit.runner.RunWith;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -17,6 +20,7 @@ import junit.framework.TestSuite;
  * Tests general to services.
  * @since 3.3
  */
+@RunWith(org.junit.runners.AllTests.class)
 public final class ServicesTestSuite extends TestSuite {
 
 	/**
