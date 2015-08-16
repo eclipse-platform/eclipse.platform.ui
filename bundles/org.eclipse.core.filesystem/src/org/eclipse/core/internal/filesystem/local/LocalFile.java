@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,30 +153,13 @@ public class LocalFile extends FileStore {
 
 	@Override
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
-		if (LocalFileNativesManager.isUsingNatives()) {
-			FileInfo info = LocalFileNativesManager.fetchFileInfo(filePath);
-			//natives don't set the file name on all platforms
-			if (info.getName().length() == 0) {
-				String name = file.getName();
-				//Bug 294429: make sure that substring baggage is removed
-				info.setName(new String(name.toCharArray()));
-			}
-			return info;
+		FileInfo info = LocalFileNativesManager.fetchFileInfo(filePath);
+		//natives don't set the file name on all platforms
+		if (info.getName().isEmpty()) {
+			String name = file.getName();
+			//Bug 294429: make sure that substring baggage is removed
+			info.setName(new String(name.toCharArray()));
 		}
-		//in-lined non-native implementation
-		FileInfo info = new FileInfo(file.getName());
-		final long lastModified = file.lastModified();
-		if (lastModified <= 0) {
-			//if the file doesn't exist, all other attributes should be default values
-			info.setExists(false);
-			return info;
-		}
-		info.setLastModified(lastModified);
-		info.setExists(true);
-		info.setLength(file.length());
-		info.setDirectory(file.isDirectory());
-		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, file.exists() && !file.canWrite());
-		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
 		return info;
 	}
 
@@ -416,8 +399,7 @@ public class LocalFile extends FileStore {
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		boolean success = true;
 		if ((options & EFS.SET_ATTRIBUTES) != 0) {
-			if (LocalFileNativesManager.isUsingNatives())
-				success &= LocalFileNativesManager.putFileInfo(filePath, info, options);
+			success &= LocalFileNativesManager.putFileInfo(filePath, info, options);
 		}
 		//native does not currently set last modified
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)

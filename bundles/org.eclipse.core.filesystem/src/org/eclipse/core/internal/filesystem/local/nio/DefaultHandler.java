@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,10 @@
  *     Chris McGee (IBM) - Bug 380325 - Release filesystem fragment providing Java 7 NIO2 support
  *     Sergey Prigogin (Google) - Bug 458006 - Fix tests that fail on Mac when filesystem.java7 is used
  *******************************************************************************/
-package org.eclipse.core.internal.filesystem.java7;
+package org.eclipse.core.internal.filesystem.local.nio;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -48,38 +49,12 @@ public class DefaultHandler extends NativeHandler {
 			}
 		}
 
-		// Fill in the real name of the file.
-		File file = new File(fileName);
-		final String lastName = file.getName();
-		// If the file does not exist, or the file system is not case sensitive, or the name
-		// of the file is not case sensitive, use the name we have. Otherwise obtain the real
-		// name of the file from a parent directory listing.
-		//
-		// Unfortunately, java.nio.file.Path.toRealPath(LinkOption.NOFOLLOW_LINKS) cannot be used
-		// due to a JDK bug on Mac. As of JDK 1.8.0_25 the following code produces "/tmp/test.txt"
-		// on Mac instead of "/tmp/Test.TXT":
-		//   File file = new File("/tmp/Test.TXT");
-		//   file.createNewFile();
-		//   file = new File(file.toString().toLowerCase());
-		//   String realName = file.toPath().toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
-		//
-		// TODO(sprigogin): Provide a JDK bug reference once the bug report goes through Oracle review.
-		if (!info.exists() || EFS.getLocalFileSystem().isCaseSensitive() || lastName.toLowerCase().equals(lastName.toUpperCase())) {
-			info.setName(lastName);
-		} else {
-			// Notice that file.getParentFile() is guaranteed to be not null since fileName == "/"
-			// case is handled by the other branch of the 'if' statement.
-			String[] names = file.getParentFile().list(new FilenameFilter() {
-				public boolean accept(File dir, String n) {
-					return n.equalsIgnoreCase(lastName);
-				}
-			});
-			if (names.length == 1) {
-				info.setName(names[0]);
-			} else {
-				info.setName(lastName);
-			}
-		}
+		// Fill in the name of the file.
+		// If the file system is case insensitive, we don't know the real name of the file.
+		// Since obtaining the real name in such situation is pretty expensive, we use the name
+		// passed as a parameter, which may differ by case from the real name of the file
+		// if the file system is case insensitive.
+		info.setName(path.toFile().getName());
 
 		// Since we will be using a mixture of pre Java 7 API's which do not support the
 		// retrieval of information for the symbolic link itself instead of the target
