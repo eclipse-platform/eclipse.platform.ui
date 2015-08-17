@@ -33,6 +33,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PerspectiveIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -75,6 +76,8 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private final IListProperty PERSPECTIVE__WINDOWS = EMFProperties
 			.list(AdvancedPackageImpl.Literals.PERSPECTIVE__WINDOWS);
+	private final IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties
+			.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private StackLayout stackLayout;
 	private final List<Action> actions = new ArrayList<>();
 
@@ -308,6 +311,16 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		final WritableList list = new WritableList();
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS,
+				element, Messages.WindowEditor_Handlers) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PERSPECTIVE_WINDOWS, PERSPECTIVE__WINDOWS, element,
 				Messages.WindowEditor_Windows) {
 
