@@ -78,6 +78,11 @@ echo ""
 
 create_wiki_section "4.6 M1" 4.6%20M1
 create_wiki_section "4.6 M2" 4.6%20M2
+create_wiki_section "4.6 M3" 4.6%20M3
+create_wiki_section "4.6 M4" 4.6%20M4
+create_wiki_section "4.6 M5" 4.6%20M5
+create_wiki_section "4.6 M6" 4.6%20M6
+create_wiki_section "4.6 M7" 4.6%20M7
 create_wiki_section "4.6" 4.6
 
 
