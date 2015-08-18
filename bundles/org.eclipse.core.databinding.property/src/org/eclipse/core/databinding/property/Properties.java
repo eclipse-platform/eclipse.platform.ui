@@ -48,10 +48,11 @@ public class Properties {
 	 * @return an array of observable maps where each map observes the
 	 *         corresponding value property of the given domain set
 	 */
-	public static <E> IObservableMap<E, ?>[] observeEach(IObservableSet<E> domainSet,
-			IValueProperty<? super E, ?>[] properties) {
+	@SafeVarargs
+	public static <E, P> IObservableMap<E, ? extends P>[] observeEach(IObservableSet<E> domainSet,
+			IValueProperty<? super E, ? extends P>... properties) {
 		@SuppressWarnings("unchecked")
-		IObservableMap<E, ?>[] maps = new IObservableMap[properties.length];
+		IObservableMap<E, ? extends P>[] maps = new IObservableMap[properties.length];
 		for (int i = 0; i < maps.length; i++) {
 			maps[i] = properties[i].observeDetail(domainSet);
 		}
@@ -75,10 +76,11 @@ public class Properties {
 	 *         in the given array
 	 * @since 1.6
 	 */
-	public static <K, V> IObservableMap<K, ?>[] observeEach(IObservableMap<K, V> domainMap,
-			IValueProperty<? super V, ?>[] properties) {
+	@SafeVarargs
+	public static <K, V, P> IObservableMap<K, ? extends P>[] observeEach(IObservableMap<K, V> domainMap,
+			IValueProperty<? super V, ? extends P>... properties) {
 		@SuppressWarnings("unchecked")
-		IObservableMap<K, ?>[] maps = new IObservableMap[properties.length];
+		IObservableMap<K, ? extends P>[] maps = new IObservableMap[properties.length];
 		for (int i = 0; i < maps.length; i++) {
 			maps[i] = properties[i].observeDetail(domainMap);
 		}
