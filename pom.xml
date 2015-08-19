@@ -7,7 +7,8 @@
   http://www.eclipse.org/org/documents/edl-v10.php
 
   Contributors:
-     Lars Vogel - initial implementation
+     Lars Vogel <Lars.Vogel@vogella.com> - initial implementation
+     Lars Vogel <Lars.Vogel@vogella.com> - Bug 471835
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -28,18 +29,29 @@
 		<tycho.scmUrl>scm:git:http://git.eclipse.org/gitroot/e4/org.eclipse.e4.tools</tycho.scmUrl>
 	</properties>
 
- <repositories>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>eclipse-hosted</id>
-      <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
-    </repository>
-  </repositories>
+  <!-- 
+    To build individual bundles, we specify a repository where to find parent pom, 
+    in case it is not in local maven cache already
+    and that parent pom also has fuller individual-bundle profile 
+    defined that is combined with this one. --> 
+  <profiles>
+    <profile>
+      <id>build-individual-bundles</id>
+      <repositories>
+        <repository>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <id>eclipse-hosted</id>
+          <url>https://repo.eclipse.org/content/repositories/eclipse/</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
 
    <modules>
     <module>./bundles/org.eclipse.e4.tools</module>
