@@ -49,8 +49,10 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -363,7 +365,11 @@ public class CompositePartEditor extends AbstractComponentEditor {
 			viewer.getControl().setLayoutData(gd);
 			final ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
-			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+
+			final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+					.setStyle(SWT.ITALIC);
+			viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
+					new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
 
 			final IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));

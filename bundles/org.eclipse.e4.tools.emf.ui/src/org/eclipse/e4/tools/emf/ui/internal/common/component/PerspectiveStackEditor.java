@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -48,6 +49,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
@@ -203,7 +206,10 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = pickList.getList();
 			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+			final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+					.setStyle(SWT.ITALIC);
+			viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
+					new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
 			final IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
 		}

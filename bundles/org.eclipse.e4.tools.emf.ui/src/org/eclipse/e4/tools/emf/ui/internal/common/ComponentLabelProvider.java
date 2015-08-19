@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -14,17 +15,20 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.TextStyle;
 
-public class ComponentLabelProvider extends StyledCellLabelProvider {
+public class ComponentLabelProvider extends BaseLabelProvider implements IStyledLabelProvider, IFontProvider {
 
 	private final ModelEditor editor;
 
@@ -34,7 +38,7 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	public static final String NOT_VISIBLE_AND_RENDERED_KEY = "NOT_VISIBLE_AND_RENDERED_KEY";//$NON-NLS-1$
 
-	private Font font;
+	private final FontDescriptor italicFontDescriptor;
 
 	private final Messages Messages;
 
@@ -61,16 +65,28 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 		}
 	};
 
-	public ComponentLabelProvider(ModelEditor editor, Messages Messages) {
+	private final ResourceManager resourceManager;
+
+	public ComponentLabelProvider(ModelEditor editor, Messages Messages, FontDescriptor italicFontDescriptor) {
 		this.editor = editor;
 		this.Messages = Messages;
+		this.italicFontDescriptor = italicFontDescriptor;
+		resourceManager = new LocalResourceManager(JFaceResources.getResources());
 	}
 
 	@Override
-	public void update(final ViewerCell cell) {
-		if (cell.getElement() instanceof EObject) {
+	public void dispose() {
+		if (resourceManager != null) {
+			resourceManager.dispose();
+		}
+		super.dispose();
+	}
 
-			final EObject o = (EObject) cell.getElement();
+	@Override
+	public StyledString getStyledText(Object element) {
+		if (element instanceof EObject) {
+
+			final EObject o = (EObject) element;
 			final AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
 			if (elementEditor != null) {
 				String label = elementEditor.getLabel(o);
@@ -80,7 +96,8 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				if (o instanceof MUIElement) {
 
 					if (!((MUIElement) o).isVisible() && !((MUIElement) o).isToBeRendered()) {
-						label += "<" + Messages.ComponentLabelProvider_invisible + "/" + Messages.ComponentLabelProvider_notrendered + ">"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						label += "<" + Messages.ComponentLabelProvider_invisible + "/" //$NON-NLS-1$//$NON-NLS-2$
+								+ Messages.ComponentLabelProvider_notrendered + ">"; //$NON-NLS-1$
 						styler = BOTH_STYLER;
 					} else if (!((MUIElement) o).isVisible()) {
 						label += "<" + Messages.ComponentLabelProvider_invisible + ">"; //$NON-NLS-1$//$NON-NLS-2$
@@ -92,38 +109,33 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				}
 
 				if (detailText == null) {
-					final StyledString styledString = new StyledString(label, styler);
-					cell.setText(styledString.getString());
-					cell.setStyleRanges(styledString.getStyleRanges());
-				} else {
-					final StyledString styledString = new StyledString(label, styler);
-					styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-					cell.setText(styledString.getString());
-					cell.setStyleRanges(styledString.getStyleRanges());
+					return new StyledString(label, styler);
 				}
-				cell.setImage(elementEditor.getImage(o));
-			} else {
-				cell.setText(cell.getElement().toString());
+				final StyledString styledString = new StyledString(label, styler);
+				styledString.append(" - " + detailText, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				return styledString;
 			}
-		} else if (cell.getElement() instanceof VirtualEntry<?>) {
-			final String s = cell.getElement().toString();
-			if (font == null) {
-				final FontData[] data = cell.getControl().getFont().getFontData();
-				font = new Font(cell.getControl().getDisplay(), new FontData(data[0].getName(), data[0].getHeight(), SWT.ITALIC));
-			}
-			cell.setFont(font);
-			cell.setText(s);
-		} else {
-			cell.setText(cell.getElement().toString());
 		}
+		return new StyledString(element.toString());
 	}
 
 	@Override
-	public void dispose() {
-		if (font != null) {
-			font.dispose();
-			font = null;
+	public Image getImage(Object element) {
+		if (element instanceof EObject) {
+			final EObject o = (EObject) element;
+			final AbstractComponentEditor elementEditor = editor.getEditor(o.eClass());
+			if (elementEditor != null) {
+				return elementEditor.getImage(element);
+			}
 		}
-		super.dispose();
+		return null;
+	}
+
+	@Override
+	public Font getFont(Object element) {
+		if(element instanceof VirtualEntry<?>) {
+			return resourceManager.createFont(italicFontDescriptor);
+		}
+		return null;
 	}
 }

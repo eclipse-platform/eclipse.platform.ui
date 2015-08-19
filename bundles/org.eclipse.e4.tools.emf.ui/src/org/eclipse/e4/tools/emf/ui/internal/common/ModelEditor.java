@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
  * Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing
  * Maintenance
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -189,11 +190,13 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1094,7 +1097,10 @@ public class ModelEditor implements IGotoObject {
 		}
 		final TreeViewer viewer = tempViewer;
 
-		viewer.setLabelProvider(new ComponentLabelProvider(this, messages));
+		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+				.setStyle(SWT.ITALIC);
+		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
+				new ComponentLabelProvider(this, messages, italicFontDescriptor)));
 		final ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				new ObservableFactoryImpl(), new TreeStructureAdvisor() {
 				});

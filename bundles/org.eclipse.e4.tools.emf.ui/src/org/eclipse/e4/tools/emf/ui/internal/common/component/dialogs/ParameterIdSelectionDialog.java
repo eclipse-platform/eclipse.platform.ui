@@ -8,6 +8,7 @@
  *
  * Contributors:
  * Veselin Markov <veselin_m84@yahoo.com> - initial API and implementation
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -38,7 +39,10 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -70,7 +74,10 @@ public class ParameterIdSelectionDialog extends AbstractIdDialog<MParameter, MCo
 
 	@Override
 	protected IBaseLabelProvider getLabelProvider() {
-		return new ComponentLabelProvider(editor, messages);
+		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+				.setStyle(SWT.ITALIC);
+		return new DelegatingStyledCellLabelProvider(
+				new ComponentLabelProvider(editor, messages, italicFontDescriptor));
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Lars Vogel <Lars.Vogel@gmail.com> - Ongoing maintenance
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -54,9 +55,11 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -572,7 +575,11 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 				bindtableViewer = new TableViewer(group);
-				bindtableViewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
+				final FontDescriptor italicFontDescriptor = FontDescriptor
+						.createFrom(bindtableViewer.getControl().getFont())
+						.setStyle(SWT.ITALIC);
+				bindtableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
+						new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
 				bindtableViewer.setContentProvider(new ArrayContentProvider());
 				bindtableViewer.setInput(application.getBindingTables());
 				bindtableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
