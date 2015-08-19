@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -79,7 +79,7 @@ public class Snippet014TreeViewerNoMandatoryLabelProvider {
 	public class MyModel {
 		public MyModel parent;
 
-		public List<MyModel> child = new ArrayList<MyModel>();
+		public List<MyModel> child = new ArrayList<>();
 
 		public int counter;
 

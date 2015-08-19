@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Hendrik Still and others.
+ * Copyright (c) 2014, 2015 Hendrik Still and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Hendrik Still<hendrik.still@gammas.de> - initial implementation
- *     Lars Vogel <lars.vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -68,7 +68,7 @@ public class Snippet063ComboViewer {
 	}
 
 	private List<MyModel> createModel() {
-		List<MyModel> elements = new ArrayList<MyModel>();
+		List<MyModel> elements = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
 			elements.add(new MyModel(i));

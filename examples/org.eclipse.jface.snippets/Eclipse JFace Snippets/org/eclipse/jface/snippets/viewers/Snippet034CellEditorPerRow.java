@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Tom Schindl and others.
+ * Copyright (c) 2007, 2015 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
  *     Wayne Beaton - bug 185540
- *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 413427, 475361
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -136,7 +136,7 @@ public class Snippet034CellEditorPerRow {
 	}
 
 	private List<MyModel> createModel() {
-		List<MyModel> elements = new ArrayList<MyModel>();
+		List<MyModel> elements = new ArrayList<>();
 
 		for (int i = 0; i < 10; i++) {
 			elements.add(new MyModel(i));

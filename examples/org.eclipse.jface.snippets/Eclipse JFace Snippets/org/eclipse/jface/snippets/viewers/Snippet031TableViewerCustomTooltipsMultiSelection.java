@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 Adam Neal and others.
+ * Copyright (c) 2007, 2015 Adam Neal and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Adam Neal - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -270,7 +270,7 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 
 
 	private List<MyModel> createModel() {
-		List<MyModel> list = new ArrayList<MyModel>();
+		List<MyModel> list = new ArrayList<>();
 		list.add(new MyModel("A", "B"));
 		list.add(new MyModel("C", "D"));
 		list.add(new MyModel("E", "F"));

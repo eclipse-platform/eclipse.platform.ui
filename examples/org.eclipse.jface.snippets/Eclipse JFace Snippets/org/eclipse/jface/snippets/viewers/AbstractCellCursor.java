@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  ******************************************************************************/
 
@@ -66,7 +66,7 @@ public abstract class AbstractCellCursor extends Canvas {
 
 				case SWT.KeyDown:
 					getParent().notifyListeners(SWT.KeyDown, event);
-					ArrayList<Object> list = new ArrayList<Object>();
+					ArrayList<Object> list = new ArrayList<>();
 					for (ViewerCell cell : cells) {
 						list.add(cell.getElement());
 					}
