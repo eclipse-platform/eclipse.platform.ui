@@ -14,6 +14,7 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -197,24 +198,37 @@ public class ModelServiceImpl implements EModelService {
 
 		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
-			if (searchRoot instanceof MPerspectiveStack) {
+			/*
+			 * Bug 455281: If given a window with a primary perspective stack,
+			 * and we're not told to look outside of the perspectives (i.e.,
+			 * searchFlags is missing OUTSIDE_PERSPECTIVE), then just search the
+			 * primary perspective stack instead. This ignores special areas
+			 * like the compat layer's stack holding the Help, CheatSheets, and
+			 * Intro.
+			 */
+			MElementContainer<?> searchContainer = (MElementContainer<?>) searchRoot;
+			MPerspectiveStack primaryStack = null;
+			if (searchRoot instanceof MWindow && (searchFlags & OUTSIDE_PERSPECTIVE) == 0
+					&& (primaryStack = getPrimaryPerspectiveStack((MWindow) searchRoot)) != null) {
+				searchContainer = primaryStack;
+			}
+			if (searchContainer instanceof MPerspectiveStack) {
 				if ((searchFlags & IN_ANY_PERSPECTIVE) != 0) {
 					// Search *all* the perspectives
-					MElementContainer<? extends MUIElement> container = (MPerspectiveStack) searchRoot;
+					MElementContainer<? extends MUIElement> container = searchContainer;
 					List<? extends MUIElement> children = container.getChildren();
 					for (MUIElement child : children) {
 						findElementsRecursive(child, clazz, matcher, elements, searchFlags);
 					}
 				} else if ((searchFlags & IN_ACTIVE_PERSPECTIVE) != 0) {
 					// Only search the currently active perspective, if any
-					MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
+					MPerspective active = ((MPerspectiveStack) searchContainer).getSelectedElement();
 					if (active != null) {
 						findElementsRecursive(active, clazz, matcher, elements, searchFlags);
 					}
-				} else if ((searchFlags & IN_SHARED_AREA) != 0 && searchRoot instanceof MUIElement) {
+				} else if ((searchFlags & IN_SHARED_AREA) != 0) {
 					// Only recurse through the shared areas
-					List<MArea> areas = findElements((MUIElement) searchRoot, null, MArea.class,
-							null);
+					List<MArea> areas = findElements(searchContainer, null, MArea.class, null);
 					for (MArea area : areas) {
 						findElementsRecursive(area, clazz, matcher, elements, searchFlags);
 					}
@@ -291,6 +305,72 @@ public class ModelServiceImpl implements EModelService {
 				}
 			}
 		}
+	}
+
+	/**
+	 * If this window has a primary perspective stack, return it. Otherwise
+	 * return null. A primary stack is a single MPerspectiveStack found either
+	 * as the window's immediate children or the child under a single
+	 * MPartSashContainer.
+	 *
+	 * @param window
+	 *            the window
+	 * @return the stack or {@code null}
+	 */
+	private MPerspectiveStack getPrimaryPerspectiveStack(MWindow window) {
+		List<MWindowElement> winKids = window.getChildren();
+		if (winKids.isEmpty()) {
+			return null;
+		}
+		// Check if we have a MPerspectiveStack in window's children
+		if (instanceCount(winKids, MPerspectiveStack.class) == 1) {
+			return firstInstance(winKids, MPerspectiveStack.class);
+		}
+		// Traditional shape of IWorkbenchWindow:
+		// MWindow{ MPartSashContainer{ MPerspectiveStack, MPartStack (intro
+		// + cheatsheets + help)}}
+		if (winKids.size() == 1 && winKids.get(0) instanceof MPartSashContainer) {
+			MPartSashContainer topLevelPSC = (MPartSashContainer) winKids.get(0);
+			if (instanceCount(topLevelPSC.getChildren(), MPerspectiveStack.class) == 1) {
+				return firstInstance(topLevelPSC.getChildren(), MPerspectiveStack.class);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the first element that is an instance of {@code clazz}
+	 *
+	 * @param elements
+	 * @param clazz
+	 * @return the first element that is an instanceof {@code clazz} or null
+	 */
+	private <T> T firstInstance(Collection<? super T> elements, Class<T> clazz) {
+		for (Object o : elements) {
+			if (clazz.isInstance(o)) {
+				return clazz.cast(o);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the number of elements that are an instance of {@code clazz}.
+	 *
+	 * @param elements
+	 *            the elements
+	 * @param clazz
+	 *            the class
+	 * @return the number of elements that are an instance of {@code clazz}
+	 */
+	private int instanceCount(Collection<?> elements, Class<?> clazz) {
+		int count = 0;
+		for (Object o : elements) {
+			if (clazz.isInstance(o)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	@Override
