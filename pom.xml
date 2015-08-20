@@ -29,7 +29,7 @@
     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.runtime.git</tycho.scmUrl>
   </properties>
 
-   <!-- 
+  <!-- 
     To build individual bundles, we specify a repository where to find parent pom, 
     in case it is not in local maven cache already
     and that parent pom also has fuller individual-bundle profile 
