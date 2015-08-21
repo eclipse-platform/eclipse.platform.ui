@@ -52,8 +52,7 @@
     </profile>
   </profiles>
 
-
-   <modules>
+  <modules>
     <module>./bundles/org.eclipse.e4.tools</module>
     <module>./bundles/org.eclipse.e4.tools.services</module>
     <module>./bundles/org.eclipse.e4.tools.compat</module>
