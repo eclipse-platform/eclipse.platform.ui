@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.service.debug.DebugOptions;
 
 public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager, IRegistryChangeListener {
-	private static ContentTypeManager instance;
-
 	public static final int BLOCK_SIZE = 0x400;
 	public static final String CONTENT_TYPE_PREF_NODE = IContentConstants.RUNTIME_NAME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_CONTENT_TYPES = "org.eclipse.core.contenttype/debug"; //$NON-NLS-1$;
@@ -49,17 +47,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		registry.removeRegistryChangeListener(this);
 	}
 
-	/**
-	 * Obtains this platform's content type manager.
-	 *
-	 * @return the content type manager
-	 */
-	public static ContentTypeManager getInstance() {
-		if (instance == null)
-			instance = new ContentTypeManager();
-		return instance;
-	}
-
 	/*
 	 * Returns the extension for a file name (omitting the leading '.').
 	 */
@@ -78,7 +65,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	public ContentTypeManager() {
 		super(null, InstanceScope.INSTANCE);
-		instance = this;
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {
@@ -92,7 +78,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		IContentType[] result = new IContentType[types.length];
 		int generation = currentCatalog.getGeneration();
 		for (int i = 0; i < result.length; i++)
-			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
+			result[i] = new ContentTypeHandler(this, (ContentType) types[i], generation);
 		return result;
 	}
 
@@ -119,12 +105,12 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	public IContentType getContentType(String contentTypeIdentifier) {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		ContentType type = currentCatalog.getContentType(contentTypeIdentifier);
-		return type == null ? null : new ContentTypeHandler(type, currentCatalog.getGeneration());
+		return type == null ? null : new ContentTypeHandler(this, type, currentCatalog.getGeneration());
 	}
 
 	@Override
 	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy, final IScopeContext context) {
-		return new ContentTypeMatcher(customPolicy, context == null ? getContext() : context);
+		return new ContentTypeMatcher(this, customPolicy, context == null ? getContext() : context);
 	}
 
 	IEclipsePreferences getPreferences() {
@@ -171,7 +157,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	public void fireContentTypeChangeEvent(ContentType type) {
 		Object[] listeners = this.contentTypeListeners.getListeners();
-		IContentType eventObject = new ContentTypeHandler(type, type.getCatalog().getGeneration());
+		IContentType eventObject = new ContentTypeHandler(this, type, type.getCatalog().getGeneration());
 		for (int i = 0; i < listeners.length; i++) {
 			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(eventObject);
 			final IContentTypeChangeListener listener = (IContentTypeChangeListener) listeners[i];

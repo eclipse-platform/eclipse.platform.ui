@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import org.eclipse.core.runtime.QualifiedName;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.RuntimeLog;
@@ -272,7 +271,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 					return baseType.getDescriber();
 				return (NO_DESCRIBER == tmpDescriber) ? null : (IContentDescriber) tmpDescriber;
 			}
-			final String describerValue = contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT);
+			final String describerValue = contentTypeElement.getAttribute(DESCRIBER_ELEMENT);
 			if (describerValue != null || contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0)
 				try {
 					if ("".equals(describerValue)) { //$NON-NLS-1$
@@ -364,7 +363,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	public IContentTypeSettings getSettings(IScopeContext context) {
 		if (context == null || context.equals(manager.getContext()))
 			return this;
-		return new ContentTypeSettings(this, context);
+		return new ContentTypeSettings(manager, this, context);
 	}
 
 	/*
@@ -385,7 +384,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	boolean hasFileSpec(IScopeContext context, String text, int typeMask) {
 		if (context.equals(manager.getContext()) || (typeMask & IGNORE_USER_DEFINED) != 0)
 			return hasFileSpec(text, typeMask, false);
-		String[] fileSpecs = ContentTypeSettings.getFileSpecs(context, id, typeMask);
+		String[] fileSpecs = ContentTypeSettings.getFileSpecs(manager, context, id, typeMask);
 		for (int i = 0; i < fileSpecs.length; i++)
 			if (text.equalsIgnoreCase(fileSpecs[i]))
 				return true;

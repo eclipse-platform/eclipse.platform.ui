@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,10 @@ public class ContentTypeHandler implements IContentType {
 	private int generation;
 	String id;
 	private SoftReference<ContentType> targetRef;
+	private ContentTypeManager contentTypeManager;
 
-	ContentTypeHandler(ContentType target, int generation) {
+	ContentTypeHandler(ContentTypeManager contentTypeManager, ContentType target, int generation) {
+		this.contentTypeManager = contentTypeManager;
 		this.id = target.getId();
 		this.targetRef = new SoftReference<ContentType>(target);
 		this.generation = generation;
@@ -86,7 +88,8 @@ public class ContentTypeHandler implements IContentType {
 		if (target == null)
 			return null;
 		final ContentType baseType = (ContentType) target.getBaseType();
-		return (baseType != null) ? new ContentTypeHandler(baseType, baseType.getCatalog().getGeneration()) : null;
+		return (baseType != null)
+				? new ContentTypeHandler(contentTypeManager, baseType, baseType.getCatalog().getGeneration()) : null;
 	}
 
 	@Override
@@ -149,7 +152,7 @@ public class ContentTypeHandler implements IContentType {
 	 */
 	public ContentType getTarget() {
 		ContentType target = targetRef.get();
-		ContentTypeCatalog catalog = ContentTypeManager.getInstance().getCatalog();
+		ContentTypeCatalog catalog = contentTypeManager.getCatalog();
 		if (target == null || catalog.getGeneration() != generation) {
 			target = catalog.getContentType(id);
 			targetRef = new SoftReference<ContentType>(target);
