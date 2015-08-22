@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     SAP SE <christian.georgi@sap.com> - Bug 475629: Key modifier order on MacOS
  *******************************************************************************/
 
 package org.eclipse.jface.bindings.keys.formatting;
@@ -160,14 +161,16 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 			}
 
 		} else if (Util.isMac()) {
-			if ((modifierKeys & lookup.getShift()) != 0) {
-				sortedKeys[index++] = lookup.getShift();
-			}
+			// As per order in OS X HIG
+			// https://developer.apple.com/library/mac/documentation/UserExperience/Conceptual/OSXHIGuidelines/Keyboard.html
 			if ((modifierKeys & lookup.getCtrl()) != 0) {
 				sortedKeys[index++] = lookup.getCtrl();
 			}
 			if ((modifierKeys & lookup.getAlt()) != 0) {
 				sortedKeys[index++] = lookup.getAlt();
+			}
+			if ((modifierKeys & lookup.getShift()) != 0) {
+				sortedKeys[index++] = lookup.getShift();
 			}
 			if ((modifierKeys & lookup.getCommand()) != 0) {
 				sortedKeys[index++] = lookup.getCommand();
