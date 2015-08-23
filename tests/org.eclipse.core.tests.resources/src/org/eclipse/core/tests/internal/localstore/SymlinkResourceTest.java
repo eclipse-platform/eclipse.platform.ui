@@ -8,7 +8,7 @@
  * Contributors:
  *     Martin Oberhuber (Wind River) - initial API and implementation for [232426]
  *     Szymon Ptaszkiewicz (IBM) - Symlink test failures on Windows 7 [331716]
- *     Sergey Prigogin (Google) - Modify symlink tests to run on Windows with or without administrator privileges [440283]
+ *     Sergey Prigogin (Google) -  ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
@@ -33,9 +33,6 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	}
 
 	public static Test suite() {
-		//TestSuite suite = new TestSuite();
-		//suite.addTest(new SymlinkResourceTest("testBug232426"));
-		//return suite;
 		return new TestSuite(SymlinkResourceTest.class);
 	}
 

@@ -13,6 +13,7 @@
  *     Martin Oberhuber (Wind River) - [292267] OutOfMemoryError due to leak in UnifiedTree
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Sergey Prigogin (Google) -  ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -471,8 +472,8 @@ public class UnifiedTree {
 				return false;
 			//get canonical path for both child and parent
 			java.io.File childFile = new java.io.File(parentFile, localInfo.getName());
-			String parentPath = parentFile.getCanonicalPath() + '/';
-			String childPath = childFile.getCanonicalPath() + '/';
+			String parentPath = parentFile.toPath().toRealPath().toString() + java.io.File.separatorChar;
+			String childPath = childFile.toPath().toRealPath().toString() + java.io.File.separatorChar;
 			//get or instantiate the prefix and root path histories.
 			//Might be done earlier - for now, do it on demand.
 			initLinkHistoriesIfNeeded();
