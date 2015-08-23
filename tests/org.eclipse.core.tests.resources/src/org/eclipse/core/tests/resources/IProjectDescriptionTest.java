@@ -134,7 +134,7 @@ public class IProjectDescriptionTest extends ResourceTest {
 		try {
 			IProjectDescription description = project.getDescription();
 			ICommand newCommand = description.newCommand();
-			Map<String, String> args = new HashMap<String, String>();
+			Map<String, String> args = new HashMap<>();
 			args.put(key, value1);
 			newCommand.setArguments(args);
 			description.setBuildSpec(new ICommand[] {newCommand});

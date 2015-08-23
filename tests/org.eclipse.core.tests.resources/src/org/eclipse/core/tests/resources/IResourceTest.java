@@ -27,7 +27,7 @@ public class IResourceTest extends ResourceTest {
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
-	protected static Set<IResource> nonExistingResources = new HashSet<IResource>();
+	protected static Set<IResource> nonExistingResources = new HashSet<>();
 	static boolean noSideEffects = false;
 	protected static final IProgressMonitor[] PROGRESS_MONITORS = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 
@@ -69,7 +69,7 @@ public class IResourceTest extends ResourceTest {
 	 */
 	protected static final int S_WORKSPACE_ONLY = 0;
 	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
-	protected static Set<IResource> unsynchronizedResources = new HashSet<IResource>();
+	protected static Set<IResource> unsynchronizedResources = new HashSet<>();
 
 	/* the delta verifier */
 	ResourceDeltaVerifier verifier;
@@ -79,7 +79,7 @@ public class IResourceTest extends ResourceTest {
 	 * @param dir 
 	 */
 	static protected Set<File> getAllFilesForDirectory(File dir) {
-		Set<File> result = new HashSet<File>(50);
+		Set<File> result = new HashSet<>(50);
 		String[] members = dir.list();
 		if (members != null) {
 			for (int i = 0; i < members.length; i++) {
@@ -98,7 +98,7 @@ public class IResourceTest extends ResourceTest {
 	 * @param resource IResource
 	 */
 	static protected Set<File> getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
-		Set<File> result = new HashSet<File>(50);
+		Set<File> result = new HashSet<>(50);
 		if (resource.getLocation() != null && (resource.getType() != IResource.PROJECT || ((IProject) resource).isOpen())) {
 			java.io.File file = resource.getLocation().toFile();
 			if (considerUnsyncLocalFiles) {
@@ -130,7 +130,7 @@ public class IResourceTest extends ResourceTest {
 	 * @param resource IResource
 	 */
 	static protected Set<IResource> getAllResourcesForResource(IResource resource) throws CoreException {
-		Set<IResource> result = new HashSet<IResource>(50);
+		Set<IResource> result = new HashSet<>(50);
 		if (resource.exists()) {
 			result.add(resource);
 			if (resource.getType() != IResource.FILE && resource.isAccessible()) {
@@ -273,7 +273,7 @@ public class IResourceTest extends ResourceTest {
 	 * Returns an array of all projects in the given resource array.
 	 */
 	protected IProject[] getProjects(IResource[] resources) {
-		ArrayList<IProject> list = new ArrayList<IProject>();
+		ArrayList<IProject> list = new ArrayList<>();
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() == IResource.PROJECT) {
 				list.add((IProject) resources[i]);
@@ -396,7 +396,7 @@ public class IResourceTest extends ResourceTest {
 			nonExistingProject.open(null);
 			nonExistingProject.delete(true, null);
 
-			Vector<IResource> resources = new Vector<IResource>();
+			Vector<IResource> resources = new Vector<>();
 			resources.addElement(openProject);
 			for (int i = 0; i < resourcesInOpenProject.length; i++) {
 				resources.addElement(resourcesInOpenProject[i]);
@@ -543,7 +543,7 @@ public class IResourceTest extends ResourceTest {
 		noSideEffects = true;
 
 		class LoggingResourceVisitor implements IResourceVisitor {
-			Vector<IResource> visitedResources = new Vector<IResource>();
+			Vector<IResource> visitedResources = new Vector<>();
 
 			void clear() {
 				visitedResources.removeAllElements();
@@ -695,7 +695,7 @@ public class IResourceTest extends ResourceTest {
 		IFolder c = b.getFolder("c");
 		IFile c1 = c.getFile("c1.txt");
 		IFile c2 = c.getFile("c2.txt");
-		final Set<IResource> toVisit = new HashSet<IResource>();
+		final Set<IResource> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
 
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
@@ -1455,7 +1455,7 @@ public class IResourceTest extends ResourceTest {
 
 		// setup
 		IResource[] resources = buildResources(getWorkspace().getRoot(), new String[] {"/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"});
-		final Map<IPath, Long> table = new HashMap<IPath, Long>(resources.length);
+		final Map<IPath, Long> table = new HashMap<>(resources.length);
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -1537,7 +1537,7 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		// touch all the resources. this will update the modification stamp
-		final Map<IPath, Long> tempTable = new HashMap<IPath, Long>(resources.length);
+		final Map<IPath, Long> tempTable = new HashMap<>(resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource.getType() != IResource.ROOT) {
@@ -2518,7 +2518,7 @@ public class IResourceTest extends ResourceTest {
 
 		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2}, true);
 
-		final List<IResource> actualOrder = new ArrayList<IResource>();
+		final List<IResource> actualOrder = new ArrayList<>();
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 			@Override
 			public boolean visit(IResourceProxy proxy) {

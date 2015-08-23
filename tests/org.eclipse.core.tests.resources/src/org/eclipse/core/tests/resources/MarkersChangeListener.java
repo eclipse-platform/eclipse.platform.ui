@@ -35,7 +35,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 		IPath path = resource == null ? Path.ROOT : resource.getFullPath();
 		Vector<IMarkerDelta> v = changes.get(path);
 		if (v == null)
-			v = new Vector<IMarkerDelta>();
+			v = new Vector<>();
 		int numChanges = (added == null ? 0 : added.length) + (removed == null ? 0 : removed.length) + (changed == null ? 0 : changed.length);
 		if (numChanges != v.size())
 			return false;
@@ -82,7 +82,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 	}
 
 	public void reset() {
-		changes = new Hashtable<IPath, Vector<IMarkerDelta>>(11);
+		changes = new Hashtable<>(11);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class MarkersChangeListener implements IResourceChangeListener {
 			IPath path = delta.getFullPath();
 			Vector<IMarkerDelta> v = changes.get(path);
 			if (v == null) {
-				v = new Vector<IMarkerDelta>();
+				v = new Vector<>();
 				changes.put(path, v);
 			}
 			IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();

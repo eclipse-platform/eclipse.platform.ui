@@ -59,7 +59,7 @@ public class Bug_192631 extends ResourceTest {
 		URI folderA = new URI(RemoteFileSystem.SCHEME_REMOTE, null, HOST_A, -1, FOLDER_A, null, null);
 		URI folderB = new URI(RemoteFileSystem.SCHEME_REMOTE, null, HOST_B, -1, FOLDER_B, null, null);
 
-		final Set<URI> toVisit = new HashSet<URI>();
+		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
@@ -107,7 +107,7 @@ public class Bug_192631 extends ResourceTest {
 		URI folderA = new URI(RemoteFileSystem.SCHEME_REMOTE, USER_A, HOST_A, -1, FOLDER_A, null, null);
 		URI folderB = new URI(RemoteFileSystem.SCHEME_REMOTE, USER_B, HOST_A, -1, FOLDER_B, null, null);
 
-		final Set<URI> toVisit = new HashSet<URI>();
+		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
@@ -155,7 +155,7 @@ public class Bug_192631 extends ResourceTest {
 		URI folderA = new URI(RemoteFileSystem.SCHEME_REMOTE, null, HOST_A, PORT_A, FOLDER_A, null, null);
 		URI folderB = new URI(RemoteFileSystem.SCHEME_REMOTE, null, HOST_A, PORT_B, FOLDER_B, null, null);
 
-		final Set<URI> toVisit = new HashSet<URI>();
+		final Set<URI> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override

@@ -69,7 +69,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * test is complete
 	 * @see #getTempStore
 	 */
-	private final Set<IFileStore> storesToDelete = new HashSet<IFileStore>();
+	private final Set<IFileStore> storesToDelete = new HashSet<>();
 
 	/**
 	 * Does some garbage collections to free unused resources
@@ -717,7 +717,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * Returns invalid sets of natures
 	 */
 	protected String[][] getInvalidNatureSets() {
-		return new String[][] { {NATURE_SNOW}, //missing water pre-req
+		return new String[][] {{NATURE_SNOW}, //missing water pre-req
 				{NATURE_WATER, NATURE_EARTH}, //duplicates from state-set
 				{NATURE_WATER, NATURE_MUD}, //missing earth pre-req
 				{NATURE_WATER, NATURE_EARTH, NATURE_MUD}, //duplicates from state-set
@@ -791,7 +791,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * Returns valid sets of natures
 	 */
 	protected String[][] getValidNatureSets() {
-		return new String[][] { {}, {NATURE_SIMPLE}, {NATURE_SNOW, NATURE_WATER}, {NATURE_EARTH}, {NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW},};
+		return new String[][] {{}, {NATURE_SIMPLE}, {NATURE_SNOW, NATURE_WATER}, {NATURE_EARTH}, {NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW},};
 	}
 
 	/**

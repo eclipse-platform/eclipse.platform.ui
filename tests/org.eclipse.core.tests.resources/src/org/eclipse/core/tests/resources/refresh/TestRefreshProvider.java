@@ -21,8 +21,8 @@ import org.eclipse.core.resources.refresh.*;
  * 
  */
 public class TestRefreshProvider extends RefreshProvider implements IRefreshMonitor {
-	private final ArrayList<AssertionFailedError> failures = new ArrayList<AssertionFailedError>();
-	private final HashSet<IResource> monitoredResources = new HashSet<IResource>();
+	private final ArrayList<AssertionFailedError> failures = new ArrayList<>();
+	private final HashSet<IResource> monitoredResources = new HashSet<>();
 	private static TestRefreshProvider instance;
 
 	public static TestRefreshProvider getInstance() {

@@ -40,7 +40,7 @@ public class Bug29116Nature extends TestNature {
 		System.arraycopy(oldSpec, 0, newSpec, 0, oldSpec.length);
 		ICommand newCommand = desc.newCommand();
 		newCommand.setBuilderName(SortBuilder.BUILDER_NAME);
-		HashMap<String, String> args = new HashMap<String, String>(20);
+		HashMap<String, String> args = new HashMap<>(20);
 		newCommand.setArguments(args);
 		newSpec[oldSpec.length] = newCommand;
 		desc.setBuildSpec(newSpec);

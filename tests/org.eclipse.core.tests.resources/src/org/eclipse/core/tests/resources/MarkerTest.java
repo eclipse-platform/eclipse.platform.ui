@@ -353,7 +353,7 @@ public class MarkerTest extends ResourceTest {
 	}
 
 	public IResource[] createLargeHierarchy() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		result.add("/");
 		new MarkerTest().addChildren(result, Path.ROOT, 3, 4);
 		String[] names = result.toArray(new String[result.size()]);
@@ -650,7 +650,7 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		// add more markers and do a search on all marker types
-		Vector<IMarker> allMarkers = new Vector<IMarker>(markers.length * 3);
+		Vector<IMarker> allMarkers = new Vector<>(markers.length * 3);
 		for (int i = 0; i < markers.length; i++)
 			allMarkers.add(markers[i]);
 		try {
@@ -1088,7 +1088,7 @@ public class MarkerTest extends ResourceTest {
 
 		try {
 			// create markers on all the non-project resources 
-			final Hashtable<IResource, IMarker> table = new Hashtable<IResource, IMarker>(1);
+			final Hashtable<IResource, IMarker> table = new Hashtable<>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
@@ -1446,7 +1446,7 @@ public class MarkerTest extends ResourceTest {
 
 		try {
 			// create markers on all the resources
-			final Hashtable<IResource, IMarker> table = new Hashtable<IResource, IMarker>(1);
+			final Hashtable<IResource, IMarker> table = new Hashtable<>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
@@ -1548,7 +1548,7 @@ public class MarkerTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List<String> list = new ArrayList<String>(5);
+		final List<String> list = new ArrayList<>(5);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(final IResource resource) {
@@ -1643,7 +1643,7 @@ public class MarkerTest extends ResourceTest {
 
 		// create the markers on the resources. create both transient
 		// and persistent markers.
-		final ArrayList<IMarker> persistentMarkers = new ArrayList<IMarker>();
+		final ArrayList<IMarker> persistentMarkers = new ArrayList<>();
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
@@ -1685,7 +1685,7 @@ public class MarkerTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List<String> list = new ArrayList<String>(5);
+		final List<String> list = new ArrayList<>(5);
 		visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(final IResource resource) {
@@ -1946,7 +1946,7 @@ public class MarkerTest extends ResourceTest {
 				// expected
 			}
 			try {
-				HashMap<String, String> attributes = new HashMap<String, String>();
+				HashMap<String, String> attributes = new HashMap<>();
 				attributes.put(IMarker.MESSAGE, "Hello");
 				marker.setAttributes(attributes);
 				fail("5.3");

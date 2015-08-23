@@ -52,7 +52,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	private HashMap<String, ProjectDescription> buildBaselineDescriptors() {
-		HashMap<String, ProjectDescription> result = new HashMap<String, ProjectDescription>();
+		HashMap<String, ProjectDescription> result = new HashMap<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		ProjectDescription desc = new ProjectDescription();
@@ -64,7 +64,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		String[] natures = new String[1];
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
-		HashMap<IPath, LinkDescription> linkMap = new HashMap<IPath, LinkDescription>();
+		HashMap<IPath, LinkDescription> linkMap = new HashMap<>();
 		LinkDescription link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
 		linkMap.put(link.getProjectRelativePath(), link);
 		desc.setLinkDescriptions(linkMap);
@@ -84,7 +84,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		natures = new String[1];
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
-		linkMap = new HashMap<IPath, LinkDescription>();
+		linkMap = new HashMap<>();
 		link = createLinkDescription("newLink", IResource.FOLDER, "d:/abc/def");
 		linkMap.put(link.getProjectRelativePath(), link);
 		link = createLinkDescription("link2", IResource.FOLDER, "d:/abc");
@@ -138,7 +138,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		commands[0].setBuilderName("org.eclipse.jdt.core.javabuilder");
 		commands[1] = desc.newCommand();
 		commands[1].setBuilderName("org.eclipse.ui.externaltools.ExternalToolBuilder");
-		HashMap<String, String> argMap = new HashMap<String, String>();
+		HashMap<String, String> argMap = new HashMap<>();
 		argMap.put("!{tool_show_log}", "true");
 		argMap.put("!{tool_refresh}", "${none}");
 		argMap.put("!{tool_name}", "org.eclipse.ant.core extra builder");
@@ -265,101 +265,16 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	private String getLongDescription() {
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>"
-				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>doc</name>"
-				+ "	<type>2</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>icons</name>"
-				+ "	<type>2</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>preferences.ini</name>"
-				+ "	<type>1</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>.options</name>"
-				+ "	<type>1</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>plugin.properties</name>"
-				+ "	<type>1</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>plugin.xml</name>"
-				+ "	<type>1</type>"
-				+ "	<location>"
-				+ LONG_LOCATION
-				+ "</location>"
-				+ "	</link>"
-				+ "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>"
+				+ "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>preferences.ini</name>"
+				+ "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<location>" + LONG_LOCATION + "</location>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
 	}
 
 	private String getLongDescriptionURI() {
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>"
-				+ "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>doc</name>"
-				+ "	<type>2</type>"
-				+ "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>icons</name>"
-				+ "	<type>2</type>"
-				+ "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>preferences.ini</name>"
-				+ "	<type>1</type>"
-				+ "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>.options</name>"
-				+ "	<type>1</type>"
-				+ "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>plugin.properties</name>"
-				+ "	<type>1</type>"
-				+ "	<locationURI>"
-				+ LONG_LOCATION_URI
-				+ "</locationURI>"
-				+ "	</link>"
-				+ "	<link>"
-				+ "	<name>plugin.xml</name>"
-				+ "	<type>1</type>"
-				+ "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<projectDescription>" + "<name>org.eclipse.help.ui</name>" + "<comment></comment>" + "<charset>UTF-8</charset>" + "	<projects>" + "	<project>org.eclipse.core.boot</project>" + "	<project>org.eclipse.core.resources</project>" + "	<project>org.eclipse.core.runtime</project>" + "	<project>org.eclipse.help</project>" + "	<project>org.eclipse.help.appserver</project>" + "	<project>org.eclipse.search</project>" + "	<project>org.eclipse.ui</project>" + "	</projects>" + "	<buildSpec>" + "	<buildCommand>" + "	<name>org.eclipse.jdt.core.javabuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.ManifestBuilder</name>" + "	<arguments>"
+				+ "	</arguments>" + "	</buildCommand>" + "	<buildCommand>" + "	<name>org.eclipse.pde.SchemaBuilder</name>" + "	<arguments>" + "	</arguments>" + "	</buildCommand>" + "	</buildSpec>" + "	<natures>" + "	<nature>org.eclipse.jdt.core.javanature</nature>" + "	<nature>org.eclipse.pde.PluginNature</nature>" + "	</natures>" + "	<linkedResources>" + "	<link>" + "	<name>contexts.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>doc</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>icons</name>" + "	<type>2</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>"
+				+ "	<name>preferences.ini</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>.options</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.properties</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>plugin.xml</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>about.html</name>" + "	<type>1</type>" + "	<locationURI>" + LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "	<link>" + "	<name>helpworkbench.jar</name>" + "	<type>1</type>" + "	<locationURI>"
+				+ LONG_LOCATION_URI + "</locationURI>" + "	</link>" + "</linkedResources>" + "</projectDescription>";
 	}
 
 	/**
@@ -388,8 +303,8 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		String locationA = getTempDir().append("testPath1").toPortableString();
 		String locationB = getTempDir().append("testPath1").toPortableString();
 		String newline = System.getProperty("line.separator");
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline
-				+ "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline
+				+ "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
 
 		IFileStore tempStore = getTempStore();
 		URI location = tempStore.toURI();
@@ -397,7 +312,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap<String, String> args = new HashMap<String, String>(2);
+		HashMap<String, String> args = new HashMap<>(2);
 		// key values are important
 		args.put("b", "ARGH!");
 		args.put("aA", "2 x ARGH!");
@@ -406,7 +321,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		commands[0].setBuilderName("MyCommand");
 		commands[0].setArguments(args);
 		description.setBuildSpec(commands);
-		HashMap<IPath, LinkDescription> linkDescriptions = new HashMap<IPath, LinkDescription>(2);
+		HashMap<IPath, LinkDescription> linkDescriptions = new HashMap<>(2);
 		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, locationB);
 		// key values are important
 		linkDescriptions.put(link.getProjectRelativePath(), link);
@@ -583,11 +498,11 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	public void testMultiLineCharFields() throws Throwable {
-		String multiLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>\n" + "      abc\n" + "   </name>\n" + "	<charset>\n" + "		ISO-8859-1\n" + "	</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>\n" + "         org.eclipse.core.boot\n" + "      </project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>\n" + "              org.eclipse.jdt.core.javabuilder\n" + "           </name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>\n" + "         org.eclipse.jdt.core.javanature\n"
-				+ "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>" + "newLink" + "</name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+		String multiLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>\n" + "      abc\n" + "   </name>\n" + "	<charset>\n" + "		ISO-8859-1\n" + "	</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>\n" + "         org.eclipse.core.boot\n" + "      </project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>\n" + "              org.eclipse.jdt.core.javabuilder\n" + "           </name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>\n"
+				+ "         org.eclipse.jdt.core.javanature\n" + "      </nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>" + "newLink" + "</name>\n" + "			<type>\n" + "              2\n" + "           </type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
-		String singleLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<charset>ISO-8859-1</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>org.eclipse.core.boot</project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>"
-				+ PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
+		String singleLineProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>abc</name>\n" + "	<charset>ISO-8859-1</charset>\n" + "	<comment>This is the comment.</comment>\n" + "	<projects>\n" + "	   <project>org.eclipse.core.boot</project>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "              <key>thisIsTheKey</key>\n" + "              <value>thisIsTheValue</value>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	   <nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n"
+				+ "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</projectDescription>";
 
 		IPath root = getWorkspace().getRoot().getLocation();
 		IPath multiLocation = root.append("multiLineTest.txt");
@@ -640,7 +555,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap<String, String> args = new HashMap<String, String>(3);
+		HashMap<String, String> args = new HashMap<>(3);
 		args.put("ArgOne", "ARGH!");
 		args.put("ArgTwo", "2 x ARGH!");
 		args.put("NullArg", null);
@@ -687,7 +602,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocationURI(location);
 		description.setName("MyProjectDescription");
-		HashMap<String, String> args = new HashMap<String, String>(3);
+		HashMap<String, String> args = new HashMap<>(3);
 		args.put("ArgOne", "ARGH!");
 		ICommand[] commands = new ICommand[1];
 		commands[0] = description.newCommand();

@@ -23,9 +23,9 @@ public class ConfigurationBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.configbuilder";
 
 	/** Stores IBuildConfiguration -> ConfigurationBuilder */
-	private static HashMap<IBuildConfiguration, ConfigurationBuilder> builders = new HashMap<IBuildConfiguration, ConfigurationBuilder>();
+	private static HashMap<IBuildConfiguration, ConfigurationBuilder> builders = new HashMap<>();
 	/** Order in which builders have been run */
-	static List<IBuildConfiguration> buildOrder = new ArrayList<IBuildConfiguration>();
+	static List<IBuildConfiguration> buildOrder = new ArrayList<>();
 
 	// Per builder instance stats
 	int triggerForLastBuild;
@@ -40,7 +40,7 @@ public class ConfigurationBuilder extends TestBuilder {
 	}
 
 	public static void clearBuildOrder() {
-		buildOrder = new ArrayList<IBuildConfiguration>();
+		buildOrder = new ArrayList<>();
 	}
 
 	public static void clearStats() {

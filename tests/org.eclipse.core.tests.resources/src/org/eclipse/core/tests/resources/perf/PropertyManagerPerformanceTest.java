@@ -51,7 +51,7 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 		folders[2] = folders[0].getFolder("folder3");
 		folders[3] = folders[2].getFolder("folder4");
 		folders[4] = folders[3].getFolder("folder5");
-		List<IResource> resources = new ArrayList<IResource>(filesPerFolder * folders.length);
+		List<IResource> resources = new ArrayList<>(filesPerFolder * folders.length);
 		for (int i = 0; i < folders.length; i++)
 			resources.add(folders[i]);
 		ensureExistsInWorkspace(folders, true);

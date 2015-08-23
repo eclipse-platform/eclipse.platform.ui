@@ -37,7 +37,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	private final static String PROJECT_VARIABLE_NAME = "PROOT";
 	private final static String PROJECT_RELATIVE_VARIABLE_NAME = "RELATIVE_PROOT";
 	private final static String PROJECT_RELATIVE_VARIABLE_VALUE = "${PROOT}";
-	private final ArrayList<IPath> toDelete = new ArrayList<IPath>();
+	private final ArrayList<IPath> toDelete = new ArrayList<>();
 	private IFileStore toSetWritable = null;
 
 	public LinkedResourceWithPathVariableTest() {
@@ -1350,7 +1350,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		IPathVariableManager pathVariableManager = existingProject.getPathVariableManager();
 
 		String[][] table = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
-		{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
+				{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
 				{"C:/foo/bar", "C:/foo/bar"}, //
 				{"VAR/foo/bar", "VAR/foo/bar"}, //
 				{"${VAR}/foo/bar", "${VAR}/foo/bar"}, //
@@ -1375,7 +1375,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 
 		String[][] tableLocationFormat = { // format: {internal-format, user-editable-format [, internal-format-reconverted]
-		{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
+				{"C:\\foo\\bar", "C:\\foo\\bar", "C:/foo/bar"}, //
 				{"C:/foo/bar", "C:/foo/bar"}, //
 				{"VAR/foo/bar", "VAR/foo/bar"}, //
 				{"${VAR}/../foo/bar", "${VAR}/../foo/bar", "PARENT-1-VAR/foo/bar"}, //

@@ -2443,7 +2443,7 @@ public class IProjectTest extends ResourceTest {
 		IResource[] resources = buildResources(project, children);
 		ensureExistsInWorkspace(project, true);
 		ensureExistsInWorkspace(resources, true);
-		Set<IPath> pathsToDelete = new HashSet<IPath>(5);
+		Set<IPath> pathsToDelete = new HashSet<>(5);
 
 		try {
 			// move the project content

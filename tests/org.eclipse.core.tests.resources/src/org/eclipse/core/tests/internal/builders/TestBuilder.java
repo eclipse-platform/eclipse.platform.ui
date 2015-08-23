@@ -76,8 +76,8 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * These are static because we want one event set for all builder instances.
 	 */
-	private static final ArrayList<String> expectedEvents = new ArrayList<String>();
-	private static final ArrayList<String> actualEvents = new ArrayList<String>();
+	private static final ArrayList<String> expectedEvents = new ArrayList<>();
+	private static final ArrayList<String> actualEvents = new ArrayList<>();
 
 	/**
 	 * Logs the given plug-in lifecycle event for this builder's plugin.

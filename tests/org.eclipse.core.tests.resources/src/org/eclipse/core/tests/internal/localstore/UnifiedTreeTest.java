@@ -116,7 +116,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable<String, String> set = new Hashtable<String, String>();
+		final Hashtable<String, String> set = new Hashtable<>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(folder, set);
@@ -162,7 +162,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable<String, String> set = new Hashtable<String, String>();
+		final Hashtable<String, String> set = new Hashtable<>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(folder, set);
@@ -219,7 +219,7 @@ public class UnifiedTreeTest extends LocalStoreTest {
 		/* Create a hash table to hold all resources the tree should visit.
 		 The resources are going to be removed from the hash table as
 		 the visitor visits it. */
-		final Hashtable<String, String> set = new Hashtable<String, String>();
+		final Hashtable<String, String> set = new Hashtable<>();
 
 		/* create some workspace structure */
 		createResourcesInWorkspace(project, set);

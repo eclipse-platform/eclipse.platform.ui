@@ -109,7 +109,7 @@ public class ISynchronizerTest extends ResourceTest {
 		synchronizer.add(qname);
 
 		// setup the sync bytes
-		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
@@ -232,7 +232,7 @@ public class ISynchronizerTest extends ResourceTest {
 		synchronizer.add(qname);
 
 		// setup the sync bytes
-		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(IResource resource) throws CoreException {
@@ -515,7 +515,7 @@ public class ISynchronizerTest extends ResourceTest {
 	}
 
 	public void testSave() {
-		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		final Synchronizer synchronizer = (Synchronizer) ResourcesPlugin.getWorkspace().getSynchronizer();
 
@@ -553,7 +553,7 @@ public class ISynchronizerTest extends ResourceTest {
 			fail("1.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List<QualifiedName> list = new ArrayList<QualifiedName>(5);
+		final List<QualifiedName> list = new ArrayList<>(5);
 		visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(final IResource resource) {
@@ -655,7 +655,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 final Hashtable table = new Hashtable(10);
 		 final QualifiedName qname = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
 		 final Synchronizer synchronizer = (Synchronizer) ResourcesPlugin.getWorkspace().getSynchronizer();
-
+		
 		 // register the sync partner and set the sync info on the resources
 		 synchronizer.add(qname);
 		 IResourceVisitor visitor = new IResourceVisitor() {
@@ -677,7 +677,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 } catch (CoreException e) {
 		 fail("0.1", e);
 		 }
-
+		
 		 // write out the data
 		 File file = Platform.getLocation().append(".testsyncinfo.snap").toFile();
 		 SafeChunkyOutputStream safeOutput = null;
@@ -718,14 +718,14 @@ public class ISynchronizerTest extends ResourceTest {
 		 fail("1.4", e);
 		 }
 		 }
-
+		
 		 // flush the sync info in memory
 		 try {
 		 flushAllSyncInfo(getWorkspace().getRoot());
 		 } catch (CoreException e) {
 		 fail("2.0", e);
 		 }
-
+		
 		 // read in the data
 		 try {
 		 InputStream safeInput = new SafeChunkyInputStream(file);
@@ -756,7 +756,7 @@ public class ISynchronizerTest extends ResourceTest {
 		 } catch (CoreException e) {
 		 fail("3.4", e);
 		 }
-
+		
 		 // confirm the sync bytes are the same
 		 visitor = new IResourceVisitor() {
 		 public boolean visit(IResource resource) throws CoreException {
@@ -784,7 +784,7 @@ public class ISynchronizerTest extends ResourceTest {
 		final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
 
 		// setup the sync bytes
-		final Hashtable<IPath, byte[]> table = new Hashtable<IPath, byte[]>(10);
+		final Hashtable<IPath, byte[]> table = new Hashtable<>(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			@Override
 			public boolean visit(IResource resource) {

@@ -42,9 +42,9 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 */
 	protected boolean deltaWasEmpty = false;
 	/** The empty deltas that were received */
-	protected ArrayList<IProject> emptyDeltas = new ArrayList<IProject>();
+	protected ArrayList<IProject> emptyDeltas = new ArrayList<>();
 	/** The deltas that were actually received */
-	protected ArrayList<IProject> receivedDeltas = new ArrayList<IProject>();
+	protected ArrayList<IProject> receivedDeltas = new ArrayList<>();
 	/** The projects to request deltas for (may be null) */
 	protected IProject[] requestedDeltas;
 	/**

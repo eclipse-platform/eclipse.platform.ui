@@ -163,7 +163,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	 * Returns an array of all the intermediary element trees.
 	 */
 	private ElementTree[] buildDeltaChain(ElementTree tree) {
-		Vector<ElementTree> trees = new Vector<ElementTree>();
+		Vector<ElementTree> trees = new Vector<>();
 		trees.addElement(tree);
 
 		int repeat = 1;

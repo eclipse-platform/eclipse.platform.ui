@@ -113,7 +113,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	 */
 	private synchronized HashMap<String, Object> getFileSystemRegistry() {
 		if (fileSystems == null) {
-			fileSystems = new HashMap<String, Object>();
+			fileSystems = new HashMap<>();
 			IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
@@ -130,10 +130,6 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		return fileSystems;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-	 */
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] changes = event.getExtensionDeltas(EFS.PI_FILE_SYSTEM, EFS.PT_FILE_SYSTEMS);

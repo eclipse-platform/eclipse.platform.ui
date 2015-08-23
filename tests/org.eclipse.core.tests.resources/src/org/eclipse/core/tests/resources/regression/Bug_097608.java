@@ -74,7 +74,7 @@ public class Bug_097608 extends ResourceTest {
 		Arrays.fill(chars, 'a');
 		String value = new String(chars);
 
-		Map<String, String> markerAttributes = new HashMap<String, String>();
+		Map<String, String> markerAttributes = new HashMap<>();
 		markerAttributes.put(IMarker.MESSAGE, value);
 
 		IMarker marker = null;

@@ -36,7 +36,7 @@ public class SortBuilder extends TestBuilder {
 	/**
 	 * All instances.
 	 */
-	protected static final ArrayList<SortBuilder> allInstances = new ArrayList<SortBuilder>();
+	protected static final ArrayList<SortBuilder> allInstances = new ArrayList<>();
 
 	/**
 	 * Build command parameters.
@@ -66,7 +66,7 @@ public class SortBuilder extends TestBuilder {
 	/**
 	 * List of the resources that were in the last delta, if any.
 	 */
-	protected final ArrayList<IResource> changedResources = new ArrayList<IResource>();
+	protected final ArrayList<IResource> changedResources = new ArrayList<>();
 	private boolean requestForgetState = false;
 
 	/**

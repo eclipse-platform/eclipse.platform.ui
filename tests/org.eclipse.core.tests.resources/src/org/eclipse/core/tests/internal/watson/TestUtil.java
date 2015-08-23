@@ -213,7 +213,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 * Returns an array of all the intermediary ElementTrees.
 	 */
 	static protected ElementTree[] doManyRoutineOperations(ElementTree tree, IPath path) {
-		Vector<ElementTree> trees = new Vector<ElementTree>();
+		Vector<ElementTree> trees = new Vector<>();
 		trees.addElement(tree);
 
 		int repeat = 1;
@@ -259,7 +259,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 * the given path.  Returns an array of all the intermediary elementtrees.
 	 */
 	static protected ElementTree[] doRoutineOperations(ElementTree tree, IPath path) {
-		Vector<ElementTree> trees = new Vector<ElementTree>();
+		Vector<ElementTree> trees = new Vector<>();
 		trees.addElement(tree);
 
 		int repeat = 1;

@@ -72,7 +72,7 @@ public class ResourceVisitorVerifier extends Assert implements IResourceVisitor 
 	}
 
 	public void reset() {
-		expected = new HashSet<IResource>();
+		expected = new HashSet<>();
 		message = new StringBuffer();
 		verified = false;
 	}

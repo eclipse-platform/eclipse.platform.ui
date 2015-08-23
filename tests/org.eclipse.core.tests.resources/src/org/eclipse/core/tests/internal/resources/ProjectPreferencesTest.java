@@ -101,13 +101,13 @@ public class ProjectPreferencesTest extends ResourceTest {
 		IScopeContext instanceContext = InstanceScope.INSTANCE;
 		ensureExistsInWorkspace(project, true);
 
-		ArrayList<IScopeContext[]> list = new ArrayList<IScopeContext[]>();
+		ArrayList<IScopeContext[]> list = new ArrayList<>();
 		list.add(null);
 		list.add(new IScopeContext[0]);
 		list.add(new IScopeContext[] {null});
 		IScopeContext[][] contextsWithoutScope = list.toArray(new IScopeContext[list.size()][]);
 
-		list = new ArrayList<IScopeContext[]>();
+		list = new ArrayList<>();
 		list.add(new IScopeContext[] {projectContext});
 		list.add(new IScopeContext[] {null, projectContext});
 		IScopeContext[][] contextsWithScope = list.toArray(new IScopeContext[list.size()][]);
@@ -761,7 +761,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		ensureExistsInWorkspace(new IResource[] {project1}, true);
 		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES).node("subnode");
 
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		keys.add("z" + getUniqueString());
 		keys.add("a" + getUniqueString());
 		keys.add("1" + getUniqueString());
@@ -874,7 +874,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		try {
 			File folder = new File(project.getLocation().toOSString() + "/.settings");
 			BufferedReader br = new BufferedReader(new FileReader(folder.getPath() + "/" + nodeName + ".prefs"));
-			List<String> lines = new ArrayList<String>();
+			List<String> lines = new ArrayList<>();
 			String line = br.readLine();
 			while (line != null) {
 				if ((!line.startsWith("#")) && (!line.startsWith("eclipse.preferences.version")))

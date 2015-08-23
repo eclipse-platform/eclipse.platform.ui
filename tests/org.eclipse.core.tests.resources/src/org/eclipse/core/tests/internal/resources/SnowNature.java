@@ -40,7 +40,7 @@ public class SnowNature extends TestNature {
 		System.arraycopy(oldSpec, 0, newSpec, 0, oldSpec.length);
 		ICommand newCommand = desc.newCommand();
 		newCommand.setBuilderName(SnowBuilder.BUILDER_NAME);
-		HashMap<String, String> args = new HashMap<String, String>(20);
+		HashMap<String, String> args = new HashMap<>(20);
 		args.put(TestBuilder.BUILD_ID, SnowBuilder.SNOW_BUILD_EVENT);
 		newCommand.setArguments(args);
 		newSpec[oldSpec.length] = newCommand;

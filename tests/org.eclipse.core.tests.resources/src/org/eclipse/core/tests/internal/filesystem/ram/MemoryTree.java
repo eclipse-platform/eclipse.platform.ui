@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public class MemoryTree {
 	static class DirNode extends Node {
-		private final ArrayList<Node> children = new ArrayList<Node>();
+		private final ArrayList<Node> children = new ArrayList<>();
 
 		DirNode(Node parent, String name) {
 			super(parent, name);

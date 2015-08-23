@@ -217,7 +217,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 	}
 
 	HashSet<ISchedulingRule> getRulesAsSet(ISchedulingRule rule) {
-		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
+		HashSet<ISchedulingRule> rules = new HashSet<>();
 		if (rule == null)
 			return rules;
 		if (rule instanceof MultiRule)

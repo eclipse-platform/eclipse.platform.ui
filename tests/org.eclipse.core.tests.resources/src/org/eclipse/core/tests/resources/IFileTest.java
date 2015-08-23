@@ -32,14 +32,14 @@ public class IFileTest extends ResourceTest {
 	protected static final Boolean[] TRUE_AND_FALSE = new Boolean[] {Boolean.TRUE, Boolean.FALSE};
 	public static final String WORKSPACE_ONLY = "WorkspaceOnlyFile";
 
-	ArrayList<IFile> allFiles = new ArrayList<IFile>();
-	ArrayList<IFile> existingFiles = new ArrayList<IFile>();
-	ArrayList<IFile> localOnlyFiles = new ArrayList<IFile>();
-	ArrayList<IFile> nonExistingFiles = new ArrayList<IFile>();
-	ArrayList<IFile> outOfSyncFiles = new ArrayList<IFile>();
+	ArrayList<IFile> allFiles = new ArrayList<>();
+	ArrayList<IFile> existingFiles = new ArrayList<>();
+	ArrayList<IFile> localOnlyFiles = new ArrayList<>();
+	ArrayList<IFile> nonExistingFiles = new ArrayList<>();
+	ArrayList<IFile> outOfSyncFiles = new ArrayList<>();
 
 	IProject[] projects = null;
-	ArrayList<IFile> workspaceOnlyFiles = new ArrayList<IFile>();
+	ArrayList<IFile> workspaceOnlyFiles = new ArrayList<>();
 
 	/**
 	 * Sets up the test suite for this class
@@ -177,7 +177,7 @@ public class IFileTest extends ResourceTest {
 	 * Returns some interesting input streams
 	 */
 	public InputStream[] interestingStreams() {
-		ArrayList<InputStream> streams = new ArrayList<InputStream>();
+		ArrayList<InputStream> streams = new ArrayList<>();
 
 		//empty stream
 		ByteArrayInputStream bis = new ByteArrayInputStream(new byte[0]);

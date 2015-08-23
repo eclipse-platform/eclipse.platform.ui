@@ -78,7 +78,7 @@ public class BucketTreeTests extends ResourceTest {
 		@Override
 		protected Object readEntryValue(DataInputStream source) throws IOException {
 			int length = source.readUnsignedShort();
-			Map<String, String> value = new HashMap<String, String>(length);
+			Map<String, String> value = new HashMap<>(length);
 			for (int j = 0; j < length; j++)
 				value.put(source.readUTF(), source.readUTF());
 			return value;
@@ -90,7 +90,7 @@ public class BucketTreeTests extends ResourceTest {
 			Map<String, String> existing = (Map<String, String>) getEntryValue(pathAsString);
 			if (existing == null) {
 				if (value != null) {
-					existing = new HashMap<String, String>();
+					existing = new HashMap<>();
 					existing.put(key, value);
 					setEntryValue(pathAsString, existing);
 				}
@@ -178,7 +178,7 @@ public class BucketTreeTests extends ResourceTest {
 	}
 
 	public void verify(BucketTree tree, final String tag, IPath root, int depth, final Collection<IPath> expected) {
-		final Set<IPath> visited = new HashSet<IPath>();
+		final Set<IPath> visited = new HashSet<>();
 		SimpleBucket.Visitor verifier = new SimpleBucket.Visitor() {
 			@Override
 			public int visit(org.eclipse.core.internal.localstore.Bucket.Entry entry) {

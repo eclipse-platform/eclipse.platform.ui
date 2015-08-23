@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 public class LocalSelectionPolicy implements ISelectionPolicy {
 	@Override
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
-		List<IContentType> result = new ArrayList<IContentType>(candidates.length);
+		List<IContentType> result = new ArrayList<>(candidates.length);
 		for (int i = 0; i < candidates.length; i++) {
 			String namespace = getNamespace(candidates[i].getId());
 			if (namespace.equals(ContentTypeTest.PI_RESOURCES_TESTS) || namespace.equals(Platform.PI_RUNTIME))

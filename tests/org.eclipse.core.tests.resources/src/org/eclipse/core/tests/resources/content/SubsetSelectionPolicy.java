@@ -18,12 +18,12 @@ public class SubsetSelectionPolicy implements ISelectionPolicy {
 	private Set<IContentType> subset;
 
 	public SubsetSelectionPolicy(IContentType[] subset) {
-		this.subset = new HashSet<IContentType>(Arrays.asList(subset));
+		this.subset = new HashSet<>(Arrays.asList(subset));
 	}
 
 	@Override
 	public IContentType[] select(IContentType[] candidates, boolean fileName, boolean content) {
-		List<IContentType> result = new ArrayList<IContentType>(candidates.length);
+		List<IContentType> result = new ArrayList<>(candidates.length);
 		for (int i = 0; i < candidates.length; i++)
 			if (subset.contains(candidates[i]))
 				result.add(candidates[i]);

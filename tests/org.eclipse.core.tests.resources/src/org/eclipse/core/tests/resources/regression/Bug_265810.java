@@ -24,8 +24,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class Bug_265810 extends ResourceTest {
 
 	protected final static String VARIABLE_NAME = "ROOT";
-	private final ArrayList<IPath> toDelete = new ArrayList<IPath>();
-	List<IResourceDelta> resourceDeltas = new ArrayList<IResourceDelta>();
+	private final ArrayList<IPath> toDelete = new ArrayList<>();
+	List<IResourceDelta> resourceDeltas = new ArrayList<>();
 
 	/**
 	 * Constructor for Bug_265810.
@@ -116,7 +116,7 @@ public class Bug_265810 extends ResourceTest {
 		byte[] dotProject2 = storeDotProject(project);
 
 		try {
-			resourceDeltas = new ArrayList<IResourceDelta>();
+			resourceDeltas = new ArrayList<>();
 			getWorkspace().addResourceChangeListener(ll);
 
 			// restore .project [1]
@@ -137,7 +137,7 @@ public class Bug_265810 extends ResourceTest {
 		}
 
 		try {
-			resourceDeltas = new ArrayList<IResourceDelta>();
+			resourceDeltas = new ArrayList<>();
 			getWorkspace().addResourceChangeListener(ll);
 
 			// restore .project [2]

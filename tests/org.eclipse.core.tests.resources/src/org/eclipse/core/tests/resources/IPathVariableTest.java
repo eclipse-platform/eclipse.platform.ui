@@ -105,8 +105,8 @@ public class IPathVariableTest extends ResourceTest {
 			}
 		}
 
-		List<Event> expected = new ArrayList<Event>();
-		List<Event> actual = new ArrayList<Event>();
+		List<Event> expected = new ArrayList<>();
+		List<Event> actual = new ArrayList<>();
 
 		void addExpectedEvent(int type, String name, IPath value) {
 			expected.add(new Event(type, name, value));
@@ -129,8 +129,8 @@ public class IPathVariableTest extends ResourceTest {
 		}
 
 		void reset() {
-			expected = new ArrayList<Event>();
-			actual = new ArrayList<Event>();
+			expected = new ArrayList<>();
+			actual = new ArrayList<>();
 		}
 
 		@Override

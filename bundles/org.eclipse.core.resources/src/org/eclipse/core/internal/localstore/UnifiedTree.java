@@ -41,19 +41,19 @@ public class UnifiedTree {
 	/** special node to mark the beginning of a level in the tree */
 	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, null, null, false);
 
-	private static final IFileInfo[] NO_CHILDREN = new IFileInfo[0];
+	private static final IFileInfo[] NO_CHILDREN = {};
 
 	/** Singleton to indicate no local children */
-	private static final IResource[] NO_RESOURCES = new IResource[0];
+	private static final IResource[] NO_RESOURCES = {};
 
 	/**
 	 * True if the level of the children of the current node are valid according
 	 * to the requested refresh depth, false otherwise
 	 */
-	protected boolean childLevelValid = false;
+	protected boolean childLevelValid;
 
 	/** an IFileTree which can be used to build a unified tree*/
-	protected IFileTree fileTree = null;
+	protected IFileTree fileTree;
 
 	/** Spare node objects available for reuse */
 	protected ArrayList<UnifiedTreeNode> freeNodes = new ArrayList<>();

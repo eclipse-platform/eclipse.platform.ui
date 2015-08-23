@@ -51,7 +51,7 @@ public class ObjectMapTest extends ResourceTest {
 	public void testPut() {
 
 		// create the objects to insert into the map
-		ObjectMap<Integer, Object> map = new ObjectMap<Integer, Object>();
+		ObjectMap<Integer, Object> map = new ObjectMap<>();
 		int max = 100;
 		Object[] values = new Object[max];
 		for (int i = 0; i < max; i++)
@@ -76,7 +76,7 @@ public class ObjectMapTest extends ResourceTest {
 	}
 
 	public void testPutEmptyMap() {
-		ObjectMap<Object, Object> map = new ObjectMap<Object, Object>(new HashMap<Object, Object>());
+		ObjectMap<Object, Object> map = new ObjectMap<>(new HashMap<>());
 		map.put(new Object(), new Object());
 	}
 
@@ -148,7 +148,7 @@ public class ObjectMapTest extends ResourceTest {
 
 	private ObjectMap<Integer, Object> populateMap(int max) {
 		// populate the map
-		ObjectMap<Integer, Object> map = new ObjectMap<Integer, Object>();
+		ObjectMap<Integer, Object> map = new ObjectMap<>();
 		values = new Object[max];
 		for (int i = 0; i < max; i++) {
 			values[i] = new Long(System.currentTimeMillis());
@@ -162,7 +162,7 @@ public class ObjectMapTest extends ResourceTest {
 	 * Bug 62231 - empty ObjectMap.toHashMap() causes NullPointerException
 	 */
 	public void testBug_62231() {
-		ObjectMap<Object, Object> map = new ObjectMap<Object, Object>();
+		ObjectMap<Object, Object> map = new ObjectMap<>();
 		try {
 			map.entrySet();
 		} catch (NullPointerException e) {

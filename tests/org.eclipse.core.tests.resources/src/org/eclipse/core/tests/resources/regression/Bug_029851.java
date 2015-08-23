@@ -41,7 +41,7 @@ public class Bug_029851 extends ResourceTest {
 	}
 
 	private Collection<String> createChildren(int breadth, int depth, IPath prefix) {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (int i = 0; i < breadth; i++) {
 			IPath child = prefix.append(Integer.toString(i)).addTrailingSeparator();
 			result.add(child.toString());

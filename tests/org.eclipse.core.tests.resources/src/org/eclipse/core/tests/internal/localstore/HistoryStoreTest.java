@@ -31,8 +31,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class HistoryStoreTest extends ResourceTest {
 
 	class LogListenerVerifier implements ILogListener {
-		List<Integer> actual = new ArrayList<Integer>();
-		List<Integer> expected = new ArrayList<Integer>();
+		List<Integer> actual = new ArrayList<>();
+		List<Integer> expected = new ArrayList<>();
 
 		void addExpected(int statusCode) {
 			expected.add(new Integer(statusCode));
@@ -49,17 +49,14 @@ public class HistoryStoreTest extends ResourceTest {
 			return buffer.toString();
 		}
 
-		/**
-		 * @see org.eclipse.core.runtime.ILogListener#logging(org.eclipse.core.runtime.IStatus, java.lang.String)
-		 */
 		@Override
 		public void logging(IStatus status, String plugin) {
 			actual.add(new Integer(status.getCode()));
 		}
 
 		void reset() {
-			expected = new ArrayList<Integer>();
-			actual = new ArrayList<Integer>();
+			expected = new ArrayList<>();
+			actual = new ArrayList<>();
 		}
 
 		void verify() throws VerificationFailedException {
@@ -77,7 +74,6 @@ public class HistoryStoreTest extends ResourceTest {
 				}
 			}
 		}
-
 	}
 
 	class VerificationFailedException extends Exception {
@@ -204,7 +200,6 @@ public class HistoryStoreTest extends ResourceTest {
 	 *  15. Check file states.  There should be none left.
 	 */
 	public void testAddStateAndPolicies() {
-
 		/* Create common objects. */
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("file.txt");
@@ -459,7 +454,6 @@ public class HistoryStoreTest extends ResourceTest {
 	 * 
 	 */
 	public void testClean() {
-
 		/* Create common objects. */
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("file.txt");

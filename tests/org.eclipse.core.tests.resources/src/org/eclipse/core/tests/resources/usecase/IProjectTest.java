@@ -214,7 +214,7 @@ public class IProjectTest extends IResourceTest {
 		ICommand command = desc.newCommand();
 		command.setBuilderName("org.eclipse.core.tests.buildername");
 		ICommand[] commands = new ICommand[] {command};
-		Hashtable<String, String> arguments = new Hashtable<String, String>(2);
+		Hashtable<String, String> arguments = new Hashtable<>(2);
 		arguments.put("param0", "arg0");
 		command.setArguments(arguments);
 		// Add buildspec to project 

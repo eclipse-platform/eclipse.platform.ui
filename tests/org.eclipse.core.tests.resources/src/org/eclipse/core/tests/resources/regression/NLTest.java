@@ -58,7 +58,7 @@ public class NLTest extends ResourceTest {
 	}
 
 	public String[] getFileNames(String language) {
-		List<String> names = new ArrayList<String>(20);
+		List<String> names = new ArrayList<>(20);
 		if (language.equalsIgnoreCase("en")) { // English
 			getFileNames(names, '\u0041', '\u005A'); // A - Z
 			getFileNames(names, '\u0061', '\u007A'); // a - z

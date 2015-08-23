@@ -50,7 +50,7 @@ public class ProjectOrderTest extends ResourceTest {
 		try {
 			IProjectDescription pd = source.getDescription();
 			IProject[] a = pd.getReferencedProjects();
-			Set<IProject> x = new HashSet<IProject>();
+			Set<IProject> x = new HashSet<>();
 			x.addAll(Arrays.asList(a));
 			x.add(target);
 			IProject[] r = new IProject[x.size()];

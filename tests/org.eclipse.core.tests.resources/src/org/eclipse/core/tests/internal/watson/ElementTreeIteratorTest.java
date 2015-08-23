@@ -71,7 +71,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		baseTree.immutable();
 		final ElementTree tree = baseTree.newEmptyDelta();
 		modifyTree(tree);
-		final ArrayList<Object> elts = new ArrayList<Object>();
+		final ArrayList<Object> elts = new ArrayList<>();
 		final IElementContentVisitor visitor = new IElementContentVisitor() {
 			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {
@@ -113,9 +113,6 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		return suite;
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		//ElementTree tests don't use the CoreTest infrastructure
@@ -125,7 +122,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 		ElementTree tree = new ElementTree();
 		int n = 3;
 		setupElementTree(tree, n);
-		final ArrayList<IPath> elts = new ArrayList<IPath>();
+		final ArrayList<IPath> elts = new ArrayList<>();
 		IElementContentVisitor elementVisitor = new IElementContentVisitor() {
 			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object info) {

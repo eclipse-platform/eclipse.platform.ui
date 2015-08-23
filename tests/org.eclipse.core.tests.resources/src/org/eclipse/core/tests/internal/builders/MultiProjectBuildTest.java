@@ -143,7 +143,7 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 		//hold onto the set of requested projects here
 		final IProject[][] previousRequest = new IProject[][] {new IProject[] {project1}};
 		//hold onto projects that have been modified since the last time the builder was run.
-		final HashSet<IProject> previouslyModified = new HashSet<IProject>();
+		final HashSet<IProject> previouslyModified = new HashSet<>();
 		new TestPerformer("testDeltas") {
 			@Override
 			public Object[] interestingOldState(Object[] args) throws Exception {
@@ -177,10 +177,10 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 
 			@Override
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				HashSet<IProject> requested = new HashSet<IProject>(Arrays.asList((IProject[]) result));
-				HashSet<IProject> modified = new HashSet<IProject>(Arrays.asList((IProject[]) args[1]));
+				HashSet<IProject> requested = new HashSet<>(Arrays.asList((IProject[]) result));
+				HashSet<IProject> modified = new HashSet<>(Arrays.asList((IProject[]) args[1]));
 				modified.addAll(previouslyModified);
-				HashSet<IProject> obtained = new HashSet<IProject>();
+				HashSet<IProject> obtained = new HashSet<>();
 				if (!builder.getReceivedDeltas().isEmpty())
 					obtained.addAll(builder.getReceivedDeltas());
 				ArrayList<IProject> emptyDeltas = builder.getEmptyDeltas();

@@ -29,7 +29,7 @@ public class QueueTest extends TestCase {
 
 	public void testElements() {
 		/* add elements without removing */
-		Queue<String> queue = new Queue<String>(5, false);
+		Queue<String> queue = new Queue<>(5, false);
 		for (int i = 0; i < 10; i++)
 			queue.add(String.valueOf(i));
 
@@ -39,7 +39,7 @@ public class QueueTest extends TestCase {
 			assertTrue("1.0", elements.next().equals(String.valueOf(i)));
 
 		/* add and remove elements */
-		queue = new Queue<String>(5, false);
+		queue = new Queue<>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -57,13 +57,13 @@ public class QueueTest extends TestCase {
 
 	public void testGrow() {
 		/* add elements without removing */
-		Queue<String> queue = new Queue<String>(5, false);
+		Queue<String> queue = new Queue<>(5, false);
 		for (int i = 0; i < 10; i++)
 			queue.add(String.valueOf(i));
 		assertTrue("1.0", queue.size() == 10);
 
 		/* add and remove elements */
-		queue = new Queue<String>(5, false);
+		queue = new Queue<>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -76,7 +76,7 @@ public class QueueTest extends TestCase {
 
 	public void testRemoveTail() {
 		/* head < tail */
-		Queue<String> queue = new Queue<String>(10, false);
+		Queue<String> queue = new Queue<>(10, false);
 		for (int i = 0; i < 8; i++)
 			queue.add(String.valueOf(i));
 		assertTrue("1.0", queue.peekTail().equals("7"));
@@ -84,7 +84,7 @@ public class QueueTest extends TestCase {
 		assertTrue("1.2", queue.peekTail().equals("6"));
 
 		/* head > tail */
-		queue = new Queue<String>(5, false);
+		queue = new Queue<>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -98,12 +98,11 @@ public class QueueTest extends TestCase {
 	}
 
 	public void testReusableElements() {
-		/**/
 		class ReusableObject {
 		}
 
 		/* add elements */
-		Queue<ReusableObject> queue = new Queue<ReusableObject>(10, true);
+		Queue<ReusableObject> queue = new Queue<>(10, true);
 		for (int i = 0; i < 9; i++) {
 			ReusableObject o = new ReusableObject();
 			queue.add(o);

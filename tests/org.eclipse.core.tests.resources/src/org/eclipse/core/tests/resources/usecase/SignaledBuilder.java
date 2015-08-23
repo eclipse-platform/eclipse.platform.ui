@@ -19,14 +19,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class SignaledBuilder extends IncrementalProjectBuilder {
-
 	/** contants */
 	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.sigbuilder";
 
 	/**
 	 * associate IProject->SignaledBuilder
 	 */
-	private static HashMap<IProject, SignaledBuilder> instances = new HashMap<IProject, SignaledBuilder>(10);
+	private static HashMap<IProject, SignaledBuilder> instances = new HashMap<>(10);
 	protected boolean wasExecuted;
 
 	public static SignaledBuilder getInstance(IProject project) {

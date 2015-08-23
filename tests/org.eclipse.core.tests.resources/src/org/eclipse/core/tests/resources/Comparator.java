@@ -134,7 +134,7 @@ public class Comparator {
 	}
 
 	public static boolean equals(Enumeration<?> e, Object[] obj1, boolean isOrderImportant) {
-		Vector<Object> v = new Vector<Object>();
+		Vector<Object> v = new Vector<>();
 
 		while (e.hasMoreElements()) {
 			v.addElement(e.nextElement());

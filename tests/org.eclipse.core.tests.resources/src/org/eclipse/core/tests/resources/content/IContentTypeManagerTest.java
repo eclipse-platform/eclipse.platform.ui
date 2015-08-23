@@ -31,7 +31,7 @@ import org.osgi.service.prefs.Preferences;
 public class IContentTypeManagerTest extends ContentTypeTest {
 
 	private static class ContentTypeChangeTracer implements IContentTypeManager.IContentTypeChangeListener {
-		private final Set<IContentType> changed = new HashSet<IContentType>();
+		private final Set<IContentType> changed = new HashSet<>();
 
 		public ContentTypeChangeTracer() {
 		}
@@ -393,7 +393,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	/**
 	 * See bug 90218.
 	 */
-	public void testContentAndNameMatching() throws IOException /* not really */{
+	public void testContentAndNameMatching() throws IOException /* not really */ {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 
 		byte[][] contents0 = {{0x0A, 0x0B, 0x0E, 0x10}};
@@ -595,7 +595,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertEquals("5.1", appropriateSpecific1, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 	}
 
-	public void testDefaultProperties() throws IOException /* never actually thrown */{
+	public void testDefaultProperties() throws IOException /* never actually thrown */ {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 
 		IContentType mytext = contentTypeManager.getContentType(PI_RESOURCES_TESTS + '.' + "mytext");

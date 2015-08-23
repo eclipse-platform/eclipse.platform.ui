@@ -133,7 +133,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		// 8 - PREF_SNAPSHOT_INTERVAL
 		modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
 
-		final List<String> changedProperties = new LinkedList<String>();
+		final List<String> changedProperties = new LinkedList<>();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
 			@Override
 			public void propertyChange(Preferences.PropertyChangeEvent event) {

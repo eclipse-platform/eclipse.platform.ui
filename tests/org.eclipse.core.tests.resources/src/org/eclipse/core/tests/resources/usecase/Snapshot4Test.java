@@ -30,7 +30,7 @@ public class Snapshot4Test extends SnapshotTest {
 	}
 
 	protected static String[] defineHierarchy1() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		String[] old = Snapshot3Test.defineHierarchy1();
 		for (int i = 0; i < old.length; i++)
 			result.add(old[i]);

@@ -94,7 +94,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	/**
 	 * Table of IPath -> ExpectedChange
 	 */
-	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<IPath, ExpectedChange>();
+	private Hashtable<IPath, ExpectedChange> fExpectedChanges = new Hashtable<>();
 	boolean fIsDeltaValid = true;
 	private StringBuffer fMessage = new StringBuffer();
 	/**
@@ -243,7 +243,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 		IResourceDelta[] changedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		IResourceDelta[] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 
-		Hashtable<IResource, IResourceDelta> h = new Hashtable<IResource, IResourceDelta>(affectedChildren.length + 1);
+		Hashtable<IResource, IResourceDelta> h = new Hashtable<>(affectedChildren.length + 1);
 
 		for (int i = 0; i < addedChildren.length; ++i) {
 			IResourceDelta childDelta1 = addedChildren[i];
@@ -440,7 +440,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * are met after iterating over a resource delta.
 	 */
 	private void finishVerification() {
-		HashSet<IPath> resourcePaths = new HashSet<IPath>(fExpectedChanges.keySet());
+		HashSet<IPath> resourcePaths = new HashSet<>(fExpectedChanges.keySet());
 
 		for (IPath resourcePath : resourcePaths) {
 			fMessage.append("Checking expectations for ");

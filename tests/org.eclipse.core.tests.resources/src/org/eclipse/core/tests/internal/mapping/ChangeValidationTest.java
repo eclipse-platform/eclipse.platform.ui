@@ -33,7 +33,7 @@ public class ChangeValidationTest extends ResourceTest {
 	}
 
 	private void assertStatusEqual(IStatus status, String[] expectedMessages) {
-		List<String> actualMessages = new ArrayList<String>();
+		List<String> actualMessages = new ArrayList<>();
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {

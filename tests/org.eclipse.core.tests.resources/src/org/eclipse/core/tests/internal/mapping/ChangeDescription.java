@@ -30,13 +30,13 @@ public class ChangeDescription {
 	public static final String MOVED = "Moved {0}";
 	public static final String REMOVED = "Removed {0}";
 
-	private List<IResource> addedRoots = new ArrayList<IResource>();
-	private List<IResource> changedRoots = new ArrayList<IResource>();
-	private List<IResource> closedProjects = new ArrayList<IResource>();
-	private List<IResource> copiedRoots = new ArrayList<IResource>();
-	private List<Status> errors = new ArrayList<Status>();
-	private List<IResource> movedRoots = new ArrayList<IResource>();
-	private List<IResource> removedRoots = new ArrayList<IResource>();
+	private List<IResource> addedRoots = new ArrayList<>();
+	private List<IResource> changedRoots = new ArrayList<>();
+	private List<IResource> closedProjects = new ArrayList<>();
+	private List<IResource> copiedRoots = new ArrayList<>();
+	private List<Status> errors = new ArrayList<>();
+	private List<IResource> movedRoots = new ArrayList<>();
+	private List<IResource> removedRoots = new ArrayList<>();
 
 	public static String getMessageFor(String messageTemplate, IResource resource) {
 		return NLS.bind(messageTemplate, resource.getFullPath().toString());
@@ -55,7 +55,7 @@ public class ChangeDescription {
 
 	public IStatus asStatus() {
 		if (errors.isEmpty()) {
-			List<ModelStatus> result = new ArrayList<ModelStatus>();
+			List<ModelStatus> result = new ArrayList<>();
 			accumulateStatus(addedRoots.toArray(new IResource[addedRoots.size()]), result, ADDED);
 			accumulateStatus(removedRoots.toArray(new IResource[removedRoots.size()]), result, REMOVED);
 			accumulateStatus(movedRoots.toArray(new IResource[movedRoots.size()]), result, MOVED);

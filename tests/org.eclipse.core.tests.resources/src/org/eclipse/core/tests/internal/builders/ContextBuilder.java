@@ -23,7 +23,7 @@ public class ContextBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.contextbuilder";
 
 	/** Stores IBuildConfiguration -> ContextBuilder */
-	private static HashMap<IBuildConfiguration, ContextBuilder> builders = new HashMap<IBuildConfiguration, ContextBuilder>();
+	private static HashMap<IBuildConfiguration, ContextBuilder> builders = new HashMap<>();
 	/** The context information for the last run of this builder */
 	IBuildContext contextForLastBuild = null;
 	/** The trigger for the last run of this builder */
