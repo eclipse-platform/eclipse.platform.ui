@@ -267,7 +267,7 @@ public class CSSSWTColorHelper {
 		if (grad.getRGBs().size() == grad.getPercents().size() + 1) {
 			int[] percents = new int[grad.getPercents().size()];
 			for (int i = 0; i < percents.length; i++) {
-				int value = ((Integer) grad.getPercents().get(i)).intValue();
+				int value = (grad.getPercents().get(i)).intValue();
 				if (value < 0 || value > 100) {
 					// TODO this should be an exception because bad source
 					// format
