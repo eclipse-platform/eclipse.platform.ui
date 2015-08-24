@@ -53,7 +53,7 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	/**
-	 * Tests behaviour of IFileStore#fetchInfo when underlying file system
+	 * Tests behavior of IFileStore#fetchInfo when underlying file system
 	 * throws exceptions.
 	 */
 	public void testBrokenFetchInfo() {
@@ -513,7 +513,6 @@ public class FileStoreTest extends LocalStoreTest {
 		} catch (CoreException e) {
 			//expected
 		}
-
 	}
 
 	public void testReadOnly() throws CoreException {
