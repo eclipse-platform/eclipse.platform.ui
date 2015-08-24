@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.WorkbenchException;
@@ -653,15 +652,11 @@ public class MarkerContentGenerator {
 	 */
 	private void initializePreferenceListener() {
 		if (filterPreferenceListener == null) {
-			filterPreferenceListener = new IPropertyChangeListener() {
-
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getProperty().equals(getMementoPreferenceName())) {
-						rebuildFilters();
-					}
-
+			filterPreferenceListener = event -> {
+				if (event.getProperty().equals(getMementoPreferenceName())) {
+					rebuildFilters();
 				}
+
 			};
 			IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 					.addPropertyChangeListener(filterPreferenceListener);

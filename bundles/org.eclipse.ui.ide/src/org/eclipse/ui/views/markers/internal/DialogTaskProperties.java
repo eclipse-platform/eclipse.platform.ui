@@ -18,8 +18,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -84,15 +82,12 @@ public class DialogTaskProperties extends DialogMarkerProperties {
         priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
                 PRIORITY_LOW });
         // Prevent Esc and Return from closing the dialog when the combo is active.
-        priorityCombo.addTraverseListener(new TraverseListener() {
-            @Override
-			public void keyTraversed(TraverseEvent e) {
-                if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
-                    e.doit = false;
-                }
-            }
-        });
+        priorityCombo.addTraverseListener(e -> {
+		    if (e.detail == SWT.TRAVERSE_ESCAPE
+		            || e.detail == SWT.TRAVERSE_RETURN) {
+		        e.doit = false;
+		    }
+		});
         priorityCombo.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e) {

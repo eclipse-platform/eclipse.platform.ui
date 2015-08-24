@@ -18,7 +18,6 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -72,13 +71,9 @@ public class FiltersContribution extends MarkersContribution {
 				 */
 				private Listener getMenuItemListener(final MarkerFieldFilterGroup filter,
 						final ExtendedMarkersView extendedView) {
-					return new Listener() {
-
-						@Override
-						public void handleEvent(Event event) {
-							if (extendedView != null)
-								extendedView.toggleFilter(filter);
-						}
+					return event -> {
+						if (extendedView != null)
+							extendedView.toggleFilter(filter);
 					};
 				}
 			};
@@ -104,14 +99,10 @@ public class FiltersContribution extends MarkersContribution {
 				item.setText(MarkerMessages.MarkerFilter_showAllCommand_title);
 				item.setSelection(noFiltersSelected());
 
-				item.addListener(SWT.Selection, new Listener() {
-
-					@Override
-					public void handleEvent(Event event) {
-						ExtendedMarkersView view = getView();
-						if (view != null) {
-							view.disableAllFilters();
-						}
+				item.addListener(SWT.Selection, event -> {
+					ExtendedMarkersView view = getView();
+					if (view != null) {
+						view.disableAllFilters();
 					}
 				});
 			}

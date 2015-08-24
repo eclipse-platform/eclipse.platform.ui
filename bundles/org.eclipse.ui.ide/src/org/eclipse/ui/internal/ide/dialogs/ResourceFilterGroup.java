@@ -24,7 +24,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -62,10 +61,8 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -84,10 +81,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.MenuDetectEvent;
-import org.eclipse.swt.events.MenuDetectListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -657,12 +650,7 @@ public class ResourceFilterGroup {
 		filterView.setInput(filters);
 		filterView.getTree().setFont(parent.getFont());
 
-		filterView.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				refreshEnablement();
-			}
-		});
+		filterView.addSelectionChangedListener(event -> refreshEnablement());
 
 		TreeColumn modeColumn = new TreeColumn(filterView.getTree(), 0);
 		modeColumn
@@ -723,18 +711,15 @@ public class ResourceFilterGroup {
 		filterView.addDropSupport(ops, transfers,
 				new FilterCopyDrop(filterView));
 
-		filterView.getTree().addMenuDetectListener(new MenuDetectListener() {
-			@Override
-			public void menuDetected(MenuDetectEvent e) {
-				MenuManager mgr = new MenuManager();
-				mgr.add(addSubFilterAction);
-				mgr.add(addSubGroupFilterAction);
-				mgr.add(new Separator());
-				mgr.add(new EditFilterAction());
-				mgr.add(new RemoveFilterAction());
-				filterView.getControl().setMenu(
-						mgr.createContextMenu(filterView.getControl()));
-			}
+		filterView.getTree().addMenuDetectListener(e -> {
+			MenuManager mgr = new MenuManager();
+			mgr.add(addSubFilterAction);
+			mgr.add(addSubGroupFilterAction);
+			mgr.add(new Separator());
+			mgr.add(new EditFilterAction());
+			mgr.add(new RemoveFilterAction());
+			filterView.getControl().setMenu(
+					mgr.createContextMenu(filterView.getControl()));
 		});
 		TreeColumnLayout layout = new TreeColumnLayout();
 		tableComposite.setLayout( layout );
@@ -1502,15 +1487,12 @@ class FilterTypeUtil {
 	 * @param descriptors
 	 */
 	private static void sortDescriptors(IFilterMatcherDescriptor[] descriptors) {
-		Arrays.sort(descriptors, new Comparator() {
-			@Override
-			public int compare(Object arg0, Object arg1) {
-				if (((IFilterMatcherDescriptor) arg0).getId().equals(FileInfoAttributesMatcher.ID))
-					return -1;
-				if (((IFilterMatcherDescriptor) arg1).getId().equals(FileInfoAttributesMatcher.ID))
-					return 1;
-				return ((IFilterMatcherDescriptor) arg0).getId().compareTo(((IFilterMatcherDescriptor) arg1).getId());
-			}
+		Arrays.sort(descriptors, (arg0, arg1) -> {
+			if (((IFilterMatcherDescriptor) arg0).getId().equals(FileInfoAttributesMatcher.ID))
+				return -1;
+			if (((IFilterMatcherDescriptor) arg1).getId().equals(FileInfoAttributesMatcher.ID))
+				return 1;
+			return ((IFilterMatcherDescriptor) arg0).getId().compareTo(((IFilterMatcherDescriptor) arg1).getId());
 		});
 	}
 
@@ -2709,12 +2691,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
-			arguments.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInputText();
-				}
-			});
+			arguments.addModifyListener(e -> validateInputText());
 
 			dummyLabel1 = new Label(multiArgumentComposite, SWT.NONE);
 			data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
@@ -2765,12 +2742,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 				argumentsRegularExpresion.setSelection(argument.regularExpression);
 			}
 
-			arguments.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					storeMultiSelection();
-				}
-			});
+			arguments.addModifyListener(e -> storeMultiSelection());
 			argumentsRegularExpresion.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -2804,12 +2776,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			data.widthHint = 150;
 			arguments.setLayoutData(data);
 			arguments.setFont(multiArgumentComposite.getFont());
-			arguments.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInputText();
-				}
-			});
+			arguments.addModifyListener(e -> validateInputText());
 
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
@@ -2819,12 +2786,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 					arguments.setText(convertToEditableLength(argument.pattern));
 			}
 
-			arguments.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					storeMultiSelection();
-				}
-			});
+			arguments.addModifyListener(e -> storeMultiSelection());
 		}
 		if (selectedKeyOperatorType.equals(Date.class)) {
 			GridData data;
@@ -3202,13 +3164,8 @@ class DefaultCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		arguments.setLayoutData(data);
 		arguments.setFont(font);
-		arguments.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS,
-						arguments.getText());
-			}
-		});
+		arguments.addModifyListener(e -> FilterTypeUtil.setValue(filter, FilterTypeUtil.ARGUMENTS,
+				arguments.getText()));
 		if (filter.hasStringArguments())
 			arguments.setText((String) FilterTypeUtil.getValue(filter,
 					FilterTypeUtil.ARGUMENTS));

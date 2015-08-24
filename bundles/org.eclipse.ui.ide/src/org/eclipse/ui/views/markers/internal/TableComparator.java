@@ -347,12 +347,7 @@ public class TableComparator extends ViewerComparator implements Comparator {
 	 * @param end
 	 */
 	public void sort(final Viewer viewer, Object[] elements, int start, int end) {
-		Arrays.sort(elements, start, end, new Comparator() {
-			@Override
-			public int compare(Object a, Object b) {
-				return TableComparator.this.compare(viewer, a, b);
-			}
-		});
+		Arrays.sort(elements, start, end, (a, b) -> TableComparator.this.compare(viewer, a, b));
 	}
 
 }

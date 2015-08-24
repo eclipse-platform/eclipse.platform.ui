@@ -83,11 +83,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	public AddBookmarkAction(final Shell shell, boolean promptForName) {
 		super(IDEWorkbenchMessages.AddBookmarkLabel);
 		Assert.isNotNull(shell);
-		shellProvider = new IShellProvider() {
-			@Override
-			public Shell getShell() {
-				return shell;
-			} };
+		shellProvider = () -> shell;
 
 		initAction(promptForName);
 	}

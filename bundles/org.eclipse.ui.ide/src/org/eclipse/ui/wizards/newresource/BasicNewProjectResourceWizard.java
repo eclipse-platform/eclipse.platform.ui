@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
@@ -220,24 +219,20 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 		}
 
 		// create the new project operation
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
-				CreateProjectOperation op = new CreateProjectOperation(
-						description, ResourceMessages.NewProject_windowTitle);
-				try {
-					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
-					// directly execute the operation so that the undo state is
-					// not preserved.  Making this undoable resulted in too many
-					// accidental file deletions.
-					op.execute(monitor, WorkspaceUndoUtil
-						.getUIInfoAdapter(getShell()));
-				} catch (ExecutionException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
+		IRunnableWithProgress op = monitor -> {
+CreateProjectOperation op1 = new CreateProjectOperation(
+			description, ResourceMessages.NewProject_windowTitle);
+try {
+		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
+		// directly execute the operation so that the undo state is
+		// not preserved.  Making this undoable resulted in too many
+		// accidental file deletions.
+		op1.execute(monitor, WorkspaceUndoUtil
+			.getUIInfoAdapter(getShell()));
+} catch (ExecutionException e) {
+		throw new InvocationTargetException(e);
+}
+};
 
 		// run the new project creation operation
 		try {

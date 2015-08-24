@@ -107,13 +107,8 @@ public class TipsAndTricksAction extends PartEventAction implements
         if (feature != null) {
             final String href = feature.getTipsAndTricksHref();
             if (href != null) {
-                BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-                    @Override
-					public void run() {
-                        workbenchWindow.getWorkbench().getHelpSystem()
-								.displayHelpResource(href);
-                    }
-                });
+                BusyIndicator.showWhile(shell.getDisplay(), () -> workbenchWindow.getWorkbench().getHelpSystem()
+						.displayHelpResource(href));
             } else {
                 IStatus status = new Status(
                         IStatus.ERROR,

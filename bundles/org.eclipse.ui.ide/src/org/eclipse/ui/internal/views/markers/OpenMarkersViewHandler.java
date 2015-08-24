@@ -71,13 +71,10 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 	 * @return IInputValidator
 	 */
 	private IInputValidator getValidator() {
-		return new IInputValidator() {
-			@Override
-			public String isValid(String newText) {
-				if (newText.length() > 0)
-					return null;
-				return MarkerMessages.MarkerFilterDialog_emptyMessage;
-			}
+		return newText -> {
+			if (newText.length() > 0)
+				return null;
+			return MarkerMessages.MarkerFilterDialog_emptyMessage;
 		};
 	}
 }

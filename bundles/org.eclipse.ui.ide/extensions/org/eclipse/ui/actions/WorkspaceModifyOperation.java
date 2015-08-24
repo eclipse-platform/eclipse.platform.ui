@@ -101,22 +101,19 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
             throws InvocationTargetException, InterruptedException {
         final InvocationTargetException[] iteHolder = new InvocationTargetException[1];
         try {
-            IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-                @Override
-				public void run(IProgressMonitor pm) throws CoreException {
-                    try {
-                        execute(pm);
-                    } catch (InvocationTargetException e) {
-                        // Pass it outside the workspace runnable
-                        iteHolder[0] = e;
-                    } catch (InterruptedException e) {
-                        // Re-throw as OperationCanceledException, which will be
-                        // caught and re-thrown as InterruptedException below.
-                        throw new OperationCanceledException(e.getMessage());
-                    }
-                    // CoreException and OperationCanceledException are propagated
-                }
-            };
+            IWorkspaceRunnable workspaceRunnable = pm -> {
+			    try {
+			        execute(pm);
+			    } catch (InvocationTargetException e1) {
+			        // Pass it outside the workspace runnable
+			        iteHolder[0] = e1;
+			    } catch (InterruptedException e2) {
+			        // Re-throw as OperationCanceledException, which will be
+			        // caught and re-thrown as InterruptedException below.
+			        throw new OperationCanceledException(e2.getMessage());
+			    }
+			    // CoreException and OperationCanceledException are propagated
+			};
 			// if we are in the UI thread, make sure we use progress monitor
 			// that spins event loop to allow processing of pending asyncExecs
 			if (monitor != null && PlatformUI.isWorkbenchRunning()

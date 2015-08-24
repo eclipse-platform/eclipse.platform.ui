@@ -24,12 +24,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -152,16 +148,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         boolean gcj = Boolean.getBoolean("eclipse.gcj"); //$NON-NLS-1$
 		String vmName = System.getProperty("java.vm.name");//$NON-NLS-1$
 		if (!gcj && vmName != null && vmName.indexOf("libgcj") != -1) { //$NON-NLS-1$
-			composite.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					// set this via an async - if we set it directly the dialog
-					// will
-					// be huge. See bug 223532
-					setMessage(IDEWorkbenchMessages.UnsupportedVM_message,
-							IMessageProvider.WARNING);
-				}
-			});
+			composite.getDisplay().asyncExec(() -> setMessage(IDEWorkbenchMessages.UnsupportedVM_message,
+					IMessageProvider.WARNING));
 		}
 
         Dialog.applyDialogFont(composite);
@@ -190,16 +178,13 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogName);
-		shell.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				// Bug 462707: [WorkbenchLauncher] dialog not closed on ESC.
-				// The dialog doesn't always have a parent, so
-				// Shell#traverseEscape() doesn't always close it for free.
-				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					e.detail = SWT.TRAVERSE_NONE;
-					cancelPressed();
-				}
+		shell.addTraverseListener(e -> {
+			// Bug 462707: [WorkbenchLauncher] dialog not closed on ESC.
+			// The dialog doesn't always have a parent, so
+			// Shell#traverseEscape() doesn't always close it for free.
+			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				e.detail = SWT.TRAVERSE_NONE;
+				cancelPressed();
 			}
 		});
     }
@@ -254,23 +239,20 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
         text.setFocus();
         text.setLayoutData(new GridData(400, SWT.DEFAULT));
-        text.addModifyListener(new ModifyListener(){
-        	@Override
-			public void modifyText(ModifyEvent e) {
-        		Button okButton = getButton(Window.OK);
-        		if(okButton != null && !okButton.isDisposed()) {
-        			boolean nonWhitespaceFound = false;
-					String characters = getWorkspaceLocation();
-					for (int i = 0; !nonWhitespaceFound
-							&& i < characters.length(); i++) {
-						if (!Character.isWhitespace(characters.charAt(i))) {
-							nonWhitespaceFound = true;
-						}
+        text.addModifyListener(e -> {
+			Button okButton = getButton(Window.OK);
+			if(okButton != null && !okButton.isDisposed()) {
+				boolean nonWhitespaceFound = false;
+				String characters = getWorkspaceLocation();
+				for (int i = 0; !nonWhitespaceFound
+						&& i < characters.length(); i++) {
+					if (!Character.isWhitespace(characters.charAt(i))) {
+						nonWhitespaceFound = true;
 					}
-        			okButton.setEnabled(nonWhitespaceFound);
-        		}
-        	}
-        });
+				}
+				okButton.setEnabled(nonWhitespaceFound);
+			}
+		});
         setInitialTextValues(text);
 
         Button browseButton = new Button(panel, SWT.PUSH);

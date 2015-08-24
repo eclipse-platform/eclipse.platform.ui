@@ -24,26 +24,16 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -271,27 +261,19 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		GridData textData = new GridData();
 		textData.widthHint = convertWidthInCharsToPixels(10);
 		limitText.setLayoutData(textData);
-		limitText.addVerifyListener(new VerifyListener() {
-
-			@Override
-			public void verifyText(VerifyEvent e) {
-				if (e.character != 0 && e.keyCode != SWT.BS
-						&& e.keyCode != SWT.DEL
-						&& !Character.isDigit(e.character)) {
-					e.doit = false;
-				}
+		limitText.addVerifyListener(e -> {
+			if (e.character != 0 && e.keyCode != SWT.BS
+					&& e.keyCode != SWT.DEL
+					&& !Character.isDigit(e.character)) {
+				e.doit = false;
 			}
 		});
 
-		limitText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				try {
-					Integer.parseInt(limitText.getText());
-				} catch (NumberFormatException ex) {
-					limitText.setText(Integer.toString(generator.getMarkerLimits()));
-				}
+		limitText.addModifyListener(e -> {
+			try {
+				Integer.parseInt(limitText.getText());
+			} catch (NumberFormatException ex) {
+				limitText.setText(Integer.toString(generator.getMarkerLimits()));
 			}
 		});
 	}
@@ -318,28 +300,22 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			}
 		});
 
-		configsTable.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				configsTable.setSelection(new StructuredSelection(event.getElement()));
-				updateRadioButtonsFromTable();
-			}
+		configsTable.addCheckStateListener(event -> {
+			configsTable.setSelection(new StructuredSelection(event.getElement()));
+			updateRadioButtonsFromTable();
 		});
 
-		configsTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				storeConfiguration();
-				MarkerFieldFilterGroup group = getSelectionFromTable();
-				if (group == null) {
-					setFieldsEnabled(false);
-				} else {
-					setFieldsEnabled(true);
-				}
-				updateButtonEnablement(group);
-				updateConfigDesc(group);
-				selectedFilterGroup = group;
+		configsTable.addSelectionChangedListener(event -> {
+			storeConfiguration();
+			MarkerFieldFilterGroup group = getSelectionFromTable();
+			if (group == null) {
+				setFieldsEnabled(false);
+			} else {
+				setFieldsEnabled(true);
 			}
+			updateButtonEnablement(group);
+			updateConfigDesc(group);
+			selectedFilterGroup = group;
 		});
 
 		createButtons(composite);
@@ -390,12 +366,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		descComposite.setBackground(parent.getBackground());
 
 		final FormToolkit toolkit = new FormToolkit(parent.getDisplay());
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				toolkit.dispose();
-			}
-		});
+		parent.addDisposeListener(e -> toolkit.dispose());
 
 		form = toolkit.createScrolledForm(descComposite);
 		form.setBackground(parent.getBackground());
@@ -506,19 +477,15 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	}
 
 	private IInputValidator getNameValidator(final String currentName, final Collection<String> existingNames) {
-		return new IInputValidator() {
-
-			@Override
-			public String isValid(String newText) {
-				newText = newText.trim();
-				if (newText.length() == 0) {
-					return MarkerMessages.MarkerFilterDialog_emptyMessage;
-				}
-				if(existingNames.contains(newText) && !currentName.equals(newText)) {
-					return NLS.bind(MarkerMessages.filtersDialog_conflictingName, newText);
-				}
-				return null;
+		return newText -> {
+			newText = newText.trim();
+			if (newText.length() == 0) {
+				return MarkerMessages.MarkerFilterDialog_emptyMessage;
 			}
+			if(existingNames.contains(newText) && !currentName.equals(newText)) {
+				return NLS.bind(MarkerMessages.filtersDialog_conflictingName, newText);
+			}
+			return null;
 		};
 	}
 

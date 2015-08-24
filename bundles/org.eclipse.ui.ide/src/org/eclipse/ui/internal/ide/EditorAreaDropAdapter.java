@@ -80,12 +80,7 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
         Display d = window.getShell().getDisplay();
         final IWorkbenchPage page = window.getActivePage();
         if (page != null) {
-            d.asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    asyncDrop(event, page);
-                }
-            });
+            d.asyncExec(() -> asyncDrop(event, page));
         }
     }
 

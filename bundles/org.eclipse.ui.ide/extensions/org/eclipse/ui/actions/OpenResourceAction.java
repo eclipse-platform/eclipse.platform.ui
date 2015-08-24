@@ -238,17 +238,14 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 						}
 					}
 					if (openProjectReferences && hasOtherClosedProjects()) {
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								try {
-								openProjectReferences = promptToOpenWithReferences();
-								} catch (OperationCanceledException e) {
-									canceled = true;
-								}
-								//remember that we have prompted to avoid repeating the analysis
-								hasPrompted = true;
+						Display.getDefault().syncExec(() -> {
+							try {
+							openProjectReferences = promptToOpenWithReferences();
+							} catch (OperationCanceledException e) {
+								canceled = true;
 							}
+							//remember that we have prompted to avoid repeating the analysis
+							hasPrompted = true;
 						});
 						if (canceled)
 							throw new OperationCanceledException();

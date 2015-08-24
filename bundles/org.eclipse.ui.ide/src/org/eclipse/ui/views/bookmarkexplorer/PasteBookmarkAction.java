@@ -16,10 +16,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -64,20 +62,17 @@ class PasteBookmarkAction extends BookmarkAction {
         final ArrayList newMarkerAttributes = new ArrayList();
         final ArrayList newMarkerResources = new ArrayList();
         try {
-            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-                @Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					for (int i = 0; i < markerData.length; i++) {
-						// Collect the info about the markers to be pasted.
-						// Ignore any markers that aren't bookmarks.
-						if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
-							continue;
-						}
-						newMarkerResources.add(markerData[i].getResource());
-						newMarkerAttributes.add(markerData[i].getAttributes());
+            ResourcesPlugin.getWorkspace().run(monitor -> {
+				for (int i = 0; i < markerData.length; i++) {
+					// Collect the info about the markers to be pasted.
+					// Ignore any markers that aren't bookmarks.
+					if (!markerData[i].getType().equals(IMarker.BOOKMARK)) {
+						continue;
 					}
-                }
-            }, null);
+					newMarkerResources.add(markerData[i].getResource());
+					newMarkerAttributes.add(markerData[i].getAttributes());
+				}
+			}, null);
         } catch (CoreException e) {
             ErrorDialog.openError(view.getShell(), BookmarkMessages.PasteBookmark_errorTitle,
                     null, e.getStatus());
@@ -96,14 +91,11 @@ class PasteBookmarkAction extends BookmarkAction {
         // Must be done outside the create marker operation above since notification for add is
         // sent after the operation is executed.
         if (op.getMarkers() != null) {
-            view.getShell().getDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    view.getViewer().setSelection(
-                            new StructuredSelection(op.getMarkers()));
-                    view.updatePasteEnablement();
-                }
-            });
+            view.getShell().getDisplay().asyncExec(() -> {
+			    view.getViewer().setSelection(
+			            new StructuredSelection(op.getMarkers()));
+			    view.updatePasteEnablement();
+			});
         }
     }
 

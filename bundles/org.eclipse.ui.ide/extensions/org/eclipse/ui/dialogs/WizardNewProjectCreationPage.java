@@ -31,7 +31,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -65,15 +64,12 @@ public class WizardNewProjectCreationPage extends WizardPage {
     // widgets
     Text projectNameField;
 
-    private Listener nameModifyListener = new Listener() {
-        @Override
-		public void handleEvent(Event e) {
-        	setLocationForSelection();
-            boolean valid = validatePage();
-            setPageComplete(valid);
+    private Listener nameModifyListener = e -> {
+		setLocationForSelection();
+	    boolean valid = validatePage();
+	    setPageComplete(valid);
 
-        }
-    };
+	};
 
 	private ProjectContentsLocationArea locationArea;
 
@@ -171,22 +167,19 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @return IErrorMessageReporter
 	 */
 	private IErrorMessageReporter getErrorReporter() {
-		return new IErrorMessageReporter(){
-			@Override
-			public void reportError(String errorMessage, boolean infoOnly) {
-				if (infoOnly) {
-					setMessage(errorMessage, IStatus.INFO);
-					setErrorMessage(null);
-				}
-				else
-					setErrorMessage(errorMessage);
-				boolean valid = errorMessage == null;
-				if(valid) {
-					valid = validatePage();
-				}
-
-				setPageComplete(valid);
+		return (errorMessage, infoOnly) -> {
+			if (infoOnly) {
+				setMessage(errorMessage, IStatus.INFO);
+				setErrorMessage(null);
 			}
+			else
+				setErrorMessage(errorMessage);
+			boolean valid = errorMessage == null;
+			if(valid) {
+				valid = validatePage();
+			}
+
+			setPageComplete(valid);
 		};
 	}
 

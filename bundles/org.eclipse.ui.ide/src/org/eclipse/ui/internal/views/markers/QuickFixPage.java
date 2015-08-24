@@ -20,19 +20,14 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -263,12 +258,9 @@ public class QuickFixPage extends WizardPage {
 		});
 
 		resolutionsList
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					@Override
-					public void selectionChanged(SelectionChangedEvent event) {
-						markersTable.refresh();
-						setPageComplete(markersTable.getCheckedElements().length > 0);
-					}
+				.addSelectionChangedListener(event -> {
+					markersTable.refresh();
+					setPageComplete(markersTable.getCheckedElements().length > 0);
 				});
 	}
 
@@ -368,16 +360,13 @@ public class QuickFixPage extends WizardPage {
 			}
 		});
 
-		markersTable.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked() == true) {
-					setPageComplete(true);
-				} else {
-					setPageComplete(markersTable.getCheckedElements().length > 0);
-				}
-
+		markersTable.addCheckStateListener(event -> {
+			if (event.getChecked() == true) {
+				setPageComplete(true);
+			} else {
+				setPageComplete(markersTable.getCheckedElements().length > 0);
 			}
+
 		});
 
 		new OpenAndLinkWithEditorHelper(markersTable) {
@@ -472,15 +461,10 @@ public class QuickFixPage extends WizardPage {
 		if (resolution instanceof WorkbenchMarkerResolution) {
 
 			try {
-				getWizard().getContainer().run(false, true, new IRunnableWithProgress() {
-
-					@Override
-					public void run(IProgressMonitor monitor1) {
-						IMarker[] markers = new IMarker[checked.length];
-						System.arraycopy(checked, 0, markers, 0, checked.length);
-						((WorkbenchMarkerResolution) resolution).run(markers, monitor1);
-					}
-
+				getWizard().getContainer().run(false, true, monitor1 -> {
+					IMarker[] markers = new IMarker[checked.length];
+					System.arraycopy(checked, 0, markers, 0, checked.length);
+					((WorkbenchMarkerResolution) resolution).run(markers, monitor1);
 				});
 			} catch (InvocationTargetException e) {
 				StatusManager.getManager().handle(
@@ -493,24 +477,19 @@ public class QuickFixPage extends WizardPage {
 		} else {
 
 			try {
-				getWizard().getContainer().run(false, true, new IRunnableWithProgress() {
-
-					@Override
-					public void run(IProgressMonitor monitor1) {
-						monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
-						for (int i = 0; i < checked.length; i++) {
-							// Allow paint events and wake up the button
-							getShell().getDisplay().readAndDispatch();
-							if (monitor1.isCanceled()) {
-								return;
-							}
-							IMarker marker = (IMarker) checked[i];
-							monitor1.subTask(Util.getProperty(IMarker.MESSAGE, marker));
-							resolution.run(marker);
-							monitor1.worked(1);
+				getWizard().getContainer().run(false, true, monitor1 -> {
+					monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
+					for (int i = 0; i < checked.length; i++) {
+						// Allow paint events and wake up the button
+						getShell().getDisplay().readAndDispatch();
+						if (monitor1.isCanceled()) {
+							return;
 						}
+						IMarker marker = (IMarker) checked[i];
+						monitor1.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+						resolution.run(marker);
+						monitor1.worked(1);
 					}
-
 				});
 			} catch (InvocationTargetException e) {
 				StatusManager.getManager().handle(

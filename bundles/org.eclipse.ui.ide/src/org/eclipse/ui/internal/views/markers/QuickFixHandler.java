@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -74,38 +73,35 @@ public class QuickFixHandler extends MarkerViewHandler {
 		final IMarker[] selectedMarkers = view.getSelectedMarkers();
 		final IMarker firstSelectedMarker = selectedMarkers[0];
 
-		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				monitor.beginTask(MarkerMessages.resolveMarkerAction_computationManyAction, 100);
+		IRunnableWithProgress resolutionsRunnable = monitor -> {
+			monitor.beginTask(MarkerMessages.resolveMarkerAction_computationManyAction, 100);
 
-				IMarker[] allMarkers = view.getAllMarkers();
-				monitor.worked(20);
-				IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(firstSelectedMarker);
-				int progressCount = 80;
-				if (resolutions.length > 1) {
-					progressCount= progressCount / resolutions.length;
-				}
-				for (int i = 0; i < resolutions.length; i++) {
-					IMarkerResolution markerResolution= resolutions[i];
-					if (markerResolution instanceof WorkbenchMarkerResolution) {
-						IMarker[] other = ((WorkbenchMarkerResolution)markerResolution).findOtherMarkers(allMarkers);
-						if (containsAllButFirst(other, selectedMarkers)) {
-							Collection<IMarker> markers = new LinkedHashSet<>(other.length + 1);
-							// Duplicates will not be added due to set
-							markers.add(firstSelectedMarker);
-							markers.addAll(Arrays.asList(other));
-							resolutionsMap.put(markerResolution, markers);
-						}
-					} else if (selectedMarkers.length == 1) {
-						Collection<IMarker> markers = new ArrayList<>(1);
-						markers.add(firstSelectedMarker);
-						resolutionsMap.put(markerResolution, markers);
-					}
-					monitor.worked(progressCount);
-				}
-				monitor.done();
+			IMarker[] allMarkers = view.getAllMarkers();
+			monitor.worked(20);
+			IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(firstSelectedMarker);
+			int progressCount = 80;
+			if (resolutions.length > 1) {
+				progressCount= progressCount / resolutions.length;
 			}
+			for (int i = 0; i < resolutions.length; i++) {
+				IMarkerResolution markerResolution= resolutions[i];
+				if (markerResolution instanceof WorkbenchMarkerResolution) {
+					IMarker[] other = ((WorkbenchMarkerResolution)markerResolution).findOtherMarkers(allMarkers);
+					if (containsAllButFirst(other, selectedMarkers)) {
+						Collection<IMarker> markers1 = new LinkedHashSet<>(other.length + 1);
+						// Duplicates will not be added due to set
+						markers1.add(firstSelectedMarker);
+						markers1.addAll(Arrays.asList(other));
+						resolutionsMap.put(markerResolution, markers1);
+					}
+				} else if (selectedMarkers.length == 1) {
+					Collection<IMarker> markers2 = new ArrayList<>(1);
+					markers2.add(firstSelectedMarker);
+					resolutionsMap.put(markerResolution, markers2);
+				}
+				monitor.worked(progressCount);
+			}
+			monitor.done();
 		};
 
 		Object service = view.getSite().getAdapter(IWorkbenchSiteProgressService.class);

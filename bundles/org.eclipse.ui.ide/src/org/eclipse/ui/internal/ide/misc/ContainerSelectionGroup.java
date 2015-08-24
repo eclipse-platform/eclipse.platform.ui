@@ -22,12 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.BidiUtils;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -269,30 +265,24 @@ public class ContainerSelectionGroup extends Composite {
 				.getDecoratingWorkbenchLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
 		treeViewer.setUseHashlookup(true);
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event
-						.getSelection();
-				containerSelectionChanged((IContainer) selection
-						.getFirstElement()); // allow null
-			}
+		treeViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) event
+					.getSelection();
+			containerSelectionChanged((IContainer) selection
+					.getFirstElement()); // allow null
 		});
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = event.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					Object item = ((IStructuredSelection) selection)
-							.getFirstElement();
-					if (item == null) {
-						return;
-					}
-					if (treeViewer.getExpandedState(item)) {
-						treeViewer.collapseToLevel(item, 1);
-					} else {
-						treeViewer.expandToLevel(item, 1);
-					}
+		treeViewer.addDoubleClickListener(event -> {
+			ISelection selection = event.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				Object item = ((IStructuredSelection) selection)
+						.getFirstElement();
+				if (item == null) {
+					return;
+				}
+				if (treeViewer.getExpandedState(item)) {
+					treeViewer.collapseToLevel(item, 1);
+				} else {
+					treeViewer.expandToLevel(item, 1);
 				}
 			}
 		});

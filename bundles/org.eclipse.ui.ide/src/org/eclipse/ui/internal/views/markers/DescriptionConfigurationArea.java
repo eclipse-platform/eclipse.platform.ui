@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.views.markers;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -96,13 +94,10 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 
 		// Prevent Esc and Return from closing the dialog when the combo is
 		// active.
-		descriptionCombo.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ESCAPE
-						|| e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-				}
+		descriptionCombo.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE
+					|| e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
 			}
 		});
 

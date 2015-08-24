@@ -25,8 +25,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -152,12 +150,7 @@ public class WizardNewLinkPage extends WizardPage {
         linkTargetField.setLayoutData(data);
         linkTargetField.setFont(font);
         linkTargetField.setEnabled(enabled);
-        linkTargetField.addModifyListener(new ModifyListener() {
-            @Override
-			public void modifyText(ModifyEvent e) {
-                setPageComplete(validatePage());
-            }
-        });
+        linkTargetField.addModifyListener(e -> setPageComplete(validatePage()));
         if (initialLinkTarget != null) {
             linkTargetField.setText(initialLinkTarget);
         }

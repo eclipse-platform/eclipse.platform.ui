@@ -91,12 +91,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	protected WorkspaceAction(final Shell shell, String text) {
 		super(text);
 		Assert.isNotNull(shell);
-		shellProvider = new IShellProvider() {
-			@Override
-			public Shell getShell() {
-				return shell;
-			}
-		};
+		shellProvider = () -> shell;
 	}
 
 	/**

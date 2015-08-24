@@ -22,18 +22,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -161,24 +155,14 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		bttArea.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, true));
 		upButton = new Button(bttArea, SWT.PUSH);
 		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
-		upButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleUpButton(event);
-			}
-		});
+		upButton.addListener(SWT.Selection, event -> handleUpButton(event));
 		setButtonLayoutData(upButton);
 		((GridData)upButton.getLayoutData()).verticalIndent = tableLabelSize.y;
 		upButton.setEnabled(false);
 
 		downButton = new Button(bttArea, SWT.PUSH);
 		downButton.setText(JFaceResources.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
-		downButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleDownButton(event);
-			}
-		});
+		downButton.addListener(SWT.Selection, event -> handleDownButton(event));
 		setButtonLayoutData(downButton);
 		downButton.setEnabled(false);
 		return bttArea;
@@ -206,27 +190,18 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		widthLabel.setLayoutData(gridData);
 
 		widthText = new Text(widthComposite, SWT.BORDER);
-		widthText.addVerifyListener(new VerifyListener() {
-
-			@Override
-			public void verifyText(VerifyEvent e) {
-				if (e.character != 0 && e.keyCode != SWT.BS
-						&& e.keyCode != SWT.DEL
-						&& !Character.isDigit(e.character)) {
-					e.doit = false;
-				}
+		widthText.addVerifyListener(e -> {
+			if (e.character != 0 && e.keyCode != SWT.BS
+					&& e.keyCode != SWT.DEL
+					&& !Character.isDigit(e.character)) {
+				e.doit = false;
 			}
 		});
 
 		gridData = new GridData();
 		gridData.widthHint = convertWidthInCharsToPixels(5);
 		widthText.setLayoutData(gridData);
-		widthText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateWidth();
-			}
-		});
+		widthText.addModifyListener(e -> updateWidth());
 		setWidthEnabled(false);
 		return widthText;
 	}
@@ -260,29 +235,14 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_VisibleColumnsTitle);
-		Listener columnResize = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				column.setWidth(table.getClientArea().width);
-			}
-		};
+		Listener columnResize = event -> column.setWidth(table.getClientArea().width);
 		table.addListener(SWT.Resize, columnResize);
 
 		visibleViewer = new TableViewer(table);
 		visibleViewer.setLabelProvider(doGetLabelProvider());
 		visibleViewer.setContentProvider(ArrayContentProvider.getInstance());
-		visibleViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleVisibleSelection(event.getSelection());
-			}
-		});
-		table.addListener(SWT.MouseDoubleClick, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleToNonVisibleButton(event);
-			}
-		});
+		visibleViewer.addSelectionChangedListener(event -> handleVisibleSelection(event.getSelection()));
+		table.addListener(SWT.MouseDoubleClick, event -> handleToNonVisibleButton(event));
 		visibleViewer.setInput(getVisible());
 		return table;
 	}
@@ -314,29 +274,14 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
-		Listener columnResize = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				column.setWidth(table.getClientArea().width);
-			}
-		};
+		Listener columnResize = event -> column.setWidth(table.getClientArea().width);
 		table.addListener(SWT.Resize, columnResize);
 
 		nonVisibleViewer = new TableViewer(table);
 		nonVisibleViewer.setLabelProvider(doGetLabelProvider());
 		nonVisibleViewer.setContentProvider(ArrayContentProvider.getInstance());
-		nonVisibleViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleNonVisibleSelection(event.getSelection());
-			}
-		});
-		table.addListener(SWT.MouseDoubleClick, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleToVisibleButton(event);
-			}
-		});
+		nonVisibleViewer.addSelectionChangedListener(event -> handleNonVisibleSelection(event.getSelection()));
+		table.addListener(SWT.MouseDoubleClick, event -> handleToVisibleButton(event));
 		nonVisibleViewer.setInput(getNonVisible());
 		return table;
 	}
@@ -366,24 +311,14 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 		toVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveRight);
 		setButtonLayoutData(toVisibleBtt);
 		((GridData)toVisibleBtt.getLayoutData()).verticalIndent = tableLabelSize.y;
-		toVisibleBtt.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleToVisibleButton(event);
-			}
-		});
+		toVisibleBtt.addListener(SWT.Selection, event -> handleToVisibleButton(event));
 		toVisibleBtt.setEnabled(false);
 
 		toNonVisibleBtt = new Button(bttArea, SWT.PUSH);
 		toNonVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveLeft);
 		setButtonLayoutData(toNonVisibleBtt);
 
-		toNonVisibleBtt.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleToNonVisibleButton(event);
-			}
-		});
+		toNonVisibleBtt.addListener(SWT.Selection, event -> handleToNonVisibleButton(event));
 		toNonVisibleBtt.setEnabled(false);
 
 		return bttArea;

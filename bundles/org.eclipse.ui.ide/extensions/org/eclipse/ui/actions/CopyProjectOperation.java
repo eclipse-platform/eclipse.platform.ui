@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
@@ -154,26 +153,23 @@ public class CopyProjectOperation {
 	 */
 	private boolean performProjectCopy(final IProject project,
 			final String projectName, final URI newLocation) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				org.eclipse.ui.ide.undo.CopyProjectOperation op = new org.eclipse.ui.ide.undo.CopyProjectOperation(
-						project, projectName, newLocation,
-						IDEWorkbenchMessages.CopyProjectOperation_copyProject);
-				op.setModelProviderIds(getModelProviderIds());
-				try {
-					PlatformUI.getWorkbench().getOperationSupport()
-							.getOperationHistory().execute(
-									op,
-									monitor,
-									WorkspaceUndoUtil
-											.getUIInfoAdapter(parentShell));
-				} catch (final ExecutionException e) {
-					if (e.getCause() instanceof CoreException) {
-						recordError((CoreException)e.getCause());
-					} else {
-						throw new InvocationTargetException(e);
-					}
+		IRunnableWithProgress op = monitor -> {
+			org.eclipse.ui.ide.undo.CopyProjectOperation op1 = new org.eclipse.ui.ide.undo.CopyProjectOperation(
+					project, projectName, newLocation,
+					IDEWorkbenchMessages.CopyProjectOperation_copyProject);
+			op1.setModelProviderIds(getModelProviderIds());
+			try {
+				PlatformUI.getWorkbench().getOperationSupport()
+						.getOperationHistory().execute(
+								op1,
+								monitor,
+								WorkspaceUndoUtil
+										.getUIInfoAdapter(parentShell));
+			} catch (final ExecutionException e) {
+				if (e.getCause() instanceof CoreException) {
+					recordError((CoreException)e.getCause());
+				} else {
+					throw new InvocationTargetException(e);
 				}
 			}
 		};
@@ -184,19 +180,11 @@ public class CopyProjectOperation {
 			return false;
 		} catch (InvocationTargetException e) {
 			final String message = e.getTargetException().getMessage();
-			parentShell.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					MessageDialog
-							.openError(
-									parentShell,
-									IDEWorkbenchMessages.CopyProjectOperation_copyFailedTitle,
-									NLS
-											.bind(
-													IDEWorkbenchMessages.CopyProjectOperation_internalError,
-													message));
-				}
-			});
+			parentShell.getDisplay().syncExec(() -> MessageDialog
+					.openError(
+							parentShell,
+							IDEWorkbenchMessages.CopyProjectOperation_copyFailedTitle,
+							NLS.bind(IDEWorkbenchMessages.CopyProjectOperation_internalError, message)));
 			return false;
 		}
 

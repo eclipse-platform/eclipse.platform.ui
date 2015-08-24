@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,8 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -101,15 +98,12 @@ public class IDEWorkbenchActivityHelper {
         natureMap = new HashMap();
         // for dynamic UI
         Platform.getExtensionRegistry().addRegistryChangeListener(
-                new IRegistryChangeListener() {
-                    @Override
-					public void registryChanged(IRegistryChangeEvent event) {
-                        if (event.getExtensionDeltas(
-                                "org.eclipse.core.resources", "natures").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
-							loadNatures();
-						}
-                    }
-                }, "org.eclipse.core.resources"); //$NON-NLS-1$
+                event -> {
+				    if (event.getExtensionDeltas(
+				            "org.eclipse.core.resources", "natures").length > 0) { //$NON-NLS-1$ //$NON-NLS-2$
+						loadNatures();
+					}
+				}, "org.eclipse.core.resources"); //$NON-NLS-1$
         loadNatures();
         listener = getChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
@@ -152,38 +146,35 @@ public class IDEWorkbenchActivityHelper {
      * @return the resource change listeners
      */
     private IResourceChangeListener getChangeListener() {
-        return new IResourceChangeListener() {
-            @Override
-			public void resourceChanged(IResourceChangeEvent event) {
-                if (!WorkbenchActivityHelper.isFiltering()) {
-					return;
-				}
-                IResourceDelta mainDelta = event.getDelta();
+        return event -> {
+		    if (!WorkbenchActivityHelper.isFiltering()) {
+				return;
+			}
+		    IResourceDelta mainDelta = event.getDelta();
 
-                if (mainDelta == null) {
-					return;
-				}
-                //Has the root changed?
-                if (mainDelta.getKind() == IResourceDelta.CHANGED
-						&& mainDelta.getResource().getType() == IResource.ROOT) {
+		    if (mainDelta == null) {
+				return;
+			}
+		    //Has the root changed?
+		    if (mainDelta.getKind() == IResourceDelta.CHANGED
+					&& mainDelta.getResource().getType() == IResource.ROOT) {
 
-					IResourceDelta[] children = mainDelta.getAffectedChildren();
-					Set projectsToUpdate = new HashSet();
-					for (int i = 0; i < children.length; i++) {
-						IResourceDelta delta = children[i];
-						if (delta.getResource().getType() == IResource.PROJECT) {
-							IProject project = (IProject) delta.getResource();
+				IResourceDelta[] children = mainDelta.getAffectedChildren();
+				Set projectsToUpdate = new HashSet();
+				for (int i = 0; i < children.length; i++) {
+					IResourceDelta delta = children[i];
+					if (delta.getResource().getType() == IResource.PROJECT) {
+						IProject project = (IProject) delta.getResource();
 
-							if (project.isOpen()) {
-								projectsToUpdate.add(project);
-							}
+						if (project.isOpen()) {
+							projectsToUpdate.add(project);
 						}
 					}
-
-					processProjects(projectsToUpdate);
 				}
-            }
-        };
+
+				processProjects(projectsToUpdate);
+			}
+		};
     }
 
 

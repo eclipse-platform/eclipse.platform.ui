@@ -27,8 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -80,12 +78,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_title);
         this.variableType = variableType;
         pathVariablesGroup = new PathVariablesGroup(false, variableType,
-                new Listener() {
-                    @Override
-					public void handleEvent(Event event) {
-                        updateExtendButtonState();
-                    }
-                });
+                event -> updateExtendButtonState());
         pathVariablesGroup.setSaveVariablesOnChange(true);
         setShellStyle(getShellStyle() | SWT.SHEET);
     }

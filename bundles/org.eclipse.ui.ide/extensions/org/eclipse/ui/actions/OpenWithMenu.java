@@ -29,7 +29,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -173,18 +172,15 @@ public class OpenWithMenu extends ContributionItem {
         if (image != null) {
             menuItem.setImage(image);
         }
-        Listener listener = new Listener() {
-            @Override
-			public void handleEvent(Event event) {
-                switch (event.type) {
-                case SWT.Selection:
-                    if (menuItem.getSelection()) {
-						openEditor(descriptor, false);
-					}
-                    break;
-                }
-            }
-        };
+        Listener listener = event -> {
+		    switch (event.type) {
+		    case SWT.Selection:
+		        if (menuItem.getSelection()) {
+					openEditor(descriptor, false);
+				}
+		        break;
+		    }
+		};
         menuItem.addListener(SWT.Selection, listener);
     }
 
@@ -201,25 +197,22 @@ public class OpenWithMenu extends ContributionItem {
         new MenuItem(menu, SWT.SEPARATOR);
         final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
         menuItem.setText(IDEWorkbenchMessages.OpenWithMenu_Other);
-        Listener listener = new Listener() {
-            @Override
-			public void handleEvent(Event event) {
-                switch (event.type) {
-                case SWT.Selection:
-					EditorSelectionDialog dialog = new EditorSelectionDialog(menu.getShell());
-					String fileName = fileResource.getName();
-					dialog.setFileName(fileName);
-					dialog.setMessage(NLS.bind(IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription, fileName));
-					if (dialog.open() == Window.OK) {
-						IEditorDescriptor editor = dialog.getSelectedEditor();
-						if (editor != null) {
-							openEditor(editor, editor.isOpenExternal());
-						}
+        Listener listener = event -> {
+		    switch (event.type) {
+		    case SWT.Selection:
+				EditorSelectionDialog dialog = new EditorSelectionDialog(menu.getShell());
+				String fileName = fileResource.getName();
+				dialog.setFileName(fileName);
+				dialog.setMessage(NLS.bind(IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription, fileName));
+				if (dialog.open() == Window.OK) {
+					IEditorDescriptor editor = dialog.getSelectedEditor();
+					if (editor != null) {
+						openEditor(editor, editor.isOpenExternal());
 					}
-                    break;
-                }
-            }
-        };
+				}
+		        break;
+		    }
+		};
         menuItem.addListener(SWT.Selection, listener);
     }
 
@@ -350,25 +343,22 @@ public class OpenWithMenu extends ContributionItem {
 		menuItem.setSelection(markAsSelected);
         menuItem.setText(IDEWorkbenchMessages.DefaultEditorDescription_name);
 
-        Listener listener = new Listener() {
-            @Override
-			public void handleEvent(Event event) {
-                switch (event.type) {
-                case SWT.Selection:
-                    if (menuItem.getSelection()) {
-                        IDE.setDefaultEditor(file, null);
-                        try {
-                            openEditor(IDE.getEditorDescriptor(file), false);
-                        } catch (PartInitException e) {
-                            DialogUtil.openError(page.getWorkbenchWindow()
-                                    .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
-                                    e.getMessage(), e);
-                        }
-                    }
-                    break;
-                }
-            }
-        };
+        Listener listener = event -> {
+		    switch (event.type) {
+		    case SWT.Selection:
+		        if (menuItem.getSelection()) {
+		            IDE.setDefaultEditor(file, null);
+		            try {
+		                openEditor(IDE.getEditorDescriptor(file), false);
+		            } catch (PartInitException e) {
+		                DialogUtil.openError(page.getWorkbenchWindow()
+		                        .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
+		                        e.getMessage(), e);
+		            }
+		        }
+		        break;
+		    }
+		};
 
         menuItem.addListener(SWT.Selection, listener);
     }

@@ -73,13 +73,8 @@ class NewTaskAction extends TaskAction {
             // Need to do this in an asyncExec, even though we're in the UI thread here,
             // since the task list updates itself with the addition in an asyncExec,
             // which hasn't been processed yet.
-            getShell().getDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    getTaskList().setSelection(new StructuredSelection(marker),
-                            true);
-                }
-            });
+            getShell().getDisplay().asyncExec(() -> getTaskList().setSelection(new StructuredSelection(marker),
+			        true));
         } else {
             MessageDialog.openInformation(getShell(), TaskListMessages.NewTask_notShownTitle,
                     TaskListMessages.NewTask_notShownMsg);

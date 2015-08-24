@@ -60,12 +60,7 @@ public class CreateFolderAction extends SelectionListenerAction {
 	public CreateFolderAction(final Shell shell) {
         super(IDEWorkbenchMessages.CreateFolderAction_text);
         Assert.isNotNull(shell);
-        shellProvider = new IShellProvider(){
-        	@Override
-			public Shell getShell(){
-        		return shell;
-        	}
-        };
+        shellProvider = () -> shell;
         initAction();
     }
 

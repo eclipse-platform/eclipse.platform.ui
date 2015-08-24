@@ -34,8 +34,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.BidiUtils;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -270,15 +268,11 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
         long interval = description.getSnapshotInterval() / 60000;
         saveInterval.setStringValue(Long.toString(interval));
 
-        saveInterval.setPropertyChangeListener(new IPropertyChangeListener() {
-
-            @Override
-			public void propertyChange(PropertyChangeEvent event) {
-                if (event.getProperty().equals(FieldEditor.IS_VALID)) {
-					setValid(saveInterval.isValid());
-				}
-            }
-        });
+        saveInterval.setPropertyChangeListener(event -> {
+		    if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(saveInterval.isValid());
+			}
+		});
 
     }
 
@@ -347,14 +341,11 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 		encodingEditor.setPage(this);
 		encodingEditor.load();
-		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
-					setValid(encodingEditor.isValid());
-				}
-
+		encodingEditor.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(encodingEditor.isValid());
 			}
+
 		});
     }
 
@@ -404,12 +395,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 
 		systemExplorer.load();
 
-		systemExplorer.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
-					setValid(systemExplorer.isValid());
-				}
+		systemExplorer.setPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				setValid(systemExplorer.isValid());
 			}
 		});
 	}

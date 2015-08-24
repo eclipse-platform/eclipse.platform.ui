@@ -218,17 +218,14 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         					op.run(monitor);
         					Shell shell = provider.getShell();
 							if (shell != null && !shell.isDisposed()) {
-								shell.getDisplay().asyncExec(new Runnable() {
-									@Override
-									public void run() {
-										TreeViewer viewer = navigator
-												.getViewer();
-										if (viewer != null
-												&& viewer.getControl() != null
-												&& !viewer.getControl()
-														.isDisposed()) {
-											viewer.refresh();
-										}
+								shell.getDisplay().asyncExec(() -> {
+									TreeViewer viewer = navigator
+											.getViewer();
+									if (viewer != null
+											&& viewer.getControl() != null
+											&& !viewer.getControl()
+													.isDisposed()) {
+										viewer.refresh();
 									}
 								});
 							}

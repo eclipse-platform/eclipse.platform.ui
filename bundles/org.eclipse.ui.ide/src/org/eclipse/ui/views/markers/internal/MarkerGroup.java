@@ -568,11 +568,6 @@ public class MarkerGroup {
 	 * @return Comparator
 	 */
 	public Comparator<MarkerGroupingEntry> getEntriesComparator() {
-		return new Comparator<MarkerGroupingEntry>() {
-			@Override
-			public int compare(MarkerGroupingEntry o1, MarkerGroupingEntry o2) {
-				return -(o1.getPriority() - o2.getPriority());
-			}
-		};
+		return (o1, o2) -> -(o1.getPriority() - o2.getPriority());
 	}
 }

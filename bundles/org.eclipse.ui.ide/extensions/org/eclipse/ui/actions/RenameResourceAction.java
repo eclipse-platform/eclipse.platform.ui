@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -37,8 +36,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -188,22 +185,18 @@ public class RenameResourceAction extends WorkspaceAction {
 		// Run it inside of a runnable to make sure we get to parent off of the
 		// shell as we are not in the UI thread.
 
-		Runnable query = new Runnable() {
-			@Override
-			public void run() {
-				String pathName = destination.getFullPath().makeRelative()
-						.toString();
-				String message = RESOURCE_EXISTS_MESSAGE;
-				String title = RESOURCE_EXISTS_TITLE;
-				if (destination.getType() == IResource.PROJECT) {
-					message = PROJECT_EXISTS_MESSAGE;
-					title = PROJECT_EXISTS_TITLE;
-				}
-				result[0] = MessageDialog.openQuestion(shell,
-						title, MessageFormat.format(message,
-								new Object[] { pathName }));
+		Runnable query = () -> {
+			String pathName = destination.getFullPath().makeRelative()
+					.toString();
+			String message = RESOURCE_EXISTS_MESSAGE;
+			String title = RESOURCE_EXISTS_TITLE;
+			if (destination.getType() == IResource.PROJECT) {
+				message = PROJECT_EXISTS_MESSAGE;
+				title = PROJECT_EXISTS_TITLE;
 			}
-
+			result[0] = MessageDialog.openQuestion(shell,
+					title, MessageFormat.format(message,
+							new Object[] { pathName }));
 		};
 
 		shell.getDisplay().syncExec(query);
@@ -266,52 +259,43 @@ public class RenameResourceAction extends WorkspaceAction {
 		textEditorParent.setVisible(false);
 		final int inset = getCellEditorInset(textEditorParent);
 		if (inset > 0) {
-			textEditorParent.addListener(SWT.Paint, new Listener() {
-				@Override
-				public void handleEvent(Event e) {
-					Point textSize = textEditor.getSize();
-					Point parentSize = textEditorParent.getSize();
-					e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4,
-							parentSize.x - 1), parentSize.y - 1);
-				}
+			textEditorParent.addListener(SWT.Paint, e -> {
+				Point textSize = textEditor.getSize();
+				Point parentSize = textEditorParent.getSize();
+				e.gc.drawRectangle(0, 0, Math.min(textSize.x + 4,
+						parentSize.x - 1), parentSize.y - 1);
 			});
 		}
 		// Create inner text editor.
 		textEditor = new Text(textEditorParent, SWT.NONE);
 		textEditor.setFont(navigatorTree.getFont());
 		textEditorParent.setBackground(textEditor.getBackground());
-		textEditor.addListener(SWT.Modify, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				Point textSize = textEditor.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
-				textSize.x += textSize.y; // Add extra space for new
-				// characters.
-				Point parentSize = textEditorParent.getSize();
-				textEditor.setBounds(2, inset, Math.min(textSize.x,
-						parentSize.x - 4), parentSize.y - 2 * inset);
-				textEditorParent.redraw();
-			}
+		textEditor.addListener(SWT.Modify, e -> {
+			Point textSize = textEditor.computeSize(SWT.DEFAULT,
+					SWT.DEFAULT);
+			textSize.x += textSize.y; // Add extra space for new
+			// characters.
+			Point parentSize = textEditorParent.getSize();
+			textEditor.setBounds(2, inset, Math.min(textSize.x,
+					parentSize.x - 4), parentSize.y - 2 * inset);
+			textEditorParent.redraw();
 		});
-		textEditor.addListener(SWT.Traverse, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
+		textEditor.addListener(SWT.Traverse, event -> {
 
-				// Workaround for Bug 20214 due to extra
-				// traverse events
-				switch (event.detail) {
-				case SWT.TRAVERSE_ESCAPE:
-					// Do nothing in this case
-					disposeTextWidget();
-					event.doit = true;
-					event.detail = SWT.TRAVERSE_NONE;
-					break;
-				case SWT.TRAVERSE_RETURN:
-					saveChangesAndDispose(resource);
-					event.doit = true;
-					event.detail = SWT.TRAVERSE_NONE;
-					break;
-				}
+			// Workaround for Bug 20214 due to extra
+			// traverse events
+			switch (event.detail) {
+			case SWT.TRAVERSE_ESCAPE:
+				// Do nothing in this case
+				disposeTextWidget();
+				event.doit = true;
+				event.detail = SWT.TRAVERSE_NONE;
+				break;
+			case SWT.TRAVERSE_RETURN:
+				saveChangesAndDispose(resource);
+				event.doit = true;
+				event.detail = SWT.TRAVERSE_NONE;
+				break;
 			}
 		});
 		textEditor.addFocusListener(new FocusAdapter() {
@@ -394,22 +378,19 @@ public class RenameResourceAction extends WorkspaceAction {
 	protected String queryNewResourceName(final IResource resource) {
 		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
-		IInputValidator validator = new IInputValidator() {
-			@Override
-			public String isValid(String string) {
-				if (resource.getName().equals(string)) {
-					return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
-				}
-				IStatus status = workspace.validateName(string, resource
-						.getType());
-				if (!status.isOK()) {
-					return status.getMessage();
-				}
-				if (workspace.getRoot().exists(prefix.append(string))) {
-					return IDEWorkbenchMessages.RenameResourceAction_nameExists;
-				}
-				return null;
+		IInputValidator validator = string -> {
+			if (resource.getName().equals(string)) {
+				return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
 			}
+			IStatus status = workspace.validateName(string, resource
+					.getType());
+			if (!status.isOK()) {
+				return status.getMessage();
+			}
+			if (workspace.getRoot().exists(prefix.append(string))) {
+				return IDEWorkbenchMessages.RenameResourceAction_nameExists;
+			}
+			return null;
 		};
 
 		InputDialog dialog = new InputDialog(getShell(),
@@ -538,35 +519,32 @@ public class RenameResourceAction extends WorkspaceAction {
 		// icon of the item being renamed is clicked (i.e., which causes the
 		// rename
 		// text widget to lose focus and trigger this method).
-		Runnable query = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (!newName.equals(inlinedResource.getName())) {
-						IWorkspace workspace = IDEWorkbenchPlugin
-								.getPluginWorkspace();
-						IStatus status = workspace.validateName(newName,
-								inlinedResource.getType());
-						if (!status.isOK()) {
-							displayError(status.getMessage());
-						} else {
-							IPath newPath = inlinedResource.getFullPath()
-									.removeLastSegments(1).append(newName);
-							runWithNewPath(newPath, inlinedResource);
-						}
+		Runnable query = () -> {
+			try {
+				if (!newName.equals(inlinedResource.getName())) {
+					IWorkspace workspace = IDEWorkbenchPlugin
+							.getPluginWorkspace();
+					IStatus status = workspace.validateName(newName,
+							inlinedResource.getType());
+					if (!status.isOK()) {
+						displayError(status.getMessage());
+					} else {
+						IPath newPath = inlinedResource.getFullPath()
+								.removeLastSegments(1).append(newName);
+						runWithNewPath(newPath, inlinedResource);
 					}
-					inlinedResource = null;
-					// Dispose the text widget regardless
-					disposeTextWidget();
-					// Ensure the Navigator tree has focus, which it may not if
-					// the
-					// text widget previously had focus.
-					if (navigatorTree != null && !navigatorTree.isDisposed()) {
-						navigatorTree.setFocus();
-					}
-				} finally {
-					saving = false;
 				}
+				inlinedResource = null;
+				// Dispose the text widget regardless
+				disposeTextWidget();
+				// Ensure the Navigator tree has focus, which it may not if
+				// the
+				// text widget previously had focus.
+				if (navigatorTree != null && !navigatorTree.isDisposed()) {
+					navigatorTree.setFocus();
+				}
+			} finally {
+				saving = false;
 			}
 		};
 		getTree().getShell().getDisplay().asyncExec(query);
@@ -639,47 +617,44 @@ public class RenameResourceAction extends WorkspaceAction {
 	 */
 	@Override
 	protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
-		return new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				IResource[] resources = (IResource[]) getActionResources()
-						.toArray(new IResource[getActionResources().size()]);
-				// Rename is only valid for a single resource. This has already
-				// been validated.
-				if (resources.length == 1) {
-					// check for overwrite
-					IWorkspaceRoot workspaceRoot = resources[0].getWorkspace()
-							.getRoot();
-					IResource newResource = workspaceRoot.findMember(newPath);
-					boolean go = true;
-					if (newResource != null) {
-						go = checkOverwrite(getShell(), newResource);
-					}
-					if (go) {
-						MoveResourcesOperation op = new MoveResourcesOperation(
-								resources[0],
-								newPath,
-								IDEWorkbenchMessages.RenameResourceAction_operationTitle);
-						op.setModelProviderIds(getModelProviderIds());
-						try {
-							PlatformUI
-									.getWorkbench()
-									.getOperationSupport()
-									.getOperationHistory()
-									.execute(
-											op,
-											monitor,
-											WorkspaceUndoUtil
-													.getUIInfoAdapter(getShell()));
-						} catch (ExecutionException e) {
-							if (e.getCause() instanceof CoreException) {
-								errorStatus[0] = ((CoreException) e.getCause())
-										.getStatus();
-							} else {
-								errorStatus[0] = new Status(IStatus.ERROR,
-										PlatformUI.PLUGIN_ID,
-										getProblemsMessage(), e);
-							}
+		return monitor -> {
+			IResource[] resources = (IResource[]) getActionResources()
+					.toArray(new IResource[getActionResources().size()]);
+			// Rename is only valid for a single resource. This has already
+			// been validated.
+			if (resources.length == 1) {
+				// check for overwrite
+				IWorkspaceRoot workspaceRoot = resources[0].getWorkspace()
+						.getRoot();
+				IResource newResource = workspaceRoot.findMember(newPath);
+				boolean go = true;
+				if (newResource != null) {
+					go = checkOverwrite(getShell(), newResource);
+				}
+				if (go) {
+					MoveResourcesOperation op = new MoveResourcesOperation(
+							resources[0],
+							newPath,
+							IDEWorkbenchMessages.RenameResourceAction_operationTitle);
+					op.setModelProviderIds(getModelProviderIds());
+					try {
+						PlatformUI
+								.getWorkbench()
+								.getOperationSupport()
+								.getOperationHistory()
+								.execute(
+										op,
+										monitor,
+										WorkspaceUndoUtil
+												.getUIInfoAdapter(getShell()));
+					} catch (ExecutionException e) {
+						if (e.getCause() instanceof CoreException) {
+							errorStatus[0] = ((CoreException) e.getCause())
+									.getStatus();
+						} else {
+							errorStatus[0] = new Status(IStatus.ERROR,
+									PlatformUI.PLUGIN_ID,
+									getProblemsMessage(), e);
 						}
 					}
 				}

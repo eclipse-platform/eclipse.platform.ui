@@ -170,12 +170,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
             if (target != null) {
                 // select and reveal resource
                 final ISetSelectionTarget finalTarget = target;
-                window.getShell().getDisplay().asyncExec(new Runnable() {
-                    @Override
-					public void run() {
-                        finalTarget.selectReveal(selection);
-                    }
-                });
+                window.getShell().getDisplay().asyncExec(() -> finalTarget.selectReveal(selection));
             }
         }
     }

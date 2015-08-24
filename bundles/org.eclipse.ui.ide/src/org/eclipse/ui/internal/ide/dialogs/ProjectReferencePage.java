@@ -19,16 +19,13 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
@@ -89,12 +86,7 @@ public class ProjectReferencePage extends PropertyPage {
         }
 
         //check for initial modification to avoid work if no changes are made
-        listViewer.addCheckStateListener(new ICheckStateListener() {
-            @Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-                modified = true;
-            }
-        });
+        listViewer.addCheckStateListener(event -> modified = true);
 
         applyDialogFont(composite);
 
@@ -190,20 +182,16 @@ public class ProjectReferencePage extends PropertyPage {
         Object[] checked = listViewer.getCheckedElements();
         final IProject[] refs = new IProject[checked.length];
         System.arraycopy(checked, 0, refs, 0, checked.length);
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            @Override
-			public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException {
+        IRunnableWithProgress runnable = monitor -> {
 
-                try {
-                    IProjectDescription description = project.getDescription();
-                    description.setReferencedProjects(refs);
-                    project.setDescription(description, monitor);
-                } catch (CoreException e) {
-                    throw new InvocationTargetException(e);
-                }
+            try {
+		IProjectDescription description = project.getDescription();
+		description.setReferencedProjects(refs);
+		project.setDescription(description, monitor);
+            } catch (CoreException e) {
+		throw new InvocationTargetException(e);
             }
-        };
+         };
         IProgressService service = PlatformUI.getWorkbench().getProgressService();
         try {
             service.run(false, false, runnable);

@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -205,13 +204,8 @@ public class ResourceSelectionDialog extends SelectionDialog {
      * Initializes this dialog's controls.
      */
     private void initializeDialog() {
-        selectionGroup.addCheckStateListener(new ICheckStateListener() {
-            @Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-                getOkButton().setEnabled(
-                        selectionGroup.getCheckedElementCount() > 0);
-            }
-        });
+        selectionGroup.addCheckStateListener(event -> getOkButton().setEnabled(
+		        selectionGroup.getCheckedElementCount() > 0));
 
         if (getInitialElementSelections().isEmpty()) {
 			getOkButton().setEnabled(false);

@@ -40,8 +40,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -294,44 +292,41 @@ public class FilteredResourcesSelectionDialog extends
 		menuManager.add(this.groupResourcesByLocationAction);
 
 		workingSetFilterActionGroup = new WorkingSetFilterActionGroup(
-				getShell(), new IPropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						String property = event.getProperty();
+				getShell(), event -> {
+					String property = event.getProperty();
 
-						if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET
-								.equals(property)) {
+					if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET
+							.equals(property)) {
 
-							IWorkingSet workingSet = (IWorkingSet) event
-									.getNewValue();
+						IWorkingSet workingSet = (IWorkingSet) event
+								.getNewValue();
 
-							if (workingSet != null
-									&& !(workingSet.isAggregateWorkingSet() && workingSet
-											.isEmpty())) {
-								workingSetFilter.setWorkingSet(workingSet);
-								setSubtitle(workingSet.getLabel());
-							} else {
-								IWorkbenchWindow window = PlatformUI
-										.getWorkbench()
-										.getActiveWorkbenchWindow();
+						if (workingSet != null
+								&& !(workingSet.isAggregateWorkingSet() && workingSet
+										.isEmpty())) {
+							workingSetFilter.setWorkingSet(workingSet);
+							setSubtitle(workingSet.getLabel());
+						} else {
+							IWorkbenchWindow window = PlatformUI
+									.getWorkbench()
+									.getActiveWorkbenchWindow();
 
-								if (window != null) {
-									IWorkbenchPage page = window
-											.getActivePage();
-									workingSet = page.getAggregateWorkingSet();
+							if (window != null) {
+								IWorkbenchPage page = window
+										.getActivePage();
+								workingSet = page.getAggregateWorkingSet();
 
-									if (workingSet.isAggregateWorkingSet()
-											&& workingSet.isEmpty()) {
-										workingSet = null;
-									}
+								if (workingSet.isAggregateWorkingSet()
+										&& workingSet.isEmpty()) {
+									workingSet = null;
 								}
-
-								workingSetFilter.setWorkingSet(workingSet);
-								setSubtitle(null);
 							}
 
-							scheduleRefresh();
+							workingSetFilter.setWorkingSet(workingSet);
+							setSubtitle(null);
 						}
+
+						scheduleRefresh();
 					}
 				});
 
@@ -413,58 +408,54 @@ public class FilteredResourcesSelectionDialog extends
 
 	@Override
 	protected Comparator getItemsComparator() {
-		return new Comparator() {
+		return (o1, o2) -> {
+			Collator collator = Collator.getInstance();
+			IResource resource1 = (IResource) o1;
+			IResource resource2 = (IResource) o2;
+			String s1 = resource1.getName();
+			String s2 = resource2.getName();
 
-			@Override
-			public int compare(Object o1, Object o2) {
-				Collator collator = Collator.getInstance();
-				IResource resource1 = (IResource) o1;
-				IResource resource2 = (IResource) o2;
-				String s1 = resource1.getName();
-				String s2 = resource2.getName();
+			// Compare names without extension first
+			int s1Dot = s1.lastIndexOf('.');
+			int s2Dot = s2.lastIndexOf('.');
+			String n1 = s1Dot == -1 ? s1 : s1.substring(0, s1Dot);
+			String n2 = s2Dot == -1 ? s2 : s2.substring(0, s2Dot);
+			int comparability = collator.compare(n1, n2);
+			if (comparability != 0)
+				return comparability;
 
-				// Compare names without extension first
-				int s1Dot = s1.lastIndexOf('.');
-				int s2Dot = s2.lastIndexOf('.');
-				String n1 = s1Dot == -1 ? s1 : s1.substring(0, s1Dot);
-				String n2 = s2Dot == -1 ? s2 : s2.substring(0, s2Dot);
-				int comparability = collator.compare(n1, n2);
+			// Compare full names
+			if (s1Dot != -1 || s2Dot != -1) {
+				comparability = collator.compare(s1, s2);
 				if (comparability != 0)
 					return comparability;
-
-				// Compare full names
-				if (s1Dot != -1 || s2Dot != -1) {
-					comparability = collator.compare(s1, s2);
-					if (comparability != 0)
-						return comparability;
-				}
-
-				// Search for resource relative paths
-				if (searchContainer != null) {
-					IContainer c1 = resource1.getParent();
-					IContainer c2 = resource2.getParent();
-
-					// Return paths 'closer' to the searchContainer first
-					comparability = pathDistance(c1) - pathDistance(c2);
-					if (comparability != 0)
-						return comparability;
-				}
-
-				// Finally compare full path segments
-				IPath p1 = resource1.getFullPath();
-				IPath p2 = resource2.getFullPath();
-				// Don't compare file names again, so subtract 1
-				int c1 = p1.segmentCount() - 1;
-				int c2 = p2.segmentCount() - 1;
-				for (int i= 0; i < c1 && i < c2; i++) {
-					comparability = collator.compare(p1.segment(i), p2.segment(i));
-					if (comparability != 0)
-						return comparability;
-				}
-				comparability = c1 - c2;
-
-				return comparability;
 			}
+
+			// Search for resource relative paths
+			if (searchContainer != null) {
+				IContainer c11 = resource1.getParent();
+				IContainer c21 = resource2.getParent();
+
+				// Return paths 'closer' to the searchContainer first
+				comparability = pathDistance(c11) - pathDistance(c21);
+				if (comparability != 0)
+					return comparability;
+			}
+
+			// Finally compare full path segments
+			IPath p1 = resource1.getFullPath();
+			IPath p2 = resource2.getFullPath();
+			// Don't compare file names again, so subtract 1
+			int c12 = p1.segmentCount() - 1;
+			int c22 = p2.segmentCount() - 1;
+			for (int i= 0; i < c12 && i < c22; i++) {
+				comparability = collator.compare(p1.segment(i), p2.segment(i));
+				if (comparability != 0)
+					return comparability;
+			}
+			comparability = c12 - c22;
+
+			return comparability;
 		};
 	}
 

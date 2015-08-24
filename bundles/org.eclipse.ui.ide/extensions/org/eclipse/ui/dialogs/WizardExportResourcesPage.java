@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -290,12 +289,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
                         .getDecoratingWorkbenchLabelProvider(), SWT.NONE,
                 DialogUtil.inRegularFontMode(parent));
 
-        ICheckStateListener listener = new ICheckStateListener() {
-            @Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-                updateWidgetEnablements();
-            }
-        };
+        ICheckStateListener listener = event -> updateWidgetEnablements();
 
         this.resourceGroup.addCheckStateListener(listener);
     }
@@ -552,34 +546,31 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      */
     private void setupSelectionsBasedOnSelectedTypes() {
 
-        Runnable runnable = new Runnable() {
-            @Override
-			public void run() {
-                Map selectionMap = new Hashtable();
-                //Only get the white selected ones
-                Iterator resourceIterator = resourceGroup
-                        .getAllWhiteCheckedItems().iterator();
-                while (resourceIterator.hasNext()) {
-                    //handle the files here - white checked containers require recursion
-                    IResource resource = (IResource) resourceIterator.next();
-                    if (resource.getType() == IResource.FILE) {
-                        if (hasExportableExtension(resource.getName())) {
-                            List resourceList = new ArrayList();
-                            IContainer parent = resource.getParent();
-                            if (selectionMap.containsKey(parent)) {
-								resourceList = (List) selectionMap.get(parent);
-							}
-                            resourceList.add(resource);
-                            selectionMap.put(parent, resourceList);
-                        }
-                    } else {
-						setupSelectionsBasedOnSelectedTypes(selectionMap,
-                                (IContainer) resource);
-					}
-                }
-                resourceGroup.updateSelections(selectionMap);
-            }
-        };
+        Runnable runnable = () -> {
+		    Map selectionMap = new Hashtable();
+		    //Only get the white selected ones
+		    Iterator resourceIterator = resourceGroup
+		            .getAllWhiteCheckedItems().iterator();
+		    while (resourceIterator.hasNext()) {
+		        //handle the files here - white checked containers require recursion
+		        IResource resource = (IResource) resourceIterator.next();
+		        if (resource.getType() == IResource.FILE) {
+		            if (hasExportableExtension(resource.getName())) {
+		                List resourceList = new ArrayList();
+		                IContainer parent = resource.getParent();
+		                if (selectionMap.containsKey(parent)) {
+							resourceList = (List) selectionMap.get(parent);
+						}
+		                resourceList.add(resource);
+		                selectionMap.put(parent, resourceList);
+		            }
+		        } else {
+					setupSelectionsBasedOnSelectedTypes(selectionMap,
+		                    (IContainer) resource);
+				}
+		    }
+		    resourceGroup.updateSelections(selectionMap);
+		};
 
         BusyIndicator.showWhile(getShell().getDisplay(), runnable);
 

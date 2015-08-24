@@ -81,12 +81,7 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * @return Comparator
 	 */
 	Comparator<MarkerItem> getCategoryComparator() {
-		return new Comparator<MarkerItem>() {
-			@Override
-			public int compare(MarkerItem o1, MarkerItem o2) {
-				return compareCategory(o1, o2);
-			}
-		};
+		return (o1, o2) -> compareCategory(o1, o2);
 	}
 
 	@Override
@@ -126,12 +121,7 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * @return Comparator
 	 */
 	Comparator<MarkerItem> getFieldsComparator() {
-		return new Comparator<MarkerItem>() {
-			@Override
-			public int compare(MarkerItem o1, MarkerItem o2) {
-				return compareFields(o1, o2);
-			}
-		};
+		return (o1, o2) -> compareFields(o1, o2);
 	}
 
 	/**

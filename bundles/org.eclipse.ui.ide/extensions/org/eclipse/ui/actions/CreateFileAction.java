@@ -57,12 +57,7 @@ public class CreateFileAction extends SelectionListenerAction {
 	public CreateFileAction(final Shell shell) {
         super(IDEWorkbenchMessages.CreateFileAction_text);
         Assert.isNotNull(shell);
-        shellProvider = new IShellProvider(){
-        	@Override
-			public Shell getShell(){
-        		return shell;
-        	}
-        };
+        shellProvider = () -> shell;
         initAction();
     }
 

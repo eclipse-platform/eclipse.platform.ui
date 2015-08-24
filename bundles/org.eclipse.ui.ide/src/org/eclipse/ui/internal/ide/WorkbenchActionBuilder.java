@@ -37,7 +37,6 @@ import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -306,40 +305,31 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		};
 		getWindow().getPartService().addPartListener(partListener);
 
-        prefListener = new Preferences.IPropertyChangeListener() {
-            @Override
-			public void propertyChange(Preferences.PropertyChangeEvent event) {
-                if (event.getProperty().equals(
-                        ResourcesPlugin.PREF_AUTO_BUILDING)) {
-                   	updateBuildActions(false);
-                }
-            }
-        };
+        prefListener = event -> {
+		    if (event.getProperty().equals(
+		            ResourcesPlugin.PREF_AUTO_BUILDING)) {
+		       	updateBuildActions(false);
+		    }
+		};
         ResourcesPlugin.getPlugin().getPluginPreferences()
                 .addPropertyChangeListener(prefListener);
 
         // listener for the "close editors automatically"
         // preference change
-        propPrefListener = new IPropertyChangeListener() {
-            @Override
-			public void propertyChange(PropertyChangeEvent event) {
-                if (event.getProperty().equals(
-						IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-                    if (window.getShell() != null
-                            && !window.getShell().isDisposed()) {
-                        // this property change notification could be from a non-ui thread
-						window.getShell().getDisplay().asyncExec(new Runnable() {
-                            @Override
-							public void run() {
-								if (window.getShell() != null && !window.getShell().isDisposed()) {
-									updatePinActionToolbar();
-								}
-                            }
-                        });
-                    }
-                }
-            }
-        };
+        propPrefListener = event -> {
+		    if (event.getProperty().equals(
+					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+		        if (window.getShell() != null
+		                && !window.getShell().isDisposed()) {
+		            // this property change notification could be from a non-ui thread
+					window.getShell().getDisplay().asyncExec(() -> {
+						if (window.getShell() != null && !window.getShell().isDisposed()) {
+							updatePinActionToolbar();
+						}
+					});
+		        }
+		    }
+		};
         /*
          * In order to ensure that the pin action toolbar sets its size
          * correctly, the pin action should set its visiblity before we call updatePinActionToolbar().
@@ -350,22 +340,19 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         WorkbenchPlugin.getDefault().getPreferenceStore()
                 .addPropertyChangeListener(propPrefListener);
         //listen for project description changes, which can affect enablement of build actions
-        resourceListener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				IResourceDelta delta = event.getDelta();
-				if (delta == null) {
+        resourceListener = event -> {
+			IResourceDelta delta = event.getDelta();
+			if (delta == null) {
+				return;
+			}
+			IResourceDelta[] projectDeltas = delta.getAffectedChildren();
+			for (int i = 0; i < projectDeltas.length; i++) {
+				int kind = projectDeltas[i].getKind();
+				//affected by projects being opened/closed or description changes
+				boolean changed = (projectDeltas[i].getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
+				if (kind != IResourceDelta.CHANGED || changed) {
+					updateBuildActions(false);
 					return;
-				}
-				IResourceDelta[] projectDeltas = delta.getAffectedChildren();
-				for (int i = 0; i < projectDeltas.length; i++) {
-					int kind = projectDeltas[i].getKind();
-					//affected by projects being opened/closed or description changes
-					boolean changed = (projectDeltas[i].getFlags() & (IResourceDelta.DESCRIPTION | IResourceDelta.OPEN)) != 0;
-					if (kind != IResourceDelta.CHANGED || changed) {
-						updateBuildActions(false);
-						return;
-					}
 				}
 			}
 		};
@@ -1443,13 +1430,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 		toolBarManager.markDirty();
         toolBarManager.update(false);
         toolBarItem.update(ICoolBarManager.SIZE);
-		window.getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (window.getShell() != null && !window.getShell().isDisposed()) {
-					ICommandService commandService = window.getService(ICommandService.class);
-					commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
-				}
+		window.getShell().getDisplay().asyncExec(() -> {
+			if (window.getShell() != null && !window.getShell().isDisposed()) {
+				ICommandService commandService = window.getService(ICommandService.class);
+				commandService.refreshElements(IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, null);
 			}
 		});
     }

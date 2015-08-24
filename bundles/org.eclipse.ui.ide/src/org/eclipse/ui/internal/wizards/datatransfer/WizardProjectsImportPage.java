@@ -59,10 +59,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -75,8 +72,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -558,15 +553,12 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		projectsList.setLabelProvider(new ProjectLabelProvider());
 
-		projectsList.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				ProjectRecord element = (ProjectRecord) event.getElement();
-				if (element.hasConflicts || element.isInvalid) {
-					projectsList.setChecked(element, false);
-				}
-				setPageComplete(projectsList.getCheckedElements().length > 0);
+		projectsList.addCheckStateListener(event -> {
+			ProjectRecord element = (ProjectRecord) event.getElement();
+			if (element.hasConflicts || element.isInvalid) {
+				projectsList.setChecked(element, false);
 			}
+			setPageComplete(projectsList.getCheckedElements().length > 0);
 		});
 
 		projectsList.setInput(this);
@@ -706,15 +698,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		});
 
-		directoryPathField.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-					updateProjectsList(directoryPathField.getText().trim());
-				}
+		directoryPathField.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+				updateProjectsList(directoryPathField.getText().trim());
 			}
-
 		});
 
 		directoryPathField.addFocusListener(new FocusAdapter() {
@@ -732,15 +720,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			}
 		});
 
-		archivePathField.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-					updateProjectsList(archivePathField.getText().trim());
-				}
+		archivePathField.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				e.doit = false;
+				updateProjectsList(archivePathField.getText().trim());
 			}
-
 		});
 
 		archivePathField.addFocusListener(new FocusAdapter() {
@@ -846,92 +830,87 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		final boolean dirSelected = this.projectFromDirectoryRadio
 				.getSelection();
 		try {
-			getContainer().run(true, true, new IRunnableWithProgress() {
+			getContainer().run(true, true, monitor -> {
 
-				@Override
-				public void run(IProgressMonitor monitor) {
+				monitor
+						.beginTask(
+								DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
+								100);
+				selectedProjects = new ProjectRecord[0];
+				Collection files = new ArrayList();
+				monitor.worked(10);
+				if (!dirSelected
+						&& ArchiveFileManipulations.isTarFile(path)) {
+					TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
+					if (sourceTarFile == null) {
+						return;
+					}
 
+					structureProvider = new TarLeveledStructureProvider(
+							sourceTarFile);
+					Object child1 = structureProvider.getRoot();
+
+					if (!collectProjectFilesFromProvider(files, child1, 0,
+							monitor)) {
+						return;
+					}
+					Iterator filesIterator1 = files.iterator();
+					selectedProjects = new ProjectRecord[files.size()];
+					int index1 = 0;
+					monitor.worked(50);
 					monitor
-							.beginTask(
-									DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
-									100);
-					selectedProjects = new ProjectRecord[0];
-					Collection files = new ArrayList();
-					monitor.worked(10);
-					if (!dirSelected
-							&& ArchiveFileManipulations.isTarFile(path)) {
-						TarFile sourceTarFile = getSpecifiedTarSourceFile(path);
-						if (sourceTarFile == null) {
-							return;
-						}
-
-						structureProvider = new TarLeveledStructureProvider(
-								sourceTarFile);
-						Object child = structureProvider.getRoot();
-
-						if (!collectProjectFilesFromProvider(files, child, 0,
-								monitor)) {
-							return;
-						}
-						Iterator filesIterator = files.iterator();
-						selectedProjects = new ProjectRecord[files.size()];
-						int index = 0;
-						monitor.worked(50);
-						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
-						while (filesIterator.hasNext()) {
-							selectedProjects[index++] = (ProjectRecord) filesIterator
-									.next();
-						}
-					} else if (!dirSelected
-							&& ArchiveFileManipulations.isZipFile(path)) {
-						ZipFile sourceFile = getSpecifiedZipSourceFile(path);
-						if (sourceFile == null) {
-							return;
-						}
-						structureProvider = new ZipLeveledStructureProvider(
-								sourceFile);
-						Object child = structureProvider.getRoot();
-
-						if (!collectProjectFilesFromProvider(files, child, 0,
-								monitor)) {
-							return;
-						}
-						Iterator filesIterator = files.iterator();
-						selectedProjects = new ProjectRecord[files.size()];
-						int index = 0;
-						monitor.worked(50);
-						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
-						while (filesIterator.hasNext()) {
-							selectedProjects[index++] = (ProjectRecord) filesIterator
-									.next();
-						}
+							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+					while (filesIterator1.hasNext()) {
+						selectedProjects[index1++] = (ProjectRecord) filesIterator1
+								.next();
 					}
-
-					else if (dirSelected && directory.isDirectory()) {
-
-						if (!collectProjectFilesFromDirectory(files, directory,
-								null, monitor)) {
-							return;
-						}
-						Iterator filesIterator = files.iterator();
-						selectedProjects = new ProjectRecord[files.size()];
-						int index = 0;
-						monitor.worked(50);
-						monitor
-								.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
-						while (filesIterator.hasNext()) {
-							File file = (File) filesIterator.next();
-							selectedProjects[index] = new ProjectRecord(file);
-							index++;
-						}
-					} else {
-						monitor.worked(60);
+				} else if (!dirSelected
+						&& ArchiveFileManipulations.isZipFile(path)) {
+					ZipFile sourceFile = getSpecifiedZipSourceFile(path);
+					if (sourceFile == null) {
+						return;
 					}
-					monitor.done();
+					structureProvider = new ZipLeveledStructureProvider(
+							sourceFile);
+					Object child2 = structureProvider.getRoot();
+
+					if (!collectProjectFilesFromProvider(files, child2, 0,
+							monitor)) {
+						return;
+					}
+					Iterator filesIterator2 = files.iterator();
+					selectedProjects = new ProjectRecord[files.size()];
+					int index2 = 0;
+					monitor.worked(50);
+					monitor
+							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+					while (filesIterator2.hasNext()) {
+						selectedProjects[index2++] = (ProjectRecord) filesIterator2
+								.next();
+					}
 				}
 
+				else if (dirSelected && directory.isDirectory()) {
+
+					if (!collectProjectFilesFromDirectory(files, directory,
+							null, monitor)) {
+						return;
+					}
+					Iterator filesIterator3 = files.iterator();
+					selectedProjects = new ProjectRecord[files.size()];
+					int index3 = 0;
+					monitor.worked(50);
+					monitor
+							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
+					while (filesIterator3.hasNext()) {
+						File file = (File) filesIterator3.next();
+						selectedProjects[index3] = new ProjectRecord(file);
+						index3++;
+					}
+				} else {
+					monitor.worked(60);
+				}
+				monitor.done();
 			});
 		} catch (InvocationTargetException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);

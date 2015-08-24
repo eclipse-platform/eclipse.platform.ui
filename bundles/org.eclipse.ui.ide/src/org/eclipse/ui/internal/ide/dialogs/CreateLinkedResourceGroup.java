@@ -33,8 +33,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -276,29 +274,26 @@ public class CreateLinkedResourceGroup {
 		linkTargetField.setEnabled(enabled);
 		linkTargetField.setFont(locationGroup.getFont());
 		BidiUtils.applyBidiProcessing(linkTargetField, StructuredTextTypeHandlerFactory.FILE);
-		linkTargetField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				linkTarget = linkTargetField.getText();
-				if (isDefaultConfigurationSelected()) {
-					linkTarget = getPathVariableManager().convertFromUserEditableFormat(linkTarget, true);
-				}
-				resolveVariable();
-				if (updatableResourceName != null) {
-					String value = updatableResourceName.getValue();
-					if (value == null
-							|| value.equals("") || value.equals(lastUpdatedValue)) { //$NON-NLS-1$
-						IPath linkTargetPath = new Path(linkTarget);
-						String lastSegment = linkTargetPath.lastSegment();
-						if (lastSegment != null) {
-							lastUpdatedValue = lastSegment;
-							updatableResourceName.setValue(lastSegment);
-						}
+		linkTargetField.addModifyListener(e -> {
+			linkTarget = linkTargetField.getText();
+			if (isDefaultConfigurationSelected()) {
+				linkTarget = getPathVariableManager().convertFromUserEditableFormat(linkTarget, true);
+			}
+			resolveVariable();
+			if (updatableResourceName != null) {
+				String value = updatableResourceName.getValue();
+				if (value == null
+						|| value.equals("") || value.equals(lastUpdatedValue)) { //$NON-NLS-1$
+					IPath linkTargetPath = new Path(linkTarget);
+					String lastSegment = linkTargetPath.lastSegment();
+					if (lastSegment != null) {
+						lastUpdatedValue = lastSegment;
+						updatableResourceName.setValue(lastSegment);
 					}
 				}
-				if (listener != null) {
-					listener.handleEvent(new Event());
-				}
+			}
+			if (listener != null) {
+				listener.handleEvent(new Event());
 			}
 		});
 

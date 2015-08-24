@@ -28,22 +28,18 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -60,7 +56,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -211,41 +206,38 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
     };
 
-    private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-        @Override
-		public void propertyChange(PropertyChangeEvent event) {
-            String property = event.getProperty();
-            Object newValue = event.getNewValue();
-            Object oldValue = event.getOldValue();
+    private IPropertyChangeListener propertyChangeListener = event -> {
+	    String property = event.getProperty();
+	    Object newValue = event.getNewValue();
+	    Object oldValue = event.getOldValue();
 
-            if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)
-                    && oldValue == workingSet) {
-                setWorkingSet(null);
-            } else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE
-                    .equals(property)
-                    && newValue == workingSet) {
-                updateTitle();
-            } else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE
-                    .equals(property)
-                    && newValue == workingSet) {
-				if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
-					// act as if the working set has been made null
-					if (!emptyWorkingSet) {
-						emptyWorkingSet = true;
-						workingSetFilter.setWorkingSet(null);
-					}
-				} else {
-					// we've gone from empty to non-empty on our set.
-					// Restore it.
-					if (emptyWorkingSet) {
-					    emptyWorkingSet = false;
-						workingSetFilter.setWorkingSet(workingSet);
-					}
+	    if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property)
+	            && oldValue == workingSet) {
+	        setWorkingSet(null);
+	    } else if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE
+	            .equals(property)
+	            && newValue == workingSet) {
+	        updateTitle();
+	    } else if (IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE
+	            .equals(property)
+	            && newValue == workingSet) {
+			if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
+				// act as if the working set has been made null
+				if (!emptyWorkingSet) {
+					emptyWorkingSet = true;
+					workingSetFilter.setWorkingSet(null);
 				}
-				getViewer().refresh();
-            }
-        }
-    };
+			} else {
+				// we've gone from empty to non-empty on our set.
+				// Restore it.
+				if (emptyWorkingSet) {
+				    emptyWorkingSet = false;
+					workingSetFilter.setWorkingSet(workingSet);
+				}
+			}
+			getViewer().refresh();
+	    }
+	};
 
 	private CollapseAllHandler collapseAllHandler;
 
@@ -361,12 +353,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     protected void initContextMenu() {
         MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
         menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener() {
-            @Override
-			public void menuAboutToShow(IMenuManager manager) {
-                ResourceNavigator.this.fillContextMenu(manager);
-            }
-        });
+        menuMgr.addMenuListener(manager -> ResourceNavigator.this.fillContextMenu(manager));
         TreeViewer viewer = getTreeViewer();
         Menu menu = menuMgr.createContextMenu(viewer.getTree());
         viewer.getTree().setMenu(menu);
@@ -448,18 +435,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * @since 2.0
      */
     protected void initListeners(final TreeViewer viewer) {
-        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
-			public void selectionChanged(SelectionChangedEvent event) {
-                handleSelectionChanged(event);
-            }
-        });
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
-            @Override
-			public void doubleClick(DoubleClickEvent event) {
-                handleDoubleClick(event);
-            }
-        });
+        viewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
+        viewer.addDoubleClickListener(event -> handleDoubleClick(event));
 
 		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(viewer) {
 			@Override
@@ -482,22 +459,19 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 					// Ensure that if another selection change arrives while we're waiting for the *syncExec,
 					// we only do this work once.
 					linkScheduled = true;
-					getSite().getShell().getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							// There's no telling what might have changed since the syncExec was scheduled.
-							// Check to make sure that the widgets haven't been disposed.
-							linkScheduled = false;
+					getSite().getShell().getDisplay().asyncExec(() -> {
+						// There's no telling what might have changed since the syncExec was scheduled.
+						// Check to make sure that the widgets haven't been disposed.
+						linkScheduled = false;
 
-							if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
-								return;
-							}
+						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
+							return;
+						}
 
-							if (dragDetected == false) {
-								// only synchronize with editor when the selection is not the result
-								// of a drag. Fixes bug 22274.
-								ResourceNavigator.this.linkToEditor(viewer.getSelection());
-							}
+						if (dragDetected == false) {
+							// only synchronize with editor when the selection is not the result
+							// of a drag. Fixes bug 22274.
+							ResourceNavigator.this.linkToEditor(viewer.getSelection());
 						}
 					});
 				}
@@ -890,12 +864,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         NavigatorDropAdapter adapter = new NavigatorDropAdapter(viewer);
         adapter.setFeedbackEnabled(false);
         viewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, adapter);
-        dragDetectListener = new Listener() {
-            @Override
-			public void handleEvent(Event event) {
-                dragDetected = true;
-            }
-        };
+        dragDetectListener = event -> dragDetected = true;
         viewer.getControl().addListener(SWT.DragDetect, dragDetectListener);
     }
 
@@ -1522,69 +1491,61 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Returns the <code>IShowInSource</code> for this view.
      */
     protected IShowInSource getShowInSource() {
-        return new IShowInSource() {
-            @Override
-			public ShowInContext getShowInContext() {
-                return new ShowInContext(getViewer().getInput(), getViewer()
-                        .getSelection());
-            }
-        };
+        return () -> new ShowInContext(getViewer().getInput(), getViewer()
+		        .getSelection());
     }
 
     /**
      * Returns the <code>IShowInTarget</code> for this view.
      */
     protected IShowInTarget getShowInTarget() {
-        return new IShowInTarget() {
-            @Override
-			public boolean show(ShowInContext context) {
-                ArrayList toSelect = new ArrayList();
-                ISelection sel = context.getSelection();
-                if (sel instanceof IStructuredSelection) {
-                    IStructuredSelection ssel = (IStructuredSelection) sel;
-                    for (Iterator i = ssel.iterator(); i.hasNext();) {
-                        Object o = i.next();
-                        if (o instanceof IResource) {
-                            toSelect.add(o);
-                        } else if (o instanceof IMarker) {
-                            IResource r = ((IMarker) o).getResource();
-                            if (r.getType() != IResource.ROOT) {
-                                toSelect.add(r);
-                            }
-                        } else if (o instanceof IAdaptable) {
-                            IAdaptable adaptable = (IAdaptable) o;
-                            o = adaptable.getAdapter(IResource.class);
-                            if (o instanceof IResource) {
-                                toSelect.add(o);
-                            } else {
-                                o = adaptable.getAdapter(IMarker.class);
-                                if (o instanceof IMarker) {
-                                    IResource r = ((IMarker) o).getResource();
-                                    if (r.getType() != IResource.ROOT) {
-                                        toSelect.add(r);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (toSelect.isEmpty()) {
-                    Object input = context.getInput();
-                    if (input instanceof IAdaptable) {
-                        IAdaptable adaptable = (IAdaptable) input;
-                        Object o = adaptable.getAdapter(IResource.class);
-                        if (o instanceof IResource) {
-                            toSelect.add(o);
-                        }
-                    }
-                }
-                if (!toSelect.isEmpty()) {
-                    selectReveal(new StructuredSelection(toSelect));
-                    return true;
-                }
-                return false;
-            }
-        };
+        return context -> {
+		    ArrayList toSelect = new ArrayList();
+		    ISelection sel = context.getSelection();
+		    if (sel instanceof IStructuredSelection) {
+		        IStructuredSelection ssel = (IStructuredSelection) sel;
+		        for (Iterator i = ssel.iterator(); i.hasNext();) {
+		            Object o1 = i.next();
+		            if (o1 instanceof IResource) {
+		                toSelect.add(o1);
+		            } else if (o1 instanceof IMarker) {
+		                IResource r1 = ((IMarker) o1).getResource();
+		                if (r1.getType() != IResource.ROOT) {
+		                    toSelect.add(r1);
+		                }
+		            } else if (o1 instanceof IAdaptable) {
+		                IAdaptable adaptable1 = (IAdaptable) o1;
+		                o1 = adaptable1.getAdapter(IResource.class);
+		                if (o1 instanceof IResource) {
+		                    toSelect.add(o1);
+		                } else {
+		                    o1 = adaptable1.getAdapter(IMarker.class);
+		                    if (o1 instanceof IMarker) {
+		                        IResource r2 = ((IMarker) o1).getResource();
+		                        if (r2.getType() != IResource.ROOT) {
+		                            toSelect.add(r2);
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    }
+		    if (toSelect.isEmpty()) {
+		        Object input = context.getInput();
+		        if (input instanceof IAdaptable) {
+		            IAdaptable adaptable2 = (IAdaptable) input;
+		            Object o2 = adaptable2.getAdapter(IResource.class);
+		            if (o2 instanceof IResource) {
+		                toSelect.add(o2);
+		            }
+		        }
+		    }
+		    if (!toSelect.isEmpty()) {
+		        selectReveal(new StructuredSelection(toSelect));
+		        return true;
+		    }
+		    return false;
+		};
     }
 
 	/**

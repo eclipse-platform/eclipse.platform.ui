@@ -111,22 +111,19 @@ public class WorkspaceUndoMonitor {
 	 * @return the resource change listeners
 	 */
 	private IResourceChangeListener getResourceChangeListener() {
-		return new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				// If there is an operation in progress, this event is to be
-				// ignored.
-				if (operationInProgress != null) {
-					return;
-				}
-				if (event.getType() == IResourceChangeEvent.POST_CHANGE
-						|| event.getType() == IResourceChangeEvent.POST_BUILD) {
-					// For now, we consider any change a change worth tracking.
-					// We can be more specific later if warranted.
-					incrementChangeCount();
-					if (numChanges >= CHANGE_THRESHHOLD) {
-						checkOperationHistory();
-					}
+		return event -> {
+			// If there is an operation in progress, this event is to be
+			// ignored.
+			if (operationInProgress != null) {
+				return;
+			}
+			if (event.getType() == IResourceChangeEvent.POST_CHANGE
+					|| event.getType() == IResourceChangeEvent.POST_BUILD) {
+				// For now, we consider any change a change worth tracking.
+				// We can be more specific later if warranted.
+				incrementChangeCount();
+				if (numChanges >= CHANGE_THRESHHOLD) {
+					checkOperationHistory();
 				}
 			}
 		};
@@ -138,34 +135,29 @@ public class WorkspaceUndoMonitor {
 	 * @return the resource change listeners
 	 */
 	private IOperationHistoryListener getOperationHistoryListener() {
-		return new IOperationHistoryListener() {
-
-			@Override
-			public void historyNotification(OperationHistoryEvent event) {
-				// We only care about events that have the workspace undo
-				// context.
-				if (!event.getOperation().hasContext(
-						WorkspaceUndoUtil.getWorkspaceUndoContext())) {
-					return;
-				}
-				switch (event.getEventType()) {
-				case OperationHistoryEvent.ABOUT_TO_EXECUTE:
-				case OperationHistoryEvent.ABOUT_TO_UNDO:
-				case OperationHistoryEvent.ABOUT_TO_REDO:
-					operationInProgress = event.getOperation();
-					break;
-				case OperationHistoryEvent.DONE:
-				case OperationHistoryEvent.UNDONE:
-				case OperationHistoryEvent.REDONE:
-					resetChangeCount();
-					operationInProgress = null;
-					break;
-				case OperationHistoryEvent.OPERATION_NOT_OK:
-					operationInProgress = null;
-					break;
-				}
+		return event -> {
+			// We only care about events that have the workspace undo
+			// context.
+			if (!event.getOperation().hasContext(
+					WorkspaceUndoUtil.getWorkspaceUndoContext())) {
+				return;
 			}
-
+			switch (event.getEventType()) {
+			case OperationHistoryEvent.ABOUT_TO_EXECUTE:
+			case OperationHistoryEvent.ABOUT_TO_UNDO:
+			case OperationHistoryEvent.ABOUT_TO_REDO:
+				operationInProgress = event.getOperation();
+				break;
+			case OperationHistoryEvent.DONE:
+			case OperationHistoryEvent.UNDONE:
+			case OperationHistoryEvent.REDONE:
+				resetChangeCount();
+				operationInProgress = null;
+				break;
+			case OperationHistoryEvent.OPERATION_NOT_OK:
+				operationInProgress = null;
+				break;
+			}
 		};
 	}
 

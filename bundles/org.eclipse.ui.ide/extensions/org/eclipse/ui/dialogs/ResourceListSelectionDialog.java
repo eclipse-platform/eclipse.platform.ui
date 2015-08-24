@@ -16,12 +16,9 @@ import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -29,8 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -124,17 +119,14 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             //Keep track of if the widget got disposed
             //so that we can abort if required
             final boolean[] disposed = { false };
-            display.syncExec(new Runnable() {
-                @Override
-				public void run() {
-                    //Be sure the widget still exists
-                    if (resourceNames.isDisposed()) {
-                        disposed[0] = true;
-                        return;
-                    }
-                    itemCount[0] = resourceNames.getItemCount();
-                }
-            });
+            display.syncExec(() -> {
+			    //Be sure the widget still exists
+			    if (resourceNames.isDisposed()) {
+			        disposed[0] = true;
+			        return;
+			    }
+			    itemCount[0] = resourceNames.getItemCount();
+			});
 
             if (disposed[0]) {
 				return;
@@ -169,16 +161,13 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         return;
                     }
                     final int index = i;
-                    display.syncExec(new Runnable() {
-                        @Override
-						public void run() {
-                            if (stop || resourceNames.isDisposed()) {
-								return;
-							}
-                            updateItem(index, itemIndex[0], itemCount[0]);
-                            itemIndex[0]++;
-                        }
-                    });
+                    display.syncExec(() -> {
+					    if (stop || resourceNames.isDisposed()) {
+							return;
+						}
+					    updateItem(index, itemIndex[0], itemCount[0]);
+					    itemIndex[0]++;
+					});
                 }
             } else {
                 last = lastMatch;
@@ -202,16 +191,13 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                             firstMatch = index;
                         }
                         last = index;
-                        display.syncExec(new Runnable() {
-                            @Override
-							public void run() {
-                                if (stop || resourceNames.isDisposed()) {
-									return;
-								}
-                                updateItem(index, itemIndex[0], itemCount[0]);
-                                itemIndex[0]++;
-                            }
-                        });
+                        display.syncExec(() -> {
+						    if (stop || resourceNames.isDisposed()) {
+								return;
+							}
+						    updateItem(index, itemIndex[0], itemCount[0]);
+						    itemIndex[0]++;
+						});
                     }
                 }
             }
@@ -221,25 +207,22 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			}
 
             lastMatch = last;
-            display.syncExec(new Runnable() {
-                @Override
-				public void run() {
-                    if (resourceNames.isDisposed()) {
-						return;
-					}
-                    itemCount[0] = resourceNames.getItemCount();
-                    if (itemIndex[0] < itemCount[0]) {
-                        resourceNames.setRedraw(false);
-                        resourceNames.remove(itemIndex[0], itemCount[0] - 1);
-                        resourceNames.setRedraw(true);
-                    }
-                    // If no resources, remove remaining folder entries
-                    if (resourceNames.getItemCount() == 0) {
-                        folderNames.removeAll();
-                        updateOKState(false);
-                    }
-                }
-            });
+            display.syncExec(() -> {
+			    if (resourceNames.isDisposed()) {
+					return;
+				}
+			    itemCount[0] = resourceNames.getItemCount();
+			    if (itemIndex[0] < itemCount[0]) {
+			        resourceNames.setRedraw(false);
+			        resourceNames.remove(itemIndex[0], itemCount[0] - 1);
+			        resourceNames.setRedraw(true);
+			    }
+			    // If no resources, remove remaining folder entries
+			    if (resourceNames.getItemCount() == 0) {
+			        folderNames.removeAll();
+			        updateOKState(false);
+			    }
+			});
         }
     }
 
@@ -260,17 +243,14 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             //Keep track of if the widget got disposed
             //so that we can abort if required
             final boolean[] disposed = { false };
-            display.syncExec(new Runnable() {
-                @Override
-				public void run() {
-                    //Be sure the widget still exists
-                    if (resourceNames.isDisposed()) {
-                        disposed[0] = true;
-                        return;
-                    }
-                    itemCount[0] = resourceNames.getItemCount();
-                }
-            });
+            display.syncExec(() -> {
+			    //Be sure the widget still exists
+			    if (resourceNames.isDisposed()) {
+			        disposed[0] = true;
+			        return;
+			    }
+			    itemCount[0] = resourceNames.getItemCount();
+			});
 
             if (disposed[0]) {
                 return;
@@ -290,16 +270,13 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                         return;
                     }
                     final int index = i;
-                    display.syncExec(new Runnable() {
-                        @Override
-						public void run() {
-                            if (stop || resourceNames.isDisposed()) {
-								return;
-							}
-                            updateItem(index, itemIndex[0], itemCount[0]);
-                            itemIndex[0]++;
-                        }
-                    });
+                    display.syncExec(() -> {
+					    if (stop || resourceNames.isDisposed()) {
+							return;
+						}
+					    updateItem(index, itemIndex[0], itemCount[0]);
+					    itemIndex[0]++;
+					});
                 }
             } else {
                 // we're filtering the previous list
@@ -317,16 +294,13 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                     }
                     final int index = i;
                     if (match(descriptors[index].label)) {
-                        display.syncExec(new Runnable() {
-                            @Override
-							public void run() {
-                                if (stop || resourceNames.isDisposed()) {
-									return;
-								}
-                                updateItem(index, itemIndex[0], itemCount[0]);
-                                itemIndex[0]++;
-                            }
-                        });
+                        display.syncExec(() -> {
+						    if (stop || resourceNames.isDisposed()) {
+								return;
+							}
+						    updateItem(index, itemIndex[0], itemCount[0]);
+						    itemIndex[0]++;
+						});
                     }
                 }
             }
@@ -335,25 +309,22 @@ public class ResourceListSelectionDialog extends SelectionDialog {
                 return;
             }
 
-            display.syncExec(new Runnable() {
-                @Override
-				public void run() {
-                    if (resourceNames.isDisposed()) {
-                        return;
-                    }
-                    itemCount[0] = resourceNames.getItemCount();
-                    if (itemIndex[0] < itemCount[0]) {
-                        resourceNames.setRedraw(false);
-                        resourceNames.remove(itemIndex[0], itemCount[0] - 1);
-                        resourceNames.setRedraw(true);
-                    }
-                    // If no resources, remove remaining folder entries
-                    if (resourceNames.getItemCount() == 0) {
-                        folderNames.removeAll();
-                        updateOKState(false);
-                    }
-                }
-            });
+            display.syncExec(() -> {
+			    if (resourceNames.isDisposed()) {
+			        return;
+			    }
+			    itemCount[0] = resourceNames.getItemCount();
+			    if (itemIndex[0] < itemCount[0]) {
+			        resourceNames.setRedraw(false);
+			        resourceNames.remove(itemIndex[0], itemCount[0] - 1);
+			        resourceNames.setRedraw(true);
+			    }
+			    // If no resources, remove remaining folder entries
+			    if (resourceNames.getItemCount() == 0) {
+			        folderNames.removeAll();
+			        updateOKState(false);
+			    }
+			});
         }
     }
 
@@ -485,12 +456,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             }
         });
 
-        pattern.addModifyListener(new ModifyListener() {
-            @Override
-			public void modifyText(ModifyEvent e) {
-                refresh(false);
-            }
-        });
+        pattern.addModifyListener(e -> refresh(false));
 
         resourceNames.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -653,15 +619,12 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         }
 
         final ArrayList resources = new ArrayList();
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            @Override
-			public void run() {
-                getMatchingResources(resources);
-                IResource resourcesArray[] = new IResource[resources.size()];
-                resources.toArray(resourcesArray);
-                initDescriptors(resourcesArray);
-            }
-        });
+        BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+		    getMatchingResources(resources);
+		    IResource resourcesArray[] = new IResource[resources.size()];
+		    resources.toArray(resourcesArray);
+		    initDescriptors(resourcesArray);
+		});
 
         updateGatherThread.firstMatch = 0;
         updateGatherThread.lastMatch = descriptorsSize - 1;
@@ -721,30 +684,27 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     private void getMatchingResources(final ArrayList resources) {
         try {
-            container.accept(new IResourceProxyVisitor() {
-                @Override
-				public boolean visit(IResourceProxy proxy) {
-                    // optionally exclude derived resources (bugs 38085 and 81333)
-                    if (!getShowDerived() && proxy.isDerived()) {
-                        return false;
-                    }
-                    int type = proxy.getType();
-                    if ((typeMask & type) != 0) {
-                        if (match(proxy.getName())) {
-                            IResource res = proxy.requestResource();
-                            if (select(res)) {
-                                resources.add(res);
-                                return true;
-                            }
-                            return false;
-                        }
-                    }
-                    if (type == IResource.FILE) {
-						return false;
-					}
-                    return true;
-                }
-            }, IResource.NONE);
+            container.accept(proxy -> {
+			    // optionally exclude derived resources (bugs 38085 and 81333)
+			    if (!getShowDerived() && proxy.isDerived()) {
+			        return false;
+			    }
+			    int type = proxy.getType();
+			    if ((typeMask & type) != 0) {
+			        if (match(proxy.getName())) {
+			            IResource res = proxy.requestResource();
+			            if (select(res)) {
+			                resources.add(res);
+			                return true;
+			            }
+			            return false;
+			        }
+			    }
+			    if (type == IResource.FILE) {
+					return false;
+				}
+			    return true;
+			}, IResource.NONE);
         } catch (CoreException e) {
             // ignore
         }
@@ -798,53 +758,50 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * @param resources resources to create resource descriptors for
      */
     private void initDescriptors(final IResource resources[]) {
-        BusyIndicator.showWhile(null, new Runnable() {
-            @Override
-			public void run() {
-                descriptors = new ResourceDescriptor[resources.length];
-                for (int i = 0; i < resources.length; i++) {
-                    IResource r = resources[i];
-                    ResourceDescriptor d = new ResourceDescriptor();
-                    //TDB: Should use the label provider and compare performance.
-                    d.label = r.getName();
-                    d.resources.add(r);
-                    descriptors[i] = d;
-                }
-                Arrays.sort(descriptors);
-                descriptorsSize = descriptors.length;
+        BusyIndicator.showWhile(null, () -> {
+		    descriptors = new ResourceDescriptor[resources.length];
+		    for (int i1 = 0; i1 < resources.length; i1++) {
+		        IResource r = resources[i1];
+		        ResourceDescriptor d = new ResourceDescriptor();
+		        //TDB: Should use the label provider and compare performance.
+		        d.label = r.getName();
+		        d.resources.add(r);
+		        descriptors[i1] = d;
+		    }
+		    Arrays.sort(descriptors);
+		    descriptorsSize = descriptors.length;
 
-                //Merge the resource descriptor with the same label and type.
-                int index = 0;
-                if (descriptorsSize < 2) {
-					return;
-				}
-                ResourceDescriptor current = descriptors[index];
-                IResource currentResource = (IResource) current.resources
-                        .get(0);
-                for (int i = 1; i < descriptorsSize; i++) {
-                    ResourceDescriptor next = descriptors[i];
-                    IResource nextResource = (IResource) next.resources.get(0);
-                    if (nextResource.getType() == currentResource.getType()
-                            && next.label.equals(current.label)) {
-                        current.resources.add(nextResource);
-                        // If we are merging resources with the same name, into a single descriptor,
-                        // then we must mark the descriptor unsorted so that we will sort the folder
-                        // names.
-                        // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=76496
-                        current.resourcesSorted = false;
-                    } else {
-                        if (current.resources.size() > 1) {
-                            current.resourcesSorted = false;
-                        }
-                        descriptors[index + 1] = descriptors[i];
-                        index++;
-                        current = descriptors[index];
-                        currentResource = (IResource) current.resources.get(0);
-                    }
-                }
-                descriptorsSize = index + 1;
-            }
-        });
+		    //Merge the resource descriptor with the same label and type.
+		    int index = 0;
+		    if (descriptorsSize < 2) {
+				return;
+			}
+		    ResourceDescriptor current = descriptors[index];
+		    IResource currentResource = (IResource) current.resources
+		            .get(0);
+		    for (int i2 = 1; i2 < descriptorsSize; i2++) {
+		        ResourceDescriptor next = descriptors[i2];
+		        IResource nextResource = (IResource) next.resources.get(0);
+		        if (nextResource.getType() == currentResource.getType()
+		                && next.label.equals(current.label)) {
+		            current.resources.add(nextResource);
+		            // If we are merging resources with the same name, into a single descriptor,
+		            // then we must mark the descriptor unsorted so that we will sort the folder
+		            // names.
+		            // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=76496
+		            current.resourcesSorted = false;
+		        } else {
+		            if (current.resources.size() > 1) {
+		                current.resourcesSorted = false;
+		            }
+		            descriptors[index + 1] = descriptors[i2];
+		            index++;
+		            current = descriptors[index];
+		            currentResource = (IResource) current.resources.get(0);
+		        }
+		    }
+		    descriptorsSize = index + 1;
+		});
     }
 
     /**
@@ -911,32 +868,26 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * @desc resource descriptor of the selected resource
      */
     private void updateFolders(final ResourceDescriptor desc) {
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            @Override
-			public void run() {
-                if (!desc.resourcesSorted) {
-                    // sort the folder names
-                    Collections.sort(desc.resources, new Comparator() {
-                        @Override
-						public int compare(Object o1, Object o2) {
-                            String s1 = getParentLabel((IResource) o1);
-                            String s2 = getParentLabel((IResource) o2);
-                            return collator.compare(s1, s2);
-                        }
-                    });
-                    desc.resourcesSorted = true;
-                }
-                folderNames.removeAll();
-                for (int i = 0; i < desc.resources.size(); i++) {
-                    TableItem newItem = new TableItem(folderNames, SWT.NONE);
-                    IResource r = (IResource) desc.resources.get(i);
-                    newItem.setText(getParentLabel(r));
-                    newItem.setImage(getParentImage(r));
-                    newItem.setData(r);
-                }
-                folderNames.setSelection(0);
-            }
-        });
+        BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+		    if (!desc.resourcesSorted) {
+		        // sort the folder names
+		        Collections.sort(desc.resources, (o1, o2) -> {
+				    String s1 = getParentLabel((IResource) o1);
+				    String s2 = getParentLabel((IResource) o2);
+				    return collator.compare(s1, s2);
+				});
+		        desc.resourcesSorted = true;
+		    }
+		    folderNames.removeAll();
+		    for (int i = 0; i < desc.resources.size(); i++) {
+		        TableItem newItem = new TableItem(folderNames, SWT.NONE);
+		        IResource r = (IResource) desc.resources.get(i);
+		        newItem.setText(getParentLabel(r));
+		        newItem.setImage(getParentImage(r));
+		        newItem.setData(r);
+		    }
+		    folderNames.setSelection(0);
+		});
     }
 
     /**

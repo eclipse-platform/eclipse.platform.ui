@@ -16,9 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -67,19 +65,16 @@ class PasteTaskAction extends TaskAction {
         final ArrayList newMarkerResources = new ArrayList();
 
         try {
-            getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
-                @Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-                    for (int i = 0; i < markerData.length; i++) {
-                        // Only paste tasks
-                        if (!markerData[i].getType().equals(IMarker.TASK)) {
-							continue;
-						}
-                        newMarkerResources.add(markerData[i].getResource());
-                        newMarkerAttributes.add(markerData[i].getAttributes());
-                    }
-                }
-            }, null);
+            getTaskList().getWorkspace().run(monitor -> {
+			    for (int i = 0; i < markerData.length; i++) {
+			        // Only paste tasks
+			        if (!markerData[i].getType().equals(IMarker.TASK)) {
+						continue;
+					}
+			        newMarkerResources.add(markerData[i].getResource());
+			        newMarkerAttributes.add(markerData[i].getAttributes());
+			    }
+			}, null);
         } catch (CoreException e) {
             ErrorDialog.openError(getShell(), TaskListMessages.PasteTask_errorMessage,
                     null, e.getStatus());
@@ -99,14 +94,11 @@ class PasteTaskAction extends TaskAction {
         // Must be done outside the create marker operation above since notification for add is
         // sent after the operation is executed.
         if (op.getMarkers() != null) {
-            getShell().getDisplay().asyncExec(new Runnable() {
-                @Override
-				public void run() {
-                    TaskList taskList = getTaskList();
-                    taskList.setSelection(new StructuredSelection(op.getMarkers()),
-                            true);
-                }
-            });
+            getShell().getDisplay().asyncExec(() -> {
+			    TaskList taskList = getTaskList();
+			    taskList.setSelection(new StructuredSelection(op.getMarkers()),
+			            true);
+			});
         }
     }
 

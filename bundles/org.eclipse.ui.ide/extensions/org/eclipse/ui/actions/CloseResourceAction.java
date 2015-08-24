@@ -297,24 +297,19 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		if (resourceRoots.isEmpty()) {
 			return;
 		}
-		Runnable runnable = new Runnable() {
+		Runnable runnable = () -> SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorOnCloseEditors) {
 			@Override
 			public void run() {
-				SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorOnCloseEditors) {
-					@Override
-					public void run() {
-						IWorkbenchWindow w = getActiveWindow();
-						if (w != null) {
-							List<IEditorReference> toClose = getMatchingEditors(resourceRoots, w, deletedOnly);
-							if (toClose.isEmpty()) {
-								return;
-							}
-							closeEditors(toClose, w);
-						}
+				IWorkbenchWindow w = getActiveWindow();
+				if (w != null) {
+					List<IEditorReference> toClose = getMatchingEditors(resourceRoots, w, deletedOnly);
+					if (toClose.isEmpty()) {
+						return;
 					}
-				});
+					closeEditors(toClose, w);
+				}
 			}
-		};
+		});
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
 	}
 

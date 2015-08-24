@@ -346,12 +346,7 @@ class FiltersDialog extends TrayDialog {
         }
     };
 
-    private ICheckStateListener checkStateListener = new ICheckStateListener() {
-        @Override
-		public void checkStateChanged(CheckStateChangedEvent event) {
-            FiltersDialog.this.checkStateChanged(event);
-        }
-    };
+    private ICheckStateListener checkStateListener = event -> FiltersDialog.this.checkStateChanged(event);
 
     /**
      * Creates a new filters dialog.

@@ -32,8 +32,6 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -294,12 +292,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	        variableNameField.setText(variableName);
 	        variableNameField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 	        		false, 2, 1));
-	        variableNameField.addModifyListener(new ModifyListener() {
-	            @Override
-				public void modifyText(ModifyEvent event) {
-	                variableNameModified();
-	            }
-	        });
+	        variableNameField.addModifyListener(event -> variableNameModified());
         }
 
         // variable value label
@@ -312,12 +305,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         variableValueField.setText(variableValue);
         variableValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
         		false));
-        variableValueField.addModifyListener(new ModifyListener() {
-            @Override
-			public void modifyText(ModifyEvent event) {
-                variableValueModified();
-            }
-        });
+        variableValueField.addModifyListener(event -> variableValueModified());
 
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,

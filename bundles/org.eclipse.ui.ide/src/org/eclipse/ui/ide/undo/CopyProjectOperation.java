@@ -179,8 +179,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		// If the original project content no longer exist, we do not want to
 		// attempt to undo the copy which involves deleting the copies. They may
 		// be all we have left.
-		if (originalProject == null
-				|| !originalProjectDescription.verifyExistence(true)) {
+		if (originalProject == null	|| !originalProjectDescription.verifyExistence(true)) {
 			markInvalid();
 			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
@@ -196,8 +195,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	 */
 	IProject copyProject(IProject project, IPath destinationPath,
 			URI locationURI, IProgressMonitor monitor) throws CoreException {
-		monitor
-				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
+		monitor.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
 
 		boolean open = project.isOpen();
 		if (!open) {
