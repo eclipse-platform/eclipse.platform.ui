@@ -14,7 +14,9 @@ package org.eclipse.e4.ui.tests.reconciler;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.e4.ui.tests.reconciler.xml.XMLModelReconcilerTestSuite;
+import org.junit.runner.RunWith;
 
+@RunWith(org.junit.runners.AllTests.class)
 public class ModelReconcilerTestSuite extends TestSuite {
 
 	public static Test suite() {
