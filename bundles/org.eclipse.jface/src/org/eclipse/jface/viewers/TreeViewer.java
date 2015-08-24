@@ -23,16 +23,12 @@ import java.util.List;
 
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -247,27 +243,19 @@ public class TreeViewer extends AbstractTreeViewer {
 		Tree treeControl = (Tree) control;
 
 		if ((treeControl.getStyle() & SWT.VIRTUAL) != 0) {
-			treeControl.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					treeIsDisposed = true;
-					unmapAllElements();
-				}
+			treeControl.addDisposeListener(e -> {
+				treeIsDisposed = true;
+				unmapAllElements();
 			});
-			treeControl.addListener(SWT.SetData, new Listener() {
-
-				@Override
-				public void handleEvent(Event event) {
-					if (contentProviderIsLazy) {
-						TreeItem item = (TreeItem) event.item;
-						TreeItem parentItem = item.getParentItem();
-						int index = event.index;
-						virtualLazyUpdateWidget(
-								parentItem == null ? (Widget) getTree()
-										: parentItem, index);
-					}
+			treeControl.addListener(SWT.SetData, event -> {
+				if (contentProviderIsLazy) {
+					TreeItem item = (TreeItem) event.item;
+					TreeItem parentItem = item.getParentItem();
+					int index = event.index;
+					virtualLazyUpdateWidget(
+							parentItem == null ? (Widget) getTree()
+									: parentItem, index);
 				}
-
 			});
 		}
 	}
@@ -384,18 +372,15 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setChildCount(final Object elementOrTreePath, final int count) {
 		if (checkBusy())
 			return;
-		preservingSelection(new Runnable() {
-			@Override
-			public void run() {
-				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-					getTree().setItemCount(count);
-					return;
-				}
-				Widget[] items = internalFindItems(elementOrTreePath);
-				for (Widget item : items) {
-					TreeItem treeItem = (TreeItem) item;
-					treeItem.setItemCount(count);
-				}
+		preservingSelection(() -> {
+			if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+				getTree().setItemCount(count);
+				return;
+			}
+			Widget[] items = internalFindItems(elementOrTreePath);
+			for (Widget item : items) {
+				TreeItem treeItem = (TreeItem) item;
+				treeItem.setItemCount(count);
 			}
 		});
 	}
@@ -728,14 +713,11 @@ public class TreeViewer extends AbstractTreeViewer {
 			// because it is reused
 			if (item.getData(VIRTUAL_DISPOSE_KEY) == null) {
 				item.setData(VIRTUAL_DISPOSE_KEY, Boolean.TRUE);
-				item.addDisposeListener(new DisposeListener() {
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						if (!treeIsDisposed) {
-							Object data = item.getData();
-							if (usingElementMap() && data != null) {
-								unmapElement(data, item);
-							}
+				item.addDisposeListener(e -> {
+					if (!treeIsDisposed) {
+						Object data = item.getData();
+						if (usingElementMap() && data != null) {
+							unmapElement(data, item);
 						}
 					}
 				});
@@ -817,65 +799,62 @@ public class TreeViewer extends AbstractTreeViewer {
 			return;
 		final List oldSelection = new LinkedList(Arrays
 				.asList(((TreeSelection) getSelection()).getPaths()));
-		preservingSelection(new Runnable() {
-			@Override
-			public void run() {
-				TreePath removedPath = null;
-				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
-					Tree tree = (Tree) getControl();
-					if (index < tree.getItemCount()) {
-						TreeItem item = tree.getItem(index);
-						if (item.getData() != null) {
-							removedPath = getTreePathFromItem(item);
-							disassociate(item);
-						}
-						item.dispose();
+		preservingSelection(() -> {
+			TreePath removedPath = null;
+			if (internalIsInputOrEmptyPath(parentOrTreePath)) {
+				Tree tree = (Tree) getControl();
+				if (index < tree.getItemCount()) {
+					TreeItem item1 = tree.getItem(index);
+					if (item1.getData() != null) {
+						removedPath = getTreePathFromItem(item1);
+						disassociate(item1);
 					}
-				} else {
-					Widget[] parentItems = internalFindItems(parentOrTreePath);
-					for (Widget parentWidget : parentItems) {
-						TreeItem parentItem = (TreeItem) parentWidget;
-						if (parentItem.isDisposed())
-							continue;
-						if (index < parentItem.getItemCount()) {
-							TreeItem item = parentItem.getItem(index);
+					item1.dispose();
+				}
+			} else {
+				Widget[] parentItems = internalFindItems(parentOrTreePath);
+				for (Widget parentWidget : parentItems) {
+					TreeItem parentItem = (TreeItem) parentWidget;
+					if (parentItem.isDisposed())
+						continue;
+					if (index < parentItem.getItemCount()) {
+						TreeItem item2 = parentItem.getItem(index);
 
-							if (item.getData() == null) {
-								// If getData()==null and index == 0, and the
-								// parent item is collapsed, then we are
-								// being asked to remove the dummy node. We'll
-								// just ignore the request to remove the dummy
-								// node (bug 292322 and bug 296573).
-								if (index > 0 || parentItem.getExpanded()) {
-									item.dispose();
-								}
-							} else {
-								removedPath = getTreePathFromItem(item);
-								disassociate(item);
-								item.dispose();
+						if (item2.getData() == null) {
+							// If getData()==null and index == 0, and the
+							// parent item is collapsed, then we are
+							// being asked to remove the dummy node. We'll
+							// just ignore the request to remove the dummy
+							// node (bug 292322 and bug 296573).
+							if (index > 0 || parentItem.getExpanded()) {
+								item2.dispose();
 							}
+						} else {
+							removedPath = getTreePathFromItem(item2);
+							disassociate(item2);
+							item2.dispose();
 						}
 					}
 				}
-				if (removedPath != null) {
-					boolean removed = false;
-					for (Iterator it = oldSelection.iterator(); it
-							.hasNext();) {
-						TreePath path = (TreePath) it.next();
-						if (path.startsWith(removedPath, getComparer())) {
-							it.remove();
-							removed = true;
-						}
+			}
+			if (removedPath != null) {
+				boolean removed = false;
+				for (Iterator it = oldSelection.iterator(); it
+						.hasNext();) {
+					TreePath path = (TreePath) it.next();
+					if (path.startsWith(removedPath, getComparer())) {
+						it.remove();
+						removed = true;
 					}
-					if (removed) {
-						setSelection(new TreeSelection(
-								(TreePath[]) oldSelection
-										.toArray(new TreePath[oldSelection
-												.size()]), getComparer()),
-								false);
-					}
+				}
+				if (removed) {
+					setSelection(new TreeSelection(
+							(TreePath[]) oldSelection
+									.toArray(new TreePath[oldSelection
+											.size()]), getComparer()),
+							false);
+				}
 
-				}
 			}
 		});
 	}
@@ -936,35 +915,32 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
 		if (checkBusy())
 			return;
-		preservingSelection(new Runnable() {
-			@Override
-			public void run() {
-				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-					if (hasChildren) {
-						virtualLazyUpdateChildCount(getTree(),
-								getChildren(getTree()).length);
-					} else {
-						setChildCount(elementOrTreePath, 0);
-					}
-					return;
+		preservingSelection(() -> {
+			if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+				if (hasChildren) {
+					virtualLazyUpdateChildCount(getTree(),
+							getChildren(getTree()).length);
+				} else {
+					setChildCount(elementOrTreePath, 0);
 				}
-				Widget[] items = internalFindItems(elementOrTreePath);
-				for (Widget widget : items) {
-					TreeItem item = (TreeItem) widget;
-					if (!hasChildren) {
-						item.setItemCount(0);
+				return;
+			}
+			Widget[] items = internalFindItems(elementOrTreePath);
+			for (Widget widget : items) {
+				TreeItem item = (TreeItem) widget;
+				if (!hasChildren) {
+					item.setItemCount(0);
+				} else {
+					if (!item.getExpanded()) {
+						item.setItemCount(1);
+						TreeItem child = item.getItem(0);
+						if (child.getData() != null) {
+							disassociate(child);
+						}
+						item.clear(0, true);
 					} else {
-						if (!item.getExpanded()) {
-							item.setItemCount(1);
-							TreeItem child = item.getItem(0);
-							if (child.getData() != null) {
-								disassociate(child);
-							}
-							item.clear(0, true);
-						} else {
-                            virtualLazyUpdateChildCount(item, item.getItemCount());
-                        }
-					}
+		                virtualLazyUpdateChildCount(item, item.getItemCount());
+		            }
 				}
 			}
 		});

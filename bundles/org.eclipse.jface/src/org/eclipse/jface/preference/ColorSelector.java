@@ -13,8 +13,6 @@ package org.eclipse.jface.preference;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -80,19 +78,16 @@ public class ColorSelector extends EventManager {
                 open();
             }
         });
-        fButton.addDisposeListener(new DisposeListener() {
-            @Override
-			public void widgetDisposed(DisposeEvent event) {
-                if (fImage != null) {
-                    fImage.dispose();
-                    fImage = null;
-                }
-                if (fColor != null) {
-                    fColor.dispose();
-                    fColor = null;
-                }
-            }
-        });
+        fButton.addDisposeListener(event -> {
+		    if (fImage != null) {
+		        fImage.dispose();
+		        fImage = null;
+		    }
+		    if (fColor != null) {
+		        fColor.dispose();
+		        fColor = null;
+		    }
+		});
         fButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
             @Override
 			public void getName(AccessibleEvent e) {

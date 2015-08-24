@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -205,17 +204,13 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             // ToolBarManager.createControl can actually return a pre-existing control.
             // Only add the listener if the toolbar was newly created (bug 62097).
             if (oldToolBar != toolBar) {
-	            toolBar.addListener(SWT.MenuDetect, new Listener() {
-
-	                @Override
-					public void handleEvent(Event event) {
-	                    // if the toolbar does not have its own context menu then
-	                    // handle the event
-	                    if (toolBarManager.getContextMenuManager() == null) {
-	                        handleContextMenu(event);
-	                    }
-	                }
-	            });
+	            toolBar.addListener(SWT.MenuDetect, event -> {
+				    // if the toolbar does not have its own context menu then
+				    // handle the event
+				    if (toolBarManager.getContextMenuManager() == null) {
+				        handleContextMenu(event);
+				    }
+				});
             }
 
             // Handle for chevron clicking
@@ -233,13 +228,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
             }
 
             // Handle for disposal
-            coolItem.addDisposeListener(new DisposeListener() {
-
-                @Override
-				public void widgetDisposed(DisposeEvent event) {
-                    handleWidgetDispose(event);
-                }
-            });
+            coolItem.addDisposeListener(event -> handleWidgetDispose(event));
 
             // Sets the size of the coolItem
             updateSize(true);

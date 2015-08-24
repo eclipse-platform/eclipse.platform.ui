@@ -17,8 +17,6 @@ import java.util.Map;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BidiSegmentEvent;
-import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.widgets.Combo;
@@ -336,12 +334,7 @@ public final class BidiUtils {
 	public static void applyBidiProcessing(StyledText field, String handlingType) {
 		final SegmentListener listener = getSegmentListener(handlingType);
 		if (listener != null) {
-			field.addBidiSegmentListener(new BidiSegmentListener() {
-				@Override
-				public void lineGetSegments(BidiSegmentEvent event) {
-					listener.getSegments(event);
-				}
-			});
+			field.addBidiSegmentListener(listener::getSegments);
 		}
 	}
 

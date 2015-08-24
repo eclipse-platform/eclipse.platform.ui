@@ -15,8 +15,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
@@ -30,7 +28,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -273,12 +270,7 @@ public abstract class TrayDialog extends Dialog {
 		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		toolBar.setCursor(cursor);
-		toolBar.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				cursor.dispose();
-			}
-		});
+		toolBar.addDisposeListener(e -> cursor.dispose());
         fHelpButton = new ToolItem(toolBar, SWT.CHECK);
 		fHelpButton.setImage(image);
 		fHelpButton.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
@@ -433,16 +425,13 @@ public abstract class TrayDialog extends Dialog {
 		int trayWidth = leftSeparator.computeSize(SWT.DEFAULT, clientArea.height).x + sash.computeSize(SWT.DEFAULT, clientArea.height).x + rightSeparator.computeSize(SWT.DEFAULT, clientArea.height).x + data.widthHint;
 		Rectangle bounds = shell.getBounds();
 		shell.setBounds(bounds.x - ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width + trayWidth, bounds.height);
-		sash.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.detail != SWT.DRAG) {
-					Rectangle clientArea = shell.getClientArea();
-					int newWidth = clientArea.width - event.x - (sash.getSize().x + rightSeparator.getSize().x);
-					if (newWidth != data.widthHint) {
-						data.widthHint = newWidth;
-						shell.layout();
-					}
+		sash.addListener(SWT.Selection, event -> {
+			if (event.detail != SWT.DRAG) {
+				Rectangle clientArea1 = shell.getClientArea();
+				int newWidth = clientArea1.width - event.x - (sash.getSize().x + rightSeparator.getSize().x);
+				if (newWidth != data.widthHint) {
+					data.widthHint = newWidth;
+					shell.layout();
 				}
 			}
 		});

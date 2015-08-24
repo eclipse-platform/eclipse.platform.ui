@@ -27,9 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -324,12 +322,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 */
 	private void asyncSetOperationCancelButtonEnabled(final boolean b) {
 		if (getShell() != null) {
-			getShell().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					setOperationCancelButtonEnabled(b);
-				}
-			});
+			getShell().getDisplay().asyncExec(() -> setOperationCancelButtonEnabled(b));
 		}
 	}
 
@@ -395,19 +388,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		shell.setCursor(waitCursor);
 		// Add a listener to set the message properly when the dialog becomes
 		// visible
-		shell.addListener(SWT.Show, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// We need to async the message update since the Show precedes
-				// visibility
-				shell.getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						setMessage(message, true);
-					}
-				});
-			}
-		});
+		shell.addListener(SWT.Show, event -> shell.getDisplay().asyncExec(() -> setMessage(message, true)));
 	}
 
 	@Override

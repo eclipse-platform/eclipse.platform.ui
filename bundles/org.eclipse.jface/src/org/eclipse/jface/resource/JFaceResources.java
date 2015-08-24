@@ -206,12 +206,9 @@ public class JFaceResources {
 			final DeviceResourceManager mgr = new DeviceResourceManager(toQuery);
 			reg = mgr;
 			registries.put(toQuery, mgr);
-			toQuery.disposeExec(new Runnable() {
-				@Override
-				public void run() {
-					mgr.dispose();
-					registries.remove(toQuery);
-				}
+			toQuery.disposeExec(() -> {
+				mgr.dispose();
+				registries.remove(toQuery);
 			});
 		}
 

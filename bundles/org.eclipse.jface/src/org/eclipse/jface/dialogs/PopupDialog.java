@@ -27,8 +27,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,7 +40,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -582,81 +579,62 @@ public class PopupDialog extends Window {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(5, 5).applyTo(
 				shell);
 
-		shell.addListener(SWT.Deactivate, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
+		shell.addListener(SWT.Deactivate, event -> {
+			/*
+			 * Close if we are deactivating and have no child shells. If we
+			 * have child shells, we are deactivating due to their opening.
+			 * On X, we receive this when a menu child (such as the system
+			 * menu) of the shell opens, but I have not found a way to
+			 * distinguish that case here. Hence bug #113577 still exists.
+			 */
+			if (listenToDeactivate && event.widget == getShell()
+					&& getShell().getShells().length == 0) {
+				asyncClose();
+			} else {
 				/*
-				 * Close if we are deactivating and have no child shells. If we
-				 * have child shells, we are deactivating due to their opening.
-				 * On X, we receive this when a menu child (such as the system
-				 * menu) of the shell opens, but I have not found a way to
-				 * distinguish that case here. Hence bug #113577 still exists.
+				 * We typically ignore deactivates to work around
+				 * platform-specific event ordering. Now that we've ignored
+				 * whatever we were supposed to, start listening to
+				 * deactivates. Example issues can be found in
+				 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123392
 				 */
-				if (listenToDeactivate && event.widget == getShell()
-						&& getShell().getShells().length == 0) {
-					asyncClose();
-				} else {
-					/*
-					 * We typically ignore deactivates to work around
-					 * platform-specific event ordering. Now that we've ignored
-					 * whatever we were supposed to, start listening to
-					 * deactivates. Example issues can be found in
-					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123392
-					 */
-					listenToDeactivate = true;
-				}
+				listenToDeactivate = true;
 			}
 		});
 		// Set this true whenever we activate. It may have been turned
 		// off by a menu or secondary popup showing.
-		shell.addListener(SWT.Activate, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// ignore this event if we have launched a child
-				if (event.widget == getShell()
-						&& getShell().getShells().length == 0) {
-					listenToDeactivate = true;
-					// Typically we start listening for parent deactivate after
-					// we are activated, except on the Mac, where the deactivate
-					// is received after activate.
-					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
-					listenToParentDeactivate = !Util.isMac();
-				}
+		shell.addListener(SWT.Activate, event -> {
+			// ignore this event if we have launched a child
+			if (event.widget == getShell()
+					&& getShell().getShells().length == 0) {
+				listenToDeactivate = true;
+				// Typically we start listening for parent deactivate after
+				// we are activated, except on the Mac, where the deactivate
+				// is received after activate.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=100668
+				listenToParentDeactivate = !Util.isMac();
 			}
 		});
 
 		if ((getShellStyle() & SWT.ON_TOP) != 0 && shell.getParent() != null) {
-			parentDeactivateListener = new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					if (listenToParentDeactivate) {
-						asyncClose();
-					} else {
-						// Our first deactivate, now start listening on the Mac.
-						listenToParentDeactivate = listenToDeactivate;
-					}
+			parentDeactivateListener = event -> {
+				if (listenToParentDeactivate) {
+					asyncClose();
+				} else {
+					// Our first deactivate, now start listening on the Mac.
+					listenToParentDeactivate = listenToDeactivate;
 				}
 			};
 			shell.getParent().addListener(SWT.Deactivate,
 					parentDeactivateListener);
 		}
 
-		shell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				handleDispose();
-			}
-		});
+		shell.addDisposeListener(event -> handleDispose());
 	}
 
 	private void asyncClose() {
 		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=152010
-		getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				close();
-			}
-		});
+		getShell().getDisplay().asyncExec(() -> close());
 	}
 
 	/**

@@ -22,10 +22,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -253,22 +251,12 @@ public class ConfigureColumns {
 			if (moveableColumnsFound) {
 				upButton = new Button(composite, SWT.PUSH);
 				upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
-				upButton.addListener(SWT.Selection, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-						handleMove(table, true);
-					}
-				});
+				upButton.addListener(SWT.Selection, event -> handleMove(table, true));
 				setButtonLayoutData(upButton);
 				downButton = new Button(composite, SWT.PUSH);
 				downButton.setText(JFaceResources
 						.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
-				downButton.addListener(SWT.Selection, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-						handleMove(table, false);
-					}
-				});
+				downButton.addListener(SWT.Selection, event -> handleMove(table, false));
 				setButtonLayoutData(downButton);
 
 				// filler label
@@ -292,25 +280,17 @@ public class ConfigureColumns {
 
 			GridLayoutFactory.swtDefaults().numColumns(numColumns).applyTo(composite);
 
-			table.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					handleSelectionChanged(table.indexOf((TableItem) event.item));
+			table.addListener(SWT.Selection, event -> handleSelectionChanged(table.indexOf((TableItem) event.item)));
+			text.addListener(SWT.Modify, event -> {
+				ColumnObject columnObject = columnObjects[table.getSelectionIndex()];
+				if (!columnObject.resizable) {
+					return;
 				}
-			});
-			text.addListener(SWT.Modify, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					ColumnObject columnObject = columnObjects[table.getSelectionIndex()];
-					if (!columnObject.resizable) {
-						return;
-					}
-					try {
-						int width = Integer.parseInt(text.getText());
-						columnObject.width = width;
-					} catch (NumberFormatException ex) {
-						// ignore for now
-					}
+				try {
+					int width = Integer.parseInt(text.getText());
+					columnObject.width = width;
+				} catch (NumberFormatException ex) {
+					// ignore for now
 				}
 			});
 

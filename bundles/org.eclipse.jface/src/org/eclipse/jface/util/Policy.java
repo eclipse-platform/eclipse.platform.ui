@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.AnimatorFactory;
 import org.eclipse.jface.dialogs.ErrorSupportProvider;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -79,13 +77,10 @@ public class Policy {
 	 * Returns the dummy log to use if none has been set
 	 */
 	private static ILogger getDummyLog() {
-		return new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				System.err.println(status.getMessage());
-				if (status.getException() != null) {
-					status.getException().printStackTrace(System.err);
-				}
+		return status -> {
+			System.err.println(status.getMessage());
+			if (status.getException() != null) {
+				status.getException().printStackTrace(System.err);
 			}
 		};
 	}
@@ -149,25 +144,16 @@ public class Policy {
 
 			@Override
 			public void show(final IStatus status, String title) {
-				Runnable runnable = new Runnable() {
-					@Override
-					public void run() {
-						if (dialog == null || dialog.getShell().isDisposed()) {
-							dialog = new SafeRunnableDialog(status);
-							dialog.create();
-							dialog.getShell().addDisposeListener(
-									new DisposeListener() {
-										@Override
-										public void widgetDisposed(
-												DisposeEvent e) {
-											dialog = null;
-										}
-									});
-							dialog.open();
-						} else {
-							dialog.addStatus(status);
-							dialog.refresh();
-						}
+				Runnable runnable = () -> {
+					if (dialog == null || dialog.getShell().isDisposed()) {
+						dialog = new SafeRunnableDialog(status);
+						dialog.create();
+						dialog.getShell().addDisposeListener(
+								e -> dialog = null);
+						dialog.open();
+					} else {
+						dialog.addStatus(status);
+						dialog.refresh();
 					}
 				};
 				if (Display.getCurrent() != null) {
@@ -185,26 +171,7 @@ public class Policy {
 	 * @return a default comparator used by JFace to sort strings
 	 */
 	private static Comparator<Object> getDefaultComparator() {
-		return new Comparator<Object>() {
-			/**
-			 * Compares string s1 to string s2.
-			 *
-			 * @param s1
-			 *            string 1
-			 * @param s2
-			 *            string 2
-			 * @return Returns an integer value. Value is less than zero if
-			 *         source is less than target, value is zero if source and
-			 *         target are equal, value is greater than zero if source is
-			 *         greater than target.
-			 * @exception ClassCastException
-			 *                the arguments cannot be cast to Strings.
-			 */
-			@Override
-			public int compare(Object s1, Object s2) {
-				return ((String) s1).compareTo((String) s2);
-			}
-		};
+		return (s1, s2) -> ((String) s1).compareTo((String) s2);
 	}
 
 	/**

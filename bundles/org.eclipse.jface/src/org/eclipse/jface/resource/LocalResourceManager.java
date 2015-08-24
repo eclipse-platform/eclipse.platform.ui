@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -57,12 +55,7 @@ public final class LocalResourceManager extends AbstractResourceManager {
     public LocalResourceManager(ResourceManager parentRegistry, Control owner) {
         this(parentRegistry);
 
-        owner.addDisposeListener(new DisposeListener() {
-	        @Override
-			public void widgetDisposed(DisposeEvent e) {
-	            LocalResourceManager.this.dispose();
-	        }
-        });
+        owner.addDisposeListener(e -> LocalResourceManager.this.dispose());
     }
 
     @Override

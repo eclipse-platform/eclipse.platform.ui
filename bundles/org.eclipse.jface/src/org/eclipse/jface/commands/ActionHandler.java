@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 475689
  *******************************************************************************/
 package org.eclipse.jface.commands;
 
@@ -17,7 +18,6 @@ import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
 
 /**
@@ -73,15 +73,11 @@ public final class ActionHandler extends AbstractHandler {
 	 */
 	private final void attachListener() {
 		if (propertyChangeListener == null) {
-			propertyChangeListener = new IPropertyChangeListener() {
-				@Override
-				public final void propertyChange(
-						final PropertyChangeEvent propertyChangeEvent) {
-					final String property = propertyChangeEvent.getProperty();
-					fireHandlerChanged(new HandlerEvent(ActionHandler.this,
-							IAction.ENABLED.equals(property),
-							IAction.HANDLED.equals(property)));
-				}
+			propertyChangeListener = propertyChangeEvent -> {
+				final String property = propertyChangeEvent.getProperty();
+				fireHandlerChanged(new HandlerEvent(ActionHandler.this,
+						IAction.ENABLED.equals(property),
+						IAction.HANDLED.equals(property)));
 			};
 		}
 
@@ -151,8 +147,7 @@ public final class ActionHandler extends AbstractHandler {
 	}
 
 	@Override
-	public final void removeHandlerListener(
-			final IHandlerListener handlerListener) {
+	public final void removeHandlerListener(final IHandlerListener handlerListener) {
 		super.removeHandlerListener(handlerListener);
 
 		if (!hasListeners()) {

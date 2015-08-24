@@ -26,8 +26,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -163,15 +161,12 @@ public class TextCellEditor extends CellEditor {
                 checkSelectable();
             }
         });
-        text.addTraverseListener(new TraverseListener() {
-            @Override
-			public void keyTraversed(TraverseEvent e) {
-                if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
-                    e.doit = false;
-                }
-            }
-        });
+        text.addTraverseListener(e -> {
+		    if (e.detail == SWT.TRAVERSE_ESCAPE
+		            || e.detail == SWT.TRAVERSE_RETURN) {
+		        e.doit = false;
+		    }
+		});
         // We really want a selection listener but it is not supported so we
         // use a key listener and a mouse listener to know when selection changes
         // may have occurred
@@ -275,12 +270,7 @@ public class TextCellEditor extends CellEditor {
      */
     private ModifyListener getModifyListener() {
         if (modifyListener == null) {
-            modifyListener = new ModifyListener() {
-                @Override
-				public void modifyText(ModifyEvent e) {
-                    editOccured(e);
-                }
-            };
+			modifyListener = this::editOccured;
         }
         return modifyListener;
     }

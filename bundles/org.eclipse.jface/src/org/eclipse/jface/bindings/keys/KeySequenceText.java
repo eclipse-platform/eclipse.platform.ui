@@ -22,8 +22,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -553,12 +551,7 @@ public final class KeySequenceText {
 			final Font font = new Font(text.getDisplay(),
 					"Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
 			text.setFont(font);
-			text.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					font.dispose();
-				}
-			});
+			text.addDisposeListener(e -> font.dispose());
 		}
 
 		// Add the key listener.
@@ -567,12 +560,7 @@ public final class KeySequenceText {
 
 		final TraversalFilterManager traversalFilterManager = new TraversalFilterManager();
 		text.addFocusListener(traversalFilterManager);
-		text.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				traversalFilterManager.dispose();
-			}
-		});
+		text.addDisposeListener(e -> traversalFilterManager.dispose());
 
 		// Add an internal modify listener.
 		text.addModifyListener(updateSequenceListener);

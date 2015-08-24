@@ -142,12 +142,7 @@ public class FieldAssistColors {
 		// If we have never created a color on this display before, install
 		// a dispose exec on the display.
 		if (!displays.containsValue(display)) {
-			display.disposeExec(new Runnable() {
-				@Override
-				public void run() {
-					disposeColors(display);
-				}
-			});
+			display.disposeExec(() -> disposeColors(display));
 		}
 		// Record the color and its display in a map for later disposal.
 		displays.put(color, display);

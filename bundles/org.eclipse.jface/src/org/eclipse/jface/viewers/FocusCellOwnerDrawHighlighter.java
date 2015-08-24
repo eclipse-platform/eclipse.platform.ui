@@ -95,28 +95,23 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 	private void hookListener(final ColumnViewer viewer) {
 
-		Listener listener = new Listener() {
+		Listener listener = event -> {
+			if ((event.detail & SWT.SELECTED) > 0) {
+				ViewerCell focusCell = getFocusCell();
+				ViewerRow row = viewer.getViewerRowFromItem(event.item);
 
-			@Override
-			public void handleEvent(Event event) {
-				if ((event.detail & SWT.SELECTED) > 0) {
-					ViewerCell focusCell = getFocusCell();
-					ViewerRow row = viewer.getViewerRowFromItem(event.item);
+				Assert
+						.isNotNull(row,
+								"Internal structure invalid. Item without associated row is not possible."); //$NON-NLS-1$
 
-					Assert
-							.isNotNull(row,
-									"Internal structure invalid. Item without associated row is not possible."); //$NON-NLS-1$
+				ViewerCell cell = row.getCell(event.index);
 
-					ViewerCell cell = row.getCell(event.index);
-
-					if (focusCell == null || !cell.equals(focusCell)) {
-						removeSelectionInformation(event, cell);
-					} else {
-						markFocusedCell(event, cell);
-					}
+				if (focusCell == null || !cell.equals(focusCell)) {
+					removeSelectionInformation(event, cell);
+				} else {
+					markFocusedCell(event, cell);
 				}
 			}
-
 		};
 		viewer.getControl().addListener(SWT.EraseItem, listener);
 	}

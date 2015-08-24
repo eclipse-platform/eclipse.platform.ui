@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -25,7 +24,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -273,13 +271,10 @@ public class ControlDecoration {
 					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			hoverShell.setForeground(display
 					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			hoverShell.addPaintListener(new PaintListener() {
-				@Override
-				public void paintControl(PaintEvent pe) {
-					pe.gc.drawText(text, hm, hm);
-					if (!MAC) {
-						pe.gc.drawPolygon(getPolygon(true));
-					}
+			hoverShell.addPaintListener(pe -> {
+				pe.gc.drawText(text, hm, hm);
+				if (!MAC) {
+					pe.gc.drawPolygon(getPolygon(true));
 				}
 			});
 			hoverShell.addMouseListener(new MouseAdapter() {
@@ -598,12 +593,7 @@ public class ControlDecoration {
 	 * the decoration is to be rendered.
 	 */
 	private void addControlListeners() {
-		disposeListener = new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				dispose();
-			}
-		};
+		disposeListener = event -> dispose();
 		printAddListener(control, "DISPOSE"); //$NON-NLS-1$
 		control.addDisposeListener(disposeListener);
 
@@ -628,31 +618,25 @@ public class ControlDecoration {
 		control.addFocusListener(focusListener);
 
 		// Listener for painting the decoration
-		paintListener = new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				Control control = (Control) event.widget;
-				Rectangle rect = getDecorationRectangle(control);
-				if (shouldShowDecoration()) {
-					event.gc.drawImage(getImage(), rect.x, rect.y);
-				}
+		paintListener = event -> {
+			Control control = (Control) event.widget;
+			Rectangle rect = getDecorationRectangle(control);
+			if (shouldShowDecoration()) {
+				event.gc.drawImage(getImage(), rect.x, rect.y);
 			}
 		};
 
 		// Listener for tracking the end of a hover. Only installed
 		// after a hover begins.
-		mouseMoveListener = new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent event) {
-				if (showHover) {
-					if (!decorationRectangle.contains(event.x, event.y)) {
-						hideHover();
-						// No need to listen any longer
-						printRemoveListener(event.widget, "MOUSEMOVE"); //$NON-NLS-1$
-						((Control) event.widget)
-								.removeMouseMoveListener(mouseMoveListener);
-						moveListeningTarget = null;
-					}
+		mouseMoveListener = event -> {
+			if (showHover) {
+				if (!decorationRectangle.contains(event.x, event.y)) {
+					hideHover();
+					// No need to listen any longer
+					printRemoveListener(event.widget, "MOUSEMOVE"); //$NON-NLS-1$
+					((Control) event.widget)
+							.removeMouseMoveListener(mouseMoveListener);
+					moveListeningTarget = null;
 				}
 			}
 		};
@@ -703,28 +687,25 @@ public class ControlDecoration {
 			}
 		};
 
-		compositeListener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// Don't forward events if decoration is not showing
-				if (!visible) {
-					return;
-				}
-				// Notify listeners if any are registered.
-				switch (event.type) {
-				case SWT.MouseDown:
-					if (!selectionListeners.isEmpty())
-						notifySelectionListeners(event);
-					break;
-				case SWT.MouseDoubleClick:
-					if (!selectionListeners.isEmpty())
-						notifySelectionListeners(event);
-					break;
-				case SWT.MenuDetect:
-					if (!menuDetectListeners.isEmpty())
-						notifyMenuDetectListeners(event);
-					break;
-				}
+		compositeListener = event -> {
+			// Don't forward events if decoration is not showing
+			if (!visible) {
+				return;
+			}
+			// Notify listeners if any are registered.
+			switch (event.type) {
+			case SWT.MouseDown:
+				if (!selectionListeners.isEmpty())
+					notifySelectionListeners(event);
+				break;
+			case SWT.MouseDoubleClick:
+				if (!selectionListeners.isEmpty())
+					notifySelectionListeners(event);
+				break;
+			case SWT.MenuDetect:
+				if (!menuDetectListeners.isEmpty())
+					notifyMenuDetectListeners(event);
+				break;
 			}
 		};
 

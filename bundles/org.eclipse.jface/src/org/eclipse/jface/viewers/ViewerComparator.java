@@ -186,12 +186,7 @@ public class ViewerComparator {
      */
 	public void sort(final Viewer viewer, Object[] elements) {
 		try {
-			Arrays.sort(elements, new Comparator() {
-				@Override
-				public int compare(Object a, Object b) {
-					return ViewerComparator.this.compare(viewer, a, b);
-				}
-			});
+			Arrays.sort(elements, (a, b) -> ViewerComparator.this.compare(viewer, a, b));
 		} catch (IllegalArgumentException e) {
 			String msg = "Workaround for comparator violation:\n\t- set system property java.util.Arrays.useLegacyMergeSort=true\n\t- use a 1.6 JRE "  //$NON-NLS-1$
 					+ "\nmessage: " + e.getLocalizedMessage() //$NON-NLS-1$

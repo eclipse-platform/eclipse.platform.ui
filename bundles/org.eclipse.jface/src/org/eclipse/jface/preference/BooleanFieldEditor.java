@@ -11,8 +11,6 @@
 package org.eclipse.jface.preference;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -195,12 +193,7 @@ public class BooleanFieldEditor extends FieldEditor {
 					wasSelected = isSelected;
 				}
 			});
-			checkBox.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent event) {
-					checkBox = null;
-				}
-			});
+			checkBox.addDisposeListener(event -> checkBox = null);
 		} else {
 			checkParent(checkBox, parent);
 		}

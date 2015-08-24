@@ -12,7 +12,6 @@
 package org.eclipse.jface.viewers;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * A viewer sorter that is provided extra context in the form of the path of the
@@ -100,11 +99,6 @@ public class TreePathViewerSorter extends ViewerSorter {
      * @param elements the elements to sort
      */
     public void sort(final Viewer viewer, final TreePath parentPath, Object[] elements) {
-        Arrays.sort(elements, new Comparator() {
-            @Override
-			public int compare(Object a, Object b) {
-                return TreePathViewerSorter.this.compare(viewer, parentPath, a, b);
-            }
-        });
+        Arrays.sort(elements, (a, b) -> TreePathViewerSorter.this.compare(viewer, parentPath, a, b));
     }
 }

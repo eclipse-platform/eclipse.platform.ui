@@ -12,8 +12,6 @@
 package org.eclipse.jface.preference;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -215,12 +213,7 @@ public class ScaleFieldEditor extends FieldEditor {
                     valueChanged();
                 }
             });
-            scale.addDisposeListener(new DisposeListener() {
-                @Override
-				public void widgetDisposed(DisposeEvent event) {
-                    scale = null;
-                }
-            });
+            scale.addDisposeListener(event -> scale = null);
         } else {
             checkParent(scale, parent);
         }

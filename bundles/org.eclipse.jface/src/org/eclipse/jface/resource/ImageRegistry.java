@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
@@ -54,12 +54,7 @@ public class ImageRegistry {
 
     private Map<String, Entry> table;
 
-    private Runnable disposeRunnable = new Runnable() {
-        @Override
-		public void run() {
-            dispose();
-        }
-    };
+	private Runnable disposeRunnable = this::dispose;
 
     /**
      * Contains the data for an entry in the registry.
@@ -195,12 +190,7 @@ public class ImageRegistry {
             if (swtKey != -1) {
                 final Image[] image = new Image[1];
                 final int id = swtKey;
-                display.syncExec(new Runnable() {
-                    @Override
-					public void run() {
-                        image[0] = display.getSystemImage(id);
-                    }
-                });
+                display.syncExec(() -> image[0] = display.getSystemImage(id));
                 return image[0];
             }
         }

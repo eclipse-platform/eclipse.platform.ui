@@ -12,8 +12,6 @@ package org.eclipse.jface.preference;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -262,13 +260,10 @@ public class RadioGroupFieldEditor extends FieldEditor {
                     }
                 });
             }
-            radioBox.addDisposeListener(new DisposeListener() {
-                @Override
-				public void widgetDisposed(DisposeEvent event) {
-                    radioBox = null;
-                    radioButtons = null;
-                }
-            });
+            radioBox.addDisposeListener(event -> {
+			    radioBox = null;
+			    radioButtons = null;
+			});
         } else {
             checkParent(radioBox, parent);
         }

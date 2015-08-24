@@ -366,12 +366,7 @@ public class TableViewer extends AbstractTableViewer {
 			cancelEditing();
 		}
 
-		preservingSelection(new Runnable() {
-			@Override
-			public void run() {
-				internalRefresh(element, updateLabels);
-			}
-		}, reveal);
+		preservingSelection(() -> internalRefresh(element, updateLabels), reveal);
 	}
 
 	/**

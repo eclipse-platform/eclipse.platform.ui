@@ -100,15 +100,12 @@ package org.eclipse.jface.viewers.deferred;
      * Runnable that can be posted with an asyncExec to schedule
      * an update to the real table.
      */
-    Runnable uiRunnable = new Runnable() {
-        @Override
-		public void run() {
-            updateScheduled = false;
-            if(!table.getControl().isDisposed()) {
-				updateTable();
-			}
-        }
-    };
+    Runnable uiRunnable = () -> {
+	    updateScheduled = false;
+	    if(!table.getControl().isDisposed()) {
+			updateTable();
+		}
+	};
 
     /**
      * Creates a new table updator

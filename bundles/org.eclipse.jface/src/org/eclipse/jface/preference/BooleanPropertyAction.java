@@ -12,8 +12,6 @@
 package org.eclipse.jface.preference;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * The BooleanPropertyAction is an action that set the values of a
@@ -48,14 +46,11 @@ public class BooleanPropertyAction extends Action {
         final String finalProprety = property;
 
         preferenceStore
-                .addPropertyChangeListener(new IPropertyChangeListener() {
-                    @Override
-					public void propertyChange(PropertyChangeEvent event) {
-                        if (finalProprety.equals(event.getProperty())) {
-							setChecked(Boolean.TRUE.equals(event.getNewValue()));
-						}
-                    }
-                });
+                .addPropertyChangeListener(event -> {
+				    if (finalProprety.equals(event.getProperty())) {
+						setChecked(Boolean.TRUE.equals(event.getNewValue()));
+					}
+				});
 
         setChecked(preferenceStore.getBoolean(property));
     }

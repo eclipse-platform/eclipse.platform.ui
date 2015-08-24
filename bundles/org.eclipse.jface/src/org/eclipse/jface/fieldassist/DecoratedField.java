@@ -13,15 +13,11 @@ package org.eclipse.jface.fieldassist;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -210,13 +206,10 @@ public class DecoratedField {
 					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			hoverShell.setForeground(display
 					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			hoverShell.addPaintListener(new PaintListener() {
-				@Override
-				public void paintControl(PaintEvent pe) {
-					pe.gc.drawString(text, hm, hm);
-					if (!MAC) {
-						pe.gc.drawPolygon(getPolygon(true));
-					}
+			hoverShell.addPaintListener(pe -> {
+				pe.gc.drawString(text, hm, hm);
+				if (!MAC) {
+					pe.gc.drawPolygon(getPolygon(true));
 				}
 			});
 			hoverShell.addMouseListener(new MouseAdapter() {
@@ -573,12 +566,9 @@ public class DecoratedField {
 	 * Add any listeners needed on the target control.
 	 */
 	private void addControlListeners() {
-		control.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent event) {
-				if (hover != null) {
-					hover.dispose();
-				}
+		control.addDisposeListener(event -> {
+			if (hover != null) {
+				hover.dispose();
 			}
 		});
 		control.addFocusListener(new FocusListener() {

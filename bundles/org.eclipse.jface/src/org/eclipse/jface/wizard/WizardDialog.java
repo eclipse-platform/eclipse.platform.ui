@@ -43,12 +43,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -371,24 +367,21 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			// Install traverse listener once in order to implement 'Enter' and 'Space' key blocking
 			if (timeWhenLastJobFinished == -1) {
 				timeWhenLastJobFinished= 0;
-				getShell().addTraverseListener(new TraverseListener() {
-					@Override
-					public void keyTraversed(TraverseEvent e) {
-						if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
-							// We want to ignore the keystroke when we detect that it has been received within the
-							// delay period after the last operation has finished.  This prevents the user from accidentally
-							// hitting "Enter" or "Space", intending to cancel an operation, but having it processed exactly
-							// when the operation finished, thus traversing the wizard.  If there is another operation still
-							// running, the UI is locked anyway so we are not in this code.  This listener should fire only
-							// after the UI state is restored (which by definition means all jobs are done.
-							// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
-							if (timeWhenLastJobFinished != 0 && System.currentTimeMillis() - timeWhenLastJobFinished < RESTORE_ENTER_DELAY) {
-								e.doit= false;
-								return;
-							}
-							timeWhenLastJobFinished= 0;
-						}}
-				});
+				getShell().addTraverseListener(e -> {
+					if (e.detail == SWT.TRAVERSE_RETURN || (e.detail == SWT.TRAVERSE_MNEMONIC && e.keyCode == 32)) {
+						// We want to ignore the keystroke when we detect that it has been received within the
+						// delay period after the last operation has finished.  This prevents the user from accidentally
+						// hitting "Enter" or "Space", intending to cancel an operation, but having it processed exactly
+						// when the operation finished, thus traversing the wizard.  If there is another operation still
+						// running, the UI is locked anyway so we are not in this code.  This listener should fire only
+						// after the UI state is restored (which by definition means all jobs are done.
+						// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887
+						if (timeWhenLastJobFinished != 0 && System.currentTimeMillis() - timeWhenLastJobFinished < RESTORE_ENTER_DELAY) {
+							e.doit= false;
+							return;
+						}
+						timeWhenLastJobFinished= 0;
+					}});
 			}
 		}
 		return savedState;
@@ -483,13 +476,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		// Register help listener on the shell
-		newShell.addHelpListener(new HelpListener() {
-			@Override
-			public void helpRequested(HelpEvent event) {
-				// call perform help on the current page
-				if (currentPage != null) {
-					currentPage.performHelp();
-				}
+		newShell.addHelpListener(event -> {
+			// call perform help on the current page
+			if (currentPage != null) {
+				currentPage.performHelp();
 			}
 		});
 	}
@@ -1191,12 +1181,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			updateForPage(page);
 		} else {
 			final IWizardPage finalPage = page;
-			BusyIndicator.showWhile(getContents().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					updateForPage(finalPage);
-				}
-			});
+			BusyIndicator.showWhile(getContents().getDisplay(), () -> updateForPage(finalPage));
 		}
 	}
 
