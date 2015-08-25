@@ -37,7 +37,6 @@ public class AllTests extends TestSuite {
 		addTestSuite(TreeViewerColumnTest.class);
 		addTestSuite(VirtualTableViewerTest.class);
 		addTestSuite(VirtualLazyTableViewerTest.class);
-		addTestSuite(TableTreeViewerTest.class);
 		addTestSuite(TableColorProviderTest.class);
 		addTestSuite(TableFontProviderTest.class);
 		addTestSuite(ListViewerTest.class);

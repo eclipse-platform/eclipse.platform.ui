@@ -401,11 +401,6 @@
             name="Table View Test"
             id="org.eclipse.ui.tests.decorator.TableViewTest"/>
       <view
-            class="org.eclipse.ui.tests.decorators.DecoratorTableTreeView"
-            category="org.eclipse.ui.tests.decoratorCategory"
-            name="Table Tree Test"
-            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>
-      <view
             class="org.eclipse.jface.tests.viewers.interactive.VirtualTableView"
             category="org.eclipse.ui.tests.tableViewerViews"
             name="Virtual Table View test"
