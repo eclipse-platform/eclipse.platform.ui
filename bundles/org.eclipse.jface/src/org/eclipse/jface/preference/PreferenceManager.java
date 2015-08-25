@@ -187,7 +187,7 @@ public class PreferenceManager {
     public List<IPreferenceNode> getElements(int order) {
         Assert.isTrue(order == PRE_ORDER || order == POST_ORDER,
                 "invalid traversal order");//$NON-NLS-1$
-        ArrayList<IPreferenceNode> sequence = new ArrayList<IPreferenceNode>();
+        ArrayList<IPreferenceNode> sequence = new ArrayList<>();
         IPreferenceNode[] subnodes = getRoot().getSubNodes();
         for (int i = 0; i < subnodes.length; i++) {
 			buildSequence(subnodes[i], sequence, order);

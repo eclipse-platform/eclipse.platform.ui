@@ -34,7 +34,7 @@ public final class Util {
 	 * change and never be <code>null</code>.
 	 */
 	public static final SortedSet<?> EMPTY_SORTED_SET = Collections
-			.unmodifiableSortedSet(new TreeSet<Object>());
+			.unmodifiableSortedSet(new TreeSet<>());
 
 	/**
 	 * A common zero-length string. It avoids needing write <code>NON-NLS</code>

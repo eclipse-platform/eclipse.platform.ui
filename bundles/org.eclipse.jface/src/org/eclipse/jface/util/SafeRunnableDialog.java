@@ -43,7 +43,7 @@ class SafeRunnableDialog extends ErrorDialog {
 
 	private TableViewer statusListViewer;
 
-	private Collection<IStatus> statuses = new ArrayList<IStatus>();
+	private Collection<IStatus> statuses = new ArrayList<>();
 
 	/**
 	 * Create a new instance of the receiver on a status.

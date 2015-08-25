@@ -1542,7 +1542,7 @@ public class PopupDialog extends Window {
 	 * @return the List of controls
 	 */
 	protected List<Control> getForegroundColorExclusions() {
-		List<Control> list = new ArrayList<Control>(3);
+		List<Control> list = new ArrayList<>(3);
 		if (infoLabel != null) {
 			list.add(infoLabel);
 		}
@@ -1563,7 +1563,7 @@ public class PopupDialog extends Window {
 	 * @return the List of controls
 	 */
 	protected List<Control> getBackgroundColorExclusions() {
-		List<Control> list = new ArrayList<Control>(2);
+		List<Control> list = new ArrayList<>(2);
 		if (titleSeparator != null) {
 			list.add(titleSeparator);
 		}

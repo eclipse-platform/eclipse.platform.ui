@@ -35,19 +35,19 @@ public final class SWTKeyLookup implements IKeyLookup {
 	 * The look-up table for modifier keys. This is a map of formal name (<code>String</code>)
 	 * to integer value (<code>Integer</code>).
 	 */
-	private final Map<String, Integer> modifierKeyTable = new HashMap<String, Integer>();
+	private final Map<String, Integer> modifierKeyTable = new HashMap<>();
 
 	/**
 	 * The look-up table for formal names. This is a map of integer value (<code>Integer</code>)
 	 * to formal name (<code>String</code>).
 	 */
-	private final Map<Integer, String> nameTable = new HashMap<Integer, String>();
+	private final Map<Integer, String> nameTable = new HashMap<>();
 
 	/**
 	 * The look-up table for natural keys. This is a map of formal name (<code>String</code>)
 	 * to integer value (<code>Integer</code>).
 	 */
-	private final Map<String, Integer> naturalKeyTable = new HashMap<String, Integer>();
+	private final Map<String, Integer> naturalKeyTable = new HashMap<>();
 
 	/**
 	 * Constructs a new look-up class. This should only be done by the look-up

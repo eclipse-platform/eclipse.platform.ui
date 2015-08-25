@@ -39,7 +39,7 @@ public class WindowManager {
      * List of windows managed by this window manager
      * (element type: <code>Window</code>).
      */
-    private ArrayList<Window> windows = new ArrayList<Window>();
+    private ArrayList<Window> windows = new ArrayList<>();
 
     /**
      * List of window managers who have this window manager
@@ -87,7 +87,7 @@ public class WindowManager {
      */
     private void addWindowManager(WindowManager wm) {
         if (subManagers == null) {
-			subManagers = new ArrayList<WindowManager>();
+			subManagers = new ArrayList<>();
 		}
         if (!subManagers.contains(wm)) {
             subManagers.add(wm);
@@ -102,7 +102,7 @@ public class WindowManager {
      * and <code>false</code> if any window refused to close
      */
     public boolean close() {
-        List<Window> t = new ArrayList<Window>(windows); // make iteration robust
+        List<Window> t = new ArrayList<>(windows); // make iteration robust
         Iterator<Window> e = t.iterator();
         while (e.hasNext()) {
             Window window = e.next();

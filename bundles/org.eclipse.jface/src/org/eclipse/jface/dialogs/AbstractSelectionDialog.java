@@ -144,7 +144,7 @@ public abstract class AbstractSelectionDialog<T> extends TrayDialog {
 	 *            the List of elements to select
 	 */
 	public void setInitialSelection(Collection<T> selectedElements) {
-		initialSelection = new ArrayList<T>(selectedElements);
+		initialSelection = new ArrayList<>(selectedElements);
 	}
 
 	/**

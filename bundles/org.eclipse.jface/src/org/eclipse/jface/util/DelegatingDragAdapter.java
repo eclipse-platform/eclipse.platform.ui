@@ -88,9 +88,9 @@ import org.eclipse.swt.dnd.TransferData;
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {
-    private List<TransferDragSourceListener> listeners = new ArrayList<TransferDragSourceListener>();
+    private List<TransferDragSourceListener> listeners = new ArrayList<>();
 
-    private List<TransferDragSourceListener> activeListeners = new ArrayList<TransferDragSourceListener>();
+    private List<TransferDragSourceListener> activeListeners = new ArrayList<>();
 
     private TransferDragSourceListener currentListener;
 
@@ -176,7 +176,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Start: " + toString()); //$NON-NLS-1$
         boolean doit = false; // true if any one of the listeners can handle the drag
-        List<Transfer> transfers = new ArrayList<Transfer>(listeners.size());
+        List<Transfer> transfers = new ArrayList<>(listeners.size());
 
         activeListeners.clear();
         for (int i = 0; i < listeners.size(); i++) {

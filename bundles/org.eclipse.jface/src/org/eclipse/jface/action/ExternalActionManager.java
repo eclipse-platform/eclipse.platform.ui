@@ -123,7 +123,7 @@ public final class ExternalActionManager {
 		 * will be removed from this set and the listener removed. This value
 		 * may be empty, but never <code>null</code>.
 		 */
-		private final Set<String> loggedCommandIds = new HashSet<String>();
+		private final Set<String> loggedCommandIds = new HashSet<>();
 
 		/**
 		 * The list of listeners that have registered for property change
@@ -131,7 +131,7 @@ public final class ExternalActionManager {
 		 * to listeners (<code>IPropertyChangeListener</code> or
 		 * <code>ListenerList</code> of <code>IPropertyChangeListener</code>).
 		 */
-		private final Map<String, Object> registeredListeners = new HashMap<String, Object>();
+		private final Map<String, Object> registeredListeners = new HashMap<>();
 
 		/**
 		 * Constructs a new instance of <code>CommandCallback</code> with the

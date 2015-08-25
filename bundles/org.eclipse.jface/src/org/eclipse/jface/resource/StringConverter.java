@@ -94,7 +94,7 @@ public class StringConverter {
      * @throws DataFormatException thrown if request string could not seperated
      */
     public static String[] asArray(String value) throws DataFormatException {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         StringTokenizer stok = new StringTokenizer(value);
         while (stok.hasMoreTokens()) {
             list.add(stok.nextToken());
@@ -307,7 +307,7 @@ public class StringConverter {
 		if (prop == null || prop.trim().equals("")) { //$NON-NLS-1$
 			return new String[0];
 		}
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		StringTokenizer tokens = new StringTokenizer(prop, separator);
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
@@ -327,7 +327,7 @@ public class StringConverter {
      */
     public static FontData[] asFontDataArray(String value) {
         String[] strings = getArrayFromList(value, FONT_SEPARATOR);
-        ArrayList<FontData> data = new ArrayList<FontData>(strings.length);
+        ArrayList<FontData> data = new ArrayList<>(strings.length);
         for (int i = 0; i < strings.length; i++) {
             try {
                 data.add(StringConverter.asFontData(strings[i]));

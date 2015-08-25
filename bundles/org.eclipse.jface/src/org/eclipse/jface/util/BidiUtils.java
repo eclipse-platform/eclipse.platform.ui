@@ -121,7 +121,7 @@ public final class BidiUtils {
 	 * Listener cache. Map from structured text type id ({@link String}) to
 	 * structured text segment listener ({@link SegmentListener}).
 	 */
-	private static final Map<String, SegmentListener> structuredTextSegmentListeners = new HashMap<String, SegmentListener>();
+	private static final Map<String, SegmentListener> structuredTextSegmentListeners = new HashMap<>();
 
 	/**
 	 * The LRE char

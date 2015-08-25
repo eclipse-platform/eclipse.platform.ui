@@ -107,9 +107,9 @@ public class DialogSettings implements IDialogSettings {
      */
     public DialogSettings(String sectionName) {
         name = sectionName;
-        items = new HashMap<String, String>();
-        arrayItems = new HashMap<String, String[]>();
-        sections = new HashMap<String, IDialogSettings>();
+        items = new HashMap<>();
+        arrayItems = new HashMap<>();
+        sections = new HashMap<>();
     }
 
     @Override
@@ -305,7 +305,7 @@ public class DialogSettings implements IDialogSettings {
                 Element child = (Element) l.item(i);
                 String key = child.getAttribute(TAG_KEY);
                 NodeList list = child.getElementsByTagName(TAG_ITEM);
-                List<String> valueList = new ArrayList<String>();
+                List<String> valueList = new ArrayList<>();
                 for (int j = 0; j < list.getLength(); j++) {
                     Element node = (Element) list.item(j);
                     if (child == node.getParentNode()) {
@@ -379,7 +379,7 @@ public class DialogSettings implements IDialogSettings {
     }
 
     private void save(XMLWriter out) throws IOException {
-    	HashMap<String, String> attributes = new HashMap<String, String>(2);
+    	HashMap<String, String> attributes = new HashMap<>(2);
     	attributes.put(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
         out.startTag(TAG_SECTION, attributes);
         attributes.clear();

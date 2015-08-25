@@ -93,10 +93,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	private IWizard wizard;
 
 	// Wizards to dispose
-	private ArrayList<IWizard> createdWizards = new ArrayList<IWizard>();
+	private ArrayList<IWizard> createdWizards = new ArrayList<>();
 
 	// Current nested wizards
-	private ArrayList<IWizard> nestedWizards = new ArrayList<IWizard>();
+	private ArrayList<IWizard> nestedWizards = new ArrayList<>();
 
 	// The currently displayed page.
 	private IWizardPage currentPage = null;
@@ -1052,7 +1052,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * @see #restoreUIState
 	 */
 	private Map<String, Object> saveUIState(boolean keepCancelEnabled) {
-		Map<String, Object> savedState = new HashMap<String, Object>(10);
+		Map<String, Object> savedState = new HashMap<>(10);
 		saveEnableStateAndSet(backButton, savedState, "back", false); //$NON-NLS-1$
 		saveEnableStateAndSet(nextButton, savedState, "next", false); //$NON-NLS-1$
 		saveEnableStateAndSet(finishButton, savedState, "finish", false); //$NON-NLS-1$

@@ -353,7 +353,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
         ToolBar toolBar = (ToolBar) control;
         Rectangle toolBarBounds = toolBar.getBounds();
         ToolItem[] items = toolBar.getItems();
-        ArrayList<ToolItem> hidden = new ArrayList<ToolItem>();
+        ArrayList<ToolItem> hidden = new ArrayList<>();
         for (int i = 0; i < items.length; ++i) {
             Rectangle itemBounds = items[i].getBounds();
             if (!((itemBounds.x + itemBounds.width <= toolBarBounds.width) && (itemBounds.y

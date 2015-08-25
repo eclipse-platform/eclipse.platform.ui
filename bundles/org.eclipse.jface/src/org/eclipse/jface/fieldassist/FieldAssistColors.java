@@ -49,13 +49,13 @@ public class FieldAssistColors {
 	 * Keys are background colors, values are the color with the alpha value
 	 * applied
 	 */
-	private static Map<Color, Color> requiredFieldColorMap = new HashMap<Color, Color>();
+	private static Map<Color, Color> requiredFieldColorMap = new HashMap<>();
 
 	/*
 	 * Keys are colors we have created, values are the displays on which they
 	 * were created.
 	 */
-	private static Map<Color, Display> displays = new HashMap<Color, Display>();
+	private static Map<Color, Display> displays = new HashMap<>();
 
 	/**
 	 * Compute the RGB of the color that should be used for the background of a
@@ -158,7 +158,7 @@ public class FieldAssistColors {
 	 * Dispose any colors that were allocated for the given display.
 	 */
 	private static void disposeColors(Display display) {
-		List<Color> toBeRemoved = new ArrayList<Color>(1);
+		List<Color> toBeRemoved = new ArrayList<>(1);
 
 		if (DEBUG) {
 			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
@@ -175,7 +175,7 @@ public class FieldAssistColors {
 
 				// Now look for any references to it in the required field color
 				// map
-				List<Color> toBeRemovedFromRequiredMap = new ArrayList<Color>(1);
+				List<Color> toBeRemovedFromRequiredMap = new ArrayList<>(1);
 				for (Iterator<Color> iter = requiredFieldColorMap.keySet().iterator(); iter
 						.hasNext();) {
 					Color bgColor = iter.next();

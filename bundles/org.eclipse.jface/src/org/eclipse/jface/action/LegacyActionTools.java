@@ -478,7 +478,7 @@ public final class LegacyActionTools {
 	 * Initializes the internal key code table.
 	 */
 	private static final void initKeyCodes() {
-		keyCodes = new HashMap<String, Integer>(40);
+		keyCodes = new HashMap<>(40);
 
 		keyCodes.put("BACKSPACE", new Integer(8)); //$NON-NLS-1$
 		keyCodes.put("TAB", new Integer(9)); //$NON-NLS-1$
@@ -524,7 +524,7 @@ public final class LegacyActionTools {
 	 * Initializes the internal key string table.
 	 */
 	private static void initKeyStrings() {
-		keyStrings = new HashMap<Integer, String>(40);
+		keyStrings = new HashMap<>(40);
 
 		keyStrings.put(new Integer(8), JFaceResources.getString("Backspace")); //$NON-NLS-1$
 		keyStrings.put(new Integer(9), JFaceResources.getString("Tab")); //$NON-NLS-1$
@@ -578,7 +578,7 @@ public final class LegacyActionTools {
 	 * Initializes the localized internal key code table.
 	 */
 	private static void initLocalizedKeyCodes() {
-		localizedKeyCodes = new HashMap<String, Integer>(40);
+		localizedKeyCodes = new HashMap<>(40);
 
 		localizedKeyCodes.put(JFaceResources
 				.getString("Backspace").toUpperCase(), new Integer(8)); //$NON-NLS-1$

@@ -88,7 +88,7 @@ public class RadioState extends ToggleState {
 			 */
 			private final void addMember(final RadioState state) {
 				if (members == null) {
-					members = new HashSet<RadioState>(5);
+					members = new HashSet<>(5);
 				}
 
 				members.add(state);
@@ -174,7 +174,7 @@ public class RadioState extends ToggleState {
 		private static final void registerState(final String identifier,
 				final RadioState state) {
 			if (radioStatesById == null) {
-				radioStatesById = new HashMap<String, RadioGroup>();
+				radioStatesById = new HashMap<>();
 			}
 
 			final Object currentValue = radioStatesById.get(identifier);

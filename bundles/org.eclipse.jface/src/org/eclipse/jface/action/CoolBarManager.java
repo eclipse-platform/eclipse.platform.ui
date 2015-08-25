@@ -46,7 +46,7 @@ public class CoolBarManager extends ContributionManager implements
     /**
      * The original creation order of the contribution items.
      */
-    private ArrayList<IContributionItem> cbItemsCreationOrder = new ArrayList<IContributionItem>();
+    private ArrayList<IContributionItem> cbItemsCreationOrder = new ArrayList<>();
 
     /**
      * MenuManager for cool bar pop-up menu, or null if none.
@@ -387,7 +387,7 @@ public class CoolBarManager extends ContributionManager implements
      */
     private ArrayList<IContributionItem> getItemList() {
         IContributionItem[] cbItems = getItems();
-        ArrayList<IContributionItem> list = new ArrayList<IContributionItem>(cbItems.length);
+        ArrayList<IContributionItem> list = new ArrayList<>(cbItems.length);
         for (int i = 0; i < cbItems.length; i++) {
             list.add(cbItems[i]);
         }
@@ -565,7 +565,7 @@ public class CoolBarManager extends ContributionManager implements
         // Traverse through all cool items in the coolbar add them to a new
         // data structure
         // in the correct order
-        ArrayList<IContributionItem> displayedItems = new ArrayList<IContributionItem>(coolBar.getItemCount());
+        ArrayList<IContributionItem> displayedItems = new ArrayList<>(coolBar.getItemCount());
         for (int i = 0; i < coolItems.length; i++) {
             CoolItem coolItem = coolItems[i];
             if (coolItem.getData() instanceof IContributionItem) {
@@ -584,7 +584,7 @@ public class CoolBarManager extends ContributionManager implements
         }
 
         // Determine which rows are invisible
-        ArrayList<Integer> existingVisibleRows = new ArrayList<Integer>(4);
+        ArrayList<Integer> existingVisibleRows = new ArrayList<>(4);
         ListIterator<IContributionItem> rowIterator = contributionList.listIterator();
         collapseSeparators(rowIterator);
         int numRow = 0;
@@ -611,7 +611,7 @@ public class CoolBarManager extends ContributionManager implements
             row = existingRows.next().intValue();
         }
 
-        HashMap<IContributionItem, Integer> itemLocation = new HashMap<IContributionItem, Integer>();
+        HashMap<IContributionItem, Integer> itemLocation = new HashMap<>();
         for (ListIterator<IContributionItem> locationIterator = displayedItems.listIterator(); locationIterator
                 .hasNext();) {
             IContributionItem item = locationIterator
@@ -820,7 +820,7 @@ public class CoolBarManager extends ContributionManager implements
              * a cool bar.
              */
             final IContributionItem[] items = getItems();
-            final List<IContributionItem> visibleItems = new ArrayList<IContributionItem>(items.length);
+            final List<IContributionItem> visibleItems = new ArrayList<>(items.length);
             for (int i = 0; i < items.length; i++) {
                 final IContributionItem item = items[i];
                 if (isChildVisible(item)) {
@@ -834,7 +834,7 @@ public class CoolBarManager extends ContributionManager implements
              * to be disposed. Dynamic items are also removed.
              */
             CoolItem[] coolItems = coolBar.getItems();
-            final ArrayList<CoolItem> coolItemsToRemove = new ArrayList<CoolItem>(coolItems.length);
+            final ArrayList<CoolItem> coolItemsToRemove = new ArrayList<>(coolItems.length);
             for (int i = 0; i < coolItems.length; i++) {
                 final Object data = coolItems[i].getData();
                 if ((data == null)
@@ -958,7 +958,7 @@ public class CoolBarManager extends ContributionManager implements
         if (coolBar != null) {
             CoolItem[] items = coolBar.getItems();
             if (items != null) {
-                ArrayList<Control> children = new ArrayList<Control>(items.length);
+                ArrayList<Control> children = new ArrayList<>(items.length);
                 for (int i = 0; i < items.length; i++) {
                     if ((items[i].getControl() != null)
                             && (!items[i].getControl().isDisposed())) {

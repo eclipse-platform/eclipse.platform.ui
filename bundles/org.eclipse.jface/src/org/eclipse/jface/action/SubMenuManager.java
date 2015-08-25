@@ -242,7 +242,7 @@ public class SubMenuManager extends SubContributionManager implements
      */
     protected IMenuManager getWrapper(IMenuManager mgr) {
         if (mapMenuToWrapper == null) {
-            mapMenuToWrapper = new HashMap<IMenuManager, SubMenuManager>(4);
+            mapMenuToWrapper = new HashMap<>(4);
         }
         SubMenuManager wrapper = mapMenuToWrapper.get(mgr);
         if (wrapper == null) {

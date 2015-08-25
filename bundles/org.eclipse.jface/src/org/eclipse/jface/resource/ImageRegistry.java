@@ -324,7 +324,7 @@ public class ImageRegistry {
 
     private Map<String, Entry> getTable() {
         if (table == null) {
-            table = new HashMap<String, Entry>(10);
+            table = new HashMap<>(10);
         }
         return table;
     }

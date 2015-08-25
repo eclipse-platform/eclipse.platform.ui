@@ -259,7 +259,7 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 
 		// clean contains all active items without double separators
 		IContributionItem[] items = getItems();
-		ArrayList<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
+		ArrayList<IContributionItem> clean = new ArrayList<>(items.length);
 		IContributionItem separator = null;
 		for (IContributionItem ci : items) {
 			if (!isChildVisible(ci)) {
@@ -282,7 +282,7 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 
 		// determine obsolete items (removed or non active)
 		ToolItem[] mi = toolBar.getItems();
-		ArrayList<ToolItem> toRemove = new ArrayList<ToolItem>(mi.length);
+		ArrayList<ToolItem> toRemove = new ArrayList<>(mi.length);
 		for (ToolItem item : mi) {
 			// there may be null items in a toolbar
 			if (item == null) {

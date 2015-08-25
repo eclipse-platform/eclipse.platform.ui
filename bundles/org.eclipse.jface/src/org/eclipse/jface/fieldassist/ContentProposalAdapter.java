@@ -1041,7 +1041,7 @@ public class ContentProposalAdapter {
 
 			// Check each string for a match. Use the string displayed to the
 			// user, not the proposal content.
-			ArrayList<IContentProposal> list = new ArrayList<IContentProposal>();
+			ArrayList<IContentProposal> list = new ArrayList<>();
 			for (int i = 0; i < proposals.length; i++) {
 				String string = getString(proposals[i]);
 				if (string.length() >= filterString.length()

@@ -44,7 +44,7 @@ public abstract class ContributionManager implements IContributionManager {
 	/**
 	 * The list of contribution items.
 	 */
-	private List<IContributionItem> contributions = new ArrayList<IContributionItem>();
+	private List<IContributionItem> contributions = new ArrayList<>();
 
 	/**
 	 * Indicates whether the widgets are in sync with the contributions.

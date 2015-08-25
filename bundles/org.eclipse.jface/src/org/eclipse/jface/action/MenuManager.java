@@ -741,7 +741,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             if (menuExist()) {
                 // clean contains all active items without double separators
                 IContributionItem[] items = getItems();
-                List<IContributionItem> clean = new ArrayList<IContributionItem>(items.length);
+                List<IContributionItem> clean = new ArrayList<>(items.length);
                 IContributionItem separator = null;
                 for (IContributionItem item : items) {
                     IContributionItem ci = item;

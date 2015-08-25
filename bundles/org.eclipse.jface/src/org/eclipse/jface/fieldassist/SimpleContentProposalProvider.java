@@ -67,7 +67,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		if (filterProposals) {
-			ArrayList<ContentProposal> list = new ArrayList<ContentProposal>();
+			ArrayList<ContentProposal> list = new ArrayList<>();
 			for (int i = 0; i < proposals.length; i++) {
 				if (proposals[i].length() >= contents.length()
 						&& proposals[i].substring(0, contents.length())

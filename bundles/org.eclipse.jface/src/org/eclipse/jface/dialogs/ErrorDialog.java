@@ -519,7 +519,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	}
 
 	private static java.util.List<String> readLines(final String s) {
-		java.util.List<String> lines = new ArrayList<String>();
+		java.util.List<String> lines = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new StringReader(s));
 		String line;
 		try {

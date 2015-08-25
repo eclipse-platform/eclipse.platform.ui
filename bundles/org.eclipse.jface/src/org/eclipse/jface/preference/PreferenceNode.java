@@ -118,7 +118,7 @@ public class PreferenceNode implements IPreferenceNode {
     @Override
 	public void add(IPreferenceNode node) {
         if (subNodes == null) {
-			subNodes = new ArrayList<IPreferenceNode>();
+			subNodes = new ArrayList<>();
 		}
         subNodes.add(node);
     }

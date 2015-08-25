@@ -30,7 +30,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Maps each item in the manager to a wrapper.  The wrapper is used to
      * control the visibility of each item.
      */
-    private Map<IContributionItem, SubContributionItem> mapItemToWrapper = new HashMap<IContributionItem, SubContributionItem>();
+    private Map<IContributionItem, SubContributionItem> mapItemToWrapper = new HashMap<>();
 
     /**
      * The visibility of the manager,
