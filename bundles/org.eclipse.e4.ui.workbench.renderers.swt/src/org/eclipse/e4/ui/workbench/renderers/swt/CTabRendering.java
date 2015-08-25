@@ -1009,7 +1009,6 @@ ICTabRendering {
 			setActive(!(color.getRed() == 255 && color.getGreen() == 255 && color
 					.getBlue() == 255));
 		}
-		parent.redraw();
 	}
 
 	@Override
