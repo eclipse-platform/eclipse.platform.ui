@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431093, 440080, 440270
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431093, 440080, 440270, 475873
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -144,7 +144,7 @@ public class JFaceResources {
 	 *            the message arguments
 	 * @return the string
 	 */
-	public static String format(String key, Object[] args) {
+	public static String format(String key, Object... args) {
 		return MessageFormat.format(getString(key), args);
 	}
 
@@ -337,8 +337,7 @@ public class JFaceResources {
 	 */
 	public static FontRegistry getFontRegistry() {
 		if (fontRegistry == null) {
-			fontRegistry = new FontRegistry(
-					"org.eclipse.jface.resource.jfacefonts"); //$NON-NLS-1$
+			fontRegistry = new FontRegistry("org.eclipse.jface.resource.jfacefonts"); //$NON-NLS-1$
 		}
 		return fontRegistry;
 	}
@@ -398,8 +397,7 @@ public class JFaceResources {
 	 */
 	public static ImageRegistry getImageRegistry() {
 		if (imageRegistry == null) {
-			imageRegistry = new ImageRegistry(
-					getResources(Display.getCurrent()));
+			imageRegistry = new ImageRegistry(getResources(Display.getCurrent()));
 			initializeDefaultImages();
 		}
 		return imageRegistry;
@@ -466,8 +464,8 @@ public class JFaceResources {
 	 *            the path relative to the fallback {@link Class}
 	 *
 	 */
-	private static final void declareImage(Object bundle, String key,
-			String path, Class<?> fallback, String fallbackPath) {
+	private static final void declareImage(Object bundle, String key, String path, Class<?> fallback,
+			String fallbackPath) {
 
 		ImageDescriptor descriptor = null;
 
@@ -573,8 +571,7 @@ public class JFaceResources {
 	 *            a font registry
 	 */
 	public static void setFontRegistry(FontRegistry registry) {
-		Assert.isTrue(fontRegistry == null,
-				"Font registry can only be set once."); //$NON-NLS-1$
+		Assert.isTrue(fontRegistry == null, "Font registry can only be set once."); //$NON-NLS-1$
 		fontRegistry = registry;
 	}
 
