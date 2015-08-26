@@ -30,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
  *
  * @see OpenStrategy
  */
+@FunctionalInterface
 public interface IOpenEventListener {
     /**
      * Called when a selection or default selection occurs
