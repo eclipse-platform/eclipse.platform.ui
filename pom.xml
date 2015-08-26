@@ -57,8 +57,6 @@
     <module>bundles/org.eclipse.core.expressions</module>
     <module>bundles/org.eclipse.core.jobs</module>
     <module>bundles/org.eclipse.core.runtime</module>
-    <module>bundles/org.eclipse.core.runtime.compatibility</module>
-    <module>bundles/org.eclipse.core.runtime.compatibility.registry</module>
     <module>bundles/org.eclipse.e4.core.contexts</module>
     <module>bundles/org.eclipse.e4.core.di.annotations</module>
     <module>bundles/org.eclipse.e4.core.di</module>
