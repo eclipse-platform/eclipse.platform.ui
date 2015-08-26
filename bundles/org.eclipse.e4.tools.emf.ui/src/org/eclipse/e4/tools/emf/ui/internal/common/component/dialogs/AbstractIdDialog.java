@@ -9,6 +9,7 @@
  * Nicolaj Hoess <nicohoess@gmail.com> - initial implementation (Bug 396975)
  * Andrej Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 396975, 395283
  * Adrian Alcaide - initial implementation (Bug 396975)
+ * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -26,16 +27,18 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -85,25 +88,7 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 	}
 
 	protected IBaseLabelProvider getLabelProvider() {
-		return new StyledCellLabelProvider() {
-
-			@Override
-			public void update(ViewerCell cell) {
-				@SuppressWarnings("unchecked")
-				final ElementClass el = (ElementClass) cell.getElement();
-				final String elementId = el.getElementId() != null && el.getElementId().trim().length() > 0 ? el
-					.getElementId() : "(Id missing)"; //$NON-NLS-1$
-				final StyledString str = new StyledString(elementId);
-
-				final String infoString = getListItemInformation(el);
-				if (infoString != null && infoString.trim().length() > 0) {
-					str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
-				}
-
-				cell.setText(str.getString());
-				cell.setStyleRanges(str.getStyleRanges());
-			}
-		};
+		return new DelegatingStyledCellLabelProvider(new DefaultStyledLabelProvider());
 	}
 
 	@Override
@@ -162,4 +147,27 @@ public abstract class AbstractIdDialog<ContributionClass, ElementClass extends M
 		}
 	}
 
+	private class DefaultStyledLabelProvider extends BaseLabelProvider implements IStyledLabelProvider {
+
+		@Override
+		public StyledString getStyledText(Object element) {
+			@SuppressWarnings("unchecked")
+			final ElementClass el = (ElementClass) element;
+			final String elementId = el.getElementId() != null && el.getElementId().trim().length() > 0
+					? el.getElementId() : "(Id missing)"; //$NON-NLS-1$
+					final StyledString str = new StyledString(elementId);
+
+					final String infoString = getListItemInformation(el);
+					if (infoString != null && infoString.trim().length() > 0) {
+						str.append(" - " + getListItemInformation(el), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+					}
+
+					return str;
+		}
+
+		@Override
+		public Image getImage(Object element) {
+			return null;
+		}
+	}
 }
