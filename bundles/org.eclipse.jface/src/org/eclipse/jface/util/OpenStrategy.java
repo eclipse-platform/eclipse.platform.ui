@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
-import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -25,8 +24,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.core.runtime.ListenerList;
 
 /**
  * Implementation of single-click and double-click strategies.
@@ -479,13 +476,6 @@ public class OpenStrategy {
                     TableItem item = table.getItem(new Point(e.x, e.y));
                     if (item != null) {
 						table.setSelection(new TableItem[] { item });
-					}
-                    selEvent.item = item;
-                } else if (w instanceof TableTree) {
-                    TableTree table = (TableTree) w;
-                    TableTreeItem item = table.getItem(new Point(e.x, e.y));
-                    if (item != null) {
-						table.setSelection(new TableTreeItem[] { item });
 					}
                     selEvent.item = item;
                 } else {
