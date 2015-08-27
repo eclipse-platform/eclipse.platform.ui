@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.2
  * @deprecated As of 3.3, this class is no longer necessary.
  *
+ * This class is planned to be deleted, see Bug 475863.
  */
 @Deprecated
 public class ImageAndMessageArea extends Composite {
