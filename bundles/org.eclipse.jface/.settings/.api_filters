@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="3.13.0"/>
+                <message_argument value="3.11.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.viewers.TableTreeViewer">
+        <filter id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="org.eclipse.jface_3.13.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollector">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollector"/>
+                <message_argument value="applyFontsAndColors(TableTreeItem)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollectorWithProviders">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollectorWithProviders"/>
+                <message_argument value="applyFontsAndColors(TableTreeItem)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
