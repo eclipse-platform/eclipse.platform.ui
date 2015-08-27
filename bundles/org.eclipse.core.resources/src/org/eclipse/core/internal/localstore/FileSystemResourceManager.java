@@ -644,6 +644,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
 		IFileStore descriptionFileStore = ((Resource) descriptionFile).getStore();
 		IFileInfo fileInfo = descriptionFileStore.fetchInfo();
+
 		if (fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 			IStatus result = getWorkspace().validateEdit(new IFile[] {descriptionFile}, null);
 			if (!result.isOK())
@@ -1137,8 +1138,21 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				getHistoryStore().addState(target.getFullPath(), store, fileInfo, false);
 			if (!fileInfo.exists())
 				store.getParent().mkdir(EFS.NONE, null);
+
+			// On Windows an attempt to open an output stream on a hidden file results in FileNotFoundException.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=194216
+			boolean restoreHiddenAttribute = false;
+			if (fileInfo.exists() && fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN) && Platform.getOS().equals(Platform.OS_WIN32)) {
+				fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, false);
+				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, Policy.monitorFor(null));
+				restoreHiddenAttribute = true;
+			}
 			int options = append ? EFS.APPEND : EFS.NONE;
 			OutputStream out = store.openOutputStream(options, Policy.subMonitorFor(monitor, 0));
+			if (restoreHiddenAttribute) {
+				fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, true);
+				store.putInfo(fileInfo, EFS.SET_ATTRIBUTES, Policy.monitorFor(null));
+			}
 			FileUtil.transferStreams(content, out, store.toString(), monitor);
 			// get the new last modified time and stash in the info
 			lastModified = store.fetchInfo().getLastModified();
