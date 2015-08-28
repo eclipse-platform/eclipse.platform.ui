@@ -311,7 +311,7 @@ public class MinMaxAddon {
 			}
 
 			// Find the editor 'area'
-			MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, curPersp);
+			MUIElement eaPlaceholder = modelService.find(ID_EDITOR_AREA, curPersp);
 			adjustCTFButtons(eaPlaceholder);
 		}
 
