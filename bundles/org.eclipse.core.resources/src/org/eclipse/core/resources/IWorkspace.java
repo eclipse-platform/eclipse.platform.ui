@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public interface IWorkspace extends IAdaptable {
 	 * notifications should be avoided during the invocation of a compound
 	 * resource changing operation.
 	 * 
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
+	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final int AVOID_UPDATE = 1;
@@ -172,7 +172,7 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	@Deprecated
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
-	
+
 	/**
 	 * Registers the given plug-in's workspace save participant, and returns an
 	 * object describing the workspace state at the time of the last save in
@@ -308,7 +308,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param build whether or not to run a build
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
+	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
 	public void checkpoint(boolean build);
 
@@ -726,7 +726,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a map (key type: <code>IProject</code>, value type:
 	 * <code>IProject[]</code>) from project to dangling project references
 	 */
-	public Map<IProject,IProject[]> getDanglingReferences();
+	public Map<IProject, IProject[]> getDanglingReferences();
 
 	/**
 	 * Returns the workspace description. This object is responsible for
@@ -1040,7 +1040,7 @@ public interface IWorkspace extends IAdaptable {
 	 */
 	@Deprecated
 	public void removeSaveParticipant(Plugin plugin);
-	
+
 	/**
 	 * Removes the workspace save participant for the given plug-in from this
 	 * workspace. If no such participant is registered, no action is taken.
@@ -1115,9 +1115,9 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @see #AVOID_UPDATE
 	 * @see IResourceRuleFactory
-	 * @since 3.0
+	 * @since 3.11
 	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+	public void run(ICoreRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Runs the given action as an atomic workspace operation.
@@ -1136,6 +1136,20 @@ public interface IWorkspace extends IAdaptable {
 	 * @exception CoreException if the operation failed.
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
+	 * @since 3.11
+	 */
+	public void run(ICoreRunnable action, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Identical to {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
+	 * New code should use {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
+	 * @since 3.0
+	 */
+	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Identical to {@link #run(ICoreRunnable, IProgressMonitor)}.
+	 * New code should use {@link #run(ICoreRunnable, IProgressMonitor)}.
 	 */
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 

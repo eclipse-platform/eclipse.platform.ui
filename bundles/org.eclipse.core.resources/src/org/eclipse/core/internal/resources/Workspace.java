@@ -2222,12 +2222,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	@Override
-	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
+	public void run(ICoreRunnable action, IProgressMonitor monitor) throws CoreException {
 		run(action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
 	}
 
 	@Override
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
+	public void run(ICoreRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
@@ -2253,6 +2253,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			monitor.done();
 		}
+	}
+
+	@Override
+	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException {
+		run((ICoreRunnable) action, defaultRoot, IWorkspace.AVOID_UPDATE, monitor);
+	}
+
+	@Override
+	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
+		run((ICoreRunnable) action, rule, options, monitor);
 	}
 
 	@Override
