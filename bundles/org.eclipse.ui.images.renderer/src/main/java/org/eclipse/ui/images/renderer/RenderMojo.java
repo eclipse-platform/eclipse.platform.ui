@@ -48,8 +48,6 @@ import org.w3c.dom.svg.SVGDocument;
 import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.GrayscaleFilter;
 import com.jhlabs.image.HSBAdjustFilter;
-import com.jhlabs.image.PointFilter;
-import com.jhlabs.image.TransferFilter;
 
 /**
  * <p>Mojo which renders SVG icons into PNG format.</p>
@@ -157,9 +155,35 @@ public class RenderMojo extends AbstractMojo {
         Element svgDocumentNode = svgDocument.getDocumentElement();
         String nativeWidthStr = svgDocumentNode.getAttribute("width");
         String nativeHeightStr = svgDocumentNode.getAttribute("height");
+        int nativeWidth = -1;
+        int nativeHeight = -1;
 
-        int nativeWidth = Integer.parseInt(nativeWidthStr);
-        int nativeHeight = Integer.parseInt(nativeHeightStr);
+        try{
+            if (nativeWidthStr != "" && nativeHeightStr != ""){
+                nativeWidth = Integer.parseInt(nativeWidthStr);
+                nativeHeight = Integer.parseInt(nativeHeightStr);
+            } else {
+                // Vector graphics editing programs don't always output height and width attributes on SVG.
+                // As fall back: parse the viewBox attribute (which is almost always set).
+                String viewBoxStr = svgDocumentNode.getAttribute("viewBox");
+                if (viewBoxStr == ""){
+                    log.error("Icon defines neither width/height nor a viewBox, skipping: " + icon.nameBase);
+                    failedIcons.add(icon);
+                    return;
+                }
+                String[] splitted = viewBoxStr.split(" ");
+                String xStr = splitted[0];
+                String yStr = splitted[1];
+                String widthStr = splitted[2];
+                String heightStr = splitted[3];
+                nativeWidth = Integer.parseInt(widthStr) - Integer.parseInt(xStr);
+                nativeHeight = Integer.parseInt(heightStr) - Integer.parseInt(yStr); 
+            }
+        }catch (NumberFormatException e){
+            log.error("Dimension could not be parsed ( "+e.getMessage()+ "), skipping: " + icon.nameBase);
+            failedIcons.add(icon);
+            return;
+        }
 
         int outputWidth = (int) (nativeWidth * outputScale);
         int outputHeight = (int) (nativeHeight * outputScale);
