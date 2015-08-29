@@ -25,12 +25,19 @@ Supported runtime arguments (e.g mvn -Declipse.svg.scale=2 ...):
 
 eclipse.svg.scale - an integer that is used to scale output images (e.g. 2 will render a 16x16 svg at 32x32)
 eclipse.svg.renderthreads - an integer that specifies how many threads to use simultaneously while rendering
+eclipse.svg.sourcedirectory - a string that specifies the directory name where the SVGs are taken from (defaults to "eclipse-svg")
+eclipse.svg.targetdirectory - a string that specifies the directory name where the PNGs are written to (defaults to "eclipse-png")
 
 Once the icon sets have been rendered, you can create galleries for evaluation and feedback with the gallery mojo:
 
 mvn org.eclipse.ui:org.eclipse.ui.images.renderer:render-galleries
 
 This will create a set of galleries and gif comparisons comprised of the newly rendered icons, located in the target/ output directory.
+
+Supported runtime arguments :
+
+eclipse.svg.pngdirectory - a string that specifies the directory name where the PNGs are taken from (defaults to "eclipse-png")
+eclipse.svg.gifdirectory - a string that specifies the directory name where the GIFs are taken from (defaults to "eclipse-gif")
 
 License
 -------
