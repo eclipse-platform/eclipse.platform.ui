@@ -16,6 +16,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 378849
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430, 472654
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -134,6 +135,8 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					|| UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
 				ici.update();
 			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+				ici.update();
+			} else if (UIEvents.UILabel.TOOLTIP.equals(attName) || UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
 				ici.update();
 			}
 		}

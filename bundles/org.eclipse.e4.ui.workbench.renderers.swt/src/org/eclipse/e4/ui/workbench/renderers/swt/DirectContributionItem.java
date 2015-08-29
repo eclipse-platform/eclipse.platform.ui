@@ -10,6 +10,7 @@
  *     Joseph Carroll <jdsalingerjr@gmail.com> - Bug 385414 Contributing wizards
  *     to toolbar always displays icon and text
  *     Bruce Skingle <Bruce.Skingle@immutify.com> - Bug 443092
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -48,6 +49,8 @@ public class DirectContributionItem extends AbstractContributionItem {
 		} else {
 			item.setText(""); //$NON-NLS-1$
 		}
+		final String tooltip = getModel().getLocalizedTooltip();
+		item.setToolTipText(tooltip);
 		item.setSelection(getModel().isSelected());
 		item.setEnabled(getModel().isEnabled());
 	}
