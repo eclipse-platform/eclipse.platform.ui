@@ -13,6 +13,7 @@
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49445
  *     Ericsson AB, Hamdan Msheik - Bug 389564
  *     Ericsson AB, Julian Enoch - Bug 389564
+ *     David North - Bug 475839
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.model;
@@ -241,7 +242,9 @@ public class AntElementNode implements IAdaptable, IAntElement {
 
 		try {
 			URL fileURL = FileLocator.toFileURL(url);
-			fFilePath = new Path((URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath()).toString();
+			if (IAntCoreConstants.FILE.equals(fileURL.toURI().getScheme())) {
+				fFilePath = new Path((URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath()).toString();
+			}
 		}
 		catch (URISyntaxException e) {
 			AntUIPlugin.log(e);
