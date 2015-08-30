@@ -259,7 +259,7 @@ public abstract class PreferencePage extends DialogPage implements
         contributeButtons(buttonBar);
 
 		if (createApplyButton || createDefaultButton) {
-			layout.numColumns = 1 + (createApplyButton && createDefaultButton ? 1 : 0);
+			layout.numColumns += 1 + (createApplyButton && createDefaultButton ? 1 : 0);
 			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 
 			if (createDefaultButton) {
