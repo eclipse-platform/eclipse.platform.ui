@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
  * @deprecated This class tests intentionally tests deprecated functionality, so tag
  * added to hide deprecation reference warnings.
  */
+@Deprecated
 public class PreferenceExportTest extends RuntimeTest {
 	public static Test suite() {
 		return new TestSuite(PreferenceExportTest.class);
@@ -41,7 +42,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		super.tearDown();
 
 		//remove properties modified by this test
-		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
+		Plugin testPlugin = RuntimeTestsPlugin.getPlugin();
 		Preferences prefs = testPlugin.getPluginPreferences();
 		prefs.setDefault("SomeTestKey", Preferences.STRING_DEFAULT_DEFAULT);
 		prefs.setDefault("SomeOtherTestKey", Preferences.STRING_DEFAULT_DEFAULT);
@@ -62,7 +63,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		IPath exportPath = new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
 		exportPath.toFile().delete();
 		//add a property change listener that asserts key identity
-		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
+		Plugin testPlugin = RuntimeTestsPlugin.getPlugin();
 		Preferences prefs = testPlugin.getPluginPreferences();
 		try {
 			//add a preference on the runtime plugin
@@ -115,7 +116,7 @@ public class PreferenceExportTest extends RuntimeTest {
 		IPath exportPath = new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
 		exportPath.toFile().delete();
 		//add a property change listener that asserts key identity
-		Plugin testPlugin = Platform.getPlugin(PI_RUNTIME_TESTS);
+		Plugin testPlugin = RuntimeTestsPlugin.getPlugin();
 		Preferences prefs = testPlugin.getPluginPreferences();
 		Preferences.IPropertyChangeListener listener = new Preferences.IPropertyChangeListener() {
 			@Override
@@ -157,8 +158,9 @@ public class PreferenceExportTest extends RuntimeTest {
 			}
 		} finally {
 			exportPath.toFile().delete();
-			if (prefs != null)
+			if (prefs != null) {
 				prefs.removePropertyChangeListener(listener);
+			}
 		}
 	}
 }
