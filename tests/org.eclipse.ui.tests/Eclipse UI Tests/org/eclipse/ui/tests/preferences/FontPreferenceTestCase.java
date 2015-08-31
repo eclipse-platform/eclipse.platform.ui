@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.preferences;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,7 +23,7 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -55,8 +54,7 @@ public class FontPreferenceTestCase extends UITestCase {
     @Override
 	protected void doSetUp() throws Exception {
         super.doSetUp();
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
+		AbstractUIPlugin plugin = WorkbenchPlugin.getDefault();
         preferenceStore = plugin.getPreferenceStore();
 
         //Set up the bogus entry for the bad first test

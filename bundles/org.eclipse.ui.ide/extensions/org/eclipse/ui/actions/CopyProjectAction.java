@@ -35,11 +35,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The CopyProjectAction is the action designed to copy projects specifically as
@@ -210,7 +210,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 * @return AbstractUIPlugin
 	 */
 	protected org.eclipse.ui.plugin.AbstractUIPlugin getPlugin() {
-		return (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		return WorkbenchPlugin.getDefault();
 	}
 
 	/**
