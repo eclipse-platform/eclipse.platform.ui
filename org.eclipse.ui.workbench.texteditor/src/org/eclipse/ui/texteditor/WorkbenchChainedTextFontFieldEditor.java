@@ -15,15 +15,14 @@ package org.eclipse.ui.texteditor;
 
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.PropagatingFontFieldEditor;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 
 /**
@@ -61,13 +60,8 @@ public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEdi
 	 * @param targetKey the key to be used in the target preference store
 	 */
 	public static void startPropagate(IPreferenceStore target, String targetKey) {
-		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
-		if (plugin instanceof AbstractUIPlugin) {
-			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
-			IPreferenceStore store= uiPlugin.getPreferenceStore();
-			if (store != null)
-				PropagatingFontFieldEditor.startPropagate(store, JFaceResources.TEXT_FONT, target, targetKey);
-		}
+		IPreferenceStore store= new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.ui.workbench"); //$NON-NLS-1$
+		PropagatingFontFieldEditor.startPropagate(store, JFaceResources.TEXT_FONT, target, targetKey);
 	}
 }
 

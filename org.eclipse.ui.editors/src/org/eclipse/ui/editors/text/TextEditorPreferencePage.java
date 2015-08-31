@@ -17,8 +17,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -29,7 +28,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
@@ -60,11 +59,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 		super(GRID);
 
 		setDescription(TextEditorMessages.PreferencePage_description);
-		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
-		if (plugin instanceof AbstractUIPlugin) {
-			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
-			setPreferenceStore(uiPlugin.getPreferenceStore());
-		}
+		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.ui.workbench")); //$NON-NLS-1$
 	}
 
 	/*
