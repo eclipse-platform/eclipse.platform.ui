@@ -26,6 +26,7 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -637,7 +638,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *         <code>null</code> if there are no scheduling restrictions for
 	 *         this operation.
 	 *
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int,
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getExecuteSchedulingRule() {
@@ -655,7 +656,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *         <code>null</code> if there are no scheduling restrictions for
 	 *         this operation.
 	 *
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int,
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getUndoSchedulingRule() {
@@ -672,7 +673,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *         <code>null</code> if there are no scheduling restrictions for
 	 *         this operation.
 	 *
-	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int,
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getRedoSchedulingRule() {

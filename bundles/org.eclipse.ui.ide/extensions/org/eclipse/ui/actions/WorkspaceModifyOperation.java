@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -47,7 +48,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * operation.
  * </p>
  * @see ISchedulingRule
- * @see org.eclipse.core.resources.IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
+ * @see org.eclipse.core.resources.IWorkspace#run(ICoreRunnable, IProgressMonitor)
  *  */
 public abstract class WorkspaceModifyOperation implements IRunnableWithProgress, IThreadListener {
     private ISchedulingRule rule;
