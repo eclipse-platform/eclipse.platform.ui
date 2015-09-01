@@ -11,6 +11,7 @@
  *     Christian Walther (Indel AG) - Bug 389012: Fix division by zero in TrimBarLayout
  *     Marc-Andre Laperle (Ericsson) - Bug 466233: Toolbar items are wrongly rendered into a "drop-down"
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 476386
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -31,6 +32,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ToolBar;
 
+/**
+ * This class manages the {@link Layout} of the applications' TrimBar.
+ */
 public class TrimBarLayout extends Layout {
 	class TrimLine {
 		Map<Control, Point> sizeMap = new HashMap<>();
@@ -70,10 +74,23 @@ public class TrimBarLayout extends Layout {
 
 	private List<TrimLine> lines = new ArrayList<>();
 
-	public static String SPACER = "stretch"; //$NON-NLS-1$
-	public static String GLUE = "glue"; //$NON-NLS-1$
+	/**
+	 * When applied as a tag to a tool control (e.g. LayoutModifierToolControl),
+	 * it causes the tool control to grab all available space to its right
+	 * within its containing {@link MTrimBar}. Items after a spacer will be
+	 * aligned to the right side of the {@link MTrimBar}.
+	 */
+	public final static String SPACER = "stretch"; //$NON-NLS-1$
 
-	private boolean horizontal;
+	/**
+	 * When applied as a tag to a tool control (e.g. LayoutModifierToolControl)
+	 * within a {@link MTrimBar}, it causes the tool control to be glued to the
+	 * items to its immediate left and right so that in case the
+	 * {@link MTrimBar} must be wrapped, then the glued items stay together.
+	 */
+	public final static String GLUE = "glue"; //$NON-NLS-1$
+
+	private final boolean horizontal;
 
 	public int marginLeft = 0;
 	public int marginRight = 0;
@@ -81,27 +98,32 @@ public class TrimBarLayout extends Layout {
 	public int marginBottom = 0;
 	public int wrapSpacing = 0;
 
+	/**
+	 * Constructor for the TrimBarLayout.
+	 *
+	 * @param horizontal
+	 *            specifies the orientation of the {@link Layout}. If true, items
+	 *            are placed in a horizontal orientation, otherwise in a
+	 *            vertical orientation.
+	 */
 	public TrimBarLayout(boolean horizontal) {
 		this.horizontal = horizontal;
 	}
 
 	@Override
-	protected Point computeSize(Composite composite, int wHint, int hHint,
-			boolean flushCache) {
+	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (flushCache) {
 			// Clear the current cache
 			lines.clear();
 		}
 
 		// First, hide any empty toolbars
-		MTrimBar bar = (MTrimBar) composite
-				.getData(AbstractPartRenderer.OWNING_ME);
+		MTrimBar bar = (MTrimBar) composite.getData(AbstractPartRenderer.OWNING_ME);
 		for (MTrimElement te : bar.getChildren()) {
 			hideManagedTB(te);
 		}
 
-		int totalMajor = horizontal ? wHint - (marginLeft + marginRight)
-				: hHint - (marginTop + marginBottom);
+		int totalMajor = horizontal ? wHint - (marginLeft + marginRight) : hHint - (marginTop + marginBottom);
 		int totalMinor = 0;
 		int spaceLeft = totalMajor;
 
@@ -143,11 +165,9 @@ public class TrimBarLayout extends Layout {
 
 		// Adjust the 'totalMinor' to account for the margins
 		int totalWrapSpacing = (lines.size() - 1) * wrapSpacing;
-		totalMinor += horizontal ? (marginTop + marginBottom)
-				+ totalWrapSpacing : (marginLeft + marginRight)
-				+ totalWrapSpacing;
-		Point calcSize = horizontal ? new Point(wHint, totalMinor) : new Point(
-				totalMinor, hHint);
+		totalMinor += horizontal ? (marginTop + marginBottom) + totalWrapSpacing
+				: (marginLeft + marginRight) + totalWrapSpacing;
+		Point calcSize = horizontal ? new Point(wHint, totalMinor) : new Point(totalMinor, hHint);
 		return calcSize;
 	}
 
@@ -174,8 +194,7 @@ public class TrimBarLayout extends Layout {
 	 *         TB.
 	 */
 	private boolean hideManagedTB(MTrimElement te) {
-		if (!(te instanceof MToolBar)
-				|| !(te.getRenderer() instanceof ToolBarManagerRenderer))
+		if (!(te instanceof MToolBar) || !(te.getRenderer() instanceof ToolBarManagerRenderer))
 			return false;
 
 		if (!(te.getWidget() instanceof Composite))
@@ -230,10 +249,6 @@ public class TrimBarLayout extends Layout {
 		}
 	}
 
-	/**
-	 * @param curLine
-	 * @param bounds
-	 */
 	private void tileLine(TrimLine curLine, Rectangle bounds) {
 		int curX = bounds.x;
 		int curY = bounds.y;
@@ -269,8 +284,7 @@ public class TrimBarLayout extends Layout {
 				int offset = (curLine.minor - ctrlHeight) / 2;
 				if (!isSpacer(ctrl)) {
 					if (!zeroSize)
-						ctrl.setBounds(curX, curY + offset, ctrlWidth,
-								ctrlHeight);
+						ctrl.setBounds(curX, curY + offset, ctrlWidth, ctrlHeight);
 					else
 						ctrl.setBounds(curX, curY, 0, 0);
 				}
@@ -284,8 +298,7 @@ public class TrimBarLayout extends Layout {
 	}
 
 	private boolean isSpacer(Control ctrl) {
-		MUIElement element = (MUIElement) ctrl
-				.getData(AbstractPartRenderer.OWNING_ME);
+		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null && element.getTags().contains(SPACER))
 			return true;
 
@@ -293,8 +306,7 @@ public class TrimBarLayout extends Layout {
 	}
 
 	private boolean isGlue(Control ctrl) {
-		MUIElement element = (MUIElement) ctrl
-				.getData(AbstractPartRenderer.OWNING_ME);
+		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null && element.getTags().contains(GLUE))
 			return true;
 
@@ -302,8 +314,7 @@ public class TrimBarLayout extends Layout {
 	}
 
 	private boolean isStatusLine(Control ctrl) {
-		MUIElement element = (MUIElement) ctrl
-				.getData(AbstractPartRenderer.OWNING_ME);
+		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
 		if (element != null && element.getElementId() != null
 				&& element.getElementId().equals("org.eclipse.ui.StatusLine")) //$NON-NLS-1$
 			return true;
@@ -312,12 +323,19 @@ public class TrimBarLayout extends Layout {
 	}
 
 	/**
+	 * Get a Control at a certain position from the TrimBar.
+	 *
+	 * @param trimComp
+	 *            TrimBar {@link Composite}
 	 * @param trimPos
-	 * @return
+	 *            position in the TrimBar
+	 *
+	 * @return the {@link Control} at the given trimPos {@link Point} or
+	 *         <code>null</code>, if the given Point does not fit into any
+	 *         TrimBar-Control's bounds.
 	 */
 	public Control ctrlFromPoint(Composite trimComp, Point trimPos) {
-		if (trimComp == null || trimComp.isDisposed() || lines == null
-				|| lines.size() == 0)
+		if (trimComp == null || trimComp.isDisposed() || lines == null || lines.size() == 0)
 			return null;
 
 		Control[] kids = trimComp.getChildren();
