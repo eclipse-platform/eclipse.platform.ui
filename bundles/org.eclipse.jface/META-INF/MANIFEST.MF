@@ -42,5 +42,3 @@ Import-Package: javax.xml.parsers,
  org.osgi.framework,
  org.w3c.dom,
  org.xml.sax
-Bundle-Activator: org.eclipse.jface.internal.JFaceActivator
-Bundle-ActivationPolicy: lazy

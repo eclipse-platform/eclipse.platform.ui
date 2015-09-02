@@ -11,7 +11,7 @@
 package org.eclipse.jface.internal;
 
 import org.eclipse.jface.util.BidiUtils;
-
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Internal class used for non-API debug flags.
@@ -98,5 +98,13 @@ public class InternalPolicy {
 	 * @since 3.5
 	 */
 	public static boolean OSGI_AVAILABLE; // default value is false
+
+	static {
+		try {
+			OSGI_AVAILABLE = FrameworkUtil.getBundle(InternalPolicy.class) != null;
+		} catch (Throwable t) {
+			OSGI_AVAILABLE = false;
+		}
+	}
 
 }

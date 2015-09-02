@@ -24,13 +24,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Utility methods to access JFace-specific resources.
@@ -162,7 +162,7 @@ public class JFaceResources {
 	}
 
 	/**
-	 * Returns the resource bundle for JFace itself. The resouble bundle is
+	 * Returns the resource bundle for JFace itself. The resource bundle is
 	 * obtained from
 	 * <code>ResourceBundle.getBundle("org.eclipse.jface.jface_nls")</code>.
 	 * <p>
@@ -408,8 +408,8 @@ public class JFaceResources {
 
 		Object bundle = null;
 		try {
-			bundle = JFaceActivator.getBundle();
-		} catch (NoClassDefFoundError exception) {
+			bundle = FrameworkUtil.getBundle(JFaceResources.class);
+		} catch (Throwable exception) {
 			// Test to see if OSGI is present
 		}
 		declareImage(bundle, Wizard.DEFAULT_IMAGE, ICONS_PATH + "page.png", //$NON-NLS-1$
