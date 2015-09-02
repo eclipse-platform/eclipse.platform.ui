@@ -660,8 +660,15 @@ public final class Workbench extends EventManager implements IWorkbench,
 						setSearchContribution(appModel, false);
 						e4app.saveModel();
 					}
-					e4Workbench.close();
-					returnCode[0] = workbench.returnCode;
+
+					// if a restart was triggered via E4Workbench the return
+					// code needs to be set appropriately
+					if (e4Workbench.isRestart()) {
+						returnCode[0] = PlatformUI.RETURN_RESTART;
+					} else {
+						e4Workbench.close();
+						returnCode[0] = workbench.returnCode;
+					}
 				}
 			}
 		});
