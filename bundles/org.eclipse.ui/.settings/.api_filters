@@ -20,6 +20,38 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.viewers.TableTreeViewer">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="org.eclipse.ui_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTree">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.swt.custom.TableTree"/>
+                <message_argument value="org.eclipse.ui_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTreeEditor">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.swt.custom.TableTreeEditor"/>
+                <message_argument value="org.eclipse.ui_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTreeItem">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.swt.custom.TableTreeItem"/>
+                <message_argument value="org.eclipse.ui_3.107.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.presentations.AbstractPresentationFactory">
         <filter id="305422471">
             <message_arguments>
