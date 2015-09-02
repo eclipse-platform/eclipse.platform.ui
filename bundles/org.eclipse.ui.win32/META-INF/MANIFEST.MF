@@ -9,4 +9,4 @@ Fragment-Host: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)"
 Bundle-Localization: fragment-win32
 Export-Package: org.eclipse.ui.internal.editorsupport.win32;x-internal:=true
 Eclipse-PlatformFilter: (osgi.ws=win32)
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
