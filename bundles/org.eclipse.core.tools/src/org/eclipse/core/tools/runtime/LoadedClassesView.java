@@ -75,7 +75,7 @@ public class LoadedClassesView extends TableWithTotalView {
 		return ""; //$NON-NLS-1$
 	}
 
-	protected TableTreeViewer getViewer() {
+	protected TableViewer getViewer() {
 		return viewer;
 	}
 

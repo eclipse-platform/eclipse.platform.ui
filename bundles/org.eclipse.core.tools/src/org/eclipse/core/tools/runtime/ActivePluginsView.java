@@ -221,7 +221,7 @@ public class ActivePluginsView extends TableWithTotalView {
 		return ""; //$NON-NLS-1$
 	}
 
-	protected TableTreeViewer getViewer() {
+	protected TableViewer getViewer() {
 		return viewer;
 	}
 

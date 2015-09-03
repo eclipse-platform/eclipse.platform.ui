@@ -341,7 +341,7 @@ public class EventsView extends TableWithTotalView {
 		return ((PerformanceStats) element).getBlameString();
 	}
 
-	protected TableTreeViewer getViewer() {
+	protected TableViewer getViewer() {
 		return viewer;
 	}
 }

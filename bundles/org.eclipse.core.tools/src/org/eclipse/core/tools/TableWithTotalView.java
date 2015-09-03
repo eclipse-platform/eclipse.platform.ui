@@ -14,7 +14,6 @@ import java.util.Iterator;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -30,8 +29,9 @@ import org.eclipse.ui.part.ViewPart;
  * data showed in the first table.
  */
 public abstract class TableWithTotalView extends ViewPart implements ISelectionProvider {
-	protected TableTreeViewer viewer; // Table tree viewer used to contain all the data but the total
-	protected TableTree tableTree; // The table tree that will populate the viewer
+	protected TableViewer viewer; // Table viewer used to contain all the data
+									// but the total
+	protected Table tableTree; // The table tree that will populate the viewer
 	protected Table totalTable; // The table used to display the totals
 	protected boolean flat; // Flag indicating the view mode
 	protected Clipboard clipboard;
@@ -58,7 +58,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				// column selected - need to sort
-				int column = viewer.getTableTree().getTable().indexOf((TableColumn) event.widget);
+				int column = viewer.getTable().indexOf((TableColumn) event.widget);
 
 				ISorter oldSorter = (ISorter) viewer.getSorter();
 				boolean threeState = oldSorter.states() == 3;
@@ -104,7 +104,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 			@Override
 			public void controlResized(ControlEvent event) {
 				TableColumn column = (TableColumn) event.widget;
-				int columnNumber = viewer.getTableTree().getTable().indexOf(column);
+				int columnNumber = viewer.getTable().indexOf(column);
 				totalTable.getColumn(columnNumber).setWidth(column.getWidth());
 			}
 		};
@@ -112,9 +112,9 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 	private void createTables(Composite parent) {
 		// create a first table, that will display all the data
-		tableTree = new TableTree(parent, SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		tableTree = new Table(parent, SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		tableTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Table table = tableTree.getTable();
+		Table table = tableTree;
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		TableLayout tableLayout = new TableLayout();
@@ -174,7 +174,7 @@ public abstract class TableWithTotalView extends ViewPart implements ISelectionP
 
 		clipboard = new Clipboard(parent.getDisplay());
 		//create the viewer
-		viewer = new TableTreeViewer(tableTree);
+		viewer = new TableViewer(tableTree);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.setSorter(getSorter(0));
