@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -99,7 +100,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	class MouseHandler implements MouseListener, MouseMoveListener {
+	class MouseHandler implements MouseListener, MouseMoveListener, MouseWheelListener {
 
 		/** The cached view port size. */
 		private int fCachedViewportSize;
@@ -361,6 +362,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 			return -1;
 		}
+
+		public void mouseScrolled(MouseEvent e) {
+			fCachedTextViewer.setTopIndex(fCachedTextViewer.getTopIndex() - e.count);
+		}
 	}
 
 	/** This column's parent ruler */
@@ -620,6 +625,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fMouseHandler= new MouseHandler();
 		fCanvas.addMouseListener(fMouseHandler);
 		fCanvas.addMouseMoveListener(fMouseHandler);
+		fCanvas.addMouseWheelListener(fMouseHandler);
 
 		if (fCachedTextViewer != null) {
 

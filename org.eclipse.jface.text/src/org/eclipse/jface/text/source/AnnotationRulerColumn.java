@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -337,6 +338,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				handleMouseMove(e);
 			}
 		});
+		
+		fCanvas.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseScrolled(MouseEvent e) {
+				handleMouseScrolled(e);
+			}
+		});
 
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.addViewportListener(fInternalListener);
@@ -419,6 +426,17 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				fCanvas.setCursor(cursor);
 				fLastCursor= cursor;
 			}
+		}
+	}
+
+	/**
+	 * Handles mouse scrolls.
+	 *
+	 * @param event the mouse scrolled event
+	 */
+	private void handleMouseScrolled(MouseEvent event) {
+		if (fCachedTextViewer != null) {
+			fCachedTextViewer.setTopIndex(fCachedTextViewer.getTopIndex() - event.count);
 		}
 	}
 
