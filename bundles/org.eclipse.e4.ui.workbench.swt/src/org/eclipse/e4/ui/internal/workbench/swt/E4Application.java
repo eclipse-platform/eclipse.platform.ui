@@ -196,8 +196,7 @@ public class E4Application implements IApplication {
 		}
 	}
 
-	public E4Workbench createE4Workbench(
-			IApplicationContext applicationContext, final Display display) {
+	public E4Workbench createE4Workbench(IApplicationContext applicationContext, final Display display) {
 		args = (String[]) applicationContext.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
 		IEclipseContext appContext = createDefaultContext();
@@ -235,8 +234,7 @@ public class E4Application implements IApplication {
 			lcManager = factory.create(lifeCycleURI, appContext);
 			if (lcManager != null) {
 				// Let the manager manipulate the appContext if desired
-				ContextInjectionFactory.invoke(lcManager,
-						PostContextCreate.class, appContext, null);
+				ContextInjectionFactory.invoke(lcManager, PostContextCreate.class, appContext, null);
 			}
 		}
 
@@ -339,12 +337,10 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 		context.set(IWorkbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);
 	}
 
-	private MApplication loadApplicationModel(IApplicationContext appContext,
-			IEclipseContext eclipseContext) {
+	private MApplication loadApplicationModel(IApplicationContext appContext, IEclipseContext eclipseContext) {
 		MApplication theApp = null;
 
-		Location instanceLocation = WorkbenchSWTActivator.getDefault()
-				.getInstanceLocation();
+		Location instanceLocation = WorkbenchSWTActivator.getDefault().getInstanceLocation();
 
 
 		URI applicationModelURI = determineApplicationModelURI(appContext);
@@ -356,8 +352,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 
 		saveAndRestore = value == null || Boolean.parseBoolean(value);
 
-		eclipseContext.set(IWorkbench.PERSIST_STATE,
-				Boolean.valueOf(saveAndRestore));
+		eclipseContext.set(IWorkbench.PERSIST_STATE, Boolean.valueOf(saveAndRestore));
 
 		// when -data @none or -data @noDefault options
 		if (instanceLocation != null && instanceLocation.getURL() != null) {
@@ -370,28 +365,23 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 		boolean clearPersistedState;
 		value = getArgValue(IWorkbench.CLEAR_PERSISTED_STATE, appContext, true);
 		clearPersistedState = value != null && Boolean.parseBoolean(value);
-		eclipseContext.set(IWorkbench.CLEAR_PERSISTED_STATE,
-				Boolean.valueOf(clearPersistedState));
+		eclipseContext.set(IWorkbench.CLEAR_PERSISTED_STATE, Boolean.valueOf(clearPersistedState));
 
 		// Delta save and restore
 		boolean deltaRestore;
 		value = getArgValue(E4Workbench.DELTA_RESTORE, appContext, false);
 		deltaRestore = value == null || Boolean.parseBoolean(value);
-		eclipseContext.set(E4Workbench.DELTA_RESTORE,
-				Boolean.valueOf(deltaRestore));
+		eclipseContext.set(E4Workbench.DELTA_RESTORE, Boolean.valueOf(deltaRestore));
 
 		String resourceHandler = getArgValue(IWorkbench.MODEL_RESOURCE_HANDLER, appContext, false);
 
 		if (resourceHandler == null) {
-			resourceHandler = "bundleclass://org.eclipse.e4.ui.workbench/"
-					+ ResourceHandler.class.getName();
+			resourceHandler = "bundleclass://org.eclipse.e4.ui.workbench/" + ResourceHandler.class.getName();
 		}
 
-		IContributionFactory factory = eclipseContext
-				.get(IContributionFactory.class);
+		IContributionFactory factory = eclipseContext.get(IContributionFactory.class);
 
-		handler = (IModelResourceHandler) factory.create(resourceHandler,
-				eclipseContext);
+		handler = (IModelResourceHandler) factory.create(resourceHandler, eclipseContext);
 		eclipseContext.set(IModelResourceHandler.class, handler);
 
 		Resource resource = handler.loadMostRecentModel();
@@ -412,8 +402,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 				appModelPath = brandingBundle.getSymbolicName() + "/" + E4Application.APPLICATION_MODEL_PATH_DEFAULT;
 			else {
 				Logger logger = new WorkbenchLogger(PLUGIN_ID);
-				logger.error(new Exception(), // log a stack trace for debugging
-						"applicationXMI parameter not set and no branding plugin defined. "); //$NON-NLS-1$
+				logger.error(new Exception(), "applicationXMI parameter not set and no branding plugin defined. "); //$NON-NLS-1$
 			}
 		}
 
@@ -519,25 +508,19 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 
 	// TODO This should go into a different bundle
 	public static IEclipseContext createDefaultContext() {
+
 		IEclipseContext serviceContext = createDefaultHeadlessContext();
-		final IEclipseContext appContext = serviceContext
-				.createChild("WorkbenchContext"); //$NON-NLS-1$
+		final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
 
-		appContext
-				.set(Logger.class, ContextInjectionFactory.make(
-						WorkbenchLogger.class, appContext));
-
+		appContext.set(Logger.class, ContextInjectionFactory.make(WorkbenchLogger.class, appContext));
 		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
-
 		appContext.set(EPlaceholderResolver.class, new PlaceholderResolver());
 
 		// setup for commands and handlers
-		appContext.set(IServiceConstants.ACTIVE_PART,
-				new ActivePartLookupFunction());
+		appContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
 
 		appContext.set(IServiceConstants.ACTIVE_SHELL,
-				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL,
-						E4Workbench.LOCAL_ACTIVE_SHELL));
+				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL, E4Workbench.LOCAL_ACTIVE_SHELL));
 
 		appContext.set(IStylingEngine.class, new IStylingEngine() {
 			@Override
@@ -558,8 +541,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 			}
 
 			@Override
-			public void setClassnameAndId(Object widget, String classname,
-					String id) {
+			public void setClassnameAndId(Object widget, String classname, String id) {
 			}
 		});
 
@@ -586,19 +568,16 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 	 * Simplified copy of IDEAplication processing that does not offer to choose
 	 * a workspace location.
 	 */
-	private boolean checkInstanceLocation(Location instanceLocation,
-			Shell shell, IEclipseContext context) {
+	private boolean checkInstanceLocation(Location instanceLocation, Shell shell, IEclipseContext context) {
 
 		// Eclipse has been run with -data @none or -data @noDefault options so
 		// we don't need to validate the location
-		if (instanceLocation == null
-				&& Boolean.FALSE.equals(context.get(IWorkbench.PERSIST_STATE))) {
+		if (instanceLocation == null && Boolean.FALSE.equals(context.get(IWorkbench.PERSIST_STATE))) {
 			return true;
 		}
 
 		if (instanceLocation == null) {
-			MessageDialog
-					.openError(
+			MessageDialog.openError(
 							shell,
 							WorkbenchSWTMessages.IDEApplication_workspaceMandatoryTitle,
 							WorkbenchSWTMessages.IDEApplication_workspaceMandatoryMessage);
@@ -626,20 +605,17 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 				// Two possibilities:
 				// 1. directory is already in use
 				// 2. directory could not be created
-				File workspaceDirectory = new File(instanceLocation.getURL()
-						.getFile());
+				File workspaceDirectory = new File(instanceLocation.getURL().getFile());
 				if (workspaceDirectory.exists()) {
-					MessageDialog
-							.openError(
-									shell,
-									WorkbenchSWTMessages.IDEApplication_workspaceCannotLockTitle,
-									WorkbenchSWTMessages.IDEApplication_workspaceCannotLockMessage);
+					MessageDialog.openError(
+								shell,
+								WorkbenchSWTMessages.IDEApplication_workspaceCannotLockTitle,
+								WorkbenchSWTMessages.IDEApplication_workspaceCannotLockMessage);
 				} else {
-					MessageDialog
-							.openError(
-									shell,
-									WorkbenchSWTMessages.IDEApplication_workspaceCannotBeSetTitle,
-									WorkbenchSWTMessages.IDEApplication_workspaceCannotBeSetMessage);
+					MessageDialog.openError(
+								shell,
+								WorkbenchSWTMessages.IDEApplication_workspaceCannotBeSetTitle,
+							WorkbenchSWTMessages.IDEApplication_workspaceCannotBeSetMessage);
 				}
 			} catch (IOException e) {
 				Logger logger = new WorkbenchLogger(PLUGIN_ID);
@@ -649,33 +625,6 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 			}
 			return false;
 		}
-		/*
-		 * // -data @noDefault or -data not specified, prompt and set
-		 * ChooseWorkspaceData launchData = new ChooseWorkspaceData(instanceLoc
-		 * .getDefault());
-		 *
-		 * boolean force = false; while (true) { URL workspaceUrl =
-		 * promptForWorkspace(shell, launchData, force); if (workspaceUrl ==
-		 * null) { return false; }
-		 *
-		 * // if there is an error with the first selection, then force the //
-		 * dialog to open to give the user a chance to correct force = true;
-		 *
-		 * try { // the operation will fail if the url is not a valid //
-		 * instance data area, so other checking is unneeded if
-		 * (instanceLocation.setURL(workspaceUrl, true)) {
-		 * launchData.writePersistedData(); writeWorkspaceVersion(); return
-		 * true; } } catch (IllegalStateException e) { MessageDialog .openError(
-		 * shell, IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
-		 * IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-		 * return false; }
-		 *
-		 * // by this point it has been determined that the workspace is //
-		 * already in use -- force the user to choose again
-		 * MessageDialog.openError(shell,
-		 * IDEWorkbenchMessages.IDEApplication_workspaceInUseTitle,
-		 * IDEWorkbenchMessages.IDEApplication_workspaceInUseMessage); }
-		 */
 		return false;
 	}
 
@@ -775,8 +724,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 
 		OutputStream output = null;
 		try {
-			String versionLine = WORKSPACE_VERSION_KEY + '='
-					+ WORKSPACE_VERSION_VALUE;
+			String versionLine = WORKSPACE_VERSION_KEY + '=' + WORKSPACE_VERSION_VALUE;
 
 			output = new FileOutputStream(versionFile);
 			output.write(versionLine.getBytes("UTF-8")); //$NON-NLS-1$
@@ -898,8 +846,7 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 			public void notifyChanged(Notification notification) {
 				if (notification.getFeatureID(MWindow.class) != BasicPackageImpl.WINDOW__CONTEXT)
 					return;
-				IEclipseContext windowContext = (IEclipseContext) notification
-						.getNewValue();
+				IEclipseContext windowContext = (IEclipseContext) notification.getNewValue();
 				initWindowContext(windowContext);
 			}
 		});
@@ -908,8 +855,8 @@ IWorkbench.CSS_URI_ARG, applicationContext, false);
 	static private void initWindowContext(IEclipseContext windowContext) {
 		if (windowContext == null)
 			return;
-		SelectionAggregator selectionAggregator = ContextInjectionFactory.make(
-				SelectionAggregator.class, windowContext);
+		SelectionAggregator selectionAggregator = ContextInjectionFactory.make(SelectionAggregator.class,
+				windowContext);
 		windowContext.set(SelectionAggregator.class, selectionAggregator);
 	}
 }
