@@ -364,7 +364,17 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		public void mouseScrolled(MouseEvent e) {
-			fCachedTextViewer.setTopIndex(fCachedTextViewer.getTopIndex() - e.count);
+			if (fCachedTextViewer instanceof ITextViewerExtension5) {
+				ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+				StyledText textWidget= fCachedTextViewer.getTextWidget();
+				int topIndex= textWidget.getTopIndex();
+				int newTopIndex= Math.max(0, topIndex - e.count);
+				fCachedTextViewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
+			} else {
+				int topIndex= fCachedTextViewer.getTopIndex();
+				int newTopIndex= Math.max(0, topIndex - e.count);
+				fCachedTextViewer.setTopIndex(newTopIndex);
+			}
 		}
 	}
 

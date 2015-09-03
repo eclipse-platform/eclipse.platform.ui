@@ -1133,8 +1133,16 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @param event the mouse scrolled event
 	 */
 	private void handleMouseScrolled(MouseEvent event) {
-		if (fTextViewer != null) {
-			fTextViewer.setTopIndex(fTextViewer.getTopIndex() - event.count);
+		if (fTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+			StyledText textWidget= fTextViewer.getTextWidget();
+			int topIndex= textWidget.getTopIndex();
+			int newTopIndex= Math.max(0, topIndex - event.count);
+			fTextViewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
+		} else if (fTextViewer != null) {
+			int topIndex= fTextViewer.getTopIndex();
+			int newTopIndex= Math.max(0, topIndex - event.count);
+			fTextViewer.setTopIndex(newTopIndex);
 		}
 	}
 
