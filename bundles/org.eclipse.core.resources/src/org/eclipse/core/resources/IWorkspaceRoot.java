@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -301,6 +301,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * from the workspace according to existing resource filters.
 	 * </p>
 	 * <p>
+	 * This method prefers a container whose path has a minimal number of segments.
+	 * I.e. a container in a nested project is preferred over a container in an enclosing project.
+	 * </p>
+	 * <p>
 	 * Warning: This method ignores linked resources and their children.  Since
 	 * linked resources may overlap other resources, a unique mapping from a
 	 * file system location to a single resource is not guaranteed.  To find all
@@ -327,6 +331,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
 	 * The result will also omit resources that are explicitly excluded
 	 * from the workspace according to existing resource filters.
+	 * </p>
+	 * <p>
+	 * This method prefers a file whose path has a minimal number of segments.
+	 * I.e. a file in a nested project is preferred over a file in an enclosing project.
 	 * </p>
 	 * <p>
 	 * Warning: This method ignores linked resources and their children.  Since
@@ -365,9 +373,9 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * Returns the collection of projects which exist under this root.
 	 * The projects can be open or closed.
 	 * <p>
- 	 * This is a convenience method, fully equivalent to <code>getProjects(IResource.NONE)</code>.
- 	 * Hidden projects are <b>not</b> included.
- 	 * </p>
+	 * This is a convenience method, fully equivalent to <code>getProjects(IResource.NONE)</code>.
+	 * Hidden projects are <b>not</b> included.
+	 * </p>
 	 * @return an array of projects
 	 * @see #getProject(String)
 	 * @see IResource#isHidden()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -265,17 +265,25 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * from the workspace according to existing resource filters. If all resources
 	 * are omitted, the result may be null.
 	 * </p>
+	 * <p>
+	 * Returns a folder whose path has a minimal number of segments.
+	 * I.e. a folder in a nested project is preferred over a folder in an enclosing project.
+	 * </p>
 	 */
 	public IContainer containerForLocation(IPath location) {
 		return (IContainer) resourceForLocation(location, false);
 	}
 
 	/**
-	 * Returns the resource corresponding to the given location.  The
+	 * Returns a resource corresponding to the given location.  The
 	 * "files" parameter is used for paths of two or more segments.  If true,
 	 * a file is returned, otherwise a folder is returned.  Returns null if files is true
 	 * and the path is not of sufficient length. Also returns null if the resource is
-	 * filtered out by resource filters
+	 * filtered out by resource filters.
+	 * <p>
+	 * Returns a resource whose path has a minimal number of segments.
+	 * I.e. a resource in a nested project is preferred over a resource in an enclosing project.
+	 * </p>
 	 */
 	private IResource resourceForLocation(IPath location, boolean files) {
 		if (workspace.getRoot().getLocation().equals(location)) {
@@ -283,19 +291,25 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 				return resourceFor(Path.ROOT, false);
 			return null;
 		}
+		int resultProjectPathSegments = 0;
+		IResource result = null;
 		IProject[] projects = getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			IPath projectLocation = project.getLocation();
 			if (projectLocation != null && projectLocation.isPrefixOf(location)) {
 				int segmentsToRemove = projectLocation.segmentCount();
-				IPath path = project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
-				IResource resource = resourceFor(path, files);
-				if (resource != null && !((Resource) resource).isFiltered())
-					return resource;
+				if (segmentsToRemove > resultProjectPathSegments) {
+					IPath path = project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
+					IResource resource = resourceFor(path, files);
+					if (resource != null && !((Resource) resource).isFiltered()) {
+						resultProjectPathSegments = segmentsToRemove;
+						result = resource;
+					}
+				}
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public void copy(IResource target, IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
@@ -471,6 +485,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * The result will also omit resources that are explicitly excluded
 	 * from the workspace according to existing resource filters. If all resources
 	 * are omitted, the result may be null.
+	 * </p>
+	 * <p>
+	 * Returns a file whose path has a minimal number of segments.
+	 * I.e. a file in a nested project is preferred over a file in an enclosing project.
 	 * </p>
 	 */
 	public IFile fileForLocation(IPath location) {

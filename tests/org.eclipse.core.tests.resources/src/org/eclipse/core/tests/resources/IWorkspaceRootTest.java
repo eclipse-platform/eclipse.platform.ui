@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -453,6 +453,44 @@ public class IWorkspaceRootTest extends ResourceTest {
 
 		containers = root.findContainersForLocationURI(file.getLocationURI(), IContainer.INCLUDE_HIDDEN);
 		assertEquals("6.0", 1, containers.length);
+	}
+
+	/**
+	 * Regression test for bug 476585: IWorkspaceRoot#getFileForLocation(IPath) should return IFile in nested project
+	 */
+	public void testBug476585() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("a");
+		ensureExistsInWorkspace(project, true);
+
+		String subProjectName = "subProject";
+		IPath subProjectLocation = project.getLocation().append(subProjectName);
+
+		IPath fileLocation = subProjectLocation.append("file.txt");
+		IFile file = root.getFileForLocation(fileLocation);
+		assertEquals("1.0", project, file.getProject());
+
+		IPath containerLocation = subProjectLocation.append("folder");
+		IContainer container = root.getContainerForLocation(containerLocation);
+		assertEquals("1.1", project, container.getProject());
+
+		IProject subProject = root.getProject(subProjectName);
+		IProjectDescription newProjectDescription = getWorkspace().newProjectDescription(subProjectName);
+		newProjectDescription.setLocation(subProjectLocation);
+
+		try {
+			subProject.create(newProjectDescription, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		file = root.getFileForLocation(fileLocation);
+		assertNotNull("2.0", file);
+		assertEquals("2.1", subProject, file.getProject());
+
+		container = root.getContainerForLocation(containerLocation);
+		assertNotNull("2.2", container);
+		assertEquals("2.3", subProject, container.getProject());
 	}
 
 	/*
