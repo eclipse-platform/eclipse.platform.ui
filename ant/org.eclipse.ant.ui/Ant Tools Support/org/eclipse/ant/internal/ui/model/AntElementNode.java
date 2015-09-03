@@ -242,7 +242,8 @@ public class AntElementNode implements IAdaptable, IAntElement {
 
 		try {
 			URL fileURL = FileLocator.toFileURL(url);
-			if (IAntCoreConstants.FILE.equals(fileURL.toURI().getScheme())) {
+			// To be worked in 4.6 via Bug 476266
+			if (IAntCoreConstants.FILE.equals(fileURL.getProtocol())) {
 				fFilePath = new Path((URIUtil.toFile(URIUtil.toURI(fileURL))).getAbsolutePath()).toString();
 			}
 		}
