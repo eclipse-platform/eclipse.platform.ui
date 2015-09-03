@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Simon Scholz <scholzsimon@vogella.com> - Bug 445663
+ *     Simon Scholz <scholzsimon@vogella.com> - Bug 445663, 473845
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445663
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.addons;
@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle;
+import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -85,20 +86,35 @@ public class ModelCleanupAddon {
 		}
 	}
 
-	/**
-	 * @param bundle
-	 * @param iterator
-	 */
 	private boolean isValidPartDescriptor(Bundle bundle, MPartDescriptor partDescriptor) {
 		String contributionURI = partDescriptor.getContributionURI();
-		if (!(COMPATIBILITY_EDITOR_URI.equals(contributionURI)) && !(COMPATIBILITY_VIEW_URI.equals(contributionURI))) {
-			if (!URIHelper.isBundleClassUri(contributionURI))
-				return false;
+		if (!URIHelper.isBundleClassUri(contributionURI)) {
+			return false;
 		}
-		String[] bundleClass = contributionURI.substring(14).split("/"); //$NON-NLS-1$
-		String bundleSymbolicName = bundleClass[0];
-		String className = bundleClass[1];
 
+		String originalCompatibilityViewClass = partDescriptor.getPersistedState()
+				.get(ViewRegistry.ORIGINAL_COMPATIBILITY_VIEW_CLASS);
+		// if the originalCompatibilityViewClass is not null, the given
+		// MPartDescriptor is based on a ViewPart (not e4view)
+		// See createDescriptor method of the ViewRegistry
+		if (COMPATIBILITY_VIEW_URI.equals(contributionURI) && originalCompatibilityViewClass != null) {
+			String originalCompatibilityViewBundle = partDescriptor.getPersistedState()
+					.get(ViewRegistry.ORIGINAL_COMPATIBILITY_VIEW_BUNDLE);
+			return checkPartDescriptorByBundleSymbolicNameAndClass(bundle, originalCompatibilityViewBundle,
+					originalCompatibilityViewClass);
+		} else if (!COMPATIBILITY_EDITOR_URI.equals(contributionURI)) {
+			// check for e4views and usual MPartDescriptors
+			String[] bundleClass = contributionURI.substring(14).split("/"); //$NON-NLS-1$
+			String bundleSymbolicName = bundleClass[0];
+			String className = bundleClass[1];
+			return checkPartDescriptorByBundleSymbolicNameAndClass(bundle, bundleSymbolicName, className);
+		}
+
+		return true;
+	}
+
+	private boolean checkPartDescriptorByBundleSymbolicNameAndClass(Bundle bundle, String bundleSymbolicName,
+			String className) {
 		Collection<BundleWiring> wirings = findWirings(bundleSymbolicName, bundle.getBundleContext());
 		if (!isPartDescriptorClassAvailable(wirings, className)) {
 			// remove PartDescriptor, if there is not wiring available
