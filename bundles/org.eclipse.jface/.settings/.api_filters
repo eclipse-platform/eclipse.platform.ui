@@ -1,35 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Filter for the reexported SWT TreeTable deletion" id="923795461">
-            <message_arguments>
-                <message_argument value="3.12.0"/>
-                <message_argument value="3.11.0"/>
-            </message_arguments>
-        </filter>
-        <filter id="923795461">
-            <message_arguments>
-                <message_argument value="3.13.0"/>
-                <message_argument value="3.11.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.viewers.TableTreeViewer">
-        <filter comment="Filter for the reexported SWT TreeTable deletion" id="305324134">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
                 <message_argument value="org.eclipse.jface_3.12.0"/>
             </message_arguments>
         </filter>
-        <filter id="305324134">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
-                <message_argument value="org.eclipse.jface_3.13.0"/>
-            </message_arguments>
-        </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTree">
-        <filter comment="Filter for the reexported SWT TreeTable deletion" id="305422471">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.swt.custom.TableTree"/>
                 <message_argument value="org.eclipse.jface_3.11.0"/>
@@ -37,7 +17,7 @@
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTreeEditor">
-        <filter comment="Filter for the reexported SWT TreeTable deletion" id="305422471">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.swt.custom.TableTreeEditor"/>
                 <message_argument value="org.eclipse.jface_3.11.0"/>
@@ -45,7 +25,7 @@
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.custom.TableTreeItem">
-        <filter comment="Filter for the reexported SWT TreeTable deletion" id="305422471">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.swt.custom.TableTreeItem"/>
                 <message_argument value="org.eclipse.jface_3.11.0"/>
@@ -53,7 +33,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollector">
-        <filter id="338792546">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollector"/>
                 <message_argument value="applyFontsAndColors(TableTreeItem)"/>
@@ -61,7 +41,7 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/jface/viewers/StructuredViewer.java" type="org.eclipse.jface.viewers.StructuredViewer$ColorAndFontCollectorWithProviders">
-        <filter id="338792546">
+        <filter comment="Bug 475833: Delete TableTree and related items" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.viewers.StructuredViewer.ColorAndFontCollectorWithProviders"/>
                 <message_argument value="applyFontsAndColors(TableTreeItem)"/>
