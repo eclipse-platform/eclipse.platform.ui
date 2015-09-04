@@ -19,13 +19,13 @@ import static org.mockito.Mockito.verify;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.zip.ZipFile;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -60,6 +61,8 @@ import org.eclipse.ui.tests.harness.util.FileTool;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard;
+
+import junit.framework.TestSuite;
 
 public class ImportExistingProjectsWizardTest extends UITestCase {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
@@ -1070,16 +1073,16 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 					"TestPlugin default reference is null");
 		}
 
-		URL fullPathString = plugin.getDescriptor().find(
-				new Path(WS_DATA_PREFIX).append(dataLocation + ".zip"));
+		URL fullPathString = plugin.getBundle().getResource("/" + WS_DATA_PREFIX + "/" + dataLocation + ".zip");
 
-		if (fullPathString == null) {
+		URI fileURI = null;
+		try {
+			fileURI = FileLocator.resolve(fullPathString).toURI();
+		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException();
 		}
 
-		IPath path = new Path(fullPathString.getPath());
-
-		File origin = path.toFile();
+		File origin = new File(fileURI);
 		if (!origin.exists()) {
 			throw new IllegalArgumentException();
 		}
@@ -1099,16 +1102,16 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 					"TestPlugin default reference is null");
 		}
 
-		URL fullPathString = plugin.getDescriptor().find(
-				new Path(WS_DATA_PREFIX).append(zipLocation + ".zip"));
+		URL fullPathString = plugin.getBundle().getResource(WS_DATA_PREFIX + "/" + zipLocation + ".zip");
 
-		if (fullPathString == null) {
+		URI fileURI = null;
+		try {
+			fileURI = FileLocator.resolve(fullPathString).toURI();
+		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException();
 		}
 
-		IPath path = new Path(fullPathString.getPath());
-
-		File origin = path.toFile();
+		File origin = new File(fileURI);
 		if (!origin.exists()) {
 			throw new IllegalArgumentException();
 		}
