@@ -94,7 +94,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     public ImageDescriptor getImageDescriptor(String relativePath) {
         String iconPath = "icons/";
         try {
-            URL installURL = getDescriptor().getInstallURL();
+			URL installURL = getBundle().getEntry("/");
             URL url = new URL(installURL, iconPath + relativePath);
             return ImageDescriptor.createFromURL(url);
         } catch (MalformedURLException e) {
