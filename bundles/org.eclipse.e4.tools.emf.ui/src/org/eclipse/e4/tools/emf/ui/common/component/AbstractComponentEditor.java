@@ -9,7 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Marco Descher <marco@descher.at> - Bug 422465
  * Steven Spungin <steven@spungin.tv> - Bug 437951, Bug 439709
- * Olivier Prouvost <olivier.prouvost@opcoach.com> Bug 403583
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> Bug 403583, 472658
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
@@ -289,7 +289,7 @@ public abstract class AbstractComponentEditor {
 					// platform:/resource !
 					try {
 						url = FileLocator.find(new URL(uri));
-						stream = url.openStream();
+						stream = url != null ? url.openStream() : null;
 					} catch (final IOException ex) {
 						url = null;
 						// Can't do more !
