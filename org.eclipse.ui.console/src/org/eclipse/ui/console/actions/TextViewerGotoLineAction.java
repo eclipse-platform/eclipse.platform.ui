@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 			int startLine= selection == null ? 1 : fTextViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
 			String title= ConsoleMessages.TextViewerGotoLineAction_Go_To_Line_1;
-			String message= MessageFormat.format(ConsoleMessages.TextViewerGotoLineAction_Enter_line_number__8, new Object[] {new Integer(fLastLine)});
+			String message= MessageFormat.format(ConsoleMessages.TextViewerGotoLineAction_Enter_line_number__8, new Object[] {Integer.valueOf(fLastLine)});
 			String value= Integer.toString(startLine);
 			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());

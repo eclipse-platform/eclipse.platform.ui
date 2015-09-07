@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -493,12 +493,12 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 
 	private void started(PDAStartedEvent event) {
 	    PDAThread newThread = new PDAThread(this, event.fThreadId);
-	    fThreads.put(new Integer(event.fThreadId), newThread);
+	    fThreads.put(Integer.valueOf(event.fThreadId), newThread);
 	    newThread.start();
 	}
 
 	private void exited(PDAExitedEvent event) {
-        PDAThread thread = fThreads.remove(new Integer(event.fThreadId));
+        PDAThread thread = fThreads.remove(Integer.valueOf(event.fThreadId));
         if (thread != null) {
             thread.exit();
         }
@@ -587,7 +587,7 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 */
 	public PDAThread getThread(int threadId) {
 	    if (threadId > 0) {
-	        return fThreads.get(new Integer(threadId));
+	        return fThreads.get(Integer.valueOf(threadId));
 	    } else {
     	    synchronized(fThreads) {
     	        if (fThreads.size() > 0) {

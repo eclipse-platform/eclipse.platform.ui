@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -354,7 +354,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		Map<?, ?> attributes = handle.getAttributes();
 		 // retrieve attributes
 		 assertEquals("String1 should be String1", "String1", attributes.get("String1")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		 assertEquals("Int1 should be 1", new Integer(1), attributes.get("Int1")); //$NON-NLS-1$ //$NON-NLS-2$
+		 assertEquals("Int1 should be 1", Integer.valueOf(1), attributes.get("Int1")); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertEquals("Boolean1 should be true", Boolean.TRUE, attributes.get("Boolean1")); //$NON-NLS-1$ //$NON-NLS-2$
 		 assertEquals("Boolean2 should be false", Boolean.FALSE, attributes.get("Boolean2")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -1440,7 +1440,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		try {
 			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
 			assertNotNull("Should have a working copy of the testig launch configuration", wc); //$NON-NLS-1$
-			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test.project", new Integer(IResource.PROJECT)) }); //$NON-NLS-1$
+			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test.project", Integer.valueOf(IResource.PROJECT)) }); //$NON-NLS-1$
 			IResource[] res = wc.getMappedResources();
 			assertNotNull("There should be mapped resources", res); //$NON-NLS-1$
 			assertTrue("There should be one project", res.length == 1); //$NON-NLS-1$
@@ -1462,7 +1462,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		try {
 			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
 			assertNotNull("Should have a working copy of the testig launch configuration", wc); //$NON-NLS-1$
-			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test/project", new Integer(IResource.PROJECT)) }); //$NON-NLS-1$
+			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test/project", Integer.valueOf(IResource.PROJECT)) }); //$NON-NLS-1$
 			IResource[] res = wc.getMappedResources();
 			assertNull("There should be no mapped resources", res); //$NON-NLS-1$
 		}
@@ -1483,7 +1483,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		try {
 			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
 			assertNotNull("Should have a working copy of the testig launch configuration", wc); //$NON-NLS-1$
-			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test\\project", new Integer(IResource.PROJECT)) }); //$NON-NLS-1$
+			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("test\\project", Integer.valueOf(IResource.PROJECT)) }); //$NON-NLS-1$
 			IResource[] res = wc.getMappedResources();
 			if(Platform.OS_WIN32.equals(Platform.getOS())) {
 				assertNull("There should be no mapped resources", res); //$NON-NLS-1$
@@ -1509,7 +1509,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		try {
 			ILaunchConfigurationWorkingCopy wc = lc.getWorkingCopy();
 			assertNotNull("Should have a working copy of the testig launch configuration", wc); //$NON-NLS-1$
-			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("/project", new Integer(IResource.PROJECT)) }); //$NON-NLS-1$
+			setResourceMappings(wc, new ResourceItem[] { new ResourceItem("/project", Integer.valueOf(IResource.PROJECT)) }); //$NON-NLS-1$
 			IResource[] res = wc.getMappedResources();
 			assertNotNull("There should be mapped resources", res); //$NON-NLS-1$
 		}

@@ -35,7 +35,7 @@ public class PresentationContextTests extends TestCase {
     public void testSaveRestore () {
 		PresentationContext context = new PresentationContext("test"); //$NON-NLS-1$
 		context.setProperty("string", "string"); //$NON-NLS-1$ //$NON-NLS-2$
-		context.setProperty("integer", new Integer(1)); //$NON-NLS-1$
+		context.setProperty("integer", Integer.valueOf(1)); //$NON-NLS-1$
 		context.setProperty("boolean", Boolean.TRUE); //$NON-NLS-1$
 		context.setProperty("persistable", ResourcesPlugin.getWorkspace().getRoot().getAdapter(IPersistableElement.class)); //$NON-NLS-1$
 
@@ -45,7 +45,7 @@ public class PresentationContextTests extends TestCase {
 		context = new PresentationContext("test"); //$NON-NLS-1$
         context.initProperties(memento);
 		assertEquals("Wrong value restored", "string", context.getProperty("string")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertEquals("Wrong value restored", new Integer(1), context.getProperty("integer")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("Wrong value restored", Integer.valueOf(1), context.getProperty("integer")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong value restored", Boolean.TRUE, context.getProperty("boolean")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong value restored", ResourcesPlugin.getWorkspace().getRoot(), context.getProperty("persistable")); //$NON-NLS-1$ //$NON-NLS-2$
         context.dispose();

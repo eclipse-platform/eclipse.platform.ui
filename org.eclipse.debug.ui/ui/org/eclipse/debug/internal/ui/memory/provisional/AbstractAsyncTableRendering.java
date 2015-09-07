@@ -2624,7 +2624,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return;
 		}
 
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_COL_SIZE, null, new Integer(fColumnSize));
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_COL_SIZE, null, Integer.valueOf(fColumnSize));
 		firePropertyChangedEvent(event);
 	}
 
@@ -2637,7 +2637,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return;
 		}
 
-		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_ROW_SIZE, null, new Integer(fBytePerLine));
+		PropertyChangeEvent event = new PropertyChangeEvent(this, AbstractAsyncTableRendering.PROPERTY_ROW_SIZE, null, Integer.valueOf(fBytePerLine));
 		firePropertyChangedEvent(event);
 	}
 

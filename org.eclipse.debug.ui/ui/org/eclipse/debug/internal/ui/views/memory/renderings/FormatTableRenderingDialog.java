@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,8 +471,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 				&& elmt.supportsProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL))
 			{
 				try {
-					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL, new Integer(rowSize));
-					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL, new Integer(columnSize));
+					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_ROW_SIZE_BY_MODEL, Integer.valueOf(rowSize));
+					elmt.setProperty(fRendering, IDebugPreferenceConstants.PREF_COL_SIZE_BY_MODEL, Integer.valueOf(columnSize));
 				} catch (CoreException e) {
 					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.FormatTableRenderingDialog_4, DebugUIMessages.FormatTableRenderingDialog_5, e);
 				}

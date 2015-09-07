@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -460,15 +460,15 @@ public class RenderingsUtil {
 		{
 			for (int j=0; j<4; j++)
 			{
-				buf[j] = new Integer(i>>j*8).byteValue();
+				buf[j] = Integer.valueOf(i>>j*8).byteValue();
 			}
 			return buf;
 		}
-        for (int j=3; j>=0; j--)
-        {
-        	buf[j] = new Integer(i>>(3-j)*8).byteValue();
-        }
-        return buf;
+		for (int j=3; j>=0; j--)
+		{
+			buf[j] = Integer.valueOf(i>>(3-j)*8).byteValue();
+		}
+		return buf;
 	}
 	
 	/**
@@ -485,15 +485,15 @@ public class RenderingsUtil {
 		{
 			for (short j=0; j<2; j++)
 			{
-				buf[j] = new Integer(i>>j*8).byteValue();
+				buf[j] = Integer.valueOf(i>>j*8).byteValue();
 			}
 			return buf;
 		}
-        for (short j=1; j>=0; j--)
-        {
-        	buf[j] = new Integer(i>>(1-j)*8).byteValue();
-        }
-        return buf;
+		for (short j=1; j>=0; j--)
+		{
+			buf[j] = Integer.valueOf(i>>(1-j)*8).byteValue();
+		}
+		return buf;
 	}
 
 	/**

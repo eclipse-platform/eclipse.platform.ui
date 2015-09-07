@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems and others.
+ * Copyright (c) 2009, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -261,13 +261,13 @@ public class TestModelUpdatesListener
 			childrenIndexes = new TreeSet<Integer>();
             fChildrenUpdatesScheduled.put(path, childrenIndexes);
         }
-        childrenIndexes.add(new Integer(index));
+		childrenIndexes.add(Integer.valueOf(index));
     }
 
     public void removeChildrenUpdate(TreePath path, int index) {
 		Set<?> childrenIndexes = fChildrenUpdatesScheduled.get(path);
         if (childrenIndexes != null) {
-            childrenIndexes.remove(new Integer(index));
+			childrenIndexes.remove(Integer.valueOf(index));
             if (childrenIndexes.isEmpty()) {
                 fChildrenUpdatesScheduled.remove(path);
             }
@@ -411,7 +411,7 @@ public class TestModelUpdatesListener
 					Set<Integer> childrenIndexes = new HashSet<Integer>();
                     for (int i = 0; i < children.length; i++) {
                     	if (!isFiltered(children[i], filters)) {
-                    		childrenIndexes.add(new Integer(i));
+							childrenIndexes.add(Integer.valueOf(i));
                     	}
                     }
                     fChildrenUpdatesScheduled.put(path, childrenIndexes);
@@ -601,7 +601,7 @@ public class TestModelUpdatesListener
     		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
 			Set<?> set = fChildrenUpdatesScheduled.get(update.getElementPath());
     		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
-        		if (set.contains(new Integer(i))) {
+				if (set.contains(Integer.valueOf(i))) {
 					runningCount++;
 				}
     		}
@@ -610,7 +610,7 @@ public class TestModelUpdatesListener
     		IChildrenUpdate update = ((IChildrenUpdate)itr.next());
 			Set<?> set = fChildrenUpdatesScheduled.get(update.getElementPath());
     		for (int i = update.getOffset(); set != null && i < update.getOffset() + update.getLength(); i++) {
-        		if (set.contains(new Integer(i))) {
+				if (set.contains(Integer.valueOf(i))) {
 					runningCount++;
 				}
     		}
@@ -668,7 +668,7 @@ public class TestModelUpdatesListener
 				Set<?> childrenIndexes = fChildrenUpdatesScheduled.get(updatePath);
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
-                        childrenIndexes.remove(new Integer(i));
+						childrenIndexes.remove(Integer.valueOf(i));
                     }
                     if (childrenIndexes.isEmpty()) {
                         fChildrenUpdatesScheduled.remove(updatePath);

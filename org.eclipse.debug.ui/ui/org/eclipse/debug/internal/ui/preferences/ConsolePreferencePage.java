@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fBufferSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.ConsolePreferencePage_Console_buffer_size__characters___2, getFieldEditorParent()); 
 		addField(fBufferSizeEditor);
 		fBufferSizeEditor.setValidRange(1000, Integer.MAX_VALUE - 100000);
-		fBufferSizeEditor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.ConsolePreferencePage_The_console_buffer_size_must_be_at_least_1000_characters__1, new Integer(Integer.MAX_VALUE - 100000)));
+		fBufferSizeEditor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.ConsolePreferencePage_The_console_buffer_size_must_be_at_least_1000_characters__1, Integer.valueOf(Integer.MAX_VALUE - 100000)));
 		
 		fUseBufferSize.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {

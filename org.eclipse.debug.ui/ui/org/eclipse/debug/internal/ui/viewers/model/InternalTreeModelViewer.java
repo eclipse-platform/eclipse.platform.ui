@@ -879,7 +879,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		for (int i = 0; i < columns.length; i++) {
 			TreeColumn treeColumn = columns[i];
 			Object id = treeColumn.getData();
-			fColumnSizes.put(id, new Integer(treeColumn.getWidth()));
+			fColumnSizes.put(id, Integer.valueOf(treeColumn.getWidth()));
 		}
     }
     

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,7 +172,7 @@ public abstract class TextConsole extends AbstractConsole {
             int old = fConsoleWidth;
             fConsoleWidth = width;
 
-            firePropertyChange(this, IConsoleConstants.P_CONSOLE_WIDTH, new Integer(old), new Integer(fConsoleWidth));
+            firePropertyChange(this, IConsoleConstants.P_CONSOLE_WIDTH, Integer.valueOf(old), Integer.valueOf(fConsoleWidth));
         }
     }
 
@@ -188,7 +188,7 @@ public abstract class TextConsole extends AbstractConsole {
             ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
                 @Override
 				public void run() {
-                    firePropertyChange(TextConsole.this, IConsoleConstants.P_TAB_SIZE, new Integer(oldTabWidth), new Integer(fTabWidth));
+                    firePropertyChange(TextConsole.this, IConsoleConstants.P_TAB_SIZE, Integer.valueOf(oldTabWidth), Integer.valueOf(fTabWidth));
                 }
             });
         }

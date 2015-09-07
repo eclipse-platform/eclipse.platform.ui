@@ -256,7 +256,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					if (element instanceof IProcess) {
 						IProcess process = (IProcess)element;
 						int exit = process.getExitValue();
-						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { new Integer(exit).toString() });
+						terminatedMessage = MessageFormat.format(DebugUIMessages.DefaultLabelProvider_16, new Object[] { Integer.valueOf(exit).toString() });
 					} else {
 						terminatedMessage= DebugUIMessages.DefaultLabelProvider_1; 
 					}

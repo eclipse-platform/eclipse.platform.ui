@@ -279,7 +279,7 @@ public final class XMLMemento {
 		}
         String strValue = attr.getValue();
         try {
-            return new Integer(strValue);
+            return Integer.valueOf(strValue);
         } catch (NumberFormatException e) {
             DebugPlugin
                     .logMessage("Memento problem - invalid integer for key: " + key //$NON-NLS-1$

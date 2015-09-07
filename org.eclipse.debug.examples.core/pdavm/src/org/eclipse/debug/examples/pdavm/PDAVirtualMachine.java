@@ -46,7 +46,7 @@ public class PDAVirtualMachine {
 
         @Override
 		public Object pop() {
-            return isEmpty() ? new Integer(0) : remove(size() - 1);
+            return isEmpty() ? Integer.valueOf(0) : remove(size() - 1);
         }
 
         @Override
@@ -119,7 +119,7 @@ public class PDAVirtualMachine {
         Object getNextIntOrStringArg() {
             String arg = getNextStringArg();
             try {
-                return new Integer(arg);
+                return Integer.valueOf(arg);
             } catch (NumberFormatException e) {
             }
             return arg;
@@ -127,7 +127,7 @@ public class PDAVirtualMachine {
 
         PDAThread getThreadArg() {
             int id = getNextIntArg();
-            return fThreads.get( new Integer(id) );
+            return fThreads.get( Integer.valueOf(id) );
         }
     }
 
@@ -268,9 +268,9 @@ public class PDAVirtualMachine {
 			}
             int bitFieldMask = 2^(bitField.fBitCount - 1);
             int registerMask = bitFieldMask << bitField.fBitOffset;
-            return new Integer( (reg.fValue & registerMask) >> bitField.fBitOffset );
+            return Integer.valueOf( (reg.fValue & registerMask) >> bitField.fBitOffset );
         } else {
-            return new Integer(reg.fValue);
+            return Integer.valueOf(reg.fValue);
         }
     }
 
@@ -419,7 +419,7 @@ public class PDAVirtualMachine {
 		Map<String, Integer> labels = new HashMap<String, Integer>();
         for (int i = 0; i < code.length; i++) {
             if (code[i].length() != 0 && code[i].charAt(0) == ':') {
-                labels.put(code[i].substring(1), new Integer(i));
+                labels.put(code[i].substring(1), Integer.valueOf(i));
             }
         }
         return labels;
@@ -472,7 +472,7 @@ public class PDAVirtualMachine {
     void run() {
         int id = fNextThreadId++;
         sendDebugEvent("vmstarted", false); //$NON-NLS-1$
-        fThreads.put(new Integer(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
+        fThreads.put(Integer.valueOf(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
         if (fDebug) {
             sendDebugEvent("started " + id, false); //$NON-NLS-1$
         }
@@ -520,7 +520,7 @@ public class PDAVirtualMachine {
                     }
                     if (!thread.fRun) {
                         sendDebugEvent("exited " + thread.fID, false); //$NON-NLS-1$
-                        fThreads.remove(new Integer(thread.fID));
+                        fThreads.remove(Integer.valueOf(thread.fID));
                     } else if (thread.fSuspend != null) {
                         sendDebugEvent("suspended " + thread.fID + " " + thread.fSuspend, false); //$NON-NLS-1$ //$NON-NLS-2$
                         thread.fStep = thread.fStepReturn = thread.fPerformingEval = false;
@@ -613,7 +613,7 @@ public class PDAVirtualMachine {
         if (fDebug) {
 			for (Iterator<PDAThread> itr = fThreads.values().iterator(); itr.hasNext();) {
                 PDAThread thread = itr.next();
-                Integer pc = new Integer(thread.fCurrentFrame.fPC);
+                Integer pc = Integer.valueOf(thread.fCurrentFrame.fPC);
                 // Suspend for breakpoint if:
                 // - the VM is not yet set to suspend, for e.g. as a result of step end,
                 // - the thread is not yet suspended and is not performing an evaluation
@@ -800,7 +800,7 @@ public class PDAVirtualMachine {
     void debugClearBreakpoint(Args args) {
         int line = args.getNextIntArg();
 
-        fBreakpoints.remove( new Integer(line) );
+        fBreakpoints.remove( Integer.valueOf(line) );
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
@@ -1018,7 +1018,7 @@ public class PDAVirtualMachine {
         fThreads.clear();
 
         int id = fNextThreadId++;
-        fThreads.put(new Integer(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
+        fThreads.put(Integer.valueOf(id), new PDAThread(id, "main", 0)); //$NON-NLS-1$
         sendDebugEvent("started " + id, false);             //$NON-NLS-1$
 
         fRegisters.clear();
@@ -1051,7 +1051,7 @@ public class PDAVirtualMachine {
         int line = args.getNextIntArg();
         int stopVM = args.getNextIntArg();
 
-        fBreakpoints.put(new Integer(line), Boolean.valueOf(stopVM != 0));
+        fBreakpoints.put(Integer.valueOf(line), Boolean.valueOf(stopVM != 0));
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
@@ -1286,7 +1286,7 @@ public class PDAVirtualMachine {
     void debugWatch(Args args) {
         String funcAndVar = args.getNextStringArg();
         int flags = args.getNextIntArg();
-        fWatchpoints.put(funcAndVar, new Integer(flags));
+        fWatchpoints.put(funcAndVar, Integer.valueOf(flags));
         sendCommandResponse("ok\n"); //$NON-NLS-1$
     }
 
@@ -1300,9 +1300,9 @@ public class PDAVirtualMachine {
         if (val1 instanceof Integer && val2 instanceof Integer) {
             int intVal1 = ((Integer) val1).intValue();
             int intVal2 = ((Integer) val2).intValue();
-            thread.fStack.push( new Integer(intVal1 + intVal2) );
+            thread.fStack.push( Integer.valueOf(intVal1 + intVal2) );
         } else {
-            thread.fStack.push( new Integer(-1) );
+            thread.fStack.push( Integer.valueOf(-1) );
         }
     }
 
@@ -1344,7 +1344,7 @@ public class PDAVirtualMachine {
     void iDec(PDAThread thread, Args args) {
         Object val = thread.fStack.pop();
         if (val instanceof Integer) {
-            val = new Integer(((Integer) val).intValue() - 1);
+            val = Integer.valueOf(((Integer) val).intValue() - 1);
         }
         thread.fStack.push(val);
     }
@@ -1383,7 +1383,7 @@ public class PDAVirtualMachine {
             if (bitField == null) {
 				return;
 			}
-            bitField.fMnemonics.put(args.getNextStringArg(), new Integer(args.getNextIntArg()));
+            bitField.fMnemonics.put(args.getNextStringArg(), Integer.valueOf(args.getNextIntArg()));
         }
         sendDebugEvent("registers", false); //$NON-NLS-1$
     }
@@ -1419,7 +1419,7 @@ public class PDAVirtualMachine {
         String label = args.getNextStringArg();
         if (fLabels.containsKey(label)) {
             int id = fNextThreadId++;
-            fThreads.put( new Integer(id), new PDAThread(id, label, fLabels.get(label).intValue()) );
+            fThreads.put( Integer.valueOf(id), new PDAThread(id, label, fLabels.get(label).intValue()) );
             sendDebugEvent("started " + id, false); //$NON-NLS-1$
         } else {
             sendDebugEvent("no such label " + label, true); //$NON-NLS-1$
@@ -1483,7 +1483,7 @@ public class PDAVirtualMachine {
                     }
                 } else {
                     try {
-                        val = new Integer(arg);
+                        val = Integer.valueOf(arg);
                     } catch (NumberFormatException e) {
                     }
                 }
@@ -1510,7 +1510,7 @@ public class PDAVirtualMachine {
 
     void iVar(PDAThread thread, Args args) {
         String var = args.getNextStringArg();
-        thread.fCurrentFrame.set(var, new Integer(0));
+        thread.fCurrentFrame.set(var, Integer.valueOf(0));
     }
 
     /**

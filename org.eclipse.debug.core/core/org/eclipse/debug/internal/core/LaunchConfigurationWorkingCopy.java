@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,7 +412,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	@Override
 	public void setAttribute(String attributeName, int value) {
-		getInfo().setAttribute(attributeName, new Integer(value));
+		getInfo().setAttribute(attributeName, Integer.valueOf(value));
 		setDirty();
 	}
 
@@ -708,7 +708,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				IResource resource = resources[i];
 				if(resource != null) {
 					paths.add(resource.getFullPath().toPortableString());
-					types.add(new Integer(resource.getType()).toString());
+					types.add(Integer.valueOf(resource.getType()).toString());
 				}
 			}
 		}

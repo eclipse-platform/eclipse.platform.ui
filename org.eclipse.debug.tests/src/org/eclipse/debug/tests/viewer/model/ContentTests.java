@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems and others.
+ * Copyright (c) 2009, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -378,12 +378,12 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
 	private boolean areCapturedChildrenUpdatesComplete(List<IViewerUpdate> capturedUpdates, int childCount) {
 		List<Integer> expectedChildren = new ArrayList<Integer>();
         for (int i = 0; i < childCount; i++) {
-            expectedChildren.add(new Integer(i));
+            expectedChildren.add(Integer.valueOf(i));
         }
         IChildrenUpdate[] updates = capturedUpdates.toArray(new IChildrenUpdate[0]);
         for (int i = 0; i < updates.length; i++) {
             for (int j = 0; j < updates[i].getLength(); j++) {
-                expectedChildren.remove( new Integer(updates[i].getOffset() + j) );
+                expectedChildren.remove( Integer.valueOf(updates[i].getOffset() + j) );
             }
         }
         return expectedChildren.isEmpty();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -468,7 +468,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		ViewForm viewerViewForm = new ViewForm(parent, SWT.NONE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewerViewForm, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		fViewPaneControls.put(MemoryBlocksTreeViewPane.PANE_ID, viewerViewForm);
-		fWeights.add(new Integer(15));
+		fWeights.add(Integer.valueOf(15));
 
 		fMemBlkViewer.addSelectionListener(fSelectionProvider);
 
@@ -541,7 +541,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		fViewPanes.put(paneId, renderingPane);
 		ViewForm renderingViewForm = new ViewForm(fSashForm, SWT.NONE);
 		fViewPaneControls.put(paneId, renderingViewForm);
-		fWeights.add(new Integer(40));
+		fWeights.add(Integer.valueOf(40));
 
 		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings, true, true);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(renderingControl, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
