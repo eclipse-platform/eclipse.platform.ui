@@ -874,7 +874,7 @@ public class IResourceTest extends ResourceTest {
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				Boolean force = (Boolean) args[0];
 				IResource resource = (IResource) args[2];
-				return new Object[] {new Boolean(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
+				return new Object[] {Boolean.valueOf(resource.isAccessible()), getAllFilesForResource(resource, force.booleanValue()), getAllResourcesForResource(resource)};
 			}
 
 			@Override
