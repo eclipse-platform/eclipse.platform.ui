@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * This class acts as an implementation of a barrier that is appropriate for

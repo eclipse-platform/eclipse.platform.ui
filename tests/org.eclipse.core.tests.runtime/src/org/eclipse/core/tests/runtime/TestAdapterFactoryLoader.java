@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Assert;
 import org.eclipse.core.runtime.*;
+import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
 /**

@@ -13,8 +13,8 @@ package org.eclipse.core.tests.harness;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.junit.Assert;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -39,6 +39,7 @@ public class BundleTestingHelper {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static Bundle installBundle(BundleContext context, String location) throws BundleException, MalformedURLException, IOException {
 		return installBundle("", context, location);
 	}

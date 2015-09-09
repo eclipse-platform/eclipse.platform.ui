@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import junit.framework.Assert;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.junit.Assert;
 
 /**
  */

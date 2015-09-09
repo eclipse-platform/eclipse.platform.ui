@@ -13,8 +13,8 @@ package org.eclipse.core.tests.internal.registry;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
 import org.eclipse.core.runtime.*;
+import org.junit.Assert;
 
 /**
  * Allows test cases to wait for the extension registry notifications.
@@ -40,10 +40,11 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 	public void register(String id) {
 		extPointId = id; // used for verification in callbacks
-		if (extPointId != null)
+		if (extPointId != null) {
 			Platform.getExtensionRegistry().addListener(this, extPointId);
-		else
+		} else {
 			Platform.getExtensionRegistry().addListener(this);
+		}
 	}
 
 	public void unregister() {
@@ -67,28 +68,32 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 	}
 
 	public synchronized String[] extensionsReceived(long timeout) {
-		if (extensionIDs != null)
+		if (extensionIDs != null) {
 			return extensionIDs.toArray(new String[extensionIDs.size()]);
+		}
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
 			// who cares?
 		}
-		if (extensionIDs == null)
+		if (extensionIDs == null) {
 			return null;
+		}
 		return extensionIDs.toArray(new String[extensionIDs.size()]);
 	}
 
 	public synchronized String[] extPointsReceived(long timeout) {
-		if (extPointIDs != null)
+		if (extPointIDs != null) {
 			return extPointIDs.toArray(new String[extPointIDs.size()]);
+		}
 		try {
 			wait(timeout);
 		} catch (InterruptedException e) {
 			// who cares?
 		}
-		if (extPointIDs == null)
+		if (extPointIDs == null) {
 			return null;
+		}
 		return extPointIDs.toArray(new String[extPointIDs.size()]);
 	}
 
@@ -99,7 +104,9 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 				long currentTime = System.currentTimeMillis();
 				long alreadyWaited = currentTime - startTime;
 				if (alreadyWaited < 0)
+				 {
 					alreadyWaited = 0; // just in case if system timer is not very precise
+				}
 				long timeToWait = maxTimeout - alreadyWaited;
 				if (timeToWait <= 0) {
 					wait(MIN_WAIT_TIME); // give it a last chance
@@ -156,29 +163,34 @@ public class WaitingRegistryListener extends Assert implements IRegistryEventLis
 
 			// test navigation: to extension point
 			String ownerId = extension.getExtensionPointUniqueIdentifier();
-			if (extPointId != null)
+			if (extPointId != null) {
 				assertTrue(extPointId.equals(ownerId));
+			}
 			// test navigation: all children
 			assertTrue(validContents(extension.getConfigurationElements()));
 		}
 	}
 
 	private boolean validContents(IConfigurationElement[] children) {
-		if (children == null)
+		if (children == null) {
 			return true;
+		}
 		for (int i = 0; i < children.length; i++) {
-			if (!children[i].isValid())
+			if (!children[i].isValid()) {
 				return false;
-			if (!validContents(children[i].getChildren()))
+			}
+			if (!validContents(children[i].getChildren())) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	private void extPointsToString(IExtensionPoint[] extensionPoints) {
 		extPointIDs = new ArrayList<>(extensionPoints.length);
-		for (int i = 0; i < extensionPoints.length; i++)
+		for (int i = 0; i < extensionPoints.length; i++) {
 			extPointIDs.add(extensionPoints[i].getUniqueIdentifier());
+		}
 	}
 
 }

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -35,6 +34,7 @@ import org.eclipse.core.tests.harness.CoreTest;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
 public class ConfigurationSessionTestSuite extends SessionTestSuite {

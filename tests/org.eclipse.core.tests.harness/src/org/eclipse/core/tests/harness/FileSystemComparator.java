@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * A utility class that compares file system states. It is able to take snapshot of the file system and save it into a
