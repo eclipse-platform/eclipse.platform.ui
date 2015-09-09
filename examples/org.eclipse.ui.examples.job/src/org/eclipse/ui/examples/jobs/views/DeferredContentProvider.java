@@ -19,9 +19,7 @@ public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 
 	private DeferredTreeContentManager manager;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (viewer instanceof AbstractTreeViewer) {
 			manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
@@ -29,9 +27,7 @@ public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 		super.inputChanged(viewer, oldInput, newInput);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		// the + box will always appear, but then disappear
 		// if not needed after you first click on it.
@@ -43,9 +39,7 @@ public class DeferredContentProvider extends BaseWorkbenchContentProvider {
 		return super.hasChildren(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.WorkbenchContentProvider#getChildren(java.lang.Object)
-	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (manager != null) {
 			Object[] children = manager.getChildren(element);

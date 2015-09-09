@@ -37,9 +37,7 @@ public class LazyTreeView extends ViewPart {
 	protected TreeViewer viewer;
 	protected Button serializeButton, batchButton;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite top) {
 		Composite parent = new Composite(top, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -56,6 +54,7 @@ public class LazyTreeView extends ViewPart {
 //		serializeButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isSerializeFetching());
 		serializeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SlowElementAdapter.setSerializeFetching(serializeButton.getSelection());
 			}
@@ -66,6 +65,7 @@ public class LazyTreeView extends ViewPart {
 //		batchButton.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
 		serializeButton.setSelection(SlowElementAdapter.isBatchFetchedChildren());
 		batchButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SlowElementAdapter.setBatchFetchedChildren(batchButton.getSelection());
 			}
@@ -80,6 +80,7 @@ public class LazyTreeView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}

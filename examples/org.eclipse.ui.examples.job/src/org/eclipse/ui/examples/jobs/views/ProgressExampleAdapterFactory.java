@@ -17,9 +17,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 public class ProgressExampleAdapterFactory implements IAdapterFactory {
 	private SlowElementAdapter slowElementAdapter = new SlowElementAdapter();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Object object, Class type) {
 		if(object instanceof SlowElement) {
 			if(type == SlowElement.class || type == IDeferredWorkbenchAdapter.class || type == IWorkbenchAdapter.class)
@@ -28,9 +26,7 @@ public class ProgressExampleAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {
 				SlowElement.class, IDeferredWorkbenchAdapter.class, IWorkbenchAdapter.class

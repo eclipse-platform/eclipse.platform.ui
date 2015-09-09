@@ -32,6 +32,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 
 	private long askForDuration() {
 		InputDialog dialog = new InputDialog(window.getShell(), "How long?", "Enter the number of milliseconds per job", "1000", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					@Override
 					public String isValid(String newText) {
 						try {
 							Long.parseLong(newText);
@@ -64,6 +65,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 
 	private int askForJobCount() {
 		InputDialog dialog = new InputDialog(window.getShell(), "How much work?", "Enter the number of jobs to run", "100", new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					@Override
 					public String isValid(String newText) {
 						try {
 							Integer.parseInt(newText);
@@ -78,14 +80,17 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		return Integer.parseInt(dialog.getValue());
 	}
 
+	@Override
 	public void dispose() {
 		//do nothing
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}
 
+	@Override
 	public void run(IAction action) {
 		int jobCount = askForJobCount();
 		long duration = askForDuration();
@@ -96,6 +101,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		//do nothing
 	}

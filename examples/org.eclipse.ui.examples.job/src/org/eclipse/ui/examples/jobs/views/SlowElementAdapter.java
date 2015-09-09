@@ -22,21 +22,17 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 	private static boolean batchFetchedChildren = false;
 
 	final ISchedulingRule mutexRule = new ISchedulingRule() {
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == mutexRule;
 		}
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == mutexRule;
 		}
 	};
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
-	 *           org.eclipse.jface.progress.IElementCollector,
-	 *           org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		if (object instanceof SlowElement) {
 			Object[] children = ((SlowElement) object).getChildren();
@@ -63,20 +59,12 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-	 */
+	@Override
 	public boolean isContainer() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-	 */
+	@Override
 	public ISchedulingRule getRule(final Object object) {
 		if (isSerializeFetching())
 			return mutexRule;
@@ -84,11 +72,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
+	@Override
 	public Object[] getChildren(Object object) {
 		if (object instanceof SlowElement) {
 			return ((SlowElement) object).getChildren();
@@ -96,21 +80,13 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		return new Object[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
+	@Override
 	public String getLabel(Object o) {
 		if (o instanceof SlowElement) {
 			return ((SlowElement) o).getName();
@@ -118,11 +94,7 @@ public class SlowElementAdapter implements IDeferredWorkbenchAdapter {
 		return "unknown"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
+	@Override
 	public Object getParent(Object o) {
 		if (o instanceof SlowElement) {
 			return ((SlowElement) o).getParent();

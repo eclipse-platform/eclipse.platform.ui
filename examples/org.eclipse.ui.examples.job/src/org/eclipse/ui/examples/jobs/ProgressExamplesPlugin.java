@@ -41,9 +41,7 @@ public class ProgressExamplesPlugin extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		IAdapterManager m = Platform.getAdapterManager();
