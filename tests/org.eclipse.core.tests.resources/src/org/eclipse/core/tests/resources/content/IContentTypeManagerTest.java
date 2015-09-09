@@ -889,7 +889,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 * Bugs 67841 and 62443 
 	 */
 	public void testIOException() {
-		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType rootElement = manager.getContentType(PI_RESOURCES_TESTS + ".root-element");
 		IContentType[] selected = null;
@@ -1144,7 +1144,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	 * Regression test for bug 68894  
 	 */
 	public void testPreferences() throws CoreException, BackingStoreException {
-		ContentTypeManager manager = ContentTypeManager.getInstance();
+		IContentTypeManager manager = Platform.getContentTypeManager();
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);
 		Preferences textPrefs = InstanceScope.INSTANCE.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE).node(text.getId());
 		assertNotNull("0.1", text);
