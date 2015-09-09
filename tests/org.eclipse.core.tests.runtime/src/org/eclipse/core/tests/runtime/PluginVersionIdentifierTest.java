@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
+@Deprecated
 public class PluginVersionIdentifierTest extends RuntimeTest {
 
 	public PluginVersionIdentifierTest() {
