@@ -172,11 +172,13 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	/**
 	 * Creates a new Job that will execute the provided runnable when it runs.
 	 *
-	 * @param name the name of the job
-	 * @param runnable the runnable to execute
+	 * @param name
+	 *            the name of the job
+	 * @param runnable
+	 *            the runnable to execute
 	 * @return a job that encapsulates the provided runnable
 	 * @see ICoreRunnable
-	 * @since 3.7
+	 * @since 3.8
 	 */
 	public static Job create(String name, final ICoreRunnable runnable) {
 		return new Job(name) {
@@ -200,12 +202,14 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Creates a new system {@link Job} with the given name that will execute
 	 * the provided runnable when it runs.
 	 *
-	 * @param name the name of the job
-	 * @param runnable the runnable to execute
+	 * @param name
+	 *            the name of the job
+	 * @param runnable
+	 *            the runnable to execute
 	 * @return a job that encapsulates the provided runnable
 	 * @see ICoreRunnable
 	 * @see Job#setSystem(boolean)
-	 * @since 3.7
+	 * @since 3.8
 	 */
 	public static Job createSystem(String name, final ICoreRunnable runnable) {
 		Job job = create(name, runnable);
@@ -217,11 +221,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Creates a new system {@link Job} that will execute the provided runnable
 	 * when it runs.
 	 *
-	 * @param runnable the runnable to execute
+	 * @param runnable
+	 *            the runnable to execute
 	 * @return a job that encapsulates the provided runnable
 	 * @see ICoreRunnable
 	 * @see Job#setSystem(boolean)
-	 * @since 3.7
+	 * @since 3.8
 	 */
 	public static Job createSystem(final ICoreRunnable runnable) {
 		return createSystem("", runnable); //$NON-NLS-1$
