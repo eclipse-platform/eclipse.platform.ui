@@ -103,6 +103,9 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	public XMLRootHandler(boolean checkRoot, SAXParserFactory parserFactory) {
 		this.checkRoot = checkRoot;
 		this.factory = parserFactory;
+		if (parserFactory != null) {
+			parserFactory.setNamespaceAware(true);
+		}
 	}
 
 	@Override
