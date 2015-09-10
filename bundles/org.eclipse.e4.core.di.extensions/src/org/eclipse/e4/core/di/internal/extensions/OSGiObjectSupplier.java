@@ -84,6 +84,7 @@ public class OSGiObjectSupplier extends ExtendedObjectSupplier {
 		// A _synchronous_ BundleListener asserts that the BC is un-injected,
 		// _before_ it becomes invalid (state-wise).
 		BundleListener listener = new SynchronousBundleListener() {
+			@Override
 			public void bundleChanged(BundleEvent event) {
 				if (event.getBundle().equals(bundle)) {
 					if (requestor.isValid()) {

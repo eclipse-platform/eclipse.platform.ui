@@ -38,10 +38,12 @@ public class DIEActivator implements BundleActivator {
 		return defaultInstance;
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		for (PreferencesObjectSupplier supplier : preferenceSuppliers) {
 			supplier.removeAllListeners();

@@ -47,6 +47,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 			this.requestor = requestor;
 		}
 
+		@Override
 		public void preferenceChange(final PreferenceChangeEvent event) {
 			if (!requestor.isValid()) {
 				node.removePreferenceChangeListener(this);

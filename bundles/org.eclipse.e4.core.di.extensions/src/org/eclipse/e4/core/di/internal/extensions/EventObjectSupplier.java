@@ -71,6 +71,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			this.requestor = requestor;
 		}
 
+		@Override
 		public void handleEvent(Event event) {
 			if (!requestor.isValid()) {
 				unsubscribe(requestor);
