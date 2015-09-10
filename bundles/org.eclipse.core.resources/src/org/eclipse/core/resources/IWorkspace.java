@@ -1142,14 +1142,14 @@ public interface IWorkspace extends IAdaptable {
 
 	/**
 	 * Identical to {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
-	 * New code should use {@link #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)}.
+	 * New code should use that method.
 	 * @since 3.0
 	 */
 	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Identical to {@link #run(ICoreRunnable, IProgressMonitor)}.
-	 * New code should use {@link #run(ICoreRunnable, IProgressMonitor)}.
+	 * New code should use that method.
 	 */
 	public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
 
