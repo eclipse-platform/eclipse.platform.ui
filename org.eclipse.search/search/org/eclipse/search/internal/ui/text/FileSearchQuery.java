@@ -215,20 +215,21 @@ public class FileSearchQuery implements ISearchQuery {
 	private final boolean fIsRegEx;
 	private final boolean fIsCaseSensitive;
 	private final boolean fIsWholeWord;
-
 	private FileSearchResult fResult;
+	private boolean fSearchInBinaries;
 
 
 	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, FileTextSearchScope scope) {
-		this(searchText, isRegEx, isCaseSensitive, false, scope);
+		this(searchText, isRegEx, isCaseSensitive, false, false, scope);
 	}
 
-	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, boolean isWholeWord, FileTextSearchScope scope) {
+	public FileSearchQuery(String searchText, boolean isRegEx, boolean isCaseSensitive, boolean isWholeWord, boolean searchInBinaries, FileTextSearchScope scope) {
 		fSearchText= searchText;
 		fIsRegEx= isRegEx;
 		fIsCaseSensitive= isCaseSensitive;
 		fIsWholeWord= isWholeWord;
 		fScope= scope;
+		fSearchInBinaries= searchInBinaries;
 	}
 
 	public FileTextSearchScope getSearchScope() {
@@ -244,9 +245,8 @@ public class FileSearchQuery implements ISearchQuery {
 		textResult.removeAll();
 
 		Pattern searchPattern= getSearchPattern();
-		boolean searchInBinaries= true; // see bug 229897
 
-		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileNameSearch(), searchInBinaries);
+		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileNameSearch(), fSearchInBinaries);
 		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
 
@@ -311,7 +311,7 @@ public class FileSearchQuery implements ISearchQuery {
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { file }, new String[] { "*" }, true); //$NON-NLS-1$
 
 		Pattern searchPattern= getSearchPattern();
-		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileNameSearch(), true);
+		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileNameSearch(), fSearchInBinaries);
 
 		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}

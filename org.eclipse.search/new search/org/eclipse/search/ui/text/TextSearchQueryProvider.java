@@ -77,6 +77,18 @@ public abstract class TextSearchQueryProvider {
 		}
 
 		/**
+		 * Returns whether binary files are searched.
+		 * 
+		 * This implementation returns <code>false</code>, subclasses can override.
+		 * 
+		 * @return <code>true</code> if binary files are searched
+		 * @since 3.11
+		 */
+		public boolean searchInBinaries() {
+			return false;
+		}
+
+		/**
 		 * Returns the scope for the search
 		 *
 		 * @return the scope for the search

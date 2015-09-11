@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,9 @@ public final class SearchMessages extends NLS {
 	public static String TextSearchEngine_statusMessage;
 	public static String TextSearchPage_replace_querycreationproblem_message;
 	public static String TextSearchPage_replace_runproblem_message;
+	public static String TextSearchPage_searchIn_label;
 	public static String TextSearchPage_searchDerived_label;
+	public static String TextSearchPage_searchBinary_label;
 	public static String TextSearchVisitor_filesearch_task_label;
 	public static String TextSearchVisitor_patterntoocomplex0;
 	public static String TextSearchVisitor_progress_updating_job;

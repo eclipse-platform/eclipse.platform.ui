@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.core.runtime.Assert;
@@ -101,6 +102,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private static final String STORE_IS_REG_EX_SEARCH= "REG_EX_SEARCH"; //$NON-NLS-1$
 	private static final String STORE_IS_WHOLE_WORD= "WHOLE_WORD"; //$NON-NLS-1$
 	private static final String STORE_SEARCH_DERIVED = "SEARCH_DERIVED"; //$NON-NLS-1$
+	private static final String STORE_SEARCH_IN_BINARIES = "SEARCH_IN_BINARIES"; //$NON-NLS-1$
 	private static final String STORE_HISTORY= "HISTORY"; //$NON-NLS-1$
 	private static final String STORE_HISTORY_SIZE= "HISTORY_SIZE"; //$NON-NLS-1$
 
@@ -117,6 +119,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean fIsRegExSearch;
 	private boolean fIsWholeWord;
 	private boolean fSearchDerived;
+	private boolean fSearchBinaries;
 
 	private Combo fPattern;
 	private Button fIsCaseSensitiveCheckbox;
@@ -125,6 +128,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private Button fIsWholeWordCheckbox;
 	private CLabel fStatusLabel;
 	private Button fSearchDerivedCheckbox;
+	private Button fSearchBinaryCheckbox;
 
 	private ISearchPageContainer fContainer;
 	private FileTypeEditor fFileTypeEditor;
@@ -215,13 +219,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		private final boolean fIsCaseSensitive;
 		private final boolean fIsRegEx;
 		private final boolean fIsWholeWord;
+		private final boolean fSearchInBinaries;
 		private final FileTextSearchScope fScope;
 
-		public TextSearchPageInput(String searchText, boolean isCaseSensitive, boolean isRegEx, boolean isWholeWord, FileTextSearchScope scope) {
+		public TextSearchPageInput(String searchText, boolean isCaseSensitive, boolean isRegEx, boolean isWholeWord, boolean searchInBinaries, FileTextSearchScope scope) {
 			fSearchText= searchText;
 			fIsCaseSensitive= isCaseSensitive;
 			fIsRegEx= isRegEx;
 			fIsWholeWord= isWholeWord;
+			fSearchInBinaries= searchInBinaries;
 			fScope= scope;
 		}
 
@@ -241,16 +247,21 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			return fIsWholeWord;
 		}
 
+		public boolean searchInBinaries() {
+			return fSearchInBinaries;
+		}
+
 		public FileTextSearchScope getScope() {
 			return fScope;
 		}
 	}
 
+
 	//---- Action Handling ------------------------------------------------
 
 	private ISearchQuery newQuery() throws CoreException {
 		SearchPatternData data= getPatternData();
-		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, data.isWholeWord && !data.isRegExSearch, createTextSearchScope());
+		TextSearchPageInput input= new TextSearchPageInput(data.textPattern, data.isCaseSensitive, data.isRegExSearch, data.isWholeWord && !data.isRegExSearch, fSearchBinaries, createTextSearchScope());
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
@@ -730,7 +741,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		description.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
 		description.setFont(group.getFont());
 
-		fSearchDerivedCheckbox= new Button(group, SWT.CHECK);
+
+		Group searchInGroup= new Group(group, SWT.NONE);
+		searchInGroup.setText(SearchMessages.TextSearchPage_searchIn_label);
+		searchInGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		searchInGroup.setLayout(new GridLayout(2, false));
+
+		fSearchDerivedCheckbox= new Button(searchInGroup, SWT.CHECK);
 		fSearchDerivedCheckbox.setText(SearchMessages.TextSearchPage_searchDerived_label);
 
 		fSearchDerivedCheckbox.setSelection(fSearchDerived);
@@ -740,8 +757,21 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				writeConfiguration();
 			}
 		});
-		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		fSearchDerivedCheckbox.setFont(group.getFont());
+		fSearchDerivedCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1));
+		fSearchDerivedCheckbox.setFont(searchInGroup.getFont());
+		
+		fSearchBinaryCheckbox= new Button(searchInGroup, SWT.CHECK);
+		fSearchBinaryCheckbox.setText(SearchMessages.TextSearchPage_searchBinary_label);
+		
+		fSearchBinaryCheckbox.setSelection(fSearchBinaries);
+		fSearchBinaryCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fSearchBinaries= fSearchBinaryCheckbox.getSelection();
+				writeConfiguration();
+			}
+		});
+		fSearchBinaryCheckbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false, 1, 1));
+		fSearchBinaryCheckbox.setFont(searchInGroup.getFont());
   	}
 
 	/**
@@ -790,6 +820,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsRegExSearch= s.getBoolean(STORE_IS_REG_EX_SEARCH);
 		fIsWholeWord= s.getBoolean(STORE_IS_WHOLE_WORD);
 		fSearchDerived= s.getBoolean(STORE_SEARCH_DERIVED);
+		fSearchBinaries= s.getBoolean(STORE_SEARCH_IN_BINARIES);
 
 		try {
 			int historySize= s.getInt(STORE_HISTORY_SIZE);
@@ -831,6 +862,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_IS_REG_EX_SEARCH, fIsRegExSearch);
 		s.put(STORE_IS_WHOLE_WORD, fIsWholeWord);
 		s.put(STORE_SEARCH_DERIVED, fSearchDerived);
+		s.put(STORE_SEARCH_IN_BINARIES, fSearchBinaries);
 
 		int historySize= Math.min(fPreviousSearchPatterns.size(), HISTORY_SIZE);
 		s.put(STORE_HISTORY_SIZE, historySize);
