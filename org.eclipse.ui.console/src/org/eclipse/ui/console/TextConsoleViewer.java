@@ -142,7 +142,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
 			int lineCount = textWidget.getLineCount();
-			textWidget.setTopIndex(lineCount - 1);
+			textWidget.setTopIndex(lineCount > 0 ? lineCount - 1 : 0);
 		}
 
 	}
