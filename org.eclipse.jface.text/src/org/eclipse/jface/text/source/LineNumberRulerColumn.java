@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Shift clicking in line number column doesn't select range - https://bugs.eclipse.org/bugs/show_bug.cgi?id=32166
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Clicking in line number ruler should not trigger annotation ruler - https://bugs.eclipse.org/bugs/show_bug.cgi?id=40889
+ *     Florian Weßling <flo@cdhq.de> - [rulers] Line numbering was wrong when word wrap was active - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -16,6 +17,8 @@ import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -587,6 +590,15 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
+		// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the line ruler
+		fCachedTextWidget.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if(fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
+					postRedraw();
+				}
+			}
+		});
+
 		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) {
  			/*
  			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
@@ -741,15 +753,36 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		// draw diff info
 		int y= -JFaceTextUtil.getHiddenTopLinePixels(fCachedTextWidget);
 
+		// add empty lines if line is wrapped
+		boolean isWrapActive= fCachedTextWidget.getWordWrap();
+
 		int lastLine= end(visibleLines);
 		for (int line= visibleLines.getStartLine(); line < lastLine; line++) {
 			int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, line);
 			if (widgetLine == -1)
 				continue;
 
-			int lineHeight= fCachedTextWidget.getLineHeight(fCachedTextWidget.getOffsetAtLine(widgetLine));
+			final int offsetAtLine= fCachedTextWidget.getOffsetAtLine(widgetLine);
+			int lineHeight= fCachedTextWidget.getLineHeight(offsetAtLine);
 			paintLine(line, y, lineHeight, gc, display);
-			y += lineHeight;
+
+			// increment y position
+			if (!isWrapActive) {
+				y+= lineHeight;
+			} else {
+				int charCount= fCachedTextWidget.getCharCount();
+				if (offsetAtLine == charCount)
+					continue;
+
+				// end of wrapped line
+				final int offsetEnd= offsetAtLine + fCachedTextWidget.getLine(widgetLine).length();
+
+				if (offsetEnd == charCount)
+					continue;
+
+				// use height of text bounding because bounds.width changes on word wrap
+				y+= fCachedTextWidget.getTextBounds(offsetAtLine, offsetEnd).height;
+			}
 		}
 	}
 

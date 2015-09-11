@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Avaloq Evolution AG and others.
+ * Copyright (c) 2009, 2015 Avaloq Evolution AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,10 +34,14 @@ public interface ITextEditorExtension5 {
 	boolean isBlockSelectionModeEnabled();
 
 	/**
-	 * Sets the block selection mode state of the receiver to <code>state</code>. Nothing happens
-	 * if the receiver already is in the requested state.
-	 * 
+	 * Sets the block selection mode state of the receiver to <code>state</code>. Nothing happens if
+	 * the receiver already is in the requested state.
+	 * <p>
+	 * Note: enabling block selection mode disables word wrap {@link ITextEditorExtension6}),
+	 * enabling word wrap will disable block selection mode.
+	 *
 	 * @param state the new block selection state
+	 * @see ITextEditorExtension6#setWordWrap(boolean)
 	 */
 	void setBlockSelectionMode(boolean state);
 }

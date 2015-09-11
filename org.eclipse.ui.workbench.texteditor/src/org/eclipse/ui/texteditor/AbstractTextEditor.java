@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@
  *     Stephan Wahlbrink <stephan.wahlbrink@walware.de> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *     Nick Sandonato <nsandona@us.ibm.com> - [implementation] AbstractTextEditor does not prompt when out of sync in MultiPageEditorPart - http://bugs.eclipse.org/337719
+ *     Holger Voormann - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
+ *     Florian Weßling <flo@cdhq.de> - Word Wrap - https://bugs.eclipse.org/bugs/show_bug.cgi?id=35779
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -251,7 +253,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
  * {@link #COMMON_RULER_CONTEXT_MENU_ID}.
  * </p>
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, ITextEditorExtension5, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, ITextEditorExtension5, ITextEditorExtension6, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -7388,10 +7390,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						disposeFont();
 						updateCaret();
 					}
+
+					// we must unset word wrap before we can set block selection
+					if (isWordWrapEnabled()) {
+						setWordWrap(false);
+					}
 				}
 
 				styledText.setBlockSelection(enable);
-				
+
 				if (!enable) {
 					initializeViewerFont(viewer);
 					updateCaret();
@@ -7399,4 +7406,63 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 		}
 	}
+
+	/**
+	 * Tells whether word wrap is supported.
+	 * <p>
+	 * By default word wrap is supported. Subclasses may override this method to disable
+	 * it.
+	 * </p>
+	 *
+	 * @return <code>true</code> if word wrap is supported, <code>false</code> otherwise
+	 * @since 3.10
+	 */
+	protected boolean isWordWrapSupported() {
+		return true;
+	}
+
+	/**
+	 * <code>true</code> if word wrap is supported and enabled, <code>false</code> otherwise
+	 * @return the receiver's word wrap state if word wrap is supported
+	 * @since 3.10
+	 * @see AbstractTextEditor#isWordWrapSupported()
+	 */
+	public final boolean isWordWrapEnabled() {
+		if(!isWordWrapSupported()){
+			return false;
+		}
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer != null) {
+			StyledText styledText= viewer.getTextWidget();
+			if (styledText != null) {
+				return styledText.getWordWrap();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension6#setWordWrap(boolean)
+	 * @since 3.10
+	 */
+	public void setWordWrap(boolean enable) {
+		if (!isWordWrapSupported() || isWordWrapEnabled() == enable) {
+			return;
+		}
+
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer != null) {
+			StyledText styledText= viewer.getTextWidget();
+			if (styledText != null) {
+				if(isBlockSelectionModeEnabled()){
+					setBlockSelectionMode(false);
+				}
+				styledText.setWordWrap(enable);
+				if (fVerticalRuler != null) {
+					fVerticalRuler.update();
+				}
+			}
+		}
+	}
+
 }

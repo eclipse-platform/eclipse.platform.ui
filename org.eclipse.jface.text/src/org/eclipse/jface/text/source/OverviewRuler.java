@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -613,8 +615,21 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			}
 		});
 		
-		if (fTextViewer != null)
+		if (fTextViewer != null) {
 			fTextViewer.addTextListener(fInternalListener);
+			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
+			fTextViewer.getTextWidget().addControlListener(new ControlAdapter() {
+				public void controlResized(ControlEvent e) {
+					if(fTextViewer == null){
+						return;
+					}
+					StyledText textWidget= fTextViewer.getTextWidget();
+					if(textWidget != null && textWidget.getWordWrap()) {
+						redraw();
+					}
+				}
+			});
+		}
 
 		return fCanvas;
 	}

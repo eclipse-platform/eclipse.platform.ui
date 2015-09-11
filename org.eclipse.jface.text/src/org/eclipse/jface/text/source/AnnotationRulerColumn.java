@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -338,7 +340,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				handleMouseMove(e);
 			}
 		});
-		
+
 		fCanvas.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseScrolled(MouseEvent e) {
 				handleMouseScrolled(e);
@@ -348,6 +350,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.addViewportListener(fInternalListener);
 			fCachedTextViewer.addTextListener(fInternalListener);
+			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
+			fCachedTextWidget.addControlListener(new ControlAdapter() {
+				public void controlResized(ControlEvent e) {
+					if(fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
+						redraw();
+					}
+				}
+			});
 		}
 
 		return fCanvas;
@@ -385,7 +395,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 	/**
 	 * Hook method for a mouse down event on the given ruler line.
-	 * 
+	 *
 	 * @param rulerLine the ruler line
 	 * @since 3.5
 	 */
@@ -405,7 +415,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * <p>
 	 * <strong>Note:</strong> The event is sent on mouse up.
 	 * </p>
-	 * 
+	 *
 	 * @param rulerLine the ruler line
 	 * @since 3.0
 	 */
