@@ -9,7 +9,7 @@ Export-Package: org.eclipse.core.internal.jobs;x-internal:=true,
  org.eclipse.core.runtime.jobs
 Bundle-Activator: org.eclipse.core.internal.jobs.JobActivator
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.8.0,4.0.0)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.osgi.service.debug,
  org.eclipse.osgi.util,

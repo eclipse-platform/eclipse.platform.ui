@@ -20,46 +20,18 @@ import org.eclipse.osgi.util.NLS;
  * specialized iterator to ensure the complex iteration logic is contained in one place.
  */
 class JobListeners {
+
+	@FunctionalInterface
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
 
-	private final IListenerDoit aboutToRun = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.aboutToRun(event);
-		}
-	};
-	private final IListenerDoit awake = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.awake(event);
-		}
-	};
-	private final IListenerDoit done = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.done(event);
-		}
-	};
-	private final IListenerDoit running = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.running(event);
-		}
-	};
-	private final IListenerDoit scheduled = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.scheduled(event);
-		}
-	};
-	private final IListenerDoit sleeping = new IListenerDoit() {
-		@Override
-		public void notify(IJobChangeListener listener, IJobChangeEvent event) {
-			listener.sleeping(event);
-		}
-	};
+	private final IListenerDoit aboutToRun = (listener, event) -> listener.aboutToRun(event);
+	private final IListenerDoit awake = (listener, event) -> listener.awake(event);
+	private final IListenerDoit done = (listener, event) -> listener.done(event);
+	private final IListenerDoit running = (listener, event) -> listener.running(event);
+	private final IListenerDoit scheduled = (listener, event) -> listener.scheduled(event);
+	private final IListenerDoit sleeping = (listener, event) -> listener.sleeping(event);
 	/**
 	 * The global job listeners.
 	 */
