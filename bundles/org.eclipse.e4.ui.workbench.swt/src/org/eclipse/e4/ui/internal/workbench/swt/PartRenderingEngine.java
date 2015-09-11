@@ -123,11 +123,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private void subscribeTopicToBeRendered(@EventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 
 		MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-		MElementContainer<?> parent = changedElement.getParent();
+		MUIElement parent = changedElement.getParent();
 
 		// Handle Detached Windows
 		if (parent == null) {
-			parent = (MElementContainer<?>) ((EObject) changedElement).eContainer();
+			parent = (MUIElement) ((EObject) changedElement).eContainer();
 		}
 
 		// menus are not handled here... ??
@@ -152,8 +152,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// Ensure that the element about to be removed is not the
 			// selected element
-			if (parent.getSelectedElement() == changedElement)
-				parent.setSelectedElement(null);
+			if (parent instanceof MElementContainer<?>) {
+				@SuppressWarnings("unchecked")
+				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) parent;
+				if (container.getSelectedElement() == changedElement) {
+					container.setSelectedElement(null);
+				}
+			}
 
 			if (okToRender) {
 				// Un-maximize the element before tearing it down

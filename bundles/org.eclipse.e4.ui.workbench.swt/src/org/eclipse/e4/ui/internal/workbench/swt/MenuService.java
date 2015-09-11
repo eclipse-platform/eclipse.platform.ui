@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.services.EMenuService;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -35,10 +36,8 @@ public class MenuService implements EMenuService {
 		for (MMenu mmenu : myPart.getMenus()) {
 			if (menuId.equals(mmenu.getElementId())
 					&& mmenu instanceof MPopupMenu) {
-				Menu menu = registerMenu(parentControl, (MPopupMenu) mmenu,
-						myPart.getContext());
+				Menu menu = registerMenu(parentControl, (MPopupMenu) mmenu, myPart.getContext());
 				if (menu != null) {
-					parentControl.setMenu(menu);
 					return true;
 				}
 				return false;
@@ -55,11 +54,15 @@ public class MenuService implements EMenuService {
 		// MenuManager correctly
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu, parentControl);
-
+		mmenu.setRenderer(renderer);
 		IEclipseContext popupContext = context.createChild("popup:" + mmenu.getElementId());
 		mmenu.setContext(popupContext);
+		if (mmenu.getParent() == null) {
+			mmenu.getTransientData().put(IPresentationEngine.RENDERING_PARENT_KEY, parentControl);
+		}
 		Object widget = renderer.createWidget(mmenu, parentControl);
 		if (!(widget instanceof Menu)) {
+			mmenu.getTransientData().remove(IPresentationEngine.RENDERING_PARENT_KEY);
 			return null;
 		}
 		renderer.bindWidget(mmenu, widget);

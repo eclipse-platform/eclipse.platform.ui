@@ -121,7 +121,12 @@ public abstract class AbstractPartRenderer {
 	public Object getUIContainer(MUIElement element) {
 		if (element.getParent() != null)
 			return element.getParent().getWidget();
-
+		else {
+			Object value = element.getTransientData().get(IPresentationEngine.RENDERING_PARENT_KEY);
+			if (value != null) {
+				return value;
+			}
+		}
 		return null;
 	}
 
