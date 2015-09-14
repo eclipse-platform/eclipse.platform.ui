@@ -184,6 +184,13 @@ class DnDManager {
 		if (overlayFrame != null && !overlayFrame.isDisposed())
 			overlayFrame.dispose();
 		overlayFrame = null;
+
+		for (DragAgent agent : dragAgents) {
+			agent.dispose();
+		}
+		for (DropAgent agent : dropAgents) {
+			agent.dispose();
+		}
 	}
 
 	private void track() {

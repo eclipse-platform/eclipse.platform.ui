@@ -174,4 +174,10 @@ abstract class DragAgent {
 
 		dragElement = null;
 	}
+
+	/**
+	 * This agent is being disposed
+	 */
+	public void dispose() {
+	}
 }
