@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin <steven@spungin.tv> - Bug 391061
  *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *     Alex Blewitt <alex.blewitt@gmail.com> - Bug 476364
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -32,20 +31,9 @@ import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * Note: we do not support byte arrays in preferences at this time. This class
- * is instantiated and wired by declarative services, in OSGI-INF/preference.xml
+ * Note: we do not support byte arrays in preferences at this time.
  */
 public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
-
-	private IPreferencesService preferencesService;
-
-	public IPreferencesService getPreferencesService() {
-		return preferencesService;
-	}
-
-	public void setPreferencesService(IPreferencesService preferenceService) {
-		this.preferencesService = preferenceService;
-	}
 
 	static private class PrefInjectionListener implements IPreferenceChangeListener {
 
@@ -85,6 +73,10 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 
 	// Hash (nodePath -> Hash (key -> list))
 	private Map<String, HashMap<String, List<PrefInjectionListener>>> listenerCache = new HashMap<>();
+
+	public PreferencesObjectSupplier() {
+		DIEActivator.getDefault().registerPreferencesSupplier(this);
+	}
 
 	@Override
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track, boolean group) {
@@ -163,6 +155,10 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 			nodePath = FrameworkUtil.getBundle(requestingObject).getSymbolicName();
 		}
 		return nodePath;
+	}
+
+	private IPreferencesService getPreferencesService() {
+		return DIEActivator.getDefault().getPreferencesService();
 	}
 
 	private void addListener(String nodePath, String key, final IRequestor requestor) {
