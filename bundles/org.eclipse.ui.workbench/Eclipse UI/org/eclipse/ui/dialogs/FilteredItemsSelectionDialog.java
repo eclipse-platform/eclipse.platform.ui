@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -2091,22 +2091,16 @@ public abstract class FilteredItemsSelectionDialog extends
 				lastCompletedFilter = null;
 				lastCompletedResult = null;
 
-				SubProgressMonitor subMonitor = null;
-				if (monitor != null) {
-					monitor
-							.beginTask(
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
 									WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
 									100);
-					subMonitor = new SubProgressMonitor(monitor, 95);
 
-				}
-
-				fillContentProvider(contentProvider, itemsFilter, subMonitor);
+				fillContentProvider(contentProvider, itemsFilter, subMonitor.newChild(95));
 
 				if (monitor != null && !monitor.isCanceled()) {
-					monitor.worked(2);
+					subMonitor.worked(2);
 					contentProvider.rememberResult(itemsFilter);
-					monitor.worked(3);
+					subMonitor.worked(3);
 				}
 			}
 
@@ -2816,61 +2810,41 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param monitor
 		 *            progress monitor
 		 */
-		public void reloadCache(boolean checkDuplicates,
-				IProgressMonitor monitor) {
-
+		public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
 			reset = false;
 
-			if (monitor != null) {
-				// the work is divided into two actions of the same length
-				int totalWork = checkDuplicates ? 200 : 100;
+			// the work is divided into two actions of the same length
+			int totalWork = checkDuplicates ? 200 : 100;
 
-				monitor
-						.beginTask(
-								WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob,
-								totalWork);
-			}
+			SubMonitor subMonitor = SubMonitor.convert(monitor,
+					WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob, totalWork);
 
 			// the TableViewer's root (the input) is treated as parent
 
-			lastFilteredItems = Arrays.asList(getFilteredItems(list.getInput(),
-					monitor != null ? new SubProgressMonitor(monitor, 100)
-							: null));
+			lastFilteredItems = Arrays.asList(getFilteredItems(list.getInput(), subMonitor.newChild(100)));
 
-			if (reset || (monitor != null && monitor.isCanceled())) {
-				if (monitor != null)
-					monitor.done();
+			if (reset || subMonitor.isCanceled()) {
 				return;
 			}
 
 			if (checkDuplicates) {
-				checkDuplicates(monitor);
+				checkDuplicates(subMonitor.newChild(100));
 			}
-			if (monitor != null)
-				monitor.done();
 		}
 
 		private void checkDuplicates(IProgressMonitor monitor) {
 			synchronized (lastFilteredItems) {
-				IProgressMonitor subMonitor = null;
-				int reportEvery = lastFilteredItems.size() / 20;
-				if (monitor != null) {
-					subMonitor = new SubProgressMonitor(monitor, 100);
-					subMonitor
-							.beginTask(
-									WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_checkDuplicates,
-									5);
-				}
-				HashMap helperMap = new HashMap();
+				SubMonitor subMonitor = SubMonitor.convert(monitor,
+						WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_checkDuplicates,
+						lastFilteredItems.size());
+				HashMap<String, Object> helperMap = new HashMap<>();
 				for (int i = 0; i < lastFilteredItems.size(); i++) {
-					if (reset
-							|| (subMonitor != null && subMonitor.isCanceled()))
+					if (reset || subMonitor.isCanceled())
 						return;
 					Object item = lastFilteredItems.get(i);
 
 					if (!(item instanceof ItemsListSeparator)) {
-						Object previousItem = helperMap.put(
-								getElementName(item), item);
+						Object previousItem = helperMap.put(getElementName(item), item);
 						if (previousItem != null) {
 							setDuplicateElement(previousItem, true);
 							setDuplicateElement(item, true);
@@ -2879,9 +2853,7 @@ public abstract class FilteredItemsSelectionDialog extends
 						}
 					}
 
-					if (subMonitor != null && reportEvery != 0
-							&& (i + 1) % reportEvery == 0)
-						subMonitor.worked(1);
+					subMonitor.worked(1);
 				}
 				helperMap.clear();
 			}
