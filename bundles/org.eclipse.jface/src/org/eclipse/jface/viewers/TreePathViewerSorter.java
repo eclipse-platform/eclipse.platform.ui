@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel - <Lars.Vogel@vogella.com> - Bug 402464
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -17,8 +18,11 @@ import java.util.Arrays;
  * A viewer sorter that is provided extra context in the form of the path of the
  * parent element of the elements being sorted.
  *
+ ** @deprecated see <code>ViewerSorter</code> for more information.
+ *
  * @since 3.2
  */
+@Deprecated
 public class TreePathViewerSorter extends ViewerSorter {
 
 	/**
