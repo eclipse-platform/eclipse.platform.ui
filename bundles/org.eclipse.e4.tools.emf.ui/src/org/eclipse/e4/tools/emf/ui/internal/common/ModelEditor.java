@@ -163,6 +163,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
@@ -1712,7 +1713,8 @@ public class ModelEditor implements IGotoObject {
 		@Override
 		public void dragStart(DragSourceEvent event) {
 			final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-			event.doit = !selection.isEmpty() && selection.getFirstElement() instanceof MApplicationElement;
+			event.doit = !selection.isEmpty() && (selection.getFirstElement() instanceof MApplicationElement
+					|| selection.getFirstElement() instanceof MModelFragment);
 		}
 
 		@Override
@@ -1866,16 +1868,16 @@ public class ModelEditor implements IGotoObject {
 
 		@Override
 		public boolean validateDrop(Object target, int operation, TransferData transferType) {
-			boolean rv = false;
-			if (getSelectedObject() instanceof MApplicationElement) {
+			boolean rv = true;
+			if (getSelectedObject() instanceof MApplicationElement || getSelectedObject() instanceof MModelFragment) {
 				if (getCurrentLocation() == LOCATION_ON) {
-					rv = isValidDrop(target, (MApplicationElement) getSelectedObject(), false);
+					rv = isValidDrop(target, getSelectedObject(), false);
 				} else if (getCurrentLocation() == LOCATION_AFTER || getCurrentLocation() == LOCATION_BEFORE) {
 					TreeItem item = (TreeItem) getCurrentEvent().item;
 					if (item != null) {
 						item = item.getParentItem();
 						if (item != null) {
-							rv = isValidDrop(item.getData(), (MApplicationElement) getSelectedObject(), true);
+							rv = isValidDrop(item.getData(), getSelectedObject(), true);
 						}
 					}
 				}
@@ -1884,7 +1886,7 @@ public class ModelEditor implements IGotoObject {
 			return rv;
 		}
 
-		private boolean isValidDrop(Object target, MApplicationElement instance, boolean isIndex) {
+		private boolean isValidDrop(Object target, Object instance, boolean isIndex) {
 			if (target instanceof MElementContainer<?>) {
 				@SuppressWarnings("unchecked")
 				final MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
