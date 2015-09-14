@@ -25,8 +25,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.IWorkingSet;
 
 /**
@@ -56,7 +55,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 
 	@Override
 	public IProject[] getProjects() {
-		Set result = new HashSet();
+		Set<IProject> result = new HashSet<>();
 		ResourceMapping[] mappings = getMappings();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
@@ -66,25 +65,21 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 				result.add(project);
 			}
 		}
-		return (IProject[]) result.toArray(new IProject[result.size()]);
+		return result.toArray(new IProject[result.size()]);
 	}
 
 	@Override
-	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		try {
-			ResourceMapping[] mappings = getMappings();
-			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
-			List result = new ArrayList();
-			for (int i = 0; i < mappings.length; i++) {
-				ResourceMapping mapping = mappings[i];
-				result.addAll(Arrays.asList(mapping.getTraversals(context, new SubProgressMonitor(monitor, 100))));
-			}
-			return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
-		} finally {
-			monitor.done();
+	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor mon)
+			throws CoreException {
+		ResourceMapping[] mappings = getMappings();
+		SubMonitor subMonitor = SubMonitor.convert(mon, mappings.length);
+
+		List<ResourceTraversal> result = new ArrayList<>();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			result.addAll(Arrays.asList(mapping.getTraversals(context, subMonitor.newChild(1))));
 		}
+		return result.toArray(new ResourceTraversal[result.size()]);
 	}
 
 	/**
@@ -93,7 +88,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 	 */
 	private ResourceMapping[] getMappings() {
 		IAdaptable[] elements = set.getElements();
-		List result = new ArrayList();
+		List<ResourceMapping> result = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			IAdaptable element = elements[i];
 			ResourceMapping mapping = WorkingSetAdapterFactory.getContributedResourceMapping(element);
@@ -104,7 +99,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 				result.add(mapping);
 			}
 		}
-		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+		return result.toArray(new ResourceMapping[result.size()]);
 	}
 
 	@Override
