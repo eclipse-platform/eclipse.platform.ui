@@ -11,6 +11,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -149,6 +150,8 @@ public class ColorCellEditor extends DialogCellEditor {
 			extent = ((Table) w).getItemHeight() - 1;
 		} else if (w instanceof Tree) {
 			extent = ((Tree) w).getItemHeight() - 1;
+		} else if (w instanceof TableTree) {
+			extent = ((TableTree) w).getItemHeight() - 1;
 		}
 
         if (size > extent) {

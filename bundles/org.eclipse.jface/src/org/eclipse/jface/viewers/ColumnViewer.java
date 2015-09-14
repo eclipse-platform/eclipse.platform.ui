@@ -83,8 +83,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * 		the control you want to hook on
 	 */
 	protected void hookEditingSupport(Control control) {
-		// Needed for backwards comp with AbstractTreeViewer
-		// which is not hooked this way others may already overwrite and provide
+		// Needed for backwards comp with AbstractTreeViewer and TableTreeViewer
+		// who are not hooked this way others may already overwrite and provide
 		// their
 		// own impl
 		if (viewerEditor != null) {
