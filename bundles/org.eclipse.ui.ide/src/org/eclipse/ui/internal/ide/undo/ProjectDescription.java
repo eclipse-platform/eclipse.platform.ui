@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * ProjectDescription is a lightweight description that describes a project to
@@ -79,28 +79,25 @@ public class ProjectDescription extends ContainerDescription {
 	@Override
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 200);
 		Assert.isLegal(resource instanceof IProject);
 		if (resource.exists()) {
 			return;
 		}
 		IProject projectHandle = (IProject) resource;
-		monitor.beginTask("", 200); //$NON-NLS-1$
-		monitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
+		subMonitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
 		if (projectDescription == null) {
-			projectHandle.create(new SubProgressMonitor(monitor, 100));
+			projectHandle.create(subMonitor.newChild(100));
 		} else {
-			projectHandle.create(projectDescription, new SubProgressMonitor(
-					monitor, 100));
+			projectHandle.create(projectDescription, subMonitor.newChild(100));
 		}
 
-		if (monitor.isCanceled()) {
+		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 		if (openOnCreate) {
-			projectHandle.open(IResource.NONE,
-					new SubProgressMonitor(monitor, 100));
+			projectHandle.open(IResource.NONE, subMonitor.newChild(100));
 		}
-		monitor.done();
 	}
 
 	@Override
