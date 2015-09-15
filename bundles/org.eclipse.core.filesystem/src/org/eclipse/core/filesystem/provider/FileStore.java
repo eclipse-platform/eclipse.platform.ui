@@ -29,23 +29,16 @@ import org.eclipse.osgi.util.NLS;
  */
 public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
-	 * Singleton buffer created to avoid buffer creations in the
-	 * transferStreams method.  Used as an optimization, based on the assumption
-	 * that multiple writes won't happen in a given instance of FileStore.
-	 */
-	private static final byte[] buffer = new byte[8192];
-
-	/**
 	 * A file info array of size zero that can be used as a return value for methods
 	 * that return IFileInfo[] to avoid creating garbage objects.
 	 */
-	protected static final IFileInfo[] EMPTY_FILE_INFO_ARRAY = new IFileInfo[0];
+	protected static final IFileInfo[] EMPTY_FILE_INFO_ARRAY = {};
 
 	/**
 	 * A string array of size zero that can be used as a return value for methods
 	 * that return String[] to avoid creating garbage objects.
 	 */
-	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
+	protected static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
 	 * Transfers the contents of an input stream to an output stream, using a large
@@ -53,42 +46,35 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * 
 	 * @param source The input stream to transfer
 	 * @param destination The destination stream of the transfer
+	 * @param length the size of the file or -1 if not known
 	 * @param path A path representing the data being transferred for use in error
 	 * messages.
-	 * @param monitor A progress monitor.  The monitor is assumed to have
-	 * already done beginWork with one unit of work allocated per buffer load
-	 * of contents to be transferred.
+	 * @param monitor A progress monitor
 	 * @throws CoreException
 	 */
-	private static final void transferStreams(InputStream source, OutputStream destination, String path, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+	private static final void transferStreams(InputStream source, OutputStream destination, long length, String path, IProgressMonitor monitor) throws CoreException {
+		byte[] buffer = new byte[8192];
+		SubMonitor subMonitor = SubMonitor.convert(monitor, length >= 0 ? 1 + (int) (length / buffer.length) : 1000);
 		try {
-			/*
-			 * Note: although synchronizing on the buffer is thread-safe,
-			 * it may result in slower performance in the future if we want 
-			 * to allow concurrent writes.
-			 */
-			synchronized (buffer) {
-				while (true) {
-					int bytesRead = -1;
-					try {
-						bytesRead = source.read(buffer);
-					} catch (IOException e) {
-						String msg = NLS.bind(Messages.failedReadDuringWrite, path);
-						Policy.error(EFS.ERROR_READ, msg, e);
-					}
-					try {
-						if (bytesRead == -1) {
-							destination.close();
-							break;
-						}
-						destination.write(buffer, 0, bytesRead);
-					} catch (IOException e) {
-						String msg = NLS.bind(Messages.couldNotWrite, path);
-						Policy.error(EFS.ERROR_WRITE, msg, e);
-					}
-					monitor.worked(1);
+			while (true) {
+				int bytesRead = -1;
+				try {
+					bytesRead = source.read(buffer);
+				} catch (IOException e) {
+					String msg = NLS.bind(Messages.failedReadDuringWrite, path);
+					Policy.error(EFS.ERROR_READ, msg, e);
 				}
+				try {
+					if (bytesRead == -1) {
+						destination.close();
+						break;
+					}
+					destination.write(buffer, 0, bytesRead);
+				} catch (IOException e) {
+					String msg = NLS.bind(Messages.couldNotWrite, path);
+					Policy.error(EFS.ERROR_WRITE, msg, e);
+				}
+				subMonitor.worked(1);
 			}
 		} finally {
 			Policy.safeClose(source);
@@ -161,27 +147,24 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * </ul>
 	 */
 	protected void copyDirectory(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
-		try {
-			IFileStore[] children = null;
-			int opWork = 1;
-			if ((options & EFS.SHALLOW) == 0) {
-				children = childStores(EFS.NONE, null);
-				opWork += children.length;
-			}
-			monitor.beginTask("", opWork); //$NON-NLS-1$
-			monitor.subTask(NLS.bind(Messages.copying, toString()));
-			// create directory 
-			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 1));
-			// copy attributes
-			transferAttributes(sourceInfo, destination);
+		IFileStore[] children = null;
+		int opWork = 1;
+		if ((options & EFS.SHALLOW) == 0) {
+			children = childStores(EFS.NONE, null);
+			opWork += children.length;
+		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, opWork);
+		subMonitor.subTask(NLS.bind(Messages.copying, toString()));
+		// create directory 
+		destination.mkdir(EFS.NONE, subMonitor.newChild(1));
+		// copy attributes
+		transferAttributes(sourceInfo, destination);
 
-			if (children == null)
-				return;
-			// copy children
-			for (int i = 0; i < children.length; i++)
-				children[i].copy(destination.getChild(children[i].getName()), options, Policy.subMonitorFor(monitor, 1));
-		} finally {
-			monitor.done();
+		if (children == null)
+			return;
+		// copy children
+		for (int i = 0; i < children.length; i++) {
+			children[i].copy(destination.getChild(children[i].getName()), options, subMonitor.newChild(1));
 		}
 	}
 
@@ -204,34 +187,25 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * </ul>
 	 */
 	protected void copyFile(IFileInfo sourceInfo, IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
+		if ((options & EFS.OVERWRITE) == 0 && destination.fetchInfo().exists())
+			Policy.error(EFS.ERROR_EXISTS, NLS.bind(Messages.fileExists, destination));
+		long length = sourceInfo.getLength();
+		String sourcePath = toString();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(Messages.copying, sourcePath), 100);
+		InputStream in = null;
+		OutputStream out = null;
 		try {
-			if ((options & EFS.OVERWRITE) == 0 && destination.fetchInfo().exists())
-				Policy.error(EFS.ERROR_EXISTS, NLS.bind(Messages.fileExists, destination));
-			long length = sourceInfo.getLength();
-			int totalWork;
-			if (length == -1)
-				totalWork = IProgressMonitor.UNKNOWN;
-			else
-				totalWork = 1 + (int) (length / buffer.length);
-			String sourcePath = toString();
-			monitor.beginTask(NLS.bind(Messages.copying, sourcePath), totalWork);
-			InputStream in = null;
-			OutputStream out = null;
-			try {
-				in = openInputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
-				out = destination.openOutputStream(EFS.NONE, Policy.subMonitorFor(monitor, 0));
-				transferStreams(in, out, sourcePath, monitor);
-				transferAttributes(sourceInfo, destination);
-			} catch (CoreException e) {
-				Policy.safeClose(in);
-				Policy.safeClose(out);
-				//if we failed to write, try to cleanup the half written file
-				if (!destination.fetchInfo(0, null).exists())
-					destination.delete(EFS.NONE, null);
-				throw e;
-			}
-		} finally {
-			monitor.done();
+			in = openInputStream(EFS.NONE, subMonitor.newChild(1));
+			out = destination.openOutputStream(EFS.NONE, subMonitor.newChild(1));
+			transferStreams(in, out, length, sourcePath, subMonitor.newChild(98));
+			transferAttributes(sourceInfo, destination);
+		} catch (CoreException e) {
+			Policy.safeClose(in);
+			Policy.safeClose(out);
+			//if we failed to write, try to cleanup the half written file
+			if (!destination.fetchInfo(0, null).exists())
+				destination.delete(EFS.NONE, null);
+			throw e;
 		}
 	}
 
@@ -406,17 +380,14 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 */
 	@Override
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(NLS.bind(Messages.moving, destination.toString()), 100);
-			copy(destination, options & EFS.OVERWRITE, Policy.subMonitorFor(monitor, 70));
-			delete(EFS.NONE, Policy.subMonitorFor(monitor, 30));
+			SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(Messages.moving, destination.toString()), 100);
+			copy(destination, options & EFS.OVERWRITE, subMonitor.newChild(70));
+			delete(EFS.NONE, subMonitor.newChild(30));
 		} catch (CoreException e) {
 			//throw new error to indicate failure occurred during a move
 			String message = NLS.bind(Messages.couldNotMove, toString());
 			Policy.error(EFS.ERROR_WRITE, message, e);
-		} finally {
-			monitor.done();
 		}
 	}
 

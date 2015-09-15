@@ -945,24 +945,19 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	protected boolean refreshResource(IResource target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		int totalWork = RefreshLocalVisitor.TOTAL_WORK;
 		String title = NLS.bind(Messages.localstore_refreshing, target.getFullPath());
-		try {
-			monitor.beginTask(title, totalWork);
-			RefreshLocalVisitor visitor = updateAliases ? new RefreshLocalAliasVisitor(monitor) : new RefreshLocalVisitor(monitor);
-			IFileStore fileStore = ((Resource) target).getStore();
-			//try to get all info in one shot, if file system supports it
-			IFileTree fileTree = fileStore.getFileSystem().fetchFileTree(fileStore, new SubProgressMonitor(monitor, 0));
-			UnifiedTree tree = fileTree == null ? new UnifiedTree(target) : new UnifiedTree(target, fileTree);
-			tree.accept(visitor, depth);
-			IStatus result = visitor.getErrorStatus();
-			if (!result.isOK())
-				throw new ResourceException(result);
-			return visitor.resourcesChanged();
-		} finally {
-			monitor.done();
-		}
+		SubMonitor subMonitor = SubMonitor.convert(monitor, title, 100);
+		SubMonitor refreshMonitor = subMonitor.newChild(98);
+		RefreshLocalVisitor visitor = updateAliases ? new RefreshLocalAliasVisitor(refreshMonitor) : new RefreshLocalVisitor(refreshMonitor);
+		IFileStore fileStore = ((Resource) target).getStore();
+		//try to get all info in one shot, if file system supports it
+		IFileTree fileTree = fileStore.getFileSystem().fetchFileTree(fileStore, subMonitor.newChild(2));
+		UnifiedTree tree = fileTree == null ? new UnifiedTree(target) : new UnifiedTree(target, fileTree);
+		tree.accept(visitor, depth);
+		IStatus result = visitor.getErrorStatus();
+		if (!result.isOK())
+			throw new ResourceException(result);
+		return visitor.resourcesChanged();
 	}
 
 	/**
@@ -972,25 +967,20 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * be possible.
 	 */
 	protected boolean refreshRoot(IWorkspaceRoot target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
 		IProject[] projects = target.getProjects(IContainer.INCLUDE_HIDDEN);
-		int totalWork = projects.length;
 		String title = Messages.localstore_refreshingRoot;
-		try {
-			monitor.beginTask(title, totalWork);
-			// if doing depth zero, there is nothing to do (can't refresh the root).
-			// Note that we still need to do the beginTask, done pair.
-			if (depth == IResource.DEPTH_ZERO)
-				return false;
-			boolean changed = false;
-			// drop the depth by one level since processing the root counts as one level.
-			depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
-			for (int i = 0; i < projects.length; i++)
-				changed |= refresh(projects[i], depth, updateAliases, Policy.subMonitorFor(monitor, 1));
-			return changed;
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, title, projects.length);
+		// if doing depth zero, there is nothing to do (can't refresh the root).
+		// Note that we still need to do the beginTask, done pair.
+		if (depth == IResource.DEPTH_ZERO)
+			return false;
+		boolean changed = false;
+		// drop the depth by one level since processing the root counts as one level.
+		depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
+		for (int i = 0; i < projects.length; i++) {
+			changed |= refresh(projects[i], depth, updateAliases, subMonitor.newChild(1));
 		}
+		return changed;
 	}
 
 	/**

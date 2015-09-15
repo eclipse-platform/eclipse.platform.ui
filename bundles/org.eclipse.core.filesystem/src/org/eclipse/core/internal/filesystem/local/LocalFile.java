@@ -321,9 +321,8 @@ public class LocalFile extends FileStore {
 		File source = file;
 		File destination = ((LocalFile) destFile).file;
 		boolean overwrite = (options & EFS.OVERWRITE) != 0;
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(Messages.moving, source.getAbsolutePath()), 1);
 		try {
-			monitor.beginTask(NLS.bind(Messages.moving, source.getAbsolutePath()), 10);
 			//this flag captures case renaming on a case-insensitive OS, or moving
 			//two equivalent files in an environment that supports symbolic links.
 			//in these cases we NEVER want to delete anything
@@ -358,8 +357,7 @@ public class LocalFile extends FileStore {
 						String message = NLS.bind(Messages.failedMove, source.getAbsolutePath(), destination.getAbsolutePath());
 						Policy.error(EFS.ERROR_WRITE, message);
 					}
-					//the move was successful
-					monitor.worked(10);
+					// the move was successful
 					return;
 				}
 			}
@@ -369,17 +367,15 @@ public class LocalFile extends FileStore {
 				Policy.error(EFS.ERROR_WRITE, message, null);
 			}
 			// fall back to default implementation
-			super.move(destFile, options, Policy.subMonitorFor(monitor, 10));
+			super.move(destFile, options, subMonitor.newChild(1));
 		} finally {
-			monitor.done();
+			subMonitor.done();
 		}
 	}
 
 	@Override
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask("", 1); //$NON-NLS-1$
 			return new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			String message;
@@ -394,16 +390,12 @@ public class LocalFile extends FileStore {
 				Policy.error(EFS.ERROR_READ, message, e);
 			}
 			return null;
-		} finally {
-			monitor.done();
 		}
 	}
 
 	@Override
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask("", 1); //$NON-NLS-1$
 			return new FileOutputStream(file, (options & EFS.APPEND) != 0);
 		} catch (FileNotFoundException e) {
 			checkReadOnlyParent(file, e);
@@ -417,8 +409,6 @@ public class LocalFile extends FileStore {
 				Policy.error(EFS.ERROR_WRITE, message, e);
 			}
 			return null;
-		} finally {
-			monitor.done();
 		}
 	}
 

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.*;
  * @since 3.2
  */
 public abstract class ModelProvider extends PlatformObject {
-
 	/**
 	 * The model provider id of the Resources model.
 	 */
@@ -38,7 +37,7 @@ public abstract class ModelProvider extends PlatformObject {
 	private IModelProviderDescriptor descriptor;
 
 	/**
-	 * Return the descriptor for the model provider of the given id
+	 * Returns the descriptor for the model provider of the given id
 	 * or <code>null</code> if the provider has not been registered.
 	 * @param id a model provider id.
 	 * @return the descriptor for the model provider of the given id
@@ -56,7 +55,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the descriptors for all model providers that are registered.
+	 * Returns the descriptors for all model providers that are registered.
 	 *
 	 * @return the descriptors for all model providers that are registered.
 	 */
@@ -74,7 +73,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the descriptor of this model provider. The descriptor
+	 * Returns the descriptor of this model provider. The descriptor
 	 * is set during initialization so implements cannot call this method
 	 * until after the <code>initialize</code> method is invoked.
 	 * @return the descriptor of this model provider
@@ -100,7 +99,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the resource mappings that cover the given resource.
+	 * Returns the resource mappings that cover the given resource.
 	 * By default, an empty array is returned. Subclass may override
 	 * this method but should consider overriding either
 	 * {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
@@ -110,7 +109,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param resource the resource
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 *     reporting is not desired
 	 * @return the resource mappings that cover the given resource.
 	 * @exception CoreException
 	 */
@@ -119,7 +118,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the set of mappings that cover the given resources.
+	 * Returns the set of mappings that cover the given resources.
 	 * This method is used to map operations on resources to
 	 * operations on resource mappings. By default, this method
 	 * calls <code>getMapping(IResource)</code> for each resource.
@@ -130,7 +129,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param resources the resources
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 *     reporting is not desired
 	 * @return the set of mappings that cover the given resources
 	 * @exception CoreException
 	 */
@@ -146,7 +145,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return the set of mappings that overlap with the given resource traversals.
+	 * Returns the set of mappings that overlap with the given resource traversals.
 	 * This method is used to map operations on resources to
 	 * operations on resource mappings. By default, this method
 	 * calls {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
@@ -158,7 +157,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param traversals the traversals
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 *     reporting is not desired
 	 * @return the set of mappings that overlap with the given resource traversals
 	 */
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
@@ -173,7 +172,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Return a set of traversals that cover the given resource mappings. The
+	 * Returns a set of traversals that cover the given resource mappings. The
 	 * provided mappings must be from this provider or one of the providers this
 	 * provider extends.
 	 * <p>
@@ -184,24 +183,20 @@ public abstract class ModelProvider extends PlatformObject {
 	 *
 	 * @param mappings the mappings being mapped to resources
 	 * @param context the context used to determine the set of traversals that
-	 *            cover the mappings
+	 *     cover the mappings
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 *     reporting is not desired
 	 * @return a set of traversals that cover the given mappings
 	 * @exception CoreException
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		try {
-			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
-			List<ResourceTraversal> traversals = new ArrayList<>();
-			for (int i = 0; i < mappings.length; i++) {
-				ResourceMapping mapping = mappings[i];
-				traversals.addAll(Arrays.asList(mapping.getTraversals(context, new SubProgressMonitor(monitor, 100))));
-			}
-			return traversals.toArray(new ResourceTraversal[traversals.size()]);
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, mappings.length);
+		List<ResourceTraversal> traversals = new ArrayList<>();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			Collections.addAll(traversals, mapping.getTraversals(context, subMonitor.newChild(1)));
 		}
+		return traversals.toArray(new ResourceTraversal[traversals.size()]);
 	}
 
 	@Override
@@ -220,9 +215,10 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final void init(IModelProviderDescriptor desc) {
-		if (descriptor != null)
+		if (descriptor != null) {
 			// prevent subsequent calls from damaging this instance
 			return;
+		}
 		descriptor = desc;
 		initialize();
 	}
@@ -236,7 +232,7 @@ public abstract class ModelProvider extends PlatformObject {
 	}
 
 	/**
-	 * Validate the proposed changes contained in the given delta.
+	 * Validates the proposed changes contained in the given delta.
 	 * <p>
 	 * This method must return either a {@link ModelStatus}, or a {@link MultiStatus}
 	 * whose children are {@link ModelStatus}. The severity of the returned status
@@ -253,9 +249,9 @@ public abstract class ModelProvider extends PlatformObject {
 	 *
 	 * @param delta a delta tree containing the proposed changes
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 *     reporting is not desired
 	 * @return a status indicating any potential side effects
-	 * on the model that provided this validator.
+	 *     on the model that provided this validator.
 	 */
 	public IStatus validateChange(IResourceDelta delta, IProgressMonitor monitor) {
 		return new ModelStatus(IStatus.OK, ResourcesPlugin.PI_RESOURCES, descriptor.getId(), Status.OK_STATUS.getMessage());

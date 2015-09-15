@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,8 +80,8 @@ public class FileCache {
 	 */
 	public java.io.File cache(IFileStore source, IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(NLS.bind(Messages.copying, toString()), 100);
-			IFileInfo myInfo = source.fetchInfo(EFS.NONE, Policy.subMonitorFor(monitor, 25));
+			SubMonitor subMonitor = SubMonitor.convert(monitor, NLS.bind(Messages.copying, toString()), 3);
+			IFileInfo myInfo = source.fetchInfo(EFS.NONE, subMonitor.newChild(1));
 			if (!myInfo.exists())
 				return new File(cacheDir, "Non-Existent-" + System.currentTimeMillis()); //$NON-NLS-1$
 			File result;
@@ -90,16 +90,14 @@ public class FileCache {
 			} else {
 				result = File.createTempFile(source.getFileSystem().getScheme(), "efs", cacheDir); //$NON-NLS-1$
 			}
-			monitor.worked(25);
+			subMonitor.worked(1);
 			IFileStore resultStore = new LocalFile(result);
-			source.copy(resultStore, EFS.OVERWRITE, Policy.subMonitorFor(monitor, 25));
+			source.copy(resultStore, EFS.OVERWRITE, subMonitor.newChild(1));
 			result.deleteOnExit();
 			return result;
 		} catch (IOException e) {
 			Policy.error(EFS.ERROR_WRITE, NLS.bind(Messages.couldNotWrite, toString()));
-			return null;//can't get here
-		} finally {
-			monitor.done();
+			return null; // Can't get here
 		}
 	}
 

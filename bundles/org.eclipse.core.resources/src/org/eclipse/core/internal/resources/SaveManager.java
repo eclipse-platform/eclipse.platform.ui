@@ -922,7 +922,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			// write the project tree ...
 			writeTree(project, IResource.DEPTH_INFINITE);
 			// ... and close the project
-			project.internalClose();
+			project.internalClose(monitor);
 			throw failure;
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)

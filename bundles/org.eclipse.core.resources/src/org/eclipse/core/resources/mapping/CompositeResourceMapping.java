@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.*;
  * @since 3.2
  */
 public final class CompositeResourceMapping extends ResourceMapping {
-
 	private final ResourceMapping[] mappings;
 	private final Object modelObject;
 	private IProject[] projects;
@@ -86,19 +85,13 @@ public final class CompositeResourceMapping extends ResourceMapping {
 
 	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		try {
-			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
-			List<ResourceTraversal> result = new ArrayList<>();
-			for (int i = 0; i < mappings.length; i++) {
-				ResourceMapping mapping = mappings[i];
-				result.addAll(Arrays.asList(mapping.getTraversals(context, new SubProgressMonitor(monitor, 100))));
-			}
-			return result.toArray(new ResourceTraversal[result.size()]);
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, mappings.length);
+		List<ResourceTraversal> result = new ArrayList<>();
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping mapping = mappings[i];
+			Collections.addAll(result, mapping.getTraversals(context, subMonitor.newChild(1)));
 		}
+		return result.toArray(new ResourceTraversal[result.size()]);
 	}
 
 }

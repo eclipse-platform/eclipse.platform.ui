@@ -562,12 +562,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//nothing to do if the workspace failed to open
 		if (!isOpen())
 			return;
-		monitor = Policy.monitorFor(monitor);
 		try {
 			String msg = Messages.resources_closing_0;
-			int rootCount = tree.getChildCount(Path.ROOT);
-			monitor.beginTask(msg, rootCount + 2);
-			monitor.subTask(msg);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, msg, 20);
+			subMonitor.subTask(msg);
 			//this operation will never end because the world is going away
 			try {
 				stringPoolJob.cancel();
@@ -575,15 +573,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//note: you can't call #save() from within a nested operation
 				saveManager.shutdown(null);
 				saveManager.reportSnapshotRequestor();
-				prepareOperation(getRoot(), monitor);
+				prepareOperation(getRoot(), subMonitor.newChild(1));
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
 				beginOperation(true);
 				IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
+				subMonitor.setWorkRemaining(projects.length + 2);
 				for (int i = 0; i < projects.length; i++) {
 					//notify managers of closing so they can cleanup
 					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
-					monitor.worked(1);
+					subMonitor.worked(1);
 				}
 				//empty the workspace tree so we leave in a clean state
 				deleteResource(getRoot());
@@ -591,12 +590,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// endOperation not needed here
 			} finally {
 				// Shutdown needs to be executed regardless of failures
-				shutdown(Policy.subMonitorFor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				shutdown(subMonitor.newChild(2, SubMonitor.SUPPRESS_SUBTASK));
 			}
 		} finally {
 			//release the scheduling rule to be a good job citizen
 			Job.getJobManager().endRule(getRoot());
-			monitor.done();
 		}
 	}
 
@@ -2239,7 +2237,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (avoidNotification)
 					avoidNotification = notificationManager.beginAvoidNotify();
 				depth = getWorkManager().beginUnprotected();
-				action.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				action.run(Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				getWorkManager().operationCanceled();
 				throw e;

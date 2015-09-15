@@ -171,40 +171,34 @@ public class Project extends Container implements IProject {
 
 	@Override
 	public void close(IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		String msg = NLS.bind(Messages.resources_closing_1, getName());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, msg, 100);
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 		try {
-			String msg = NLS.bind(Messages.resources_closing_1, getName());
-			monitor.beginTask(msg, Policy.totalWork);
-			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				checkExists(flags, true);
-				monitor.subTask(msg);
-				if (!isOpen(flags))
-					return;
-				// Signal that this resource is about to be closed.  Do this at the very
-				// beginning so that infrastructure pieces have a chance to do clean up
-				// while the resources still exist.
-				workspace.beginOperation(true);
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
-				// flush the build order early in case there is a problem
-				workspace.flushBuildOrder();
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-				IStatus saveStatus = workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
-				internalClose();
-				monitor.worked(Policy.opWork / 2);
-				if (saveStatus != null && !saveStatus.isOK())
-					throw new ResourceException(saveStatus);
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			}
+			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			ResourceInfo info = getResourceInfo(false, false);
+			int flags = getFlags(info);
+			checkExists(flags, true);
+			subMonitor.subTask(msg);
+			if (!isOpen(flags))
+				return;
+			// Signal that this resource is about to be closed.  Do this at the very
+			// beginning so that infrastructure pieces have a chance to do clean up
+			// while the resources still exist.
+			workspace.beginOperation(true);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
+			IProgressMonitor sub = subMonitor.newChild(49, SubMonitor.SUPPRESS_SUBTASK);
+			IStatus saveStatus = workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
+			internalClose(subMonitor.newChild(49));
+			if (saveStatus != null && !saveStatus.isOK())
+				throw new ResourceException(saveStatus);
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
 		} finally {
-			monitor.done();
+			workspace.endOperation(rule, true, subMonitor.newChild(1));
 		}
 	}
 
@@ -596,15 +590,19 @@ public class Project extends Container implements IProject {
 	 * to read the project description.  Since it is called during workspace restore,
 	 * it cannot start any operations.
 	 */
-	protected void internalClose() throws CoreException {
+	protected void internalClose(IProgressMonitor monitor) throws CoreException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		workspace.flushBuildOrder();
 		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
+		subMonitor.worked(1);
 		// remove each member from the resource tree.
 		// DO NOT use resource.delete() as this will delete it from disk as well.
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
+		subMonitor.setWorkRemaining(members.length);
 		for (int i = 0; i < members.length; i++) {
 			Resource member = (Resource) members[i];
 			workspace.deleteResource(member);
+			subMonitor.worked(1);
 		}
 		// finally mark the project as closed.
 		ResourceInfo info = getResourceInfo(false, true);
