@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -278,12 +278,13 @@ public class BuildAction extends WorkspaceAction {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				IStatus status = null;
-				monitor.beginTask("", 10000); //$NON-NLS-1$
-				monitor.setTaskName(getOperationMessage());
+				SubMonitor progress = SubMonitor.convert(monitor, 10000);
+				progress.setTaskName(getOperationMessage());
 				try {
 					// Backwards compatibility: check shouldPerformResourcePruning().
 					// Previously if this returned true, the full reference graph is built, otherwise just build the selected configurations
-					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(), new SubProgressMonitor(monitor, 10000));
+					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(),
+							progress.newChild(10000));
 				} catch (CoreException e) {
 					status = e.getStatus();
 				}
