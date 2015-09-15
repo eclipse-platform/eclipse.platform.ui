@@ -5,4 +5,5 @@
       <provide interface="org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier"/>
    </service>
    <property name="dependency.injection.annotation" type="String" value="org.eclipse.e4.ui.di.UIEventTopic"/>
+   <reference bind="setEventAdmin" cardinality="1..1" interface="org.osgi.service.event.EventAdmin" name="EventAdmin" policy="static"/>
 </scr:component>
