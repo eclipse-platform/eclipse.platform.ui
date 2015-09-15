@@ -37,9 +37,6 @@ public class CustomTriggerBuilder extends TestBuilder {
 		singleton = this;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IncrementalProjectBuilder
-	 */
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		triggerForLastBuild = kind;

@@ -36,11 +36,6 @@ public class BrokenFileSystem extends FileSystem {
 		instance = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(java.net.URI)
-	 */
 	@Override
 	public IFileStore getStore(URI uri) {
 		Assert.isLegal(SCHEME_BROKEN.equals(uri.getScheme()));

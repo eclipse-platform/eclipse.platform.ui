@@ -32,9 +32,6 @@ public class TestModelProvider extends ModelProvider {
 		return new ResourceMapping[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ModelProvider#validateChange(org.eclipse.core.resources.IResourceDelta, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus validateChange(IResourceDelta rootDelta, IProgressMonitor monitor) {
 		if (!enabled)

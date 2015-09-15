@@ -92,10 +92,6 @@ public class ContextBuilder extends TestBuilder {
 		buildConfigurationForLastBuild = getBuildConfig();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IncrementalProjectBuilder#getRule(int, Map)
-	 */
 	@Override
 	public ISchedulingRule getRule(int kind, Map<String, String> args) {
 		getRuleCalledForLastBuild = true;

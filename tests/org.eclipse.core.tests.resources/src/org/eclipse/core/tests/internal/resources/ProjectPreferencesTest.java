@@ -62,9 +62,6 @@ public class ProjectPreferencesTest extends ResourceTest {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
-		 */
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			log.append("[");

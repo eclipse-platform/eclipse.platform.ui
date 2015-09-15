@@ -36,18 +36,12 @@ public class SimpleNature extends TestNature {
 		instance = this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
 	@Override
 	public void configure() throws CoreException {
 		super.configure();
 		wasConfigured = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
 	@Override
 	public void deconfigure() throws CoreException {
 		super.deconfigure();

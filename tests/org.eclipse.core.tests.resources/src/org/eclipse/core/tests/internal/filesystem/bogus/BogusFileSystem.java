@@ -46,11 +46,6 @@ public class BogusFileSystem extends MemoryFileSystem {
 		instance = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filesystem.provider.FileSystem#getStore(java.net.URI)
-	 */
 	@Override
 	public IFileStore getStore(URI uri) {
 		return new BogusFileStore(Path.fromPortableString(uri.getSchemeSpecificPart()));

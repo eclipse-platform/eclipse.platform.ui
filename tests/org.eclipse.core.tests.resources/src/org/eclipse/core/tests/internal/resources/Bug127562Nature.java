@@ -25,9 +25,6 @@ public class Bug127562Nature extends TestNature {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
 	@Override
 	public void configure() throws CoreException {
 		super.configure();
@@ -35,9 +32,6 @@ public class Bug127562Nature extends TestNature {
 		p.create(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
 	@Override
 	public void deconfigure() throws CoreException {
 		super.deconfigure();

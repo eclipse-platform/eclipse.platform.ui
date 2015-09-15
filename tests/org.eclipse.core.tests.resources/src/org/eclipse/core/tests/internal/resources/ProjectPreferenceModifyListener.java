@@ -39,9 +39,6 @@ public class ProjectPreferenceModifyListener extends PreferenceModifyListener {
 		return qualifier.equals(getSegment(node.absolutePath(), 2));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.PreferenceModifyListener#preApply(org.eclipse.core.runtime.preferences.IEclipsePreferences)
-	 */
 	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		if (equalsQualifier(node, "test.load.is.import"))

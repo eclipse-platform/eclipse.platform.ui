@@ -29,10 +29,6 @@ public class BuilderEventTest extends AbstractBuilderTest {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.tests.internal.builders.AbstractBuilderTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -41,10 +37,6 @@ public class BuilderEventTest extends AbstractBuilderTest {
 		getWorkspace().addResourceChangeListener(listener, mask);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.tests.internal.builders.AbstractBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

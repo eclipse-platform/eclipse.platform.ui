@@ -33,9 +33,6 @@ public class TestWorkspaceJob extends WorkspaceJob {
 			throw new IllegalArgumentException("Use a job duration that it is a multiple of " + tickLength);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.resources.InternalWorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		int ticks = (int) (duration / tickLength);
