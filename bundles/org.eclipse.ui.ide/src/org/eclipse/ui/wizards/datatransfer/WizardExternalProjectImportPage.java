@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -437,14 +437,12 @@ public class WizardExternalProjectImportPage extends WizardPage {
             @Override
 			protected void execute(IProgressMonitor monitor)
                     throws CoreException {
-                monitor.beginTask("", 2000); //$NON-NLS-1$
-                project.create(description, new SubProgressMonitor(monitor,
-                        1000));
-                if (monitor.isCanceled()) {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
+				project.create(description, subMonitor.newChild(50));
+				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-                project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
-
+				project.open(IResource.BACKGROUND_REFRESH, subMonitor.newChild(50));
             }
         };
 
