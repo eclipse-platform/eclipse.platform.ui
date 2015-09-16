@@ -6,11 +6,14 @@
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.util;
 
-import java.util.List;
-
-import org.eclipse.e4.emf.xpath.test.model.xpathtest.*;
-
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Menu;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuContainer;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuElement;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.MenuItem;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
