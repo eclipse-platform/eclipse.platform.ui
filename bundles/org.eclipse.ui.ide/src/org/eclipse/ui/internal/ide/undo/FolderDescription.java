@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * FolderDescription is a lightweight description that describes a folder to be
@@ -75,33 +75,41 @@ public class FolderDescription extends ContainerDescription {
 	}
 
 	@Override
-	public void createExistentResourceFromHandle(IResource resource, IProgressMonitor mon) throws CoreException {
+	public void createExistentResourceFromHandle(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
+
 		Assert.isLegal(resource instanceof IFolder);
 		if (resource.exists()) {
 			return;
 		}
 		IFolder folderHandle = (IFolder) resource;
-		SubMonitor subMonitor = SubMonitor.convert(mon, 300);
-		subMonitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		if (filters != null) {
-			SubMonitor loopMonitor = subMonitor.newChild(100).setWorkRemaining(filters.length);
-			for (int i = 0; i < filters.length; i++) {
-				folderHandle.createFilter(filters[i].getType(), filters[i].getFileInfoMatcherDescription(), 0,
-						loopMonitor.newChild(1));
+		try {
+			monitor.beginTask("", 200); //$NON-NLS-1$
+			monitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
 			}
+			if (filters != null) {
+				for (int i = 0; i < filters.length; i++) {
+					folderHandle.createFilter(filters[i].getType(), filters[i].getFileInfoMatcherDescription(), 0, new SubProgressMonitor(
+							monitor, 100));
+				}
+			}
+			if (location != null) {
+				folderHandle.createLink(location,
+						IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(
+								monitor, 100));
+			} else {
+				folderHandle.create(virtual ? IResource.VIRTUAL:0, true, new SubProgressMonitor(
+						monitor, 100));
+			}
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			createChildResources(folderHandle, monitor, 100);
+
+		} finally {
+			monitor.done();
 		}
-		subMonitor.setWorkRemaining(200);
-		if (location != null) {
-			folderHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.newChild(100));
-		} else {
-			folderHandle.create(virtual ? IResource.VIRTUAL : 0, true, subMonitor.newChild(100));
-		}
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-		createChildResources(folderHandle, subMonitor.newChild(100));
 	}
 }

@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -545,24 +545,30 @@ return true;
 				IDEWorkbenchMessages.LinkedResourceEditor_removeTitle,
 				IDEWorkbenchMessages.LinkedResourceEditor_removeMessage)) {
 			final IResource[] selectedResources = getSelectedResource();
-			final ArrayList<IResource> removedResources = new ArrayList<>();
+			final ArrayList/*<IResource>*/ removedResources = new ArrayList();
 
 			IRunnableWithProgress op = monitor -> {
-				SubMonitor subMonitor = SubMonitor.convert(monitor,
-						IDEWorkbenchMessages.LinkedResourceEditor_removingMessage, selectedResources.length);
-				for (int i = 0; i < selectedResources.length; i++) {
-					if (subMonitor.isCanceled())
-						break;
-					String fullPath = selectedResources[i].getFullPath().toPortableString();
-					try {
-						selectedResources[i].delete(true, subMonitor.newChild(1));
-						removedResources.add(selectedResources[i]);
-						fBrokenResources.remove(fullPath);
-						fFixedResources.remove(fullPath);
-						fAbsoluteResources.remove(fullPath);
-					} catch (CoreException e) {
-						e.printStackTrace();
+				try {
+					monitor.beginTask(
+							IDEWorkbenchMessages.LinkedResourceEditor_removingMessage,
+							selectedResources.length);
+					for (int i = 0; i < selectedResources.length; i++) {
+						if (monitor.isCanceled())
+							break;
+						String fullPath = selectedResources[i]
+								.getFullPath().toPortableString();
+						try {
+							selectedResources[i].delete(true, new SubProgressMonitor(monitor, 1));
+							removedResources.add(selectedResources[i]);
+							fBrokenResources.remove(fullPath);
+							fFixedResources.remove(fullPath);
+							fAbsoluteResources.remove(fullPath);
+						} catch (CoreException e) {
+							e.printStackTrace();
+						}
 					}
+				} finally {
+					monitor.done();
 				}
 			};
 			try {

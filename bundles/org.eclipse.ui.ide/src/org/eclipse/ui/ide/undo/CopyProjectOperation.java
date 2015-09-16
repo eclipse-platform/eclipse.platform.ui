@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.internal.ide.undo.ProjectDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
@@ -130,9 +130,9 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		// Delete the project that was copied
-		WorkspaceUndoUtil.delete(resources, subMonitor.newChild(1), uiInfo, true);
+		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(monitor, 1),
+				uiInfo, true);
 		// Set the target resource to the original
 		setTargetResources(new IResource[] { originalProject });
 		setResourceDescriptions(new ResourceDescription[0]);

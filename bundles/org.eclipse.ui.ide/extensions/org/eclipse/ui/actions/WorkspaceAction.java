@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -140,29 +140,38 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 *            a progress monitor
 	 * @return The result of the execution
 	 */
-	final IStatus execute(List<? extends IResource> resources, IProgressMonitor mon) {
+	final IStatus execute(List<? extends IResource> resources, IProgressMonitor monitor) {
 		MultiStatus errors = null;
 		// 1FTIMQN: ITPCORE:WIN - clients required to do too much iteration work
 		if (shouldPerformResourcePruning()) {
 			resources = pruneResources(resources);
 		}
-		SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
+		// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
+		monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
 		// Fix for bug 31768 - Don't provide a task name in beginTask
 		// as it will be appended to each subTask message. Need to
 		// call setTaskName as its the only was to assure the task name is
 		// set in the monitor (see bug 31824)
-		subMonitor.setTaskName(getOperationMessage());
-		for (IResource resource : resources) {
-			try {
-				invokeOperation(resource, subMonitor.newChild(1));
-			} catch (CoreException e) {
-				errors = recordError(errors, e);
+		monitor.setTaskName(getOperationMessage());
+		Iterator<? extends IResource> resourcesEnum = resources.iterator();
+		try {
+			while (resourcesEnum.hasNext()) {
+				IResource resource = resourcesEnum.next();
+				try {
+					// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity
+					// issues
+					invokeOperation(resource, new SubProgressMonitor(monitor, 1000));
+				} catch (CoreException e) {
+					errors = recordError(errors, e);
+				}
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
 			}
-			if (subMonitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
+			return errors == null ? Status.OK_STATUS : errors;
+		} finally {
+			monitor.done();
 		}
-		return errors == null ? Status.OK_STATUS : errors;
 	}
 
 	/**

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -172,9 +172,10 @@ public class GlobalBuildAction extends Action implements
         Job buildJob = new Job(IDEWorkbenchMessages.GlobalBuildAction_jobTitle) {
             @Override
 			protected IStatus run(IProgressMonitor monitor) {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, getOperationMessage(), 100);
+                monitor.beginTask(getOperationMessage(), 100);
                 try {
-					ResourcesPlugin.getWorkspace().build(buildType, subMonitor.newChild(100));
+                    ResourcesPlugin.getWorkspace().build(buildType,
+                            new SubProgressMonitor(monitor, 100));
                 } catch (CoreException e) {
                     return e.getStatus();
                 } finally {

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.ide.undo.ResourceDescription;
 
@@ -176,42 +176,48 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 *            the handle of the created parent
 	 * @param monitor
 	 *            the progress monitor to be used
+	 * @param ticks
+	 *            the number of ticks allocated for creating children
 	 * @throws CoreException
 	 */
-	protected final void createChildResources(IContainer parentHandle,
-			IProgressMonitor monitor) throws CoreException {
+	protected void createChildResources(IContainer parentHandle,
+			IProgressMonitor monitor, int ticks) throws CoreException {
+
 		// restore any children
 		if (members != null && members.length > 0) {
-			SubMonitor subMonitor = SubMonitor.convert(monitor, members.length);
 			for (int i = 0; i < members.length; i++) {
 				members[i].parent = parentHandle;
-				members[i].createResource(subMonitor.newChild(1));
+				members[i].createResource(new SubProgressMonitor(monitor, ticks
+						/ members.length));
 			}
 		}
 	}
 
 	@Override
-	public void recordStateFromHistory(IResource resource, IProgressMonitor mon) throws CoreException {
+	public void recordStateFromHistory(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask(
+				UndoMessages.FolderDescription_SavingUndoInfoProgress, 100);
 		if (members != null) {
-			SubMonitor subMonitor = SubMonitor.convert(mon, UndoMessages.FolderDescription_SavingUndoInfoProgress,
-					members.length);
 			for (int i = 0; i < members.length; i++) {
-				SubMonitor iterationMonitor = subMonitor.newChild(1);
 				if (members[i] instanceof FileDescription) {
 					IPath path = resource.getFullPath().append(
 							((FileDescription) members[i]).name);
 					IFile fileHandle = resource.getWorkspace().getRoot().getFile(
 							path);
-					members[i].recordStateFromHistory(fileHandle, iterationMonitor);
+					members[i].recordStateFromHistory(fileHandle,
+							new SubProgressMonitor(monitor, 100 / members.length));
 				} else if (members[i] instanceof FolderDescription) {
 					IPath path = resource.getFullPath().append(
 							((FolderDescription) members[i]).name);
 					IFolder folderHandle = resource.getWorkspace().getRoot()
 							.getFolder(path);
-					members[i].recordStateFromHistory(folderHandle, iterationMonitor);
+					members[i].recordStateFromHistory(folderHandle,
+							new SubProgressMonitor(monitor, 100 / members.length));
 				}
 			}
 		}
+		monitor.done();
 	}
 
 	/**

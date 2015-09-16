@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -188,18 +189,18 @@ public class SaveableHelper {
 			@Override
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				SubMonitor subMonitor = SubMonitor.convert(monitorWrap, WorkbenchMessages.Save, dirtyModels.size());
+				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
 				try {
 					for (Iterator<Saveable> i = dirtyModels.iterator(); i.hasNext();) {
 						Saveable model = i.next();
 						// handle case where this model got saved as a result of
 						// saving another
 						if (!model.isDirty()) {
-							subMonitor.worked(1);
+							monitor.worked(1);
 							continue;
 						}
-						doSaveModel(model, subMonitor.newChild(1), window, confirm);
-						if (subMonitor.isCanceled()) {
+						doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), window, confirm);
+						if (monitor.isCanceled()) {
 							break;
 						}
 					}

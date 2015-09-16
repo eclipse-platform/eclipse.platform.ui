@@ -18,7 +18,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -40,8 +40,8 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 
 		final ExecutionEvent finalEvent = event;
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, true, mon -> {
-				SubMonitor subMonitor = SubMonitor.convert(mon, MarkerMessages.markCompletedHandler_task, 100);
+			PlatformUI.getWorkbench().getProgressService().run(true, true, monitor -> {
+				monitor.beginTask(MarkerMessages.markCompletedHandler_task, 100);
 				IMarker[] markers = getSelectedMarkers(finalEvent);
 				if (markers.length == 0) {
 					return;
@@ -52,11 +52,12 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 				IUndoableOperation op = new UpdateMarkersOperation(markers, attrs,
 						MarkerMessages.markCompletedAction_title, true);
 
-				subMonitor.worked(20);
-				if (subMonitor.isCanceled()) {
+				monitor.worked(20);
+				if(monitor.isCanceled()) {
 					return;
 				}
-				execute(op, MarkerMessages.markCompletedAction_title, subMonitor.newChild(80), null);
+				execute(op, MarkerMessages.markCompletedAction_title, new SubProgressMonitor(monitor, 80), null);
+				monitor.done();
 			});
 		} catch (InvocationTargetException e) {
 			StatusManager.getManager().handle(

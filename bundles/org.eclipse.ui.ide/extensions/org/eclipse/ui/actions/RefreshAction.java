@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -221,24 +221,28 @@ public class RefreshAction extends WorkspaceAction {
 		}
 		return new WorkspaceModifyOperation(rule) {
 			@Override
-			public void execute(IProgressMonitor mon) {
-				SubMonitor subMonitor = SubMonitor.convert(mon, resources.size());
+			public void execute(IProgressMonitor monitor) {
 				MultiStatus errors = null;
-				subMonitor.setTaskName(getOperationMessage());
+				monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
+				monitor.setTaskName(getOperationMessage());
 				Iterator<? extends IResource> resourcesEnum = resources.iterator();
-				while (resourcesEnum.hasNext()) {
-					try {
-						IResource resource = resourcesEnum.next();
-						refreshResource(resource, subMonitor.newChild(1));
-					} catch (CoreException e) {
-						errors = recordError(errors, e);
+				try {
+					while (resourcesEnum.hasNext()) {
+						try {
+							IResource resource = resourcesEnum.next();
+							refreshResource(resource, new SubProgressMonitor(monitor, 1000));
+						} catch (CoreException e) {
+							errors = recordError(errors, e);
+						}
+						if (monitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
 					}
-					if (subMonitor.isCanceled()) {
-						throw new OperationCanceledException();
+					if (errors != null) {
+						errorStatus[0] = errors;
 					}
-				}
-				if (errors != null) {
-					errorStatus[0] = errors;
+				} finally {
+					monitor.done();
 				}
 			}
 		};

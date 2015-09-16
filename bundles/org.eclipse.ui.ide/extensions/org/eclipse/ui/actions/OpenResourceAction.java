@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -215,7 +215,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * Opens the selected projects, and all related projects, in the background.
 	 */
 	private void runOpenWithReferences() {
-		final List<IResource> resources = new ArrayList<>(getActionResources());
+		final List resources = new ArrayList(getActionResources());
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
 			private boolean openProjectReferences = true;
 			private boolean hasPrompted = false;
@@ -223,9 +223,11 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			/**
 			 * Opens a project along with all projects it references
 			 */
-			private void doOpenWithReferences(IProject project, IProgressMonitor mon) throws CoreException {
-				SubMonitor subMonitor = SubMonitor.convert(mon, openProjectReferences ? 2 : 1);
-				project.open(subMonitor.newChild(1));
+			private void doOpenWithReferences(IProject project, IProgressMonitor monitor) throws CoreException {
+				if (!project.exists() || project.isOpen()) {
+					return;
+				}
+				project.open(new SubProgressMonitor(monitor, 1000));
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
@@ -250,28 +252,23 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					}
 				}
 				if (openProjectReferences) {
-					SubMonitor loopMonitor = subMonitor.newChild(1).setWorkRemaining(references.length);
 					for (int i = 0; i < references.length; i++) {
-						doOpenWithReferences(references[i], loopMonitor.newChild(1));
+						doOpenWithReferences(references[i], monitor);
 					}
 				}
 			}
 
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, countClosedProjects());
-				// at most we can only open all projects currently closed
-				subMonitor.setTaskName(getOperationMessage());
-				for (IResource resource : resources) {
-					if (!(resource instanceof IProject)) {
-						continue;
+				try {
+					// at most we can only open all projects currently closed
+					monitor.beginTask("", countClosedProjects() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(getOperationMessage());
+					for (Iterator it = resources.iterator(); it.hasNext();) {
+						doOpenWithReferences((IProject) it.next(), monitor);
 					}
-
-					IProject project = (IProject) resource;
-					if (!project.exists() || project.isOpen()) {
-						continue;
-					}
-					doOpenWithReferences(project, subMonitor.newChild(1));
+				} finally {
+					monitor.done();
 				}
 				return Status.OK_STATUS;
 			}

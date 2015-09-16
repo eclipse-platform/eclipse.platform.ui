@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -652,19 +652,19 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			@Override
 			public void run(IProgressMonitor monitor) {
-				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				SubMonitor subMonitor = SubMonitor.convert(monitorWrap, WorkbenchMessages.Saving_Modifications,
-						finalModels.size());
+				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
+						monitor);
+				monitorWrap.beginTask(WorkbenchMessages.Saving_Modifications, finalModels.size());
 				for (Saveable model : finalModels) {
 					// handle case where this model got saved as a result of
 					// saving another
 					if (!model.isDirty()) {
-						subMonitor.worked(1);
+						monitor.worked(1);
 						continue;
 					}
-					SaveableHelper.doSaveModel(model, subMonitor.newChild(1),
+					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1),
 							shellProvider, blockUntilSaved);
-					if (subMonitor.isCanceled())
+					if (monitorWrap.isCanceled())
 						break;
 				}
 				monitorWrap.done();

@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -76,6 +76,8 @@ public class ImportOperation extends WorkspaceModifyOperation {
     private List rejectedFiles;
 
     private IImportStructureProvider provider;
+
+    private IProgressMonitor monitor;
 
     protected IOverwriteQuery overwriteCallback;
 
@@ -229,10 +231,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param policy on of the POLICY constants defined in the
      * class.
      */
-	void collectExistingReadonlyFiles(IPath sourceStart, List sources, ArrayList noOverwrite,
-			ArrayList overwriteReadonly, int policy, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+    void collectExistingReadonlyFiles(IPath sourceStart, List sources,
+            ArrayList noOverwrite, ArrayList overwriteReadonly, int policy) {
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
         Iterator sourceIter = sources.iterator();
         IPath sourceRootPath = null;
 
@@ -271,8 +272,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
                     }
                 }
                 if (provider.isFolder(nextSource)) {
-					collectExistingReadonlyFiles(newDestinationPath, provider.getChildren(nextSource), noOverwrite,
-							overwriteReadonly, POLICY_FORCE_OVERWRITE, subMonitor.newChild(100));
+					collectExistingReadonlyFiles(newDestinationPath, provider
+                            .getChildren(nextSource), noOverwrite,
+                            overwriteReadonly, POLICY_FORCE_OVERWRITE);
 				}
             } else {
                 IFile file = getFile(newDestination);
@@ -371,24 +373,41 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     @Override
 	protected void execute(IProgressMonitor progressMonitor) {
-		SubMonitor subMonitor = SubMonitor.convert(progressMonitor, DataTransferMessages.DataTransfer_importTask, 100);
+
+        monitor = progressMonitor;
+
         try {
             if (selectedFiles == null) {
-				ContainerGenerator generator = new ContainerGenerator(destinationPath);
-				subMonitor.worked(3);
-				validateFiles(Arrays.asList(new Object[] { source }), subMonitor.newChild(3));
-				destinationContainer = generator.generateContainer(subMonitor.newChild(4));
-				importRecursivelyFrom(source, POLICY_DEFAULT, subMonitor.newChild(90));
+                //Set the amount to 1000 as we have no idea of how long this will take
+                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, 1000);
+                ContainerGenerator generator = new ContainerGenerator(
+                        destinationPath);
+                monitor.worked(30);
+                validateFiles(Arrays.asList(new Object[] { source }));
+                monitor.worked(50);
+                destinationContainer = generator
+                        .generateContainer(new SubProgressMonitor(monitor, 50));
+                importRecursivelyFrom(source, POLICY_DEFAULT);
+                //Be sure it finishes
+                monitor.worked(90);
             } else {
                 // Choose twice the selected files size to take folders into account
-				ContainerGenerator generator = new ContainerGenerator(destinationPath);
-				subMonitor.worked(3);
-				validateFiles(selectedFiles, subMonitor.newChild(3));
-				destinationContainer = generator.generateContainer(subMonitor.newChild(4));
-				importFileSystemObjects(selectedFiles, subMonitor.newChild(90));
+                int creationCount = selectedFiles.size();
+                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, creationCount + 100);
+                ContainerGenerator generator = new ContainerGenerator(
+                        destinationPath);
+                monitor.worked(30);
+                validateFiles(selectedFiles);
+                monitor.worked(50);
+                destinationContainer = generator
+                        .generateContainer(new SubProgressMonitor(monitor, 50));
+                importFileSystemObjects(selectedFiles);
+                monitor.done();
             }
         } catch (CoreException e) {
             errorTable.add(e.getStatus());
+        } finally {
+            monitor.done();
         }
     }
 
@@ -500,8 +519,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param fileObject the file system object to be imported
      * @param policy determines how the file object is imported
      */
-	void importFile(Object fileObject, int policy, IProgressMonitor mon) {
-		SubMonitor subMonitor = SubMonitor.convert(mon, 100);
+    void importFile(Object fileObject, int policy) {
         IContainer containerResource;
         try {
             containerResource = getDestinationContainerFor(fileObject);
@@ -515,9 +533,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
         }
 
         String fileObjectPath = provider.getFullPath(fileObject);
-		subMonitor.subTask(fileObjectPath);
+        monitor.subTask(fileObjectPath);
         IFile targetResource = containerResource.getFile(new Path(provider
                 .getLabel(fileObject)));
+        monitor.worked(1);
 
         if (rejectedFiles.contains(targetResource.getFullPath())) {
 			return;
@@ -545,44 +564,51 @@ public class ImportOperation extends WorkspaceModifyOperation {
             return;
         }
 
-		try {
-			if (createVirtualFolder || createLinks || createLinkFilesOnly) {
-				if (targetResource.exists())
-					targetResource.delete(true, subMonitor.newChild(50));
-				targetResource.createLink(
-						createRelativePath(new Path(provider.getFullPath(fileObject)), targetResource), 0,
-						subMonitor.newChild(50));
-			} else {
-				if (targetResource.exists()) {
-					if (targetResource.isLinked()) {
-						targetResource.delete(true, subMonitor.newChild(50));
-						targetResource.create(contentStream, false, subMonitor.newChild(50));
-					} else
-						targetResource.setContents(contentStream, IResource.KEEP_HISTORY, subMonitor.newChild(100));
-				} else
-					targetResource.create(contentStream, false, subMonitor.newChild(100));
-			}
-			setResourceAttributes(targetResource, fileObject);
+        try {
+            if (createVirtualFolder || createLinks || createLinkFilesOnly) {
+	            if (targetResource.exists())
+	            	targetResource.delete(true, null);
+                targetResource.createLink(createRelativePath(
+                        new Path(provider
+                                .getFullPath(fileObject)), targetResource), 0, null);
+            } else {
+            if (targetResource.exists()) {
+	            	if (targetResource.isLinked()) {
+		            	targetResource.delete(true, null);
+		            	targetResource.create(contentStream, false, null);
+	            	}
+	            	else
+				targetResource.setContents(contentStream,
+                        IResource.KEEP_HISTORY, null);
+	            }
+                else
+                    targetResource.create(contentStream, false, null);
+            }
+            setResourceAttributes(targetResource, fileObject);
 
-			if (provider instanceof TarLeveledStructureProvider) {
-				try {
-					targetResource.setResourceAttributes(
-							((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
-				} catch (CoreException e) {
-					errorTable.add(e.getStatus());
-				}
-			}
-		} catch (CoreException e) {
-			errorTable.add(e.getStatus());
-		} finally {
-			try {
-				contentStream.close();
-			} catch (IOException e) {
-				errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-						NLS.bind(DataTransferMessages.ImportOperation_closeStreamError, fileObjectPath), e));
-			}
-		}
-	}
+            if (provider instanceof TarLeveledStructureProvider) {
+            	try {
+            		targetResource.setResourceAttributes(((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
+            	} catch (CoreException e) {
+            		errorTable.add(e.getStatus());
+            	}
+            }
+        } catch (CoreException e) {
+            errorTable.add(e.getStatus());
+        } finally {
+            try {
+                contentStream.close();
+            } catch (IOException e) {
+                errorTable
+                        .add(new Status(
+                                IStatus.ERROR,
+                                PlatformUI.PLUGIN_ID,
+                                0,
+                                NLS.bind(DataTransferMessages.ImportOperation_closeStreamError, fileObjectPath),
+                                e));
+            }
+        }
+    }
 
     /**
      * Reuse the file attributes set in the import.
@@ -631,11 +657,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @throws CoreException
      * @exception OperationCanceledException if canceled
      */
-	void importFileSystemObjects(List filesToImport, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, filesToImport.size());
+    void importFileSystemObjects(List filesToImport) throws CoreException {
         Iterator filesEnum = filesToImport.iterator();
         while (filesEnum.hasNext()) {
-			SubMonitor iterationMonitor = subMonitor.newChild(1);
             Object fileSystemObject = filesEnum.next();
             if (source == null) {
                 // We just import what we are given into the destination
@@ -652,7 +676,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                 }
                 source = sourcePath.toFile();
             }
-			importRecursivelyFrom(fileSystemObject, POLICY_DEFAULT, iterationMonitor);
+            importRecursivelyFrom(fileSystemObject, POLICY_DEFAULT);
         }
     }
 
@@ -666,7 +690,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @return the policy to use to import the folder's children
      * @throws CoreException
      */
-	int importFolder(Object folderObject, int policy, IProgressMonitor monitor) throws CoreException {
+    int importFolder(Object folderObject, int policy) throws CoreException {
         IContainer containerResource;
         try {
             containerResource = getDestinationContainerFor(folderObject);
@@ -754,23 +778,22 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	 * @throws CoreException
      * @exception OperationCanceledException if canceled
      */
-	void importRecursivelyFrom(Object fileSystemObject, int policy, IProgressMonitor mon) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(mon, 100);
-		if (subMonitor.isCanceled()) {
+    void importRecursivelyFrom(Object fileSystemObject, int policy) throws CoreException {
+        if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 
         if (!provider.isFolder(fileSystemObject)) {
-			importFile(fileSystemObject, policy, subMonitor.newChild(100));
+            importFile(fileSystemObject, policy);
             return;
         }
 
-		int childPolicy = importFolder(fileSystemObject, policy, subMonitor.newChild(10));
+        int childPolicy = importFolder(fileSystemObject, policy);
         if (childPolicy != POLICY_SKIP_CHILDREN) {
-			List children = provider.getChildren(fileSystemObject);
-			SubMonitor loopMonitor = subMonitor.newChild(90).setWorkRemaining(children.size());
-			for (Object child : children) {
-				importRecursivelyFrom(child, childPolicy, loopMonitor.newChild(1));
+            Iterator children = provider.getChildren(fileSystemObject)
+                    .iterator();
+            while (children.hasNext()) {
+				importRecursivelyFrom(children.next(), childPolicy);
 			}
         }
     }
@@ -919,14 +942,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
      *
      * @param sourceFiles files to validate
      */
-	void validateFiles(List sourceFiles, IProgressMonitor monitor) {
+    void validateFiles(List sourceFiles) {
         ArrayList noOverwrite = new ArrayList();
         ArrayList overwriteReadonly = new ArrayList();
 
-		collectExistingReadonlyFiles(destinationPath, sourceFiles, noOverwrite, overwriteReadonly, POLICY_DEFAULT,
-				monitor);
-		rejectedFiles = validateEdit(overwriteReadonly);
-		rejectedFiles.addAll(noOverwrite);
+        collectExistingReadonlyFiles(destinationPath, sourceFiles, noOverwrite,
+                overwriteReadonly, POLICY_DEFAULT);
+        rejectedFiles = validateEdit(overwriteReadonly);
+        rejectedFiles.addAll(noOverwrite);
     }
 
     /**
