@@ -24,6 +24,8 @@
   <packaging>pom</packaging>
   <properties>
     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/platform/eclipse.platform.ua.git</tycho.scmUrl>
+    <!-- See bug 443174 - remove when parent pom doesn't set skipTests to true -->
+    <skipTests>false</skipTests>
   </properties>
 
   <!-- 

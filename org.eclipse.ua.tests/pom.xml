@@ -21,4 +21,9 @@
   <artifactId>org.eclipse.ua.tests</artifactId>
   <version>3.3.800-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
+
+  <properties>
+    <!-- Tests not yet ready for surefire -->
+    <skipTests>true</skipTests>
+  </properties>
 </project>
