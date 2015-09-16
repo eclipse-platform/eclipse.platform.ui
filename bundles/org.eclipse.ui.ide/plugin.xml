@@ -1054,6 +1054,11 @@
             sequence="M2+M3+W"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.ide.showInSystemExplorer"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+M3+E"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             platform="carbon"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M2+M3+W"
@@ -2249,9 +2254,12 @@
             class="org.eclipse.ui.internal.ide.handlers.ShowInSystemExplorerHandler"
             commandId="org.eclipse.ui.ide.showInSystemExplorer">
          <enabledWhen>
-            <reference
-                  definitionId="org.eclipse.ui.ide.showInDefinition">
-            </reference>
+            <or>
+	            <reference
+	                  definitionId="org.eclipse.ui.ide.showInDefinition">
+	            </reference>
+	            <adapt type="org.eclipse.core.resources.IResource"/>
+	        </or>
          </enabledWhen>
       </handler>
    </extension>
