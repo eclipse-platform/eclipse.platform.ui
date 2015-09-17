@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.junit.Test;
 
 /**
  * Base class for a simple test job with configurable parameters

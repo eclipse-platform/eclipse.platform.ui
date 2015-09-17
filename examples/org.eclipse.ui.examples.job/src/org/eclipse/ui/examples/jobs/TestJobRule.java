@@ -12,7 +12,6 @@ package org.eclipse.ui.examples.jobs;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.junit.Test;
 
 /**
  * TestJobRule is a scheduling rules that makes all jobs sequential.
