@@ -20,9 +20,5 @@
   <groupId>org.eclipse.core</groupId>
   <artifactId>org.eclipse.core.tests.harness</artifactId>
   <version>3.11.0-SNAPSHOT</version>
-  <packaging>eclipse-test-plugin</packaging>
-  <!-- This plug-in does not contain runnable tests, only helper classes for other tests -->
-  <properties>
-	<skipTests>true</skipTests>
-  </properties>
+  <packaging>eclipse-plugin</packaging>
 </project>
