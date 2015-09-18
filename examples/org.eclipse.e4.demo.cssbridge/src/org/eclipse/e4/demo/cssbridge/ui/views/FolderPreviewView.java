@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,8 +66,7 @@ import org.eclipse.ui.part.ViewPart;
 public class FolderPreviewView extends ViewPart {
 	public static final String ID = "org.eclipse.e4.demo.cssbridge.ui.views.folderPreviewView";
 
-	private static final String[] VIEWER_COLUMN_NAMES = { "Importance",
-			"Sender", "Subject", "Date" };
+	private static final String[] VIEWER_COLUMN_NAMES = { "Importance", "Sender", "Subject", "Date" };
 
 	private Composite messageBodyComposite;
 
@@ -88,13 +87,10 @@ public class FolderPreviewView extends ViewPart {
 	private ISelectionListener mailFolderChangedListener = new ISelectionListener() {
 		@Override
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			if (part instanceof FoldersView
-					&& selection instanceof StructuredSelection) {
+			if (part instanceof FoldersView && selection instanceof StructuredSelection) {
 				Object selected = ((TreeSelection) selection).getFirstElement();
-				if (selected instanceof TreeItem
-						&& ((TreeItem) selected).getValue() instanceof FolderType) {
-					updateMailFolder((FolderType) ((TreeItem) selected)
-							.getValue());
+				if (selected instanceof TreeItem && ((TreeItem) selected).getValue() instanceof FolderType) {
+					updateMailFolder((FolderType) ((TreeItem) selected).getValue());
 				}
 			}
 		}
@@ -155,9 +151,8 @@ public class FolderPreviewView extends ViewPart {
 	private SelectionAdapter senderLinkSelectionAdapter = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			MessageDialog
-					.openInformation(getSite().getShell(), "Not Implemented",
-							"Imagine the address book or a new message being created now.");
+			MessageDialog.openInformation(getSite().getShell(), "Not Implemented",
+					"Imagine the address book or a new message being created now.");
 		}
 	};
 
@@ -185,10 +180,9 @@ public class FolderPreviewView extends ViewPart {
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		selectionService = (ISelectionService) site
-				.getService(ISelectionService.class);
+		selectionService = site.getService(ISelectionService.class);
 		selectionService.addPostSelectionListener(mailFolderChangedListener);
-		mailService = (IMailService) site.getService(IMailService.class);
+		mailService = site.getService(IMailService.class);
 	}
 
 	@Override
@@ -197,10 +191,8 @@ public class FolderPreviewView extends ViewPart {
 		getDisplay(getSite()).removeListener(SWT.Skin, shellReskinListener);
 
 		if (!viewer.getTable().isDisposed()) {
-			viewer.getTable().removeListener(SWT.PaintItem,
-					tableItemPaintListener);
-			viewer.getTable().removeSelectionListener(
-					tableSelectionChangedListener);
+			viewer.getTable().removeListener(SWT.PaintItem, tableItemPaintListener);
+			viewer.getTable().removeSelectionListener(tableSelectionChangedListener);
 		}
 		if (!senderLink.isDisposed()) {
 			senderLink.removeSelectionListener(senderLinkSelectionAdapter);
@@ -220,8 +212,7 @@ public class FolderPreviewView extends ViewPart {
 	}
 
 	private void createMessageListComposite(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		viewer.getTable().setHeaderVisible(true);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.getTable().addSelectionListener(tableSelectionChangedListener);
@@ -270,8 +261,7 @@ public class FolderPreviewView extends ViewPart {
 				refreshControl(child);
 			}
 		} else {
-			control.setForeground(Theme
-					.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
+			control.setForeground(Theme.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
 		}
 	}
 
@@ -284,8 +274,8 @@ public class FolderPreviewView extends ViewPart {
 
 		// top banner
 		Composite banner = new Composite(messageBodyComposite, SWT.NONE);
-		banner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL,
-				GridData.VERTICAL_ALIGN_BEGINNING, true, false));
+		banner.setLayoutData(
+				new GridData(GridData.HORIZONTAL_ALIGN_FILL, GridData.VERTICAL_ALIGN_BEGINNING, true, false));
 		layout = new GridLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 10;
@@ -293,8 +283,7 @@ public class FolderPreviewView extends ViewPart {
 		banner.setLayout(layout);
 
 		// setup bold font
-		Font boldFont = JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT);
+		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
 
 		Label l = new Label(banner, SWT.NONE);
 		l.setText("Subject:");
@@ -302,14 +291,12 @@ public class FolderPreviewView extends ViewPart {
 		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		l.setForeground(Theme.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
 
-		GridData gridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, true,
-				false);
+		GridData gridData = new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false);
 		gridData.minimumWidth = 100;
 
 		subjectLabel = new Label(banner, SWT.WRAP);
 		subjectLabel.setLayoutData(gridData);
-		subjectLabel.setForeground(Theme
-				.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
+		subjectLabel.setForeground(Theme.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
 
 		l = new Label(banner, SWT.NONE);
 		l.setText("From:");
@@ -330,18 +317,14 @@ public class FolderPreviewView extends ViewPart {
 
 		dateLabel = new Label(banner, SWT.WRAP);
 		dateLabel.setLayoutData(gridData);
-		dateLabel.setForeground(Theme
-				.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
+		dateLabel.setForeground(Theme.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
 
 		// message contents
-		messageText = new Text(messageBodyComposite, SWT.BORDER | SWT.MULTI
-				| SWT.WRAP);
+		messageText = new Text(messageBodyComposite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 		messageText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		messageText.setEditable(false);
-		messageText.setBackground(messageText.getDisplay().getSystemColor(
-				SWT.COLOR_WHITE));
-		messageText.setForeground(Theme
-				.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
+		messageText.setBackground(messageText.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		messageText.setForeground(Theme.getColor(Theme.Shell.TEXT_AND_LABEL_FOREGROUND));
 		messageText.setBackground(viewer.getTable().getBackground());
 	}
 
@@ -358,10 +341,8 @@ public class FolderPreviewView extends ViewPart {
 
 		@Override
 		public Image getImage(Object element) {
-			if (columnIndex == 0
-					&& ((Mail) element).getImportance() == Importance.High) {
-				return PlatformUI.getWorkbench().getSharedImages()
-						.getImage(ISharedImages.IMG_DEC_FIELD_WARNING);
+			if (columnIndex == 0 && ((Mail) element).getImportance() == Importance.High) {
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEC_FIELD_WARNING);
 			}
 			return null;
 		}
@@ -370,12 +351,10 @@ public class FolderPreviewView extends ViewPart {
 		public Font getFont(Object element) {
 			Mail mail = (Mail) element;
 			if (mail.getImportance() == Importance.High) {
-				return Theme
-						.getFont(Theme.FolderPreviewView.HIGH_IMP_MAIL_FONT);
+				return Theme.getFont(Theme.FolderPreviewView.HIGH_IMP_MAIL_FONT);
 			}
 			if (mail.getImportance() == Importance.Normal) {
-				return Theme
-						.getFont(Theme.FolderPreviewView.NORMAL_IMP_MAIL_FONT);
+				return Theme.getFont(Theme.FolderPreviewView.NORMAL_IMP_MAIL_FONT);
 			}
 			return Theme.getFont(Theme.FolderPreviewView.LOW_IMP_MAIL_FONT);
 		}
@@ -384,15 +363,12 @@ public class FolderPreviewView extends ViewPart {
 		public Color getForeground(Object element) {
 			Mail mail = (Mail) element;
 			if (mail.getImportance() == Importance.High) {
-				return Theme
-						.getColor(Theme.FolderPreviewView.HIGH_IMP_MAIL_FOREGROUND);
+				return Theme.getColor(Theme.FolderPreviewView.HIGH_IMP_MAIL_FOREGROUND);
 			}
 			if (mail.getImportance() == Importance.Normal) {
-				return Theme
-						.getColor(Theme.FolderPreviewView.NORMAL_IMP_MAIL_FOREGROUND);
+				return Theme.getColor(Theme.FolderPreviewView.NORMAL_IMP_MAIL_FOREGROUND);
 			}
-			return Theme
-					.getColor(Theme.FolderPreviewView.LOW_IMP_MAIL_FOREGROUND);
+			return Theme.getColor(Theme.FolderPreviewView.LOW_IMP_MAIL_FOREGROUND);
 		}
 
 		@Override
