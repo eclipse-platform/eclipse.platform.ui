@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philipp Bumann <bumannp@gmail.com> - Bug 477602
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
@@ -306,8 +307,7 @@ public class FinishedJobs extends EventManager {
 				if (job != null) {
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
-						JobTreeElement topElement = (JobTreeElement) info1
-								.getParent();
+						JobTreeElement topElement = info1.getParent();
 						if (topElement == null) {
 							topElement = info1;
 						}

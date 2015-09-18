@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philipp Bumann <bumannp@gmail.com> - Bug 477602
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
@@ -117,8 +118,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
             Iterator<JobTreeElement> additionsIterator = additions.iterator();
             while (additionsIterator.hasNext()) {
-                JobTreeElement treeElement = (JobTreeElement) additionsIterator
-                        .next();
+				JobTreeElement treeElement = additionsIterator.next();
                 if (!treeElement.isActive()) {
                     if (deletions.contains(treeElement)) {
 						staleAdditions.add(treeElement);
@@ -131,8 +131,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
             HashSet<JobTreeElement> obsoleteRefresh = new HashSet<>();
             Iterator<JobTreeElement> refreshIterator = refreshes.iterator();
             while (refreshIterator.hasNext()) {
-                JobTreeElement treeElement = (JobTreeElement) refreshIterator
-                        .next();
+				JobTreeElement treeElement = refreshIterator.next();
                 if (deletions.contains(treeElement)
                         || additions.contains(treeElement)) {
 					obsoleteRefresh.add(treeElement);

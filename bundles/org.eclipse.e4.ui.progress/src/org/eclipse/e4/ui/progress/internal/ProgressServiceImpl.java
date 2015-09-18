@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Philipp Bumann <bumannp@gmail.com> - Bug 477602
  ******************************************************************************/
 
 package org.eclipse.e4.ui.progress.internal;
@@ -115,8 +116,7 @@ public class ProgressServiceImpl implements IProgressService {
 		while (families.hasMoreElements()) {
 			Object next = families.nextElement();
 			if (job.belongsTo(next)) {
-				return JFaceResources.getImageRegistry().get(
-						(String) imageKeyTable.get(next));
+				return JFaceResources.getImageRegistry().get(imageKeyTable.get(next));
 			}
 		}
 		return null;
