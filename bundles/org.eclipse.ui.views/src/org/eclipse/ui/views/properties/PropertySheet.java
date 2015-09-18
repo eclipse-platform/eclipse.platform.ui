@@ -12,10 +12,12 @@
  *     Craig Foote (Footeware.ca) - https://bugs.eclipse.org/325743
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 460405
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 417447
+ *     Stefan Winkler <stefan@winklerweb.net> - Bug 477848
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -121,7 +123,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	/**
 	 * Set of workbench parts, which should not be used as a source for PropertySheet
 	 */
-	private HashSet ignoredViews;
+	private HashSet<String> ignoredViews;
 
     /**
      * Creates a property sheet view.
@@ -354,9 +356,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * @since 3.2
 	 */
 	@Override
-	protected Object getViewAdapter(Class key) {
+	protected <T> T getViewAdapter(Class<T> key) {
 		if (ISaveablePart.class.equals(key)) {
-			return getSaveablePart();
+			return key.cast(getSaveablePart());
 		}
 		return super.getViewAdapter(key);
 	}
@@ -421,18 +423,18 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		updateContentDescription();
 	}
 
-	private HashSet getIgnoredViews() {
+	private Set<String> getIgnoredViews() {
 		if (ignoredViews == null) {
-			ignoredViews = new HashSet();
+			ignoredViews = new HashSet<>();
 	        IExtensionRegistry registry = RegistryFactory.getRegistry();
 	        IExtensionPoint ep = registry.getExtensionPoint(EXT_POINT);
 			if (ep != null) {
 				IExtension[] extensions = ep.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < elements.length; j++) {
-						if ("excludeSources".equalsIgnoreCase(elements[j].getName())) { //$NON-NLS-1$
-							String id = elements[j].getAttribute("id"); //$NON-NLS-1$
+				for (IExtension extension : extensions) {
+					IConfigurationElement[] elements = extension.getConfigurationElements();
+					for (IConfigurationElement element : elements) {
+						if ("excludeSources".equalsIgnoreCase(element.getName())) { //$NON-NLS-1$
+							String id = element.getAttribute("id"); //$NON-NLS-1$
 							if (id != null)
 								ignoredViews.add(id);
 						}
