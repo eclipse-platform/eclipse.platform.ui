@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.examples.jobs.actions;
 
 import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,7 +39,7 @@ public class DebugJobManagerAction implements IWorkbenchWindowActionDelegate {
 	@Override
 	public void run(IAction action) {
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); //$NON-NLS-1$
-		Job[] jobs = Platform.getJobManager().find(null);
+		Job[] jobs = Job.getJobManager().find(null);
 		for (int i = 0; i < jobs.length; i++) {
 			System.out.println("" + jobs[i].getClass().getName() + " state: " + JobManager.printState(jobs[i].getState())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
