@@ -108,7 +108,7 @@ public class ModelUtils {
 				      String elementId = posInfo.getPositionReference();
 
 				      for( int i = 0; i < list.size(); i++ ) {
-		            if( elementId.equals(((MApplicationElement)list.get(i)).getElementId()) ) {
+		            if( elementId.equals((list.get(i)).getElementId()) ) {
 		              tmpIndex = i;
 		              break;
 		            }
