@@ -54,7 +54,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -1186,28 +1186,23 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		saveWidgetValues();
 
 		final Object[] selected = projectsList.getCheckedElements();
-		createdProjects = new ArrayList();
+		createdProjects = new ArrayList<>();
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			@Override
-			protected void execute(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask("", selected.length); //$NON-NLS-1$
-					if (monitor.isCanceled()) {
-						throw new OperationCanceledException();
-					}
-					// Import as many projects as we can; accumulate errors to
-					// report to the user
-					MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-							DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid, null);
-					for (Object element : selected) {
-						status.add(createExistingProject((ProjectRecord) element, new SubProgressMonitor(monitor, 1)));
-					}
-					if (!status.isOK()) {
-						throw new InvocationTargetException(new CoreException(status));
-					}
-				} finally {
-					monitor.done();
+			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, selected.length);
+				if (subMonitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				// Import as many projects as we can; accumulate errors to
+				// report to the user
+				MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
+						DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid, null);
+				for (Object element : selected) {
+					status.add(createExistingProject((ProjectRecord) element, subMonitor.newChild(1)));
+				}
+				if (!status.isOK()) {
+					throw new InvocationTargetException(new CoreException(status));
 				}
 			}
 		};
@@ -1271,8 +1266,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * @return status of the creation
 	 * @throws InterruptedException
 	 */
-	private IStatus createExistingProject(final ProjectRecord record, IProgressMonitor monitor)
+	private IStatus createExistingProject(final ProjectRecord record, IProgressMonitor mon)
 			throws InterruptedException {
+		SubMonitor subMonitor = SubMonitor.convert(mon, 3);
 		String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
@@ -1302,7 +1298,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 					structureProvider, this, fileSystemObjects);
 			operation.setContext(getShell());
 			try {
-				operation.run(monitor);
+				operation.run(subMonitor.newChild(1));
 			} catch (InvocationTargetException e) {
 				if (e.getCause() instanceof CoreException) {
 					return ((CoreException) e.getCause()).getStatus();
@@ -1312,6 +1308,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			}
 			return operation.getStatus();
 		}
+
 		// import from file system
 		File importSource = null;
 		if (copyFiles) {
@@ -1342,19 +1339,16 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			}
 		}
 
+		subMonitor.setWorkRemaining((copyFiles && importSource != null) ? 2 : 1);
+
 		try {
-			monitor
-					.beginTask(
-							DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask,
-							100);
-			project.create(record.description, new SubProgressMonitor(monitor,
-					30));
-			project.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(
-					monitor, 70));
+			SubMonitor subTask = subMonitor.newChild(1).setWorkRemaining(100);
+			subTask.setTaskName(DataTransferMessages.WizardProjectsImportPage_CreateProjectsTask);
+			project.create(record.description, subTask.newChild(30));
+			project.open(IResource.BACKGROUND_REFRESH, subTask.newChild(70));
+			subTask.setTaskName(""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			return e.getStatus();
-		} finally {
-			monitor.done();
 		}
 
 		// import operation to import project files if copy checkbox is selected
@@ -1370,7 +1364,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			// files
 			operation.setCreateContainerStructure(false);
 			try {
-				operation.run(monitor);
+				operation.run(subMonitor.newChild(1));
 			} catch (InvocationTargetException e) {
 				if (e.getCause() instanceof CoreException) {
 					return ((CoreException) e.getCause()).getStatus();

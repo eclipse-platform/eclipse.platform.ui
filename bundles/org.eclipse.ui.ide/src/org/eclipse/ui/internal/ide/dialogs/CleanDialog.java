@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -313,15 +313,10 @@ public class CleanDialog extends MessageDialog {
         if (cleanAll) {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
         } else {
-            try {
-                monitor.beginTask(IDEWorkbenchMessages.CleanDialog_cleanSelectedTaskName, selection.length);
-                for (int i = 0; i < selection.length; i++) {
-                    ((IProject) selection[i]).build(
-                            IncrementalProjectBuilder.CLEAN_BUILD,
-                            new SubProgressMonitor(monitor, 1));
-                }
-            } finally {
-                monitor.done();
+			SubMonitor subMonitor = SubMonitor.convert(monitor, IDEWorkbenchMessages.CleanDialog_cleanSelectedTaskName,
+					selection.length);
+			for (int i = 0; i < selection.length; i++) {
+				((IProject) selection[i]).build(IncrementalProjectBuilder.CLEAN_BUILD, subMonitor.newChild(1));
             }
         }
     }

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -140,9 +140,9 @@ public class CopyResourcesOperation extends
 	protected void copy(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
 
-		monitor.beginTask("", 2000); //$NON-NLS-1$
-		monitor
-				.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
+		SubMonitor subMonitor = SubMonitor.convert(monitor,
+				resources.length + (resourceDescriptions != null ? resourceDescriptions.length : 0));
+		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		List resourcesAtDestination = new ArrayList();
 		List overwrittenResources = new ArrayList();
 
@@ -150,11 +150,8 @@ public class CopyResourcesOperation extends
 			// Copy the resources and record the overwrites that would
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
-			overwrites = WorkspaceUndoUtil.copy(
-					new IResource[] { resources[i] }, getDestinationPath(
-							resources[i], i), resourcesAtDestination,
-					new SubProgressMonitor(monitor, 1000 / resources.length),
-					uiInfo, true, fCreateGroups, fCreateLinks,
+			overwrites = WorkspaceUndoUtil.copy(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
+					resourcesAtDestination, subMonitor.newChild(1), uiInfo, true, fCreateGroups, fCreateLinks,
 					fRelativeToVariable);
 			// Accumulate the overwrites into the full list
 			for (int j = 0; j < overwrites.length; j++) {
@@ -166,9 +163,7 @@ public class CopyResourcesOperation extends
 		if (resourceDescriptions != null) {
 			for (int i = 0; i < resourceDescriptions.length; i++) {
 				if (resourceDescriptions[i] != null) {
-					resourceDescriptions[i]
-							.createResource(new SubProgressMonitor(monitor,
-									1000 / resourceDescriptions.length));
+					resourceDescriptions[i].createResource(subMonitor.newChild(1));
 				}
 			}
 		}
@@ -181,7 +176,6 @@ public class CopyResourcesOperation extends
 		// location.
 		setTargetResources((IResource[]) resourcesAtDestination
 				.toArray(new IResource[resourcesAtDestination.size()]));
-		monitor.done();
 	}
 
 	/*
@@ -191,15 +185,12 @@ public class CopyResourcesOperation extends
 	@Override
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		monitor.beginTask("", 2); //$NON-NLS-1$
-		monitor
-				.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
+		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		// undoing a copy is first deleting the copied resources...
-		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(monitor, 1),
-				uiInfo, true);
+		WorkspaceUndoUtil.delete(resources, subMonitor.newChild(1), uiInfo, true);
 		// then restoring any overwritten by the previous copy...
-		WorkspaceUndoUtil.recreate(resourceDescriptions,
-				new SubProgressMonitor(monitor, 1), uiInfo);
+		WorkspaceUndoUtil.recreate(resourceDescriptions, subMonitor.newChild(1), uiInfo);
 		setResourceDescriptions(new ResourceDescription[0]);
 		// then setting the target resources back to the original ones.
 		// Note that the destination paths never changed since they
