@@ -278,13 +278,13 @@ public class BuildAction extends WorkspaceAction {
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				IStatus status = null;
-				SubMonitor progress = SubMonitor.convert(monitor, 10000);
+				SubMonitor progress = SubMonitor.convert(monitor, 1);
 				progress.setTaskName(getOperationMessage());
 				try {
 					// Backwards compatibility: check shouldPerformResourcePruning().
 					// Previously if this returned true, the full reference graph is built, otherwise just build the selected configurations
 					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(),
-							progress.newChild(10000));
+							progress.newChild(1));
 				} catch (CoreException e) {
 					status = e.getStatus();
 				}
