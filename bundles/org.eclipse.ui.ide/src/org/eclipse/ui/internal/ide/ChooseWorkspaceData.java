@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Eric Rizzo - added API to set the list of recent workspaces.
+ *     Jan-Ove Weichel <ovi.weichel@gmail.com> - Bug 463039
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -39,7 +40,7 @@ public class ChooseWorkspaceData {
     /**
      * The default max length of the recent workspace mru list.
      */
-    private static final int RECENT_MAX_LENGTH = 5;
+	private static final int RECENT_MAX_LENGTH = 10;
 
     /**
      * The directory within the config area that will be used for the
