@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.databinding.property" version="2">
+    <resource path="src/org/eclipse/core/databinding/property/list/SimpleListProperty.java" type="org.eclipse.core.databinding.property.list.SimpleListProperty">
+        <filter comment="See bug 477875" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.property.list.SimpleListProperty"/>
+                <message_argument value="doSetList(Object, List, ListDiff)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/property/map/SimpleMapProperty.java" type="org.eclipse.core.databinding.property.map.SimpleMapProperty">
+        <filter comment="See bug 477875" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.property.map.SimpleMapProperty"/>
+                <message_argument value="doSetMap(Object, Map, MapDiff)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/property/set/SimpleSetProperty.java" type="org.eclipse.core.databinding.property.set.SimpleSetProperty">
+        <filter comment="See bug 477875" id="336695337">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.property.set.SimpleSetProperty"/>
+                <message_argument value="doSetSet(Object, Set, SetDiff)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
