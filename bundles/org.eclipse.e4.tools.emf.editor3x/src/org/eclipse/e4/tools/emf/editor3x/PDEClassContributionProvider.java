@@ -106,9 +106,12 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 		final TypeNameRequestor req = new TypeNameRequestor() {
 			@Override
 			public void acceptType(int modifiers, char[] packageName, char[] simpleTypeName,
-				char[][] enclosingTypeNames, String path) {
+					char[][] enclosingTypeNames, String path) {
+				// 474841 compute name considering inner classes
+				final boolean isEnclosed = enclosingTypeNames != null && enclosingTypeNames.length > 0;
+				final String ePrefix = isEnclosed ? new String(enclosingTypeNames[0]) + "$" : ""; //$NON-NLS-1$//$NON-NLS-2$
 				// Accept search results from the JDT SearchEngine
-				final String cName = new String(simpleTypeName);
+				final String cName = ePrefix + new String(simpleTypeName);
 				final String pName = new String(packageName);
 				//				String label = cName + " - " + pName; //$NON-NLS-1$
 				final String content = pName.length() == 0 ? cName : pName + "." + cName; //$NON-NLS-1$
