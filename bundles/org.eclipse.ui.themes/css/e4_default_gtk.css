@@ -8,21 +8,66 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
+ *     Mickael Istria <mistria@redhat.com> - 325937
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #DCDCDC;
+	color: #EEEEEE;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #E1E1E1;
+	color: #EEEEEE;
+}
+/* Higher contrast keylines for selected stack */
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
+	color: #A0A0A0;
+}
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR {
+	color: #A0A0A0;
+}
+ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
+	color: #A0A0A0;
 }
 
-ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
+	color: #DCDCDC;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
+	color: #DCDCDC;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #B4B4B4;
 }
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR {
+	color: #B4B4B4;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START{
+	color: #E2E2E2;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
+	color: #E2E2E2;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_START {
+	color: #E2E2E2;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_END {
+	color: #E2E2E2;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
+	color: #B4B4B4;
+}
+
 
 .MTrimmedWindow {
 	background-color: #E2E2E2;
