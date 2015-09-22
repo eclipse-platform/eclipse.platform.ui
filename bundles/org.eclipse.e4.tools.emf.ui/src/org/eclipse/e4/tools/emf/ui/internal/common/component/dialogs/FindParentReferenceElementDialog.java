@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steven@spungin.tv> - Bug 437469
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -82,6 +83,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private WritableList list;
 	private ComboViewer eClassViewer;
 	private Text searchText;
+	private EClass selectedContainer;
 
 	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor,
 			MStringModelFragment fragment, Messages Messages) {
@@ -263,6 +265,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				final Command cmd = SetCommand.create(editor.getEditingDomain(), fragment,
 						FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, el.getElementId());
 				if (cmd.canExecute()) {
+					selectedContainer = (EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement();
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					super.okPressed();
 				}
@@ -270,6 +273,16 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 				setErrorMessage(Messages.FindParentReferenceElementDialog_NoReferenceId);
 			}
 		}
+	}
+
+	/**
+	 * Gets the selected EClass container after a successeful selection of the
+	 * parent
+	 *
+	 * @return the selectedContainer
+	 */
+	public EClass getSelectedContainer() {
+		return selectedContainer;
 	}
 
 	private ClassContributionCollector getCollector() {

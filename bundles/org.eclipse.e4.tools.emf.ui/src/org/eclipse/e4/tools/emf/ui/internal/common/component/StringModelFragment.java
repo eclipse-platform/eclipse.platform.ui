@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2010, 2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Steven Spungin <steve@spungin.tv> - Ongoing Maintenance, Bug 439532, Bug 443945
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -53,6 +54,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -74,6 +76,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 			.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	private final List<Action> actions = new ArrayList<>();
+
+	private EClass selectedContainer;
 
 	@Inject
 	IEclipseContext eclipseContext;
@@ -195,6 +199,12 @@ public class StringModelFragment extends AbstractComponentEditor {
 					final FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(),
 							StringModelFragment.this, (MStringModelFragment) getMaster().getValue(), Messages);
 					dialog.open();
+					// store user selected container
+					if (dialog.getReturnCode() == Window.OK) {
+						selectedContainer = dialog.getSelectedContainer();
+					} else {
+						selectedContainer = null;
+					}
 				}
 			});
 		}
@@ -229,7 +239,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					final FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),
-							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages);
+							getEditingDomain(), (MStringModelFragment) getMaster().getValue(), Messages,
+							selectedContainer);
 					dialog.open();
 				}
 			});
@@ -247,7 +258,8 @@ public class StringModelFragment extends AbstractComponentEditor {
 					FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS) {
 				@Override
 				protected void addPressed() {
-					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection()).getFirstElement()).eClass;
+					final EClass eClass = ((FeatureClass) ((IStructuredSelection) getSelection())
+							.getFirstElement()).eClass;
 					handleAdd(eClass, false);
 				}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2014 BestSolution.at and others.
+ * Copyright (c) 2010-2015 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Andrej ten Brummelhuis <andrejbrummelhuis@gmail.com> - Bug 395283
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 467262
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
@@ -25,6 +26,7 @@ import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -36,6 +38,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -65,13 +68,15 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	private final EditingDomain editingDomain;
 	private final Messages Messages;
 	private ViewerFilterImpl filter;
+	private final EClass userSelectedContainer;
 
 	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment,
-		Messages Messages) {
+			Messages Messages, EClass userSelectedContainer) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editingDomain = editingDomain;
 		this.Messages = Messages;
+		this.userSelectedContainer = userSelectedContainer;
 	}
 
 	@Override
@@ -184,6 +189,38 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 		viewer.setInput(Util.loadPackages());
 
 		return composite;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		// selection has influence on buttons
+		selectTreeElement();
+	}
+
+	/** selects a tree element if userselected container is not null */
+	private void selectTreeElement() {
+		if (userSelectedContainer == null) {
+			return;
+		}
+		// loop through the children of parent element of tree viewer
+		for (final Object item : ((ITreeContentProvider) viewer.getContentProvider()).getElements(viewer.getInput())) {
+			// loop through the chidren of incoming parent element
+			final Object[] contents = ((ITreeContentProvider) viewer.getContentProvider()).getChildren(item);
+			for (final Object content : contents) {
+				if (content instanceof InternalClass) {
+					final EClass eClass = ((InternalClass) content).eClass;
+					// checks with my overrided equals method\
+					if (eClass.equals(userSelectedContainer)) {
+						// expand the particular child
+						viewer.setSelection(new StructuredSelection(content));
+						viewer.reveal(content);
+						viewer.expandToLevel(content, 1);
+						return;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
