@@ -57,9 +57,10 @@ public class BlobStore {
 		return uuid;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see UniversalUniqueIdentifier#appendByteString(StringBuffer, byte)
 	 */
+	@SuppressWarnings("javadoc")
 	private void appendByteString(StringBuffer buffer, byte value) {
 		String hexString;
 		if (value < 0)
@@ -71,7 +72,7 @@ public class BlobStore {
 		buffer.append(hexString);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Converts an array of bytes into a String.
 	 *
 	 * @see UniversalUniqueIdentifier#toString()

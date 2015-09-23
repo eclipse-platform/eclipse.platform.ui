@@ -680,18 +680,12 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IManager#shutdown(IProgressMonitor)
-	 */
 	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		workspace.removeResourceChangeListener(this);
 		locationsMap.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see IManager#startup(IProgressMonitor)
-	 */
 	@Override
 	public void startup(IProgressMonitor monitor) {
 		workspace.addLifecycleListener(this);

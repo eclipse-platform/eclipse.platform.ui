@@ -122,9 +122,6 @@ public class BuildCommand extends ModelObject implements ICommand {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Object
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (this == object)
@@ -136,9 +133,6 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return getBuilderName().equals(command.getBuilderName()) && getArguments(false).equals(command.getArguments(false)) && (triggers & ALL_TRIGGERS) == (command.triggers & ALL_TRIGGERS);
 	}
 
-	/**
-	 * @see ICommand#getArguments()
-	 */
 	@Override
 	public Map<String, String> getArguments() {
 		return getArguments(true);
@@ -173,26 +167,17 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return builder;
 	}
 
-	/**
-	 * @see ICommand#getBuilderName()
-	 */
 	@Override
 	public String getBuilderName() {
 		return getName();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Object
-	 */
 	@Override
 	public int hashCode() {
 		// hash on name and trigger
 		return 37 * getName().hashCode() + (ALL_TRIGGERS & triggers);
 	}
 
-	/**
-	 * @see ICommand#isBuilding(int)
-	 */
 	@Override
 	public boolean isBuilding(int trigger) {
 		return (triggers & maskForTrigger(trigger)) != 0;
@@ -220,9 +205,6 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return supportsConfigurations;
 	}
 
-	/**
-	 * @see ICommand#setArguments(Map)
-	 */
 	@Override
 	public void setArguments(Map<String, String> value) {
 		// copy parameter for safety's sake
@@ -269,18 +251,12 @@ public class BuildCommand extends ModelObject implements ICommand {
 			builder = newBuilder;
 	}
 
-	/**
-	 * @see ICommand#setBuilderName(String)
-	 */
 	@Override
 	public void setBuilderName(String value) {
 		//don't allow builder name to be null
 		setName(value == null ? "" : value); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ICommand#setBuilding(int, boolean)
-	 */
 	@Override
 	public void setBuilding(int trigger, boolean value) {
 		if (!isConfigurable())

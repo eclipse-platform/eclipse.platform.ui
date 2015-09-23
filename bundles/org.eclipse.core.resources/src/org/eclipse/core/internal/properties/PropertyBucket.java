@@ -234,9 +234,6 @@ public class PropertyBucket extends Bucket {
 		return new PropertyEntry(path, existing);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.localstore.Bucket#getIndexFileName()
-	 */
 	@Override
 	protected String getIndexFileName() {
 		return "properties.index"; //$NON-NLS-1$
@@ -254,9 +251,6 @@ public class PropertyBucket extends Bucket {
 		return VERSION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.localstore.Bucket#getVersionFileName()
-	 */
 	@Override
 	protected String getVersionFileName() {
 		return "properties.version"; //$NON-NLS-1$

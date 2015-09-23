@@ -47,12 +47,6 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 */
 	private static final String USE_FILENAME_ONLY = "useFilenameOnly"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.resources.ResourcePropertyTester#test(java.lang.Object,
-	 *      java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		if ((receiver instanceof IFile) && method.equals(CONTENT_TYPE_ID))

@@ -659,7 +659,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	public boolean includes(IPath key) {
 		return searchNodeAt(key) != null;
 	}
-	
+
 	public boolean isEmptyDelta() {
 		return rootNode.getChildren().length == 0;
 	}
@@ -962,13 +962,13 @@ public class DeltaDataTree extends AbstractDataTree {
 			return;
 		setRootNode(rootNode.simplifyWithParent(rootKey(), parent, comparer));
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IStringPoolParticipant
+
+	/**
+	 * @see org.eclipse.core.internal.utils.IStringPoolParticipant#shareStrings(StringPool)
 	 */
-	public void storeStrings(StringPool set){
+	public void storeStrings(StringPool set) {
 		AbstractDataTreeNode root = null;
-		for(DeltaDataTree dad = this ; dad != null; dad = dad.getParent()){
+		for (DeltaDataTree dad = this; dad != null; dad = dad.getParent()) {
 			root = dad.getRootNode();
 			if (root != null)
 				root.storeStrings(set);

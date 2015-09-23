@@ -338,9 +338,6 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		return parentsNode.forwardDeltaWith(this, comparer);
 	}
 
-	/* (non-Javadoc
-	 * Method declared on IStringPoolParticipant
-	 */
 	@Override
 	public void storeStrings(StringPool set) {
 		super.storeStrings(set);

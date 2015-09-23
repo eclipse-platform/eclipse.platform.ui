@@ -65,10 +65,6 @@ public class BuildContext implements IBuildContext {
 		return requestedBuilt.clone();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.resources.IBuildContext#getAllReferencedBuildConfigurations()
-	 */
 	@Override
 	public IBuildConfiguration[] getAllReferencedBuildConfigs() {
 		int position = findBuildConfigurationIndex();
@@ -77,10 +73,6 @@ public class BuildContext implements IBuildContext {
 		return builtBefore;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.resources.IBuildContext#getAllReferencingBuildConfigurations()
-	 */
 	@Override
 	public IBuildConfiguration[] getAllReferencingBuildConfigs() {
 		int position = findBuildConfigurationIndex();
