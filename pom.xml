@@ -53,12 +53,6 @@
   </profiles>
 
   <modules>
-    <!--
-    requires org.eclipse.ui.presentations.PresentationUtil which is not available from anywhere
-    it used to come from  org.eclipse.ui.workbench in 3.8, but it's not in 3.103 any more.
-    <module>bundles/org.eclipse.ui.presentations.r21</module>
-     -->
-
     <module>examples/org.eclipse.jface.examples.databinding</module>
     <module>examples/org.eclipse.ui.examples.contributions</module>
     <module>examples/org.eclipse.ui.examples.fieldassist</module>
