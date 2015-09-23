@@ -21,6 +21,7 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 import org.eclipse.e4.core.internal.di.shared.CoreLogger;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
@@ -36,7 +37,7 @@ public class ProviderHelper {
 
 	static {
 		// in case if any extended object supplier changes, clear the supplier cache
-		BundleContext bundleContext = DIActivator.getDefault().getBundleContext();
+		BundleContext bundleContext = FrameworkUtil.getBundle(ProviderHelper.class).getBundleContext();
 		String filter = '(' + Constants.OBJECTCLASS + '=' + ExtendedObjectSupplier.SERVICE_NAME + ')';
 		try {
 			bundleContext.addServiceListener(new ServiceListener() {
@@ -57,7 +58,7 @@ public class ProviderHelper {
 		synchronized (extendedSuppliers) {
 			if (extendedSuppliers.containsKey(qualifier))
 				return extendedSuppliers.get(qualifier);
-			BundleContext bundleContext = DIActivator.getDefault().getBundleContext();
+			BundleContext bundleContext = FrameworkUtil.getBundle(ProviderHelper.class).getBundleContext();
 			try {
 				String filter = '(' + ExtendedObjectSupplier.SERVICE_CONTEXT_KEY + '=' + qualifier + ')';
 				ServiceReference<?>[] refs = bundleContext.getServiceReferences(ExtendedObjectSupplier.SERVICE_NAME, filter);

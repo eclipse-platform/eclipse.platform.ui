@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,23 @@ package org.eclipse.e4.core.internal.di.osgi;
 
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class LogHelper {
+
+	private static final ServiceTracker<FrameworkLog, FrameworkLog> logTracker = openLogTracker();
+
+	private static ServiceTracker<FrameworkLog, FrameworkLog> openLogTracker() {
+		try {
+			ServiceTracker<FrameworkLog, FrameworkLog> st = new ServiceTracker<FrameworkLog, FrameworkLog>(
+					FrameworkUtil.getBundle(LogHelper.class).getBundleContext(), FrameworkLog.class, null);
+			st.open();
+			return st;
+		} catch (Throwable t) {
+			return null;
+		}
+	}
 
 	static final private String plugin_name = "org.eclipse.e4.core"; //$NON-NLS-1$
 
@@ -26,8 +41,10 @@ public class LogHelper {
 	}
 
 	static public void log(String msg, int severity, Throwable e) {
-		FrameworkLog log = DIActivator.getDefault().getFrameworkLog();
-		FrameworkLogEntry logEntry = new FrameworkLogEntry(plugin_name, severity, 0, msg, 0, e, null);
-		log.log(logEntry);
+		FrameworkLog log = logTracker == null ? null : logTracker.getService();
+		if (log != null) {
+			FrameworkLogEntry logEntry = new FrameworkLogEntry(plugin_name, severity, 0, msg, 0, e, null);
+			log.log(logEntry);
+		}
 	}
 }
