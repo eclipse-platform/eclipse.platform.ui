@@ -34,4 +34,3 @@ Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0",
  org.w3c.dom.css;version="2.0.0"
-Bundle-Activator: org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersActivator
