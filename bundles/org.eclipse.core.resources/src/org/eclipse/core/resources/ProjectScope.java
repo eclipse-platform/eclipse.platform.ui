@@ -86,9 +86,6 @@ public final class ProjectScope extends AbstractScope {
 		return SCOPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -101,9 +98,6 @@ public final class ProjectScope extends AbstractScope {
 		return context.equals(other.context);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode() + context.getFullPath().hashCode();

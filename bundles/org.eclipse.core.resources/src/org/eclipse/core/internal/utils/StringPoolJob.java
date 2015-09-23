@@ -76,9 +76,6 @@ public class StringPoolJob extends Job {
 		participants.remove(participant);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Job
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		//if the system is shutting down, don't build

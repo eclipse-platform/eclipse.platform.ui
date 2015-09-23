@@ -27,9 +27,6 @@ public class SimpleResourceMapping extends ResourceMapping {
 		this.resource = resource;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
-	 */
 	@Override
 	public boolean contains(ResourceMapping mapping) {
 		if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
@@ -47,9 +44,6 @@ public class SimpleResourceMapping extends ResourceMapping {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ResourceMapping.
-	 */
 	@Override
 	public Object getModelObject() {
 		return resource;
@@ -60,9 +54,6 @@ public class SimpleResourceMapping extends ResourceMapping {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ResourceMapping.
-	 */
 	@Override
 	public IProject[] getProjects() {
 		if (resource.getType() == IResource.ROOT)
@@ -70,9 +61,6 @@ public class SimpleResourceMapping extends ResourceMapping {
 		return new IProject[] {resource.getProject()};
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on ResourceMapping.
-	 */
 	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		if (resource.getType() == IResource.ROOT) {

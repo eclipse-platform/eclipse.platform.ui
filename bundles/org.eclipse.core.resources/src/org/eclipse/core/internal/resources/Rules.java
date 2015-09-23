@@ -101,9 +101,6 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 		return fac;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.events.ILifecycleListener#handleEvent(org.eclipse.core.internal.events.LifecycleEvent)
-	 */
 	@Override
 	public void handleEvent(LifecycleEvent event) {
 		//clear resource rule factory for projects that are about to be closed

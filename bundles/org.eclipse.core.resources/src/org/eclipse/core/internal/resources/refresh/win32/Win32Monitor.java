@@ -547,17 +547,11 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		fHandleValueArrays = arrays;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-	 */
 	@Override
 	public boolean shouldRun() {
 		return !fHandleValueToHandle.isEmpty();
 	}
 
-	/*
-	 * @see org.eclipse.core.resources.refresh.IRefreshMonitor#unmonitor(IContainer)
-	 */
 	@Override
 	public void unmonitor(IResource resource) {
 		if (resource == null) {

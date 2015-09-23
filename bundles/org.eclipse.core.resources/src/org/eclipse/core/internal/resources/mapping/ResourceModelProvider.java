@@ -26,17 +26,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public final class ResourceModelProvider extends ModelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.IResource, org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceMapping[] {new SimpleResourceMapping(resource)};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) {
 		Set<IAdaptable> result = new HashSet<>();

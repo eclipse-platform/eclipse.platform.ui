@@ -1431,9 +1431,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, new Integer(number).toString());
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IStringPoolParticipant
-	 */
 	@Override
 	public void shareStrings(StringPool pool) {
 		lastSnap.shareStrings(pool);
