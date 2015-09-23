@@ -62,9 +62,6 @@ public class CharsetManager implements IManager {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.resources_updatingEncoding, null);
@@ -111,9 +108,6 @@ public class CharsetManager implements IManager {
 			return result;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-		 */
 		@Override
 		public boolean shouldRun() {
 			synchronized (asyncChanges) {

@@ -34,17 +34,11 @@ public class FileState extends PlatformObject implements IFileState {
 		this.fullPath = fullPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#exists()
-	 */
 	@Override
 	public boolean exists() {
 		return store.exists(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
-	 */
 	@Override
 	public String getCharset() throws CoreException {
 		// if there is an existing file at this state's path, use the encoding of that file
@@ -67,33 +61,21 @@ public class FileState extends PlatformObject implements IFileState {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws CoreException {
 		return store.getContents(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#getFullPath()
-	 */
 	@Override
 	public IPath getFullPath() {
 		return fullPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#getModificationTime()
-	 */
 	@Override
 	public long getModificationTime() {
 		return lastModified;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#getName()
-	 */
 	@Override
 	public String getName() {
 		return fullPath.lastSegment();
@@ -103,9 +85,6 @@ public class FileState extends PlatformObject implements IFileState {
 		return uuid;
 	}
 
-	/* (non-Javadoc)
-	 * @see IFileState#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;

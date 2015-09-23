@@ -62,10 +62,6 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		return tree;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.internal.watson.ElementTreeReader#readDeltaChain(java.io.DataInput, java.lang.String)
-	 */
 	@Override
 	public ElementTree[] readDeltaChain(DataInput input, String newProjectName) throws IOException {
 		/* read the number of trees */
@@ -93,10 +89,6 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.internal.watson.ElementTreeReader#readTree(java.io.DataInput, java.lang.String)
-	 */
 	@Override
 	public ElementTree readTree(DataInput input, String newProjectName) throws IOException {
 

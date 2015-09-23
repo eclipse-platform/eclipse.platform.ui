@@ -54,17 +54,11 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			toFlush = new ArrayList<>(5);
 		}
 
-		/* (non-Javadoc)
-		 * See Job#belongsTo(Object)
-		 */
 		@Override
 		public boolean belongsTo(Object family) {
 			return FAMILY_DESCRIPTION_CACHE_FLUSH.equals(family);
 		}
 
-		/* (non-Javadoc)
-		 * See WorkspaceJob#runInWorkspace(IProgressMonitor)
-		 */
 		@Override
 		public IStatus runInWorkspace(final IProgressMonitor monitor) {
 			if (monitor.isCanceled())

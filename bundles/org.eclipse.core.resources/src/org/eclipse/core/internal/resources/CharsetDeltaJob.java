@@ -163,9 +163,6 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);

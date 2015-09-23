@@ -33,13 +33,6 @@ public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.core.resources.AbstractFileInfoMatcher#initialize(org.eclipse
-	 * .core.resources.IProject, java.lang.Object)
-	 */
 	@Override
 	public final void initialize(IProject project, Object arguments) throws CoreException {
 		FileInfoMatcherDescription[] filters = (FileInfoMatcherDescription[]) arguments;

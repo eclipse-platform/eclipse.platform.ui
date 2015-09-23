@@ -42,9 +42,6 @@ public final class CompositeResourceMapping extends ResourceMapping {
 		this.providerId = providerId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#contains(org.eclipse.core.resources.mapping.ResourceMapping)
-	 */
 	@Override
 	public boolean contains(ResourceMapping mapping) {
 		for (int i = 0; i < mappings.length; i++) {
@@ -64,25 +61,16 @@ public final class CompositeResourceMapping extends ResourceMapping {
 		return mappings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelObject()
-	 */
 	@Override
 	public Object getModelObject() {
 		return modelObject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getModelProviderId()
-	 */
 	@Override
 	public String getModelProviderId() {
 		return providerId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getProjects()
-	 */
 	@Override
 	public IProject[] getProjects() {
 		if (projects == null) {
@@ -96,9 +84,6 @@ public final class CompositeResourceMapping extends ResourceMapping {
 		return projects;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.ResourceMapping#getTraversals(org.eclipse.core.internal.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null)
