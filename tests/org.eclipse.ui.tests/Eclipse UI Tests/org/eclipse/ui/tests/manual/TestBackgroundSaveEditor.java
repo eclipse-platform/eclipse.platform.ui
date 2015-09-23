@@ -56,8 +56,7 @@ import org.eclipse.ui.progress.IJobRunnable;
  * @since 3.3
  *
  */
-public class TestBackgroundSaveEditor extends EditorPart implements
-		ISaveablesSource {
+public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSource {
 
 	public class MySaveable extends Saveable {
 
@@ -69,10 +68,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 		public void doSave(IProgressMonitor monitor) throws CoreException {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 			IJobRunnable runnable = doSave(subMonitor.newChild(1), getSite());
-			if (runnable!=null) {
+			if (runnable != null) {
 				runnable.run(subMonitor.newChild(1));
 			}
-			monitor.done();
 		}
 
 		@Override
