@@ -186,9 +186,6 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 			Policy.debug(RefreshManager.DEBUG_PREFIX + "new hot root: " + resource); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see Job#shouldRun
-	 */
 	@Override
 	public boolean shouldRun() {
 		//only run if there is something to refresh

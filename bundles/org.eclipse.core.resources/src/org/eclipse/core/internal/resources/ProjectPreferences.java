@@ -526,9 +526,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#nodeExists(java.lang.String)
-	 * 
+	/**
 	 * If we are at the /project node and we are checking for the existence of a child, we
 	 * want special behaviour. If the child is a single segment name, then we want to
 	 * return true if the node exists OR if a project with that name exists in the workspace.

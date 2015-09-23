@@ -46,10 +46,10 @@ public class MarkerManager implements IManager {
 		this.workspace = workspace;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds the given markers to the given resource.
-	 * 
-	 * @see IResource#createMarker(String) 
+	 *
+	 * @see IResource#createMarker(String)
 	 */
 	public void add(IResource resource, MarkerInfo newMarker) throws CoreException {
 		Resource target = (Resource) resource;
@@ -579,9 +579,6 @@ public class MarkerManager implements IManager {
 		writer.save(info, requestor, output, list);
 	}
 
-	/* (non-Javadoc)
-	 * @see IManager#shutdown(IProgressMonitor)
-	 */
 	@Override
 	public void shutdown(IProgressMonitor monitor) {
 		// do nothing
@@ -591,9 +588,6 @@ public class MarkerManager implements IManager {
 		writer.snap(info, requestor, output);
 	}
 
-	/* (non-Javadoc)
-	 * @see IManager#startup(IProgressMonitor)
-	 */
 	@Override
 	public void startup(IProgressMonitor monitor) {
 		// do nothing

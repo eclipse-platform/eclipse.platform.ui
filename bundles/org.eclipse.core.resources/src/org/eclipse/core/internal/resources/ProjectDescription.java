@@ -261,9 +261,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return makeCopy ? (IBuildConfiguration[]) configs.clone() : configs;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getBuildConfigReferences(String)
-	 */
 	@Override
 	public IBuildConfiguration[] getBuildConfigReferences(String configName) {
 		return getBuildConfigRefs(configName, true);
@@ -285,9 +282,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return makeCopy ? (Map<String, IBuildConfiguration[]>) dynamicConfigRefs.clone() : dynamicConfigRefs;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getBuildSpec()
-	 */
 	@Override
 	public ICommand[] getBuildSpec() {
 		return getBuildSpec(true);
@@ -306,17 +300,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getComment()
-	 */
 	@Override
 	public String getComment() {
 		return comment;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getDynamicReferences()
-	 */
 	@Override
 	public IProject[] getDynamicReferences() {
 		return getDynamicReferences(true);
@@ -386,17 +374,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return FileUtil.toPath(location);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getLocationURI()
-	 */
 	@Override
 	public URI getLocationURI() {
 		return location;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getNatureIds()
-	 */
 	@Override
 	public String[] getNatureIds() {
 		return getNatureIds(true);
@@ -408,9 +390,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return makeCopy ? (String[]) natures.clone() : natures;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getReferencedProjects()
-	 */
 	@Override
 	public IProject[] getReferencedProjects() {
 		return getReferencedProjects(true);
@@ -441,9 +420,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return snapshotLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#hasNature(String)
-	 */
 	@Override
 	public boolean hasNature(String natureID) {
 		String[] natureIDs = getNatureIds(false);
@@ -554,9 +530,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#newCommand()
-	 */
 	@Override
 	public ICommand newCommand() {
 		return new BuildCommand();
@@ -570,9 +543,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		activeConfiguration = configName;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setBuildSpec(ICommand[])
-	 */
 	@Override
 	public void setBuildSpec(ICommand[] value) {
 		Assert.isLegal(value != null);
@@ -592,17 +562,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		buildSpec = result;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setComment(String)
-	 */
 	@Override
 	public void setComment(String value) {
 		comment = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setDynamicReferences(IProject[])
-	 */
 	@Override
 	public void setDynamicReferences(IProject[] value) {
 		Assert.isLegal(value != null);
@@ -615,9 +579,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		clearCachedReferences(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setDynamicConfigReferences(String, IBuildConfiguration[])
-	 */
 	@Override
 	public void setBuildConfigReferences(String configName, IBuildConfiguration[] references) {
 		Assert.isLegal(configName != null);
@@ -628,10 +589,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		clearCachedReferences(configName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see IProjectDescription#setBuildConfigurations(String[])
-	 */
 	@Override
 	public void setBuildConfigs(String[] names) {
 		// Remove references for deleted buildConfigs
@@ -832,9 +789,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setLocation(IPath)
-	 */
 	@Override
 	public void setLocation(IPath path) {
 		this.location = path == null ? null : URIUtil.toURI(path);
@@ -845,25 +799,16 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		this.location = location;
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setName(String)
-	 */
 	@Override
 	public void setName(String value) {
 		super.setName(value);
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setNatureIds(String[])
-	 */
 	@Override
 	public void setNatureIds(String[] value) {
 		natures = value.clone();
 	}
 
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setReferencedProjects(IProject[])
-	 */
 	@Override
 	public void setReferencedProjects(IProject[] value) {
 		Assert.isLegal(value != null);
