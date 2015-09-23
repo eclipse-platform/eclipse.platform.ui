@@ -64,9 +64,6 @@ public abstract class ModelProvider extends PlatformObject {
 		return ModelProviderManager.getDefault().getDescriptors();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ModelProvider) {
@@ -207,9 +204,6 @@ public abstract class ModelProvider extends PlatformObject {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getDescriptor().getId().hashCode();

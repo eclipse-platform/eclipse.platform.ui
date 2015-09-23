@@ -41,41 +41,26 @@ public class FilterDescriptor implements IFilterMatcherDescriptor {
 			isFirst = ordering.equals("first"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#getName()
-	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#getArgumentType()
-	 */
 	@Override
 	public String getArgumentType() {
 		return argumentType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#getFactory()
-	 */
 	public AbstractFileInfoMatcher createFilter() {
 		try {
 			return (AbstractFileInfoMatcher) element.createExecutableExtension("class"); //$NON-NLS-1$
@@ -85,9 +70,6 @@ public class FilterDescriptor implements IFilterMatcherDescriptor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFilterDescriptor#isFirstOrdering()
-	 */
 	@Override
 	public boolean isFirstOrdering() {
 		return isFirst;

@@ -477,11 +477,6 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		getWorkspaceManager().removeChangeListener(listener, resource.getProject());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
-	 */
 	@Override
 	public URI getVariableRelativePathLocation(URI location) {
 		try {

@@ -33,17 +33,11 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 		this.info = info;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttribute(String)
-	 */
 	@Override
 	public Object getAttribute(String attributeName) {
 		return info.getAttribute(attributeName);
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttribute(String, int)
-	 */
 	@Override
 	public int getAttribute(String attributeName, int defaultValue) {
 		Object value = info.getAttribute(attributeName);
@@ -52,9 +46,6 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 		return defaultValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttribute(String, String)
-	 */
 	@Override
 	public String getAttribute(String attributeName, String defaultValue) {
 		Object value = info.getAttribute(attributeName);
@@ -63,9 +54,6 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 		return defaultValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttribute(String, boolean)
-	 */
 	@Override
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		Object value = info.getAttribute(attributeName);
@@ -74,65 +62,41 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 		return defaultValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttributes()
-	 */
 	@Override
 	public Map<String, Object> getAttributes() {
 		return info.getAttributes();
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getAttributes(String[])
-	 */
 	@Override
 	public Object[] getAttributes(String[] attributeNames) {
 		return info.getAttributes(attributeNames);
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getId()
-	 */
 	@Override
 	public long getId() {
 		return info.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return kind;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getMarker()
-	 */
 	@Override
 	public IMarker getMarker() {
 		return new Marker(resource, getId());
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getResource()
-	 */
 	@Override
 	public IResource getResource() {
 		return resource;
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#getType()
-	 */
 	@Override
 	public String getType() {
 		return info.getType();
 	}
 
-	/* (non-Javadoc)
-	 * @see IMarkerDelta#isSubtypeOf(String)
-	 */
 	@Override
 	public boolean isSubtypeOf(String superType) {
 		return ((Workspace) getResource().getWorkspace()).getMarkerManager().isSubtype(getType(), superType);

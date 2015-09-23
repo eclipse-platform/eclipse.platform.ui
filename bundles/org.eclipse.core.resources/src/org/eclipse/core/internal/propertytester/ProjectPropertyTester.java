@@ -25,12 +25,6 @@ public class ProjectPropertyTester extends ResourcePropertyTester {
 	 */
 	private static final String OPEN = "open"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.resources.ResourcePropertyTester#test(java.lang.Object,
-	 *      java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		if ((receiver instanceof IProject) && method.equals(OPEN))

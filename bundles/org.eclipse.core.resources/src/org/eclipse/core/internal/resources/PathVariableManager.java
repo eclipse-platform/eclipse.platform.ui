@@ -358,11 +358,6 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		return getPathVariableNames();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see IPathVariableManager#getVariableRelativePathLocation(IResource, URI)
-	 */
 	@Override
 	public URI getVariableRelativePathLocation(URI location) {
 		try {

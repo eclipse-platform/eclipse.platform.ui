@@ -50,9 +50,6 @@ public class ProjectContentTypes {
 			this.projectScope = new ProjectScope(project);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -87,9 +84,6 @@ public class ProjectContentTypes {
 			return getDelegate().getNode(qualifier);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return getName().hashCode();

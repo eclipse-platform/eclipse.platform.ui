@@ -53,9 +53,6 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		return delta;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#change(org.eclipse.core.resources.IFile)
-	 */
 	@Override
 	public void change(IFile file) {
 		ProposedResourceDelta delta = getDelta(file);
@@ -66,9 +63,6 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 			delta.addFlags(IResourceDelta.CONTENT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#close(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	public void close(IProject project) {
 		delete(project);
@@ -76,25 +70,16 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		delta.addFlags(IResourceDelta.OPEN);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#copy(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public void copy(IResource resource, IPath destination) {
 		moveOrCopyDeep(resource, destination, false /* copy */);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory#create(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public void create(IResource resource) {
 		getDelta(resource).setKind(IResourceDelta.ADDED);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#delete(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public void delete(IResource resource) {
 		if (resource.getType() == IResource.ROOT) {
@@ -111,9 +96,6 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		Policy.log(e.getStatus().getSeverity(), "An internal error occurred while accumulating a change description.", e); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#getDelta()
-	 */
 	@Override
 	public IResourceDelta getDelta() {
 		return root;
@@ -159,9 +141,6 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		return destination;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.mapping.IProposedResourceDeltaFactory#move(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public void move(IResource resource, IPath destination) {
 		moveOrCopyDeep(resource, destination, true /* move */);
