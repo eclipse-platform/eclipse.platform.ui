@@ -12,6 +12,7 @@
 
 package org.eclipse.ui.views.contentoutline;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -21,7 +22,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.ViewsPlugin;
 import org.eclipse.ui.internal.views.contentoutline.ContentOutlineMessages;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
@@ -124,7 +124,7 @@ public class ContentOutline extends PageBookView implements ISelectionProvider,
     @Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
         // Try to get an outline page.
-		IContentOutlinePage page = ViewsPlugin.getAdapter(part, IContentOutlinePage.class, false);
+		IContentOutlinePage page = Adapters.getAdapter(part, IContentOutlinePage.class, true);
 		if (page != null) {
             if (page instanceof IPageBookViewPage) {
 				initPage((IPageBookViewPage) page);

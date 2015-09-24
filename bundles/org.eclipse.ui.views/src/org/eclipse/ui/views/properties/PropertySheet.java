@@ -19,6 +19,7 @@ package org.eclipse.ui.views.properties;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -42,7 +43,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.views.ViewsPlugin;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
@@ -136,8 +136,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 
     @Override
 	protected IPage createDefaultPage(PageBook book) {
-        IPageBookViewPage page = (IPageBookViewPage) ViewsPlugin.getAdapter(this,
-                IPropertySheetPage.class, false);
+		IPageBookViewPage page = (IPageBookViewPage) Adapters.getAdapter(this, IPropertySheetPage.class, true);
         if(page == null) {
         	page = new PropertySheetPage();
         }
@@ -199,8 +198,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     	if(part instanceof PropertySheet) {
     		return null;
     	}
-		IPropertySheetPage page = ViewsPlugin.getAdapter(part,
-                IPropertySheetPage.class, false);
+		IPropertySheetPage page = Adapters.getAdapter(part, IPropertySheetPage.class, true);
         if (page != null) {
             if (page instanceof IPageBookViewPage) {
 				initPage((IPageBookViewPage) page);
@@ -284,10 +282,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      */
     @Override
 	public void partActivated(IWorkbenchPart part) {
-    	// Look for a declaratively-contributed adapter - including not yet loaded adapter factories.
-    	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
-		IContributedContentsView view = ViewsPlugin.getAdapter(part,
-                IContributedContentsView.class, true);
+		IContributedContentsView view = Adapters.getAdapter(part, IContributedContentsView.class, true);
         IWorkbenchPart source = null;
         if (view != null) {
 			source = view.getContributingPart();
