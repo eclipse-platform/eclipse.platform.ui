@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
@@ -380,5 +381,12 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 		fDiffPainter.setParentRuler(null);
 		fDiffPainter.setModel(null);
 		super.handleDispose();
+	}
+	
+	void handleMouseScrolled(MouseEvent e) {
+		if (fRevisionPainter.isWheelHandlerInstalled()) {
+			return; // scroll event is already handled; don't interfere
+		}
+		super.handleMouseScrolled(e);
 	}
 }

@@ -364,17 +364,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		public void mouseScrolled(MouseEvent e) {
-			if (fCachedTextViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-				StyledText textWidget= fCachedTextViewer.getTextWidget();
-				int topIndex= textWidget.getTopIndex();
-				int newTopIndex= Math.max(0, topIndex - e.count);
-				fCachedTextViewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
-			} else {
-				int topIndex= fCachedTextViewer.getTopIndex();
-				int newTopIndex= Math.max(0, topIndex - e.count);
-				fCachedTextViewer.setTopIndex(newTopIndex);
-			}
+			handleMouseScrolled(e);
 		}
 	}
 
@@ -897,6 +887,26 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		return fParentRuler;
 	}
 
+
+	/**
+	 * Handles mouse scrolled events on the ruler by forwarding them to the text widget.
+	 * 
+	 * @param e the mouse event
+	 * @since 3.10
+	 */
+	void handleMouseScrolled(MouseEvent e) {
+		if (fCachedTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
+			StyledText textWidget= fCachedTextViewer.getTextWidget();
+			int topIndex= textWidget.getTopIndex();
+			int newTopIndex= Math.max(0, topIndex - e.count);
+			fCachedTextViewer.setTopIndex(extension.widgetLine2ModelLine(newTopIndex));
+		} else {
+			int topIndex= fCachedTextViewer.getTopIndex();
+			int newTopIndex= Math.max(0, topIndex - e.count);
+			fCachedTextViewer.setTopIndex(newTopIndex);
+		}
+	}
 
 	/**
 	 * Returns the number of lines in the view port.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1298,6 +1298,15 @@ public final class RevisionPainter {
 			fControl.addListener(SWT.MouseVerticalWheel, fMouseHandler);
 			fWheelHandlerInstalled= true;
 		}
+	}
+	
+	/**
+	 * @return <code>true</code> iff the mouse wheel handler is installed and others should avoid
+	 *         handling mouse wheel events
+	 * @since 3.10
+	 */
+	public boolean isWheelHandlerInstalled() {
+		return fWheelHandlerInstalled;
 	}
 
 	/**
