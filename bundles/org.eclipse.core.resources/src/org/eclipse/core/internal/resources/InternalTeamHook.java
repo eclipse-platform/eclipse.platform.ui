@@ -23,8 +23,9 @@ import org.eclipse.core.resources.team.TeamHook;
  */
 public class InternalTeamHook {
 	/**
-	 * Internal implementation of {@link TeamHook#setRulesFor(IProject, IResourceRuleFactory)}.
+	 * Internal implementation of {@link TeamHook#setRuleFactory(IProject, IResourceRuleFactory)}.
 	 */
+	@SuppressWarnings("javadoc") // Suppress the "method in not visible" warning.
 	protected void setRuleFactory(IProject project, IResourceRuleFactory factory) {
 		Workspace workspace = ((Workspace) project.getWorkspace());
 		((Rules) workspace.getRuleFactory()).setRuleFactory(project, factory);
