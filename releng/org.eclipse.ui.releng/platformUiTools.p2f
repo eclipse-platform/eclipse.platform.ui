@@ -145,7 +145,7 @@
     </iu>
     <iu id='org.eclipse.emf.sdk.feature.group' name='EMF - Eclipse Modeling Framework SDK' >
       <repositories size='1'>
-        <repository location='http://download.eclipse.org/releases/luna'/>
+        <repository location='http://download.eclipse.org/releases/mars'/>
       </repositories>
     </iu>
     <iu id='org.eclipse.jgit.feature.group' name='Java implementation of Git' >
