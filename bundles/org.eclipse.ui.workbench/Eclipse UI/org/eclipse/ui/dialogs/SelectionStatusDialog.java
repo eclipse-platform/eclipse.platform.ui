@@ -13,7 +13,6 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.Arrays;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -103,9 +102,6 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
      */
     protected abstract void computeResult();
 
-    /*
-     * @see Window#configureShell(shell)
-     */
     @Override
 	protected void configureShell(Shell shell) {
         super.configureShell(shell);
@@ -139,18 +135,12 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		}
     }
 
-    /*
-     * @see Dialog#okPressed()
-     */
     @Override
 	protected void okPressed() {
         computeResult();
         super.okPressed();
     }
 
-    /*
-     * @see Window#create()
-     */
     @Override
 	public void create() {
         super.create();
@@ -159,9 +149,6 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 		}
     }
 
-    /*
-     * @see Dialog#createButtonBar(Composite)
-     */
     @Override
 	protected Control createButtonBar(Composite parent) {
         Font font = parent.getFont();
