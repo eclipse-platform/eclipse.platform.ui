@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -118,13 +118,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         currentResourceSelection = null;
         if (selection.size() == 1) {
             Object firstElement = selection.getFirstElement();
-            if (firstElement instanceof IAdaptable) {
-                Object resource = ((IAdaptable) firstElement)
-                        .getAdapter(IResource.class);
-                if (resource != null) {
-					currentResourceSelection = (IResource) resource;
-				}
-            }
+			currentResourceSelection = Adapters.getAdapter(firstElement, IResource.class, true);
         }
 
         if (currentResourceSelection != null) {

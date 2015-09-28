@@ -28,8 +28,8 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -694,12 +694,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		Iterator it = currentSelection.iterator();
 		if (it.hasNext()) {
 			Object next = it.next();
-			IResource selectedResource = null;
-			if (next instanceof IResource) {
-				selectedResource = (IResource) next;
-			} else if (next instanceof IAdaptable) {
-				selectedResource = ((IAdaptable) next).getAdapter(IResource.class);
-			}
+			IResource selectedResource = Adapters.getAdapter(next, IResource.class, true);
 			if (selectedResource != null) {
 				if (selectedResource.getType() == IResource.FILE) {
 					selectedResource = selectedResource.getParent();

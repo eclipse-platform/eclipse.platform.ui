@@ -32,8 +32,8 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -685,12 +685,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			Iterator it = currentSelection.iterator();
 			if (it.hasNext()) {
 				Object object = it.next();
-				IResource selectedResource = null;
-				if (object instanceof IResource) {
-					selectedResource = (IResource) object;
-				} else if (object instanceof IAdaptable) {
-					selectedResource = ((IAdaptable) object).getAdapter(IResource.class);
-				}
+				IResource selectedResource = Adapters.getAdapter(object, IResource.class, true);
 				if (selectedResource != null) {
 					if (selectedResource.getType() == IResource.FILE) {
 						selectedResource = selectedResource.getParent();

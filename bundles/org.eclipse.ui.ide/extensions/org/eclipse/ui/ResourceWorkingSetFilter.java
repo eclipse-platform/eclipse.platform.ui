@@ -11,6 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
@@ -52,18 +53,12 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
      */
     @Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-        IResource resource = null;
-
         if (workingSet == null || (workingSet.isAggregateWorkingSet() &&
         		workingSet.isEmpty())) {
             return true;
         }
-        if (element instanceof IResource) {
-            resource = (IResource) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            resource = adaptable.getAdapter(IResource.class);
-        }
+        
+        IResource resource = Adapters.getAdapter(element, IResource.class, true);
         if (resource != null) {
             return isEnclosed(resource);
         }
@@ -135,11 +130,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
         if (workingSetElement.equals(element)) {
 			return true;
 		}
-        if (workingSetElement instanceof IResource) {
-            workingSetResource = (IResource) workingSetElement;
-        } else {
-            workingSetResource = workingSetElement.getAdapter(IResource.class);
-        }
+		workingSetResource = Adapters.getAdapter(workingSetElement, IResource.class, true);
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
             if (resourcePath.isPrefixOf(elementPath)) {

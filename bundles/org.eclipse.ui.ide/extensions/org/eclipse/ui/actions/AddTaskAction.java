@@ -12,8 +12,8 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -86,13 +86,7 @@ public class AddTaskAction extends SelectionListenerAction {
 		}
 
         Object element = selection.getFirstElement();
-        IResource resource = null;
-        if (element instanceof IResource) {
-			resource = (IResource) element;
-		}
-        if (element instanceof IAdaptable) {
-			resource = ((IAdaptable) element).getAdapter(IResource.class);
-		}
+		IResource resource = Adapters.getAdapter(element, IResource.class, true);
 
         if (resource != null && resource instanceof IProject) {
             IProject project = (IProject) resource;

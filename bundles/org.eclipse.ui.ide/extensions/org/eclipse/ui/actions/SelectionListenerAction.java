@@ -21,11 +21,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -112,58 +110,47 @@ public abstract class SelectionListenerAction extends BaseSelectionListenerActio
 
 		for (Iterator<?> e = getStructuredSelection().iterator(); e.hasNext();) {
 			Object next = e.next();
-			if (next instanceof IResource) {
+
+			IResource resource = Adapters.getAdapter(next, IResource.class, true);
+
+			if (resource != null) {
 				if (resources == null) {
 					// assume selection contains mostly resources most times
 					resources = new ArrayList<>(getStructuredSelection().size());
 				}
-				resources.add((IResource) next);
+				resources.add(resource);
 				continue;
-			} else if (next instanceof IAdaptable) {
-				IResource resource = ((IAdaptable) next).getAdapter(IResource.class);
-				if (resource != null) {
-					if (resources == null) {
-						// assume selection contains mostly resources most times
-						resources = new ArrayList<>(getStructuredSelection().size());
-					}
-					resources.add(resource);
-					continue;
+			}
+
+			boolean resourcesFoundForThisSelection = false;
+			ResourceMapping mapping = Adapters.getAdapter(next, ResourceMapping.class, true);
+
+			if (mapping != null) {
+				ResourceTraversal[] traversals = null;
+				try {
+					traversals = mapping.getTraversals(ResourceMappingContext.LOCAL_CONTEXT, new NullProgressMonitor());
+				} catch (CoreException exception) {
+					IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception.getStatus());
 				}
-			} else {
 
-				boolean resourcesFoundForThisSelection = false;
-				IAdapterManager adapterManager = Platform.getAdapterManager();
-				ResourceMapping mapping = adapterManager.getAdapter(next, ResourceMapping.class);
-
-				if (mapping != null) {
-					ResourceTraversal[] traversals = null;
-					try {
-						traversals = mapping.getTraversals(
-								ResourceMappingContext.LOCAL_CONTEXT,
-								new NullProgressMonitor());
-					} catch (CoreException exception) {
-						IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception.getStatus());
-					}
-
-					if (traversals != null) {
-						for (int i = 0; i < traversals.length; i++) {
-							IResource[] traversalResources = traversals[i].getResources();
-							if (traversalResources != null) {
-								resourcesFoundForThisSelection = true;
-								if (resources == null) {
-									resources = new ArrayList<>(getStructuredSelection().size());
-								}
-								for (int j = 0; j < traversalResources.length; j++) {
-									resources.add(traversalResources[j]);
-								}
+				if (traversals != null) {
+					for (int i = 0; i < traversals.length; i++) {
+						IResource[] traversalResources = traversals[i].getResources();
+						if (traversalResources != null) {
+							resourcesFoundForThisSelection = true;
+							if (resources == null) {
+								resources = new ArrayList<>(getStructuredSelection().size());
+							}
+							for (int j = 0; j < traversalResources.length; j++) {
+								resources.add(traversalResources[j]);
 							}
 						}
 					}
 				}
+			}
 
-				if (resourcesFoundForThisSelection) {
-					continue;
-				}
+			if (resourcesFoundForThisSelection) {
+				continue;
 			}
 
 			if (nonResources == null) {

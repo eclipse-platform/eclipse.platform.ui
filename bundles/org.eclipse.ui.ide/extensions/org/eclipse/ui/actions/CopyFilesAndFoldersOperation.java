@@ -35,8 +35,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -1048,10 +1048,7 @@ public class CopyFilesAndFoldersOperation {
 	 *         <code>null</code> if the resource does not adapt to IFile
 	 */
 	protected IFile getFile(IResource resource) {
-		if (resource instanceof IFile) {
-			return (IFile) resource;
-		}
-		return ((IAdaptable) resource).getAdapter(IFile.class);
+		return Adapters.getAdapter(resource, IFile.class, true);
 	}
 
 	/**
@@ -1083,10 +1080,7 @@ public class CopyFilesAndFoldersOperation {
 	 *         <code>null</code> if the resource does not adapt to IFolder
 	 */
 	protected IFolder getFolder(IResource resource) {
-		if (resource instanceof IFolder) {
-			return (IFolder) resource;
-		}
-		return ((IAdaptable) resource).getAdapter(IFolder.class);
+		return Adapters.getAdapter(resource, IFolder.class, true);
 	}
 
 	/**
