@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -218,7 +219,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			if (oldImage != null && !oldImage.isDisposed())
 				oldImage.dispose();
 		} else {
-			IPathEditorInput pinput = input.getAdapter(IPathEditorInput.class);
+			IPathEditorInput pinput = Adapters.getAdapter(input, IPathEditorInput.class, true);
 			if (pinput != null) {
 				init(site, pinput);
 			} else {
