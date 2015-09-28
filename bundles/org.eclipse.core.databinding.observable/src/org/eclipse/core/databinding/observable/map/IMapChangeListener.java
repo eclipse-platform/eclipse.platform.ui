@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
  * @since 1.0
  *
  */
+@FunctionalInterface
 public interface IMapChangeListener<K, V> extends IObservablesListener {
 
 	/**
@@ -36,5 +37,4 @@ public interface IMapChangeListener<K, V> extends IObservablesListener {
 	 *            the event
 	 */
 	void handleMapChange(MapChangeEvent<? extends K, ? extends V> event);
-
 }

@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
  * @since 1.0
  *
  */
+@FunctionalInterface
 public interface ISetChangeListener<E> extends IObservablesListener {
 
 	/**

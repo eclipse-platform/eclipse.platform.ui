@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.IDiff;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.2
  */
+@FunctionalInterface
 public interface ISimplePropertyListener<S, D extends IDiff> {
 	/**
 	 * Handle the described property event.

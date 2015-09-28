@@ -25,6 +25,7 @@ import org.eclipse.core.databinding.observable.IObservable;
  *
  * @since 1.0
  */
+@FunctionalInterface
 public interface IObservableFactory<T, E extends IObservable> {
 
 	/**

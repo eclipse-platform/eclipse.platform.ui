@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
  * @since 1.0
  *
  */
+@FunctionalInterface
 public interface IValidator {
 
 	/**

@@ -17,6 +17,7 @@ package org.eclipse.core.databinding.observable;
  *
  * @since 1.0
  */
+@FunctionalInterface
 public interface IStaleListener extends IObservablesListener {
 
 	/**

@@ -28,6 +28,7 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
  *
  * @since 1.0
  */
+@FunctionalInterface
 public interface IChangeListener extends IObservablesListener {
 
 	/**
