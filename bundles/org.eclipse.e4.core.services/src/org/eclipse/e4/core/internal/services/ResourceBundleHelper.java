@@ -28,16 +28,16 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.log.LogService;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Helper class for retrieving {@link ResourceBundle}s out of OSGi {@link Bundle}s.
  *
  * @author Dirk Fauth
  */
-// There is no replacement for PackageAdmin#getBundles()
-@SuppressWarnings("deprecation")
 public class ResourceBundleHelper {
 
 	/**
@@ -60,6 +60,19 @@ public class ResourceBundleHelper {
 	 * The separator character for paths in the platform schema
 	 */
 	private static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
+
+	private static final ServiceTracker<LogService, LogService> logTracker = openLogTracker();
+
+	private static ServiceTracker<LogService, LogService> openLogTracker() {
+		try {
+			ServiceTracker<LogService, LogService> st = new ServiceTracker<LogService, LogService>(
+					FrameworkUtil.getBundle(ResourceBundleHelper.class).getBundleContext(), LogService.class, null);
+			st.open();
+			return st;
+		} catch (Throwable t) {
+			return null;
+		}
+	}
 
 	/**
 	 * Parses the specified contribution URI and loads the {@link ResourceBundle} for the specified
@@ -93,7 +106,7 @@ public class ResourceBundleHelper {
 		if (contributionURI == null)
 			return null;
 
-		LogService logService = ServicesActivator.getDefault().getLogService();
+		LogService logService = logTracker.getService();
 
 		URI uri;
 		try {
@@ -438,13 +451,20 @@ public class ResourceBundleHelper {
 	 * @return A bundle if found, or <code>null</code>
 	 */
 	public static Bundle getBundleForName(String bundleName) {
-		PackageAdmin packageAdmin = ServicesActivator.getDefault().getPackageAdmin();
-		Bundle[] bundles = packageAdmin.getBundles(bundleName, null);
-		if (bundles == null)
+		if (bundleName == null) {
 			return null;
+		}
+		Bundle bundle = FrameworkUtil.getBundle(ResourceBundleHelper.class);
+		BundleContext context = bundle == null ? null : bundle.getBundleContext();
+
+		Bundle[] bundles = context.getBundles();
+		if (bundles == null) {
+			return null;
+		}
 		// Return the first bundle that is not installed or uninstalled
 		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+			if (bundleName.equals(bundles[i].getSymbolicName())
+					&& (bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
 				return bundles[i];
 			}
 		}
@@ -526,8 +546,7 @@ public class ResourceBundleHelper {
 	 *         default {@link Locale} will be returned.
 	 */
 	public static Locale toLocale(String localeString, Locale defaultLocale) {
-		LogService logService = ServicesActivator.getDefault() != null ? ServicesActivator
-				.getDefault().getLogService() : null;
+		LogService logService = logTracker.getService();
 
 		if (localeString == null) {
 			if (logService != null)
@@ -594,6 +613,10 @@ public class ResourceBundleHelper {
 			logService.log(LogService.LOG_ERROR, "Invalid locale format: " + str
 					+ " - Default Locale will be used instead."); //$NON-NLS-1$
 		}
+	}
+
+	public static LogService getLogService() {
+		return logTracker.getService();
 	}
 
 	/**

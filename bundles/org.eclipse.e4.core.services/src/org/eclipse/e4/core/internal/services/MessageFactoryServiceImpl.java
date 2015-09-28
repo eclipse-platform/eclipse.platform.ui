@@ -37,7 +37,7 @@ import org.osgi.service.log.LogService;
 
 public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
-	private static LogService logService = ServicesActivator.getDefault().getLogService();
+	private LogService logService;
 
 	// Cache so when multiple instance use the same message class
 	private Map<Object, Reference<Object>> SOFT_CACHE = Collections
@@ -155,7 +155,8 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * @return The created instance of the given messages class and {@link Locale} or
 	 *         <code>null</code> if an error occured on creating the instance.
 	 */
-	private static <M> M createInstance(Locale locale, Class<M> messages, Message annotation,
+	@SuppressWarnings("deprecation")
+	private <M> M createInstance(Locale locale, Class<M> messages, Message annotation,
 			ResourceBundleProvider rbProvider) {
 
 		ResourceBundle resourceBundle = null;
@@ -244,7 +245,7 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * @param messageClass
 	 *            The type of the message class whose instance is requested.
 	 */
-	private static void processPostConstruct(Object messageObject, Class<?> messageClass) {
+	private void processPostConstruct(Object messageObject, Class<?> messageClass) {
 		if (messageObject != null) {
 			Method[] methods = messageClass.getDeclaredMethods();
 			for (int i = 0; i < methods.length; i++) {
@@ -263,6 +264,14 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 				}
 			}
 		}
+	}
+
+	public void unsetLogService() {
+		setLogService(null);
+	}
+
+	public void setLogService(LogService logService) {
+		this.logService = logService;
 	}
 
 }
