@@ -15,16 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.osgi.framework.Bundle;
@@ -119,6 +117,6 @@ public class AddReadmeMarkerAction extends Action {
      */
     protected IResource getResource() {
         IEditorInput input = textEditor.getEditorInput();
-        return ((IAdaptable) input).getAdapter(IResource.class);
+        return Adapters.getAdapter(input, IResource.class, true);
     }
 }

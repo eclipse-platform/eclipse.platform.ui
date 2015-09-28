@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.views.properties.tabbed.article.views;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -94,15 +95,14 @@ public class FontSection
                 }
                 FontData fData = ftDialog.open();
 
-                if (fData != null) {
-                    value = fData.toString();
+				if (fData != null) {
+					value = fData.toString();
 
-                    ButtonElementProperties properties = (ButtonElementProperties) buttonElement
-                        .getAdapter(IPropertySource.class);
-                    properties.setPropertyValue(
-                        ButtonElementProperties.PROPERTY_FONT, value);
-                    fontText.setText(StringConverter.asString(fData));
-                }
+					ButtonElementProperties properties = (ButtonElementProperties) Adapters.getAdapter(buttonElement,
+							IPropertySource.class, true);
+					properties.setPropertyValue(ButtonElementProperties.PROPERTY_FONT, value);
+					fontText.setText(StringConverter.asString(fData));
+				}
             }
         });
 

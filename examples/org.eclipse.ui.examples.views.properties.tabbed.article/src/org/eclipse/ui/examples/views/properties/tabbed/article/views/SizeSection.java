@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.views.properties.tabbed.article.views;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -42,11 +43,11 @@ public class SizeSection
 
     private ModifyListener listener = new ModifyListener() {
 
-        public void modifyText(ModifyEvent arg0) {
-            ButtonElementProperties properties = (ButtonElementProperties) buttonElement
-                .getAdapter(IPropertySource.class);
-            SizePropertySource sizePropertySource = (SizePropertySource) properties
-                .getPropertyValue(ButtonElementProperties.PROPERTY_SIZE);
+		public void modifyText(ModifyEvent arg0) {
+			ButtonElementProperties properties = (ButtonElementProperties) Adapters.getAdapter(buttonElement,
+					IPropertySource.class, true);
+			SizePropertySource sizePropertySource = (SizePropertySource) properties
+	                .getPropertyValue(ButtonElementProperties.PROPERTY_SIZE);
             sizePropertySource.setPropertyValue(SizePropertySource.ID_HEIGHT,
                 heightText.getText());
             sizePropertySource.setPropertyValue(SizePropertySource.ID_WIDTH,
@@ -118,8 +119,8 @@ public class SizeSection
     public void refresh() {
         heightText.removeModifyListener(listener);
         widthText.removeModifyListener(listener);
-        ButtonElementProperties properties = (ButtonElementProperties) buttonElement
-            .getAdapter(IPropertySource.class);
+		ButtonElementProperties properties = (ButtonElementProperties) Adapters.getAdapter(buttonElement,
+				IPropertySource.class, true);
         widthText.setText(Integer.toString(properties.ptSize.x));
         heightText.setText(Integer.toString(properties.ptSize.y));
         heightText.addModifyListener(listener);
