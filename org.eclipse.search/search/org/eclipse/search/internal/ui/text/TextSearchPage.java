@@ -435,7 +435,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private String[] getExtensions() {
-		return fFileTypeEditor.getFileTypes();
+		String[] fileTypes= fFileTypeEditor.getFileTypes();
+		return fileTypes.length == 0 ? new String[] { "*" } : fileTypes; //$NON-NLS-1$
 	}
 
 	private boolean isCaseSensitive() {
@@ -473,8 +474,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	final void updateOKStatus() {
 		boolean regexStatus= validateRegex();
-		boolean hasFilePattern= fExtensions.getText().length() > 0;
-		getContainer().setPerformActionEnabled(regexStatus && hasFilePattern);
+		getContainer().setPerformActionEnabled(regexStatus);
 	}
 
 	//---- Widget creation ------------------------------------------------
