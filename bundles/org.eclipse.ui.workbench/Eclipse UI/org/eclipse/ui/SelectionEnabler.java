@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -489,7 +489,7 @@ public final class SelectionEnabler {
 			if (sc.nameFilter == null) {
 				return true;
 			}
-			IWorkbenchAdapter de = Util.getAdapter(element, IWorkbenchAdapter.class);
+			IWorkbenchAdapter de = Adapters.getAdapter(element, IWorkbenchAdapter.class, true);
 			if ((de != null)
 					&& verifyNameMatch(de.getLabel(element), sc.nameFilter)) {
 				return true;
