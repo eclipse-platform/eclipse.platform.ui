@@ -1136,6 +1136,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @exception CoreException if the operation failed.
 	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
+	 * 
+	 * @see #run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.11
 	 */
 	public void run(ICoreRunnable action, IProgressMonitor monitor) throws CoreException;

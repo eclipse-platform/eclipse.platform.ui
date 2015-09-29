@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * This interface is structurally equivalent to {@link ICoreRunnable}. New code should use
@@ -22,5 +21,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see IWorkspace#run(ICoreRunnable, IProgressMonitor)
  */
 public interface IWorkspaceRunnable extends ICoreRunnable {
-	// No additional methods.
+	/**
+	 * @param monitor a progress monitor, or {@code null} if progress reporting and
+	 *     cancellation are not desired.  The monitor is only valid for the duration
+	 *     of the invocation of this method.  Callers may call {@link IProgressMonitor#done()}
+	 *     after this method returns or throws an exception, but this is not strictly
+	 *     required.
+	 * @exception CoreException if this operation fails
+	 * @exception OperationCanceledException if this operation is canceled
+	 */
+	@Override
+	public void run(IProgressMonitor monitor) throws CoreException;
 }
