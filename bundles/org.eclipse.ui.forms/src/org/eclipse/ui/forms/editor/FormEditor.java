@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 478587
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 
@@ -169,7 +170,11 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	@Override
 	public Object getSelectedPage() {
-		return getActivePageInstance();
+		int index = getActivePage();
+		if (index != -1) {
+			return pages.get(index);
+		}
+		return null;
 	}
 
 	/**
@@ -581,8 +586,9 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	/**
 	 * Returns active page instance if the currently selected page index is not
-	 * -1, or <code>null</code> if it is.
+	 * -1 and active page is a IFormPage, or <code>null</code> otherwise.
 	 *
+	 * @see MultiPageEditorPart#getSelectedPage()
 	 * @return active page instance if selected, or <code>null</code> if no
 	 *         page is currently active.
 	 */
