@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,7 @@ public abstract class BasicDescription implements IContentDescription {
 	public IContentType getContentType() {
 		ContentType contentType = contentTypeInfo.getContentType();
 		//TODO performance: potential creation of garbage
-		return new ContentTypeHandler(contentType.getCatalog().getManager(), contentType,
-				contentType.getCatalog().getGeneration());
+		return new ContentTypeHandler(contentType, contentType.getCatalog().getGeneration());
 	}
 
 	public IContentTypeInfo getContentTypeInfo() {

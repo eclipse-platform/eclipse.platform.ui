@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,9 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 
 	private ContentType contentType;
 	private IScopeContext context;
-	private ContentTypeManager contentTypeManager;
 
-	static void addFileSpec(ContentTypeManager contentTypeManager, IScopeContext context, String contentTypeId,
-			String fileSpec, int type) throws CoreException {
-		Preferences contentTypeNode = contentTypeManager.getPreferences(context).node(contentTypeId);
+	static void addFileSpec(IScopeContext context, String contentTypeId, String fileSpec, int type) throws CoreException {
+		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentTypeId);
 		String key = ContentType.getPreferenceKey(type);
 		List<String> existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
 		for (int i = 0; i < existingValues.size(); i++)
@@ -47,9 +45,8 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		}
 	}
 
-	static String[] getFileSpecs(ContentTypeManager contentTypeManager, IScopeContext context, String contentTypeId,
-			int type) {
-		Preferences contentTypeNode = contentTypeManager.getPreferences(context).node(contentTypeId);
+	static String[] getFileSpecs(IScopeContext context, String contentTypeId, int type) {
+		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentTypeId);
 		return getFileSpecs(contentTypeNode, type);
 	}
 
@@ -76,8 +73,8 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		return baseType == null ? null : internalGetDefaultProperty(baseType, contentTypePrefs, key);
 	}
 
-	void removeFileSpec(IScopeContext context, String contentTypeId, String fileSpec, int type) throws CoreException {
-		Preferences contentTypeNode = contentTypeManager.getPreferences(context).node(contentTypeId);
+	static void removeFileSpec(IScopeContext context, String contentTypeId, String fileSpec, int type) throws CoreException {
+		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentTypeId);
 		String key = ContentType.getPreferenceKey(type);
 		String existing = contentTypeNode.get(key, null);
 		if (existing == null)
@@ -105,8 +102,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		}
 	}
 
-	public ContentTypeSettings(ContentTypeManager contentTypeManager, ContentType contentType, IScopeContext context) {
-		this.contentTypeManager = contentTypeManager;
+	public ContentTypeSettings(ContentType contentType, IScopeContext context) {
 		this.context = context;
 		this.contentType = contentType;
 	}
@@ -116,7 +112,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 	 */
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
-		addFileSpec(contentTypeManager, context, contentType.getId(), fileSpec, type);
+		addFileSpec(context, contentType.getId(), fileSpec, type);
 	}
 
 	@Override
@@ -131,7 +127,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 
 	@Override
 	public String getDefaultProperty(final QualifiedName key) {
-		final Preferences contentTypePrefs = contentTypeManager.getPreferences(context);
+		final Preferences contentTypePrefs = ContentTypeManager.getInstance().getPreferences(context);
 		try {
 			String propertyValue = internalGetDefaultProperty(contentType, contentTypePrefs, key);
 			return "".equals(propertyValue) ? null : propertyValue; //$NON-NLS-1$
@@ -142,7 +138,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 
 	@Override
 	public String[] getFileSpecs(int type) {
-		return getFileSpecs(contentTypeManager, context, contentType.getId(), type);
+		return getFileSpecs(context, contentType.getId(), type);
 	}
 
 	@Override
@@ -157,7 +153,7 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 
 	@Override
 	public void setDefaultCharset(String userCharset) throws CoreException {
-		Preferences contentTypeNode = contentTypeManager.getPreferences(context).node(contentType.getId());
+		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentType.getId());
 		ContentType.setPreference(contentTypeNode, ContentType.PREF_DEFAULT_CHARSET, userCharset);
 		try {
 			contentTypeNode.flush();

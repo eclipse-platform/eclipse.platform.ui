@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.core.internal.content;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.xml.parsers.*;
-import org.osgi.framework.*;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
@@ -74,38 +73,8 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	private String namespaceFound = null;
 
-	/**
-	 * This is the parser factory used to parse the XML content.
-	 */
-	private SAXParserFactory factory;
-
-	@Deprecated
 	public XMLRootHandler(boolean checkRoot) {
-		this(checkRoot, findParserFactory());
-	}
-
-	private static SAXParserFactory findParserFactory() {
-		Bundle bundle = FrameworkUtil.getBundle(XMLRootHandler.class);
-		BundleContext context = bundle == null ? null : bundle.getBundleContext();
-		ServiceReference<SAXParserFactory> sr = context == null ? null
-				: context.getServiceReference(SAXParserFactory.class);
-		if (sr == null) {
-			return null;
-		} else {
-			try {
-				return context.getService(sr);
-			} finally {
-				context.ungetService(sr);
-			}
-		}
-	}
-
-	public XMLRootHandler(boolean checkRoot, SAXParserFactory parserFactory) {
 		this.checkRoot = checkRoot;
-		this.factory = parserFactory;
-		if (parserFactory != null) {
-			parserFactory.setNamespaceAware(true);
-		}
 	}
 
 	@Override
@@ -180,6 +149,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
 		try {
+			SAXParserFactory factory = Activator.getDefault().getFactory();
 			if (factory == null)
 				return false;
 			final SAXParser parser = createParser(factory);

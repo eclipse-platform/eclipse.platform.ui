@@ -13,8 +13,8 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.viewers.*;
@@ -39,7 +39,7 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 			return true;
 		}
 
-		private TreeContentProviderNode addContentType(IContentType type, Set<ContentTypePropertySource> visited) {
+		private TreeContentProviderNode addContentType(IContentType type, Set visited) {
 			ContentTypePropertySource wrapped = new ContentTypePropertySource(type);
 			if (!visited.add(wrapped))
 				return getNodeFor(wrapped);
@@ -60,8 +60,8 @@ public class ContentTypeView extends SpyView implements IAdaptable {
 
 		@Override
 		protected void rebuild(Viewer viewer, Object input) {
-			IContentType[] allTypes = Platform.getContentTypeManager().getAllContentTypes();
-			Set<ContentTypePropertySource> visited = new HashSet<>(allTypes.length);
+			IContentType[] allTypes = ContentTypeManager.getInstance().getAllContentTypes();
+			Set visited = new HashSet(allTypes.length);
 			for (int i = 0; i < allTypes.length; i++)
 				addContentType(allTypes[i], visited);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,17 +24,8 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 
 	private IScopeContext context;
 	private IContentTypeManager.ISelectionPolicy policy;
-	private ContentTypeManager contentTypeManager;
 
-	protected ContentTypeMatcher(IContentTypeManager.ISelectionPolicy policy, IScopeContext context) {
-		this.policy = policy;
-		this.context = context;
-		this.contentTypeManager = (ContentTypeManager) this;
-	}
-
-	public ContentTypeMatcher(ContentTypeManager contentTypeManager, IContentTypeManager.ISelectionPolicy policy,
-			IScopeContext context) {
-		this.contentTypeManager = contentTypeManager;
+	public ContentTypeMatcher(IContentTypeManager.ISelectionPolicy policy, IScopeContext context) {
 		this.policy = policy;
 		this.context = context;
 	}
@@ -46,9 +37,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] all = currentCatalog.findContentTypesFor(this, contents, fileName);
-		return all.length > 0
-				? new ContentTypeHandler(contentTypeManager, (ContentType) all[0], currentCatalog.getGeneration())
-				: null;
+		return all.length > 0 ? new ContentTypeHandler((ContentType) all[0], currentCatalog.getGeneration()) : null;
 	}
 
 	/**
@@ -59,9 +48,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		// basic implementation just gets all content types
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] associated = currentCatalog.findContentTypesFor(this, fileName);
-		return associated.length == 0 ? null
-				: new ContentTypeHandler(contentTypeManager, (ContentType) associated[0],
-						currentCatalog.getGeneration());
+		return associated.length == 0 ? null : new ContentTypeHandler((ContentType) associated[0], currentCatalog.getGeneration());
 	}
 
 	/**
@@ -74,7 +61,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		IContentType[] result = new IContentType[types.length];
 		int generation = currentCatalog.getGeneration();
 		for (int i = 0; i < result.length; i++)
-			result[i] = new ContentTypeHandler(contentTypeManager, (ContentType) types[i], generation);
+			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
 		return result;
 	}
 
@@ -88,12 +75,12 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		IContentType[] result = new IContentType[types.length];
 		int generation = currentCatalog.getGeneration();
 		for (int i = 0; i < result.length; i++)
-			result[i] = new ContentTypeHandler(contentTypeManager, (ContentType) types[i], generation);
+			result[i] = new ContentTypeHandler((ContentType) types[i], generation);
 		return result;
 	}
 
 	private ContentTypeCatalog getCatalog() {
-		return contentTypeManager.getCatalog();
+		return ContentTypeManager.getInstance().getCatalog();
 	}
 
 	/**
@@ -152,18 +139,16 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	}
 
 	public IContentDescription getSpecificDescription(BasicDescription description) {
-		if (description == null || contentTypeManager.getContext().equals(getContext()))
+		if (description == null || ContentTypeManager.getInstance().getContext().equals(getContext()))
 			// no need for specific content descriptions
 			return description;
 		// default description
 		if (description instanceof DefaultDescription)
 			// return an context specific description instead
-			return new DefaultDescription(new ContentTypeSettings(contentTypeManager,
-					(ContentType) description.getContentTypeInfo(), context));
+			return new DefaultDescription(new ContentTypeSettings((ContentType) description.getContentTypeInfo(), context));
 		// non-default description
 		// replace info object with context specific settings
-		((ContentDescription) description).setContentTypeInfo(
-				new ContentTypeSettings(contentTypeManager, (ContentType) description.getContentTypeInfo(), context));
+		((ContentDescription) description).setContentTypeInfo(new ContentTypeSettings((ContentType) description.getContentTypeInfo(), context));
 		return description;
 	}
 }

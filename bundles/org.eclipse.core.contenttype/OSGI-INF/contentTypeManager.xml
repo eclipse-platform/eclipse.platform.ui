@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.core.contenttype">
-   <implementation class="org.eclipse.core.internal.content.ContentTypeManager"/>
-   <reference bind="setExtensionRegistry" unbind="unsetExtensionRegistry" cardinality="0..1" interface="org.eclipse.core.runtime.IExtensionRegistry" name="IExtensionRegistry" policy="dynamic"/>
-   <reference bind="setDebugOptions" unbind="unsetDebugOptions" cardinality="0..1" interface="org.eclipse.osgi.service.debug.DebugOptions" name="DebugOptions" policy="dynamic"/>
-   <service>
-      <provide interface="org.eclipse.core.runtime.content.IContentTypeManager"/>
-   </service>
-</scr:component>
