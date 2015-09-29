@@ -18,6 +18,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -66,11 +67,11 @@ public class MarkersPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		// initialize resources/properties
 
-		Object element = getElement().getAdapter(IMarker.class);
+		IMarker element = Adapters.getAdapter(getElement(), IMarker.class, true);
 		IResource resource = null;
 
 		if (element != null) {
-			marker = (IMarker) element;
+			marker = element;
 			resource = marker.getResource();
 		} else if (resource == null) {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
