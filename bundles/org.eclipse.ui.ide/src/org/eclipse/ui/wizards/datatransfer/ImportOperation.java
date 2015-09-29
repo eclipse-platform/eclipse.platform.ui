@@ -30,8 +30,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -427,15 +427,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * 	<code>null</code> if the resource does not adapt to IFile
      */
     IFile getFile(IResource resource) {
-        if (resource instanceof IFile) {
-            return (IFile) resource;
-        }
-        Object adapted = ((IAdaptable) resource).getAdapter(IFile.class);
-        if(adapted == null) {
-			return null;
-		}
-        return (IFile) adapted;
-
+		// TODO: Check if this is necessary. No IResource should
+		// adapt to IFile unless it *is* an IFile. An instanceof check
+		// might be better
+		return Adapters.getAdapter(resource, IFile.class, true);
     }
 
     /**
@@ -446,14 +441,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * 	<code>null</code> if the resource does not adapt to IFolder
      */
     IFolder getFolder(IResource resource) {
-        if (resource instanceof IFolder) {
-            return (IFolder) resource;
-        }
-        Object adapted = ((IAdaptable) resource).getAdapter(IFolder.class);
-        if(adapted == null) {
-			return null;
-		}
-        return (IFolder) adapted;
+		// TODO: Check if this is necessary. No IResource should
+		// adapt to IFolder unless it *is* an IFolder. An instanceof
+		// check might be better
+		return Adapters.getAdapter(resource, IFolder.class, true);
     }
 
     /**
