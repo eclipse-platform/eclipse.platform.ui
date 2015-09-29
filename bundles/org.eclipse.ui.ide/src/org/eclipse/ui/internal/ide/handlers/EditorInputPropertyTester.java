@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.ide.handlers;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -46,7 +47,7 @@ public class EditorInputPropertyTester extends PropertyTester {
 					.log("IEditorPart (" + editor.getClass() + ") passed in without IEditorInput set.", new NullPointerException()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
-		Object obj = input.getAdapter(IResource.class);
+		Object obj = Adapters.getAdapter(input, IResource.class, true);
 		return obj != null;
 	}
 }

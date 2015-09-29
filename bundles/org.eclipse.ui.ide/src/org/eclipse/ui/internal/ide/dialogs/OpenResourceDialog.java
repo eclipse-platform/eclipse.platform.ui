@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.util.Collections;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -127,7 +128,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 					}
 				}
 				private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
-					return org.eclipse.ui.internal.util.Util.getAdapter(targetPart, IShowInTarget.class);
+					return Adapters.getAdapter(targetPart, IShowInTarget.class, true);
 				}
 			};
 			action.setId(targetId);

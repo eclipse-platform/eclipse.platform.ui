@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.ide.model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -67,13 +67,7 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
      * or null if there is none.
      */
     protected IResource getResource(Object o) {
-        if (o instanceof IResource) {
-            return (IResource) o;
-        }
-        if (o instanceof IAdaptable) {
-            return ((IAdaptable) o).getAdapter(IResource.class);
-        }
-        return null;
+		return Adapters.getAdapter(o, IResource.class, true);
     }
 
     /**

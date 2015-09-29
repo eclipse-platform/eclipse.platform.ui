@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -40,7 +41,7 @@ public class ResourceFilterPage extends PropertyPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
 				IIDEHelpContextIds.RESOURCE_FILTER_PROPERTY_PAGE);
 
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 		IContainer container = resource instanceof IContainer ? (IContainer) resource
 				: null;
 		groupWidget.setContainer(container);

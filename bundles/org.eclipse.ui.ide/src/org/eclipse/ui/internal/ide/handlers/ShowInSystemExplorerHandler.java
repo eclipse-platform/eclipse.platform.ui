@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -122,8 +123,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 
 		Object selectedObject = ((IStructuredSelection) selection)
 				.getFirstElement();
-		IResource item = org.eclipse.ui.internal.util.Util
-				.getAdapter(selectedObject, IResource.class);
+		IResource item = Adapters.getAdapter(selectedObject, IResource.class, true);
 		return item;
 	}
 
@@ -136,7 +136,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput)input).getFile();
 		}
-		return input.getAdapter(IResource.class);
+		return Adapters.getAdapter(input, IResource.class, true);
 	}
 
 	/**

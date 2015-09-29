@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -333,7 +334,7 @@ public class ResourceInfoPage extends PropertyPage {
 	}
 
 	protected void editLinkLocation() {
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 		String locationFormat = resource.getPathVariableManager().convertFromUserEditableFormat(locationValue.getText(), true);
 		IPath location = Path.fromOSString(locationFormat);
 
@@ -352,7 +353,7 @@ public class ResourceInfoPage extends PropertyPage {
 	}
 
 	private void refreshLinkLocation() {
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 
 		String userEditableFormat = resource.getPathVariableManager().convertToUserEditableFormat(newResourceLocation.toOSString(), true);
 		locationValue.setText(userEditableFormat);
@@ -388,7 +389,7 @@ public class ResourceInfoPage extends PropertyPage {
 				IIDEHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 		// layout the page
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 
 		if (resource == null) {
 			Label label = new Label(parent, SWT.NONE);
@@ -846,7 +847,7 @@ public class ResourceInfoPage extends PropertyPage {
 	@Override
 	protected void performDefaults() {
 
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 
 		if (resource == null)
 			return;
@@ -1082,7 +1083,7 @@ public class ResourceInfoPage extends PropertyPage {
 	@Override
 	public boolean performOk() {
 
-		IResource resource = getElement().getAdapter(IResource.class);
+		IResource resource = Adapters.getAdapter(getElement(), IResource.class, true);
 
 		if (resource == null)
 			return true;
