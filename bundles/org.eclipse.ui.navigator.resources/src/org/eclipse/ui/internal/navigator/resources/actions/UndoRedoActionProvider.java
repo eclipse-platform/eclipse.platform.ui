@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
@@ -34,8 +35,7 @@ public class UndoRedoActionProvider extends CommonActionProvider {
 
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
-		IUndoContext workspaceContext = ResourcesPlugin
-				.getWorkspace().getAdapter(IUndoContext.class);
+		IUndoContext workspaceContext = Adapters.getAdapter(ResourcesPlugin.getWorkspace(), IUndoContext.class, true);
 		undoRedoGroup = new UndoRedoActionGroup(((ICommonViewerWorkbenchSite) anActionSite.getViewSite()).getSite(),
 				workspaceContext, true);
 	}

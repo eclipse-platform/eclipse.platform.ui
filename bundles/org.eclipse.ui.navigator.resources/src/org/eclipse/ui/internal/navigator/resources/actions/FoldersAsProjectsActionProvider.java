@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.internal.navigator.AdaptabilityUtility;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
@@ -37,7 +37,7 @@ public class FoldersAsProjectsActionProvider extends CommonActionProvider {
 			return;
 		}
 		Object object = selection.getFirstElement();
-		IFolder folder = (IFolder)AdaptabilityUtility.getAdapter(object, IFolder.class);
+		IFolder folder = Adapters.getAdapter(object, IFolder.class, true);
 		if (folder == null) {
 			return;
 		}

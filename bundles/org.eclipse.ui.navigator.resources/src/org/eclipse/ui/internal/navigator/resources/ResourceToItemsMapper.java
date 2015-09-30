@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonViewerMapper;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Adds a supplemental map for the CommonViewer to efficiently handle resource
@@ -152,10 +152,6 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 	}
 
 	private static IResource getCorrespondingResource(Object element) {
-		if (element instanceof IResource)
-			return (IResource) element;
-		if (element instanceof IAdaptable)
-			return ((IAdaptable) element).getAdapter(IResource.class);
-		return null;
+		return Adapters.getAdapter(element, IResource.class, true);
 	}
 }

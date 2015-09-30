@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,7 +24,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
-import org.eclipse.ui.internal.navigator.AdaptabilityUtility;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionConstants;
@@ -97,12 +97,10 @@ public class OpenActionProvider extends CommonActionProvider {
 		Object o = ss.getFirstElement();
 
 		// first try IResource
-		IAdaptable openable = (IAdaptable) AdaptabilityUtility.getAdapter(o,
-				IResource.class);
+		IAdaptable openable = Adapters.getAdapter(o, IResource.class, true);
 		// otherwise try ResourceMapping
 		if (openable == null) {
-			openable = (IAdaptable) AdaptabilityUtility.getAdapter(o,
-					ResourceMapping.class);
+			openable = Adapters.getAdapter(o, ResourceMapping.class, true);
 		} else if (((IResource) openable).getType() != IResource.FILE) {
 			openable = null;
 		}

@@ -20,13 +20,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
-
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -65,7 +65,7 @@ public class OpenFolderAsProjectAction extends Action {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			for (IWorkingSet workingSet : workingSetManager.getWorkingSets()) {
 				for (IAdaptable element : workingSet.getElements()) {
-					if (parentProject.equals(element.getAdapter(IProject.class))) {
+					if (parentProject.equals(Adapters.getAdapter(element, IProject.class, true))) {
 						parentWorkingSets.add(workingSet);
 						break;
 					}

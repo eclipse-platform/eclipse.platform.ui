@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,10 +46,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 			return Status.CANCEL_STATUS;
 		}
 
-		IWorkingSet targetWorkingSet = null;
-		if (target instanceof IAdaptable) {
-			targetWorkingSet = ((IAdaptable) target).getAdapter(IWorkingSet.class);
-		}
+		IWorkingSet targetWorkingSet = Adapters.getAdapter(target, IWorkingSet.class, true);
 		if (targetWorkingSet == null) {
 			return Status.CANCEL_STATUS;
 		}
@@ -60,11 +58,9 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 		ISelection sel = LocalSelectionTransfer.getTransfer().getSelection();
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			for (Object item : ((IStructuredSelection) sel).toArray()) {
-				if (item instanceof IAdaptable) {
-					IProject project = ((IAdaptable) item).getAdapter(IProject.class);
-					if (project != null && !workingSetContains(targetWorkingSet, project)) {
-						return Status.OK_STATUS;
-					}
+				IProject project = Adapters.getAdapter(item, IProject.class, true);
+				if (project != null && !workingSetContains(targetWorkingSet, project)) {
+					return Status.OK_STATUS;
 				}
 			}
 		}
@@ -74,29 +70,26 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 	@Override
 	public IStatus handleDrop(CommonDropAdapter dropAdapter, DropTargetEvent dropTargetEvent, Object target) {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet targetWorkingSet = ((IAdaptable) target).getAdapter(IWorkingSet.class);
+		IWorkingSet targetWorkingSet = Adapters.getAdapter(target, IWorkingSet.class, true);
 		ISelection sel = LocalSelectionTransfer.getTransfer().getSelection();
 		if (sel instanceof ITreeSelection) {
 			for (TreePath path : ((ITreeSelection) sel).getPaths()) {
-				IProject project = ((IAdaptable) path.getLastSegment()).getAdapter(IProject.class);
+				IProject project = Adapters.getAdapter(path.getLastSegment(), IProject.class, true);
 				if (project != null) {
 					if (!workingSetContains(targetWorkingSet, project)) {
 						workingSetManager.addToWorkingSets(project, new IWorkingSet[] { targetWorkingSet });
 					}
 					// Check if our top-level element is a working set so that
 					// we can perform a move
-					if (path.getFirstSegment() instanceof IAdaptable) {
-						IWorkingSet sourceWorkingSet = ((IAdaptable) path.getFirstSegment())
-								.getAdapter(IWorkingSet.class);
-						if (sourceWorkingSet != null) {
-							removeFromWorkingSet(project, sourceWorkingSet);
-						}
+					IWorkingSet sourceWorkingSet = Adapters.getAdapter(path.getFirstSegment(), IWorkingSet.class, true);
+					if (sourceWorkingSet != null) {
+						removeFromWorkingSet(project, sourceWorkingSet);
 					}
 				}
 			}
 		} else if (sel instanceof IStructuredSelection) {
 			for (Object item : ((IStructuredSelection) sel).toArray()) {
-				IProject project = ((IAdaptable) item).getAdapter(IProject.class);
+				IProject project = Adapters.getAdapter(item, IProject.class, true);
 				if (project != null && !workingSetContains(targetWorkingSet, project)) {
 					workingSetManager.addToWorkingSets(project, new IWorkingSet[] { targetWorkingSet });
 				}
@@ -118,7 +111,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 		IAdaptable[] srcElements = workingSet.getElements();
 		List<IAdaptable> newSrcElements = new ArrayList<IAdaptable>();
 		for (IAdaptable srcElement : srcElements) {
-			if (!project.equals(srcElement.getAdapter(IProject.class))) {
+			if (!project.equals(Adapters.getAdapter(srcElement, IProject.class, true))) {
 				newSrcElements.add(srcElement);
 			}
 		}
@@ -139,7 +132,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 	 */
 	private boolean workingSetContains(IWorkingSet workingSet, IProject project) {
 		for (IAdaptable element : workingSet.getElements()) {
-			if (project.equals(element.getAdapter(IProject.class))) {
+			if (project.equals(Adapters.getAdapter(element, IProject.class, true))) {
 				return true;
 			}
 		}

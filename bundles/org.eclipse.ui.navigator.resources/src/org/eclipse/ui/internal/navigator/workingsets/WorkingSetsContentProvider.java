@@ -13,15 +13,13 @@ package org.eclipse.ui.internal.navigator.workingsets;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -115,9 +113,9 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	private IAdaptable[] getWorkingSetElements(IWorkingSet workingSet) {
 		IAdaptable[] children = workingSet.getElements();
 		for (int i = 0; i < children.length; i++) {
-			Object resource = children[i].getAdapter(IResource.class);
+			IResource resource = Adapters.getAdapter(children[i], IResource.class, true);
 			if (resource instanceof IProject)
-				children[i] = (IProject) resource;
+				children[i] = resource;
 		}
 		return children;
 	}
