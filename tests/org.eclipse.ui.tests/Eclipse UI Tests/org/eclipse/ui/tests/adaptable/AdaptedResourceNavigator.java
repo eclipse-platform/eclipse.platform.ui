@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IMenuListener;
@@ -131,14 +132,7 @@ public class AdaptedResourceNavigator extends ViewPart {
             IStructuredSelection ssel = (IStructuredSelection) selection;
             for (Iterator i = ssel.iterator(); i.hasNext();) {
                 Object o = i.next();
-                IResource resource = null;
-                if (o instanceof IResource) {
-                    resource = (IResource) o;
-                } else {
-                    if (o instanceof IAdaptable) {
-						resource = ((IAdaptable) o).getAdapter(IResource.class);
-                    }
-                }
+				IResource resource = Adapters.getAdapter(o, IResource.class, true);
                 if (resource != null) {
                     list.add(resource);
                 }
@@ -262,12 +256,7 @@ public class AdaptedResourceNavigator extends ViewPart {
      */
     IContainer getInitialInput() {
         IAdaptable input = getSite().getPage().getInput();
-        IResource resource = null;
-        if (input instanceof IResource) {
-            resource = (IResource) input;
-        } else {
-			resource = input.getAdapter(IResource.class);
-        }
+		IResource resource = Adapters.getAdapter(input, IResource.class, true);
         if (resource != null) {
             switch (resource.getType()) {
             case IResource.FILE:
