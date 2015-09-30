@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -35,7 +36,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -132,7 +132,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable.
      */
     protected final IWorkbenchAdapter getAdapter(Object o) {
-        return Util.getAdapter(o, IWorkbenchAdapter.class);
+        return Adapters.getAdapter(o, IWorkbenchAdapter.class, true);
     }
 
     /**
@@ -143,7 +143,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable.
      */
     protected final IWorkbenchAdapter2 getAdapter2(Object o) {
-        return Util.getAdapter(o, IWorkbenchAdapter2.class);
+        return Adapters.getAdapter(o, IWorkbenchAdapter2.class, true);
     }
 
 	/**
@@ -156,7 +156,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 	 * @since 3.7
 	 */
 	protected final IWorkbenchAdapter3 getAdapter3(Object o) {
-		return Util.getAdapter(o, IWorkbenchAdapter3.class);
+		return Adapters.getAdapter(o, IWorkbenchAdapter3.class, true);
 	}
 
 	/**

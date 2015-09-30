@@ -11,12 +11,12 @@
 package org.eclipse.ui.operations;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,7 +26,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -174,8 +173,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 					// preferred
 					// comparison class has been provided.
 					if (affectedObjectsClass != null) {
-						Object adapter = Util.getAdapter(modifiedElement,
-								affectedObjectsClass);
+						Object adapter = Adapters.getAdapter(modifiedElement, affectedObjectsClass, true);
 						if (adapter != null && elementsContains(adapter)) {
 							local = true;
 						}
@@ -238,7 +236,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// not originate
 		// in our context.
 		if (uiInfo != null) {
-			IUndoContext originatingContext = Util.getAdapter(uiInfo, IUndoContext.class);
+			IUndoContext originatingContext = Adapters.getAdapter(uiInfo, IUndoContext.class, true);
 			if (originatingContext != null
 					&& !(originatingContext.matches(context))) {
 				return false;
@@ -266,7 +264,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 				elementsAndAdapters.add(element);
 				if (affectedObjectsClass != null
 						&& !affectedObjectsClass.isInstance(element)) {
-					Object adapter = Util.getAdapter(element, affectedObjectsClass);
+					Object adapter = Adapters.getAdapter(element, affectedObjectsClass, true);
 					if (adapter != null) {
 						elementsAndAdapters.add(adapter);
 					}

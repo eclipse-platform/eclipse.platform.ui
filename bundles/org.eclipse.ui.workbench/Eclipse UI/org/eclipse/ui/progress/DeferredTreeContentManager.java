@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.progress;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.ProgressMessages;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -122,8 +122,7 @@ public class DeferredTreeContentManager {
 	public DeferredTreeContentManager(AbstractTreeViewer viewer,
 			IWorkbenchPartSite site) {
 		this(viewer);
-		Object siteService = Util.getAdapter(site,
-				IWorkbenchSiteProgressService.class);
+		Object siteService = Adapters.getAdapter(site, IWorkbenchSiteProgressService.class, true);
 		if (siteService != null) {
 			progressService = (IWorkbenchSiteProgressService) siteService;
 		}
@@ -201,7 +200,7 @@ public class DeferredTreeContentManager {
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
 	protected IDeferredWorkbenchAdapter getAdapter(Object element) {
-		return Util.getAdapter(element, IDeferredWorkbenchAdapter.class);
+		return Adapters.getAdapter(element, IDeferredWorkbenchAdapter.class, true);
 	}
 
 	/**
@@ -283,7 +282,7 @@ public class DeferredTreeContentManager {
 			 *            The object we are adapting to.
 			 */
 			private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
-				return Util.getAdapter(element, IWorkbenchAdapter.class);
+				return Adapters.getAdapter(element, IWorkbenchAdapter.class, true);
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {

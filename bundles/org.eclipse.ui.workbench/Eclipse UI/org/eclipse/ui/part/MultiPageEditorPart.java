@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -62,7 +63,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -1196,7 +1196,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			// see bug 138823 - prevent some subclasses from causing
 			// an infinite loop
 			if (innerEditor != null && innerEditor != this) {
-				result = Util.getAdapter(innerEditor, adapter);
+				result = Adapters.getAdapter(innerEditor, adapter, true);
 			}
 		}
 		return result;
