@@ -713,6 +713,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				final String className = element
 						.getAttribute(delegateAttributeName);
 				buffer.append(className);
+				final String namespaceId = element.getNamespaceIdentifier();
+				buffer.append(" in ").append(namespaceId); //$NON-NLS-1$
 			} catch (InvalidRegistryObjectException e) {
 				buffer.append(actionId);
 			}
