@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -49,7 +49,7 @@ public class ResourceSelectionUtil {
      */
     public static boolean allResourcesAreOfType(IStructuredSelection selection,
             int resourceMask) {
-        Iterator resources = selection.iterator();
+		Iterator<?> resources = selection.iterator();
         while (resources.hasNext()) {
             Object next = resources.next();
             if (!(next instanceof IResource)) {
@@ -74,20 +74,17 @@ public class ResourceSelectionUtil {
      */
     public static IStructuredSelection allResources(
             IStructuredSelection selection, int resourceMask) {
-        Iterator adaptables = selection.iterator();
-        List result = new ArrayList();
+		Iterator<?> adaptables = selection.iterator();
+		List<IResource> result = new ArrayList<>();
         while (adaptables.hasNext()) {
             Object next = adaptables.next();
-            if (next instanceof IAdaptable) {
-                Object resource = ((IAdaptable) next)
-                        .getAdapter(IResource.class);
-                if (resource == null) {
-					return null;
-				} else if (resourceIsType((IResource) resource, resourceMask)) {
-					result.add(resource);
-				}
-            } else {
+
+			IResource resource = Adapters.getAdapter(next, IResource.class, true);
+			if (resource == null) {
 				return null;
+			}
+			if (resourceIsType(resource, resourceMask)) {
+				result.add(resource);
 			}
         }
         return new StructuredSelection(result);

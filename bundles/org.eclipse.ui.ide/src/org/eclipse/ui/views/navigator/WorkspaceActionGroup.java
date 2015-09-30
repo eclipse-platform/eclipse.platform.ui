@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -111,18 +111,12 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
         boolean hasOpenProjects = false;
         boolean hasClosedProjects = false;
         boolean hasBuilder = true; // false if any project is closed or does not have builder
-        Iterator resources = selection.iterator();
+		Iterator<?> resources = selection.iterator();
 
         while (resources.hasNext()
                 && (!hasOpenProjects || !hasClosedProjects || hasBuilder || isProjectSelection)) {
             Object next = resources.next();
-            IProject project = null;
-
-            if (next instanceof IProject) {
-				project = (IProject) next;
-			} else if (next instanceof IAdaptable) {
-				project = ((IAdaptable) next).getAdapter(IProject.class);
-			}
+			IProject project = Adapters.getAdapter(next, IProject.class, true);
 
             if (project == null) {
                 isProjectSelection = false;

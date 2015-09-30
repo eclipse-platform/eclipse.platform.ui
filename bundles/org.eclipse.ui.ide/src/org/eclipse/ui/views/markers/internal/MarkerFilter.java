@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -193,7 +194,7 @@ public class MarkerFilter implements Cloneable {
 		List<IResource> result = new ArrayList<>(elements.length);
 
 		for (int idx = 0; idx < elements.length; idx++) {
-			IResource next = elements[idx].getAdapter(IResource.class);
+			IResource next = Adapters.getAdapter(elements[idx], IResource.class, true);
 			if (next != null) {
 				result.add(next);
 			}

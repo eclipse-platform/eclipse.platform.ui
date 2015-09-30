@@ -18,6 +18,7 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;
@@ -228,16 +229,10 @@ class TasksFilter extends ViewerFilter implements Cloneable {
      */
     private boolean isEnclosedResource(IResource element, IPath elementPath,
             IAdaptable workingSetElement) {
-        IResource workingSetResource = null;
-
         if (workingSetElement.equals(element)) {
 			return true;
 		}
-        if (workingSetElement instanceof IResource) {
-            workingSetResource = (IResource) workingSetElement;
-        } else {
-            workingSetResource = workingSetElement.getAdapter(IResource.class);
-        }
+		IResource workingSetResource = Adapters.getAdapter(workingSetElement, IResource.class, true);
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
             if (resourcePath.isPrefixOf(elementPath)) {

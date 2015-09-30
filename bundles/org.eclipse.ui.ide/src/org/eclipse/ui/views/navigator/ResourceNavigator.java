@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IMenuManager;
@@ -268,19 +269,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * where the elements are resources.
      */
     private StructuredSelection convertSelection(ISelection selection) {
-        ArrayList list = new ArrayList();
+		ArrayList<IResource> list = new ArrayList<>();
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
-            for (Iterator i = ssel.iterator(); i.hasNext();) {
+			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
                 Object o = i.next();
-                IResource resource = null;
-                if (o instanceof IResource) {
-                    resource = (IResource) o;
-                } else {
-                    if (o instanceof IAdaptable) {
-                        resource = ((IAdaptable) o).getAdapter(IResource.class);
-                    }
-                }
+				IResource resource = Adapters.getAdapter(o, IResource.class, true);
                 if (resource != null) {
                     list.add(resource);
                 }
@@ -577,31 +571,23 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      *
      * @since 2.0
      */
-    protected IAdaptable getInitialInput() {
-        IAdaptable input = getSite().getPage().getInput();
-        if (input != null) {
-            IResource resource = null;
-            if (input instanceof IResource) {
-                resource = (IResource) input;
-            } else {
-                resource = input.getAdapter(IResource.class);
-            }
-            if (resource != null) {
-                switch (resource.getType()) {
-                case IResource.FILE:
-                    return resource.getParent();
-                case IResource.FOLDER:
-                case IResource.PROJECT:
-                case IResource.ROOT:
-                    return resource;
-                default:
-                    // Unknown resource type.  Fall through.
-                    break;
-                }
-            }
-        }
-        return ResourcesPlugin.getWorkspace().getRoot();
-    }
+	protected IAdaptable getInitialInput() {
+		IResource resource = Adapters.getAdapter(getSite().getPage().getInput(), IResource.class, true);
+		if (resource != null) {
+			switch (resource.getType()) {
+			case IResource.FILE:
+				return resource.getParent();
+			case IResource.FOLDER:
+			case IResource.PROJECT:
+			case IResource.ROOT:
+				return resource;
+			default:
+				// Unknown resource type. Fall through.
+				break;
+			}
+		}
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
 
     /**
      * Returns the pattern filter for this view.
@@ -1500,46 +1486,34 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     protected IShowInTarget getShowInTarget() {
         return context -> {
-		    ArrayList toSelect = new ArrayList();
+			ArrayList<IResource> toSelect = new ArrayList<>();
 		    ISelection sel = context.getSelection();
 		    if (sel instanceof IStructuredSelection) {
 		        IStructuredSelection ssel = (IStructuredSelection) sel;
-		        for (Iterator i = ssel.iterator(); i.hasNext();) {
+				for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
 		            Object o1 = i.next();
-		            if (o1 instanceof IResource) {
-		                toSelect.add(o1);
-		            } else if (o1 instanceof IMarker) {
-		                IResource r1 = ((IMarker) o1).getResource();
-		                if (r1.getType() != IResource.ROOT) {
-		                    toSelect.add(r1);
-		                }
-		            } else if (o1 instanceof IAdaptable) {
-		                IAdaptable adaptable1 = (IAdaptable) o1;
-		                o1 = adaptable1.getAdapter(IResource.class);
-		                if (o1 instanceof IResource) {
-		                    toSelect.add(o1);
-		                } else {
-		                    o1 = adaptable1.getAdapter(IMarker.class);
-		                    if (o1 instanceof IMarker) {
-		                        IResource r2 = ((IMarker) o1).getResource();
-		                        if (r2.getType() != IResource.ROOT) {
-		                            toSelect.add(r2);
-		                        }
-		                    }
-		                }
+
+					IResource resource = Adapters.getAdapter(o1, IResource.class, true);
+					if (resource != null) {
+						toSelect.add(resource);
+					}
+
+					IMarker marker = Adapters.getAdapter(o1, IMarker.class, true);
+					if (marker != null) {
+						IResource r2 = marker.getResource();
+						if (r2.getType() != IResource.ROOT) {
+							toSelect.add(r2);
+						}
 		            }
 		        }
 		    }
-		    if (toSelect.isEmpty()) {
-		        Object input = context.getInput();
-		        if (input instanceof IAdaptable) {
-		            IAdaptable adaptable2 = (IAdaptable) input;
-		            Object o2 = adaptable2.getAdapter(IResource.class);
-		            if (o2 instanceof IResource) {
-		                toSelect.add(o2);
-		            }
-		        }
-		    }
+			if (toSelect.isEmpty()) {
+				Object input = context.getInput();
+				IResource resource = Adapters.getAdapter(input, IResource.class, true);
+				if (resource != null) {
+					toSelect.add(resource);
+				}
+			}
 		    if (!toSelect.isEmpty()) {
 		        selectReveal(new StructuredSelection(toSelect));
 		        return true;

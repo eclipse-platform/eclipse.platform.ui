@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -1545,30 +1546,24 @@ public class TaskList extends ViewPart {
      * Updates the focus resource, and refreshes if we're showing only tasks for the focus resource.
      */
     void updateFocusResource(ISelection selection) {
-        ArrayList list = new ArrayList();
+		ArrayList<IResource> list = new ArrayList<>();
 
         if (selection instanceof IStructuredSelection) {
-            Iterator iterator = ((IStructuredSelection) selection).iterator();
+			Iterator<?> iterator = ((IStructuredSelection) selection).iterator();
             while (iterator.hasNext()) {
                 Object object = iterator.next();
 
-                if (object instanceof IAdaptable) {
-                    ITaskListResourceAdapter taskListResourceAdapter;
-                    Object adapter = ((IAdaptable) object)
-                            .getAdapter(ITaskListResourceAdapter.class);
-                    if (adapter != null
-                            && adapter instanceof ITaskListResourceAdapter) {
-                        taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
-                    } else {
-                        taskListResourceAdapter = DefaultTaskListResourceAdapter
-                                .getDefault();
-                    }
+				if (object instanceof IAdaptable) {
+					ITaskListResourceAdapter taskListResourceAdapter = Adapters.getAdapter(object,
+							ITaskListResourceAdapter.class, true);
+					if (taskListResourceAdapter == null) {
+						taskListResourceAdapter = DefaultTaskListResourceAdapter.getDefault();
+					}
 
-                    IResource resource = taskListResourceAdapter
-                            .getAffectedResource((IAdaptable) object);
-                    if (resource != null) {
-                        list.add(resource);
-                    }
+					IResource resource = taskListResourceAdapter.getAffectedResource((IAdaptable) object);
+					if (resource != null) {
+						list.add(resource);
+					}
                 }
             }
         }
@@ -1588,7 +1583,7 @@ public class TaskList extends ViewPart {
             return; // required to achieve lazy update behavior.
         }
 
-        IResource[] resources = (IResource[]) list.toArray(new IResource[l]);
+        IResource[] resources = list.toArray(new IResource[l]);
         for (int i = 0; i < l; i++) {
             Assert.isNotNull(resources[i]);
         }

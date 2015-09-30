@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -145,27 +145,22 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
      * @return the resource selection from the LocalSelectionTransfer
      */
     private IResource[] getSelectedResources() {
-        ArrayList selectedResources = new ArrayList();
+		ArrayList<IResource> selectedResources = new ArrayList<>();
 
         ISelection selection = LocalSelectionTransfer.getInstance()
                 .getSelection();
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
-            for (Iterator i = ssel.iterator(); i.hasNext();) {
+			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
                 Object o = i.next();
-                if (o instanceof IResource) {
-                    selectedResources.add(o);
-                }
-                else if (o instanceof IAdaptable) {
-                    IAdaptable a = (IAdaptable) o;
-                    IResource r = a.getAdapter(IResource.class);
-                    if (r != null) {
-                        selectedResources.add(r);
-                    }
+
+				IResource r = Adapters.getAdapter(o, IResource.class, true);
+				if (r != null) {
+					selectedResources.add(r);
                 }
             }
         }
-        return (IResource[]) selectedResources.toArray(new IResource[selectedResources.size()]);
+        return selectedResources.toArray(new IResource[selectedResources.size()]);
     }
 
     /**
