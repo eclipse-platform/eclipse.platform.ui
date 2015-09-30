@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     Gunnar Wagenknecht <gunnar@wagenknecht.org> - Fix for bug 265445
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - Fix for bug 265532
+ *     Lars Vogel<Lars.Vogel@vogella.com> - Bug 478768
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
@@ -713,65 +713,24 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns the plug-in runtime object for the identified plug-in
-	 * or <code>null</code> if no such plug-in can be found.  If
-	 * the plug-in is defined but not yet activated, the plug-in will
-	 * be activated before being returned.
-	 * <p>
-	 * <b>Note</b>: This method is only able to find and return plug-in
-	 * objects for plug-ins described using plugin.xml according to the
-	 * traditional Eclipse conventions.  Eclipse 3.0 permits plug-ins to be
-	 * described in manifest.mf files and to define their own bundle
-	 * activators.  Such plug-ins cannot be discovered by this method.</p>
+	 * As the org.eclipse.core.runtime.compatibility plug-in has been removed in
+	 * Eclipse 4.6 this method is not supported anymore.
 	 *
-	 * @param id the unique identifier of the desired plug-in
-	 *		(e.g., <code>"com.example.acme"</code>).
-	 * @return the plug-in runtime object, or <code>null</code>
-	 * @deprecated
-	 * This method only works if the compatibility layer is installed and must not be used otherwise.
-	 * See the comments on {@link IPluginDescriptor#getPlugin()} for details.
 	 */
 	@Deprecated
 	public static Plugin getPlugin(String id) {
-		try {
-			IPluginRegistry registry = getPluginRegistry();
-			if (registry == null)
-				throw new IllegalStateException();
-			IPluginDescriptor pd = registry.getPluginDescriptor(id);
-			if (pd == null)
-				return null;
-			return pd.getPlugin();
-		} catch (CoreException e) {
-			// TODO log the exception
-		}
 		return null;
 	}
 
 	/**
-	 * Returns the plug-in registry for this platform.
+	 * As the org.eclipse.core.runtime.compatibility plug-in has been removed in
+	 * Eclipse 4.6 this method is not supported anymore.
 	 *
-	 * @return the plug-in registry
-	 * @see IPluginRegistry
-	 * @deprecated use {@link #getExtensionRegistry()} instead.
-	 * This method only works if the compatibility layer is installed and must not be used otherwise.
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
 	 */
 	@Deprecated
 	public static IPluginRegistry getPluginRegistry() {
-		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
-		if (compatibility == null)
-			throw new IllegalStateException();
-
-		Class<?> oldInternalPlatform = null;
-		try {
-			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
-			Method getPluginRegistry = oldInternalPlatform.getMethod("getPluginRegistry"); //$NON-NLS-1$
-			return (IPluginRegistry) getPluginRegistry.invoke(oldInternalPlatform);
-		} catch (Exception e) {
-			//Ignore the exceptions, return null
-		}
 		return null;
-
 	}
 
 	/**
