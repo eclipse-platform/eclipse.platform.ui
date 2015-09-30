@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 476403
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 476403, 478769
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -92,11 +92,10 @@ import org.osgi.util.tracker.ServiceTracker;
  * class is used and {@link #start(BundleContext)} and {@link #stop(BundleContext)} are
  * called as life cycle methods.
  * </p><p>
- * If the plugin.xml of a plug-in indicates &lt;?eclipse version="3.0"?&gt; and its prerequisite list includes
- * <code>org.eclipse.core.runtime.compatibility</code>, the {@link #Plugin(IPluginDescriptor)}
- * constructor is used and {@link #startup()} and {@link #shutdown()} are called as life cycle methods.
- * Note that in this situation, start() is called before startup() and stop() is called
- * after shutdown.
+ * The {@link #Plugin(IPluginDescriptor)} constructor was called only for
+ * plug-ins which explicitly require the org.eclipse.core.runtime.compatibility
+ * plug-in. It is not called anymore as Eclipse 4.6 removed this plug-in.
+ *
  * </p><p>
  * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse version="3.0"?&gt; it is therefore
  * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and
