@@ -15,11 +15,11 @@
   <parent>
     <groupId>eclipse.platform.ui</groupId>
     <artifactId>eclipse.platform.ui</artifactId>
-    <version>4.5.1-SNAPSHOT</version>
+    <version>4.5.2-SNAPSHOT</version>
   </parent>
   <groupId>eclipse.platform.ui</groupId>
   <artifactId>eclipse.platform.ui.tests</artifactId>
-  <version>4.5.1-SNAPSHOT</version>
+  <version>4.5.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <!--
