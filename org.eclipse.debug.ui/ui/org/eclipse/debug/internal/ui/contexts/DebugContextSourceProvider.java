@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 Wind River Systems and others.
+ * Copyright (c) 2006, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,13 @@ package org.eclipse.debug.internal.ui.contexts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.services.IEvaluationService;
@@ -53,9 +55,19 @@ public class DebugContextSourceProvider extends AbstractSourceProvider implement
 
 	@Override
 	public void debugContextChanged(DebugContextEvent event) {
-		Map<String, ISelection> values = new HashMap<String, ISelection>(1);
+		final Map<String, ISelection> values = new HashMap<String, ISelection>(1);
         values.put(IDebugUIConstants.DEBUG_CONTEXT_SOURCE_NAME, event.getContext());
-        fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
+		// make sure fireSourceChanged is called on the UI thread
+		if (Display.getCurrent() == null) {
+			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
+				}
+			});
+		} else {
+			fireSourceChanged(ISources.ACTIVE_CURRENT_SELECTION, values);
+		}
 	}
 	
 	@Override
