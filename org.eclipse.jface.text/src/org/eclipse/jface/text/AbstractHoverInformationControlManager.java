@@ -434,16 +434,36 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @param subjectControl the subject control
 		 */
 		public void start(Control subjectControl) {
+			start(subjectControl, subjectControl);
+		}
+
+		/**
+		 * Starts this mouse tracker. The given control becomes this tracker's subject control.
+		 * Installs itself as mouse track listener on the subject control. The mouse move listener
+		 * gets installed on the area control. The subject control is the element the hover element
+		 * is attached to. The area control is the container that holds the subject control. It
+		 * denotes the area to be tracked for mouse move events while the hover is open. Usually
+		 * this should be the root composite of the current view. If the area is too small, the
+		 * hover will not close correctly on some occasions.
+		 *
+		 * @param subjectControl the subject control
+		 * @param areaControl the area control
+		 * @since 3.11
+		 */
+		public void start(Control subjectControl, Control areaControl) {
+
 			fSubjectControl= subjectControl;
+			fAreaControl= areaControl;
+
 			if (fSubjectControl != null && !fSubjectControl.isDisposed())
 				fSubjectControl.addMouseTrackListener(this);
-
+			
 			fIsInRestartMode= false;
 			fIsComputing= false;
 			fMouseLostWhileComputing= false;
 			fShellDeactivatedWhileComputing= false;
 		}
-
+		
 		/**
 		 * Stops this mouse tracker. Removes itself  as mouse track, mouse move, and
 		 * shell listener from the subject control.
@@ -451,8 +471,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public void stop() {
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseTrackListener(this);
-				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.getShell().removeShellListener(this);
+			}
+			if (fAreaControl != null && !fAreaControl.isDisposed()) {
+				fAreaControl.removeMouseMoveListener(this);
 			}
 		}
 
@@ -488,8 +510,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			setSubjectArea(fHoverArea);
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
-				fSubjectControl.addMouseMoveListener(this);
 				fSubjectControl.getShell().addShellListener(this);
+			}
+			if (fAreaControl != null && !fAreaControl.isDisposed()) {
+				fAreaControl.addMouseMoveListener(this);
 			}
 			doShowInformation();
 		}
@@ -505,8 +529,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 			fIsInRestartMode= false;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
-				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.getShell().removeShellListener(this);
+			}
+			if (fAreaControl != null && !fAreaControl.isDisposed()) {
+				fAreaControl.removeMouseMoveListener(this);
 			}
 		}
 
@@ -615,6 +641,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @since 3.4
 	 */
 	private boolean fWaitForMouseUp= false;
+
+	/**
+	 * Control area for the mouse tracker.
+	 */
+	private Control fAreaControl;
 
 	/**
 	 * Creates a new hover information control manager using the given information control creator.
@@ -878,7 +909,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 		if (was != is && fMouseTracker != null) {
 			if (is)
-				fMouseTracker.start(getSubjectControl());
+				fMouseTracker.start(getSubjectControl(), fAreaControl);
 			else
 				fMouseTracker.stop();
 		}
@@ -892,6 +923,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		if (fMouseTracker != null) {
 			fMouseTracker.stop();
 			fMouseTracker.fSubjectControl= null;
+			fMouseTracker.fSubjectArea= null;
 			fMouseTracker= null;
 		}
 		super.dispose();
@@ -946,4 +978,27 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		};
 	}
 
+	/**
+	 * Installs this manager on the given subject control. The hover control is now taking the role
+	 * of the subject control. This implementation sets the control also as the information control
+	 * closer's subject control and automatically enables this manager. The area control typically
+	 * is the root composite of the display element (e.g. a window or a dialog) the subject control
+	 * is embedded in. It is needed to correctly close popups when the mouse pointer leaves the
+	 * popup area.
+	 *
+	 * @param subjectControl the subject control
+	 * @param areaControl the area control
+	 * @since 3.11
+	 */
+	public void install(Control subjectControl, Control areaControl) {
+		fAreaControl= (areaControl != null) ? areaControl : subjectControl;
+		super.install(subjectControl);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void install(Control subjectControl) {
+		install(subjectControl, subjectControl);
+	}
 }
