@@ -2241,6 +2241,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} catch (OperationCanceledException e) {
 				getWorkManager().operationCanceled();
 				throw e;
+			} catch (CoreException e) {
+				if (e.getStatus().getSeverity() == IStatus.CANCEL)
+					getWorkManager().operationCanceled();
+				throw e;
 			} finally {
 				if (avoidNotification)
 					notificationManager.endAvoidNotify();

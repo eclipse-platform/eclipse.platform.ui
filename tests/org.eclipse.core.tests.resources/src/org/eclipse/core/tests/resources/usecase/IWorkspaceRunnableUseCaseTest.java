@@ -25,12 +25,19 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		super(name);
 	}
 
-	protected IWorkspaceRunnable createRunnable(final IProject project, final IWorkspaceRunnable nestedOperation, final boolean triggerBuild, final boolean shouldCancel) {
+	protected IWorkspaceRunnable createRunnable(final IProject project, final IWorkspaceRunnable nestedOperation, final boolean triggerBuild, final Exception exceptionToThrow) {
 		return new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if (shouldCancel)
-					throw new OperationCanceledException();
+				if (exceptionToThrow != null) {
+					if (exceptionToThrow instanceof CoreException) {
+						throw (CoreException) exceptionToThrow;
+					}
+					if (exceptionToThrow instanceof RuntimeException) {
+						throw (RuntimeException) exceptionToThrow;
+					}
+					throw new IllegalArgumentException(exceptionToThrow);
+				}
 				if (triggerBuild)
 					project.touch(getMonitor());
 				if (nestedOperation != null)
@@ -63,9 +70,9 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		SignaledBuilder builder = SignaledBuilder.getInstance(project);
 
 		/* should trigger a build */
-		IWorkspaceRunnable op1 = createRunnable(project, null, true, false);
-		IWorkspaceRunnable op2 = createRunnable(project, op1, false, false);
-		IWorkspaceRunnable op3 = createRunnable(project, op2, false, false);
+		IWorkspaceRunnable op1 = createRunnable(project, null, true, null);
+		IWorkspaceRunnable op2 = createRunnable(project, op1, false, null);
+		IWorkspaceRunnable op3 = createRunnable(project, op2, false, null);
 		builder.reset();
 		try {
 			getWorkspace().run(op3, getMonitor());
@@ -76,32 +83,47 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 		assertTrue("1.1", builder.wasExecuted());
 
 		/* should not trigger a build */
-		op1 = createRunnable(project, null, true, true);
-		op2 = createRunnable(project, op1, true, false);
-		op3 = createRunnable(project, op2, true, false);
+		op1 = createRunnable(project, null, true, new OperationCanceledException());
+		op2 = createRunnable(project, op1, true, null);
+		op3 = createRunnable(project, op2, true, null);
 		builder.reset();
 		try {
 			getWorkspace().run(op3, getMonitor());
+			fail("2.0");
 		} catch (CoreException e) {
-			fail("2.0", e);
+			fail("2.1", e);
 		} catch (OperationCanceledException e) {
 			// expected
 		}
-		assertTrue("2.1", !builder.wasExecuted());
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		assertTrue("2.2", !builder.wasExecuted());
 
 		/* should not trigger a build */
-		op1 = createRunnable(project, null, false, false);
-		op2 = createRunnable(project, op1, false, false);
-		op3 = createRunnable(project, op2, false, false);
+		op1 = createRunnable(project, null, true, new CoreException(Status.CANCEL_STATUS));
+		op2 = createRunnable(project, op1, true, null);
+		op3 = createRunnable(project, op2, true, null);
+		builder.reset();
+		try {
+			getWorkspace().run(op3, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+			assertEquals(Status.CANCEL_STATUS, e.getStatus());
+		}
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		assertTrue("3.1", !builder.wasExecuted());
+
+		/* should not trigger a build */
+		op1 = createRunnable(project, null, false, null);
+		op2 = createRunnable(project, op1, false, null);
+		op3 = createRunnable(project, op2, false, null);
 		builder.reset();
 		try {
 			getWorkspace().run(op3, getMonitor());
 		} catch (CoreException e) {
-			fail("3.0", e);
-		} catch (OperationCanceledException e) {
-			// ignore
+			fail("4.0", e);
 		}
-		assertTrue("3.1", !builder.wasExecuted());
+		//waitForBuild();  // TODO: The test is invalid since it fails if this line is uncommented. 
+		assertTrue("4.1", !builder.wasExecuted());
 
 		/* remove trash */
 		try {
