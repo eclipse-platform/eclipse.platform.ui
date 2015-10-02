@@ -309,8 +309,7 @@ public class E4Application implements IApplication {
 			IEclipseContext context) {
 		boolean highContrastMode = getApplicationDisplay().getHighContrast();
 
-		String cssURI = highContrastMode ? null : getArgValue(
-IWorkbench.CSS_URI_ARG, applicationContext, false);
+		String cssURI = highContrastMode ? null : getArgValue(IWorkbench.CSS_URI_ARG, applicationContext, false);
 
 		if (cssURI != null) {
 			context.set(IWorkbench.CSS_URI_ARG, cssURI);
