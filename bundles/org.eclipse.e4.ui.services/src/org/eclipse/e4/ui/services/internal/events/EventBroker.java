@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Steven Spungin - Bug 441874
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 478889
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -117,10 +119,32 @@ public class EventBroker implements IEventBroker {
 	@SuppressWarnings("unchecked")
 	private Event constructEvent(String topic, Object data) {
 		Event event;
-		if (data instanceof Dictionary<?,?>) {
-			event = new Event(topic, (Dictionary<String,?>)data);
-		} else if (data instanceof Map<?,?>) {
-			event = new Event(topic, (Map<String,?>)data);
+		if (data instanceof Map<?, ?>) {
+			Map<String, Object> map = (Map<String, Object>)data;
+			if(map.containsKey(EventConstants.EVENT_TOPIC) && map.containsKey(IEventBroker.DATA)) {
+				return new Event(topic, map);
+			}
+			Map<String, Object> eventMap = new HashMap<>(map);
+			if (!eventMap.containsKey(EventConstants.EVENT_TOPIC)) {
+				eventMap.put(EventConstants.EVENT_TOPIC, topic);
+			}
+			if (!eventMap.containsKey(IEventBroker.DATA)) {
+				eventMap.put(IEventBroker.DATA, data);
+			}
+			event = new Event(topic, eventMap);
+		} else if (data instanceof Dictionary<?, ?>) {
+			Dictionary<String, Object> d = (Dictionary<String, Object>) data;
+			if (d.get(EventConstants.EVENT_TOPIC) != null && d.get(IEventBroker.DATA) != null) {
+				return new Event(topic, d);
+			}
+			Map<String, Object> map = convertToMap(d);
+			if (map.get(EventConstants.EVENT_TOPIC) == null) {
+				map.put(EventConstants.EVENT_TOPIC, topic);
+			}
+			if (map.get(IEventBroker.DATA) == null) {
+				map.put(IEventBroker.DATA, map);
+			}
+			event = new Event(topic, map);
 		} else {
 			Dictionary<String, Object> d = new Hashtable<String, Object>(2);
 			d.put(EventConstants.EVENT_TOPIC, topic);
@@ -129,6 +153,15 @@ public class EventBroker implements IEventBroker {
 			event = new Event(topic, d);
 		}
 		return event;
+	}
+
+	private static <K, V> Map<K, V> convertToMap(Dictionary<K, V> source) {
+		Map<K, V> map = new Hashtable<>();
+		for (Enumeration<K> keys = source.keys(); keys.hasMoreElements();) {
+			K key = keys.nextElement();
+			map.put(key, source.get(key));
+		}
+		return map;
 	}
 
 	@Override
