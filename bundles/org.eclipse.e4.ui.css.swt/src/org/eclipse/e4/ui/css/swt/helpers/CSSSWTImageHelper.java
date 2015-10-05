@@ -148,7 +148,7 @@ public class CSSSWTImageHelper {
 
 	/** Helper function to avoid setting images unnecessarily */
 	public static void setBackgroundImage(Control control, Image image) {
-		if (control instanceof Control && control.getBackgroundImage() != image) {
+		if (control != null && control.getBackgroundImage() != image) {
 			control.setBackgroundImage(image);
 		}
 	}
