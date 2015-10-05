@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ICoreRunnable;
@@ -723,11 +724,9 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *
 	 */
 	protected Shell getShell(IAdaptable uiInfo) {
-		if (uiInfo != null) {
-			Shell shell = uiInfo.getAdapter(Shell.class);
-			if (shell != null) {
-				return shell;
-			}
+		Shell shell = Adapters.getAdapter(uiInfo, Shell.class, true);
+		if (shell != null) {
+			return shell;
 		}
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}

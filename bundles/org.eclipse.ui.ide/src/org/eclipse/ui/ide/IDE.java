@@ -35,8 +35,8 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ModelStatus;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IStatus;
@@ -288,12 +288,7 @@ public final class IDE {
 	 *            the marker
 	 */
 	public static void gotoMarker(IEditorPart editor, IMarker marker) {
-		IGotoMarker gotoMarker = null;
-		if (editor instanceof IGotoMarker) {
-			gotoMarker = (IGotoMarker) editor;
-		} else {
-			gotoMarker = editor.getAdapter(IGotoMarker.class);
-		}
+		IGotoMarker gotoMarker = Adapters.getAdapter(editor, IGotoMarker.class, true);
 		if (gotoMarker != null) {
 			gotoMarker.gotoMarker(marker);
 		}
@@ -1386,12 +1381,7 @@ public final class IDE {
 		List resources = null;
 		for (Iterator e = originalSelection.iterator(); e.hasNext();) {
 			Object next = e.next();
-			Object resource = null;
-			if (next instanceof IResource) {
-				resource = next;
-			} else if (next instanceof IAdaptable) {
-				resource = ((IAdaptable) next).getAdapter(IResource.class);
-			}
+			Object resource = Adapters.getAdapter(next, IResource.class, true);
 			if (resource != null) {
 				if (resources == null) {
 					// lazy init to avoid creating empty lists

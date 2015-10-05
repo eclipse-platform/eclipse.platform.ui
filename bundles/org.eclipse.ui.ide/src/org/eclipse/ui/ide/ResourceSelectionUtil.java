@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -61,37 +61,34 @@ public class ResourceSelectionUtil {
         return true;
     }
 
-    /**
-     * Returns the selection adapted to IResource. Returns null
-     * if any of the entries are not adaptable.
-     *
-     * @param selection the selection
-     * @param resourceMask resource mask formed by bitwise OR of resource type
-     *   constants (defined on <code>IResource</code>)
-     * @return IStructuredSelection or null if any of the entries are not adaptable.
-     * @see IResource#getType()
-     */
-    public static IStructuredSelection allResources(
-            IStructuredSelection selection, int resourceMask) {
-        Iterator adaptables = selection.iterator();
-        List result = new ArrayList();
-        while (adaptables.hasNext()) {
-            Object next = adaptables.next();
-            if (next instanceof IAdaptable) {
-                Object resource = ((IAdaptable) next)
-                        .getAdapter(IResource.class);
-                if (resource == null) {
-					return null;
-				} else if (resourceIsType((IResource) resource, resourceMask)) {
-					result.add(resource);
-				}
-            } else {
+	/**
+	 * Returns the selection adapted to IResource. Returns null if any of the
+	 * entries are not adaptable.
+	 *
+	 * @param selection
+	 *            the selection
+	 * @param resourceMask
+	 *            resource mask formed by bitwise OR of resource type constants
+	 *            (defined on <code>IResource</code>)
+	 * @return IStructuredSelection or null if any of the entries are not
+	 *         adaptable.
+	 * @see IResource#getType()
+	 */
+	public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
+		Iterator<?> adaptables = selection.iterator();
+		List<IResource> result = new ArrayList<>();
+		while (adaptables.hasNext()) {
+			Object next = adaptables.next();
+			IResource resource = Adapters.getAdapter(next, IResource.class, true);
+			if (resource == null) {
 				return null;
 			}
-        }
-        return new StructuredSelection(result);
-
-    }
+			if (resourceIsType(resource, resourceMask)) {
+				result.add(resource);
+			}
+		}
+		return new StructuredSelection(result);
+	}
 
     /**
      * Returns whether the type of the given resource is among the specified
