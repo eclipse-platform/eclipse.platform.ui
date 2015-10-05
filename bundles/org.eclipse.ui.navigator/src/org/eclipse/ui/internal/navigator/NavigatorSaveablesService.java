@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -450,7 +451,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 			List<SaveablesProvider> result = new ArrayList<SaveablesProvider>();
 			for (int i = 0; i < descriptors.length; i++) {
 				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) descriptors[i];
-				String pluginId = ((NavigatorContentDescriptor) descriptor)
+				String pluginId = descriptor
 						.getContribution().getPluginId();
 				if (Platform.getBundle(pluginId).getState() != Bundle.ACTIVE) {
 					List<NavigatorContentDescriptor> inactiveDescriptors = inactivePluginsWithSaveablesProviders
@@ -488,7 +489,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		ITreeContentProvider contentProvider = extension
 				.getContentProvider();
 
-        return (SaveablesProvider)AdaptabilityUtility.getAdapter(contentProvider, SaveablesProvider.class);
+		return Adapters.getAdapter(contentProvider, SaveablesProvider.class, true);
 	}
 
 	private void recomputeSaveablesAndNotify(boolean recomputeProviders,
