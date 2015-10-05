@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -69,7 +69,7 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 		}
 
 		result = resource.getLocation();
-		
+
 		if (result == null) {
 			URI uri = resource.getLocationURI();
 			if (uri != null) {
@@ -90,7 +90,7 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 
 	/**
 	 * This method is called during resource plugin startup() initialization.
-	 * 
+	 *
 	 * @param root URL to the root of the current workspace.
 	 */
 	public static void startup(IPath root) {

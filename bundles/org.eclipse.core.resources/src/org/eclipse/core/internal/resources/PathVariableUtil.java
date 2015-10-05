@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -90,7 +90,7 @@ public class PathVariableUtil {
 		for (int i = 0; i < existingVariables.length; i++) {
 			String variable = existingVariables[i];
 			if (skipWorkspace) {
-				// Variables relative to the workspace are not portable, and defeat the purpose of having linked resource locations, 
+				// Variables relative to the workspace are not portable, and defeat the purpose of having linked resource locations,
 				// so they should not automatically be created relative to the workspace.
 				if (variable.equals(WorkspaceLocationVariableResolver.NAME))
 					continue;
@@ -294,7 +294,7 @@ public class PathVariableUtil {
 									if (suffix.length() != 0) {
 										// Create an intermediate variable, since a syntax of "${VAR}foo/../"
 										// can't be converted to a "${PARENT-1-VAR}foo" variable.
-										// So instead, an intermediate variable "VARFOO" will be created of value 
+										// So instead, an intermediate variable "VARFOO" will be created of value
 										// "${VAR}foo", and the string "${PARENT-1-VARFOO}" will be inserted.
 										String intermediateVariable = PathVariableUtil.getValidVariableName(variable + suffix);
 										IPath intermediateValue = Path.fromPortableString(components[j]);
@@ -409,7 +409,7 @@ public class PathVariableUtil {
 	 * Splits a value (returned by this.getValue(variable) in an array of
 	 * string, where the array is divided between the value content and the
 	 * value variables.
-	 * 
+	 *
 	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
 	 * returned will be {"${ECLIPSE_HOME}" "/plugins"}
 	 */
@@ -435,10 +435,10 @@ public class PathVariableUtil {
 	/*
 	 * Splits a value (returned by this.getValue(variable) in an array of
 	 * string of the variables contained in the value.
-	 * 
+	 *
 	 * For example, if the value is "${ECLIPSE_HOME}/plugins", the value
-	 * returned will be {"ECLIPSE_HOME"}. If the value is 
-	 * "${ECLIPSE_HOME}/${FOO}/plugins", the value returned will be 
+	 * returned will be {"ECLIPSE_HOME"}. If the value is
+	 * "${ECLIPSE_HOME}/${FOO}/plugins", the value returned will be
 	 * {"ECLIPSE_HOME", "FOO"}.
 	 */
 	static String[] splitVariableNames(String value) {
@@ -457,7 +457,7 @@ public class PathVariableUtil {
 
 	/*
 	 * Extracts the variable name from a variable segment.
-	 * 
+	 *
 	 * For example, if the value is "${ECLIPSE_HOME}", the value returned will
 	 * be "ECLIPSE_HOME". If the segment doesn't contain any variable, the value
 	 * returned will be "".
@@ -492,9 +492,9 @@ public class PathVariableUtil {
 	}
 
 	/**
-	 * Returns whether this variable is suited for programmatically determining 
+	 * Returns whether this variable is suited for programmatically determining
 	 * which variable is the most appropriate when creating new linked resources.
-	 * 
+	 *
 	 * @return true if the path variable is preferred.
 	 */
 	static public boolean isPreferred(String variableName) {

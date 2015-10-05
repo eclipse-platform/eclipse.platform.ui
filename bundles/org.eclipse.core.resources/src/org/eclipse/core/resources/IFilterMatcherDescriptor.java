@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp(Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -18,9 +18,9 @@ import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
  * obtained from the plug-in manifest (<code>plugin.xml</code>) files.
  * <p>
  * Filter descriptors are platform-defined objects that exist
- * independent of whether that filter's bundle has been started. 
+ * independent of whether that filter's bundle has been started.
  * </p>
- * 
+ *
  * @see AbstractFileInfoMatcher
  * @see IWorkspace#getFilterMatcherDescriptor(String)
  * @see IWorkspace#getFilterMatcherDescriptors()

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,8 +14,8 @@ import java.util.EventListener;
 
 /**
  * A resource change listener is notified of changes to resources
- * in the workspace. 
- * These changes arise from direct manipulation of resources, or 
+ * in the workspace.
+ * These changes arise from direct manipulation of resources, or
  * indirectly through re-synchronization with the local file system.
  * <p>
  * Clients may implement this interface.
@@ -25,7 +25,7 @@ import java.util.EventListener;
  */
 public interface IResourceChangeListener extends EventListener {
 	/**
-	 * Notifies this listener that some resource changes 
+	 * Notifies this listener that some resource changes
 	 * are happening, or have already happened.
 	 * <p>
 	 * The supplied event gives details. This event object (and the

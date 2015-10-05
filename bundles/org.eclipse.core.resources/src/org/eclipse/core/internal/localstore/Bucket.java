@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -25,7 +25,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * A bucket is a persistent dictionary having paths as keys. Values are determined
  * by subclasses.
- * 
+ *
  *  @since 3.1
  */
 public abstract class Bucket {
@@ -33,19 +33,19 @@ public abstract class Bucket {
 	public static abstract class Entry {
 		/**
 		 * This entry has not been modified in any way so far.
-		 * 
+		 *
 		 * @see #state
 		 */
 		private final static int STATE_CLEAR = 0;
 		/**
 		 * This entry has been requested for deletion.
-		 * 
+		 *
 		 * @see #state
 		 */
 		private final static int STATE_DELETED = 0x02;
 		/**
 		 * This entry has been modified.
-		 * 
+		 *
 		 * @see #state
 		 */
 		private final static int STATE_DIRTY = 0x01;
@@ -58,7 +58,7 @@ public abstract class Bucket {
 
 		/**
 		 * State for this entry. Possible values are STATE_CLEAR, STATE_DIRTY and STATE_DELETED.
-		 * 
+		 *
 		 * @see #STATE_CLEAR
 		 * @see #STATE_DELETED
 		 * @see #STATE_DIRTY
@@ -126,13 +126,13 @@ public abstract class Bucket {
 		}
 
 		/**
-		 * @throws CoreException  
+		 * @throws CoreException
 		 */
 		public void beforeSaving(Bucket bucket) throws CoreException {
 			// empty implementation, subclasses to override
 		}
 
-		/** 
+		/**
 		 * @return either STOP, CONTINUE or RETURN
 		 */
 		public abstract int visit(Entry entry);
@@ -141,7 +141,7 @@ public abstract class Bucket {
 	/**
 	 * The segment name for the root directory for index files.
 	 */
-	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$	
+	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$
 
 	/**
 	 * Map of the history entries in this bucket. Maps (String -> byte[][] or String[][]),
@@ -158,7 +158,7 @@ public abstract class Bucket {
 	 */
 	private boolean needSaving = false;
 	/**
-	 * The project name for the bucket currently loaded. <code>null</code> if this is the root bucket. 
+	 * The project name for the bucket currently loaded. <code>null</code> if this is the root bucket.
 	 */
 	protected String projectName;
 
@@ -167,10 +167,10 @@ public abstract class Bucket {
 	}
 
 	/**
-	 * Applies the given visitor to this bucket index. 
+	 * Applies the given visitor to this bucket index.
 	 * @param visitor
 	 * @param filter
-	 * @param depth the number of trailing segments that can differ from the filter 
+	 * @param depth the number of trailing segments that can differ from the filter
 	 * @return one of STOP, RETURN or CONTINUE constants
 	 * @exception CoreException
 	 */
@@ -187,7 +187,7 @@ public abstract class Bucket {
 					continue;
 				// apply visitor
 				Entry bucketEntry = createEntry(path, mapEntry.getValue());
-				// calls the visitor passing all uuids for the entry				
+				// calls the visitor passing all uuids for the entry
 				int outcome = visitor.visit(bucketEntry);
 				// notify the entry it has been visited
 				bucketEntry.visited();
@@ -214,7 +214,7 @@ public abstract class Bucket {
 	 */
 	private void cleanUp(File toDelete) {
 		if (!toDelete.delete())
-			// if deletion didn't go well, don't bother trying to delete the parent dir			
+			// if deletion didn't go well, don't bother trying to delete the parent dir
 			return;
 		// don't try to delete beyond the root for bucket indexes
 		if (toDelete.getName().equals(INDEXES_DIR_NAME))
@@ -229,7 +229,7 @@ public abstract class Bucket {
 	protected abstract Entry createEntry(IPath path, Object value);
 
 	/**
-	 * Flushes this bucket so it has no contents and is not associated to any 
+	 * Flushes this bucket so it has no contents and is not associated to any
 	 * location. Any uncommitted changes are lost.
 	 */
 	public void flush() {
@@ -247,7 +247,7 @@ public abstract class Bucket {
 	}
 
 	/**
-	 * Returns the value for entry corresponding to the given path (null if none found). 
+	 * Returns the value for entry corresponding to the given path (null if none found).
 	 */
 	public final Object getEntryValue(String path) {
 		return entries.get(path);
@@ -277,7 +277,7 @@ public abstract class Bucket {
 
 	/**
 	 * Loads the contents from a file under the given directory. If <code>force</code> is
-	 * <code>false</code>, if this bucket already contains the contents from the current location, 
+	 * <code>false</code>, if this bucket already contains the contents from the current location,
 	 * avoids reloading.
 	 */
 	public void load(String newProjectName, File baseLocation, boolean force) throws CoreException {
@@ -339,7 +339,7 @@ public abstract class Bucket {
 				cleanUp(location);
 				return;
 			}
-			// ensure the parent location exists 
+			// ensure the parent location exists
 			File parent = location.getParentFile();
 			if (parent == null)
 				throw new IOException();//caught and rethrown below
@@ -367,7 +367,7 @@ public abstract class Bucket {
 
 	/**
 	 * Sets the value for the entry with the given path. If <code>value</code> is <code>null</code>,
-	 * removes the entry. 
+	 * removes the entry.
 	 */
 	public final void setEntryValue(String path, Object value) {
 		if (value == null)

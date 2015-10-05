@@ -129,7 +129,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	 */
 	@Override
 	public ISchedulingRule derivedRule(IResource resource) {
-		//team hook currently cannot change this rule	
+		//team hook currently cannot change this rule
 		return null;
 	}
 

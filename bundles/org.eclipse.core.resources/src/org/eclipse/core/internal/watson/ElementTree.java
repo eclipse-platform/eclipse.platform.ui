@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -21,9 +21,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * An ElementTree can be viewed as a generic rooted tree that stores
- * a hierarchy of elements.  An element in the tree consists of a 
- * (name, data, children) 3-tuple.  The name can be any String, and 
- * the data can be any Object.  The children are a collection of zero 
+ * a hierarchy of elements.  An element in the tree consists of a
+ * (name, data, children) 3-tuple.  The name can be any String, and
+ * the data can be any Object.  The children are a collection of zero
  * or more elements that logically fall below their parent in the tree.
  * The implementation makes no guarantees about the ordering of children.
  *
@@ -39,7 +39,7 @@ import org.eclipse.osgi.util.NLS;
  * is always present in any tree.  This root corresponds to the key (/),
  * or the singleton <code>Path.ROOT</code>.  The root element cannot be created
  * or deleted, and its data and name cannot be set.  The root element's children
- * however can be modified (added, deleted, etc).  The root path can be obtained 
+ * however can be modified (added, deleted, etc).  The root path can be obtained
  * using the <code>getRoot()</code> method.
  *
  * ElementTrees are modified in generations.  The method <code>newEmptyDelta()</code>
@@ -48,14 +48,14 @@ import org.eclipse.osgi.util.NLS;
  * When the method <code>immutable()</code> is called, that tree generation is
  * frozen, and can never again be modified.  A tree must be immutable before
  * a new tree generation can start.  Since all ancestor trees are immutable,
- * different active trees can have ancestors in common without fear of 
- * thread corruption problems. 
- * 
- * Internally, any single tree generation is simply stored as the 
+ * different active trees can have ancestors in common without fear of
+ * thread corruption problems.
+ *
+ * Internally, any single tree generation is simply stored as the
  * set of changes between itself and its most recent ancestor (its parent).
  * This compact delta representation allows chains of element trees to
  * be created at relatively low cost.  Clients of the ElementTree can
- * instantaneously "undo" sets of changes by navigating up to the parent 
+ * instantaneously "undo" sets of changes by navigating up to the parent
  * tree using the <code>getParent()</code> method.
  *
  * Although the delta representation is compact, extremely long delta
@@ -160,11 +160,11 @@ public class ElementTree {
 		return this;
 	}
 
-	/** 
-	 * Creates the indicated element and sets its element info. 
+	/**
+	 * Creates the indicated element and sets its element info.
 	 * The parent element must be present, otherwise an IllegalArgumentException
-	 * is thrown. If the indicated element is already present in the tree, 
-	 * its element info is replaced and any existing children are 
+	 * is thrown. If the indicated element is already present in the tree,
+	 * its element info is replaced and any existing children are
 	 * deleted.
 	 *
 	 * @param key element key
@@ -190,8 +190,8 @@ public class ElementTree {
 	}
 
 	/**
-	 * Creates or replaces the subtree below the given path with 
-	 * the given tree. The subtree can only have one child below 
+	 * Creates or replaces the subtree below the given path with
+	 * the given tree. The subtree can only have one child below
 	 * the root, which will become the node specified by the given
 	 * key in this tree.
 	 *
@@ -228,8 +228,8 @@ public class ElementTree {
 		}
 	}
 
-	/** 
-	 * Deletes the indicated element and its descendents. 
+	/**
+	 * Deletes the indicated element and its descendents.
 	 * The element must be present.
 	 */
 	public synchronized void deleteElement(IPath key) {
@@ -258,7 +258,7 @@ public class ElementTree {
 	}
 
 	/**
-	 * Given an array of element trees, returns the index of the 
+	 * Given an array of element trees, returns the index of the
 	 * oldest tree.  The oldest tree is the tree such that no
 	 * other tree in the array is a descendent of that tree.
 	 * Note that this counter-intuitive concept of oldest is based on the
@@ -427,10 +427,10 @@ public class ElementTree {
 	}
 
 	/**
-	 * Returns the subtree rooted at the given key. In the resulting tree, 
-	 * the implicit root node (designated by Path.ROOT), has a single child, 
+	 * Returns the subtree rooted at the given key. In the resulting tree,
+	 * the implicit root node (designated by Path.ROOT), has a single child,
 	 * which is the node specified by the given key in this tree.
-	 * 
+	 *
 	 * The subtree must be present in this tree.
 	 *
 	 * @see #createSubtree(IPath, ElementTree)
@@ -472,7 +472,7 @@ public class ElementTree {
 			return true;
 
 		// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
-		// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the 
+		// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the
 		// common complete layer whose parent is null.  The complete layer moves up as
 		// changes happen.  To see if any changes have happened, we should consider only
 		// layers whose parent is not null.  That is, skip the complete layer as it will clearly not be
@@ -708,7 +708,7 @@ public class ElementTree {
 		tree.storeStrings(set);
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this element tree's
 	 * structure suitable for debug purposes.
 	 */

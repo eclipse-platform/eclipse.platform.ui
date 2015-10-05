@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -19,7 +19,7 @@ import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
 /**
  * Path Variable representing the parent directory of the variable provided
  * in argument, following the syntax:
- * 
+ *
  * "${PARENT-COUNT-MyVariable}"
  *
  */
@@ -36,7 +36,7 @@ public class ParentVariableResolver extends PathVariableResolver {
 		int index = variable.indexOf('-');
 		if (index == -1 || index == (variable.length() -1))
 			return null;
-		
+
 		String countRemaining = variable.substring(index + 1);
 		index = countRemaining.indexOf('-');
 		if (index == -1 || index == (variable.length() -1))
@@ -52,13 +52,13 @@ public class ParentVariableResolver extends PathVariableResolver {
 			return null;
 		}
 		String argument = countRemaining.substring(index + 1);
-		
+
 		URI value = resource.getPathVariableManager().getURIValue(argument);
 		if (value == null)
 			return null;
 		value = resource.getPathVariableManager().resolveURI(value);
 		value = URIUtil.toURI(URIUtil.toPath(value).removeLastSegments(count));
-			
+
 		return value.toASCIIString();
 	}
 }

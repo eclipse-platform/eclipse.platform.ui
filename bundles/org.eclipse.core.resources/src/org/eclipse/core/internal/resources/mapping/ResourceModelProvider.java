@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A simple model provider that represents the resource model itself.
- * 
+ *
  * @since 3.2
  */
 public final class ResourceModelProvider extends ModelProvider {

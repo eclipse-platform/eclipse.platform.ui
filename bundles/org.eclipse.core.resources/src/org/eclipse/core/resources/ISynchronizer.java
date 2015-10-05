@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * A synchronizer which maintains a list of registered partners and, on behalf of
- * each partner, it keeps resource level synchronization information 
+ * each partner, it keeps resource level synchronization information
  * (a byte array). Sync info is saved only when the workspace is saved.
- * 
+ *
  * @see IWorkspace#getSynchronizer()
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -38,7 +38,7 @@ public interface ISynchronizer {
 	 * @exception CoreException if this operation fails. Reasons include:
 	 *    <ul>
 	 *    <li>The resource does not exist.</li>
-	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
+	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code>
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
@@ -56,9 +56,9 @@ public interface ISynchronizer {
 	public void add(QualifiedName partner);
 
 	/**
-	 * Discards the named partner's synchronization information 
+	 * Discards the named partner's synchronization information
 	 * associated with the specified resource and its descendents to the
-	 * specified depth. 
+	 * specified depth.
 	 *
 	 * @param partner the sync partner name
 	 * @param resource the resource
@@ -68,7 +68,7 @@ public interface ISynchronizer {
 	 * @exception CoreException if this operation fails. Reasons include:
 	 *    <ul>
 	 *    <li>The resource does not exist.</li>
-	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
+	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code>
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
@@ -92,7 +92,7 @@ public interface ISynchronizer {
 	 * @return the synchronization information, or <code>null</code> if none
 	 * @exception CoreException if this operation fails. Reasons include:
 	 *    <ul>
-	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
+	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code>
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */
@@ -102,7 +102,7 @@ public interface ISynchronizer {
 	 * Removes the named synchronization partner from this synchronizer's
 	 * registry.  Does nothing if the partner is not registered.
 	 * This discards all sync information for the defunct partner.
-	 * After a partner has been unregistered, sync information for it can no 
+	 * After a partner has been unregistered, sync information for it can no
 	 * longer be stored on resources.
 	 *
 	 * @param partner the partner name to remove from the registry
@@ -127,7 +127,7 @@ public interface ISynchronizer {
 	 * @param info the synchronization information, or <code>null</code>
 	 * @exception CoreException if this operation fails. Reasons include:
 	 *    <ul>
-	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code> 
+	 *    <li><code>IResourceStatus.PARTNER_NOT_REGISTERED</code>
 	 The sync partner is not registered.</li>
 	 *    </ul>
 	 */

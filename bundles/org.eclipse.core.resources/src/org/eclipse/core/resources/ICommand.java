@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public interface ICommand {
 	 * Returns a table of the arguments for this command, or <code>null</code>
 	 * if there are no arguments. The argument names and values are both strings.
 	 *
-	 * @return a table of command arguments (key type : <code>String</code> 
+	 * @return a table of command arguments (key type : <code>String</code>
 	 *		value type : <code>String</code>), or <code>null</code>
 	 * @see #setArguments(Map)
 	 */
@@ -51,7 +51,7 @@ public interface ICommand {
 	 * <p>
 	 * By default, build commands respond to all kinds of builds.
 	 * </p>
-	 * 
+	 *
 	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * on <code>IncrementalProjectBuilder</code>
 	 * @return <code>true</code> if this build command responds to the specified
@@ -65,9 +65,9 @@ public interface ICommand {
 	 * Returns whether this command allows configuring of what kinds of builds
 	 * it responds to.  By default, commands are only configurable
 	 * if the corresponding builder defines the {@link #isConfigurable}
-	 * attribute in its builder extension declaration. A command that is not 
+	 * attribute in its builder extension declaration. A command that is not
 	 * configurable will always respond to all kinds of builds.
-	 * 
+	 *
 	 * @return <code>true</code> If this command allows configuration of
 	 * 		what kinds of builds it responds to, and <code>false</code> otherwise.
 	 * @see #setBuilding(int, boolean)
@@ -100,7 +100,7 @@ public interface ICommand {
 	 * Sets the name of the builder to run for this command.
 	 * <p>
 	 * The builder name comes from the extension that plugs in
-	 * to the standard <code>org.eclipse.core.resources.builders</code> 
+	 * to the standard <code>org.eclipse.core.resources.builders</code>
 	 * extension point.
 	 * </p>
 	 *
@@ -118,7 +118,7 @@ public interface ICommand {
 	 * This method has no effect if this build command does not allow its
 	 * build kinds to be configured.
 	 * </p><p>
-	 * <strong>Note:</strong> 
+	 * <strong>Note:</strong>
 	 * <ul>
 	 * <li>A request for INCREMENTAL_BUILD or AUTO_BUILD will result in the builder being called with the FULL_BUILD
 	 * kind, if there is no previous delta (e.g. after a clean build).
@@ -127,7 +127,7 @@ public interface ICommand {
 	 * if the command responds to INCREMENTAL_BUILD (or AUTO_BUILD).
 	 * </li><li>
 	 * If INCREMENTAL_BUILD is promoted to FULL_BUILD, the builder will be called,
-	 * if the command responds to FULL_BUILD. 
+	 * if the command responds to FULL_BUILD.
 	 * </li><li>
 	 * If AUTO_BUILD is promoted to FULL_BUILD, the builder will be called,
 	 * <strong>only if</strong> the command responds to AUTO_BUILD.
@@ -136,7 +136,7 @@ public interface ICommand {
 	 *
 	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * 		on <code>IncrementalProjectBuilder</code>
-	 * @param value <code>true</code> if this build command responds to the 
+	 * @param value <code>true</code> if this build command responds to the
 	 * 		specified kind of build, and <code>false</code> otherwise.
 	 * @see #isBuilding(int)
 	 * @see #isConfigurable()

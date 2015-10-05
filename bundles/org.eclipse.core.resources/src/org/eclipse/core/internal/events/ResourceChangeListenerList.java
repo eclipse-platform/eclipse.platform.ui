@@ -14,10 +14,10 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * This class is used to maintain a list of listeners. It is a fairly lightweight object, 
+ * This class is used to maintain a list of listeners. It is a fairly lightweight object,
  * occupying minimal space when no listeners are registered.
  * <p>
- * Note that the <code>add</code> method checks for and eliminates 
+ * Note that the <code>add</code> method checks for and eliminates
  * duplicates based on identity (not equality).  Likewise, the
  * <code>remove</code> method compares based on identity.
  * </p>

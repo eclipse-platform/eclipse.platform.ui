@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.PlatformObject;
  * A special model object used to represent shallow folders
  */
 public class ShallowContainer extends PlatformObject {
-	
+
 	private IContainer container;
-	
+
 	public ShallowContainer(IContainer container) {
 		this.container = container;
 	}
@@ -28,7 +28,7 @@ public class ShallowContainer extends PlatformObject {
 	public IContainer getResource() {
 		return container;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -39,12 +39,12 @@ public class ShallowContainer extends PlatformObject {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getResource().hashCode();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

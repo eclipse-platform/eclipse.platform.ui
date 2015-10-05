@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
  * from a set of child mappings.
  * <p>
  * This class is not intended to be subclasses by clients.
- * 
+ *
  * @since 3.2
  */
 public final class CompositeResourceMapping extends ResourceMapping {

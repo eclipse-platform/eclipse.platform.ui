@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ public class ShallowResourceMapping extends ResourceMapping {
 	public ResourceTraversal[] getTraversals(ResourceMappingContext context, IProgressMonitor monitor) {
 		return new ResourceTraversal[] { new ResourceTraversal(new IResource[] { container.getResource() }, IResource.DEPTH_ONE, IResource.NONE)};
 	}
-	
+
 	@Override
 	public boolean contains(ResourceMapping mapping) {
 		if (mapping.getModelProviderId().equals(this.getModelProviderId())) {
@@ -58,7 +58,7 @@ public class ShallowResourceMapping extends ResourceMapping {
 			}
 			if (object instanceof IResource) {
 				IResource other = (IResource) object;
-				return other.getType() == IResource.FILE 
+				return other.getType() == IResource.FILE
 					&& resource.getFullPath().equals(other.getFullPath().removeLastSegments(1));
 			}
 		}

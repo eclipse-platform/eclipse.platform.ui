@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     manklu@web.de - fix for bug 156082
@@ -34,20 +34,20 @@ import org.eclipse.osgi.util.NLS;
  * maintain data structures for quickly computing the set of aliases for a given
  * resource, and for efficiently updating all aliases when a resource changes on
  * disk.
- * 
+ *
  * The approach for computing aliases is optimized for alias-free workspaces and
  * alias-free projects.  That is, if the workspace contains no aliases, then
  * updating should be very quick.  If a resource is changed in a project that
  * contains no aliases, it should also be very fast.
- * 
+ *
  * The data structures maintained by the alias manager can be seen as a cache,
  * that is, they store no information that cannot be recomputed from other
  * available information.  On shutdown, the alias manager discards all state; on
  * startup, the alias manager eagerly rebuilds its state.  The reasoning is
  * that it's better to incur this cost on startup than on the first attempt to
  * modify a resource.  After startup, the state is updated incrementally on the
- * following occasions: 
- *  -  when projects are deleted, opened, closed, or moved 
+ * following occasions:
+ *  -  when projects are deleted, opened, closed, or moved
  *  - when linked resources are created, deleted, or moved.
  */
 public class AliasManager implements IManager, ILifecycleListener, IResourceChangeListener {
@@ -237,7 +237,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					//check for overlap with previous
 					//Note: previous is always shorter due to map sorting rules
 					if (previousStore.isParentOf(currentStore)) {
-						//resources will be null if they were in a list, in which case 
+						//resources will be null if they were in a list, in which case
 						//they've already been passed to the doit
 						if (previousResource != null) {
 							doit.doit(previousResource.getProject());
@@ -502,7 +502,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
 				if (compare != 0)
 					return compare;
-				// compare based on URI path segment values 
+				// compare based on URI path segment values
 				final URI uri1;
 				final URI uri2;
 				try {
@@ -608,7 +608,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * otherwise.
 	 */
 	private boolean hasNoAliases(final IResource resource) {
-		//check if we're in an aliased project or workspace before updating structure changes.  In the 
+		//check if we're in an aliased project or workspace before updating structure changes.  In the
 		//deletion case, we need to know if the resource was in an aliased project *before* deletion.
 		IProject project = resource.getProject();
 		boolean noAliases = !aliasedProjects.contains(project);

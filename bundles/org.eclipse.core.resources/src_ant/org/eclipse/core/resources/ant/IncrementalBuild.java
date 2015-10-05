@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Ant task which runs the platform's incremental build facilities.
- * 
+ *
  * @see IProject#build(int, IProgressMonitor)
  * @see IWorkspace#build(int, IProgressMonitor)
  */
@@ -62,7 +62,7 @@ public class IncrementalBuild extends Task {
 
 	/**
 	 * Executes this task.
-	 * 
+	 *
 	 * @exception BuildException thrown if a problem occurs during execution
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class IncrementalBuild extends Task {
 
 	/**
 	 * Sets the name of the receiver's builder.
-	 * 
+	 *
 	 * @param value the name of the receiver's builder
 	 */
 	public void setBuilder(String value) {
@@ -97,11 +97,11 @@ public class IncrementalBuild extends Task {
 
 	/**
 	 * Sets the receiver's kind> attribute.  This value must be one
-	 * of: <code>IncrementalBuild.KIND_FULL</code>, 
+	 * of: <code>IncrementalBuild.KIND_FULL</code>,
 	 * <code>IncrementalBuild.KIND_AUTO</code>,
 	 * <code>IncrementalBuild.KIND_INCREMENTAL</code>,
 	 * <code>IncrementalBuild.KIND_CLEAN</code>.
-	 * 
+	 *
 	 * @param value the receiver's kind attribute
 	 */
 	public void setKind(String value) {
@@ -117,7 +117,7 @@ public class IncrementalBuild extends Task {
 
 	/**
 	 * Sets the receiver's target project.
-	 * 
+	 *
 	 * @param value the receiver's target project
 	 */
 	public void setProject(String value) {

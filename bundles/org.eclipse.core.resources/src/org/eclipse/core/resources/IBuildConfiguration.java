@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * each other.
  *<p>
  * All projects have at least one build configuration.  By default this
- * has name {@link #DEFAULT_CONFIG_NAME}.  One configuration in the project is defined 
+ * has name {@link #DEFAULT_CONFIG_NAME}.  One configuration in the project is defined
  * to be 'active'. The active configuration is built by default.  If unset, the
  * active configuration defaults to the first configuration in the project.
  *</p>
@@ -35,13 +35,13 @@ import org.eclipse.core.runtime.IAdaptable;
  * and work as before.
  *</p>
  *<p>
- * Build configuration can reference other builds configurations.  These references are created 
+ * Build configuration can reference other builds configurations.  These references are created
  * using {@link IWorkspace#newBuildConfig(String, String)}, and set on the referencing project
  * with {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}.
- * A referenced build configuration may have a <code>null</code> configuration name which is resolved to the 
+ * A referenced build configuration may have a <code>null</code> configuration name which is resolved to the
  * referenced project's current active build configuration at build time.
  *</p>
- *<p> 
+ *<p>
  * Workspace build will ensure that the projects are built in an appropriate order as defined
  * by the reference graph.
  *</p>
@@ -68,7 +68,7 @@ public interface IBuildConfiguration extends IAdaptable {
 
 	/**
 	 * Returns the human readable name of this build configuration.  If this
-	 * {@link IBuildConfiguration} is set on a Project, this can never be null.  
+	 * {@link IBuildConfiguration} is set on a Project, this can never be null.
 	 * <p>
 	 * If this IBuildConfiguration is being used as a reference to a build configuration
 	 * in another project, this may be null.  Such build configuration references are

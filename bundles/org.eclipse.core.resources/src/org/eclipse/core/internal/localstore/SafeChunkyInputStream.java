@@ -135,7 +135,7 @@ public class SafeChunkyInputStream extends InputStream {
 		if (nextByteInChunk < chunkLength)
 			return chunk[nextByteInChunk++] & 0xFF;
 		// Otherwise the chunk is empty so clear the current one, get the next
-		// one and recursively call read.  Need to recur as the chunk may be 
+		// one and recursively call read.  Need to recur as the chunk may be
 		// real but empty.
 		resetChunk();
 		findChunkStart();

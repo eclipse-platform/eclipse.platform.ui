@@ -26,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
 
 /**
  * Manages project-specific content type behavior.
- * 
+ *
  * @see ContentDescriptionManager
  * @see org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy
  * @since 3.1
@@ -35,9 +35,9 @@ public class ProjectContentTypes {
 
 	/**
 	 * A project-aware content type selection policy.
-	 * This class is also a dynamic scope context that will delegate to either 
+	 * This class is also a dynamic scope context that will delegate to either
 	 * project or instance scope depending on whether project specific settings were enabled
-	 * for the project in question.    
+	 * for the project in question.
 	 */
 	private class ProjectContentTypeSelectionPolicy implements ISelectionPolicy, IScopeContext {
 		// corresponding project
@@ -179,7 +179,7 @@ public class ProjectContentTypes {
 				if (entry.getTimestamp() == info.getContentId())
 					// ...and it is not stale, so just return it
 					return (Set<String>) entry.getCached();
-			// no cached information found, have to collect associated content types  
+			// no cached information found, have to collect associated content types
 			Set<String> result = collectAssociatedContentTypes(project);
 			if (entry == null)
 				// there was no entry before - create one
@@ -208,13 +208,13 @@ public class ProjectContentTypes {
 
 	/**
 	 * Implements project specific, nature-based selection policy. No content types are vetoed.
-	 * 
+	 *
 	 * The criteria for this policy is as follows:
 	 * <ol>
 	 * <li>associated content types should appear before non-associated content types</li>
 	 * <li>otherwise, relative ordering should be preserved.</li>
 	 * </ol>
-	 * 
+	 *
 	 *  @see org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy
 	 */
 	final IContentType[] select(Project project, IContentType[] candidates, boolean fileName, boolean content) {

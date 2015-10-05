@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
@@ -226,7 +226,7 @@ public class File extends Resource implements IFile {
 		}
 		if (description != null)
 			if ((charset = description.getCharset()) != null)
-				// the description contained charset info, we are done 
+				// the description contained charset info, we are done
 				return charset;
 		// could not find out the encoding based on the contents... default to parent's
 		return workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true);
@@ -366,7 +366,7 @@ public class File extends Resource implements IFile {
 	 * Treat the file specially if it represents a metadata file, which includes:
 	 * - project description file (.project)
 	 * - project preferences files (*.prefs)
-	 *  
+	 *
 	 * This method is called whenever it is discovered that a file has
 	 * been modified (added, removed, or changed).
 	 */

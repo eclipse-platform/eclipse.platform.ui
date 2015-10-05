@@ -114,7 +114,7 @@ public class Policy {
 	}
 
 	/**
-	 * Print a debug message to the console. 
+	 * Print a debug message to the console.
 	 * Prepend the message with the current date, the name of the current thread and the current job if present.
 	 */
 	public static void debug(String message) {
@@ -135,7 +135,7 @@ public class Policy {
 	}
 
 	/**
-	 * Print a debug throwable to the console. 
+	 * Print a debug throwable to the console.
 	 */
 	public static void debug(Throwable t) {
 		StringWriter writer = new StringWriter();

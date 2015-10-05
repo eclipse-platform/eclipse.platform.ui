@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.variableresolvers.PathVariableResolver;
 
 /**
- * 
+ *
  */
 public class ProjectLocationVariableResolver extends PathVariableResolver {
 

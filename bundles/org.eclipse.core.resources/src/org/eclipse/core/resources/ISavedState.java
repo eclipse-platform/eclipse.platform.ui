@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public interface ISavedState {
 	public int getSaveNumber();
 
 	/**
-	 * Returns the mapped location associated with the given path 
+	 * Returns the mapped location associated with the given path
 	 * or <code>null</code> if none.
 	 *
 	 * @return the mapped location of a given path
@@ -54,20 +54,20 @@ public interface ISavedState {
 
 	/**
 	 * Used to receive notification of changes that might have happened
-	 * while this plug-in was not active. The listener receives notifications of changes to 
-	 * the workspace resource tree since the time this state was saved.  After this 
+	 * while this plug-in was not active. The listener receives notifications of changes to
+	 * the workspace resource tree since the time this state was saved.  After this
 	 * method is run, the delta is forgotten. Subsequent calls to this method
 	 * will have no effect.
 	 * <p>
 	 * No notification is received in the following cases:
 	 * <ul>
-	 * <li>if a saved state was never recorded ({@link ISaveContext#needDelta()}</code> 
+	 * <li>if a saved state was never recorded ({@link ISaveContext#needDelta()}</code>
 	 * 		was not called) </li>
 	 * <li>a saved state has since been forgotten (using {@link IWorkspace#forgetSavedTree(String)}) </li>
 	 * <li>a saved state has been deemed too old or has become invalid</li>
 	 * </ul>
 	 * <p>
-	 * All clients should have a contingency plan in place in case 
+	 * All clients should have a contingency plan in place in case
 	 * a changes are not available (the case should be very similar
 	 * to the first time a plug-in is activated, and only has the
 	 * current state of the workspace to work from).

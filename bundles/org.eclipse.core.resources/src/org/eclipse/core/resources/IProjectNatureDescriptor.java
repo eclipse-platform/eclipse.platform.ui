@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,8 +15,8 @@ package org.eclipse.core.resources;
  * obtained from the plug-in manifest (<code>plugin.xml</code>) file.
  * <p>
  * Nature descriptors are platform-defined objects that exist
- * independent of whether that nature's plug-in has been started. 
- * In contrast, a project nature's runtime object (<code>IProjectNature</code>) 
+ * independent of whether that nature's plug-in has been started.
+ * In contrast, a project nature's runtime object (<code>IProjectNature</code>)
  * generally runs plug-in-defined code.
  * </p>
  *
@@ -32,7 +32,7 @@ public interface IProjectNatureDescriptor {
 	 * <p>
 	 * The nature identifier is composed of the nature's plug-in id and the simple
 	 * id of the nature extension.  For example, if plug-in <code>"com.xyz"</code>
-	 * defines a nature extension with id <code>"myNature"</code>, the unique 
+	 * defines a nature extension with id <code>"myNature"</code>, the unique
 	 * nature identifier will be <code>"com.xyz.myNature"</code>.
 	 * </p>
 	 * @return the unique nature identifier
@@ -54,10 +54,10 @@ public interface IProjectNatureDescriptor {
 
 	/**
 	 * Returns the unique identifiers of the natures required by this nature.
-	 * Nature requirements are specified by the <code>"requires-nature"</code> 
+	 * Nature requirements are specified by the <code>"requires-nature"</code>
 	 * element on a nature extension.
 	 * Returns an empty array if no natures are required by this nature.
-	 * 
+	 *
 	 * @return an array of nature ids that this nature requires,
 	 * 	possibly an empty array.
 	 */
@@ -65,10 +65,10 @@ public interface IProjectNatureDescriptor {
 
 	/**
 	 * Returns the identifiers of the nature sets that this nature belongs to.
-	 * Nature set inclusion is specified by the <code>"one-of-nature"</code> 
+	 * Nature set inclusion is specified by the <code>"one-of-nature"</code>
 	 * element on a nature extension.
 	 * Returns an empty array if no nature sets are specified for this nature.
-	 * 
+	 *
 	 * @return an array of nature set ids that this nature belongs to,
 	 * 	possibly an empty array.
 	 */
@@ -77,8 +77,8 @@ public interface IProjectNatureDescriptor {
 	/**
 	 * Returns whether this project nature allows linked resources to be created
 	 * in projects where this nature is installed.
-	 * 
-	 * @return boolean <code>true</code> if creating links is allowed, 
+	 *
+	 * @return boolean <code>true</code> if creating links is allowed,
 	 *       and <code>false</code> otherwise.
 	 * @see IFolder#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
 	 * @see IFile#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)

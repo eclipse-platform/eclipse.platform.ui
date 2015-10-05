@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -31,7 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads serialized project descriptions.
- * 
+ *
  * Note: Suppress warnings on whole class because of unusual use of objectStack.
  */
 @SuppressWarnings({"unchecked"})
@@ -104,8 +104,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	/**
 	 * Returns the SAXParser to use when parsing project description files.
-	 * @throws ParserConfigurationException 
-	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
 	 */
 	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException {
 		//the parser can't be used concurrently, so only use singleton when workspace is locked
@@ -119,7 +119,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	/**
 	 * Returns the SAXParserFactory to use when parsing project description files.
-	 * @throws ParserConfigurationException 
+	 * @throws ParserConfigurationException
 	 */
 	private static synchronized SAXParserFactory createParserFactory() throws ParserConfigurationException {
 		if (singletonParserFactory == null) {
@@ -350,7 +350,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				if (elementName.equals(PROJECT)) {
 					//top of stack is list of project references
 					// Referenced projects are just project names and, therefore,
-					// are also IResource names and cannot have leading/trailing 
+					// are also IResource names and cannot have leading/trailing
 					// whitespace.
 					((ArrayList<String>) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_PROJECTS;
@@ -550,7 +550,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				}
 				list.add(filter);
 			} else {
-				// if the project is null, that means that we're loading a project description to retrieve 
+				// if the project is null, that means that we're loading a project description to retrieve
 				// some meta data only.
 				String key = new String(); // an empty key;
 				HashMap<String, LinkedList<FilterDescription>> map = ((HashMap<String, LinkedList<FilterDescription>>) objectStack.peek());
@@ -585,7 +585,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	/**
-	 * For backwards compatibility, link locations in the local file system are represented 
+	 * For backwards compatibility, link locations in the local file system are represented
 	 * in the project description under the "location" tag.
 	 * @param elementName
 	 */
@@ -605,7 +605,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	/**
-	 * Link locations that are not stored in the local file system are represented 
+	 * Link locations that are not stored in the local file system are represented
 	 * in the project description under the "locationURI" tag.
 	 * @param elementName
 	 */
@@ -704,7 +704,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				if (project != null) {
 					((FilterDescription) objectStack.peek()).setResource(newPath.isEmpty() ? (IResource) project : project.getFolder(newPath));
 				} else {
-					// if the project is null, that means that we're loading a project description to retrieve 
+					// if the project is null, that means that we're loading a project description to retrieve
 					// some meta data only.
 					((FilterDescription) objectStack.peek()).setResource(null);
 				}
@@ -961,7 +961,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	/**
-	 * Reads and returns a project description stored at the given location, or 
+	 * Reads and returns a project description stored at the given location, or
 	 * temporary location.
 	 */
 	public ProjectDescription read(IPath location, IPath tempLocation) throws IOException {

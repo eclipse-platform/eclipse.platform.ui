@@ -3,7 +3,7 @@
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.resources.mapping;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * This class may be subclassed by clients.
  * </p>
- * 
+ *
  * @see ResourceMapping
  * @see ResourceMappingContext
  * @since 3.2
@@ -48,14 +48,14 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * allow the caller to access the contents of the base resource that
 	 * corresponds to the given local resource. The base of a resource is the
 	 * contents of the resource before any local modifications were made. If the
-	 * base file does not exist, or if this is a two-way comparison, <code>null</code> 
-	 * is returned. The provided local file handle need not exist locally. A exception 
+	 * base file does not exist, or if this is a two-way comparison, <code>null</code>
+	 * is returned. The provided local file handle need not exist locally. A exception
 	 * is thrown if the corresponding base resource is not a file.
 	 * <p>
 	 * This method may be long running as a server may need to be contacted to
 	 * obtain the contents of the file.
 	 * </p>
-	 * 
+	 *
 	 * @param file the local file
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
@@ -73,13 +73,13 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	public abstract IStorage fetchBaseContents(IFile file, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns the members of the base resource corresponding to the given container. 
-	 * The container and the returned members need not exist locally and may not 
-	 * include all children that exist locally. An empty list is returned if the base resource 
-	 * is empty or does not exist. An exception is thrown if the base resource is not 
+	 * Returns the members of the base resource corresponding to the given container.
+	 * The container and the returned members need not exist locally and may not
+	 * include all children that exist locally. An empty list is returned if the base resource
+	 * is empty or does not exist. An exception is thrown if the base resource is not
 	 * capable of having members. This method returns <code>null</code> if
-	 * the base members cannot be computed, in which case clients should call 
-	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the 
+	 * the base members cannot be computed, in which case clients should call
+	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the
 	 * combined members for the base and remote.
 	 * </p>
 	 * <p>
@@ -87,7 +87,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * obtain the members of the base resource.
 	 * </p>
 	 * <p>
-	 * This default implementation always returns <code>null</code>, but subclasses 
+	 * This default implementation always returns <code>null</code>, but subclasses
 	 * may override.
 	 * </p>
 	 * @param container the local container
@@ -110,7 +110,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	}
 
 	/**
-	 * Returns the combined members of the base and remote resources corresponding 
+	 * Returns the combined members of the base and remote resources corresponding
 	 * to the given container. The container need not exist locally and the result may
 	 * include entries that do not exist locally and may not include all local
 	 * children. An empty list is returned if the remote resource which
@@ -121,11 +121,11 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * This method may be long running as a server may need to be contacted to
 	 * obtain the members of the container's corresponding remote resource.
 	 * </p>
-	 * 
+	 *
 	 * @param container the local container
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
-	 * @return returns the combined members of the base and remote resources 
+	 * @return returns the combined members of the base and remote resources
 	 * corresponding to the given container.
 	 * @exception CoreException if the members could not be fetched. Reasons
 	 * include:
@@ -147,7 +147,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * This method may be long running as a server may need to be contacted to
 	 * obtain the contents of the file.
 	 * </p>
-	 * 
+	 *
 	 * @param file the local file
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
@@ -165,13 +165,13 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	public abstract IStorage fetchRemoteContents(IFile file, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns the members of the remote resource corresponding to the given container. 
-	 * The container and the returned members need not exist locally and may not 
-	 * include all children that exist locally. An empty list is returned if the remote resource 
-	 * is empty or does not exist. An exception is thrown if the remote resource is not 
+	 * Returns the members of the remote resource corresponding to the given container.
+	 * The container and the returned members need not exist locally and may not
+	 * include all children that exist locally. An empty list is returned if the remote resource
+	 * is empty or does not exist. An exception is thrown if the remote resource is not
 	 * capable of having members. This method returns <code>null</code> if
-	 * the remote members cannot be computed, in which case clients should call 
-	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the 
+	 * the remote members cannot be computed, in which case clients should call
+	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the
 	 * combined members for the base and remote.
 	 * </p>
 	 * <p>
@@ -179,7 +179,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * obtain the members of the remote resource.
 	 * </p>
 	 * <p>
-	 * This default implementation always returns <code>null</code>, but subclasses 
+	 * This default implementation always returns <code>null</code>, but subclasses
 	 * may override.
 	 * </p>
 	 * @param container the local container
@@ -204,7 +204,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	/**
 	 * Return the list of projects that apply to this context.
 	 * In other words, the context is only capable of querying the
-	 * remote state for projects that are contained in the 
+	 * remote state for projects that are contained in the
 	 * returned list.
 	 * @return the list of projects that apply to this context
 	 */
@@ -215,7 +215,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * modifications have been made to the given resource. For two-way
 	 * comparisons, calling this method has the same effect as calling
 	 * {@link #hasRemoteChange(IResource, IProgressMonitor)}.
-	 * 
+	 *
 	 * @param resource the resource being tested
 	 * @param monitor a progress monitor
 	 * @return whether the resource contains local modifications
@@ -256,7 +256,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * situation where <code>true</code> is returned but the actual contents
 	 * do not differ. Clients must be prepared handle this situation.
 	 * </p>
-	 * 
+	 *
 	 * @param resource the local resource
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
@@ -276,7 +276,7 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * Return <code>true</code> if the context is associated with an operation
 	 * that is using a three-way comparison and <code>false</code> if it is
 	 * using a two-way comparison.
-	 * 
+	 *
 	 * @return whether the context is a three-way or two-way
 	 */
 	public abstract boolean isThreeWay();
@@ -291,18 +291,18 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * Note that this is really only a hint to the context provider. It is up to
 	 * implementors to decide, based on the provided traversals, how to
 	 * efficiently perform the refresh. In the ideal case, calls to
-	 * {@link #hasRemoteChange(IResource, IProgressMonitor)} and 
-	 * {@link #fetchMembers} would not need to contact the server after a call to a 
-	 * refresh with appropriate traversals.  Also, ideally, if 
-	 * {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents 
-	 * for these files will be cached as efficiently as possible so that calls to 
-	 * {@link #fetchRemoteContents} will also not need to contact the server. This 
-	 * may not be possible for all context providers, so clients cannot assume that 
-	 * the above mentioned methods will not be long running. It is still advisable 
-	 * for clients to call {@link #refresh} with as much details as possible since, in 
+	 * {@link #hasRemoteChange(IResource, IProgressMonitor)} and
+	 * {@link #fetchMembers} would not need to contact the server after a call to a
+	 * refresh with appropriate traversals.  Also, ideally, if
+	 * {@link #FILE_CONTENTS_REQUIRED} is on of the flags, then the contents
+	 * for these files will be cached as efficiently as possible so that calls to
+	 * {@link #fetchRemoteContents} will also not need to contact the server. This
+	 * may not be possible for all context providers, so clients cannot assume that
+	 * the above mentioned methods will not be long running. It is still advisable
+	 * for clients to call {@link #refresh} with as much details as possible since, in
 	 * the case where a provider is optimized, performance will be much better.
 	 * </p>
-	 * 
+	 *
 	 * @param traversals the resource traversals that indicate which resources
 	 * are to be refreshed
 	 * @param flags additional refresh behavior. For instance, if

@@ -13,12 +13,12 @@ package org.eclipse.core.internal.watson;
 import java.io.*;
 import org.eclipse.core.runtime.IPath;
 
-/** 
+/**
  * The <code>IElementInfoFlattener</code> interface supports
  * reading and writing element info objects.
  */
 public interface IElementInfoFlattener {
-	/** 
+	/**
 	 * Reads an element info from the given input stream.
 	 * @param elementPath the path of the element to be read
 	 * @param input the stream from which the element info should be read.

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * This class provides the same interface as <code>WorkspaceDescription</code>
  * but instead of changing/obtaining values from its internal state, it
  * changes/obtains properties in/from the workspace plug-in's preferences.
- * 
+ *
  * Note: for performance reasons, some frequently called accessor methods are
  * reading a cached value from the super class instead of reading the
  * corresponding property preference store. To keep the cache synchronized with
@@ -109,10 +109,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 
 	@Override
 	public Object clone() {
-		// should never be called - throws an exception to avoid using a 
-		// WorkspacePreferences when using WorkspaceDescription was the real 
+		// should never be called - throws an exception to avoid using a
+		// WorkspacePreferences when using WorkspaceDescription was the real
 		// intention (this class offers a different protocol for copying state).
-		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$ 
+		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$
 	}
 
 	public void copyFrom(WorkspaceDescription source) {
@@ -221,9 +221,9 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	}
 
 	protected void synchronizeWithPreferences(String property) {
-		// do not use the value in the event - may be a string instead 
-		// of the expected type. Retrieve it from the preferences store 
-		// using the type-specific method 		
+		// do not use the value in the event - may be a string instead
+		// of the expected type. Retrieve it from the preferences store
+		// using the type-specific method
 		if (property.equals(ResourcesPlugin.PREF_AUTO_BUILDING))
 			super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		else if (property.equals(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL))

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn - Fix for bug 266712
@@ -19,7 +19,7 @@ import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.*;
 
 /**
- * A file store representing a virtual resource. 
+ * A file store representing a virtual resource.
  * A virtual resource always exists and has no children.
  */
 public class VirtualFileStore extends FileStore {

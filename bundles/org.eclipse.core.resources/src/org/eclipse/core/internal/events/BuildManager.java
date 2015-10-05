@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Isaac Pacht (isaacp3@gmail.com) - fix for bug 206540
@@ -197,7 +197,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				// Acquire the rule required for running this builder
 				if (rule != null) {
 					Job.getJobManager().beginRule(rule, monitor);
-					// Now that we've acquired the rule, changes may have been made concurrently, ensure we're pointing at the 
+					// Now that we've acquired the rule, changes may have been made concurrently, ensure we're pointing at the
 					// correct currentTree so delta contains concurrent changes made in areas guarded by the scheduling rule
 					if (currentTree != null)
 						currentTree = workspace.getElementTree();
@@ -431,7 +431,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * in the builder spec, and that have a last built state, even if they
 	 * have not been instantiated this session.
 	 *
-	 * e.g. 
+	 * e.g.
 	 * For a project with 3 builders, 2 build configurations and the second
 	 * builder doesn't support configurations.
 	 * The returned List of BuilderInfos is ordered:
@@ -565,7 +565,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Returns the builder instance corresponding to the given command, or
 	 * <code>null</code> if the builder was not valid, and sets its context
 	 * to the one supplied.
-	 * 
+	 *
 	 * @param buildConfiguration The project config this builder corresponds to
 	 * @param command The build command
 	 * @param buildSpecIndex The index of this builder in the build spec, or -1 if
@@ -582,7 +582,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Removes the builder persistent info from the map corresponding to the
 	 * given builder name, configuration name and build spec index, or <code>null</code> if not found
-	 * 
+	 *
 	 * @param configName or null if the builder doesn't support configurations
 	 * @param buildSpecIndex The index in the build spec, or -1 if unknown
 	 */
@@ -649,7 +649,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * </ul>
 	 * <p>
 	 * Deltas are computed once and cached for efficiency.
-	 * 
+	 *
 	 * @param project the project to get a delta for
 	 */
 	IResourceDelta getDelta(IProject project) {
@@ -843,7 +843,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * Instantiates the builder with the given name.  If the builder, its plugin, or its nature
-	 * is missing, create a placeholder builder to takes its place.  This is needed to generate 
+	 * is missing, create a placeholder builder to takes its place.  This is needed to generate
 	 * appropriate exceptions when somebody tries to invoke the builder, and to
 	 * prevent trying to instantiate it every time a build is run.
 	 * This method NEVER returns null.
@@ -872,7 +872,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					((InternalBuilder) builder).setLastBuiltTree(tree);
 				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
 			}
-			// delete the build map if it's now empty 
+			// delete the build map if it's now empty
 			if (infos.size() == 0)
 				setBuildersPersistentInfo(project, null);
 		}
@@ -942,7 +942,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Returns true if the given builder needs to be invoked, and false
 	 * otherwise.
-	 * 
+	 *
 	 * The algorithm is to compute the intersection of the set of build configs that
 	 * have changed since the last build, and the set of build configs this builder
 	 * cares about.  This is an optimization, under the assumption that computing
@@ -1039,7 +1039,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Sets the builder infos for the given build config.  The builder infos are
 	 * an ArrayList of BuilderPersistentInfo.
 	 * The list includes entries for all builders that are
-	 * in the builder spec, and that have a last built state, even if they 
+	 * in the builder spec, and that have a last built state, even if they
 	 * have not been instantiated this session.
 	 */
 	public void setBuildersPersistentInfo(IProject project, List<BuilderPersistentInfo> list) {
@@ -1063,7 +1063,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
-	 * Returns a string representation of the given builder.  
+	 * Returns a string representation of the given builder.
 	 * For debugging purposes only.
 	 */
 	private String toString(InternalBuilder builder) {
@@ -1076,8 +1076,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * Returns true if the nature membership rules are satisfied for the given
-	 * builder extension on the given project, and false otherwise.  A builder that 
-	 * does not specify that it belongs to a nature is always valid.  A builder 
+	 * builder extension on the given project, and false otherwise.  A builder that
+	 * does not specify that it belongs to a nature is always valid.  A builder
 	 * extension that belongs to a nature can be invalid for the following reasons:
 	 * <ul>
 	 * <li>The nature that owns the builder does not exist on the given project</li>
@@ -1085,7 +1085,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * </ul>
 	 * Furthermore, if the nature that owns the builder does not exist on the project,
 	 * that builder will be removed from the build spec.
-	 * 
+	 *
 	 * Note: This method only validates nature constraints that can vary at runtime.
 	 * Additional checks are done in the instantiateBuilder method for constraints
 	 * that cannot vary once the plugin registry is initialized.

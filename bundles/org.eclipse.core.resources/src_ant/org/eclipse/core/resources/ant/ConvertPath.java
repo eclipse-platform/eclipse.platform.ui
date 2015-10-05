@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * An Ant task which allows to switch from a file system path to a resource path, 
- * and vice versa, and store the result in a user property whose name is set by the user. If the 
+ * An Ant task which allows to switch from a file system path to a resource path,
+ * and vice versa, and store the result in a user property whose name is set by the user. If the
  * resource does not exist, the property is set to <code>false</code>.
  * <p>
  * The attribute "property" must be specified, as well as only one of "fileSystemPath" or "resourcePath".
@@ -60,7 +60,7 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Performs the path conversion operation.
-	 * 
+	 *
 	 * @exception BuildException thrown if a problem occurs during execution.
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Sets the file system path.
-	 * 
+	 *
 	 * @param value the file corresponding to the path supplied by the user
 	 */
 	public void setFileSystemPath(File value) {
@@ -128,8 +128,8 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Sets the resource path.
-	 * 
-	 * @param value the path	
+	 *
+	 * @param value the path
 	 */
 	public void setResourcePath(String value) {
 		if (fileSystemPath != null)
@@ -139,8 +139,8 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Sets the name of the property where the result may stored.
-	 * 
-	 * @param value the name of the property		
+	 *
+	 * @param value the name of the property
 	 */
 	public void setProperty(String value) {
 		property = value;
@@ -149,7 +149,7 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Sets the id for the path where the result may be stored
-	 * 
+	 *
 	 * @param value the id of the path
 	 */
 	public void setPathId(String value) {
@@ -158,7 +158,7 @@ public class ConvertPath extends Task {
 
 	/**
 	 * Performs a validation of the receiver.
-	 * 
+	 *
 	 * @exception BuildException thrown if a problem occurs during validation.
 	 */
 	protected void validateAttributes() throws BuildException {

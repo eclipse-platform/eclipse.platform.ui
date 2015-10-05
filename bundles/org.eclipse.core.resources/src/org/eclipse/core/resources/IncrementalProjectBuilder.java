@@ -55,7 +55,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * autobuild is turned on, these builds are triggered automatically whenever
 	 * resources change.  Apart from the method by which autobuilds are triggered,
 	 * they otherwise operate like an incremental build.
-	 * 
+	 *
 	 * @see IWorkspaceDescription#setAutoBuilding(boolean)
 	 * @see IWorkspace#isAutoBuilding()
 	 */
@@ -65,7 +65,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Incremental builds use an {@link IResourceDelta} that describes what
 	 * resources have changed since the last build.  The builder calculates
 	 * what resources are affected by the delta, and rebuilds the affected resources.
-	 * 
+	 *
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 * @see IWorkspace#build(int, IProgressMonitor)
@@ -73,10 +73,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	public static final int INCREMENTAL_BUILD = 10;
 	/**
 	 * Build kind constant (value 15) indicating a clean build request.  A clean
-	 * build discards any additional state that has  been computed as a result of 
+	 * build discards any additional state that has  been computed as a result of
 	 * previous builds, and returns the project to a clean slate. Resource
 	 * deltas are not applicable for this kind of build.
-	 * 
+	 *
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 * @see IWorkspace#build(int, IProgressMonitor)
@@ -123,7 +123,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * another is to use a {@link MultiStatus} containing finer-grained problem
 	 * diagnoses.
 	 * </p>
-	 * 
+	 *
 	 * @param kind the kind of build being requested. Valid values are
 	 * <ul>
 	 * <li>{@link #FULL_BUILD} - indicates a full build.</li>
@@ -145,10 +145,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	protected abstract IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Clean is an opportunity for a builder to discard any additional state that has 
-	 * been computed as a result of previous builds. It is recommended that builders 
-	 * override this method to delete all derived resources created by previous builds, 
-	 * and to remove all markers of type {@link IMarker#PROBLEM} that 
+	 * Clean is an opportunity for a builder to discard any additional state that has
+	 * been computed as a result of previous builds. It is recommended that builders
+	 * override this method to delete all derived resources created by previous builds,
+	 * and to remove all markers of type {@link IMarker#PROBLEM} that
 	 * were created by previous invocations of the builder. The platform will
 	 * take care of discarding the builder's last built state (there is no need
 	 * to call <code>forgetLastBuiltState</code>).
@@ -158,7 +158,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <code>IWorkspace.build</code> or <code>IProject.build</code> where
 	 * the build kind is {@link #CLEAN_BUILD}.
 	 * <p>
-	 * This default implementation does nothing. Subclasses may override. 
+	 * This default implementation does nothing. Subclasses may override.
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided by
 	 * the given progress monitor. All builders should report their progress and
@@ -166,7 +166,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * propagated to the caller by throwing
 	 * <code>OperationCanceledException</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @exception CoreException if this build fails.
@@ -194,7 +194,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 
 	/**
 	 * Requests that this builder remember any build invocation specific state.
-	 * This means that the next time the builder runs, it will receive a delta 
+	 * This means that the next time the builder runs, it will receive a delta
 	 * which includes changes reported in the current {@link #getDelta(IProject)}.
 	 *<p>
 	 * This can be used to indicate that a builder didn't run, even though there
@@ -217,7 +217,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Any changes made to the returned command will only take effect if
 	 * the modified command is installed on a project build spec.
 	 * </p>
-	 * 
+	 *
 	 * @see IProjectDescription#setBuildSpec(ICommand [])
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @since 3.1
@@ -260,11 +260,11 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * </p>
 	 * <p>
 	 * The delta does not include changes made while this builder is running.
-	 * If {@link #getRule(int, Map)} is overridden to return a scheduling rule other than 
+	 * If {@link #getRule(int, Map)} is overridden to return a scheduling rule other than
 	 * the workspace root, changes performed in other threads during the build
 	 * will not appear in the resource delta.
 	 * </p>
-	 * 
+	 *
 	 * @return the resource delta for the project or <code>null</code>
 	 */
 	@Override
@@ -274,7 +274,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 
 	/**
 	 * Returns the project for which this builder is defined.
-	 * 
+	 *
 	 * @return the project
 	 */
 	@Override
@@ -302,7 +302,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * project is being built, then there is no build order and this method will
 	 * always return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param project the project to check against in the current build order
 	 * @return <code>true</code> if the given project has been built in this
 	 * iteration, and <code>false</code> otherwise.
@@ -323,7 +323,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * respond to this interruption in a timely manner. Builders are not
 	 * required to respond to interruption requests.
 	 * <p>
-	 * 
+	 *
 	 * @return <code>true</code> if the build cycle has been interrupted, and
 	 * <code>false</code> otherwise.
 	 * @since 3.0
@@ -342,7 +342,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * can cause workspace builds to iterate until no more builders require
 	 * rebuilds.
 	 * </p>
-	 * 
+	 *
 	 * @see #hasBeenBuilt(IProject)
 	 * @since 2.1
 	 */
@@ -363,7 +363,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * For example, the following method looks for a boolean-valued parameter
 	 * named "trace":
-	 * 
+	 *
 	 * <pre>
 	 * public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) throws CoreException {
 	 * 	super.setInitializationData(cfig, propertyName, data);
@@ -388,7 +388,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * infrastructure. By the time this method is run, the builder's project is
 	 * available and <code>setInitializationData</code> has been called. The
 	 * default implementation should be called by all overriding methods.
-	 * 
+	 *
 	 * @see #setInitializationData(IConfigurationElement, String, Object)
 	 */
 	@Override
@@ -397,11 +397,11 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	}
 
 	/**
-	 * Returns the scheduling rule that is required for building 
-	 * the project build configuration for which this builder is defined. The default 
+	 * Returns the scheduling rule that is required for building
+	 * the project build configuration for which this builder is defined. The default
 	 * is the workspace root rule.
 	 * <p>
-	 * The scheduling rule determines which resources in the workspace are 
+	 * The scheduling rule determines which resources in the workspace are
 	 * protected from being modified by other threads while the builder is running. Up until
 	 * Eclipse 3.5, the entire workspace was always locked during a build;
 	 * since Eclipse 3.6, builders can allow resources outside their scheduling
@@ -411,18 +411,18 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <ul>
 	 * <li>
 	 * If the builder rule is non-<code>null</code> it must be "contained" in the workspace root rule.
-	 * I.e. {@link ISchedulingRule#contains(ISchedulingRule)} must return 
+	 * I.e. {@link ISchedulingRule#contains(ISchedulingRule)} must return
 	 * <code>true</code> when invoked on the workspace root with the builder rule.
 	 * </li>
 	 * <li>
-	 * The rule returned here may have no effect if the build is invoked within the 
+	 * The rule returned here may have no effect if the build is invoked within the
 	 * scope of another operation that locks the entire workspace.
 	 * </li>
 	 * <li>
 	 * If this method returns any rule other than the workspace root,
-	 * resources outside of the rule scope can be modified concurrently with the build. 
+	 * resources outside of the rule scope can be modified concurrently with the build.
 	 * The delta returned by {@link #getDelta(IProject)} for any project
-	 * outside the scope of the builder's rule may not contain changes that occurred 
+	 * outside the scope of the builder's rule may not contain changes that occurred
 	 * concurrently with the build.
 	 * </ul>
 	 * </p>
@@ -430,7 +430,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Subclasses may override this method.
 	 * </p>
 	 * @noreference This method is not intended to be referenced by clients.
-	 * 
+	 *
 	 * @param kind the kind of build being requested. Valid values include:
 	 * <ul>
 	 * <li>{@link #FULL_BUILD} - indicates a full build.</li>
@@ -442,10 +442,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @param args a table of builder-specific arguments keyed by argument name
 	 * (key type: <code>String</code>, value type: <code>String</code>);
 	 * <code>null</code> is equivalent to an empty map.
-	 * @return a scheduling rule which is contained in the workspace root rule 
+	 * @return a scheduling rule which is contained in the workspace root rule
 	 *   or <code>null</code> to indicate that no protection against resource
 	 *   modification during the build is needed.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public ISchedulingRule getRule(int kind, Map<String, String> args) {

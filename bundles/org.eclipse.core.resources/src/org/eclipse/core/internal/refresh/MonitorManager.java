@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.*;
  * Manages monitors by creating new monitors when projects are added and
  * removing monitors when projects are removed. Also handles the polling
  * mechanism when contributed native monitors cannot handle a project.
- * 
+ *
  * @since 3.0
  */
 class MonitorManager implements ILifecycleListener, IPathVariableChangeListener, IResourceChangeListener, IResourceDeltaVisitor {
@@ -63,7 +63,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	/**
 	 * Queries extensions of the refreshProviders extension point, and
 	 * creates the provider classes. Will never return <code>null</code>.
-	 * 
+	 *
 	 * @return RefreshProvider[] The array of registered <code>RefreshProvider</code>
 	 *             objects or an empty array.
 	 */
@@ -270,7 +270,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		((Workspace) workspace).addLifecycleListener(this);
 		if (Policy.DEBUG_AUTO_REFRESH)
 			Policy.debug(RefreshManager.DEBUG_PREFIX + " starting monitor manager."); //$NON-NLS-1$
-		//If not exclusively using polling, create a polling monitor and run it once, to catch 
+		//If not exclusively using polling, create a polling monitor and run it once, to catch
 		//changes that occurred while the native monitor was turned off.
 		if (refreshNeeded)
 			new PollingMonitor(refreshManager).runOnce();

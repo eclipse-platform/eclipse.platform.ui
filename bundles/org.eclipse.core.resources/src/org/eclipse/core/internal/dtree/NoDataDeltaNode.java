@@ -73,7 +73,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
+	 * Creates and returns a new copy of the receiver.  Makes a deep copy of
 	 * children, but a shallow copy of name and data.
 	 */
 	@Override
@@ -105,7 +105,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 		return this.size() == 0;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given node, and returns its replacement.
 	 */
 	@Override

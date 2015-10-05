@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [210664] descriptionChanged(): ignore LF style
@@ -31,7 +31,7 @@ import org.eclipse.osgi.util.NLS;
 import org.xml.sax.InputSource;
 
 /**
- * Manages the synchronization between the workspace's view and the file system.  
+ * Manages the synchronization between the workspace's view and the file system.
  */
 public class FileSystemResourceManager implements ICoreConstants, IManager, Preferences.IPropertyChangeListener {
 
@@ -49,14 +49,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	/**
 	 * Returns the workspace paths of all resources that may correspond to
-	 * the given file system location.  Returns an empty ArrayList if there are no 
-	 * such paths.  This method does not consider whether resources actually 
+	 * the given file system location.  Returns an empty ArrayList if there are no
+	 * such paths.  This method does not consider whether resources actually
 	 * exist at the given locations.
 	 * <p>
 	 * The workspace paths of {@link IResource#HIDDEN} project and resources
 	 * located in {@link IResource#HIDDEN} projects won't be added to the result.
 	 * </p>
-	 * 
+	 *
 	 */
 	protected ArrayList<IPath> allPathsForLocation(URI inputLocation) {
 		URI canonicalLocation = FileUtil.canonicalURI(inputLocation);
@@ -101,7 +101,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			}
 			if (usingAnotherScheme) {
 				// if a different scheme is used, we can't use the AliasManager, since the manager
-				// map is stored using the EFS scheme, and not necessarily the SCHEME_FILE 
+				// map is stored using the EFS scheme, and not necessarily the SCHEME_FILE
 				ProjectDescription description = ((Project) project).internalGetDescription();
 				if (description == null)
 					continue;
@@ -164,9 +164,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		}
 	}
 
-	/** 
+	/**
 	 * Tries to obtain a file URI for the given URI. Returns <code>null</code> if the file system associated
-	 * to the URI scheme does not map to the local file system. 
+	 * to the URI scheme does not map to the local file system.
 	 * @param locationURI the URI to convert
 	 * @return a file URI or <code>null</code>
 	 */
@@ -200,10 +200,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * the result will omit any hidden member resources.
 	 * </p>
 	 * <p>
-	 * The result will also omit resources that are explicitly excluded 
+	 * The result will also omit resources that are explicitly excluded
 	 * from the workspace according to existing resource filters.
 	 * </p>
-	 * 
+	 *
 	 * @param location
 	 *        the file system location
 	 * @param files
@@ -256,13 +256,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	/**
 	 * Returns a container for the given file system location or null if there
-	 * is no mapping for this path. If the path has only one segment, then an 
+	 * is no mapping for this path. If the path has only one segment, then an
 	 * <code>IProject</code> is returned.  Otherwise, the returned object
 	 * is a <code>IFolder</code>.  This method does NOT check the existence
 	 * of a folder in the given location. Location cannot be null.
 	 * <p>
-	 * The result will also omit resources that are explicitly excluded 
-	 * from the workspace according to existing resource filters. If all resources 
+	 * The result will also omit resources that are explicitly excluded
+	 * from the workspace according to existing resource filters. If all resources
 	 * are omitted, the result may be null.
 	 * </p>
 	 */
@@ -274,7 +274,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * Returns the resource corresponding to the given location.  The
 	 * "files" parameter is used for paths of two or more segments.  If true,
 	 * a file is returned, otherwise a folder is returned.  Returns null if files is true
-	 * and the path is not of sufficient length. Also returns null if the resource is 
+	 * and the path is not of sufficient length. Also returns null if the resource is
 	 * filtered out by resource filters
 	 */
 	private IResource resourceForLocation(IPath location, boolean files) {
@@ -362,7 +362,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	/**
 	 * Returns true if the description on disk is different from the given byte array,
 	 * and false otherwise.
-	 * Since org.eclipse.core.resources 3.4.1 differences in line endings (CR, LF, CRLF) 
+	 * Since org.eclipse.core.resources 3.4.1 differences in line endings (CR, LF, CRLF)
 	 * are not considered.
 	 */
 	private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
@@ -468,8 +468,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * is no mapping for this path. This method does NOT check the existence
 	 * of a file in the given location. Location cannot be null.
 	 * <p>
-	 * The result will also omit resources that are explicitly excluded 
-	 * from the workspace according to existing resource filters. If all resources 
+	 * The result will also omit resources that are explicitly excluded
+	 * from the workspace according to existing resource filters. If all resources
 	 * are omitted, the result may be null.
 	 * </p>
 	 */
@@ -501,7 +501,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		return _historyStore;
 	}
 
-	/** 
+	/**
 	 * Returns the real name of the resource on disk. Returns null if no local
 	 * file exists by that name.  This is useful when dealing with
 	 * case insensitive file systems.
@@ -593,7 +593,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	/**
 	 * Initializes the file store for a resource.
-	 * 
+	 *
 	 * @param target The resource to initialize the file store for.
 	 * @param location the File system location of this resource on disk
 	 * @return The file store for the provided resource
@@ -649,7 +649,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			IStatus result = getWorkspace().validateEdit(new IFile[] {descriptionFile}, null);
 			if (!result.isOK())
 				throw new ResourceException(result);
-			// re-read the file info in case the file attributes were modified	
+			// re-read the file info in case the file attributes were modified
 			fileInfo = descriptionFileStore.fetchInfo();
 		}
 		//write the project description file (don't use API because scheduling rule might not match)
@@ -686,7 +686,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * Returns true if the given resource is synchronized with the file system
 	 * to the given depth.  Returns false otherwise.
 	 *
-	 * Any discovered out-of-sync resources are scheduled to be brought 
+	 * Any discovered out-of-sync resources are scheduled to be brought
 	 * back in sync, if {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
 	 * enabled.
 	 *
@@ -840,7 +840,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * Never returns null.
 	 * @param target the project whose description should be read.
 	 * @param creation true if this project is just being created, in which
-	 * case the private project information (including the location) needs to be read 
+	 * case the private project information (including the location) needs to be read
 	 * from disk as well.
 	 * @exception CoreException if there was any failure to read the project
 	 * description, or if the description was missing.
@@ -978,7 +978,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 		String title = Messages.localstore_refreshingRoot;
 		try {
 			monitor.beginTask(title, totalWork);
-			// if doing depth zero, there is nothing to do (can't refresh the root).  
+			// if doing depth zero, there is nothing to do (can't refresh the root).
 			// Note that we still need to do the beginTask, done pair.
 			if (depth == IResource.DEPTH_ZERO)
 				return false;

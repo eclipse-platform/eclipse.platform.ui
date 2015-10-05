@@ -22,7 +22,7 @@ public class Win32Natives {
 	 */
 	public static final long INVALID_HANDLE_VALUE;
 	/**
-	 * An error constant which indicates that the previous function 
+	 * An error constant which indicates that the previous function
 	 * succeeded.
 	 */
 	public static final int ERROR_SUCCESS;
@@ -105,40 +105,40 @@ public class Win32Natives {
 		INVALID_HANDLE_VALUE= INVALID_HANDLE_VALUE();
 		ERROR_SUCCESS= ERROR_SUCCESS();
 		ERROR_INVALID_HANDLE= ERROR_INVALID_HANDLE();
-		
+
 		MAXIMUM_WAIT_OBJECTS= MAXIMUM_WAIT_OBJECTS();
 		MAX_PATH= MAX_PATH();
-		INFINITE= INFINITE(); 
-		
+		INFINITE= INFINITE();
+
 		WAIT_TIMEOUT= WAIT_TIMEOUT();
 		WAIT_OBJECT_0= WAIT_OBJECT_0();
 		WAIT_FAILED= WAIT_FAILED();
-		
+
 		FILE_NOTIFY_CHANGE_FILE_NAME= FILE_NOTIFY_CHANGE_FILE_NAME();
 		FILE_NOTIFY_CHANGE_DIR_NAME= FILE_NOTIFY_CHANGE_DIR_NAME();
 		FILE_NOTIFY_CHANGE_ATTRIBUTES= FILE_NOTIFY_CHANGE_ATTRIBUTES();
 		FILE_NOTIFY_CHANGE_SIZE= FILE_NOTIFY_CHANGE_SIZE();
 		FILE_NOTIFY_CHANGE_LAST_WRITE= FILE_NOTIFY_CHANGE_LAST_WRITE();
 		FILE_NOTIFY_CHANGE_SECURITY= FILE_NOTIFY_CHANGE_SECURITY();
-		FILE_NOTIFY_ALL= 
+		FILE_NOTIFY_ALL=
 			FILE_NOTIFY_CHANGE_FILE_NAME |
-			FILE_NOTIFY_CHANGE_DIR_NAME | 
+			FILE_NOTIFY_CHANGE_DIR_NAME |
 			FILE_NOTIFY_CHANGE_ATTRIBUTES |
-			FILE_NOTIFY_CHANGE_SIZE | 
+			FILE_NOTIFY_CHANGE_SIZE |
 			FILE_NOTIFY_CHANGE_LAST_WRITE |
 			FILE_NOTIFY_CHANGE_SECURITY;
 	}
 
 	/**
-	 * Creates a change notification object for the given path. The notification 
-	 * object allows the client to monitor changes to the directory and the 
+	 * Creates a change notification object for the given path. The notification
+	 * object allows the client to monitor changes to the directory and the
 	 * subtree under the directory using FindNextChangeNotification or
 	 * WaitForMultipleObjects.
 	 * <p>
 	 * If the OS supports unicode the path must be no longer than 2^15 - 1 characters.
 	 * Otherwise, the path cannot be longer than MAX_PATH. In either case, if the given
 	 * path is too long ERROR_INVALID_HANDLE is returned.
-	 * 
+	 *
 	 * @param lpPathName The path of the file.
 	 * @param bWatchSubtree If <code>true</code>, specifies that the entire
 	 * 	tree under the given path should be monitored. If <code>false</code>
@@ -160,7 +160,7 @@ public class Win32Natives {
 	 * allows the client to monitor changes to the directory and the subtree
 	 * under the directory using FindNextChangeNotification or
 	 * WaitForMultipleObjects.
-	 * 
+	 *
 	 * @param lpPathName The path to the directory to be monitored. Cannot be <code>null</code>,
 	 *  or longer than 2^15 - 1 characters.
 	 * @param bWatchSubtree If <code>true</code>, specifies that the entire
@@ -174,15 +174,15 @@ public class Win32Natives {
 	 *  ERROR_INVALID_HANDLE  if the attempt fails.
 	 */
 	private static native long FindFirstChangeNotificationW(String lpPathName, boolean bWatchSubtree, int dwNotifyFilter);
-	
+
 	/**
 	 * Creates a change notification object for the given path. This notification object
 	 * allows the client to monitor changes to the directory and the subtree
 	 * under the directory using FindNextChangeNotification or
 	 * WaitForMultipleObjects.
-	 * 
+	 *
 	 * @param lpPathName The path to the directory to be monitored,  cannot be <code>null</code>,
-	 *  or  be longer 
+	 *  or  be longer
 	 *  than MAX_PATH.  This path must be in platform bytes converted.
 	 * @param bWatchSubtree If <code>true</code>, specifies that the entire
 	 * 	tree under the given path should be monitored. If <code>false</code>
@@ -201,7 +201,7 @@ public class Win32Natives {
 	 * Stops and disposes of the change notification object that corresponds to the given
 	 * handle.  The handle cannot be used in future calls to FindNextChangeNotification or
 	 * WaitForMultipleObjects
-	 * 
+	 *
 	 * @param hChangeHandle a handle which was created with FindFirstChangeNotification
 	 * @return boolean <code>true</code> if the method succeeds, <code>false</code>
 	 * otherwise.
@@ -239,7 +239,7 @@ public class Win32Natives {
 	 * function fails.
 	 */
 	public static native int WaitForMultipleObjects(int nCount, long[] lpHandles, boolean bWaitAll, int dwMilliseconds);
-	
+
 	/**
 	 * Answers <code>true</code> if the operating system supports
 	 * long filenames.
@@ -247,7 +247,7 @@ public class Win32Natives {
 	 * long filenames, <code>false</code> otherwise.
 	 */
 	private static native boolean IsUnicode();
-	
+
 	/**
 	 * Answers the last error set in the current thread.
 	 * @return int the last error
@@ -259,55 +259,55 @@ public class Win32Natives {
 	 * @return int
 	 */
 	private static native int FILE_NOTIFY_CHANGE_LAST_WRITE();
-	
+
 	/**
 	 * Returns the constant FILE_NOTIFY_CHANGE_DIR_NAME.
 	 * @return int
 	 */
 	private static native int FILE_NOTIFY_CHANGE_DIR_NAME();
-	
+
 	/**
 	 * Returns the constant FILE_NOTIFY_CHANGE_ATTRIBUTES.
 	 * @return int
 	 */
 	private static native int FILE_NOTIFY_CHANGE_ATTRIBUTES();
-	
+
 	/**
 	 * Returns the constant FILE_NOTIFY_CHANGE_SIZE.
 	 * @return int
 	 */
-	private static native int FILE_NOTIFY_CHANGE_SIZE();	
-	
+	private static native int FILE_NOTIFY_CHANGE_SIZE();
+
 	/**
 	 * Returns the constant FILE_NOTIFY_CHANGE_FILE_NAME.
 	 * @return int
 	 */
 	private static native int FILE_NOTIFY_CHANGE_FILE_NAME();
-	
+
 	/**
 	 * Returns the constant FILE_NOTIFY_CHANGE_SECURITY.
 	 * @return int
 	 */
-	private static native int FILE_NOTIFY_CHANGE_SECURITY();	
+	private static native int FILE_NOTIFY_CHANGE_SECURITY();
 
 	/**
 	 * Returns the constant MAXIMUM_WAIT_OBJECTS.
 	 * @return int
 	 */
 	private static native int MAXIMUM_WAIT_OBJECTS();
-	
+
 	/**
 	 * Returns the constant MAX_PATH.
 	 * @return int
 	 */
-	private static native int MAX_PATH();	
+	private static native int MAX_PATH();
 
 	/**
 	 * Returns the constant INFINITE.
 	 * @return int
 	 */
 	private static native int INFINITE();
-		
+
 	/**
 	 * Returns the constant WAIT_OBJECT_0.
 	 * @return int
@@ -319,25 +319,25 @@ public class Win32Natives {
 	 * @return int
 	 */
 	private static native int WAIT_FAILED();
-	
+
 	/**
 	 * Returns the constant WAIT_TIMEOUT.
 	 * @return int
 	 */
 	private static native int WAIT_TIMEOUT();
-	
+
 	/**
 	 * Returns the constant ERROR_INVALID_HANDLE.
 	 * @return int
 	 */
 	private static native int ERROR_INVALID_HANDLE();
-	
+
 	/**
 	 * Returns the constant ERROR_SUCCESS.
 	 * @return int
 	 */
 	private static native int ERROR_SUCCESS();
-	
+
 	/**
 	 * Returns the constant INVALID_HANDLE_VALUE.
 	 * @return long

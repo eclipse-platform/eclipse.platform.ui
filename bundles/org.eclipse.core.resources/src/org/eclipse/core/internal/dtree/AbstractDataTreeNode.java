@@ -52,7 +52,7 @@ public abstract class AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns a node which if applied to the receiver will produce 
+	 * Returns a node which if applied to the receiver will produce
 	 * the corresponding node in the given parent tree.
 	 *
 	 * @param myTree  tree to which the node belongs
@@ -181,12 +181,12 @@ public abstract class AbstractDataTreeNode {
 		// node must be either a DataDeltaNode or a NoDataDeltaNode
 		if (node.hasData()) {
 			if (this.isDelta()) {
-				// keep deletions because they still need 
+				// keep deletions because they still need
 				// to hide child nodes in the parent.
 				AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, true);
 				return new DataDeltaNode(name, node.getData(), assembledChildren);
 			}
-			// This is a complete picture, so deletions 
+			// This is a complete picture, so deletions
 			// wipe out the child and are no longer useful
 			AbstractDataTreeNode[] assembledChildren = assembleWith(children, node.children, false);
 			return new DataTreeNode(name, node.getData(), assembledChildren);
@@ -253,12 +253,12 @@ public abstract class AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns the child with the given local name, ignoring case.  
+	 * Returns the child with the given local name, ignoring case.
 	 * If multiple case variants exist, the search will favour real nodes
 	 * over deleted nodes. If multiple real nodes are found, the first one
 	 * encountered in case order is returned. Returns null if no matching
 	 * children are found.
-	 * 
+	 *
 	 * @param localName name of child to retrieve
 	 */
 	AbstractDataTreeNode childAtIgnoreCase(String localName) {
@@ -275,7 +275,7 @@ public abstract class AbstractDataTreeNode {
 		return result;
 	}
 
-	/** 
+	/**
 	 */
 	protected static AbstractDataTreeNode[] compareWith(AbstractDataTreeNode[] oldNodes, AbstractDataTreeNode[] newNodes, IComparator comparator) {
 
@@ -344,7 +344,7 @@ public abstract class AbstractDataTreeNode {
 		return comparedNodes;
 	}
 
-	/** 
+	/**
 	 */
 	protected static AbstractDataTreeNode[] compareWithParent(AbstractDataTreeNode[] nodes, IPath key, DeltaDataTree parent, IComparator comparator) {
 
@@ -446,7 +446,7 @@ public abstract class AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns true if the receiver has a child with the given local name, 
+	 * Returns true if the receiver has a child with the given local name,
 	 * false otherwise
 	 */
 	boolean includesChild(String localName) {
@@ -533,7 +533,7 @@ public abstract class AbstractDataTreeNode {
 		name = s;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given nodes, and answers their replacements.
 	 */
 	protected static AbstractDataTreeNode[] simplifyWithParent(AbstractDataTreeNode[] nodes, IPath key, DeltaDataTree parent, IComparator comparer) {
@@ -558,7 +558,7 @@ public abstract class AbstractDataTreeNode {
 		return simplifiedNodes;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given node, and answers its replacement.
 	 */
 	abstract AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer);

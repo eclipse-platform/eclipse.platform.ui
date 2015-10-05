@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * An objects that visits resource deltas.
- * <p> 
+ * <p>
  * Usage:
  * <pre>
  * class Visitor implements IResourceDeltaVisitor {
@@ -44,9 +44,9 @@ import org.eclipse.core.runtime.CoreException;
  * @see IResource#accept(IResourceVisitor)
  */
 public interface IResourceDeltaVisitor {
-	/** 
+	/**
 	 * Visits the given resource delta.
-	 * 
+	 *
 	 * @return <code>true</code> if the resource delta's children should
 	 *		be visited; <code>false</code> if they should be skipped.
 	 * @exception CoreException if the visit fails for some reason.

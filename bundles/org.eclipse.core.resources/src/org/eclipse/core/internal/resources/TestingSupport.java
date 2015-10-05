@@ -16,7 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 /**
  * Provides special internal access to the workspace resource implementation.
  * This class is to be used for testing purposes only.
- * 
+ *
  * @since 2.0
  */
 public class TestingSupport {
@@ -40,7 +40,7 @@ public class TestingSupport {
 		}
 	}
 
-	/* 
+	/*
 	 * Class cannot be instantiated.
 	 */
 	private TestingSupport() {

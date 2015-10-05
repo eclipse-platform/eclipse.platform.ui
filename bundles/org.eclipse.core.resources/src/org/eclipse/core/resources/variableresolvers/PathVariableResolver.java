@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -28,7 +28,7 @@ public abstract class PathVariableResolver {
 	 * This default implementation always returns <code>null</code>. Subclasses
 	 * should override to provide custom extensions.
 	 * </p>
-	 * 
+	 *
 	 * @param variable
 	 *            The current variable name.
 	 * @param resource
@@ -41,7 +41,7 @@ public abstract class PathVariableResolver {
 
 	/**
 	 * Returns a variable value
-	 * 
+	 *
 	 * @param variable
 	 *            The current variable name.
 	 * @param resource

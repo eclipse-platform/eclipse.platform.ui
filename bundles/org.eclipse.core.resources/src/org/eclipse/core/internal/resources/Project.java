@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -83,7 +83,7 @@ public class Project extends Container implements IProject {
 		// set the build order before setting the references or the natures
 		current.setBuildSpec(description.getBuildSpec(true));
 
-		// set the references before the natures 
+		// set the references before the natures
 		boolean flushOrder = false;
 		IProject[] oldReferences = current.getReferencedProjects();
 		IProject[] newReferences = description.getReferencedProjects();
@@ -184,8 +184,8 @@ public class Project extends Container implements IProject {
 				monitor.subTask(msg);
 				if (!isOpen(flags))
 					return;
-				// Signal that this resource is about to be closed.  Do this at the very 
-				// beginning so that infrastructure pieces have a chance to do clean up 
+				// Signal that this resource is about to be closed.  Do this at the very
+				// beginning so that infrastructure pieces have a chance to do clean up
 				// while the resources still exist.
 				workspace.beginOperation(true);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
@@ -342,7 +342,7 @@ public class Project extends Container implements IProject {
 	@Override
 	protected void fixupAfterMoveSource() throws CoreException {
 		workspace.deleteResource(this);
-		// check if we deleted a preferences file 
+		// check if we deleted a preferences file
 		ProjectPreferences.deleted(this);
 	}
 
@@ -577,7 +577,7 @@ public class Project extends Container implements IProject {
 			}
 
 			/**
-			 * Returns whether this project should be built for a given trigger. 
+			 * Returns whether this project should be built for a given trigger.
 			 * @return <code>true</code> if the build should proceed, and <code>false</code> otherwise.
 			 */
 			private boolean shouldBuild() {
@@ -599,7 +599,7 @@ public class Project extends Container implements IProject {
 	protected void internalClose() throws CoreException {
 		workspace.flushBuildOrder();
 		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
-		// remove each member from the resource tree. 
+		// remove each member from the resource tree.
 		// DO NOT use resource.delete() as this will delete it from disk as well.
 		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < members.length; i++) {
@@ -914,8 +914,8 @@ public class Project extends Container implements IProject {
 	 * Loads a snapshot of project meta-data from the given location URI.
 	 * Like {@link IProject#loadSnapshot(int, URI, IProgressMonitor)} but can be
 	 * called when the project is open.
-	 * 
-	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor) 
+	 *
+	 * @see IProject#saveSnapshot(int, URI, IProgressMonitor)
 	 */
 	private void internalLoadSnapshot(int options, URI snapshotLocation, IProgressMonitor monitor) throws CoreException {
 		if ((options & SNAPSHOT_TREE) != 0) {
@@ -1095,7 +1095,7 @@ public class Project extends Container implements IProject {
 	 * links to bring the links in sync with those described in the project description.
 	 * @param newDescription the new project description that may have
 	 * 	changed link descriptions.
-	 * @return status ok if everything went well, otherwise an ERROR multi-status 
+	 * @return status ok if everything went well, otherwise an ERROR multi-status
 	 * 	describing the problems encountered.
 	 */
 	public IStatus reconcileLinksAndGroups(ProjectDescription newDescription) {
@@ -1216,7 +1216,7 @@ public class Project extends Container implements IProject {
 	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// FIXME - update flags should be honored:
 		//    KEEP_HISTORY means capture .project file in local history
-		//    FORCE means overwrite any existing .project file 
+		//    FORCE means overwrite any existing .project file
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.resources_setDesc, Policy.totalWork);
@@ -1283,7 +1283,7 @@ public class Project extends Container implements IProject {
 	}
 
 	/**
-	 * Restore the non-persisted state for the project.  For example, read and set 
+	 * Restore the non-persisted state for the project.  For example, read and set
 	 * the description from the local meta area.  Also, open the property store etc.
 	 * This method is used when an open project is restored and so emulates
 	 * the behaviour of open().
@@ -1318,8 +1318,8 @@ public class Project extends Container implements IProject {
 	}
 
 	/**
-	 * The project description file on disk is better than the description in memory.  
-	 * Make sure the project description in memory is synchronized with the 
+	 * The project description file on disk is better than the description in memory.
+	 * Make sure the project description in memory is synchronized with the
 	 * description file contents.
 	 */
 	protected void updateDescription() throws CoreException {

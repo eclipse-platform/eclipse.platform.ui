@@ -47,8 +47,8 @@ public class BuilderPersistentInfo {
 	}
 
 	/**
-	 * @return the name of the configuration for which this information refers. 
-	 * Will return null if the build command doesn't support configurations, or the 
+	 * @return the name of the configuration for which this information refers.
+	 * Will return null if the build command doesn't support configurations, or the
 	 * build persistent info has been loaded from a workspace without configurations.
 	 */
 	public String getConfigName() {

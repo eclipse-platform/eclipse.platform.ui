@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2014 Red Hat Incorporated and others
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/org/documents/epl-v10.html
- * 
+ *
  * Contributors:
- *     IBM Corporation - initial API 
+ *     IBM Corporation - initial API
  *     Red Hat Incorporated - initial implementation
  *     Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
  *******************************************************************************/
@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * This class represents platform specific attributes of files.
- * Any attributes can be added, but only the attributes that are 
- * supported by the platform will be used. These methods do not set the 
+ * Any attributes can be added, but only the attributes that are
+ * supported by the platform will be used. These methods do not set the
  * attributes in the file system.
- * 
+ *
  * @author Red Hat Incorporated
  * @see IResource#getResourceAttributes()
  * @see IResource#setResourceAttributes(ResourceAttributes)
@@ -38,7 +38,7 @@ public class ResourceAttributes {
 	 * taken from the specified file in the file system.  If the specified
 	 * file does not exist or is not accessible, this method has the
 	 * same effect as calling the default constructor.
-	 * 
+	 *
 	 * @param file The file to get attributes from
 	 * @return A resource attributes object
 	 */
@@ -61,8 +61,8 @@ public class ResourceAttributes {
 	/**
 	 * Returns whether this ResourceAttributes object is marked archive.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_ARCHIVE}.</p>
-	 * 
-	 * @return <code>true</code> if this resource is marked archive, 
+	 *
+	 * @return <code>true</code> if this resource is marked archive,
 	 *		<code>false</code> otherwise
 	 * @see #setArchive(boolean)
 	 * @see IFileSystem#attributes()
@@ -76,7 +76,7 @@ public class ResourceAttributes {
 	 * Returns whether this ResourceAttributes object is marked executable.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_EXECUTABLE}.</p>
 	 *
-	 * @return <code>true</code> if this resource is marked executable, 
+	 * @return <code>true</code> if this resource is marked executable,
 	 *		<code>false</code> otherwise
 	 * @see #setExecutable(boolean)
 	 * @see IFileSystem#attributes()
@@ -90,7 +90,7 @@ public class ResourceAttributes {
 	 * Returns whether this ResourceAttributes object is marked hidden.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_HIDDEN}.</p>
 	 *
-	 * @return <code>true</code> if this resource is marked hidden, 
+	 * @return <code>true</code> if this resource is marked hidden,
 	 *		<code>false</code> otherwise
 	 * @see #setHidden(boolean)
 	 * @see IFileSystem#attributes()
@@ -105,7 +105,7 @@ public class ResourceAttributes {
 	 * Returns whether this ResourceAttributes object is marked read only.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_READ_ONLY}.</p>
 	 *
-	 * @return <code>true</code> if this resource is marked as read only, 
+	 * @return <code>true</code> if this resource is marked as read only,
 	 *		<code>false</code> otherwise
 	 * @see #setReadOnly(boolean)
 	 * @see IFileSystem#attributes()
@@ -119,7 +119,7 @@ public class ResourceAttributes {
 	 * Returns whether this ResourceAttributes object is marked as symbolic link.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_SYMLINK}.</p>
 	 *
-	 * @return <code>true</code> if this resource is marked as symbolic link, 
+	 * @return <code>true</code> if this resource is marked as symbolic link,
 	 *		<code>false</code> otherwise
 	 * @see #setSymbolicLink(boolean)
 	 * @see IFileSystem#attributes()
@@ -134,7 +134,7 @@ public class ResourceAttributes {
 	 * Sets or unsets whether this ResourceAttributes object is marked archive.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_ARCHIVE}.</p>
 	 *
-	 * @param archive <code>true</code> to set it to be archive, 
+	 * @param archive <code>true</code> to set it to be archive,
 	 *		<code>false</code> to unset
 	 * @see #isArchive()
 	 * @see IFileSystem#attributes()
@@ -144,7 +144,7 @@ public class ResourceAttributes {
 		set(EFS.ATTRIBUTE_ARCHIVE, archive);
 	}
 
-	/** 
+	/**
 	 * Clears all of the bits indicated by the mask.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
@@ -156,7 +156,7 @@ public class ResourceAttributes {
 			attributes &= ~mask;
 	}
 
-	/** 
+	/**
 	 * Returns whether this ResourceAttributes object has the given mask set.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
@@ -168,8 +168,8 @@ public class ResourceAttributes {
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked executable.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_EXECUTABLE}.</p>
-	 * 
-	 * @param executable <code>true</code> to set it to be executable, 
+	 *
+	 * @param executable <code>true</code> to set it to be executable,
 	 *		<code>false</code> to unset
 	 * @see #isExecutable()
 	 * @see IFileSystem#attributes()
@@ -182,7 +182,7 @@ public class ResourceAttributes {
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked hidden
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_HIDDEN}.</p>
-	 * 
+	 *
 	 * @param hidden <code>true</code> to set it to be marked hidden,
 	 *		<code>false</code> to unset
 	 * @see #isHidden()
@@ -197,8 +197,8 @@ public class ResourceAttributes {
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked read only.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_READ_ONLY}.</p>
-	 * 
-	 * @param readOnly <code>true</code> to set it to be marked read only, 
+	 *
+	 * @param readOnly <code>true</code> to set it to be marked read only,
 	 *		<code>false</code> to unset
 	 * @see #isReadOnly()
 	 * @see IFileSystem#attributes()
@@ -211,8 +211,8 @@ public class ResourceAttributes {
 	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked as symbolic link.
 	 * <p>This attribute is used only on file systems supporting {@link EFS#ATTRIBUTE_SYMLINK}.</p>
-	 * 
-	 * @param symLink <code>true</code> to set it to be marked as symbolic link, 
+	 *
+	 * @param symLink <code>true</code> to set it to be marked as symbolic link,
 	 *		<code>false</code> to unset
 	 * @see #isSymbolicLink()
 	 * @see IFileSystem#attributes()
@@ -224,7 +224,7 @@ public class ResourceAttributes {
 	}
 
 	/**
-	 * Returns a string representation of the attributes, suitable 
+	 * Returns a string representation of the attributes, suitable
 	 * for debugging purposes only.
 	 */
 	@Override

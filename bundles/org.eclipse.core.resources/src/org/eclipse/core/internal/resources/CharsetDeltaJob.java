@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -22,13 +22,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Bundle;
 
 /**
- * Detects changes to content types/project preferences and 
- * broadcasts any corresponding encoding changes as resource deltas.  
+ * Detects changes to content types/project preferences and
+ * broadcasts any corresponding encoding changes as resource deltas.
  */
 
 public class CharsetDeltaJob extends Job implements IContentTypeManager.IContentTypeChangeListener {
 
-	// this is copied in the runtime tests - if changed here, has to be changed there too 
+	// this is copied in the runtime tests - if changed here, has to be changed there too
 	public final static String FAMILY_CHARSET_DELTA = ResourcesPlugin.PI_RESOURCES + "charsetJobFamily"; //$NON-NLS-1$
 
 	interface ICharsetListenerFilter {
@@ -72,7 +72,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 	}
 
 	public void charsetPreferencesChanged(final IProject project) {
-		// avoid reacting to changes made by ourselves  
+		// avoid reacting to changes made by ourselves
 		if (isDisabled())
 			return;
 		ResourceInfo projectInfo = ((Project) project).getResourceInfo(false, false);
@@ -80,7 +80,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		if (projectInfo == null)
 			return;
 		final long projectId = projectInfo.getNodeId();
-		// ensure all resources under the affected project are 
+		// ensure all resources under the affected project are
 		// reported as having encoding changes
 		ICharsetListenerFilter filter = new ICharsetListenerFilter() {
 			@Override
@@ -98,7 +98,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 
 			@Override
 			public boolean isAffected(ResourceInfo info, IPathRequestor requestor) {
-				// for now, mark all resources in the project as potential encoding resource changes 
+				// for now, mark all resources in the project as potential encoding resource changes
 				return true;
 			}
 		};
@@ -173,7 +173,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 				workspace.prepareOperation(null, monitor);
 				workspace.beginOperation(true);
 				ICharsetListenerFilter next;
-				//if the system is shutting down, don't broadcast			
+				//if the system is shutting down, don't broadcast
 				while (systemBundle.getState() != Bundle.STOPPING && (next = removeFromQueue()) != null)
 					processNextEvent(next, monitor);
 			} catch (OperationCanceledException e) {

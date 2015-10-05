@@ -18,7 +18,7 @@ import org.eclipse.core.resources.team.TeamHook;
  * The internal abstract superclass of all {@link TeamHook} implementations.  This superclass
  * provides access to internal non-API methods that are not available from the API
  * package. Plugin developers should not subclass this class.
- * 
+ *
  * @see TeamHook
  */
 public class InternalTeamHook {

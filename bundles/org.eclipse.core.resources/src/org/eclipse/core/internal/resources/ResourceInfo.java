@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
@@ -28,7 +28,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	protected static final int LOWER = 0xFFFF;
 	protected static final int UPPER = 0xFFFF0000;
 
-	/** 
+	/**
 	 * This field stores the resource modification stamp in the lower two bytes,
 	 * and the character set generation count in the higher two bytes.
 	 */
@@ -62,7 +62,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	// thread safety: (Concurrency004)
 	protected volatile long nodeId = 0;
 
-	/** 
+	/**
 	 * The properties which are maintained for the lifecycle of the workspace.
 	 * <p>
 	 * This field is declared as the implementing class rather than the
@@ -71,8 +71,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	protected ObjectMap<QualifiedName, Object> sessionProperties = null;
 
-	/** 
-	 * The table of sync information. 
+	/**
+	 * The table of sync information.
 	 * <p>
 	 * This field is declared as the implementing class rather than the
 	 * interface so we ensure that we get it right since we are making certain
@@ -80,29 +80,29 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	protected ObjectMap<QualifiedName, Object> syncInfo = null;
 
-	/** 
+	/**
 	 * Returns the integer value stored in the indicated part of this info's flags.
 	 */
 	protected static int getBits(int flags, int mask, int start) {
 		return (flags & mask) >> start;
 	}
 
-	/** 
-	 * Returns the type setting for this info.  Valid values are 
-	 * FILE, FOLDER, PROJECT, 
+	/**
+	 * Returns the type setting for this info.  Valid values are
+	 * FILE, FOLDER, PROJECT,
 	 */
 	public static int getType(int flags) {
 		return getBits(flags, M_TYPE, M_TYPE_START);
 	}
 
-	/** 
+	/**
 	 * Returns true if all of the bits indicated by the mask are set.
 	 */
 	public static boolean isSet(int flags, int mask) {
 		return (flags & mask) == mask;
 	}
 
-	/** 
+	/**
 	 * Clears all of the bits indicated by the mask.
 	 */
 	public void clear(int mask) {
@@ -138,21 +138,21 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return fileStoreRoot;
 	}
 
-	/** 
+	/**
 	 * Returns the set of flags for this info.
 	 */
 	public int getFlags() {
 		return flags;
 	}
 
-	/** 
+	/**
 	 * Gets the local-relative sync information.
 	 */
 	public long getLocalSyncInfo() {
 		return localInfo;
 	}
 
-	/** 
+	/**
 	 * Returns the marker generation count.
 	 * The count is incremented whenever markers on the resource change.
 	 */
@@ -160,7 +160,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return markerAndSyncStamp >> 16;
 	}
 
-	/** 
+	/**
 	 * Returns a copy of the collection of makers on this resource.
 	 * <code>null</code> is returned if there are none.
 	 */
@@ -168,7 +168,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return getMarkers(true);
 	}
 
-	/** 
+	/**
 	 * Returns the collection of makers on this resource.
 	 * <code>null</code> is returned if there are none.
 	 */
@@ -193,7 +193,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return null;
 	}
 
-	/** 
+	/**
 	 * Returns a copy of the map of this resource session properties.
 	 * An empty map is returned if there are none.
 	 */
@@ -208,7 +208,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return temp;
 	}
 
-	/** 
+	/**
 	 * Returns the value of the identified session property
 	 */
 	public Object getSessionProperty(QualifiedName name) {
@@ -240,7 +240,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return b == null ? null : (makeCopy ? (byte[]) b.clone() : b);
 	}
 
-	/** 
+	/**
 	 * Returns the sync information generation count.
 	 * The count is incremented whenever sync info on the resource changes.
 	 */
@@ -248,15 +248,15 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		return markerAndSyncStamp & LOWER;
 	}
 
-	/** 
-	 * Returns the type setting for this info.  Valid values are 
-	 * FILE, FOLDER, PROJECT, 
+	/**
+	 * Returns the type setting for this info.  Valid values are
+	 * FILE, FOLDER, PROJECT,
 	 */
 	public int getType() {
 		return getType(flags);
 	}
 
-	/** 
+	/**
 	 * Increments the charset generation count.
 	 * The count is incremented whenever the encoding on the resource changes.
 	 */
@@ -265,7 +265,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		charsetAndContentId = ((charsetAndContentId + LOWER + 1) & UPPER) + (charsetAndContentId & LOWER);
 	}
 
-	/** 
+	/**
 	 * Mark this resource info as having changed content
 	 */
 	public void incrementContentId() {
@@ -273,7 +273,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		charsetAndContentId = (charsetAndContentId & UPPER) + ((charsetAndContentId + 1) & LOWER);
 	}
 
-	/** 
+	/**
 	 * Increments the marker generation count.
 	 * The count is incremented whenever markers on the resource change.
 	 */
@@ -282,7 +282,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		markerAndSyncStamp = ((markerAndSyncStamp + LOWER + 1) & UPPER) + (markerAndSyncStamp & LOWER);
 	}
 
-	/** 
+	/**
 	 * Change the modification stamp to indicate that this resource has changed.
 	 * The exact value of the stamp doesn't matter, as long as it can be used to
 	 * distinguish two arbitrary resource generations.
@@ -291,7 +291,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		modStamp++;
 	}
 
-	/** 
+	/**
 	 * Increments the sync information generation count.
 	 * The count is incremented whenever sync info on the resource changes.
 	 */
@@ -300,7 +300,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		markerAndSyncStamp = (markerAndSyncStamp & UPPER) + ((markerAndSyncStamp + 1) & LOWER);
 	}
 
-	/** 
+	/**
 	 * Returns true if all of the bits indicated by the mask are set.
 	 */
 	public boolean isSet(int mask) {
@@ -308,8 +308,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	public void readFrom(int newFlags, DataInput input) throws IOException {
-		// The flags for this info are read by the visitor (flattener). 
-		// See Workspace.readElement().  This allows the reader to look ahead 
+		// The flags for this info are read by the visitor (flattener).
+		// See Workspace.readElement().  This allows the reader to look ahead
 		// and see what type of info is being loaded.
 		this.flags = newFlags;
 		localInfo = input.readLong();
@@ -318,14 +318,14 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		modStamp = input.readLong();
 	}
 
-	/** 
+	/**
 	 * Sets all of the bits indicated by the mask.
 	 */
 	public void set(int mask) {
 		flags |= mask;
 	}
 
-	/** 
+	/**
 	 * Sets the value of the indicated bits to be the given value.
 	 */
 	protected void setBits(int mask, int start, int value) {
@@ -342,21 +342,21 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		this.fileStoreRoot = fileStoreRoot;
 	}
 
-	/** 
+	/**
 	 * Sets the flags for this info.
 	 */
 	protected void setFlags(int value) {
 		flags = value;
 	}
 
-	/** 
+	/**
 	 * Sets the local-relative sync information.
 	 */
 	public void setLocalSyncInfo(long info) {
 		localInfo = info;
 	}
 
-	/** 
+	/**
 	 * Sets the collection of makers for this resource.
 	 * <code>null</code> is passed in if there are no markers.
 	 */
@@ -371,7 +371,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		this.modStamp = value;
 	}
 
-	/** 
+	/**
 	 *
 	 */
 	public void setNodeId(long id) {
@@ -389,7 +389,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		// needs to be implemented on subclasses
 	}
 
-	/** 
+	/**
 	 * Sets the identified session property to the given value.  If
 	 * the value is null, the property is removed.
 	 */
@@ -441,8 +441,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		}
 	}
 
-	/** 
-	 * Sets the type for this info to the given value.  Valid values are 
+	/**
+	 * Sets the type for this info to the given value.  Valid values are
 	 * FILE, FOLDER, PROJECT
 	 */
 	public void setType(int value) {
@@ -466,8 +466,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	public void writeTo(DataOutput output) throws IOException {
-		// The flags for this info are written by the visitor (flattener). 
-		// See SaveManager.writeElement().  This allows the reader to look ahead 
+		// The flags for this info are written by the visitor (flattener).
+		// See SaveManager.writeElement().  This allows the reader to look ahead
 		// and see what type of info is being loaded.
 		output.writeLong(localInfo);
 		output.writeLong(nodeId);

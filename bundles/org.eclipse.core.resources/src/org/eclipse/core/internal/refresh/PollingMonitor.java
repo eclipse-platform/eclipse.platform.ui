@@ -25,14 +25,14 @@ import org.osgi.framework.Bundle;
 /**
  * The <code>PollingMonitor</code> is an <code>IRefreshMonitor</code> that
  * polls the file system rather than registering natively for call-backs.
- * 
+ *
  * The polling monitor operates in iterations that span multiple invocations
- * of the job's run method.  At the beginning of an iteration, a set of 
+ * of the job's run method.  At the beginning of an iteration, a set of
  * all resource roots is collected.  Each time the job runs, it removes items
  * from the set and searches for changes for a fixed period of time.
  * This ensures that the refresh job is broken into very small discrete
  * operations that do not interrupt the user's main-line activity.
- * 
+ *
  * @since 3.0
  */
 public class PollingMonitor extends Job implements IRefreshMonitor {

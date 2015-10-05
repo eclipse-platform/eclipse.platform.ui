@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -46,7 +46,7 @@ public class SyncInfoReader_3 extends SyncInfoReader {
 	 * INDEX -> byte int
 	 * QNAME -> byte String
 	 * BYTES -> byte[]
-	 * 
+	 *
 	 */
 	@Override
 	public void readSyncInfo(DataInputStream input) throws IOException, CoreException {

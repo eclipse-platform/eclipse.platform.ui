@@ -17,9 +17,9 @@ package org.eclipse.core.internal.dtree;
 public interface IComparator {
 	/**
 	 * Returns an integer describing the changes between two data objects
-	 * in a data tree.  The first three bits of the returned integer are 
-	 * used during calculation of delta trees.  The remaining bits can be 
-	 * assigned any meaning that is useful to the client.  If there is no 
+	 * in a data tree.  The first three bits of the returned integer are
+	 * used during calculation of delta trees.  The remaining bits can be
+	 * assigned any meaning that is useful to the client.  If there is no
 	 * change in the two data objects, this method must return 0.
 	 *
 	 * @see NodeComparison

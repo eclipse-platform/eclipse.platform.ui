@@ -14,12 +14,12 @@ package org.eclipse.core.internal.utils;
  * A string pool participant is used for sharing strings between several
  * unrelated parties.  Typically a single <code>StringPool</code> instance
  * will be created, and a group of participants will be asked to store their
- * strings in the pool.  This allows participants to share equal strings 
+ * strings in the pool.  This allows participants to share equal strings
  * without creating explicit dependencies between each other.
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see StringPool
  * @since 3.1
  */

@@ -13,12 +13,12 @@ package org.eclipse.core.internal.dtree;
 import java.io.*;
 import org.eclipse.core.runtime.IPath;
 
-/** 
+/**
  * The <code>IElementInfoFlattener</code> interface supports
  * reading and writing element info objects.
  */
 public interface IDataFlattener {
-	/** 
+	/**
 	 * Reads a data object from the given input stream.
 	 * @param path the path of the element to be read
 	 * @param input the stream from which the element info should be read.

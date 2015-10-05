@@ -43,16 +43,16 @@ public class StringPoolJob extends Job {
 	 * a string pool and asks all registered participants to share their strings in
 	 * the pool.  Once all participants have added their strings to the pool, the
 	 * pool is discarded to avoid additional memory overhead.
-	 * 
+	 *
 	 * Adding a participant that is equal to a participant already registered will
 	 * replace the scheduling rule associated with the participant, but will otherwise
 	 * be ignored.
-	 * 
+	 *
 	 * @param participant The participant to add
 	 * @param rule The scheduling rule that must be owned at the time the
 	 * participant is called.  This allows a participant to protect their data structures
 	 * against access at unsafe times.
-	 * 
+	 *
 	 * @see #removeStringPoolParticipant(IStringPoolParticipant)
 	 * @since 3.1
 	 */
@@ -64,7 +64,7 @@ public class StringPoolJob extends Job {
 			schedule(INITIAL_DELAY);
 	}
 
-	/** 
+	/**
 	 * Removes the indicated log listener from the set of registered string
 	 * pool participants.  If no such participant is registered, no action is taken.
 	 *
@@ -104,7 +104,7 @@ public class StringPoolJob extends Job {
 		if (start > 0) {
 			lastDuration = System.currentTimeMillis() - start;
 			if (Policy.DEBUG_STRINGS)
-				Policy.debug("String sharing saved " + savings + " bytes in: " + lastDuration); //$NON-NLS-1$ //$NON-NLS-2$ 
+				Policy.debug("String sharing saved " + savings + " bytes in: " + lastDuration); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		//throttle frequency if it takes too long
 		long scheduleDelay = Math.max(RESCHEDULE_DELAY, lastDuration * 100);

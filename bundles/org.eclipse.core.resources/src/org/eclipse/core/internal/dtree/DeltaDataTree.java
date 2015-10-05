@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.*;
 /**
  * Externally, a <code>DeltaDataTree</code> appears to have the same content as
  * a standard data tree.  Internally, the delta tree may be complete, or it may
- * just indicate the changes between itself and its parent.  
+ * just indicate the changes between itself and its parent.
  *
- * <p>Nodes that exist in the parent but do not exist in the delta, are represented 
+ * <p>Nodes that exist in the parent but do not exist in the delta, are represented
  * as instances of <code>DeletedNode</code>.  Nodes that are identical in the parent
  * and the delta, but have differences in their subtrees, are represented as
  * instances of <code>NoDataDeltaNode</code> in the delta tree.  Nodes that differ
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.*;
  * between parent and delta.
  *
  * A delta tree algebra is used to manipulate sets of delta trees.  Given two trees,
- * one can obtain the delta between the two using the method 
+ * one can obtain the delta between the two using the method
  * <code>forwardDeltaWith(aTree)</code>.  Given a tree and a delta, one can assemble
  * the complete tree that the delta represents using the method <code>
  * assembleWithForwardDelta</code>.  Refer to the public API methods of this class
@@ -77,8 +77,8 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Returns the tree as a backward delta.  If the delta is applied to the tree it
-	 * will produce its parent. The receiver must have a forward 
-	 * delta representation. I.e.:  Call the receiver's parent A, 
+	 * will produce its parent. The receiver must have a forward
+	 * delta representation. I.e.:  Call the receiver's parent A,
 	 * and the receiver B.  The receiver's representation is A->B.
 	 * Returns the delta A<-B.  The result is equivalent to A, but has B as its parent.
 	 */
@@ -120,7 +120,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Replaces a node in the tree with the result of assembling the node
-	 * with the given delta node (which represents a forward delta on 
+	 * with the given delta node (which represents a forward delta on
 	 * the existing node).
 	 *
 	 * @param key key of the node to replace.
@@ -131,9 +131,9 @@ public class DeltaDataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Assembles the receiver with the given delta tree and answer 
-	 * the resulting, mutable source tree.  The given delta tree must be a 
-	 * forward delta based on the receiver (i.e. missing information is taken from 
+	 * Assembles the receiver with the given delta tree and answer
+	 * the resulting, mutable source tree.  The given delta tree must be a
+	 * forward delta based on the receiver (i.e. missing information is taken from
 	 * the receiver).  This operation is used to coalesce delta trees.
 	 *
 	 * <p>In detail, suppose that c is a forward delta over source tree a.
@@ -206,9 +206,9 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * <p> This operation should be used to collapse chains of
 	 * delta trees that don't contain interesting intermediate states.
 	 *
-	 * <p>This is a destructive operation, since it modifies the structure of this 
+	 * <p>This is a destructive operation, since it modifies the structure of this
 	 * tree instance.  This tree must be immutable at the start of this operation,
-	 * and will be immutable afterwards.  
+	 * and will be immutable afterwards.
 	 * @return this tree.
 	 */
 	public DeltaDataTree collapseTo(DeltaDataTree collapseTo, IComparator comparator) {
@@ -336,7 +336,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Returns a delta data tree that represents an empty delta.
-	 * (i.e. it represents a delta on another (unspecified) tree, 
+	 * (i.e. it represents a delta on another (unspecified) tree,
 	 * but introduces no changes).
 	 */
 	static DeltaDataTree createEmptyDelta() {
@@ -385,7 +385,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Initializes the receiver so that it is a complete, empty tree. 
+	 * Initializes the receiver so that it is a complete, empty tree.
 	 * @see AbstractDataTree#empty()
 	 */
 	@Override
@@ -396,7 +396,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Initializes the receiver so that it represents an empty delta.
-	 * (i.e. it represents a delta on another (unspecified) tree, 
+	 * (i.e. it represents a delta on another (unspecified) tree,
 	 * it introduces no changes).  The parent is left unchanged.
 	 */
 	void emptyDelta() {
@@ -422,7 +422,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Returns a forward delta between the receiver and the given source tree,
-	 * using the given comparer to compare data objects.  
+	 * using the given comparer to compare data objects.
 	 * The result describes the changes which, if assembled with the receiver,
 	 * will produce the given source tree.
 	 * In more detail, let c = a.forwardDeltaWith(b).
@@ -432,8 +432,8 @@ public class DeltaDataTree extends AbstractDataTree {
 	 * There is no requirement that a and b be related, although it is usually more
 	 * efficient if they are. The node keys are used as the basis of correlation
 	 * between trees.
-	 * 
-	 * Note that if b is already represented as a delta over a, 
+	 *
+	 * Note that if b is already represented as a delta over a,
 	 * then c will have the same internal structure as b.
 	 * Thus the very common case of previous forwardDeltaWith: current
 	 * is actually very fast when current is a modification of previous.
@@ -487,7 +487,7 @@ public class DeltaDataTree extends AbstractDataTree {
 		 *   for each delta in chain (going backwards),
 		 *     get list of child nodes, if any in delta
 		 *     assemble with previously seen list, if any
-		 *     break when complete tree found, 
+		 *     break when complete tree found,
 		 *   report error if parent is missing or has been deleted
 		 */
 
@@ -621,7 +621,7 @@ public class DeltaDataTree extends AbstractDataTree {
 		return namesOfChildren;
 	}
 
-	/** 
+	/**
 	 * Returns the parent of the tree.
 	 */
 	public DeltaDataTree getParent() {
@@ -705,7 +705,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 *  - the node key
 	 * 	- a flag indicating whether the specified node was found
 	 *  - the data for the node, if it was found
-	 * 
+	 *
 	 * This is a case-insensitive variant of the <code>lookup</code>
 	 * method.
 	 *
@@ -755,7 +755,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Returns a complete node containing the contents of the subtree 
+	 * Returns a complete node containing the contents of the subtree
 	 * rooted at <code>key</code> in the receiver.  Uses the public API.
 	 *
 	 * @param key
@@ -855,7 +855,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Returns a complete node containing the contents of the subtree 
+	 * Returns a complete node containing the contents of the subtree
 	 * rooted at @key in the receiver.  Returns null if this node does not exist in
 	 * the tree.  This is a thread-safe version of naiveCopyCompleteSubtree
 	 *
@@ -953,7 +953,7 @@ public class DeltaDataTree extends AbstractDataTree {
 
 	/**
 	 * Simplifies the receiver:
-	 *	- replaces any DataDelta nodes with the same data as the parent 
+	 *	- replaces any DataDelta nodes with the same data as the parent
 	 *	  with a NoDataDelta node
 	 *	- removes any empty (leaf NoDataDelta) nodes
 	 */

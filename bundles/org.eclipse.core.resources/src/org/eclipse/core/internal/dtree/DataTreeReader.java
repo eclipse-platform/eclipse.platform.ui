@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
@@ -120,7 +120,7 @@ public class DataTreeReader {
 		}
 	}
 
-	/** 
+	/**
 	 * Reads an integer stored in compact format.  Numbers between
 	 * 0 and 254 inclusive occupy 1 byte; other numbers occupy 5 bytes,
 	 * the first byte being 0xff and the next 4 bytes being the standard

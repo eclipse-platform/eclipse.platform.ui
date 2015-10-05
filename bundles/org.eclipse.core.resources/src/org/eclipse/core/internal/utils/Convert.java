@@ -74,7 +74,7 @@ public class Convert {
 
 		long longValue = 0L;
 
-		// See method convertLongToBytes(long) for algorithm details.	
+		// See method convertLongToBytes(long) for algorithm details.
 		for (int i = 0; i < value.length; i++) {
 			// Left shift has no effect thru first iteration of loop.
 			longValue <<= 8;

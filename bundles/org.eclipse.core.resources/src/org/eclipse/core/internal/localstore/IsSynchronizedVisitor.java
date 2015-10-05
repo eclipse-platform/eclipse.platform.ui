@@ -16,8 +16,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Visits a unified tree, and throws a ResourceChangedException on the first 
- * node that is discovered to be out of sync.  The exception that is thrown 
+ * Visits a unified tree, and throws a ResourceChangedException on the first
+ * node that is discovered to be out of sync.  The exception that is thrown
  * will not have any meaningful status, message, or stack trace. However it
  * does contain the target resource which can be used to bring the Resource
  * back into sync.

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Core's implementation of IPathVariableManager. 
+ * Core's implementation of IPathVariableManager.
  */
 public class PathVariableManager implements IPathVariableManager, IManager {
 
@@ -83,7 +83,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * Fires a property change event corresponding to a change to the
 	 * current value of the variable with the given name.
-	 * 
+	 *
 	 * @param name the name of the variable, to be used as the variable
 	 *      in the event object
 	 * @param value the current value of the path variable or <code>null</code> if
@@ -103,7 +103,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	private void fireVariableChangeEvent(Collection<IPathVariableChangeListener> list, String name, IPath value, int type) {
 		if (list.size() == 0)
 			return;
-		// use a separate collection to avoid interference of simultaneous additions/removals 
+		// use a separate collection to avoid interference of simultaneous additions/removals
 		Object[] listenerArray = list.toArray();
 		final PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listenerArray.length; ++i) {
@@ -146,10 +146,10 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		for (int i = 0; i < names.length; i++) {
 			if (names[i].startsWith(VARIABLE_PREFIX)) {
 				String key = names[i].substring(VARIABLE_PREFIX.length());
-				// filter out names for preferences which might be valid in the 
+				// filter out names for preferences which might be valid in the
 				// preference store but does not have valid path variable names
-				// and/or values. We can get in this state if the user has 
-				// edited the file on disk or set a preference using the prefix 
+				// and/or values. We can get in this state if the user has
+				// edited the file on disk or set a preference using the prefix
 				// reserved to path variables (#VARIABLE_PREFIX).
 				// TODO: we may want to look at removing these keys from the
 				// preference store as a garbage collection means
@@ -165,7 +165,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * and then calls #getValue using that key, they will get the value back for
 	 * that. But then if they try and call #setValue using the same key it will throw
 	 * an exception. We may want to revisit this behaviour in the future.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IPathVariableManager#getValue(String)
 	 */
 	@Deprecated
@@ -236,7 +236,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			newValue = FileUtil.canonicalPath(newValue);
 		checkIsValidValue(newValue);
 		int eventType;
-		// read previous value and set new value atomically in order to generate the right event		
+		// read previous value and set new value atomically in order to generate the right event
 		synchronized (this) {
 			IPath currentValue = getValue(varName);
 			boolean variableExists = currentValue != null;

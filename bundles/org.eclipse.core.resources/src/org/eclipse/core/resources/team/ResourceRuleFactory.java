@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * Default implementation of IResourceRuleFactory. The teamHook extension
  * may subclass to provide more specialized scheduling rules for workspace operations that
  * they participate in.
- * 
+ *
  * @see IResourceRuleFactory
  * @since 3.0
  */
@@ -42,7 +42,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * This default implementation always returns the workspace root.
 	 * <p>
 	 * Subclasses may not currently override this method.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#buildRule()
 	 */
 	@Override
@@ -52,14 +52,14 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#charsetRule</code>.
-	 * This default implementation always returns the project of the resource 
-	 * whose charset setting is being changed, or <code>null</code> if the 
+	 * This default implementation always returns the project of the resource
+	 * whose charset setting is being changed, or <code>null</code> if the
 	 * resource is the workspace root.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.1
@@ -76,7 +76,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * This default implementation always returns <code>null</code>.
 	 * <p>
 	 * Subclasses may not currently override this method.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#derivedRule(IResource)
 	 * @since 3.6
@@ -89,11 +89,11 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#copyRule</code>.
 	 * This default implementation always returns the parent of the destination
-	 * resource. 
+	 * resource.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#copyRule(IResource, IResource)
 	 */
@@ -105,12 +105,12 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#createRule</code>.
-	 * This default implementation always returns the parent of the resource 
+	 * This default implementation always returns the parent of the resource
 	 * being created.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#createRule(IResource)
 	 */
@@ -121,12 +121,12 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#deleteRule</code>.
-	 * This default implementation always returns the parent of the resource 
+	 * This default implementation always returns the parent of the resource
 	 * being deleted.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#deleteRule(IResource)
 	 */
@@ -145,7 +145,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * This default implementation always returns <code>null</code>.
 	 * <p>
 	 * Subclasses may not currently override this method.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#markerRule(IResource)
 	 */
 	@Override
@@ -159,9 +159,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * parent resource if modifying a project description file.
 	 * Note that this must encompass any rule required by the <code>validateSave</code> hook.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#modifyRule(IResource)
 	 * @see FileModificationValidator#validateSave(IFile)
@@ -181,9 +181,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * This default implementation returns a rule that combines the parent
 	 * of the source resource and the parent of the destination resource.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#moveRule(IResource, IResource)
 	 */
@@ -194,7 +194,7 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	}
 
 	/**
-	 * Convenience method to return the parent of the given resource, 
+	 * Convenience method to return the parent of the given resource,
 	 * or the resource itself for projects and the workspace root.
 	 * @param resource the resource to compute the parent of
 	 * @return the parent resource for folders and files, and the
@@ -212,12 +212,12 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#refreshRule</code>.
-	 * This default implementation always returns the parent of the resource 
+	 * This default implementation always returns the parent of the resource
 	 * being refreshed.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#refreshRule(IResource)
 	 */
@@ -232,9 +232,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * all read-only resources, or <code>null</code> if there are no read-only
 	 * resources.
 	 * <p>
-	 * Subclasses may override this method. The rule provided by an overriding 
+	 * Subclasses may override this method. The rule provided by an overriding
 	 * method must at least contain the rule from this default implementation.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#validateEditRule(IResource[])
 	 */

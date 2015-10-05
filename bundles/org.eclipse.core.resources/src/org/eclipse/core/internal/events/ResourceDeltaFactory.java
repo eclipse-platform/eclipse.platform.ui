@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * This class is used for calculating and building resource delta trees for notification 
+ * This class is used for calculating and building resource delta trees for notification
  * and build purposes.
  */
 public class ResourceDeltaFactory {

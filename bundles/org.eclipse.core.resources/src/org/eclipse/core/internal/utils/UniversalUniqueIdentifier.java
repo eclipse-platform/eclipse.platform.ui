@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -139,7 +139,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	/**
 	 * Answers the node address attempting to mask the IP
 	 * address of this machine.
-	 * 
+	 *
 	 * @return byte[] the node address
 	 */
 	private static byte[] computeNodeAddress() {
@@ -324,7 +324,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		return fgClockAdjustment == 0 ? timestamp : timestamp.add(BigInteger.valueOf(fgClockAdjustment));
 	}
 
-	/** 
+	/**
 	 This representation is compatible with the (byte[]) constructor.
 
 	 @see #UniversalUniqueIdentifier(byte[])

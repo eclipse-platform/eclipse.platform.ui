@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -15,9 +15,9 @@ package org.eclipse.core.internal.utils;
 import java.util.*;
 
 /**
- * A specialized map implementation that is optimized for a 
- * small set of object keys. 
- * 
+ * A specialized map implementation that is optimized for a
+ * small set of object keys.
+ *
  * Implemented as a single array that alternates keys and values.
  */
 @SuppressWarnings("unchecked")
@@ -46,7 +46,7 @@ public class ObjectMap<K, V> implements Map<K, V>, IStringPoolParticipant {
 	}
 
 	/**
-	 * Creates a new object map of the same size as the given map and 
+	 * Creates a new object map of the same size as the given map and
 	 * populate it with the key/attribute pairs found in the map.
 	 * @param map The entries in the given map will be added to the new map.
 	 */

@@ -302,7 +302,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		if (path.segmentCount() == 0)
 			return deltaInfo.getWorkspace().getRoot();
 		// if the delta is a remove then we have to look for the old info to find the type
-		// of resource to create. 
+		// of resource to create.
 		ResourceInfo info = null;
 		if ((getKind() & (REMOVED | REMOVED_PHANTOM)) != 0)
 			info = oldInfo;
@@ -363,7 +363,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		this.status = status;
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this delta's
 	 * immediate structure suitable for debug purposes.
 	 */
@@ -373,7 +373,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return buffer.toString();
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this delta's
 	 * deep structure suitable for debug purposes.
 	 */
@@ -395,14 +395,14 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 
 	/**
 	 * Provides a new set of markers for the delta.  This is used
-	 * when the delta is reused in cases where the only changes 
+	 * when the delta is reused in cases where the only changes
 	 * are marker changes.
 	 */
 	public void updateMarkers(Map<IPath, MarkerSet> markers) {
 		deltaInfo.setMarkerDeltas(markers);
 	}
 
-	/** 
+	/**
 	 * Writes a string representation of this delta's
 	 * immediate structure on the given string buffer.
 	 */

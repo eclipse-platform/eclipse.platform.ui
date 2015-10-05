@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
@@ -74,7 +74,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	private boolean shouldWriteTriggers(BuildCommand command) {
 		//only write triggers if command is configurable and there exists a trigger
 		//that the builder does NOT respond to.  I.e., don't write out on the default
-		//cases to avoid dirtying .project files unnecessarily.	
+		//cases to avoid dirtying .project files unnecessarily.
 		if (!command.isConfigurable())
 			return false;
 		return !command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) || !command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) || !command.isBuilding(IncrementalProjectBuilder.FULL_BUILD) || !command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD);

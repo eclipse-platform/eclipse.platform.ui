@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,7 +33,7 @@ public interface IResourceStatus extends IStatus {
 	// General constants [0-98]
 	// Information Only [0-32]
 	// Warnings [33-65]
-	/** Status code constant (value 35) indicating that a given 
+	/** Status code constant (value 35) indicating that a given
 	 * nature set does not satisfy its constraints.
 	 * Severity: warning. Category: general.
 	 */
@@ -75,20 +75,20 @@ public interface IResourceStatus extends IStatus {
 
 	// Errors [266-298]
 
-	/** Status code constant (value 268) indicating a resource unexpectedly 
+	/** Status code constant (value 268) indicating a resource unexpectedly
 	 * exists on the local file system.
 	 * Severity: error. Category: local file system.
 	 */
 	public static final int EXISTS_LOCAL = 268;
 
-	/** Status code constant (value 269) indicating a resource unexpectedly 
+	/** Status code constant (value 269) indicating a resource unexpectedly
 	 * does not exist on the local file system.
 	 * Severity: error. Category: local file system.
 	 */
 	public static final int NOT_FOUND_LOCAL = 269;
 
 	/** Status code constant (value 270) indicating the local file system location for
-	 * a resource could not be computed. 
+	 * a resource could not be computed.
 	 * Severity: error. Category: local file system.
 	 */
 	public static final int NO_LOCATION_LOCAL = 270;
@@ -119,7 +119,7 @@ public interface IResourceStatus extends IStatus {
 	public static final int OUT_OF_SYNC_LOCAL = 274;
 
 	/** Status code constant (value 275) indicating this file system is not case
-	 * sensitive and a resource that differs only in case unexpectedly exists on 
+	 * sensitive and a resource that differs only in case unexpectedly exists on
 	 * the local file system.
 	 * Severity: error. Category: local file system.
 	 */
@@ -145,7 +145,7 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int INVALID_RESOURCE_NAME = 278;
 
-	/** Status code constant (value 279) indicating that the 
+	/** Status code constant (value 279) indicating that the
 	 * file in the file system is marked as read-only.
 	 * Severity: error. Category: local file system.
 	 * @since 3.0
@@ -157,7 +157,7 @@ public interface IResourceStatus extends IStatus {
 
 	// Warnings [333-365]
 
-	/** Status code constant (value 333) indicating that a workspace path 
+	/** Status code constant (value 333) indicating that a workspace path
 	 * variable unexpectedly does not exist.
 	 *  Severity: warning. Category: workspace.
 	 * @since 2.1
@@ -172,19 +172,19 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int RESOURCE_WRONG_TYPE = 366;
 
-	/** Status code constant (value 367) indicating a resource unexpectedly 
+	/** Status code constant (value 367) indicating a resource unexpectedly
 	 * exists in the workspace.
 	 * Severity: error. Category: workspace.
 	 */
 	public static final int RESOURCE_EXISTS = 367;
 
-	/** Status code constant (value 368) indicating a resource unexpectedly 
+	/** Status code constant (value 368) indicating a resource unexpectedly
 	 * does not exist in the workspace.
 	 * Severity: error. Category: workspace.
 	 */
 	public static final int RESOURCE_NOT_FOUND = 368;
 
-	/** Status code constant (value 369) indicating a resource unexpectedly 
+	/** Status code constant (value 369) indicating a resource unexpectedly
 	 * does not have content local to the workspace.
 	 * Severity: error. Category: workspace.
 	 */
@@ -215,13 +215,13 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int PARTNER_NOT_REGISTERED = 375;
 
-	/** Status code constant (value 376) indicating a marker unexpectedly 
+	/** Status code constant (value 376) indicating a marker unexpectedly
 	 * does not exist in the workspace tree.
 	 * Severity: error. Category: workspace.
 	 */
 	public static final int MARKER_NOT_FOUND = 376;
 
-	/** Status code constant (value 377) indicating a resource is 
+	/** Status code constant (value 377) indicating a resource is
 	 * unexpectedly not a linked resource.
 	 * Severity: error. Category: workspace.
 	 * @since 2.1
@@ -235,45 +235,45 @@ public interface IResourceStatus extends IStatus {
 	 */
 	public static final int LINKING_NOT_ALLOWED = 378;
 
-	/** Status code constant (value 379) indicating that a workspace path 
+	/** Status code constant (value 379) indicating that a workspace path
 	 * variable unexpectedly does not exist.
 	 *  Severity: error. Category: workspace.
 	 * @since 2.1
 	 */
 	public static final int VARIABLE_NOT_DEFINED = 379;
 
-	/** Status code constant (value 380) indicating that an attempt was made to modify 
+	/** Status code constant (value 380) indicating that an attempt was made to modify
 	 * the workspace while it was locked.  Resource changes are disallowed
-	 * during certain types of resource change event notification. 
+	 * during certain types of resource change event notification.
 	 * Severity: error. Category: workspace.
 	 * @see IResourceChangeEvent
 	 * @since 2.1
 	 */
 	public static final int WORKSPACE_LOCKED = 380;
-	
+
 	/** Status code constant (value 381) indicating that a problem occurred while
 	 * retrieving the content description for a resource.
 	 * Severity: error. Category: workspace.
 	 * @see IFile#getContentDescription
-	 * @since 3.0 
+	 * @since 3.0
 	 */
-	public static final int FAILED_DESCRIBING_CONTENTS = 381;	
+	public static final int FAILED_DESCRIBING_CONTENTS = 381;
 
 	/** Status code constant (value 382) indicating that a problem occurred while
 	 * setting the charset for a resource.
 	 * Severity: error. Category: workspace.
 	 * @see IContainer#setDefaultCharset(String, IProgressMonitor)
 	 * @see IFile#setCharset(String, IProgressMonitor)
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	public static final int FAILED_SETTING_CHARSET = 382;
-	
+
 	/** Status code constant (value 383) indicating that a problem occurred while
 	 * getting the charset for a resource.
 	 * Severity: error. Category: workspace.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
-	public static final int FAILED_GETTING_CHARSET = 383;	
+	public static final int FAILED_GETTING_CHARSET = 383;
 
 	/** Status code constant (value 384) indicating a build configuration with
 	 * the specified ID unexpectedly does not exist.

@@ -42,8 +42,8 @@ public class MarkerWriter {
 	}
 
 	/**
-	 * Returns an Object array of length 2. The first element is an Integer which is the number 
-	 * of persistent markers found. The second element is an array of boolean values, with a 
+	 * Returns an Object array of length 2. The first element is an Integer which is the number
+	 * of persistent markers found. The second element is an array of boolean values, with a
 	 * value of true meaning that the marker at that index is to be persisted.
 	 */
 	private Object[] filterMarkers(IMarkerSetElement[] markers) {
@@ -82,7 +82,7 @@ public class MarkerWriter {
 	 * STRING_VALUE -> byte String
 	 * NULL_VALUE -> byte
 	 * CREATION_TIME -> long
-	 * 	
+	 *
 	 */
 	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<String> writtenTypes) throws IOException {
 		// phantom resources don't have markers
@@ -111,7 +111,7 @@ public class MarkerWriter {
 
 	/**
 	 * Snapshot the markers for the specified resource to the given output stream.
-	 * 
+	 *
 	 * SNAP_FILE -> [VERSION_ID RESOURCE]*
 	 * VERSION_ID -> int (used for backwards compatibiliy)
 	 * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
@@ -159,7 +159,7 @@ public class MarkerWriter {
 		info.clear(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	}
 
-	/* 
+	/*
 	 * Write out the given marker attributes to the given output stream.
 	 */
 	private void write(Map<String, Object> attributes, DataOutputStream output) throws IOException {

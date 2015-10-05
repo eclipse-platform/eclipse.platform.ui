@@ -32,14 +32,14 @@ import org.osgi.framework.Bundle;
 
 /**
  * Keeps a cache of recently read content descriptions.
- * 
+ *
  * @since 3.0
  * @see IFile#getContentDescription()
  */
 public class ContentDescriptionManager implements IManager, IRegistryChangeListener, IContentTypeManager.IContentTypeChangeListener, ILifecycleListener {
 	/**
-	 * This job causes the content description cache and the related flags 
-	 * in the resource tree to be flushed. 
+	 * This job causes the content description cache and the related flags
+	 * in the resource tree to be flushed.
 	 */
 	private class FlushJob extends WorkspaceJob {
 		private final List<IPath> toFlush;
@@ -120,7 +120,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 
 	}
 
-	/** 
+	/**
 	 * An input stream that only opens the file if bytes are actually requested.
 	 * @see #readDescription(File)
 	 */
@@ -183,7 +183,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	private static final QualifiedName CACHE_STATE = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheState"); //$NON-NLS-1$
 	private static final QualifiedName CACHE_TIMESTAMP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheTimestamp"); //$NON-NLS-1$\
 
-	public static final String FAMILY_DESCRIPTION_CACHE_FLUSH = ResourcesPlugin.PI_RESOURCES + ".contentDescriptionCacheFamily"; //$NON-NLS-1$	
+	public static final String FAMILY_DESCRIPTION_CACHE_FLUSH = ResourcesPlugin.PI_RESOURCES + ".contentDescriptionCacheFamily"; //$NON-NLS-1$
 
 	//possible values for the CACHE_STATE property
 	public static final byte EMPTY_CACHE = 1;
@@ -232,7 +232,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				// no project was added, must be a global flush
 				clearContentFlags(Path.ROOT, monitor);
 			else {
-				// flush a project at a time								
+				// flush a project at a time
 				for (int i = 0; i < toClean.length; i++)
 					clearContentFlags(toClean[i], monitor);
 			}
@@ -250,8 +250,8 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	private void clearContentFlags(IPath root, final IProgressMonitor monitor) {
 		long flushStart = System.currentTimeMillis();
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
-			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$		
-		// discard content type related flags for all files in the tree 
+			Policy.debug("Flushing content type cache for " + root); //$NON-NLS-1$
+		// discard content type related flags for all files in the tree
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -336,7 +336,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				// presumably, this file has no known content type
 				return null;
 			if (info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION)) {
-				// this file supposedly has a default content description for an "obvious" content type			
+				// this file supposedly has a default content description for an "obvious" content type
 				IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 				// try to find the obvious content type matching its name
 				IContentType type = contentTypeManager.findContentTypeFor(file.getName());
@@ -344,12 +344,12 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 					// we found it, we are done
 					return type.getDefaultDescription();
 				// for some reason, there was no content type for this file name
-				// fix this and keep going			
+				// fix this and keep going
 				info.clear(ICoreConstants.M_CONTENT_CACHE);
 			}
 		}
 		if (inSync) {
-			// tries to get a description from the cache	
+			// tries to get a description from the cache
 			synchronized (this) {
 				Cache.Entry entry = cache.getEntry(file.getFullPath());
 				if (entry != null && entry.getTimestamp() == getTimestamp(info))
@@ -381,7 +381,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 					// we got a default description
 					IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
 					if (newDescription.getContentType().equals(defaultForName)) {
-						// it is a default description for the obvious content type given its file name, we don't have to cache					
+						// it is a default description for the obvious content type given its file name, we don't have to cache
 						info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
 						return newDescription;
 					}
@@ -411,13 +411,13 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	/**
 	 * Marks the cache as invalid. Does not do anything if the cache is new.
 	 * Optionally causes the cached information to be actually flushed.
-	 *  
-	 * @param flush whether the cached information should be flushed 
+	 *
+	 * @param flush whether the cached information should be flushed
 	 * @see #doFlushCache(IProgressMonitor, IPath[])
 	 */
 	public synchronized void invalidateCache(boolean flush, IProject project) {
 		if (getCacheState() == EMPTY_CACHE)
-			// cache has not been touched, nothing to do			
+			// cache has not been touched, nothing to do
 			return;
 		// mark the cache as invalid
 		try {
@@ -426,7 +426,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			Policy.log(e.getStatus());
 		}
 		if (Policy.DEBUG_CONTENT_TYPE_CACHE)
-			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$		
+			Policy.debug("Invalidated cache for " + (project == null ? Path.ROOT : project.getFullPath())); //$NON-NLS-1$
 		if (flush) {
 			try {
 				// discard the cache, so it can be used before the flush job starts
@@ -441,11 +441,11 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	}
 
 	/**
-	 * Tries to obtain a content description for the given file.  
+	 * Tries to obtain a content description for the given file.
 	 */
 	private IContentDescription readDescription(File file) throws CoreException {
 		if (Policy.DEBUG_CONTENT_TYPE)
-			Policy.debug("reading contents of " + file); //$NON-NLS-1$		
+			Policy.debug("reading contents of " + file); //$NON-NLS-1$
 		// tries to obtain a description for this file contents
 		InputStream contents = new LazyFileInputStream(file.getStore());
 		try {
@@ -485,7 +485,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 				// if the project gets deleted, we may get confused if it is recreated again (content ids might match)
 			case LifecycleEvent.PRE_PROJECT_MOVE :
-				// if the project moves, resource paths (used as keys in the in-memory cache) will have changed 
+				// if the project moves, resource paths (used as keys in the in-memory cache) will have changed
 				invalidateCache(true, (IProject) event.resource);
 		}
 	}
@@ -504,7 +504,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	@Override
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (getCacheState() != INVALID_CACHE)
-			// remember the platform timestamp for which we have a valid cache 
+			// remember the platform timestamp for which we have a valid cache
 			setCacheTimeStamp(Platform.getStateStamp());
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		//tolerate missing services during shutdown because they might be already gone
@@ -527,7 +527,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		projectContentTypes = new ProjectContentTypes(workspace);
 		getCacheState();
 		if (cacheState == FLUSHING_CACHE || cacheState == ABOUT_TO_FLUSH)
-			// in case we died before completing the last flushing 
+			// in case we died before completing the last flushing
 			setCacheState(INVALID_CACHE);
 		flushJob = new FlushJob();
 		// the cache is stale (plug-ins that might be contributing content types were added/removed)
@@ -537,13 +537,13 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		workspace.addLifecycleListener(this);
 		// register a content type change listener
 		Platform.getContentTypeManager().addContentTypeChangeListener(this);
-		// register a registry change listener		
+		// register a registry change listener
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
 	}
 
 	public void projectPreferencesChanged(IProject project) {
 		if (Policy.DEBUG_CONTENT_TYPE)
-			Policy.debug("Project preferences changed for " + project); //$NON-NLS-1$		
+			Policy.debug("Project preferences changed for " + project); //$NON-NLS-1$
 		projectContentTypes.contentTypePreferencesChanged(project);
 	}
 }

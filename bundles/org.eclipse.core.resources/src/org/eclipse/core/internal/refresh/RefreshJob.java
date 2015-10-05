@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -24,7 +24,7 @@ import org.eclipse.osgi.util.NLS;
  * The <code>RefreshJob</code> class maintains a list of resources that
  * need to be refreshed, and periodically schedules itself to perform the
  * refreshes in the background.
- * 
+ *
  * @since 3.0
  */
 public class RefreshJob extends WorkspaceJob {

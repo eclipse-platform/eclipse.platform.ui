@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Baltasar Belyavsky (Texas Instruments) - [361675] Order mismatch when saving/restoring workspace trees
@@ -25,8 +25,8 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
 /**
- * Reads version 2 of the workspace tree file format. 
- * 
+ * Reads version 2 of the workspace tree file format.
+ *
  * This version differs from version 1 in the amount of information that is persisted
  * for each builder. Version 1 only stored builder names and trees. Version
  * 2 stores builder names, project names, trees, and interesting projects for

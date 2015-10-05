@@ -132,7 +132,7 @@ public class FileStoreRoot {
 	 * Returns the resolved, absolute file system location of the given resource.
 	 * Returns null if the location could not be resolved.  No canonicalization
 	 * is applied to the returned path.
-	 * 
+	 *
 	 * @param workspacePath the workspace path of the resource
 	 * @param resource the resource itself
 	 */
@@ -143,7 +143,7 @@ public class FileStoreRoot {
 	/**
 	 * Returns the resolved, absolute file system location of the given resource.
 	 * Returns null if the location could not be resolved.
-	 * 
+	 *
 	 * @param workspacePath the workspace path of the resource
 	 * @param resource the resource itself
 	 * @param canonical if {@code true}, the prefix of the returned path corresponding

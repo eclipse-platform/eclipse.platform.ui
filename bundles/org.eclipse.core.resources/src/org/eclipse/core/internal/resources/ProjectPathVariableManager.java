@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -104,7 +104,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	/**
 	 * If the variable is not listed in the project description, we fall back on
 	 * the workspace variables.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IPathVariableManager#getURIValue(String)
 	 */
 	@Override
@@ -446,7 +446,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	/**
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @see IPathVariableManager#convertToRelative(URI, boolean, String)
 	 */
 	@Override

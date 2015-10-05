@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * A property tester for various properties of projects.
- * 
+ *
  * @since 3.2
  */
 public class ProjectPropertyTester extends ResourcePropertyTester {

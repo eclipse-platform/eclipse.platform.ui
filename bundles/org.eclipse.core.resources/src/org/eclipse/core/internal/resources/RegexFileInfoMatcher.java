@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -18,7 +18,7 @@ import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.*;
 
 /**
- * A Filter provider for Java Regular expression supported by 
+ * A Filter provider for Java Regular expression supported by
  * java.util.regex.Pattern.
  */
 public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {

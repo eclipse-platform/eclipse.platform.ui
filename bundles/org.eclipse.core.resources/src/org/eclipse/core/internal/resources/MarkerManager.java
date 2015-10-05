@@ -74,7 +74,7 @@ public class MarkerManager implements IManager {
 
 	/**
 	 * Adds the new markers to the given set of markers.  If added, the markers
-	 * are associated with the specified resource.IMarkerDeltas for Added markers 
+	 * are associated with the specified resource.IMarkerDeltas for Added markers
 	 * are generated.
 	 */
 	private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo newMarker) throws CoreException {
@@ -184,7 +184,7 @@ public class MarkerManager implements IManager {
 			info = workspace.getResourceInfo(path, false, true);
 			//Concurrency: copy the marker set on modify
 			markers = info.getMarkers(true);
-			// remove all the matching markers and also the whole 
+			// remove all the matching markers and also the whole
 			// set if there are no remaining markers
 			if (markers.size() == matching.length) {
 				info.setMarkers(null);
@@ -272,7 +272,7 @@ public class MarkerManager implements IManager {
 	}
 
 	/**
-	 * Fills the provided list with all markers of the specified type on the given target, 
+	 * Fills the provided list with all markers of the specified type on the given target,
 	 * with option to search the target's children.
 	 * Passing <code>null</code> for the type specifies a match
 	 * for all types (i.e., <code>null</code> is a wildcard.
@@ -286,7 +286,7 @@ public class MarkerManager implements IManager {
 	}
 
 	/**
-	 * Finds the max severity across all problem markers on the given target, 
+	 * Finds the max severity across all problem markers on the given target,
 	 * with option to search the target's children.
 	 */
 	public int findMaxProblemSeverity(IResource target, String type, boolean includeSubtypes, int depth) {
@@ -476,7 +476,7 @@ public class MarkerManager implements IManager {
 	}
 
 	/**
-	 * Removes the specified marker 
+	 * Removes the specified marker
 	 */
 	public void removeMarker(IResource resource, long id) {
 		MarkerInfo markerInfo = findMarkerInfo(resource, id);

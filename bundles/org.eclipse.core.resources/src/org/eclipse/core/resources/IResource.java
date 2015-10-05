@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - get/setResourceAttribute code
@@ -36,10 +36,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * <li><code>IResource</code> objects are <i>handles</i> to state maintained
  *		by a workspace.  That is, resource objects do not actually contain data
  *		themselves but rather represent resource state and give it behavior.  Programmers
- *		are free to manipulate handles for resources that do not exist in a workspace 
- *		but must keep in mind that some methods and operations require that an actual 
+ *		are free to manipulate handles for resources that do not exist in a workspace
+ *		but must keep in mind that some methods and operations require that an actual
  *		resource be available.</li>
- * <li>Resources have two different kinds of properties as detailed below.  All 
+ * <li>Resources have two different kinds of properties as detailed below.  All
  *		properties are keyed by qualified names.</li>
  * <ul>
  * <li>Session properties: Session properties live for the lifetime of one execution of
@@ -47,12 +47,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  *		object values.  Clients should be aware that these values are kept in memory
  *		at all times and, as such, the values should not be large.</li>
  * <li>Persistent properties: Persistent properties have string values which are stored
- *		on disk across platform sessions.  The value of a persistent property is a 
+ *		on disk across platform sessions.  The value of a persistent property is a
  * 		string which should be short (i.e., under 2KB). </li>
  * </ul>
  * </li>
- * <li>Resources are identified by type and by their <i>path</i>, which is similar to a file system 
- * 		path.  The name of a resource is the last segment of its path. A resource's parent 
+ * <li>Resources are identified by type and by their <i>path</i>, which is similar to a file system
+ * 		path.  The name of a resource is the last segment of its path. A resource's parent
  *		is located by removing the last segment (the resource's name) from the resource's full path.</li>
  * <li>Resources can be local or non-local. A non-local resource is one whose
  * 		contents and properties have not been fetched from a repository.</li>
@@ -77,7 +77,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * and their type constants are in the integer range 1 to 8 as defined below.
 	 *====================================================================*/
 
-	/** 
+	/**
 	 * Type constant (bit mask value 1) which identifies file resources.
 	 *
 	 * @see IResource#getType()
@@ -137,7 +137,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 1) indicating that the operation
 	 * should proceed even if the resource is out of sync with the local file
 	 * system.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final int FORCE = 0x1;
@@ -146,7 +146,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 2) indicating that the operation
 	 * should maintain local history by taking snapshots of the contents of
 	 * files just before being overwritten or deleted.
-	 * 
+	 *
 	 * @see IFile#getHistory(IProgressMonitor)
 	 * @since 2.0
 	 */
@@ -156,7 +156,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 4) indicating that the operation
 	 * should delete the files and folders of a project.
 	 * <p>
-	 * Deleting a project that is open ordinarily deletes all its files and folders, 
+	 * Deleting a project that is open ordinarily deletes all its files and folders,
 	 * whereas deleting a project that is closed retains its files and folders.
 	 * Specifying <code>ALWAYS_DELETE_PROJECT_CONTENT</code> indicates that the contents
 	 * of a project are to be deleted regardless of whether the project is open or closed
@@ -164,7 +164,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * the contents of a project are to be retained regardless of whether the project
 	 * is open or closed at the time.
 	 * </p>
-	 * 
+	 *
 	 * @see #NEVER_DELETE_PROJECT_CONTENT
 	 * @since 2.0
 	 */
@@ -174,7 +174,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 8) indicating that the operation
 	 * should preserve the files and folders of a project.
 	 * <p>
-	 * Deleting a project that is open ordinarily deletes all its files and folders, 
+	 * Deleting a project that is open ordinarily deletes all its files and folders,
 	 * whereas deleting a project that is closed retains its files and folders.
 	 * Specifying <code>ALWAYS_DELETE_PROJECT_CONTENT</code> indicates that the contents
 	 * of a project are to be deleted regardless of whether the project is open or closed
@@ -182,7 +182,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * the contents of a project are to be retained regardless of whether the project
 	 * is open or closed at the time.
 	 * </p>
-	 * 
+	 *
 	 * @see #ALWAYS_DELETE_PROJECT_CONTENT
 	 * @since 2.0
 	 */
@@ -191,7 +191,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Update flag constant (bit mask value 16) indicating that the link creation
 	 * should proceed even if the local file system file or directory is missing.
-	 * 
+	 *
 	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
 	 * @see IFile#createLink(IPath, int, IProgressMonitor)
 	 * @since 2.1
@@ -221,7 +221,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Update flag constant (bit mask value 128) indicating that opening a
-	 * project for the first time or creating a linked folder should refresh in the 
+	 * project for the first time or creating a linked folder should refresh in the
 	 * background.
 	 *
 	 * @see IProject#open(int, IProgressMonitor)
@@ -263,7 +263,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public static final int DERIVED = 0x400;
 
 	/**
-	 * Update flag constant (bit mask value 0x800) indicating that a 
+	 * Update flag constant (bit mask value 0x800) indicating that a
 	 * resource should be marked as team private.
 	 *
 	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
@@ -275,17 +275,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public static final int TEAM_PRIVATE = 0x800;
 
 	/**
-	 * Update flag constant (bit mask value 0x1000) indicating that a 
+	 * Update flag constant (bit mask value 0x1000) indicating that a
 	 * resource should be marked as a hidden resource.
-	 * 
+	 *
 	 * @since 3.4
 	 */
 	public static final int HIDDEN = 0x1000;
 
 	/**
-	 * Update flag constant (bit mask value 0x2000) indicating that a 
+	 * Update flag constant (bit mask value 0x2000) indicating that a
 	 * resource should be marked as a virtual resource.
-	 * 
+	 *
 	 * @see IFolder#create(int, boolean, IProgressMonitor)
 	 * @since 3.6
 	 */
@@ -295,7 +295,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Other constants:
 	 *====================================================================*/
 
-	/** 
+	/**
 	 * Modification stamp constant (value -1) indicating no modification stamp is
 	 * available.
 	 *
@@ -303,7 +303,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public static final int NULL_STAMP = -1;
 
-	/** 
+	/**
 	 * General purpose zero-valued bit mask constant. Useful whenever you need to
 	 * supply a bit mask with no bits set.
 	 * <p>
@@ -320,7 +320,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public static final int NONE = 0;
 
 	/**
-	 * Accepts the given visitor for an optimized traversal. 
+	 * Accepts the given visitor for an optimized traversal.
 	 * The visitor's <code>visit</code> method is called, and is provided with a
 	 * proxy to this resource.  The proxy is a transient object that can be queried
 	 * very quickly for information about the resource. If the actual resource
@@ -333,7 +333,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <code>visit</code> method.
 	 * </p>
 	 * <p>
-	 * This is a convenience method, fully equivalent to 
+	 * This is a convenience method, fully equivalent to
 	 * <code>accept(visitor, IResource.DEPTH_INFINITE, memberFlags)</code>.
 	 * </p>
 	 *  <p>No  guarantees are made about the behavior of this method if resources
@@ -345,24 +345,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visited.
 	 * </p>
 	 <p>
-	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member
 	 * flags (recommended), only member resources that exist will be visited.
 	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit will
 	 * also include any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
-	 * (recommended), team private members will not be visited. If the 
+	 * (recommended), team private members will not be visited. If the
 	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
 	 * flags, team private member resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
-	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended),
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified
 	 * in the member flags, hidden resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended),
 	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
 	 * in the member flags, the resource is not checked for existence before the visitor's
@@ -398,7 +398,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void accept(IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
 
 	/**
-	 * Accepts the given visitor for an optimized traversal. 
+	 * Accepts the given visitor for an optimized traversal.
 	 * The visitor's <code>visit</code> method is called, and is provided with a
 	 * proxy to this resource.  The proxy is a transient object that can be queried
 	 * very quickly for information about the resource. If the actual resource
@@ -419,24 +419,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visited.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member
 	 * flags (recommended), only member resources that exist will be visited.
 	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit will
 	 * also include any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
-	 * (recommended), team private members will not be visited. If the 
+	 * (recommended), team private members will not be visited. If the
 	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
 	 * flags, team private member resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
-	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended),
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified
 	 * in the member flags, hidden resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended),
 	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
 	 * in the member flags, the resource is not checked for existence before the visitor's
@@ -483,7 +483,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * resource. If the visitor returns <code>true</code>, this method
 	 * visits this resource's members.
 	 * <p>
-	 * This is a convenience method, fully equivalent to 
+	 * This is a convenience method, fully equivalent to
 	 * <code>accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE)</code>.
 	 * </p>
 	 *
@@ -501,7 +501,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Accepts the given visitor.
 	 * The visitor's <code>visit</code> method is called with this
-	 * resource. If the visitor returns <code>false</code>, 
+	 * resource. If the visitor returns <code>false</code>,
 	 * this resource's members are not visited.
 	 * <p>
 	 * The subtree under the given resource is traversed to the supplied depth.
@@ -540,7 +540,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Accepts the given visitor.
 	 * The visitor's <code>visit</code> method is called with this
-	 * resource. If the visitor returns <code>false</code>, 
+	 * resource. If the visitor returns <code>false</code>,
 	 * this resource's members are not visited.
 	 * <p>
 	 * The subtree under the given resource is traversed to the supplied depth.
@@ -552,30 +552,30 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visitor; if resources are created, they may not be passed to the visitor.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member
 	 * flags (recommended), only member resources that exists are visited.
 	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit also
 	 * includes any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
-	 * (recommended), team private members are not visited. If the 
+	 * (recommended), team private members are not visited. If the
 	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
 	 * flags, team private member resources are visited as well.
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#EXCLUDE_DERIVED} flag is not specified
-	 * (recommended), derived resources are visited. If the 
+	 * (recommended), derived resources are visited. If the
 	 * {@link IContainer#EXCLUDE_DERIVED} flag is specified in the member
 	 * flags, derived resources are not visited.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
-	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended),
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified
 	 * in the member flags, hidden resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended), 
+	 * If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is not specified (recommended),
 	 * the resource is checked for existence before the visitor's <code>visit</code>
 	 * method is called. If the {@link IContainer#DO_NOT_CHECK_EXISTENCE} flag is specified
 	 * in the member flags, the resource is not checked for existence before the visitor's
@@ -588,7 +588,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
 	 *		or {@link IResource#DEPTH_INFINITE}.
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}, 
+	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS},
 	 *   {@link IContainer#INCLUDE_HIDDEN} and {@link IContainer#EXCLUDE_DERIVED}) indicating
 	 *   which members are of interest and {@link IContainer#DO_NOT_CHECK_EXISTENCE}
 	 *   if the resource on which the method is called should not be checked for existence
@@ -623,7 +623,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Removes the local history of this resource and its descendents.
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -631,24 +631,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void clearHistory(IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Makes a copy of this resource at the given path. 
+	 * Makes a copy of this resource at the given path.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
 	 * <pre>
 	 *   copy(destination, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 * </p>
-	 * <p> 
+	 * <p>
 	 * This operation changes resources; these changes will be reported
-	 * in a subsequent resource change event that will include 
+	 * in a subsequent resource change event that will include
 	 * an indication that the resource copy has been added to its new parent.
 	 * </p>
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param destination the destination path 
+	 * @param destination the destination path
 	 * @param force a flag controlling whether resources that are not
 	 *    in sync with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -668,10 +668,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
 	 * <li> The source resource is a file and the destination path specifies a project.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 */
 	public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -751,7 +751,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * Update flags other than those listed above are ignored.
 	 * </p>
-	 * <p> 
+	 * <p>
 	 * This operation changes resources; these changes will be reported in a
 	 * subsequent resource change event that will include an indication that the
 	 * resource copy has been added to its new parent.
@@ -763,10 +763,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param destination the destination path 
+	 * @param destination the destination path
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link #FORCE}, {@link #SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE}, {@link #HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -792,10 +792,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * 	specify a project.</li>
 	 * <li> The location of the source resource on disk is the same or a prefix of
 	 * the location of the destination resource on disk.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see #FORCE
 	 * @see #SHALLOW
@@ -814,14 +814,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *   copy(description, (force ? FORCE : IResource.NONE), monitor);
 	 * </pre>
 	 * </p>
-	 * <p> 
+	 * <p>
 	 * This operation changes resources; these changes will be reported
-	 * in a subsequent resource change event that will include 
+	 * in a subsequent resource change event that will include
 	 * an indication that the resource copy has been added to its new parent.
 	 * </p>
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
 	 * @param description the destination project description
@@ -839,16 +839,16 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      system and <code>force</code> is <code>false</code>.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 */
 	public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Makes a copy of this project using the given project description. 
+	 * Makes a copy of this project using the given project description.
 	 * The project's descendents are copied as well. The description specifies the
 	 * name, location and attributes of the new project. After successful
 	 * completion, corresponding new resources will exist at the given path; their
@@ -871,7 +871,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * in the workspace would be out of sync with the local file system; this
 	 * ensures files in the file system cannot be accidentally overwritten.
 	 * </p>
-	 * <p>  
+	 * <p>
 	 * The <code>SHALLOW</code> update flag controls how this method deals with
 	 * linked resources.  If <code>SHALLOW</code> is not specified, then the
 	 * underlying contents of any linked resources in the project will always be
@@ -897,7 +897,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
 	 * @param description the destination project description
@@ -915,10 +915,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      system and <code>FORCE</code> is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #FORCE
 	 * @see #SHALLOW
@@ -951,7 +951,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * with the corresponding resource.  Changes to the resource after
 	 * the proxy is created will not be reflected in the state of the proxy.
 	 * </p>
-	 * 
+	 *
 	 * @return A proxy representing this resource
 	 * @since 3.2
 	 */
@@ -971,9 +971,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
-	 * 
+	 *
 	 * @param force a flag controlling whether resources that are not
 	 *    in sync with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -983,10 +983,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource could not be deleted for some reason.</li>
 	 * <li> This resource or one of its descendents is out of sync with the local file system
 	 *      and <code>force</code> is <code>false</code>.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 *
 	 * @see IResource#delete(int,IProgressMonitor)
@@ -1032,7 +1032,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * <p>
 	 * The {@link #FORCE} update flag controls how this method deals with
@@ -1072,7 +1072,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * content area from open projects (subject to the {@link #FORCE} flag), but
 	 * never from closed projects.
 	 * </p>
-	 * 
+	 *
 	 * @param updateFlags bit-wise or of update flag constants (
 	 *   {@link #FORCE}, {@link #KEEP_HISTORY},
 	 *   {@link #ALWAYS_DELETE_PROJECT_CONTENT},
@@ -1084,10 +1084,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource could not be deleted for some reason.</li>
 	 * <li> This resource or one of its descendents is out of sync with the local file system
 	 *      and {@link #FORCE} is not specified.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IFile#delete(boolean, boolean, IProgressMonitor)
 	 * @see IFolder#delete(boolean, boolean, IProgressMonitor)
@@ -1101,10 +1101,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Deletes all markers on this resource of the given type, and, 
+	 * Deletes all markers on this resource of the given type, and,
 	 * optionally, deletes such markers from its children.  If <code>includeSubtypes</code>
-	 * is <code>false</code>, only markers whose type exactly matches 
-	 * the given type are deleted.  
+	 * is <code>false</code>, only markers whose type exactly matches
+	 * the given type are deleted.
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event.
@@ -1117,7 +1117,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is a project that is not open.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see IResource#DEPTH_ZERO
@@ -1130,7 +1130,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Compares two objects for equality;
 	 * for resources, equality is defined in terms of their handles:
-	 * same resource type, equal full paths, and identical workspaces. 
+	 * same resource type, equal full paths, and identical workspaces.
 	 * Resources are not equal to objects other than resources.
 	 *
 	 * @param other the other object
@@ -1147,23 +1147,23 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * <code>IResource</code> objects are lightweight handle objects
 	 * used to access resources in the workspace. However, having a
-	 * handle object does not necessarily mean the workspace really 
+	 * handle object does not necessarily mean the workspace really
 	 * has such a resource. When the workspace does have a genuine
-	 * resource of a matching type, the resource is said to 
-	 * <em>exist</em>, and this method returns <code>true</code>; 
+	 * resource of a matching type, the resource is said to
+	 * <em>exist</em>, and this method returns <code>true</code>;
 	 * in all other cases, this method returns <code>false</code>.
 	 * In particular, it returns <code>false</code> if the workspace
 	 * has no resource at that path, or if it has a resource at that
 	 * path with a type different from the type of this resource handle.
 	 * </p>
 	 * <p>
-	 * Note that no resources ever exist under a project 
+	 * Note that no resources ever exist under a project
 	 * that is closed; opening a project may bring some
 	 * resources into existence.
 	 * </p>
 	 * <p>
 	 * The name and path of a resource handle may be invalid.
-	 * However, validation checks are done automatically as a 
+	 * However, validation checks are done automatically as a
 	 * resource is created; this means that any resource that exists
 	 * can be safely assumed to have a valid name and path.
 	 * </p>
@@ -1190,8 +1190,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns all markers of the specified type on this resource,
 	 * and, optionally, on its children. If <code>includeSubtypes</code>
-	 * is <code>false</code>, only markers whose type exactly matches 
-	 * the given type are returned.  Returns an empty array if there 
+	 * is <code>false</code>, only markers whose type exactly matches
+	 * the given type are returned.  Returns an empty array if there
 	 * are no matching markers.
 	 *
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
@@ -1210,17 +1210,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 
 	/**
-	 * Returns the maximum value of the {@link IMarker#SEVERITY} attribute across markers 
-	 * of the specified type on this resource, and, optionally, on its children. 
-	 * If <code>includeSubtypes</code>is <code>false</code>, only markers whose type 
-	 * exactly matches the given type are considered.  
-	 * Returns <code>-1</code> if there are no matching markers.  
-	 * Returns {@link IMarker#SEVERITY_ERROR} if any of the markers has a severity 
+	 * Returns the maximum value of the {@link IMarker#SEVERITY} attribute across markers
+	 * of the specified type on this resource, and, optionally, on its children.
+	 * If <code>includeSubtypes</code>is <code>false</code>, only markers whose type
+	 * exactly matches the given type are considered.
+	 * Returns <code>-1</code> if there are no matching markers.
+	 * Returns {@link IMarker#SEVERITY_ERROR} if any of the markers has a severity
 	 * greater than or equal to {@link IMarker#SEVERITY_ERROR}.
 	 *
-	 * @param type the type of marker to consider (normally {@link IMarker#PROBLEM} 
-	 *   or one of its subtypes), or <code>null</code> to indicate all types 
-	 *   
+	 * @param type the type of marker to consider (normally {@link IMarker#PROBLEM}
+	 *   or one of its subtypes), or <code>null</code> to indicate all types
+	 *
 	 * @param includeSubtypes whether or not to consider sub-types of the given type
 	 * @param depth how far to recurse (see <code>IResource.DEPTH_* </code>)
 	 * @return {@link IMarker#SEVERITY_INFO}, {@link IMarker#SEVERITY_WARNING}, {@link IMarker#SEVERITY_ERROR}, or -1
@@ -1246,8 +1246,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * file extension portion. If the name ends in a period,
 	 * the file extension portion is the empty string.
 	 * </p>
-	 * <p> 
-	 * This is a resource handle operation; the resource need 
+	 * <p>
+	 * This is a resource handle operation; the resource need
 	 * not exist.
 	 * </p>
 	 *
@@ -1259,15 +1259,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns the full, absolute path of this resource relative to the
 	 * workspace.
-	 * <p> 
-	 * This is a resource handle operation; the resource need 
+	 * <p>
+	 * This is a resource handle operation; the resource need
 	 * not exist.
 	 * If this resource does exist, its path can be safely assumed to be valid.
 	 * </p>
 	 * <p>
 	 * A resource's full path indicates the route from the root of the workspace
 	 * to the resource.  Within a workspace, there is exactly one such path
-	 * for any given resource. The first segment of these paths name a project; 
+	 * for any given resource. The first segment of these paths name a project;
 	 * remaining segments, folders and/or files within that project.
 	 * The returned path never has a trailing separator.  The path of the
 	 * workspace root is <code>Path.ROOT</code>.
@@ -1285,9 +1285,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IPath getFullPath();
 
 	/**
-	 * Returns a cached value of the local time stamp on disk for this resource, or 
-	 * <code>NULL_STAMP</code>  if the resource does not exist or is not local or is 
-	 * not accessible.  The return value is represented as the number of milliseconds 
+	 * Returns a cached value of the local time stamp on disk for this resource, or
+	 * <code>NULL_STAMP</code>  if the resource does not exist or is not local or is
+	 * not accessible.  The return value is represented as the number of milliseconds
 	 * since the epoch (00:00:00 GMT, January 1, 1970).
 	 * The returned value may not be the same as the actual time stamp
 	 * on disk if the file has been modified externally since the last local refresh.
@@ -1295,14 +1295,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Note that due to varying file system timing granularities, this value is not guaranteed
 	 * to change every time the file is modified.  For a more reliable indication of whether
 	 * the file has changed, use <code>getModificationStamp</code>.
-	 * 
+	 *
 	 * @return a local file system time stamp, or <code>NULL_STAMP</code>.
 	 * @since 3.0
 	 */
 	public long getLocalTimeStamp();
 
 	/**
-	 * Returns the absolute path in the local file system to this resource, 
+	 * Returns the absolute path in the local file system to this resource,
 	 * or <code>null</code> if no path can be determined.
 	 * <p>
 	 * If this resource is the workspace root, this method returns
@@ -1331,11 +1331,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p><p>
 	 * If this resource is a project that does not exist in the workspace,
 	 * or a file or folder below such a project, this method returns
-	 * <code>null</code>.  This method also returns <code>null</code> if called 
-	 * on a resource that is not stored in the local file system.  For such resources 
+	 * <code>null</code>.  This method also returns <code>null</code> if called
+	 * on a resource that is not stored in the local file system.  For such resources
 	 * {@link #getLocationURI()} should be used instead.
 	 * </p>
-	 * 
+	 *
 	 * @return the absolute path of this resource in the local file system,
 	 *  or <code>null</code> if no path can be determined
 	 * @see #getRawLocation()
@@ -1346,7 +1346,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IPath getLocation();
 
 	/**
-	 * Returns the absolute URI of this resource, 
+	 * Returns the absolute URI of this resource,
 	 * or <code>null</code> if no URI can be determined.
 	 * <p>
 	 * If this resource is the workspace root, this method returns
@@ -1377,7 +1377,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * or a file or folder below such a project, this method returns
 	 * <code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the absolute URI of this resource,
 	 *  or <code>null</code> if no URI can be determined
 	 * @see #getRawLocation()
@@ -1401,7 +1401,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IMarker getMarker(long id);
 
 	/**
-	 * Returns a non-negative modification stamp, or <code>NULL_STAMP</code> if 
+	 * Returns a non-negative modification stamp, or <code>NULL_STAMP</code> if
 	 * the resource does not exist or is not local or is not accessible.
 	 * <p>
 	 * A resource's modification stamp gets updated each time a resource is modified.
@@ -1410,7 +1410,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * (other than properties) has been modified at least once (possibly several times).
 	 * Resource modification stamps are preserved across project close/re-open,
 	 * and across workspace shutdown/restart.
-	 * The magnitude or sign of the numerical difference between two modification stamps 
+	 * The magnitude or sign of the numerical difference between two modification stamps
 	 * is not significant.
 	 * </p>
 	 * <p>
@@ -1448,12 +1448,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public long getModificationStamp();
 
 	/**
-	 * Returns the name of this resource. 
+	 * Returns the name of this resource.
 	 * The name of a resource is synonymous with the last segment
-	 * of its full (or project-relative) path for all resources other than the 
+	 * of its full (or project-relative) path for all resources other than the
 	 * workspace root.  The workspace root's name is the empty string.
-	 * <p> 
-	 * This is a resource handle operation; the resource need 
+	 * <p>
+	 * This is a resource handle operation; the resource need
 	 * not exist.
 	 * </p>
 	 * <p>
@@ -1468,7 +1468,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns the path variable manager for this resource.
-	 * 
+	 *
 	 * @return the path variable manager
 	 * @see IPathVariableManager
 	 * @since 3.6
@@ -1484,7 +1484,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * resource's full path with the last segment removed.
 	 * </p>
 	 * <p>
-	 * This is a resource handle operation; neither the resource 
+	 * This is a resource handle operation; neither the resource
 	 * nor the resulting resource need exist.
 	 * </p>
 	 *
@@ -1498,7 +1498,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Returns an empty map if this resource has no persistent properties.
 	 *
 	 * @return the map containing the persistent properties where the key is
-	 *  the {@link QualifiedName} of the property and the value is the {@link String} 
+	 *  the {@link QualifiedName} of the property and the value is the {@link String}
 	 *  value of the property.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -1516,7 +1516,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * by the given key, or <code>null</code> if this resource has no such property.
 	 *
 	 * @param key the qualified name of the property
-	 * @return the string value of the property, 
+	 * @return the string value of the property,
 	 *     or <code>null</code> if this resource has no such property
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -1537,7 +1537,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * of its full path.
 	 * </p>
 	 * <p>
-	 * This is a resource handle operation; neither the resource 
+	 * This is a resource handle operation; neither the resource
 	 * nor the resulting project need exist.
 	 * </p>
 	 *
@@ -1548,7 +1548,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns a relative path of this resource with respect to its project.
 	 * Returns the empty path for projects and the workspace root.
-	 * <p> 
+	 * <p>
 	 * This is a resource handle operation; the resource need not exist.
 	 * If this resource does exist, its path can be safely assumed to be valid.
 	 * </p>
@@ -1558,7 +1558,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * for any given resource. The returned path never has a trailing slash.
 	 * </p>
 	 * <p>
-	 * Project-relative paths are recommended over absolute paths, since 
+	 * Project-relative paths are recommended over absolute paths, since
 	 * the former are not affected if the project is renamed.
 	 * </p>
 	 *
@@ -1581,7 +1581,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * path supplied when the linked resource was created.  In all other cases, this
 	 * method returns the same value as {@link #getLocation()}.
 	 * </p>
-	 * 
+	 *
 	 * @return the raw path of this resource in the local file system,  or
 	 * <code>null</code> if no path can be determined
 	 * @see #getLocation()
@@ -1607,8 +1607,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * supplied when the linked resource was created.  In all other cases, this
 	 * method returns the same value as {@link #getLocationURI()}.
 	 * </p>
-	 * 
-	 * @return the raw location of this resource, or <code>null</code> if no 
+	 *
+	 * @return the raw location of this resource, or <code>null</code> if no
 	 * location can be determined
 	 * @see #getLocationURI()
 	 * @see IFile#createLink(URI, int, IProgressMonitor)
@@ -1630,13 +1630,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource is a project that is not open.</li>
 	 * </ul>
 	 * </p><p>
-	 * Attributes that are not supported by the underlying file system 
+	 * Attributes that are not supported by the underlying file system
 	 * will have a value of <code>false</code>.
 	 * </p><p>
 	 * Sample usage: <br>
-	 * <br> 
+	 * <br>
 	 * <code>
-	 *  IResource resource; <br> 
+	 *  IResource resource; <br>
 	 *  ... <br>
 	 *  ResourceAttributes attributes = resource.getResourceAttributes(); <br>
 	 *  if (attributes != null) {
@@ -1645,7 +1645,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *  }
 	 * </code>
 	 * </p>
-	 * 
+	 *
 	 * @return the extended attributes from the file system, or
 	 * <code>null</code> if they could not be obtained
 	 * @see #setResourceAttributes(ResourceAttributes)
@@ -1659,7 +1659,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Returns an empty map if this resource has no session properties.
 	 *
 	 * @return the map containing the session properties where the key is
-	 *  the {@link QualifiedName} of the property and the value is the property 
+	 *  the {@link QualifiedName} of the property and the value is the property
 	 *  value (an {@link Object}.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -1677,7 +1677,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * by the given key, or <code>null</code> if this resource has no such property.
 	 *
 	 * @param key the qualified name of the property
-	 * @return the value of the session property, 
+	 * @return the value of the session property,
 	 *     or <code>null</code> if this resource has no such property
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -1691,7 +1691,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns the type of this resource.
-	 * The returned value will be one of <code>FILE</code>, 
+	 * The returned value will be one of <code>FILE</code>,
 	 * <code>FOLDER</code>, <code>PROJECT</code>, <code>ROOT</code>.
 	 * <p>
 	 * <ul>
@@ -1701,8 +1701,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> All resources of type <code>ROOT</code> implement <code>IWorkspaceRoot</code>.</li>
 	 * </ul>
 	 * </p>
-	 * <p> 
-	 * This is a resource handle operation; the resource need 
+	 * <p>
+	 * This is a resource handle operation; the resource need
 	 * not exist in the workspace.
 	 * </p>
 	 *
@@ -1717,7 +1717,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns the workspace which manages this resource.
 	 * <p>
-	 * This is a resource handle operation; the resource need 
+	 * This is a resource handle operation; the resource need
 	 * not exist in the workspace.
 	 * </p>
 	 *
@@ -1727,7 +1727,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Returns whether this resource is accessible.  For files and folders,
-	 * this is equivalent to existing; for projects, 
+	 * this is equivalent to existing; for projects,
 	 * this is equivalent to existing and being open.  The workspace root
 	 * is always accessible.
 	 *
@@ -1741,9 +1741,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns whether this resource subtree is marked as derived. Returns
 	 * <code>false</code> if this resource does not exist.
-	 * 
+	 *
 	 * <p>
-	 * This is a convenience method, 
+	 * This is a convenience method,
 	 * fully equivalent to <code>isDerived(IResource.NONE)</code>.
 	 * </p>
 	 *
@@ -1755,21 +1755,21 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isDerived();
 
 	/**
-	 * Returns whether this resource subtree is marked as derived. Returns 
+	 * Returns whether this resource subtree is marked as derived. Returns
 	 * <code>false</code> if this resource does not exist.
-	 * 
+	 *
 	 * <p>
 	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
-	 * should consider ancestor resources in its calculation.  If the 
-	 * {@link #CHECK_ANCESTORS} flag is present, this method will return 
+	 * should consider ancestor resources in its calculation.  If the
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return
 	 * <code>true</code>, if this resource, or any parent resource, is marked
 	 * as derived.  If the {@link #CHECK_ANCESTORS} option flag is not specified,
 	 * this method returns false for children of derived resources.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants
 	 *  (only {@link #CHECK_ANCESTORS} is applicable)
-	 * @return <code>true</code> if this resource subtree is derived, and 
+	 * @return <code>true</code> if this resource subtree is derived, and
 	 *   <code>false</code> otherwise
 	 * @see IResource#setDerived(boolean)
 	 * @since 3.4
@@ -1777,7 +1777,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isDerived(int options);
 
 	/**
-	 * Returns whether this resource is hidden in the resource tree. Returns 
+	 * Returns whether this resource is hidden in the resource tree. Returns
 	 * <code>false</code> if this resource does not exist.
 	 *	<p>
 	 * This operation is not related to the file system hidden attribute accessible using
@@ -1806,7 +1806,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * resource. If the {@link #CHECK_ANCESTORS} option flag is not specified,
 	 * this method returns false for children of hidden resources.
 	 * </p>
-	 * 
+	 *
 	 * @param options
 	 *        bit-wise or of option flag constants (only
 	 *        {@link #CHECK_ANCESTORS} is applicable)
@@ -1818,14 +1818,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isHidden(int options);
 
 	/**
-	 * Returns whether this resource has been linked to 
-	 * a location other than the default location calculated by the platform. 
+	 * Returns whether this resource has been linked to
+	 * a location other than the default location calculated by the platform.
 	 * <p>
-	 * 	 This is a convenience method, fully equivalent to 
+	 * 	 This is a convenience method, fully equivalent to
 	 * <code>isLinked(IResource.NONE)</code>.
 	 * </p>
-	 * 
-	 * @return <code>true</code> if this resource is linked, and 
+	 *
+	 * @return <code>true</code> if this resource is linked, and
 	 *   <code>false</code> otherwise
 	 * @see IFile#createLink(IPath, int, IProgressMonitor)
 	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
@@ -1836,10 +1836,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns whether this resource is a virtual resource. Returns <code>true</code>
 	 * for folders that have been marked virtual using the {@link #VIRTUAL} update
-	 * flag.  Returns <code>false</code> in all other cases, including 
+	 * flag.  Returns <code>false</code> in all other cases, including
 	 * the case where this resource does not exist.  The workspace root, projects
 	 * and files currently cannot be made virtual.
-	 * 
+	 *
 	 * @return <code>true</code> if this resource is virtual, and
 	 *         <code>false</code> otherwise
 	 * @see IFile#create(java.io.InputStream, int, IProgressMonitor)
@@ -1849,28 +1849,28 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isVirtual();
 
 	/**
-	 * Returns <code>true</code> if this resource has been linked to 
+	 * Returns <code>true</code> if this resource has been linked to
 	 * a location other than the default location calculated by the platform. This
 	 * location can be outside the project's content area or another location
-	 * within the project. Returns <code>false</code> in all other cases, including 
-	 * the case where this resource does not exist.  The workspace root and 
+	 * within the project. Returns <code>false</code> in all other cases, including
+	 * the case where this resource does not exist.  The workspace root and
 	 * projects are never linked.
 	 * <p>
 	 * This method returns true for a resource that has been linked using
-	 * the <code>createLink</code> method.  
+	 * the <code>createLink</code> method.
 	 * </p>
 	 * <p>
 	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
-	 * should consider ancestor resources in its calculation.  If the 
-	 * {@link #CHECK_ANCESTORS} flag is present, this method will return 
-	 * <code>true</code> if this resource, or any parent resource, is a linked 
+	 * should consider ancestor resources in its calculation.  If the
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return
+	 * <code>true</code> if this resource, or any parent resource, is a linked
 	 * resource.  If the {@link #CHECK_ANCESTORS} option flag is not specified,
 	 * this method returns false for children of linked resources.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants
 	 *  (only {@link #CHECK_ANCESTORS} is applicable)
-	 * @return <code>true</code> if this resource is linked, and 
+	 * @return <code>true</code> if this resource is linked, and
 	 *   <code>false</code> otherwise
 	 * @see IFile#createLink(IPath, int, IProgressMonitor)
 	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
@@ -1879,7 +1879,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isLinked(int options);
 
 	/**
-	 * Returns whether this resource and its members (to the 
+	 * Returns whether this resource and its members (to the
 	 * specified depth) are expected to have their contents (and properties)
 	 * available locally.  Returns <code>false</code> in all other cases,
 	 * including the case where this resource does not exist.  The workspace
@@ -1888,14 +1888,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * When a resource is not local, its content and properties are
 	 * unavailable for both reading and writing.
 	 * </p>
-	 * 
-	 * @param depth valid values are <code>DEPTH_ZERO</code>, 
+	 *
+	 * @param depth valid values are <code>DEPTH_ZERO</code>,
 	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
 	 * @return <code>true</code> if this resource is local, and
 	 *   <code>false</code> otherwise
 	 *
 	 * @see #setLocal(boolean, int, IProgressMonitor)
-	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
+	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
 	@Deprecated
@@ -1906,7 +1906,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * The workspace uses phantom resources to remember outgoing deletions and
 	 * incoming additions relative to an external synchronization partner.  Phantoms
-	 * appear and disappear automatically as a byproduct of synchronization.   
+	 * appear and disappear automatically as a byproduct of synchronization.
 	 * Since the workspace root cannot be synchronized in this way, it is never a phantom.
 	 * Projects are also never phantoms.
 	 * </p>
@@ -1930,7 +1930,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns whether this resource is marked as read-only in the file system.
 	 *
-	 * @return <code>true</code> if this resource is read-only, 
+	 * @return <code>true</code> if this resource is read-only,
 	 *		<code>false</code> otherwise
 	 * @deprecated use {@link #getResourceAttributes()}
 	 */
@@ -1938,14 +1938,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isReadOnly();
 
 	/**
-	 * Returns whether this resource and its descendents to the given depth 
-	 * are considered to be in sync with the local file system.  
+	 * Returns whether this resource and its descendents to the given depth
+	 * are considered to be in sync with the local file system.
 	 * <p>
-	 * A resource is considered to be in sync if all of the following 
+	 * A resource is considered to be in sync if all of the following
 	 * conditions are true:
 	 * <ul>
 	 * <li>The resource exists in both the workspace and the file system.</li>
-	 * <li>The timestamp in the file system has not changed since the 
+	 * <li>The timestamp in the file system has not changed since the
 	 * last synchronization.</li>
 	 * <li>The resource in the workspace is of the same type as the corresponding
 	 * file in the file system (they are either both files or both folders).</li>
@@ -1959,10 +1959,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * depending on the speed of the local file system and the requested depth,
 	 * this operation may be time-consuming.
 	 * </p>
-	 * 
+	 *
 	 * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code>,
 	 *   <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>)
-	 * @return <code>true</code> if this resource and its descendents to the 
+	 * @return <code>true</code> if this resource and its descendents to the
 	 *    specified depth are synchronized, and <code>false</code> in all other
 	 *    cases
 	 * @see IResource#DEPTH_ZERO
@@ -1996,7 +1996,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * specified, this method returns false for children of team private
 	 * members.
 	 * </p>
-	 * 
+	 *
 	 * @param options
 	 *        bit-wise or of option flag constants (only
 	 *        {@link #CHECK_ANCESTORS} is applicable)
@@ -2008,7 +2008,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isTeamPrivateMember(int options);
 
 	/**
-	 * Moves this resource so that it is located at the given path.  
+	 * Moves this resource so that it is located at the given path.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
 	 * <pre>
@@ -2017,7 +2017,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
-	 * in a subsequent resource change event that will include 
+	 * in a subsequent resource change event that will include
 	 * an indication that the resource has been removed from its parent
 	 * and that a corresponding resource has been added to its new parent.
 	 * Additional information provided with resource delta shows that these
@@ -2025,10 +2025,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param destination the destination path 
+	 * @param destination the destination path
 	 * @param force a flag controlling whether resources that are not
 	 *    in sync with the local file system will be tolerated
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -2041,7 +2041,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The source is a project but the destination is not.</li>
 	 * <li> The destination is a project but the source is not.</li>
 	 * <li> The resource corresponding to the parent destination path does not exist.</li>
-	 * <li> The resource corresponding to the parent destination path is a closed 
+	 * <li> The resource corresponding to the parent destination path is a closed
 	 *      project.</li>
 	 * <li> A resource at destination path does exist.</li>
 	 * <li> A resource of a different type exists at the destination path.</li>
@@ -2049,18 +2049,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      system and <code>force</code> is <code>false</code>.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * <li> The source resource is a file and the destination path specifies a project.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
 	public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Moves this resource so that it is located at the given path.  
+	 * Moves this resource so that it is located at the given path.
 	 * The path of the resource must not be a prefix of the destination path. The
 	 * workspace root may not be the source or destination location of a move
 	 * operation, and a project can only be moved to another project. After
@@ -2100,7 +2100,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * overwritten.
 	 * </p>
 	 * <p>
-	 * The <code>KEEP_HISTORY</code> update flag controls whether or not 
+	 * The <code>KEEP_HISTORY</code> update flag controls whether or not
 	 * file that are about to be deleted from the local file system have their
 	 * current contents saved in the workspace's local history. The local history
 	 * mechanism serves as a safety net to help the user recover from mistakes that
@@ -2112,9 +2112,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * when moving files and folders, but not whole projects.
 	 * </p>
 	 * <p>
-	 * If this resource is not a project, an attempt will be made to copy the local history 
-	 * for this resource and its children, to the destination. Since local history existence 
-	 * is a safety-net mechanism, failure of this action will not result in automatic failure 
+	 * If this resource is not a project, an attempt will be made to copy the local history
+	 * for this resource and its children, to the destination. Since local history existence
+	 * is a safety-net mechanism, failure of this action will not result in automatic failure
 	 * of the move operation.
 	 * </p>
 	 * <p>
@@ -2133,7 +2133,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * permitted.  The <code>SHALLOW</code> update flag is ignored when moving non-
 	 * linked resources.
 	 * </p>
-	 * <p> 
+	 * <p>
 	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>and
 	 * <code>SHALLOW</code> are ignored.
 	 * </p>
@@ -2146,10 +2146,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
-	 * @param destination the destination path 
+	 * @param destination the destination path
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>SHALLOW</code>)
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -2162,7 +2162,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The source is a project but the destination is not.</li>
 	 * <li> The destination is a project but the source is not.</li>
 	 * <li> The resource corresponding to the parent destination path does not exist.</li>
-	 * <li> The resource corresponding to the parent destination path is a closed 
+	 * <li> The resource corresponding to the parent destination path is a closed
 	 *      project.</li>
 	 * <li> The source is a linked resource, but the destination is not a project
 	 *      and  <code>SHALLOW</code> is specified.</li>
@@ -2178,7 +2178,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> Resource changes are disallowed during certain types of resource change
 	 * event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 * @see #FORCE
@@ -2190,7 +2190,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Renames or relocates this project so that it is the project specified by the given project 
+	 * Renames or relocates this project so that it is the project specified by the given project
 	 * description.
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
@@ -2200,7 +2200,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This operation changes resources; these changes will be reported
-	 * in a subsequent resource change event that will include 
+	 * in a subsequent resource change event that will include
 	 * an indication that the resource has been removed from its parent
 	 * and that a corresponding resource has been added to its new parent.
 	 * Additional information provided with resource delta shows that these
@@ -2208,7 +2208,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
 	 * @param description the destination project description
@@ -2228,10 +2228,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      system and <code>force</code> is <code>false</code>.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 */
@@ -2309,7 +2309,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * disk at the new location become the project contents.  If the new project
 	 * location does not exist, it will be created.
 	 * </p>
-	 * <p>  
+	 * <p>
 	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p>
@@ -2321,7 +2321,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
 	 * @param description the destination project description
@@ -2340,12 +2340,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      local  file system and <code>FORCE</code> is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
 	 *      at the destination resource or one of its descendents.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *      event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 *  <li> The destination file system location is occupied. When moving a project
 	 *  in the file system, the destination directory must either not exist or be empty.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceDelta#getFlags()
 	 * @see #FORCE
@@ -2358,18 +2358,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Refreshes the resource hierarchy from this resource and its 
+	 * Refreshes the resource hierarchy from this resource and its
 	 * children (to the specified depth) relative to the local file system.
-	 * Creations, deletions, and changes detected in the local file system 
+	 * Creations, deletions, and changes detected in the local file system
 	 * will be reflected in the workspace's resource tree.
 	 * This resource need not exist or be local.
 	 * <p>
-	 * This method may discover changes to resources; any such 
+	 * This method may discover changes to resources; any such
 	 * changes will be reported in a subsequent resource change event.
 	 * </p>
 	 * <p>
 	 * If a new file or directory is discovered in the local file
-	 * system at or below the location of this resource, 
+	 * system at or below the location of this resource,
 	 * any parent folders required to contain the new
 	 * resource in the workspace will also be created automatically as required.
 	 * </p>
@@ -2377,17 +2377,17 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * This method is long-running; progress and cancellation are provided
 	 * by the given progress monitor.
 	 * </p>
-	 * 
-	 * @param depth valid values are <code>DEPTH_ZERO</code>, 
+	 *
+	 * @param depth valid values are <code>DEPTH_ZERO</code>,
 	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#DEPTH_ZERO
 	 * @see IResource#DEPTH_ONE
@@ -2397,32 +2397,32 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Reverts this resource's modification stamp.  This is intended to be used by 
-	 * a client that is rolling back or undoing a previous change to this resource.  
+	 * Reverts this resource's modification stamp.  This is intended to be used by
+	 * a client that is rolling back or undoing a previous change to this resource.
 	 * <p>
-	 * It is the caller's responsibility to ensure that the value of the reverted 
-	 * modification stamp matches this resource's modification stamp prior to the 
+	 * It is the caller's responsibility to ensure that the value of the reverted
+	 * modification stamp matches this resource's modification stamp prior to the
 	 * change that has been rolled back.  More generally, the caller must ensure
-	 * that the specification of modification stamps outlined in 
+	 * that the specification of modification stamps outlined in
 	 * <code>getModificationStamp</code> is honored; the modification stamp
 	 * of two distinct resource states should be different if and only if one or more
 	 * of the attributes listed in the specification as affecting the modification
 	 * stamp have changed.
 	 * <p>
-	 * Reverting the modification stamp will <b>not</b> be reported in a 
+	 * Reverting the modification stamp will <b>not</b> be reported in a
 	 * subsequent resource change event.
 	 * <p>
 	 * Note that a resource's modification stamp is unrelated to the local
 	 * time stamp for this resource on disk, if any.  A resource's local time
 	 * stamp is modified using the <code>setLocalTimeStamp</code> method.
-	 * 
+	 *
 	 * @param value A non-negative modification stamp value
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> This resource is not accessible.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #getModificationStamp()
@@ -2434,15 +2434,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Sets whether this resource subtree is marked as derived.
 	 * <p>
 	 * A <b>derived</b> resource is a regular file or folder that is
-	 * created in the course of translating, compiling, copying, or otherwise 
+	 * created in the course of translating, compiling, copying, or otherwise
 	 * processing other files. Derived resources are not original data, and can be
-	 * recreated from other resources. It is commonplace to exclude derived 
+	 * recreated from other resources. It is commonplace to exclude derived
 	 * resources from version and configuration management because they would
 	 * otherwise clutter the team repository with version of these ever-changing
 	 * files as each user regenerates them.
 	 * </p>
 	 * <p>
-	 * If a resource or any of its ancestors is marked as derived, a team 
+	 * If a resource or any of its ancestors is marked as derived, a team
 	 * provider should assume that the resource is not under version and
 	 * configuration management <i>by default</i>. That is, the resource
 	 * should only be stored in a team repository if the user explicitly indicates
@@ -2463,18 +2463,18 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * This operation does <b>not</b> result in a resource change event, and does not
 	 * trigger autobuilds.
 	 * </p>
-	 * 
+	 *
 	 * @param isDerived <code>true</code> if this resource is to be marked
 	 *   as derived, and <code>false</code> otherwise
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #isDerived()
 	 * @since 2.0
-	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
+	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which
 	 * is a workspace operation and reports changes in resource deltas.
 	 */
 	@Deprecated
@@ -2484,15 +2484,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Sets whether this resource subtree is marked as derived.
 	 * <p>
 	 * A <b>derived</b> resource is a regular file or folder that is
-	 * created in the course of translating, compiling, copying, or otherwise 
+	 * created in the course of translating, compiling, copying, or otherwise
 	 * processing other files. Derived resources are not original data, and can be
-	 * recreated from other resources. It is commonplace to exclude derived 
+	 * recreated from other resources. It is commonplace to exclude derived
 	 * resources from version and configuration management because they would
 	 * otherwise clutter the team repository with version of these ever-changing
 	 * files as each user regenerates them.
 	 * </p>
 	 * <p>
-	 * If a resource or any of its ancestors is marked as derived, a team 
+	 * If a resource or any of its ancestors is marked as derived, a team
 	 * provider should assume that the resource is not under version and
 	 * configuration management <i>by default</i>. That is, the resource
 	 * should only be stored in a team repository if the user explicitly indicates
@@ -2510,24 +2510,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * mark them as derived are ignored.
 	 * </p>
 	 * <p>
-	 * These changes will be reported in a subsequent resource change event, 
+	 * These changes will be reported in a subsequent resource change event,
 	 * including an indication that this file's derived flag has changed.
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
-	 * 
+	 *
 	 * @param isDerived <code>true</code> if this resource is to be marked
 	 * 		as derived, and <code>false</code> otherwise
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * 		reporting is not desired
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * 		Cancellation can occur even if no progress monitor is provided.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #isDerived()
@@ -2539,7 +2539,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Sets whether this resource and its members are hidden in the resource tree.
 	 * <p>
-	 * Hidden resources are invisible to most clients. Newly-created resources 
+	 * Hidden resources are invisible to most clients. Newly-created resources
 	 * are not hidden resources by default.
 	 * </p>
 	 * <p>
@@ -2555,13 +2555,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Whether a resource is hidden in the resource tree is unrelated to whether the
 	 * underlying file is hidden in the file system.
 	 * </p>
-	 * 
+	 *
 	 * @param isHidden <code>true</code> if this resource is to be marked
 	 *   as hidden, and <code>false</code> otherwise
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #isHidden()
@@ -2570,10 +2570,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void setHidden(boolean isHidden) throws CoreException;
 
 	/**
-	 * Set whether or not this resource and its members (to the 
+	 * Set whether or not this resource and its members (to the
 	 * specified depth) are expected to have their contents (and properties)
-	 * available locally.  The workspace root and projects are always local and 
-	 * attempting to set either to non-local (i.e., passing <code>false</code>) 
+	 * available locally.  The workspace root and projects are always local and
+	 * attempting to set either to non-local (i.e., passing <code>false</code>)
 	 * has no effect on the resource.
 	 * <p>
 	 * When a resource is not local, its content and properties are
@@ -2583,34 +2583,34 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * This method is long-running; progress and cancellation are provided
 	 * by the given progress monitor.
 	 * </p>
-	 * 
+	 *
 	 * @param flag whether this resource should be considered local
-	 * @param depth valid values are <code>DEPTH_ZERO</code>, 
+	 * @param depth valid values are <code>DEPTH_ZERO</code>,
 	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See {@link IResourceChangeEvent} for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see #isLocal(int)
-	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
+	 * @deprecated This API is no longer in use.  Note that this API is unrelated
 	 * to whether the resource is in the local file system versus some other file system.
 	 */
 	@Deprecated
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Sets the local time stamp on disk for this resource.  The time must be represented 
+	 * Sets the local time stamp on disk for this resource.  The time must be represented
 	 * as the number of milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
 	 * Returns the actual time stamp that was recorded.
 	 * Due to varying file system timing granularities, the provided value may be rounded
 	 * or otherwise truncated, so the actual recorded time stamp that is returned may
 	 * not be the same as the supplied value.
-	 * 
+	 *
 	 * @param value a time stamp in milliseconds.
 	 * @return a local file system time stamp.
 	 * @exception CoreException if this method fails. Reasons include:
@@ -2618,7 +2618,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> This resource is not accessible.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @since 3.0
@@ -2643,14 +2643,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 *
 	 * @param key the qualified name of the property
-	 * @param value the string value of the property, 
+	 * @param value the string value of the property,
 	 *     or <code>null</code> if the property is to be removed
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> This resource is a project that is not open.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #getPersistentProperty(QualifiedName)
@@ -2661,7 +2661,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Sets or unsets this resource as read-only in the file system.
 	 *
-	 * @param readOnly <code>true</code> to set it to read-only, 
+	 * @param readOnly <code>true</code> to set it to read-only,
 	 *		<code>false</code> to unset
 	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
@@ -2671,12 +2671,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Sets this resource with the given extended attributes. This sets the
 	 * attributes in the file system. Only attributes that are supported by
-	 * the underlying file system will be set. 
+	 * the underlying file system will be set.
 	 * <p>
 	 * Sample usage: <br>
-	 * <br> 
+	 * <br>
 	 * <code>
-	 *  IResource resource; <br> 
+	 *  IResource resource; <br>
 	 *  ... <br>
 	 *  if (attributes != null) {
 	 *     attributes.setExecutable(true); <br>
@@ -2685,11 +2685,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </code>
 	 * </p>
 	 * <p>
-	 * Note that a resource cannot be converted into a symbolic link by 
+	 * Note that a resource cannot be converted into a symbolic link by
 	 * setting resource attributes with {@link ResourceAttributes#isSymbolicLink()}
 	 * set to true.
 	 * </p>
-	 * 
+	 *
 	 * @param attributes the attributes to set
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -2698,14 +2698,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> This resource is a project that is not open.</li>
 	 * </ul>
 	 * @see #getResourceAttributes()
-	 * @since 3.1 
+	 * @since 3.1
 	 */
 	void setResourceAttributes(ResourceAttributes attributes) throws CoreException;
 
 	/**
 	 * Sets the value of the session property of this resource identified
 	 * by the given key. If the supplied value is <code>null</code>,
-	 * the session property is removed from this resource. 
+	 * the session property is removed from this resource.
 	 * <p>
 	 * Sessions properties are intended to be used as a caching mechanism
 	 * by ISV plug-ins. They allow key-object associations to be stored with
@@ -2720,14 +2720,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 *
 	 * @param key the qualified name of the property
-	 * @param value the value of the session property, 
+	 * @param value the value of the session property,
 	 *     or <code>null</code> if the property is to be removed
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> This resource is a project that is not open.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #getSessionProperty(QualifiedName)
@@ -2739,7 +2739,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * A <b>team private member</b> resource is a special file or folder created by a team
 	 * provider to hold team-provider-specific information. Resources marked as team private
-	 * members are invisible to most clients. 
+	 * members are invisible to most clients.
 	 * </p>
 	 * <p>
 	 * Newly-created resources are not team private members by default; rather, the
@@ -2757,13 +2757,13 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * This operation does <b>not</b> result in a resource change event, and does not
 	 * trigger autobuilds.
 	 * </p>
-	 * 
+	 *
 	 * @param isTeamPrivate <code>true</code> if this resource is to be marked
 	 *   as team private, and <code>false</code> otherwise
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #isTeamPrivateMember()
@@ -2773,9 +2773,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 
 	/**
 	 * Marks this resource as having changed even though its content
-	 * may not have changed. This method can be used to trigger 
+	 * may not have changed. This method can be used to trigger
 	 * the rebuilding of resources/structures derived from this resource.
-	 * Touching the workspace root has no effect. 
+	 * Touching the workspace root has no effect.
 	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event. If the resource is a project,
@@ -2783,7 +2783,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 *
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -2792,10 +2792,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @see IResourceDelta#CONTENT

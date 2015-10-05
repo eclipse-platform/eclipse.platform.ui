@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
@@ -120,7 +120,7 @@ public class FileUtil {
 						realName = names[0];
 					} else {
 						// More than one file matches the file name. Maybe the file system was
-						// misreported to be case insensitive. Preserve the original name. 
+						// misreported to be case insensitive. Preserve the original name.
 						realName = segment;
 					}
 					realPath = realPath.append(realName);
@@ -328,7 +328,7 @@ public class FileUtil {
 	}
 
 	/**
-	 * Returns true if the given file system locations overlap, and false otherwise. 
+	 * Returns true if the given file system locations overlap, and false otherwise.
 	 * Overlap means the locations are the same, or one is a proper prefix of the other.
 	 */
 	public static boolean isOverlapping(URI location1, URI location2) {

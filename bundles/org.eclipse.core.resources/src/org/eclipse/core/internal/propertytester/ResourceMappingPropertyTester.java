@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * A property tester for various properties of resource mappings
- * 
+ *
  * @since 3.2
  */
 public class ResourceMappingPropertyTester extends ResourcePropertyTester {
@@ -28,7 +28,7 @@ public class ResourceMappingPropertyTester extends ResourcePropertyTester {
 		if (!method.equals(PROJECT_PERSISTENT_PROPERTY))
 			return false;
 		//Note: we currently say the test is satisfied if any project associated
-		//with the mapping satisfies the test.  
+		//with the mapping satisfies the test.
 		IProject[] projects = ((ResourceMapping) receiver).getProjects();
 		if (projects.length == 0)
 			return false;

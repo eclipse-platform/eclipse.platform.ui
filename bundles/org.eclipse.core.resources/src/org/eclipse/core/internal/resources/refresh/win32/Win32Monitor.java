@@ -468,7 +468,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 
 	/**
 	 * Removes the handle from the <code>fHandleValueToHandle</code> map.
-	 * 
+	 *
 	 * @param handle
 	 *                  a handle, not <code>null</code>
 	 */
@@ -483,7 +483,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 * map. If collections from the <code>fHandleValueToHandle</code> map are
 	 * used, copy them before passing them in as this method modifies the
 	 * <code>fHandleValueToHandle</code> map.
-	 * 
+	 *
 	 * @param handles
 	 *                  a collection of handles, not <code>null</code>
 	 */
@@ -572,7 +572,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	/**
 	 * Performs the native call to wait for notification on one of the given
 	 * handles.
-	 * 
+	 *
 	 * @param handleValues
 	 *                  an array of handles, it must contain no duplicates.
 	 */

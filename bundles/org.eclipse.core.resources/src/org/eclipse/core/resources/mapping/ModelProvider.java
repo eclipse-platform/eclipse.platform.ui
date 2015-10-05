@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
  * Represents the provider of a logical model. The main purpose of this
  * API is to support batch operations on sets of <code>ResourceMapping</code>
  * objects that are part of the same model.
- * 
+ *
  * <p>
  * This class may be subclassed by clients.
  * </p>
@@ -57,7 +57,7 @@ public abstract class ModelProvider extends PlatformObject {
 
 	/**
 	 * Return the descriptors for all model providers that are registered.
-	 * 
+	 *
 	 * @return the descriptors for all model providers that are registered.
 	 */
 	public static IModelProviderDescriptor[] getModelProviderDescriptors() {
@@ -92,7 +92,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * <code>"myModelProvider"</code>, the unique model provider identifier will be
 	 * <code>"com.xyz.myModelProvider"</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the unique model provider identifier
 	 */
 	public final String getId() {
@@ -102,17 +102,17 @@ public abstract class ModelProvider extends PlatformObject {
 	/**
 	 * Return the resource mappings that cover the given resource.
 	 * By default, an empty array is returned. Subclass may override
-	 * this method but should consider overriding either 
+	 * this method but should consider overriding either
 	 * {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
 	 * or {@link #getMappings(ResourceTraversal[], ResourceMappingContext, IProgressMonitor)}
 	 * if more context is needed to determine the proper mappings.
-	 * 
+	 *
 	 * @param resource the resource
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @return the resource mappings that cover the given resource.
-	 * @exception CoreException 
+	 * @exception CoreException
 	 */
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		return new ResourceMapping[0];
@@ -126,13 +126,13 @@ public abstract class ModelProvider extends PlatformObject {
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>
-	 * 
+	 *
 	 * @param resources the resources
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @return the set of mappings that cover the given resources
-	 * @exception CoreException 
+	 * @exception CoreException
 	 */
 	public ResourceMapping[] getMappings(IResource[] resources, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set<ResourceMapping> mappings = new HashSet<>();
@@ -154,7 +154,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>
-	 * 
+	 *
 	 * @param traversals the traversals
 	 * @param context a resource mapping context
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -181,7 +181,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * mappings. Subclasses can override to provide a more optimal
 	 * transformation.
 	 * </p>
-	 * 
+	 *
 	 * @param mappings the mappings being mapped to resources
 	 * @param context the context used to determine the set of traversals that
 	 *            cover the mappings
@@ -215,7 +215,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * cannot be overridden by subclasses. However, it invokes the
 	 * <code>initialize</code> method once the descriptor is set so subclasses
 	 * can override that method if they need to do additional initialization.
-	 * 
+	 *
 	 * @param desc the description of the provider as it appears in the plugin manifest
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -232,25 +232,25 @@ public abstract class ModelProvider extends PlatformObject {
 	 * of this provider is set. Subclasses may override.
 	 */
 	protected void initialize() {
-		// Do nothing	
+		// Do nothing
 	}
 
 	/**
-	 * Validate the proposed changes contained in the given delta. 
+	 * Validate the proposed changes contained in the given delta.
 	 * <p>
 	 * This method must return either a {@link ModelStatus}, or a {@link MultiStatus}
-	 * whose children are {@link ModelStatus}. The severity of the returned status 
-	 * indicates the severity of the possible side-effects of the operation.  Any 
-	 * severity other than <code>OK</code> will be shown to the user. The 
-	 * message should be a human readable message that will allow the user to 
-	 * make a decision on whether to continue with the operation. The model 
+	 * whose children are {@link ModelStatus}. The severity of the returned status
+	 * indicates the severity of the possible side-effects of the operation.  Any
+	 * severity other than <code>OK</code> will be shown to the user. The
+	 * message should be a human readable message that will allow the user to
+	 * make a decision on whether to continue with the operation. The model
 	 * provider id should indicate which model is flagging the possible side effects.
 	 * <p>
 	 * This default implementation accepts all changes and returns a status with
 	 * severity <code>OK</code>. Subclasses should override to perform
 	 * validation specific to their model.
 	 * </p>
-	 * 
+	 *
 	 * @param delta a delta tree containing the proposed changes
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired

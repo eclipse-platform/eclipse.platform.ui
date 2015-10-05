@@ -21,7 +21,7 @@ public class Policy {
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 
 	/**
-	 * Lookup the message with the given ID in this catalog 
+	 * Lookup the message with the given ID in this catalog
 	 */
 	public static String bind(String id) {
 		return bind(id, (String[]) null);

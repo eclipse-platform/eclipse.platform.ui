@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * The flags of the traversal indicate which special resources should be
  * included or excluded from the traversal. The flags used are the same as
  * those passed to the {@link IResource#accept(IResourceVisitor, int, int)} method.
- * 
+ *
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p>
@@ -57,7 +57,7 @@ public class ResourceTraversal {
 
 	/**
 	 * Visits all existing resources defined by this traversal.
-	 * 
+	 *
 	 * @param visitor a resource visitor
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -80,9 +80,9 @@ public class ResourceTraversal {
 	 * Return whether the given resource is contained in or
 	 * covered by this traversal, regardless of whether the resource
 	 * currently exists.
-	 * 
+	 *
 	 * @param resource the resource to be tested
-	 * @return <code>true</code> if the resource is in this traversal, and 
+	 * @return <code>true</code> if the resource is in this traversal, and
 	 * <code>false</code> otherwise.
 	 */
 	public boolean contains(IResource resource) {
@@ -120,8 +120,8 @@ public class ResourceTraversal {
 
 	/**
 	 * Returns all markers of the specified type on existing resources in this traversal.
-	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
-	 * whose type exactly matches the given type are returned.  Returns an empty 
+	 * If <code>includeSubtypes</code> is <code>false</code>, only markers
+	 * whose type exactly matches the given type are returned.  Returns an empty
 	 * array if there are no matching markers.
 	 *
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
@@ -140,7 +140,7 @@ public class ResourceTraversal {
 
 	/**
 	 * Returns the depth to which the resources should be traversed.
-	 * 
+	 *
 	 * @return the depth to which the physical resources are to be traversed
 	 * (one of IResource.DEPTH_ZERO, IResource.DEPTH_ONE or
 	 * IResource.DEPTH_INFINITE)
@@ -150,14 +150,14 @@ public class ResourceTraversal {
 	}
 
 	/**
-	 * Return the flags for this traversal. 
+	 * Return the flags for this traversal.
 	 * The flags of the traversal indicate which special resources should be
 	 * included or excluded from the traversal. The flags used are the same as
 	 * those passed to the <code>IResource#accept(IResourceVisitor, int, int)</code> method.
 	 * Clients who traverse the resources manually (i.e. without calling <code>accept</code>)
 	 * should respect the flags when determining which resources are included
 	 * in the traversal.
-	 * 
+	 *
 	 * @return the flags for this traversal
 	 */
 	public int getFlags() {
@@ -174,7 +174,7 @@ public class ResourceTraversal {
 	 * visited if the folder is IResource.DEPTH_ONE or IResource.DEPTH_INFINITE.
 	 * Child folders should only be visited if the depth is
 	 * IResource.DEPTH_INFINITE.
-	 * 
+	 *
 	 * @return The resources in this traversal
 	 */
 	public IResource[] getResources() {

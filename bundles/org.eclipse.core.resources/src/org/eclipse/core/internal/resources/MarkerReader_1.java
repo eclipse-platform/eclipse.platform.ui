@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
 /**
- * This class is used to read markers from disk. This is for version 1. 
+ * This class is used to read markers from disk. This is for version 1.
  */
 public class MarkerReader_1 extends MarkerReader {
 
@@ -40,7 +40,7 @@ public class MarkerReader_1 extends MarkerReader {
 
 	/**
 	 * SAVE_FILE -> VERSION_ID RESOURCE+
-	 * VERSION_ID -> 
+	 * VERSION_ID ->
 	 * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER*
 	 * RESOURCE_PATH -> String
 	 * MARKERS_SIZE -> int

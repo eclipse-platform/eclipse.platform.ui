@@ -26,7 +26,7 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
  */
 /* package */class ElementTreeReaderImpl_1 extends ElementTreeReader {
 
-	/** 
+	/**
 	 * Constructs a new element tree reader that works for
 	 * the given element info factory.
 	 */

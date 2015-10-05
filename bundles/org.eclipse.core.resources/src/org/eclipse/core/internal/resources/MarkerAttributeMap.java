@@ -17,10 +17,10 @@ import org.eclipse.core.internal.utils.IStringPoolParticipant;
 import org.eclipse.core.internal.utils.StringPool;
 
 /**
- * A specialized map implementation that is optimized for a 
+ * A specialized map implementation that is optimized for a
  * small set of interned strings as keys.  The provided keys
  * MUST be instances of java.lang.String.
- * 
+ *
  * Implemented as a single array that alternates keys and values.
  */
 @SuppressWarnings("unchecked")

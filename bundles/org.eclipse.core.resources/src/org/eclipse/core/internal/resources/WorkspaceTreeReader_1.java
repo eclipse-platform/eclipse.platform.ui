@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
@@ -256,7 +256,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 	protected void readWorkspaceFields(DataInputStream input, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			// read the node id 
+			// read the node id
 			workspace.nextNodeId = input.readLong();
 			// read the modification stamp (no longer used)
 			input.readLong();

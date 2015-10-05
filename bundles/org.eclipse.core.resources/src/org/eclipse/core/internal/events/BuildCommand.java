@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - Custom trigger builder #equals
@@ -61,13 +61,13 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 */
 	private IncrementalProjectBuilder builder;
 	/**
-	 * The builders for this command if the builder supports multiple configurations 
+	 * The builders for this command if the builder supports multiple configurations
 	 */
 	private HashMap<IBuildConfiguration, IncrementalProjectBuilder> builders;
 
 	/**
-	 * The triggers that this builder will respond to.  Since build triggers are not 
-	 * bit-maskable, we use internal bit masks to represent each 
+	 * The triggers that this builder will respond to.  Since build triggers are not
+	 * bit-maskable, we use internal bit masks to represent each
 	 * trigger (MASK_* constants). By default, a command responds to all
 	 * build triggers.
 	 */

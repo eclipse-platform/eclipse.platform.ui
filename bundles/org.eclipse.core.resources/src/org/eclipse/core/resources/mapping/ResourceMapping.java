@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -18,7 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * A resource mapping supports the transformation of an application model 
+ * A resource mapping supports the transformation of an application model
  * object into its underlying file system resources. It provides the
  * bridge between a logical element and the physical resource(s) into which it
  * is stored but does not provide more comprehensive model access or
@@ -43,9 +43,9 @@ public abstract class ResourceMapping extends PlatformObject {
 
 	/**
 	 * Accepts the given visitor for all existing resources in this mapping.
-	 * The visitor's {@link IResourceVisitor#visit} method is called for each 
-	 * accessible resource in this mapping. 
-	 * 
+	 * The visitor's {@link IResourceVisitor#visit} method is called for each
+	 * accessible resource in this mapping.
+	 *
 	 * @param context the traversal context
 	 * @param visitor the visitor
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -66,10 +66,10 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * Return whether this resource mapping contains all the resources
 	 * of the given mapping.
 	 * <p>
-	 * This method always returns <code>false</code> when the given resource 
+	 * This method always returns <code>false</code> when the given resource
 	 * mapping's model provider id does not match that the of the receiver.
 	 * </p>
-	 * 
+	 *
 	 * @param mapping the given resource mapping
 	 * @return <code>true</code> if this mapping contains all the resources
 	 * of the given mapping, and <code>false</code> otherwise.
@@ -98,8 +98,8 @@ public abstract class ResourceMapping extends PlatformObject {
 
 	/**
 	 * Returns all markers of the specified type on the resources in this mapping.
-	 * If <code>includeSubtypes</code> is <code>false</code>, only markers 
-	 * whose type exactly matches the given type are returned.  Returns an empty 
+	 * If <code>includeSubtypes</code> is <code>false</code>, only markers
+	 * whose type exactly matches the given type are returned.  Returns an empty
 	 * array if there are no matching markers.
 	 *
 	 * @param type the type of marker to consider, or <code>null</code> to indicate all types
@@ -120,7 +120,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	/**
 	 * Returns the application model element associated with this
 	 * resource mapping.
-	 * 
+	 *
 	 * @return the application model element associated with this
 	 * resource mapping.
 	 */
@@ -143,15 +143,15 @@ public abstract class ResourceMapping extends PlatformObject {
 	/**
 	 * Returns the id of the model provider that generated this resource
 	 * mapping.
-	 * 
+	 *
 	 * @return the model provider id
 	 */
 	public abstract String getModelProviderId();
 
 	/**
-	 * Returns the projects that contain the resources that constitute this 
+	 * Returns the projects that contain the resources that constitute this
 	 * application model.
-	 * 
+	 *
 	 * @return the projects
 	 */
 	public abstract IProject[] getProjects();
@@ -164,7 +164,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * flexibility in describing the traversals that constitute a model element.
 	 * <p>
 	 * Subclasses should, when possible, include
-	 * all resources that are or may be members of the model element. 
+	 * all resources that are or may be members of the model element.
 	 * For instance, a model element should return the same list of
 	 * resources regardless of the existence of the files on the file system.
 	 * For example, if a logical resource called "form" maps to "/p1/form.xml"
@@ -179,7 +179,7 @@ public abstract class ResourceMapping extends PlatformObject {
 	 * corresponding remote files. This gives the model element the opportunity
 	 * to deduce what additional resources should be included in the traversal.
 	 * </p>
-	 * 
+	 *
 	 * @param context gives access to the state of
 	 *            remote resources that correspond to local resources for the
 	 *            purpose of determining traversals that adequately cover the

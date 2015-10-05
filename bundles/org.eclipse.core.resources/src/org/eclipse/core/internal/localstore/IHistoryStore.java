@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.*;
  * History store policies are stored in the org.eclipse.core.resources'
  * plug-in preferences.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IHistoryStore extends IManager {
@@ -44,9 +44,9 @@ public interface IHistoryStore extends IManager {
 	 * @param localFile local file system file handle
 	 * @param fileInfo The IFileInfo for the entry
 	 * @return the file state or <code>null</code>
-	 * 
+	 *
 	 * TODO: should this method take a progress monitor?
-	 * 
+	 *
 	 * TODO: look at #getFileFor(). Is there a case where we wouldn't want to
 	 * copy over the file attributes to the local history? If we did that here then
 	 * we wouldn't have to have that other API.
@@ -59,7 +59,7 @@ public interface IHistoryStore extends IManager {
 	 * empty set if there are none.
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * @param path full workspace path to resource
 	 * @param depth depth limit: one of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>
@@ -75,7 +75,7 @@ public interface IHistoryStore extends IManager {
 	 * Clean this store applying the current policies.
 	 * <p>
 	 * Note: The history store policies are stored as part of
-	 * the org.eclipse.core.resource plug-in's preferences and 
+	 * the org.eclipse.core.resource plug-in's preferences and
 	 * include such settings as: maximum file size, maximum number
 	 * of states per file, file expiration date, etc.
 	 * </p>
@@ -86,7 +86,7 @@ public interface IHistoryStore extends IManager {
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
@@ -97,17 +97,17 @@ public interface IHistoryStore extends IManager {
 	 * Closes the history store for the given resource.
 	 */
 	public void closeHistoryStore(IResource resource);
-	
+
 	/**
 	 * Copies the history store information from the source path given destination path.
 	 * Note that destination may already have some history store information. Also note
 	 * that this is a DEPTH_INFINITY operation. That is, history will be copied for partial
 	 * matches of the source path.
-	 * 
+	 *
 	 * @param source the resource containing the original copy of the history store information
 	 * @param destination the target resource where to copy the history
 	 * @param moving whether the history is being copied due to a resource move
-	 * 
+	 *
 	 * TODO: should this method take a progress monitor?
 	 */
 	public void copyHistory(IResource source, IResource destination, boolean moving);
@@ -122,7 +122,7 @@ public interface IHistoryStore extends IManager {
 	 * monitor.
 	 * </p>
 	 * @param target the file state to be verified
-	 * @return <code>true</code>  if file state exists, 
+	 * @return <code>true</code>  if file state exists,
 	 * 	and <code>false</code> otherwise
 	 */
 	public boolean exists(IFileState target);
@@ -145,7 +145,7 @@ public interface IHistoryStore extends IManager {
 	 * an empty array if none.
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * @param path the resource path
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -156,11 +156,11 @@ public interface IHistoryStore extends IManager {
 
 	/**
 	 * Remove all of the file states for the given resource path and
-	 * all its children. If the workspace root path is the given argument, 
+	 * all its children. If the workspace root path is the given argument,
 	 * then all history for this store is removed.
 	 * <p>
 	 * This method is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
 	 * @param path the resource path whose history is to be removed
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -170,7 +170,7 @@ public interface IHistoryStore extends IManager {
 
 	/**
 	 * Go through the history store and remove all of the unreferenced states.
-	 * 
+	 *
 	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
 	 * store is garbage collected during the #clean method.
 	 */

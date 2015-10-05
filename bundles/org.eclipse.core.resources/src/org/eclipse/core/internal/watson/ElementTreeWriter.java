@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.*;
  *
  * <p>This writer generates the most up-to-date format
  * of a saved element tree (cf. readers, which must usually also
- * deal with backward compatibility issues).  The flattened 
+ * deal with backward compatibility issues).  The flattened
  * representation always includes a format version number.
  *
  * <p>The writer has an <code>IElementInfoFactory</code>,
@@ -50,7 +50,7 @@ public class ElementTreeWriter {
 
 	/**
 	 * Constructs a new element tree writer that works for
-	 * the given element info flattener. 
+	 * the given element info flattener.
 	 */
 	public ElementTreeWriter(final IElementInfoFlattener flattener) {
 
@@ -137,7 +137,7 @@ public class ElementTreeWriter {
 	/**
 	 * Writes the delta describing the changes that have to be made
 	 * to newerTree to obtain olderTree.
-	 * 
+	 *
 	 * @param path The path of the subtree to write.  All nodes on the path above
 	 *  the subtree are represented as empty nodes.
 	 * @param depth The depth of the subtree to write.  A depth of zero writes a
@@ -173,7 +173,7 @@ public class ElementTreeWriter {
 	 * @param depth The depth of the subtree to write.  A depth of zero writes a
 	 *  single node, and a depth of D_INFINITE writes the whole subtree.
 	 * @param output The stream to write the subtree to.
-	 
+
 	 */
 	public void writeDeltaChain(ElementTree[] trees, IPath path, int depth, DataOutput output, IElementComparator comparator) throws IOException {
 		/* Write the format version number */
@@ -188,7 +188,7 @@ public class ElementTreeWriter {
 		}
 
 		/**
-		 * Sort the trees in ancestral order, 
+		 * Sort the trees in ancestral order,
 		 * which writes the tree order to the output
 		 */
 		ElementTree[] sortedTrees = sortTrees(trees, output);
@@ -202,7 +202,7 @@ public class ElementTreeWriter {
 		}
 	}
 
-	/** 
+	/**
 	 * Writes an integer in a compact format biased towards
 	 * small non-negative numbers. Numbers between
 	 * 0 and 254 inclusive occupy 1 byte; other numbers occupy 5 bytes.
@@ -220,7 +220,7 @@ public class ElementTreeWriter {
 	 * Writes all or some of an element tree to an output stream.
 	 * This always writes the most current version of the element tree
 	 * file format, whereas the reader supports multiple versions.
-	 * 
+	 *
 	 * @param tree The tree to write
 	 * @param path The path of the subtree to write.  All nodes on the path above
 	 *  the subtree are represented as empty nodes.

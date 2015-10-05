@@ -18,13 +18,13 @@ import org.eclipse.core.runtime.content.*;
 
 /**
  * A property tester for various properties of files.
- * 
+ *
  * @since 3.2
  */
 public class FilePropertyTester extends ResourcePropertyTester {
 
 	/**
-	 * A property indicating a content type on the selected file (value <code>"contentTypeId"</code>). 
+	 * A property indicating a content type on the selected file (value <code>"contentTypeId"</code>).
 	 * <code>"kindOf"</code> indicates that the file content type should be the kind of the one given as the expected value.
 	 * If <code>"kindOf"</code> is not specified, the file content type identifier should equals the expected value.
 	 * @see IContentType#isKindOf(IContentType)
@@ -63,7 +63,7 @@ public class FilePropertyTester extends ResourcePropertyTester {
 
 	/**
 	 * <p>
-	 * Tests whether the content type for <code>file</code> matches 
+	 * Tests whether the content type for <code>file</code> matches
 	 * or is a kind of <code>contentTypeId</code>.
 	 * </p>
 	 * <p>
@@ -71,21 +71,21 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 * cause the file to be read. It is also possible (through poor plug-in
 	 * design) for this method to load plug-ins.
 	 * </p>
-	 * 
+	 *
 	 * @param file
 	 *            The file to test. Must not be <code>null</code>.
 	 * @param contentTypeId
 	 *            The content type to test. Must not be <code>null</code>.
 	 * @param isKindOfUsed
-	 *            Indicates whether the file content type should match <code>contentTypeId</code> 
+	 *            Indicates whether the file content type should match <code>contentTypeId</code>
 	 *            or should be a kind of <code>contentTypeId</code>.
 	 * @param useFilenameOnly
 	 *            Indicates to determine the file content type based on the file name only.
 	 * @return <code>true</code>, if the best matching content type for <code>file</code>
 	 * 		<ul>
-	 *			<li>has an identifier that matches <code>contentTypeId</code> 
+	 *			<li>has an identifier that matches <code>contentTypeId</code>
 	 *			and <code>isKindOfUsed</code> is <code>false</code>, or</li>
-	 * 			<li>is a kind of <code>contentTypeId</code> 
+	 * 			<li>is a kind of <code>contentTypeId</code>
 	 * 			and <code>isKindOfUsed</code> is <code>true</code>.</li>
 	 * 		</ul>
 	 * Otherwise it returns <code>false</code>.

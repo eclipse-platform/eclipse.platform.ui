@@ -12,13 +12,13 @@ package org.eclipse.core.resources;
 
 /**
  * Stores information about the context in which a builder was called.
- * 
+ *
  * <p>
  * This can be interrogated by a builder to determine what's been built
  * before, and what's being built after it, for this particular build
  * invocation.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  *
@@ -52,7 +52,7 @@ public interface IBuildContext {
 	 * by the API user.  These configurations may be anywhere in the build
 	 * order (depending on how the build graph has been flattened).
  	 * <p>
- 	 * This array won't include any build configurations being built by virtue 
+ 	 * This array won't include any build configurations being built by virtue
  	 * of being referenced from a requested build configuration.
 	 * </p>
 	 * May return the empty array if this is a top-level workspace build.

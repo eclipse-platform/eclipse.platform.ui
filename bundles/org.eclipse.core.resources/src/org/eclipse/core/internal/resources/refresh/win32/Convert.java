@@ -27,7 +27,7 @@ public class Convert {
 	/**
 	 * Converts the given String to bytes using the platforms default
 	 * encoding.
-	 * 
+	 *
 	 * @param target	The String to be converted, can not be <code>null</code>.
 	 * @return byte[]	The resulting bytes, or <code>null</code>.
 	 */

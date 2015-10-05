@@ -127,7 +127,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/**
 	 * Merge two sets of marker changes.  Both sets must be on the same resource. Use the original set
 	 * of changes to store the result so we don't have to build a completely different set to return.
-	 * 
+	 *
 	 * add + add = N/A
 	 * add + remove = nothing (no delta)
 	 * add + change = add

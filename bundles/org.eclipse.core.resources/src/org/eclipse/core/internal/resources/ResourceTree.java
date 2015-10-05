@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -25,7 +25,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 2.0
- * 
+ *
  * Implementation note: Since the move/delete hook involves running third
  * party code, the workspace lock is not held.  This means the workspace
  * lock must be re-acquired whenever we need to manipulate the workspace
@@ -243,7 +243,7 @@ class ResourceTree implements IResourceTree {
 
 	/**
 	 * Returns the local timestamp for a file.
-	 * 
+	 *
 	 * @param file
 	 * @return The local file system timestamp
 	 */
@@ -254,7 +254,7 @@ class ResourceTree implements IResourceTree {
 
 	/**
 	 * Helper method for #standardDeleteFile. Returns a boolean indicating whether or
-	 * not the delete was successful. 
+	 * not the delete was successful.
 	 */
 	private boolean internalDeleteFile(IFile file, int flags, IProgressMonitor monitor) {
 		try {
@@ -290,7 +290,7 @@ class ResourceTree implements IResourceTree {
 				addToLocalHistory(file);
 			monitor.worked(Policy.totalWork / 4);
 
-			// We want to fail if force is false and the file is not synchronized with the 
+			// We want to fail if force is false and the file is not synchronized with the
 			// local file system.
 			if (!force) {
 				boolean inSync = isSynchronized(file, IResource.DEPTH_ZERO);
@@ -326,7 +326,7 @@ class ResourceTree implements IResourceTree {
 	}
 
 	/**
-	 * Helper method for #standardDeleteFolder. Returns a boolean indicating 
+	 * Helper method for #standardDeleteFolder. Returns a boolean indicating
 	 * whether or not the deletion of this folder was successful. Does a best effort
 	 * delete of this resource and its children.
 	 */
@@ -642,7 +642,7 @@ class ResourceTree implements IResourceTree {
 			Workspace workspace = (Workspace) source.getWorkspace();
 			int depth = IResource.DEPTH_INFINITE;
 
-			// If the name of the source and destination projects are not the same then 
+			// If the name of the source and destination projects are not the same then
 			// rename the meta area and make changes in the tree.
 			if (isNameChange(source, destDescription)) {
 				if (destination.exists()) {
@@ -839,7 +839,7 @@ class ResourceTree implements IResourceTree {
 			// not to delete the project content or if the project is closed and
 			// ALWAYS_DELETE_PROJECT_CONTENT was not specified.
 			if (alwaysDeleteContent || (project.isOpen() && !neverDeleteContent)) {
-				// Force is implied if alwaysDeleteContent is true or if the project is in sync 
+				// Force is implied if alwaysDeleteContent is true or if the project is in sync
 				// with the local file system.
 				if (alwaysDeleteContent || isSynchronized(project, IResource.DEPTH_INFINITE)) {
 					flags |= IResource.FORCE;
@@ -921,7 +921,7 @@ class ResourceTree implements IResourceTree {
 			}
 			monitor.worked(Policy.totalWork / 4);
 
-			// Add the file contents to the local history if requested by the user.	
+			// Add the file contents to the local history if requested by the user.
 			if (keepHistory)
 				addToLocalHistory(source);
 			monitor.worked(Policy.totalWork / 4);
@@ -943,7 +943,7 @@ class ResourceTree implements IResourceTree {
 				localManager.move(source, destStore, flags, monitor);
 			} catch (CoreException e) {
 				failed(e.getStatus());
-				// did the fail occur after copying to the destination?									
+				// did the fail occur after copying to the destination?
 				failedDeletingSource = destStore != null && destStore.fetchInfo().exists();
 				// if so, we should proceed
 				if (!failedDeletingSource)
@@ -1056,7 +1056,7 @@ class ResourceTree implements IResourceTree {
 				return;
 			}
 
-			// Check to see if we are synchronized with the local file system. 
+			// Check to see if we are synchronized with the local file system.
 			boolean force = (flags & IResource.FORCE) != 0;
 			if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
 				// FIXME: make this a best effort move?

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
@@ -99,7 +99,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected long persistMarkers = 0l;
 	protected long persistSyncInfo = 0l;
 
-	/** 
+	/**
 	 * In-memory representation of plugins saved state. Maps String (plugin id)-> SavedState.
 	 * This map is accessed from API that is not synchronized, so it requires
 	 * independent synchronization. This is accomplished using a synchronized
@@ -316,7 +316,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		ElementTree[] treeArray = new ElementTree[trees.size()];
 		trees.toArray(treeArray);
 		ElementTree[] sorted = sortTrees(treeArray);
-		// if there was a problem sorting the tree, bail on trying to collapse.  
+		// if there was a problem sorting the tree, bail on trying to collapse.
 		// We will be able to GC the layers at a later time.
 		if (sorted == null)
 			return;
@@ -352,7 +352,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Returns a table mapping having the plug-in id as the key and the old tree
 	 * as the value.
-	 * This table is based on the union of the current savedStates</code> 
+	 * This table is based on the union of the current savedStates</code>
 	 * and the given table of contexts.  The specified tree is used as the tree for
 	 * any newly created saved states.  This method is used to compute the set of
 	 * saved states to be written out.
@@ -543,7 +543,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	public Object readElement(IPath path, DataInput input) throws IOException {
 		Assert.isNotNull(path);
 		Assert.isNotNull(input);
-		// read the flags and pull out the type.  
+		// read the flags and pull out the type.
 		int flags = input.readInt();
 		int type = (flags & ICoreConstants.M_TYPE) >> ICoreConstants.M_TYPE_START;
 		ResourceInfo info = workspace.newElement(type);
@@ -639,7 +639,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (candidates != null)
 			removeFiles(target, candidates, valuables);
 
-		// projects	
+		// projects
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			location = workspace.getMetaArea().getTreeLocationFor(projects[i], false);
@@ -662,7 +662,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	/**
 	 * Reset the snapshot mechanism for the non-workspace files. This
-	 * includes the markers and sync info. 
+	 * includes the markers and sync info.
 	 */
 	protected void resetSnapshots(IResource resource) throws CoreException {
 		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
@@ -706,7 +706,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", 50); //$NON-NLS-1$
-			// need to open the tree to restore, but since we're not 
+			// need to open the tree to restore, but since we're not
 			// inside an operation, be sure to close it afterwards
 			workspace.newWorkingTree();
 			try {
@@ -751,7 +751,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Restores the contents of this project.  Throw
 	 * an exception if the project could not be restored.
 	 * @return <code><code>true</code> if the project data was restored successfully,
-	 * and <code>false</code> if non-critical problems occurred while restoring. 
+	 * and <code>false</code> if non-critical problems occurred while restoring.
 	 * @exception CoreException if the project could not be restored.
 	 */
 	protected boolean restore(Project project, IProgressMonitor monitor) throws CoreException {
@@ -838,7 +838,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (projects[i].isAccessible())
 				markerManager.restore(projects[i], generateDeltas, monitor);
 		if (Policy.DEBUG_RESTORE_MARKERS) {
-			Policy.debug("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			Policy.debug("Restore Markers for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -891,7 +891,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	/**
-	 * Restores the contents of this project.  Throw an exception if the 
+	 * Restores the contents of this project.  Throw an exception if the
 	 * project description could not be restored.
 	 */
 	protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
@@ -902,7 +902,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (project.isOpen())
 				description = workspace.getFileSystemManager().read(project, true);
 			else
-				//for closed projects, just try to read the legacy .prj file, 
+				//for closed projects, just try to read the legacy .prj file,
 				//because the project location is stored there.
 				description = workspace.getMetaArea().readOldDescription(project);
 		} catch (CoreException e) {
@@ -1036,8 +1036,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	/**
-	 * Reads the contents of the tree rooted by the given resource from the 
-	 * file system. This method is used when restoring a complete workspace 
+	 * Reads the contents of the tree rooted by the given resource from the
+	 * file system. This method is used when restoring a complete workspace
 	 * after workspace save/shutdown.
 	 * @exception CoreException if the workspace could not be restored.
 	 */
@@ -1212,7 +1212,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
 							monitor.ignoreCancelState(keepConsistencyWhenCanceled);
 
-							// write out all metainfo (e.g., workspace/project descriptions) 
+							// write out all metainfo (e.g., workspace/project descriptions)
 							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;
 						case ISaveContext.SNAPSHOT :
@@ -1228,13 +1228,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 							}
 							collapseTrees(contexts);
 							clearSavedDelta();
-							// write out all metainfo (e.g., workspace/project descriptions) 
+							// write out all metainfo (e.g., workspace/project descriptions)
 							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;
 						case ISaveContext.PROJECT_SAVE :
 							writeTree(project, IResource.DEPTH_INFINITE);
 							monitor.worked(1);
-							// save markers and sync info 
+							// save markers and sync info
 							visitAndSave(project);
 							monitor.worked(1);
 							// reset the snapshot file
@@ -1323,7 +1323,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Ensures that the project meta-info is saved.  The project meta-info
 	 * is usually saved as soon as it changes, so this is just a sanity check
 	 * to make sure there is something on disk before we shutdown.
-	 * 
+	 *
 	 * @return Status object containing non-critical warnings, or an OK status.
 	 */
 	protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
@@ -1439,7 +1439,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	@Override
 	public void shutdown(final IProgressMonitor monitor) {
 		// do a last snapshot if it was scheduled
-		// we force it in the same thread because it would not  
+		// we force it in the same thread because it would not
 		// help if the job runs after we close the workspace
 		int state = snapshotJob.getState();
 		if (state == Job.WAITING || state == Job.SLEEPING)
@@ -1493,7 +1493,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			//the tree must be immutable
 			tree.immutable();
-			// don't need to snapshot if there are no changes 
+			// don't need to snapshot if there are no changes
 			if (tree == lastSnap)
 				return;
 			operationCount = 0;
@@ -1593,8 +1593,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Update the expiration time for the given plug-in's tree.  If the tree was never
 	 * loaded, use the current value in the master table. If the tree has been loaded,
 	 * use the provided new timestamp.
-	 * 
-	 * The timestamp is used in the policy for cleaning up tree's of plug-ins that are 
+	 *
+	 * The timestamp is used in the policy for cleaning up tree's of plug-ins that are
 	 * not often activated.
 	 */
 	protected void updateDeltaExpiration(String pluginId) {
@@ -1628,7 +1628,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Visit the given resource (to depth infinite) and write out extra information
 	 * like markers and sync info. To be called during a full save and project save.
-	 * 
+	 *
 	 * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
 	 */
 	public void visitAndSave(final IResource root) throws CoreException {
@@ -1673,7 +1673,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// for each resource otherwise.
 		final long[] saveTimes = new long[2];
 
-		// Create the visitor 
+		// Create the visitor
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			@Override
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -1741,7 +1741,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Visit the given resource (to depth infinite) and write out extra information
 	 * like markers and sync info. To be called during a snapshot
-	 * 
+	 *
 	 * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
 	 */
 	public void visitAndSnap(final IResource root) throws CoreException {
@@ -1895,14 +1895,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	/**
 	 * Discovers the trees which need to be saved for the passed in project's builders.
-	 * In a pre-3.7 workspace, only one tree is saved per builder.  
+	 * In a pre-3.7 workspace, only one tree is saved per builder.
 	 * Since 3.7 one tree may be persisted per build configuration per multi-config builder.
-	 * 
+	 *
 	 * We still provide one tree per builder first so the workspace can be opened in an older Eclipse.
 	 * Newer eclipses will be able to load the additional per-configuration trees.
 	 * @param project project to fetch builder trees for
 	 * @param trees list of trees to be persisted
-	 * @param builderInfos list of builder infos; one per builder 
+	 * @param builderInfos list of builder infos; one per builder
 	 * @param configNames configuration names persisted for builder infos above
 	 * @param additionalTrees remaining trees to be persisted for other configurations
 	 * @param additionalBuilderInfos remaining builder infos for other configurations
@@ -1917,7 +1917,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
 					BuilderPersistentInfo info = it.next();
 					// Nothing to persist if there isn't a previous delta tree.
-					// There used to be code which serialized the current workspace tree 
+					// There used to be code which serialized the current workspace tree
 					// but this will result in the next build of the builder getting an empty delta...
 					if (info.getLastBuiltTree() == null)
 						continue;
@@ -1925,7 +1925,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					// Add to the correct list of builders info and add to the configuration names
 					String configName = info.getConfigName() == null ? activeConfigName : info.getConfigName();
 					if (configName.equals(activeConfigName)) {
-						// Serializes the active configurations's build tree 
+						// Serializes the active configurations's build tree
 						// TODO could probably do better by serializing the 'oldest' tree
 						builderInfos.add(info);
 						configNames.add(configName);
@@ -1943,7 +1943,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Attempts to save plugin info, builder info and build states for all projects
 	 * in the workspace.
-	 * 
+	 *
 	 * The following is written to the output stream:
 	 * <ul>
 	 * <li> Workspace information </li>
@@ -1955,7 +1955,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * <li> The names of the buildConfigs for each of the builders </li>
 	 * </ul>
 	 * This format is designed to work with WorkspaceTreeReader versions 2.
-	 * 
+	 *
 	 * @see WorkspaceTreeReader_2
 	 */
 	protected void writeTree(Map<String, ElementTree> statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
@@ -1997,7 +1997,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
-				// Builder infos of non-active configurations are persisted after the active 
+				// Builder infos of non-active configurations are persisted after the active
 				// configuration's builder infos. So, their trees have to follow the same order.
 				trees.addAll(additionalTrees);
 
@@ -2030,7 +2030,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Attempts to save all the trees for the given project. This includes the current
 	 * workspace tree and a tree for each builder that has previously built state information.
-	 * 
+	 *
 	 * The following is written to the output stream:
 	 * <ul>
 	 * <li> Builder info for all the builders for the project's active build configuration </li>
@@ -2068,7 +2068,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
 
-				// Builder infos of non-active configurations are persisted after the active 
+				// Builder infos of non-active configurations are persisted after the active
 				// configuration's builder infos. So, their trees have to follow the same order.
 				trees.addAll(additionalTrees);
 
@@ -2123,7 +2123,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			// save the next node id 
+			// save the next node id
 			output.writeLong(workspace.nextNodeId);
 			// save the modification stamp (no longer used)
 			output.writeLong(0L);

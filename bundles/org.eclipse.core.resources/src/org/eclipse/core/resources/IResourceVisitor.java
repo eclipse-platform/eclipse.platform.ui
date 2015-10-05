@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -12,9 +12,9 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.runtime.CoreException;
 
-/** 
+/**
  * This interface is implemented by objects that visit resource trees.
- * <p> 
+ * <p>
  * Usage:
  * <pre>
  * class Visitor implements IResourceVisitor {
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * IResource root = ...;
  * root.accept(new Visitor());
  * </pre>
- * </p> 
+ * </p>
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.CoreException;
  * @see IResource#accept(IResourceVisitor)
  */
 public interface IResourceVisitor {
-	/** 
+	/**
 	 * Visits the given resource.
 	 *
 	 * @param resource the resource to visit

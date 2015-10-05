@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
@@ -44,11 +44,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	// Build configuration + References state
 	/** Id of the currently active build configuration */
 	protected String activeConfiguration = IBuildConfiguration.DEFAULT_CONFIG_NAME;
-	/** 
-	 * The 'real' build configuration names set on this project. 
+	/**
+	 * The 'real' build configuration names set on this project.
 	 * This doesn't contain the generated 'default' build configuration with name
 	 * {@link IBuildConfiguration#DEFAULT_CONFIG_NAME}
-	 * when no build configurations have been defined. 
+	 * when no build configurations have been defined.
 	 */
 	protected String[] configNames = EMPTY_STRING_ARRAY;
 	// Static + Dynamic project level references
@@ -209,9 +209,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * The main entrance point to fetch the full set of Project references.
 	 *
-	 * Returns the union of all the description's references. Includes static and dynamic 
+	 * Returns the union of all the description's references. Includes static and dynamic
 	 * project level references as well as build configuration references for the configuration
-	 * with the given id. 
+	 * with the given id.
 	 * Duplicates are omitted.  The calculation is optimized by caching the result.
 	 * Note that these BuildConfiguration references may have <code>null</code> name.  They must
 	 * be resolved using {@link BuildConfiguration#getBuildConfig()} before use.
@@ -401,7 +401,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return makeCopy ? (IProject[]) staticRefs.clone() : staticRefs;
 	}
 
-	/** 
+	/**
 	 * Returns the URI to load a resource snapshot from.
 	 * May return <code>null</code> if no snapshot is set.
 	 * <p>
@@ -826,10 +826,10 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * consulting with the Platform Core team.
 	 * </p>
 	 * @param snapshotLocation the location URI or
-	 *    <code>null</code> to clear the setting 
+	 *    <code>null</code> to clear the setting
 	 * @see IProject#loadSnapshot(int, URI, IProgressMonitor)
 	 * @see #getSnapshotLocationURI()
-	 * @since 3.6 
+	 * @since 3.6
 	 */
 	public void setSnapshotLocationURI(URI snapshotLocation) {
 		this.snapshotLocation = snapshotLocation;
@@ -840,7 +840,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Updates the dynamic build configuration and reference state to that of the passed in 
+	 * Updates the dynamic build configuration and reference state to that of the passed in
 	 * description.
 	 * Copies in:
 	 * <ul>

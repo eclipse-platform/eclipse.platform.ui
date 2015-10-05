@@ -18,7 +18,7 @@ import org.eclipse.core.resources.refresh.IRefreshMonitor;
  * Internal abstract superclass of all refresh providers.  This class must not be
  * subclassed directly by clients.  All refresh providers must subclass the public
  * API class <code>org.eclipse.core.resources.refresh.RefreshProvider</code>.
- * 
+ *
  * @since 3.0
  */
 public class InternalRefreshProvider {

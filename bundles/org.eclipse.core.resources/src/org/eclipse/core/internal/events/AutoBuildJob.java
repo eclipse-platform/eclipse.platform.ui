@@ -23,7 +23,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * The job for performing workspace auto-builds, and pre- and post- autobuild
- * notification.  This job is run whenever the workspace changes regardless 
+ * notification.  This job is run whenever the workspace changes regardless
  * of whether autobuild is on or off.
  */
 class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
@@ -67,7 +67,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	/**
 	 * Instructs the build job that a build is required.  Ensure the build
 	 * job is scheduled to run.
-	 * @param needsBuild Whether a build is required, either due to 
+	 * @param needsBuild Whether a build is required, either due to
 	 * workspace change or other factor that invalidates the built state.
 	 */
 	synchronized void build(boolean needsBuild) {
@@ -109,9 +109,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	/**
 	 * The autobuild job has been canceled.  There are two flavours of
 	 * cancel, explicit user cancelation, and implicit interruption due to another
-	 * thread trying to modify the workspace.  In the latter case, we must 
-	 * make sure the build is immediately rescheduled if it was interrupted 
-	 * by another thread, so that clients waiting to join autobuild will properly 
+	 * thread trying to modify the workspace.  In the latter case, we must
+	 * make sure the build is immediately rescheduled if it was interrupted
+	 * by another thread, so that clients waiting to join autobuild will properly
 	 * continue waiting
 	 * @return a status with severity <code>CANCEL</code>
 	 */

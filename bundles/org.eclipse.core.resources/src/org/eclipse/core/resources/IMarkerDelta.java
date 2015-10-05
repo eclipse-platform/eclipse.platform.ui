@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,19 +18,19 @@ import java.util.Map;
  * Marker deltas give access to the state of the marker as it
  * was (in the case of deletions and changes) before the modifying
  * operation occurred.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IMarkerDelta {
 	/**
 	 * Returns the object attribute with the given name.  The result is an instance of one
-	 * of the following classes: <code>String</code>, <code>Integer</code>, 
+	 * of the following classes: <code>String</code>, <code>Integer</code>,
 	 * or <code>Boolean</code>.
 	 * Returns <code>null</code> if the attribute is undefined.
 	 * The set of valid attribute names is defined elsewhere.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 * @param attributeName the name of the attribute
@@ -39,11 +39,11 @@ public interface IMarkerDelta {
 	public Object getAttribute(String attributeName);
 
 	/**
-	 * Returns the integer-valued attribute with the given name.  
+	 * Returns the integer-valued attribute with the given name.
 	 * Returns the given default value if the attribute is undefined
 	 * or is not an integer value.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
@@ -54,11 +54,11 @@ public interface IMarkerDelta {
 	public int getAttribute(String attributeName, int defaultValue);
 
 	/**
-	 * Returns the string-valued attribute with the given name.  
+	 * Returns the string-valued attribute with the given name.
 	 * Returns the given default value if the attribute is undefined or
 	 * is not a string value.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
@@ -69,11 +69,11 @@ public interface IMarkerDelta {
 	public String getAttribute(String attributeName, String defaultValue);
 
 	/**
-	 * Returns the boolean-valued attribute with the given name.  
+	 * Returns the boolean-valued attribute with the given name.
 	 * Returns the given default value if the attribute is undefined
 	 * or is not a boolean value.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
@@ -86,28 +86,28 @@ public interface IMarkerDelta {
 	/**
 	 * Returns a Map with all the attributes for the marker.  The result is a Map
 	 * whose keys are attributes names and whose values are attribute values.
-	 * Each value an instance of one of the following classes: <code>String</code>, 
+	 * Each value an instance of one of the following classes: <code>String</code>,
 	 * <code>Integer</code>, or <code>Boolean</code>. If the marker has no
 	 * attributes then <code>null</code> is returned.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
-	 * @return a map of attribute keys and values (key type : <code>String</code> 
-	 *		value type : <code>String</code>, <code>Integer</code>, or 
+	 * @return a map of attribute keys and values (key type : <code>String</code>
+	 *		value type : <code>String</code>, <code>Integer</code>, or
 	 *		<code>Boolean</code>) or <code>null</code>.
 	 */
 	public Map<String, Object> getAttributes();
 
 	/**
-	 * Returns the attributes with the given names.  The result is an array 
+	 * Returns the attributes with the given names.  The result is an array
 	 * whose elements correspond to the elements of the given attribute name
 	 * array.  Each element is <code>null</code> or an instance of one
-	 * of the following classes: <code>String</code>, <code>Integer</code>, 
+	 * of the following classes: <code>String</code>, <code>Integer</code>,
 	 * or <code>Boolean</code>.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
@@ -126,8 +126,8 @@ public interface IMarkerDelta {
 	public long getId();
 
 	/**
-	 * Returns the kind of this marker delta: 
-	 * one of <code>IResourceDelta.ADDED</code>, 
+	 * Returns the kind of this marker delta:
+	 * one of <code>IResourceDelta.ADDED</code>,
 	 * <code>IResourceDelta.REMOVED</code>, or <code>IResourceDelta.CHANGED</code>.
 	 *
 	 * @return the kind of marker delta
@@ -148,7 +148,7 @@ public interface IMarkerDelta {
 	public IMarker getMarker();
 
 	/**
-	 * Returns the resource with which this marker is associated. 
+	 * Returns the resource with which this marker is associated.
 	 *
 	 * @return the resource
 	 */
@@ -157,7 +157,7 @@ public interface IMarkerDelta {
 	/**
 	 * Returns the type of this marker.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *
@@ -167,9 +167,9 @@ public interface IMarkerDelta {
 
 	/**
 	 * Returns whether the type of this marker is considered to be a sub-type of
-	 * the given marker type. 
+	 * the given marker type.
 	 * <p>
-	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is 
+	 * If kind is <code>IResourceDelta.ADDED</code>, then the information is
 	 * from the new marker, otherwise it is from the old marker.
 	 * </p>
 	 *

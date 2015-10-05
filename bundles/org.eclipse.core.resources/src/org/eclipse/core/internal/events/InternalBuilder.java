@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Broadcom Corporation - build configurations and references
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
 /**
  * This class is the internal basis for all builders. Plugin developers should not
  * subclass this class.
- * 
+ *
  * @see IncrementalProjectBuilder
  */
 public abstract class InternalBuilder {
@@ -103,7 +103,7 @@ public abstract class InternalBuilder {
 	protected ICommand getCommand() {
 		return (ICommand)((BuildCommand)command).clone();
 	}
-	
+
 	/**
 	 * @see IncrementalProjectBuilder#forgetLastBuiltState()
 	 * @see IncrementalProjectBuilder#rememberLastBuiltState()
@@ -111,10 +111,10 @@ public abstract class InternalBuilder {
 	protected IResourceDelta getDelta(IProject aProject) {
 		return buildManager.getDelta(aProject);
 	}
-	
+
 	/**
 	 * @see IncrementalProjectBuilder#getContext()
-	 */ 
+	 */
 	protected IBuildContext getContext() {
 		return context;
 	}
@@ -177,7 +177,7 @@ public abstract class InternalBuilder {
 	protected void needRebuild() {
 		buildManager.requestRebuild();
 	}
-	
+
 	final void setCallOnEmptyDelta(boolean value) {
 		this.callOnEmptyDelta = value;
 	}
@@ -185,7 +185,7 @@ public abstract class InternalBuilder {
 	final void setCommand(ICommand value) {
 		this.command = value;
 	}
-	
+
 	final void setInterestingProjects(IProject[] value) {
 		interestingProjects = value;
 	}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * obtained from the plug-in manifest (<code>plugin.xml</code>) file.
  * <p>
  * Model provider descriptors are platform-defined objects that exist
- * independent of whether that model provider's plug-in has been started. 
- * In contrast, a model provider's runtime object (<code>ModelProvider</code>) 
+ * independent of whether that model provider's plug-in has been started.
+ * In contrast, a model provider's runtime object (<code>ModelProvider</code>)
  * generally runs plug-in-defined code.
  * </p>
  *
@@ -46,7 +46,7 @@ public interface IModelProviderDescriptor {
 	 * <code>"myModelProvider"</code>, the unique model provider identifier will be
 	 * <code>"com.xyz.myModelProvider"</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return the unique model provider identifier
 	 */
 	public String getId();
@@ -69,7 +69,7 @@ public interface IModelProviderDescriptor {
 	 * rule specified for the model provider descriptor. The resource mappings
 	 * for the returned resources can then be obtained by invoking
 	 * {@link ModelProvider#getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
-	 * 
+	 *
 	 * @param resources the resources
 	 * @return the resources that match the descriptor's enablement rule
 	 */
@@ -78,18 +78,18 @@ public interface IModelProviderDescriptor {
 	/**
 	 * Return the set of traversals that overlap with the resources that
 	 * this descriptor matches.
-	 * 
+	 *
 	 * @param traversals the traversals being tested
 	 * @return the subset of these traversals that overlap with the resources
 	 * that match this descriptor
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException;
 
 	/**
 	 * Return the model provider for this descriptor, instantiating it if it is
 	 * the first time the method is called.
-	 * 
+	 *
 	 * @return the model provider for this descriptor
 	 * @exception CoreException if the model provider could not be instantiated for
 	 *             some reason

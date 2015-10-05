@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,11 +20,11 @@ import org.eclipse.osgi.util.NLS;
  * rootNode, and each node can contain an arbitrary number of children.<p>
  *
  * <p>Internally, data trees can be either complete trees (DataTree class), or delta
- * trees (<code>DeltaDataTree</code> class).  A DataTree is a stand-alone tree 
- * that contains all its own data.  A <code>DeltaDataTree</code> only stores the 
- * differences between itself and its parent tree.  This sparse representation allows 
- * the API user to retain chains of delta trees that represent incremental changes to 
- * a system.  Using the delta trees, the user can undo changes to a tree by going up to 
+ * trees (<code>DeltaDataTree</code> class).  A DataTree is a stand-alone tree
+ * that contains all its own data.  A <code>DeltaDataTree</code> only stores the
+ * differences between itself and its parent tree.  This sparse representation allows
+ * the API user to retain chains of delta trees that represent incremental changes to
+ * a system.  Using the delta trees, the user can undo changes to a tree by going up to
  * the parent tree.
  *
  * <p>Both representations of the tree support the same API, so the user of a tree
@@ -39,7 +39,7 @@ import org.eclipse.osgi.util.NLS;
 public abstract class AbstractDataTree {
 
 	/**
-	 * Whether modifications to the given source tree are allowed 
+	 * Whether modifications to the given source tree are allowed
 	 */
 	private boolean immutable = false;
 
@@ -73,7 +73,7 @@ public abstract class AbstractDataTree {
 	public abstract AbstractDataTreeNode copyCompleteSubtree(IPath key);
 
 	/**
-	 * Creates a new child in the tree.  If a child with such a name exists, 
+	 * Creates a new child in the tree.  If a child with such a name exists,
 	 * it is replaced with the new child
 	 *
 	 * @param parentKey key of parent for new child.
@@ -86,7 +86,7 @@ public abstract class AbstractDataTree {
 	public abstract void createChild(IPath parentKey, String localName);
 
 	/**
-	 * Creates a new child in the tree.  If a child with such a name exists, 
+	 * Creates a new child in the tree.  If a child with such a name exists,
 	 * it is replaced with the new child
 	 *
 	 * @param parentKey key of parent for new child.
@@ -100,10 +100,10 @@ public abstract class AbstractDataTree {
 	public abstract void createChild(IPath parentKey, String localName, Object object);
 
 	/**
-	 * Creates and returns a new instance of the tree.  This is an 
+	 * Creates and returns a new instance of the tree.  This is an
 	 * implementation of the factory method creational pattern for allowing
 	 * abstract methods to create instances.
-	 * 
+	 *
 	 * @return the new tree.
 	 */
 	protected abstract AbstractDataTree createInstance();
@@ -128,13 +128,13 @@ public abstract class AbstractDataTree {
 	 * @exception ObjectNotFoundException
 	 *	a child of parentKey with name localName does not exist in the receiver
 	 * @exception RuntimeException
-	 *	receiver is immutable	 
+	 *	receiver is immutable
 	 */
 	public abstract void deleteChild(IPath parentKey, String localName);
 
 	/**
 	 * Initializes the receiver so that it is a complete, empty tree.  The
-	 * result does not represent a delta on another tree.  An empty tree is 
+	 * result does not represent a delta on another tree.  An empty tree is
 	 * defined to have a root node with null data and no children.
 	 */
 	public abstract void empty();
@@ -142,9 +142,9 @@ public abstract class AbstractDataTree {
 	/**
 	 * Returns the key of a node in the tree.
 	 *
-	 * @param parentKey 
+	 * @param parentKey
 	 *	parent of child to retrieve.
-	 * @param index 
+	 * @param index
 	 *	index of the child to retrieve in its parent.
 	 * @exception ObjectNotFoundException
 	 * 	parentKey does not exist in the receiver
@@ -162,7 +162,7 @@ public abstract class AbstractDataTree {
 	 *
 	 * @param parentKey
 	 *	key of the node for which we want to retreive the number of children
-	 * @exception ObjectNotFoundException 
+	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
 	 */
 	public int getChildCount(IPath parentKey) {

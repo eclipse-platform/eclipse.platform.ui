@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -148,7 +148,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 
 	/**
 	 * Builds the delta representing a single resource being moved or copied.
-	 * 
+	 *
 	 * @param resource The resource being moved
 	 * @param sourcePrefix The root of the sub-tree being moved
 	 * @param destinationPrefix The root of the destination sub-tree

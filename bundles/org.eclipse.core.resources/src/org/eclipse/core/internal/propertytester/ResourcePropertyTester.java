@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * A property tester for various properties of resources.
- * 
+ *
  * @since 3.2
  */
 public class ResourcePropertyTester extends PropertyTester {
@@ -127,7 +127,7 @@ public class ResourcePropertyTester extends PropertyTester {
 	/**
 	 * Tests whether a session or persistent property on the resource or its
 	 * project matches the given value.
-	 * 
+	 *
 	 * @param resource
 	 *            the resource to check
 	 * @param persistentFlag
@@ -138,12 +138,12 @@ public class ResourcePropertyTester extends PropertyTester {
 	 *            If of length 0, this treats the expectedValue as the property name
 	 *            and does a simple check for existence of the property.
 	 *            If of length 1, this treats the first argument as the property name
-	 *            and does a simple check for existence of the property. 
+	 *            and does a simple check for existence of the property.
 	 *            If of length 2, this treats the first argument as the property name,
 	 *            the second argument as the expected value, and checks for equality
-	 *            with the actual property value. 
+	 *            with the actual property value.
 	 * @param expectedValue
-	 *            used only if args is of length 0 (see Javadoc for args parameter) 
+	 *            used only if args is of length 0 (see Javadoc for args parameter)
 	 * @return whether there is a match
 	 */
 	protected boolean testProperty(IResource resource, boolean persistentFlag, Object[] args, Object expectedValue) {
@@ -176,7 +176,7 @@ public class ResourcePropertyTester extends PropertyTester {
 
 	/**
 	 * Converts the given expected value to a boolean.
-	 * 
+	 *
 	 * @param expectedValue
 	 *            the expected value (may be <code>null</code>).
 	 * @return <code>false</code> if the expected value equals Boolean.FALSE,
@@ -191,7 +191,7 @@ public class ResourcePropertyTester extends PropertyTester {
 
 	/**
 	 * Converts the given name to a qualified name.
-	 * 
+	 *
 	 * @param name the name
 	 * @return the qualified name
 	 */
@@ -208,7 +208,7 @@ public class ResourcePropertyTester extends PropertyTester {
 
 	/**
 	 * Converts the given expected value to a <code>String</code>.
-	 * 
+	 *
 	 * @param expectedValue
 	 *            the expected value (may be <code>null</code>).
 	 * @return the empty string if the expected value is <code>null</code>,

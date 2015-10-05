@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 public final class ProjectScope extends AbstractScope {
 
 	/**
-	 * String constant (value of <code>"project"</code>) used for the 
+	 * String constant (value of <code>"project"</code>) used for the
 	 * scope name for this preference scope.
 	 */
 	public static final String SCOPE = "project"; //$NON-NLS-1$
@@ -47,7 +47,7 @@ public final class ProjectScope extends AbstractScope {
 	/**
 	 * Create and return a new project scope for the given project. The given
 	 * project must not be <code>null</code>.
-	 * 
+	 *
 	 * @param context the project
 	 * @exception IllegalArgumentException if the project is <code>null</code>
 	 */

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
- * Martin Oberhuber (Wind River) - initial API and implementation for [105554] 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Martin Oberhuber (Wind River) - initial API and implementation for [105554]
  *******************************************************************************/
 
 package org.eclipse.core.internal.localstore;
@@ -23,7 +23,7 @@ import java.util.Arrays;
  *   <li>{@link #containsAsPrefix(String)} - check whether a given
  *       String s is a prefix of any String in the pool.</li>
  *   <li>{@link #hasPrefixOf(String)} - check whether any String
- *       in the pool is a prefix of the given String s. 
+ *       in the pool is a prefix of the given String s.
  * </ul>
  * The prefix pool is always kept normalized, i.e. no element of
  * the pool is a prefix of any other element in the pool. In order
@@ -33,15 +33,15 @@ import java.util.Arrays;
  *   <li>{@link #insertLonger(String)} - add a String s to the pool,
  *       and remove any existing prefix of s from the pool.</li>
  *   <li>{@link #insertShorter(String)} - add a String s to the pool,
- *       and remove any existing Strings sx from the pool which 
+ *       and remove any existing Strings sx from the pool which
  *       contain s as prefix.</li>
  * </ul>
  * The PrefixPool grows as needed when adding Strings. Typically,
  * it is used for prefix checks on absolute paths of a tree.
- * </p><p> 
+ * </p><p>
  * This class is not thread-safe: no two threads may add or
  * check items at the same time.
- * 
+ *
  * @since 3.3
  */
 public class PrefixPool {
@@ -50,7 +50,7 @@ public class PrefixPool {
 
 	/**
 	 * Constructor.
-	 * @param initialCapacity the initial size of the 
+	 * @param initialCapacity the initial size of the
 	 *     internal array holding the String pool. Must
 	 *     be greater than 0.
 	 */
@@ -73,7 +73,7 @@ public class PrefixPool {
 
 	/**
 	 * Return the current size of prefix pool.
-	 * @return the number of elements in the pool. 
+	 * @return the number of elements in the pool.
 	 */
 	public/*synchronized*/int size() {
 		return size;
@@ -131,7 +131,7 @@ public class PrefixPool {
 	 * all elements that contain the new String as prefix are removed
 	 * and return value <code>true</code> is returned.
 	 * </p><p>
-	 * Otherwise, the new String is added to the pool unless an 
+	 * Otherwise, the new String is added to the pool unless an
 	 * equal String or e prefix of it exists there already (so
 	 * it is essentially equal or longer than an existing prefix).
 	 * In all these cases, <code>false</code> is returned since
@@ -190,7 +190,7 @@ public class PrefixPool {
 
 	/**
 	 * Test if the String pool contains any one that is a prefix
-	 * of the given String s. 
+	 * of the given String s.
 	 * @param s the String to test
 	 * @return <code>true</code> if the String pool contains a
 	 *     prefix of the given String.

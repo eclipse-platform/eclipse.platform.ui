@@ -14,9 +14,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.refresh.*;
 
 /**
- * The <code>Win32RefreshProvider</code> creates monitors that 
+ * The <code>Win32RefreshProvider</code> creates monitors that
  * can monitor drives on Win32 platforms.
- * 
+ *
  * @see org.eclipse.core.resources.refresh.RefreshProvider
  */
 public class Win32RefreshProvider extends RefreshProvider {
@@ -24,7 +24,7 @@ public class Win32RefreshProvider extends RefreshProvider {
 
 	/**
 	 * Creates a standard Win32 monitor if the given resource is local.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.refresh.RefreshProvider#installMonitor(IResource,IRefreshResult)
 	 */
 	@Override

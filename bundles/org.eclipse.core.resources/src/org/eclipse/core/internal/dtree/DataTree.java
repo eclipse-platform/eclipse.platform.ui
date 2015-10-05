@@ -98,7 +98,7 @@ public class DataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Creates and returns an instance of the receiver.  This is an 
+	 * Creates and returns an instance of the receiver.  This is an
 	 * implementation of the factory method creational pattern for allowing
 	 * abstract methods to create instances
 	 */

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * Manages auto-refresh functionality, including maintaining the active
  * set of monitors and controlling the job that performs periodic refreshes
  * on out of sync resources.
- * 
+ *
  * @since 3.0
  */
 public class RefreshManager implements IRefreshResult, IManager, Preferences.IPropertyChangeListener {

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -14,11 +14,11 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.*;
 
 /**
- * A previous state of a file stored in the workspace's local history. 
+ * A previous state of a file stored in the workspace's local history.
  * <p>
  * Certain methods for updating, deleting, or moving a file cause the
  * "before" contents of the file to be copied to an internal area of the
- * workspace called the <b>local history area</b> thus providing 
+ * workspace called the <b>local history area</b> thus providing
  * a limited history of earlier states of a file.
  * </p>
  * <p>
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.*;
  * </p>
  * <p>
  * The local history does not track resource properties.
- * File states are volatile; the platform does not guarantee that a 
+ * File states are volatile; the platform does not guarantee that a
  * certain state will always be in the local history.
  * </p>
  * <p>
@@ -57,7 +57,7 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	/**
 	 * Returns an open input stream on the contents of this file state.
 	 * This refinement of the corresponding
-	 * <code>IStorage</code> method returns an open input stream 
+	 * <code>IStorage</code> method returns an open input stream
 	 * on the contents this file state represents.
 	 * The client is responsible for closing the stream when finished.
 	 *
@@ -72,8 +72,8 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 
 	/**
 	 * Returns the full path of this file state.
-	 * This refinement of the corresponding <code>IStorage</code> 
-	 * method specifies that <code>IFileState</code>s always have a 
+	 * This refinement of the corresponding <code>IStorage</code>
+	 * method specifies that <code>IFileState</code>s always have a
 	 * path and that path is the full workspace path of the file represented by this state.
 	 *
 	 * @see IResource#getFullPath()
@@ -90,15 +90,15 @@ public interface IFileState extends IEncodedStorage, IAdaptable {
 	 * Note that is used only to give the user a general idea of how
 	 * old this file state is.
 	 *
-	 * @return the time of last modification, in milliseconds since 
+	 * @return the time of last modification, in milliseconds since
 	 * January 1, 1970, 00:00:00 GMT.
 	 */
 	public long getModificationTime();
 
 	/**
-	 * Returns the name of this file state. 
-	 * This refinement of the corresponding <code>IStorage</code> 
-	 * method specifies that <code>IFileState</code>s always have a 
+	 * Returns the name of this file state.
+	 * This refinement of the corresponding <code>IStorage</code>
+	 * method specifies that <code>IFileState</code>s always have a
 	 * name and that name is equivalent to the last segment of the full path
 	 * of the resource represented by this state.
 	 *

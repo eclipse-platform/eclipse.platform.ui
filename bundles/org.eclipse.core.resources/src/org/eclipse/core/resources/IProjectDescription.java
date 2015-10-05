@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Broadcom Corporation - build configurations and references
@@ -18,25 +18,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * A project description contains the meta-data required to define
  * a project.  In effect, a project description is a project's "content".
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IProjectDescription {
 	/**
-	 * Constant that denotes the name of the project description file (value 
-	 * <code>".project"</code>). 
-	 * The handle of a project's description file is 
+	 * Constant that denotes the name of the project description file (value
+	 * <code>".project"</code>).
+	 * The handle of a project's description file is
 	 * <code>project.getFile(DESCRIPTION_FILE_NAME)</code>.
 	 * The project description file is located in the root of the project's content area.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String DESCRIPTION_FILE_NAME = ".project"; //$NON-NLS-1$
 
 	/**
 	 * Returns the build configurations referenced by the specified configuration for the
-	 * described project. 
+	 * described project.
 	 * <p>
 	 * These references are persisted by the workspace in a private location outside the
 	 * project description file, and as such will not be shared when a project is exported
@@ -47,7 +47,7 @@ public interface IProjectDescription {
 	 * The referenced build configurations need not exist in the workspace.
 	 * The result will not contain duplicates. The order of the references is preserved
 	 * from the call to {@link #setBuildConfigReferences(String, IBuildConfiguration[])}.
-	 * Returns an empty array if the provided config doesn't dynamically reference 
+	 * Returns an empty array if the provided config doesn't dynamically reference
 	 * any other build configurations, or the given config does not exist in this description.
 	 * </p>
 	 * @param configName the configuration in the described project to get the references for
@@ -61,7 +61,7 @@ public interface IProjectDescription {
 	 * Returns the list of build commands to run when building the described project.
 	 * The commands are listed in the order in which they are to be run.
 	 *
-	 * @return the list of build commands for the described project 
+	 * @return the list of build commands for the described project
 	 */
 	public ICommand[] getBuildSpec();
 
@@ -82,8 +82,8 @@ public interface IProjectDescription {
 	 * is always responsible for setting these references when a project is created
 	 * or recreated.
 	 * <p>
-	 * The returned projects need not exist in the workspace. The result will not 
-	 * contain duplicates. Returns an empty array if there are no dynamic project 
+	 * The returned projects need not exist in the workspace. The result will not
+	 * contain duplicates. Returns an empty array if there are no dynamic project
 	 * references on this description.
 	 *
 	 * @see #getBuildConfigReferences(String)
@@ -98,7 +98,7 @@ public interface IProjectDescription {
 	 * Returns the  local file system location for the described project.  The path
 	 * will be either an absolute file system path, or a relative path whose first
 	 * segment is the name of a workspace path variable. <code>null</code> is
-	 * returned if the default location should be used.  This method will return 
+	 * returned if the default location should be used.  This method will return
 	 * <code>null</code> if this project is not located in the local file system.
 	 *
 	 * @return the location for the described project or <code>null</code>
@@ -125,7 +125,7 @@ public interface IProjectDescription {
 	 */
 	public String getName();
 
-	/** 
+	/**
 	 * Returns the list of natures associated with the described project.
 	 * Returns an empty array if there are no natures on this description.
 	 *
@@ -151,12 +151,12 @@ public interface IProjectDescription {
 	 */
 	public IProject[] getReferencedProjects();
 
-	/** 
+	/**
 	 * Returns whether the project nature specified by the given
-	 * nature extension id has been added to the described project. 
+	 * nature extension id has been added to the described project.
 	 *
 	 * @param natureId the nature extension identifier
-	 * @return <code>true</code> if the described project has the given nature 
+	 * @return <code>true</code> if the described project has the given nature
 	 */
 	public boolean hasNature(String natureId);
 
@@ -231,7 +231,7 @@ public interface IProjectDescription {
 	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
-	 * 
+	 *
 	 * @see #getBuildConfigReferences(String)
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @param configName the configuration in the described project to set the references for
@@ -243,7 +243,7 @@ public interface IProjectDescription {
 	/**
 	 * Sets the list of build command to run when building the described project.
 	 * <p>
-	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
 	 *
@@ -257,7 +257,7 @@ public interface IProjectDescription {
 	/**
 	 * Sets the comment for the described project.
 	 * <p>
-	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
 	 *
@@ -268,11 +268,11 @@ public interface IProjectDescription {
 	public void setComment(String comment);
 
 	/**
-	 * Sets the dynamic project references for the described project. 
+	 * Sets the dynamic project references for the described project.
 	 * The projects need not exist in the workspace. Duplicates will be
-	 * removed.  
+	 * removed.
 	 * <p>
-	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
 	 * @see #getDynamicReferences()
@@ -291,15 +291,15 @@ public interface IProjectDescription {
 	 * <p>
 	 * Setting the location on a description for a project which already
 	 * exists has no effect; the new project location is ignored when the
-	 * description is set on the already existing project. This method is 
-	 * intended for use on descriptions for new projects or for destination 
+	 * description is set on the already existing project. This method is
+	 * intended for use on descriptions for new projects or for destination
 	 * projects for <code>copy</code> and <code>move</code>.
 	 * </p>
 	 * <p>
 	 * This operation maps the root folder of the project to the exact location
 	 * provided.  For example, if the location for project named "P" is set
 	 * to the path c:\my_plugins\Project1, the file resource at workspace path
-	 * /P/index.html  would be stored in the local file system at 
+	 * /P/index.html  would be stored in the local file system at
 	 * c:\my_plugins\Project1\index.html.
 	 * </p>
 	 *
@@ -309,20 +309,20 @@ public interface IProjectDescription {
 	public void setLocation(IPath location);
 
 	/**
-	 * Sets the location for the described project.  
+	 * Sets the location for the described project.
 	 * If <code>null</code> is specified, the default location is used.
 	 * <p>
 	 * Setting the location on a description for a project which already
 	 * exists has no effect; the new project location is ignored when the
-	 * description is set on the already existing project. This method is 
-	 * intended for use on descriptions for new projects or for destination 
+	 * description is set on the already existing project. This method is
+	 * intended for use on descriptions for new projects or for destination
 	 * projects for <code>copy</code> and <code>move</code>.
 	 * </p>
 	 * <p>
 	 * This operation maps the root folder of the project to the exact location
 	 * provided.  For example, if the location for project named "P" is set
 	 * to the URI file://c:/my_plugins/Project1, the file resource at workspace path
-	 * /P/index.html  would be stored in the local file system at 
+	 * /P/index.html  would be stored in the local file system at
 	 * file://c:/my_plugins/Project1/index.html.
 	 * </p>
 	 *
@@ -336,7 +336,7 @@ public interface IProjectDescription {
 	/**
 	 * Sets the name of the described project.
 	 * <p>
-	 * Setting the name on a description and then setting the 
+	 * Setting the name on a description and then setting the
 	 * description on the project has no effect; the new name is ignored.
 	 * </p>
 	 * <p>
@@ -352,12 +352,12 @@ public interface IProjectDescription {
 	 */
 	public void setName(String projectName);
 
-	/** 
+	/**
 	 * Sets the list of natures associated with the described project.
 	 * A project created with this description will have these natures
 	 * added to it in the given order.
 	 * <p>
-	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
 	 *
@@ -372,7 +372,7 @@ public interface IProjectDescription {
 	 * The order of projects is preserved.
 	 * The projects need not exist in the workspace.
 	 * <p>
-	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)} 
+	 * Users must call {@link IProject#setDescription(IProjectDescription, int, IProgressMonitor)}
 	 * before changes made to this description take effect.
 	 * </p>
 	 *

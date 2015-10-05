@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.QualifiedName;
 public interface IPropertyManager extends IManager {
 	/**
 	 * Closes the property store for a resource
-	 * 
+	 *
 	 * @param target The resource to close the property store for
 	 * @exception CoreException
 	 */
@@ -67,9 +67,9 @@ public interface IPropertyManager extends IManager {
 	public void setProperty(IResource target, QualifiedName name, String value) throws CoreException;
 
 	/**
-	 * Returns a map (<propertyKey: QualifiedName -> value: String>) containing 
-	 * all properties defined for the given resource. In case no properties can 
-	 * be found, returns an empty map. 
+	 * Returns a map (<propertyKey: QualifiedName -> value: String>) containing
+	 * all properties defined for the given resource. In case no properties can
+	 * be found, returns an empty map.
 	 */
 	public Map<QualifiedName, String> getProperties(IResource resource) throws CoreException;
 }

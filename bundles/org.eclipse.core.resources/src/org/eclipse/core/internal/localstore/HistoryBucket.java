@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -26,8 +26,8 @@ public class HistoryBucket extends Bucket {
 	 * This class is intended as a lightweight way of hiding the internal data structure.
 	 * Objects of this class are supposed to be short-lived. No instances
 	 * of this class are kept stored anywhere. The real stuff (the internal data structure)
-	 * is.  
-	 * </p>  
+	 * is.
+	 * </p>
 	 */
 	public static final class HistoryEntry extends Bucket.Entry {
 
@@ -54,7 +54,7 @@ public class HistoryBucket extends Bucket {
 
 		/**
 		 * Comparison logic for states in byte[] form.
-		 * 
+		 *
 		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		static int compareStates(byte[] state1, byte[] state2) {
@@ -66,7 +66,7 @@ public class HistoryBucket extends Bucket {
 		}
 
 		/**
-		 * Returns the byte array representation of a (UUID, timestamp) pair. 
+		 * Returns the byte array representation of a (UUID, timestamp) pair.
 		 */
 		static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
 			byte[] uuidBytes = uuid.toBytes();
@@ -86,9 +86,9 @@ public class HistoryBucket extends Bucket {
 			return timestamp;
 		}
 
-		/** 
-		 * Inserts the given item into the given array at the right position. 
-		 * Returns the resulting array. Returns null if the item already exists. 
+		/**
+		 * Inserts the given item into the given array at the right position.
+		 * Returns the resulting array. Returns null if the item already exists.
 		 */
 		static byte[][] insert(byte[][] existing, byte[] toAdd) {
 			// look for the right spot where to insert the new guy
@@ -96,7 +96,7 @@ public class HistoryBucket extends Bucket {
 			if (index >= 0)
 				// already there - nothing else to be done
 				return null;
-			// not found - insert 
+			// not found - insert
 			int insertPosition = -index - 1;
 			byte[][] newValue = new byte[existing.length + 1][];
 			if (insertPosition > 0)
@@ -158,7 +158,7 @@ public class HistoryBucket extends Bucket {
 
 		/**
 		 * Compacts the data array removing any null slots. If non-null slots
-		 * are found, the entry is marked for removal. 
+		 * are found, the entry is marked for removal.
 		 */
 		private void compact() {
 			if (!isDirty())
@@ -220,7 +220,7 @@ public class HistoryBucket extends Bucket {
 
 	}
 
-	/** 
+	/**
 	 * Version number for the current implementation file's format.
 	 * <p>
 	 * Version 2 (3.1 M5):

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - loadProjectDescription(InputStream)
@@ -131,7 +131,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	protected SaveManager saveManager;
 	/**
-	 * File modification validation.  If it is true and validator is null, we try/initialize 
+	 * File modification validation.  If it is true and validator is null, we try/initialize
 	 * validator first time through.  If false, there is no validator.
 	 */
 	protected boolean shouldValidate = true;
@@ -160,7 +160,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * reconciles the state of the files on disk with this tree (@link {@link IResource#refreshLocal(int, IProgressMonitor)}).
 	 * The tree is also used to store metadata associated with resources in
 	 * the workspace (markers, properties, etc).
-	 * 
+	 *
 	 * While the ElementTree data structure can handle both concurrent
 	 * reads and concurrent writes, write access to the tree is governed
 	 * by {@link WorkManager}.
@@ -186,7 +186,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <p>
 	 * This class is not intended to be instantiated by clients.
 	 * </p>
-	 * 
+	 *
 	 * @see Workspace#computeProjectBuildConfigOrder(IBuildConfiguration[])
 	 * @since 3.7
 	 */
@@ -196,7 +196,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		 * <p>
 		 * This class is not intended to be instantiated by clients.
 		 * </p>
-		 * 
+		 *
 		 * @param buildConfigurations initial value of <code>buildConfigurations</code> field
 		 * @param hasCycles initial value of <code>hasCycles</code> field
 		 * @param knots initial value of <code>knots</code> field
@@ -539,7 +539,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * Closes this workspace; ignored if this workspace is not open.
 	 * The state of this workspace is not saved before the workspace
 	 * is shut down.
-	 * <p> 
+	 * <p>
 	 * If the workspace was saved immediately prior to closing,
 	 * it will have the same set of projects
 	 * (open or closed) when reopened for a subsequent session.
@@ -832,10 +832,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/*
-	 * Compatible reimplementation of 
-	 * <code>IWorkspace.computePrerequisiteOrder</code> using 
+	 * Compatible reimplementation of
+	 * <code>IWorkspace.computePrerequisiteOrder</code> using
 	 * <code>IWorkspace.computeProjectOrder</code>.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private IProject[][] computePrerequisiteOrder1(IProject[] projects) {
@@ -924,7 +924,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * the outcome: creating, renaming, or deleting a project; opening or
 	 * closing a project; deleting a build configuration; adding or removing a build configuration reference.
 	 * </p>
-	 * 
+	 *
 	 * @param buildConfigs the build configurations to order
 	 * @return result describing the build configuration order
 	 * @since 3.7
@@ -1188,7 +1188,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 			String[] referencedVariables = PathVariableUtil.splitVariableNames(srcValue.toPortableString());
 			shouldConvertToRelative = false;
-			// If the variable value is of type ${PARENT-COUNT-VAR}, 
+			// If the variable value is of type ${PARENT-COUNT-VAR},
 			// we can avoid generating an intermediate variable and convert it directly.
 			if (referencedVariables.length == 1) {
 				if (PathVariableUtil.isParentVariable(referencedVariables[0]))
@@ -1227,7 +1227,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Returns the number of resources in a subtree of the resource tree.
-	 * 
+	 *
 	 * @param root The subtree to count resources for
 	 * @param depth The depth of the subtree to count
 	 * @param phantom If true, phantoms are included, otherwise they are ignored.
@@ -1257,11 +1257,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/*
-	 * Creates the given resource in the tree and returns the new resource info object.  
+	 * Creates the given resource in the tree and returns the new resource info object.
 	 * If phantom is true, the created element is marked as a phantom.
 	 * If there is already be an element in the tree for the given resource
-	 * in the given state (i.e., phantom), a CoreException is thrown.  
-	 * If there is already a phantom in the tree and the phantom flag is false, 
+	 * in the given state (i.e., phantom), a CoreException is thrown.
+	 * If there is already a phantom in the tree and the phantom flag is false,
 	 * the element is overwritten with the new element. (but the synchronization
 	 * information is preserved)
 	 */
@@ -1287,15 +1287,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/*
-	 * Creates the given resource in the tree and returns the new resource info object.  
+	 * Creates the given resource in the tree and returns the new resource info object.
 	 * If phantom is true, the created element is marked as a phantom.
 	 * If there is already be an element in the tree for the given resource
-	 * in the given state (i.e., phantom), a CoreException is thrown.  
-	 * If there is already a phantom in the tree and the phantom flag is false, 
+	 * in the given state (i.e., phantom), a CoreException is thrown.
+	 * If there is already a phantom in the tree and the phantom flag is false,
 	 * the element is overwritten with the new element. (but the synchronization
 	 * information is preserved) If the specified resource info is null, then create
 	 * a new one.
-	 * 
+	 *
 	 * If keepSyncInfo is set to be true, the sync info in the given ResourceInfo is NOT
 	 * cleared before being created and thus any sync info already existing at that namespace
 	 * (as indicated by an already existing phantom resource) will be lost.
@@ -1413,7 +1413,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Delete the given resource from the current tree of the receiver.
-	 * This method simply removes the resource from the tree.  No cleanup or 
+	 * This method simply removes the resource from the tree.  No cleanup or
 	 * other management is done.  Use IResource.delete for proper deletion.
 	 * If the given resource is the root, all of its children (i.e., all projects) are
 	 * deleted but the root is left.
@@ -1532,7 +1532,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <p>
 	 * The returned value is cached in the <code>buildOrder</code> field.
 	 * </p>
-	 * 
+	 *
 	 * @return the list of currently open projects active buildConfigs (and the project buildConfigs
 	 * they depend on) in the workspace in the order in which they would be built by <code>IWorkspace.build</code>.
 	 * @see IWorkspace#build(int, IProgressMonitor)
@@ -1605,7 +1605,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return workingCopy;
 	}
 
-	/** 
+	/**
 	 * Returns the current element tree for this workspace
 	 */
 	public ElementTree getElementTree() {
@@ -1755,7 +1755,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * A move/delete hook hasn't been initialized. Check the extension point and 
+	 * A move/delete hook hasn't been initialized. Check the extension point and
 	 * try to create a new hook if a user has one defined as an extension. Otherwise
 	 * use the Core's implementation as the default.
 	 */
@@ -1775,7 +1775,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				Policy.log(status);
 				return;
 			}
-			// otherwise we have exactly one hook extension. Try to create a new instance 
+			// otherwise we have exactly one hook extension. Try to create a new instance
 			// from the user-specified class.
 			try {
 				IConfigurationElement config = configs[0];
@@ -1796,8 +1796,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * A team hook hasn't been initialized. Check the extension point and 
-	 * try to create a new hook if a user has one defined as an extension. 
+	 * A team hook hasn't been initialized. Check the extension point and
+	 * try to create a new hook if a user has one defined as an extension.
 	 * Otherwise use the Core's implementation as the default.
 	 */
 	protected void initializeTeamHook() {
@@ -1816,7 +1816,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				Policy.log(status);
 				return;
 			}
-			// otherwise we have exactly one hook extension. Try to create a new instance 
+			// otherwise we have exactly one hook extension. Try to create a new instance
 			// from the user-specified class.
 			try {
 				IConfigurationElement config = configs[0];
@@ -1840,7 +1840,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * A file modification validator hasn't been initialized. Check the extension point and 
+	 * A file modification validator hasn't been initialized. Check the extension point and
 	 * try to create a new validator if a user has one defined as an extension.
 	 */
 	protected void initializeValidator() {
@@ -1860,7 +1860,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			Policy.log(status);
 			return;
 		}
-		// otherwise we have exactly one validator extension. Try to create a new instance 
+		// otherwise we have exactly one validator extension. Try to create a new instance
 		// from the user-specified class.
 		try {
 			IConfigurationElement config = configs[0];
@@ -2087,7 +2087,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * Opens a new mutable element tree layer, thus allowing 
+	 * Opens a new mutable element tree layer, thus allowing
 	 * modifications to the tree.
 	 */
 	public ElementTree newWorkingTree() {
@@ -2123,7 +2123,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 *    reporting and cancellation are not desired
 	 * @return status with code <code>OK</code> if no problems;
 	 *     otherwise status describing any serious but non-fatal problems.
-	 *     
+	 *
 	 * @exception CoreException if the workspace could not be opened.
 	 * Reasons include:
 	 * <ul>
@@ -2175,9 +2175,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Called before checking the pre-conditions of an operation.  Optionally supply
-	 * a scheduling rule to determine when the operation is safe to run.  If a scheduling 
+	 * a scheduling rule to determine when the operation is safe to run.  If a scheduling
 	 * rule is supplied, this method will block until it is safe to run.
-	 * 
+	 *
 	 * @param rule the scheduling rule that describes what this operation intends to modify.
 	 */
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
@@ -2280,7 +2280,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 			return saveManager.save(ISaveContext.FULL_SAVE, keepConsistencyWhenCanceled, null, monitor);
 		}
-		// A snapshot was requested.  Start an operation (if not already started) and 
+		// A snapshot was requested.  Start an operation (if not already started) and
 		// signal that a snapshot should be done at the end.
 		try {
 			prepareOperation(getRoot(), monitor);
@@ -2416,7 +2416,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this working state's
 	 * structure suitable for debug purposes.
 	 */
@@ -2456,7 +2456,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// first time through the validator hasn't been initialized so try and create it
 		if (validator == null)
 			initializeValidator();
-		// we were unable to initialize the validator. Validation has been turned off and 
+		// we were unable to initialize the validator. Validation has been turned off and
 		// a warning has already been logged so just return.
 		if (validator == null)
 			return Status.OK_STATUS;
@@ -2524,7 +2524,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <li><code>IFile#setContents(InputStream, boolean, boolean, IProgressMonitor)</code></li>
 	 * <li><code>IFile#setContents(IFileState, boolean, boolean, IProgressMonitor)</code></li>
 	 * </ul>
-	 * 
+	 *
 	 * @see IFileModificationValidator#validateSave(IFile)
 	 */
 	protected void validateSave(final IFile file) throws CoreException {
@@ -2534,7 +2534,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// first time through the validator hasn't been initialized so try and create it
 		if (validator == null)
 			initializeValidator();
-		// we were unable to initialize the validator. Validation has been turned off and 
+		// we were unable to initialize the validator. Validation has been turned off and
 		// a warning has already been logged so just return.
 		if (validator == null)
 			return;

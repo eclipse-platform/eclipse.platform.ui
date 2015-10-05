@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
@@ -26,14 +26,14 @@ import org.eclipse.osgi.util.NLS;
  * from a future version).
  */
 public abstract class WorkspaceTreeReader {
-	
-	/** 
-	 * Configuration setting to have an existing workspace 
+
+	/**
+	 * Configuration setting to have an existing workspace
 	 * project name take precedence over data being read,
 	 * when set to <code>true</code>.
 	 */
 	protected boolean renameProjectNode;
-	
+
 	/**
 	 * Returns the tree reader associated with the given tree version number.
 	 * @param renameProjectNode if <code>true</code>, set up the reader to have

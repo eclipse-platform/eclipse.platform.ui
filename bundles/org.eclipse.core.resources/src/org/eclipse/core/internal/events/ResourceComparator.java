@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,14 +29,14 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	protected static final ResourceComparator notificationSingleton = new ResourceComparator(true, false);
 	protected static final ResourceComparator buildSingleton = new ResourceComparator(false, false);
 
-	/** 
+	/**
 	 * Boolean indicating whether or not this comparator is to be used for
 	 * a notification. (as opposed to a build) Notifications include extra information
 	 * like marker and sync info changes.
 	 */
 	private boolean notification;
 
-	/** 
+	/**
 	 * Boolean indicating whether or not this comparator is to be used for
 	 * snapshot. Snapshots care about extra information such as the used bit.
 	 */

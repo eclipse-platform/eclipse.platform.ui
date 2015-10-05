@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -26,7 +26,7 @@ import org.eclipse.osgi.util.NLS;
  * The resource change validator is used to validate that changes made to
  * resources will not adversely affect the models stored in those resources.
  * <p>
- * The validator is used by first creating a resource delta describing the 
+ * The validator is used by first creating a resource delta describing the
  * proposed changes.  A delta can be generated using a {@link IResourceChangeDescriptionFactory}.
  * The change is then validated by calling the {@link #validateChange(IResourceDelta, IProgressMonitor)}
  * method. This example validates a change to a single file:
@@ -43,7 +43,7 @@ import org.eclipse.osgi.util.NLS;
  * resources.  In this case the user should be presented with the status message
  * to determine if they want to proceed with the modification.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public final class ResourceChangeValidator {
@@ -138,14 +138,14 @@ public final class ResourceChangeValidator {
 	 * <p>
 	 * This method returns either a {@link ModelStatus}, or a {@link MultiStatus}
 	 * whose children are {@link ModelStatus}.  In either case, the severity
-	 * of the status indicates the severity of the possible side-effects of 
+	 * of the status indicates the severity of the possible side-effects of
 	 * the operation.  Any severity other than <code>OK</code> should be
 	 * shown to the user. The message should be a human readable message that
-	 * will allow the user to make a decision on whether to continue with the 
+	 * will allow the user to make a decision on whether to continue with the
 	 * operation. The model provider id should indicate which model is flagging the
 	 * the possible side effects.
 	 * </p>
-	 * 
+	 *
 	 * @param delta a delta tree containing the proposed changes
 	 * @return a status indicating any potential side effects
 	 * on models stored in the affected resources.

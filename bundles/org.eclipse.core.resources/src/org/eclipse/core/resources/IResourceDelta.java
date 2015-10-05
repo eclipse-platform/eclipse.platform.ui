@@ -35,7 +35,7 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Delta kind constant indicating that the resource has not been changed in any way.
-	 * 
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int NO_CHANGE = IElementComparator.K_NO_CHANGE;
@@ -44,7 +44,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * Delta kind constant (bit mask) indicating that the resource has been added
 	 * to its parent. That is, one that appears in the "after" state,
 	 * not in the "before" one.
-	 * 
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ADDED = 0x1;
@@ -52,32 +52,32 @@ public interface IResourceDelta extends IAdaptable {
 	/**
 	 * Delta kind constant (bit mask) indicating that the resource has been removed
 	 * from its parent. That is, one that appears in the "before" state,
-	 * not in the "after" one. 
-	 * 
+	 * not in the "after" one.
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int REMOVED = 0x2;
 
 	/**
-	 * Delta kind constant (bit mask) indicating that the resource has been changed. 
+	 * Delta kind constant (bit mask) indicating that the resource has been changed.
 	 * That is, one that appears in both the "before" and "after" states.
-	 * 
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int CHANGED = 0x4;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that a phantom resource has been added at
-	 * the location of the delta node. 
-	 * 
+	 * the location of the delta node.
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ADDED_PHANTOM = 0x8;
 
 	/**
-	 * Delta kind constant (bit mask) indicating that a phantom resource has been removed from 
-	 * the location of the delta node. 
-	 * 
+	 * Delta kind constant (bit mask) indicating that a phantom resource has been removed from
+	 * the location of the delta node.
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int REMOVED_PHANTOM = 0x10;
@@ -85,7 +85,7 @@ public interface IResourceDelta extends IAdaptable {
 	/**
 	 * The bit mask which describes all possible delta kinds,
 	 * including ones involving phantoms.
-	 * 
+	 *
 	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ALL_WITH_PHANTOMS = CHANGED | ADDED | REMOVED | ADDED_PHANTOM | REMOVED_PHANTOM;
@@ -96,15 +96,15 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Change constant (bit mask) indicating that the content of the resource has changed.
-	 * 
-	 * @see IResourceDelta#getFlags() 
+	 *
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int CONTENT = 0x100;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MOVED_FROM = 0x1000;
@@ -112,7 +112,7 @@ public interface IResourceDelta extends IAdaptable {
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved to another location.
 	 * The location in the new state can be retrieved using <code>getMovedToPath()</code>.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MOVED_TO = 0x2000;
@@ -121,7 +121,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * Change constant (bit mask) indicating that the resource was copied from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
 	 * This flag is only used when describing potential changes using an {@link IResourceChangeDescriptionFactory}.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.2
 	 */
@@ -131,14 +131,14 @@ public interface IResourceDelta extends IAdaptable {
 	 * This flag is also set when the project did not exist in the "before" state.
 	 * For example, if the current state of the resource is open then it was previously closed
 	 * or did not exist.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int OPEN = 0x4000;
 
 	/**
 	 * Change constant (bit mask) indicating that the type of the resource has changed.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int TYPE = 0x8000;
@@ -146,7 +146,7 @@ public interface IResourceDelta extends IAdaptable {
 	/**
 	 * Change constant (bit mask) indicating that the resource's sync status has changed.
 	 * This type of change is not included in build deltas, only in those for resource notification.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int SYNC = 0x10000;
@@ -154,46 +154,46 @@ public interface IResourceDelta extends IAdaptable {
 	/**
 	 * Change constant (bit mask) indicating that the resource's markers have changed.
 	 * This type of change is not included in build deltas, only in those for resource notification.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MARKERS = 0x20000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource has been
-	 * replaced by another at the same location (i.e., the resource has 
-	 * been deleted and then added). 
-	 * 
+	 * replaced by another at the same location (i.e., the resource has
+	 * been deleted and then added).
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int REPLACED = 0x40000;
 
 	/**
-	 * Change constant (bit mask) indicating that a project's description has changed. 
-	 * 
+	 * Change constant (bit mask) indicating that a project's description has changed.
+	 *
 	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int DESCRIPTION = 0x80000;
 
 	/**
 	 * Change constant (bit mask) indicating that the encoding of the resource has changed.
-	 * 
-	 * @see IResourceDelta#getFlags() 
+	 *
+	 * @see IResourceDelta#getFlags()
 	 * @since 3.0
 	 */
 	public static final int ENCODING = 0x100000;
-	
+
 	/**
 	 * Change constant (bit mask) indicating that the underlying file or folder of the linked resource has been added or removed.
-	 * 
-	 * @see IResourceDelta#getFlags() 
+	 *
+	 * @see IResourceDelta#getFlags()
 	 * @since 3.4
 	 */
 	public static final int LOCAL_CHANGED = 0x200000;
 
 	/**
 	 * Change constant (bit mask) indicating that the derived flag of the resource has changed.
-	 * 
+	 *
 	 * @see IResourceDelta#getFlags()
 	 * @since 3.6
 	 */
@@ -201,14 +201,14 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Accepts the given visitor.
-	 * The only kinds of resource deltas visited 
-	 * are <code>ADDED</code>, <code>REMOVED</code>, 
+	 * The only kinds of resource deltas visited
+	 * are <code>ADDED</code>, <code>REMOVED</code>,
 	 * and <code>CHANGED</code>.
 	 * The visitor's <code>visit</code> method is called with this
 	 * resource delta if applicable. If the visitor returns <code>true</code>,
 	 * the resource delta's children are also visited.
 	 * <p>
-	 * This is a convenience method, fully equivalent to 
+	 * This is a convenience method, fully equivalent to
 	 * <code>accept(visitor, IResource.NONE)</code>.
 	 * Although the visitor will be invoked for this resource delta, it will not be
 	 * invoked for any team-private member resources.
@@ -220,7 +220,7 @@ public interface IResourceDelta extends IAdaptable {
 	 */
 	public void accept(IResourceDeltaVisitor visitor) throws CoreException;
 
-	/** 
+	/**
 	 * Accepts the given visitor.
 	 * The visitor's <code>visit</code> method is called with this
 	 * resource delta. If the visitor returns <code>true</code>,
@@ -245,7 +245,7 @@ public interface IResourceDelta extends IAdaptable {
 	 */
 	public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
 
-	/** 
+	/**
 	 * Accepts the given visitor.
 	 * The visitor's <code>visit</code> method is called with this
 	 * resource delta. If the visitor returns <code>true</code>,
@@ -263,7 +263,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member flag is not specified
-	 * (recommended), resource deltas involving team private member resources will be 
+	 * (recommended), resource deltas involving team private member resources will be
 	 * excluded from the visit. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member
 	 * flag is specified, the visit will also include additions and removes of
 	 * team private member resources.
@@ -271,7 +271,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @param visitor the visitor
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>INCLUDE_HIDDEN</code> 
+	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>INCLUDE_HIDDEN</code>
 	 *   and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>) indicating which members are of interest
 	 * @exception CoreException if the visitor failed with this exception.
 	 * @see IResource#isPhantom()
@@ -305,7 +305,7 @@ public interface IResourceDelta extends IAdaptable {
 	public IResourceDelta findMember(IPath path);
 
 	/**
-	 * Returns resource deltas for all children of this resource 
+	 * Returns resource deltas for all children of this resource
 	 * which were added, removed, or changed. Returns an empty
 	 * array if there are no affected children.
 	 * <p>
@@ -326,7 +326,7 @@ public interface IResourceDelta extends IAdaptable {
 	public IResourceDelta[] getAffectedChildren();
 
 	/**
-	 * Returns resource deltas for all children of this resource 
+	 * Returns resource deltas for all children of this resource
 	 * whose kind is included in the given mask. Kind masks are formed
 	 * by the bitwise or of <code>IResourceDelta</code> kind constants.
 	 * Returns an empty array if there are no affected children.
@@ -338,7 +338,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * Team-private member resources are <b>not</b> included in the result.
 	 * </p>
 	 *
-	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta </code> 
+	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta </code>
 	 *    delta kind constants
 	 * @return the resource deltas for all affected children
 	 * @see IResourceDelta#ADDED
@@ -352,22 +352,22 @@ public interface IResourceDelta extends IAdaptable {
 	public IResourceDelta[] getAffectedChildren(int kindMask);
 
 	/**
-	 * Returns resource deltas for all children of this resource 
+	 * Returns resource deltas for all children of this resource
 	 * whose kind is included in the given mask. Masks are formed
 	 * by the bitwise or of <code>IResourceDelta</code> kind constants.
 	 * Returns an empty array if there are no affected children.
 	 * <p>
 	 * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member flag is not specified,
-	 * (recommended), resource deltas involving team private member resources will be 
+	 * (recommended), resource deltas involving team private member resources will be
 	 * excluded. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member
-	 * flag is specified, the result will also include resource deltas of the 
+	 * flag is specified, the result will also include resource deltas of the
 	 * specified kinds to team private member resources.
 	 * </p>
 	 * <p>
 	 * If the {@link IContainer#INCLUDE_HIDDEN} member flag is not specified,
-	 * (recommended), resource deltas involving hidden resources will be 
+	 * (recommended), resource deltas involving hidden resources will be
 	 * excluded. If the {@link IContainer#INCLUDE_HIDDEN} member
-	 * flag is specified, the result will also include resource deltas of the 
+	 * flag is specified, the result will also include resource deltas of the
 	 * specified kinds to hidden resources.
 	 * </p>
 	 * <p>
@@ -376,10 +376,10 @@ public interface IResourceDelta extends IAdaptable {
 	 * in the kind mask.
 	 * </p>
 	 *
-	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta</code> 
+	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta</code>
 	 *    delta kind constants
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS</code> 
+	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS</code>
 	 *   and <code>IContainer.INCLUDE_HIDDEN</code>)
 	 *   indicating which members are of interest
 	 * @return the resource deltas for all affected children
@@ -402,13 +402,13 @@ public interface IResourceDelta extends IAdaptable {
 	 * The following codes (bit masks) are used when kind is <code>CHANGED</code>, and
 	 * also when the resource is involved in a move:
 	 * <ul>
-	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
-	 * 		been altered, or <code>IResource.touch</code> has been called on 
+	 * <li><code>CONTENT</code> - The bytes contained by the resource have
+	 * 		been altered, or <code>IResource.touch</code> has been called on
 	 * 		the resource.</li>
 	 * <li><code>DERIVED_CHANGED</code> - The derived flag of the resource has
 	 * been altered.</li>
 	 * <li><code>ENCODING</code> - The encoding of the resource may have been altered.
-	 * This flag is not set when the encoding changes due to the file being modified, 
+	 * This flag is not set when the encoding changes due to the file being modified,
 	 * or being moved.</li>
 	 * <li><code>DESCRIPTION</code> - The description of the project has been altered,
 	 * 		or <code>IResource.touch</code> has been called on the project.
@@ -441,20 +441,20 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>COPIED_FROM</code> - Change constant (bit mask) indicating that the resource was copied from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.</li>
 	 * </ul>
-	 * 
+	 *
 	 * A simple move operation would result in the following delta information.
-	 * If a resource is moved from A to B (with no other changes to A or B), 
-	 * then A will have kind <code>REMOVED</code>, with flag <code>MOVED_TO</code>, 
-	 * and <code>getMovedToPath</code> on A will return the path for B.  
-	 * B will have kind <code>ADDED</code>, with flag <code>MOVED_FROM</code>, 
+	 * If a resource is moved from A to B (with no other changes to A or B),
+	 * then A will have kind <code>REMOVED</code>, with flag <code>MOVED_TO</code>,
+	 * and <code>getMovedToPath</code> on A will return the path for B.
+	 * B will have kind <code>ADDED</code>, with flag <code>MOVED_FROM</code>,
 	 * and <code>getMovedFromPath</code> on B will return the path for A.
 	 * B's other flags will describe any other changes to the resource, as compared
 	 * to its previous location at A.
 	 * </p>
 	 * <p>
 	 * Note that the move flags only describe the changes to a single resource; they
-	 * don't necessarily imply anything about the parent or children of the resource.  
-	 * If the children were moved as a consequence of a subtree move operation, 
+	 * don't necessarily imply anything about the parent or children of the resource.
+	 * If the children were moved as a consequence of a subtree move operation,
 	 * they will have corresponding move flags as well.
 	 * </p>
 	 * <p>
@@ -499,10 +499,10 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Returns the kind of this resource delta.
-	 * Normally, one of <code>ADDED</code>, 
+	 * Normally, one of <code>ADDED</code>,
 	 * <code>REMOVED</code>, <code>CHANGED</code>.
 	 * When phantom resources have been explicitly requested,
-	 * there are two additional kinds: <code>ADDED_PHANTOM</code> 
+	 * there are two additional kinds: <code>ADDED_PHANTOM</code>
 	 * and <code>REMOVED_PHANTOM</code>.
 	 *
 	 * @return the kind of this resource delta
@@ -523,8 +523,8 @@ public interface IResourceDelta extends IAdaptable {
 	public IMarkerDelta[] getMarkerDeltas();
 
 	/**
-	 * Returns the full path (in the "before" state) from which this resource 
-	 * (in the "after" state) was moved.  This value is only valid 
+	 * Returns the full path (in the "before" state) from which this resource
+	 * (in the "after" state) was moved.  This value is only valid
 	 * if the <code>MOVED_FROM</code> change flag is set; otherwise,
 	 * <code>null</code> is returned.
 	 * <p>
@@ -538,13 +538,13 @@ public interface IResourceDelta extends IAdaptable {
 	public IPath getMovedFromPath();
 
 	/**
-	 * Returns the full path (in the "after" state) to which this resource 
-	 * (in the "before" state) was moved.  This value is only valid if the 
+	 * Returns the full path (in the "after" state) to which this resource
+	 * (in the "before" state) was moved.  This value is only valid if the
 	 * <code>MOVED_TO</code> change flag is set; otherwise,
 	 * <code>null</code> is returned.
 	 * <p>
 	 * Note: the returned path never has a trailing separator.
-	 * 
+	 *
 	 * @return a path, or <code>null</code>
 	 * @see #getMovedFromPath()
 	 * @see #getFullPath()
@@ -569,19 +569,19 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Returns a handle for the affected resource.
-	 * <p> 
+	 * <p>
 	 * For additions (<code>ADDED</code>), this handle describes the newly-added resource; i.e.,
 	 * the one in the "after" state.
-	 * <p> 
+	 * <p>
 	 * For changes (<code>CHANGED</code>), this handle also describes the resource in the "after"
 	 * state. When a file or folder resource has changed type, the
 	 * former type of the handle can be inferred.
 	 * <p>
-	 * For removals (<code>REMOVED</code>), this handle describes the resource in the "before" 
+	 * For removals (<code>REMOVED</code>), this handle describes the resource in the "before"
 	 * state. Even though this resource would not normally exist in the
 	 * current workspace, the type of resource that was removed can be
 	 * determined from the handle.
-	 * <p> 
+	 * <p>
 	 * For phantom additions and removals (<code>ADDED_PHANTOM</code>
 	 * and <code>REMOVED_PHANTOM</code>), this is the handle of the phantom resource.
 	 *

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public interface IWorkspaceDescription {
 	 * The returned value is <code>null</code> if the workspace's default build
 	 * order is being used.
 	 *
-	 * @return the names of projects in the order they will be built, 
+	 * @return the names of projects in the order they will be built,
 	 *   or <code>null</code> if the default build order should be used
 	 * @see #setBuildOrder(String[])
 	 * @see ResourcesPlugin#PREF_BUILD_ORDER
@@ -37,10 +37,10 @@ public interface IWorkspaceDescription {
 	public String[] getBuildOrder();
 
 	/**
-	 * Returns the maximum length of time, in milliseconds, a file state should be 
+	 * Returns the maximum length of time, in milliseconds, a file state should be
 	 * kept in the local history. This setting is ignored by the workspace when
 	 * <code>isApplyFileStatePolicy()</code> returns <code>false</code>.
-	 * 
+	 *
 	 * @return the maximum time a file state should be kept in the local history
 	 *   represented in milliseconds
 	 * @see #setFileStateLongevity(long)
@@ -52,7 +52,7 @@ public interface IWorkspaceDescription {
 	/**
 	 * Returns the maximum number of times that the workspace should rebuild when
 	 * builders affect projects that have already been built.
-	 * 
+	 *
 	 * @return the maximum number of times that the workspace should rebuild when
 	 * builders affect projects that have already been built.
 	 * @see #setMaxBuildIterations(int)
@@ -75,7 +75,7 @@ public interface IWorkspaceDescription {
 
 	/**
 	 * Returns the maximum permitted size of a file, in bytes, to be stored in the
-	 * local history. This setting is ignored by the workspace when 
+	 * local history. This setting is ignored by the workspace when
 	 * <code>isApplyFileStatePolicy()</code> returns <code>false</code>.
 	 *
 	 * @return the maximum permitted size of a file to be stored in the local history
@@ -88,9 +88,9 @@ public interface IWorkspaceDescription {
 	/**
 	 * Returns whether file states are discarded according to the policy specified by
 	 * <code>setFileStateLongevity(long)</code>, <code>setMaxFileStates(int)</code>
-	 * and <code>setMaxFileStateSize(long)</code> methods. 
-	 * 
-	 * @return <code>true</code> if file states are removed due to the policy, 
+	 * and <code>setMaxFileStateSize(long)</code> methods.
+	 *
+	 * @return <code>true</code> if file states are removed due to the policy,
 	 * 		<code>false</code> otherwise
 	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see #setFileStateLongevity(long)
@@ -128,7 +128,7 @@ public interface IWorkspaceDescription {
 	 * resources automatically triggers an incremental build of the workspace.
 	 * </p>
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
@@ -144,10 +144,10 @@ public interface IWorkspaceDescription {
 	 * Sets the order in which projects in the workspace should be built.
 	 * Projects not named in this list are built in a default order defined
 	 * by the workspace.  Set this value to <code>null</code> to use the
-	 * default ordering for all projects.  Projects not named in the list are 
+	 * default ordering for all projects.  Projects not named in the list are
 	 * built in unspecified order after all ordered projects.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
@@ -164,11 +164,11 @@ public interface IWorkspaceDescription {
 	 * local history. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
 	 * </code> is set to false.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
-	 * @param time the maximum number of milliseconds a file state should be 
+	 * @param time the maximum number of milliseconds a file state should be
 	 * 		kept in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getFileStateLongevity()
@@ -181,7 +181,7 @@ public interface IWorkspaceDescription {
 	 * Sets the maximum number of times that the workspace should rebuild when
 	 * builders affect projects that have already been built.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
@@ -200,7 +200,7 @@ public interface IWorkspaceDescription {
 	 * new ones. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
 	 * </code> is set to <code>false</code>.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
@@ -217,7 +217,7 @@ public interface IWorkspaceDescription {
 	 * local history. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
 	 * </code> is set to <code>false</code>.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
@@ -234,11 +234,11 @@ public interface IWorkspaceDescription {
 	 * <code>setFileStateLongevity(long)</code>, <code>setMaxFileStates(int)</code>
 	 * and <code>setMaxFileStateSize(long)</code> methods.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *
-	 * @param apply <code>true</code> if file states are removed due to the policy, 
+	 * @param apply <code>true</code> if file states are removed due to the policy,
 	 * 		<code>false</code> otherwise
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #setFileStateLongevity(long)
@@ -254,7 +254,7 @@ public interface IWorkspaceDescription {
 	 * Sets the interval between automatic workspace snapshots.  The new interval
 	 * will only take effect after the next snapshot.
 	 * <p>
-	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * Users must call <code>IWorkspace.setDescription</code> before changes
 	 * made to this description take effect.
 	 * </p>
 	 *

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group Support
@@ -38,23 +38,23 @@ public interface ICoreConstants {
 	static final int M_TYPE_START = 8;
 	static final int M_MARKERS_SNAP_DIRTY = 0x1000;
 	static final int M_SYNCINFO_SNAP_DIRTY = 0x2000;
-	/** 
+	/**
 	 * Marks this resource as derived.
 	 * @since 2.0
 	 */
 	static final int M_DERIVED = 0x4000;
-	/** 
+	/**
 	 * Marks this resource as a team-private member of its container.
 	 * @since 2.0
 	 */
 	static final int M_TEAM_PRIVATE_MEMBER = 0x8000;
-	/** 
+	/**
 	 * Marks this resource as a hidden resource.
 	 * @since 3.4
 	 */
 	static final int M_HIDDEN = 0x200000;
-	
-	/** 
+
+	/**
 	 * Marks this resource as a linked resource.
 	 * @since 2.1
 	 */
@@ -75,7 +75,7 @@ public interface ICoreConstants {
 	 */
 	static final int M_DEFAULT_CONTENT_DESCRIPTION = 0x40000;
 
-	/** 
+	/**
 	 * Marks this resource as having undiscovered children
 	 * @since 3.1
 	 */
@@ -83,12 +83,12 @@ public interface ICoreConstants {
 
 	/**
 	 * Set of flags that should be cleared when the contents for a file change.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	static final int M_CONTENT_CACHE = M_NO_CONTENT_DESCRIPTION | M_DEFAULT_CONTENT_DESCRIPTION;
-	
+
 	static final int NULL_FLAG = -1;
-	
+
 	/**
 	 * A private preference stored in a preference node to indicate the preference
 	 * version that is used.  This version identifier is used to handle preference
@@ -103,11 +103,11 @@ public interface ICoreConstants {
 	 */
 	public static final String PREF_VERSION = "1"; //$NON-NLS-1$
 
-	// Internal status codes	
+	// Internal status codes
 	// Information Only [00-24]
 	// Warnings [25-74]
 	public static final int CRASH_DETECTED = 10035;
-	
+
 	// Errors [75-99]
 
 	public static final int PROJECT_SEGMENT_LENGTH = 1;

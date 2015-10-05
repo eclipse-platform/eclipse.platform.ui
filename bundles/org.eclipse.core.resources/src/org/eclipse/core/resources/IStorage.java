@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public interface IStorage extends IAdaptable {
 	 * The caller is responsible for closing the stream when finished.
 	 *
 	 * @return an input stream containing the contents of this storage
-	 * @exception CoreException if the contents of this storage could 
+	 * @exception CoreException if the contents of this storage could
 	 *		not be accessed.   See any refinements for more information.
 	 */
 	public InputStream getContents() throws CoreException;
@@ -42,13 +42,13 @@ public interface IStorage extends IAdaptable {
 	 * depends on the implementor/extender.  A storage need not
 	 * have a path.
 	 *
-	 * @return the path related to the data represented by this storage or 
+	 * @return the path related to the data represented by this storage or
 	 *		<code>null</code> if none.
 	 */
 	public IPath getFullPath();
 
 	/**
-	 * Returns the name of this storage. 
+	 * Returns the name of this storage.
 	 * The name of a storage is synonymous with the last segment
 	 * of its full path though if the storage does not have a path,
 	 * it may still have a name.

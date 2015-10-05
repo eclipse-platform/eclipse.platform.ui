@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * A <code>DeletedNode</code> represents a node that has been deleted in a 
- * <code>DeltaDataTree</code>.  It is a node that existed in the parent tree, 
+ * A <code>DeletedNode</code> represents a node that has been deleted in a
+ * <code>DeltaDataTree</code>.  It is a node that existed in the parent tree,
  * but no longer exists in the current delta tree.  It has no children or data.
  */
 public class DeletedNode extends AbstractDataTreeNode {
@@ -63,7 +63,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 		 * be a corresponding node in the parent.  Deleted nodes can live
 		 * in isolation.
 		 */
-		if (parent.includes(key)) 
+		if (parent.includes(key))
 			return convertToRemovedComparisonNode(parent.copyCompleteSubtree(key), NodeComparison.K_REMOVED);
 		// Node doesn't exist in either tree.  Return an empty comparison.
 		// Empty comparisons are omitted from the delta.
@@ -71,7 +71,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
+	 * Creates and returns a new copy of the receiver.  Makes a deep copy of
 	 * children, but a shallow copy of name and data.
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 		return true;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given node, and returns its replacement.
 	 */
 	@Override

@@ -66,7 +66,7 @@ public class DataDeltaNode extends DataTreeNode {
 	}
 
 	/**
-	 * Creates and returns a new copy of the receiver.  Makes a deep copy of 
+	 * Creates and returns a new copy of the receiver.  Makes a deep copy of
 	 * children, but a shallow copy of name and data.
 	 */
 	@Override
@@ -90,14 +90,14 @@ public class DataDeltaNode extends DataTreeNode {
 		return true;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given node, and answers its replacement.
 	 */
 	@Override
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
 		/* don't compare root nodes */
-		if (!key.isRoot() && comparer.compare(parent.getData(key), data) == 0) 
+		if (!key.isRoot() && comparer.compare(parent.getData(key), data) == 0)
 			return new NoDataDeltaNode(name, simplifiedChildren);
 		return new DataDeltaNode(name, data, simplifiedChildren);
 	}

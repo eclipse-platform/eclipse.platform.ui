@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -112,7 +112,7 @@ public class Cache {
 				tail = previous;
 			else
 				next.previous = previous;
-			// it may be in the head			
+			// it may be in the head
 			if (head == this)
 				head = next;
 			else
@@ -152,7 +152,7 @@ public class Cache {
 		newHead.makeHead();
 		int extraEntries = entries.size() - maximumCapacity;
 		if (extraEntries > maximumCapacity * threshold)
-			// we have reached our limit - ensure we are under the maximum capacity 
+			// we have reached our limit - ensure we are under the maximum capacity
 			// by discarding older entries
 			packEntries(extraEntries);
 		return newHead;
@@ -182,7 +182,7 @@ public class Cache {
 	}
 
 	private void packEntries(int extraEntries) {
-		// should remove in an ad-hoc way to get better performance 
+		// should remove in an ad-hoc way to get better performance
 		Entry current = tail;
 		for (; current != null && extraEntries > 0; extraEntries--) {
 			current.discard();

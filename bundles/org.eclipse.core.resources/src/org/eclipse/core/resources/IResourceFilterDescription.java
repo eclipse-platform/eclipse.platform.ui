@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM - ongoing development
@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.*;
 
 /**
  * A description of a resource filter.
- * 
- * A filter determines which file system objects will be visible when a local refresh is 
+ *
+ * A filter determines which file system objects will be visible when a local refresh is
  * performed for an IContainer.
  *
  * @see IContainer#getFilters()
@@ -31,7 +31,7 @@ public interface IResourceFilterDescription {
 	 *====================================================================*/
 
 	/**
-	 * Flag for resource filters indicating that the filter list includes only 
+	 * Flag for resource filters indicating that the filter list includes only
 	 * the files matching the filters. All INCLUDE_ONLY filters are applied to
 	 * the resource list with an logical OR operation.
 	 */
@@ -69,47 +69,47 @@ public interface IResourceFilterDescription {
 
 	/**
 	 * Return the resource towards which this filter is set.
-	 * 
+	 *
 	 * @return the resource towards which this filter is set
 	 */
 	public IResource getResource();
 
 	/**
 	 * Return the filter type, either INCLUDE_ONLY or EXCLUDE_ALL
-	 * 
+	 *
 	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
 	 */
 	public int getType();
-	
+
 	/**
 	 * Deletes this filter description from its associated resource.
 	 * <p>
 	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls when
-	 * changes to the resource hierarchy under this container resulting from the filter 
-	 * removal take effect. If this flag is specified, the resource hierarchy is updated in a 
-	 * separate thread after this method returns. If the flag is not specified, any resource 
+	 * changes to the resource hierarchy under this container resulting from the filter
+	 * removal take effect. If this flag is specified, the resource hierarchy is updated in a
+	 * separate thread after this method returns. If the flag is not specified, any resource
 	 * changes resulting from the filter removal will occur before this method returns.
 	 * </p>
-	 * <p> 
+	 * <p>
 	 * This operation changes resources; these changes will be reported
-	 * in a subsequent resource change event that will include an indication 
+	 * in a subsequent resource change event that will include an indication
 	 * of any resources that have been added as a result of the filter removal.
 	 * </p>
 	 * <p>
 	 * This operation is long-running; progress and cancellation are provided
-	 * by the given progress monitor. 
+	 * by the given progress monitor.
 	 * </p>
-	 * 
+	 *
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this filter could not be removed. Reasons include:
 	 * <ul>
-	 * <li> Resource changes are disallowed during certain types of resource change 
+	 * <li> Resource changes are disallowed during certain types of resource change
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
-	 * @exception OperationCanceledException if the operation is canceled. 
+	 * @exception OperationCanceledException if the operation is canceled.
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IContainer#getFilters()
 	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Serge Beauchamp(Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
@@ -21,19 +21,19 @@ import org.eclipse.core.runtime.CoreException;
  * The abstract base class for all file info matchers. Instances
  * of this class are provided using the <tt>org.eclipse.core.resources.filterMatchers</tt>
  * extension point.
- * 
+ *
  * @since 3.6
  */
 public abstract class AbstractFileInfoMatcher {
 
 	/**
 	 * Tests the given {@link FileInfo}
-	 * 
+	 *
 	 * @param parent the parent container
 	 * @param fileInfo the {@link FileInfo} object to test
 	 * @return <code>true</code> if the given {@link FileInfo} matches,
 	 * and <code>false</code> otherwise.
-	 * @throws CoreException the implementor should throw a CoreException if, 
+	 * @throws CoreException the implementor should throw a CoreException if,
 	 * 		in the case that the parent or fileInfo doesn't exist in the workspace
 	 * 		or in the file system, the return value can't be determined.
 	 */

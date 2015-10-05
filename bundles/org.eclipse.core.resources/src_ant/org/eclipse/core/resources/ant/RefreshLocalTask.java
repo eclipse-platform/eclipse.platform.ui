@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
 
 /**
  * An Ant task which refreshes the Eclipse Platform's view of the local filesystem.
- * 
+ *
  * @see IResource#refreshLocal(int, IProgressMonitor)
  */
 public class RefreshLocalTask extends Task {
@@ -63,7 +63,7 @@ public class RefreshLocalTask extends Task {
 
 	/**
 	 * Performs the refresh operation.
-	 * 
+	 *
 	 * @exception BuildException thrown if a problem occurs during execution.
 	 */
 	@Override
@@ -85,8 +85,8 @@ public class RefreshLocalTask extends Task {
 	 * Sets the depth of this task appropriately.  The specified argument must
 	 * by one of <code>RefreshLocal.DEPTH_ZERO</code>, <code>RefreshLocal.DEPTH_ONE</code>
 	 * or <code>RefreshLocal.DEPTH_INFINITE</code>.
-	 * 
-	 * @param value the depth to refresh to		
+	 *
+	 * @param value the depth to refresh to
 	 */
 	public void setDepth(String value) {
 		if (DEPTH_ZERO.equalsIgnoreCase(value))
@@ -99,7 +99,7 @@ public class RefreshLocalTask extends Task {
 
 	/**
 	 * Sets the root of the workspace resource tree to refresh.
-	 * 
+	 *
 	 * @param value the root value
 	 */
 	public void setResource(String value) {

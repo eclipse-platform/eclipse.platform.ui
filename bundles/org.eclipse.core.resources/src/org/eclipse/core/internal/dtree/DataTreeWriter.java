@@ -94,7 +94,7 @@ public class DataTreeWriter {
 		}
 	}
 
-	/** 
+	/**
 	 * Writes an integer in a compact format biased towards
 	 * small non-negative numbers. Numbers between
 	 * 0 and 254 inclusive occupy 1 byte; other numbers occupy 5 bytes.

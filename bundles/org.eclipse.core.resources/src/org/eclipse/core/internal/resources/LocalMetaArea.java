@@ -390,7 +390,7 @@ public class LocalMetaArea implements ICoreConstants {
 				for (int i = 0; i < configs.length; i++)
 					configs[i] = dataIn.readUTF();
 				if (configs.length > 0)
-					// In the future we may decide this is better stored in the 
+					// In the future we may decide this is better stored in the
 					// .project, so only set if configs.length > 0
 					description.setBuildConfigs(configs);
 				// Active configuration name
@@ -424,7 +424,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/**
 	 * Writes the workspace description to the local meta area. This method is
 	 * synchronized to prevent multiple current write attempts.
-	 * 
+	 *
 	 * @deprecated should not be called any more - workspace preferences are
 	 *                     now maintained in the plug-in's preferences
 	 */

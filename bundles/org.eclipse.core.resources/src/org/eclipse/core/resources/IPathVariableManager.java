@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.*;
  * Manages a collection of path variables and resolves paths containing a
  * variable reference.
  * <p>
- * A path variable is a pair of non-null elements (name,value) where name is 
+ * A path variable is a pair of non-null elements (name,value) where name is
  * a case-sensitive string (containing only letters, digits and the underscore
  * character, and not starting with a digit), and value is an absolute
  * <code>IPath</code> object.
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.*;
  * location in the file system depends on the value of a variable. A variable
  * reference may only appear as the first segment of a relative path.
  * </p>
- * 
+ *
  * @see org.eclipse.core.runtime.IPath
  * @since 2.1
  * @noimplement This interface is not intended to be implemented by clients.
@@ -37,28 +37,28 @@ import org.eclipse.core.runtime.*;
  */
 public interface IPathVariableManager {
 
-	/** 
+	/**
 	 * Converts an absolute path to path relative to some defined
-	 * variable. For example, converts "C:/foo/bar.txt" into "FOO/bar.txt", 
+	 * variable. For example, converts "C:/foo/bar.txt" into "FOO/bar.txt",
 	 * granted that the path variable "FOO" value is "C:/foo".
 	 * <p>
-	 * The "force" argument will cause an intermediate path variable to be created if 
+	 * The "force" argument will cause an intermediate path variable to be created if
 	 * the given path can be relative only to a parent of an existing path variable.
 	 * For example, if the path "C:/other/file.txt" is to be converted
-	 * and no path variables point to "C:/" or "C:/other" but "FOO" 
-	 * points to "C:/foo", an intermediate "OTHER" variable will be 
+	 * and no path variables point to "C:/" or "C:/other" but "FOO"
+	 * points to "C:/foo", an intermediate "OTHER" variable will be
 	 * created relative to "FOO" containing the value "${PARENT-1-FOO}"
 	 * so that the final path returned will be "OTHER/file.txt".
 	 * </p>
 	 * <p>
 	 * The argument "variableHint" can be used to specify the name of the path
-	 * variable to make the provided path relative to. 
+	 * variable to make the provided path relative to.
 	 * </p>
-	 *  
+	 *
 	 * @param path  The absolute path to be converted
-	 * @param force indicates whether intermediate path variables should be created 
+	 * @param force indicates whether intermediate path variables should be created
 	 * if the path is relative only to a parent of an existing path variable.
-	 * @param variableHint The name of the variable to which the path should be made 
+	 * @param variableHint The name of the variable to which the path should be made
 	 * relative to, or <code>null</code> for the nearest one.
 	 * @return The converted path
 	 * @exception CoreException if this method fails. Reasons include:
@@ -78,14 +78,14 @@ public interface IPathVariableManager {
 	 * <li>A new variable will be created, if there is no variable defined with
 	 * the given name, and the given value is not <code>null</code>.
 	 * </li>
-	 * 
+	 *
 	 * <li>The referred variable's value will be changed, if it already exists
 	 * and the given value is not <code>null</code>.</li>
-	 * 
+	 *
 	 * <li>The referred variable will be removed, if a variable with the given
 	 * name is currently defined and the given value is <code>null</code>.
 	 * </li>
-	 *  
+	 *
 	 * <li>The call will be ignored, if a variable with the given name is not
 	 * currently defined and the given value is <code>null</code>, or if it is
 	 * defined but the given value is equal to its current value.
@@ -93,8 +93,8 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * <p>If a variable is effectively changed, created or removed by a call to
 	 * this method, notification will be sent to all registered listeners.</p>
-	 * 
-	 * @param name the name of the variable 
+	 *
+	 * @param name the name of the variable
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -115,14 +115,14 @@ public interface IPathVariableManager {
 	 * <li>A new variable will be created, if there is no variable defined with
 	 * the given name, and the given value is not <code>null</code>.
 	 * </li>
-	 * 
+	 *
 	 * <li>The referred variable's value will be changed, if it already exists
 	 * and the given value is not <code>null</code>.</li>
-	 * 
+	 *
 	 * <li>The referred variable will be removed, if a variable with the given
 	 * name is currently defined and the given value is <code>null</code>.
 	 * </li>
-	 *  
+	 *
 	 * <li>The call will be ignored, if a variable with the given name is not
 	 * currently defined and the given value is <code>null</code>, or if it is
 	 * defined but the given value is equal to its current value.
@@ -130,8 +130,8 @@ public interface IPathVariableManager {
 	 * </ul>
 	 * <p>If a variable is effectively changed, created or removed by a call to
 	 * this method, notification will be sent to all registered listeners.</p>
-	 * 
-	 * @param name the name of the variable 
+	 *
+	 * @param name the name of the variable
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -145,8 +145,8 @@ public interface IPathVariableManager {
 	/**
 	 * Returns the value of the path variable with the given name. If there is
 	 * no variable defined with the given name, returns <code>null</code>.
-	 * 
-	 * @param name the name of the variable to return the value for  
+	 *
+	 * @param name the name of the variable to return the value for
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
 	 * @deprecated use {@link #getURIValue(String)} instead.
@@ -157,8 +157,8 @@ public interface IPathVariableManager {
 	/**
 	 * Returns the value of the path variable with the given name. If there is
 	 * no variable defined with the given name, returns <code>null</code>.
-	 * 
-	 * @param name the name of the variable to return the value for  
+	 *
+	 * @param name the name of the variable to return the value for
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
 	 * @since 3.6
@@ -167,7 +167,7 @@ public interface IPathVariableManager {
 
 	/**
 	 * Returns an array containing all defined path variable names.
-	 *  
+	 *
 	 * @return an array containing all defined path variable names
 	 */
 	public String[] getPathVariableNames();
@@ -180,7 +180,7 @@ public interface IPathVariableManager {
 	 * variables. The listener will be notified whenever a variable has been
 	 * added, removed or had its value changed. Has no effect if an identical
 	 * path variable change listener is already registered.
-	 * 
+	 *
 	 * @param listener the listener
 	 * @see IPathVariableChangeListener
 	 */
@@ -189,8 +189,8 @@ public interface IPathVariableManager {
 	/**
 	 * Removes the given path variable change listener from the listeners list.
 	 * Has no effect if an identical listener is not registered.
-	 * 
-	 * @param listener the listener 
+	 *
+	 * @param listener the listener
 	 * @see IPathVariableChangeListener
 	 */
 	public void removeChangeListener(IPathVariableChangeListener listener);
@@ -208,7 +208,7 @@ public interface IPathVariableManager {
 	 * If the given URI is <code>null</code> then <code>null</code> will be
 	 * returned.  In all other cases the result will be non-<code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param uri  the URI to be resolved
 	 * @return the resolved URI or <code>null</code>
 	 * @since 3.2
@@ -228,7 +228,7 @@ public interface IPathVariableManager {
 	 * If the given path is <code>null</code> then <code>null</code> will be
 	 * returned.  In all other cases the result will be non-<code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * For example, consider the following collection of path variables:
 	 * </p>
@@ -245,7 +245,7 @@ public interface IPathVariableManager {
 	 * <p>BACKUP  => /tmp/backup</p>
 	 * <p>BACKUP/bar.txt  => /tmp/backup/bar.txt</p>
 	 * <p>SOMEPATH/foo => SOMEPATH/foo</p></p>
-	 * 
+	 *
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
 	 * @deprecated use {@link #resolveURI(URI)} instead.
@@ -257,7 +257,7 @@ public interface IPathVariableManager {
 	 * Returns <code>true</code> if the given variable is defined and
 	 * <code>false</code> otherwise. Returns <code>false</code> if the given
 	 * name is not a valid path variable name.
-	 * 
+	 *
 	 * @param name the variable's name
 	 * @return <code>true</code> if the variable exists, <code>false</code>
 	 *    otherwise
@@ -266,7 +266,7 @@ public interface IPathVariableManager {
 
 	/**
 	 * Returns whether a variable is user defined or not.
-	 * 
+	 *
 	 * @return true if the path is user defined.
 	 * @since 3.6
 	 */
@@ -276,7 +276,7 @@ public interface IPathVariableManager {
 	 * Validates the given name as the name for a path variable. A valid path
 	 * variable name is made exclusively of letters, digits and the underscore
 	 * character, and does not start with a digit.
-	 * 
+	 *
 	 * @param name a possibly valid path variable name
 	 * @return a status object with code <code>IStatus.OK</code> if
 	 *    the given name is a valid path variable name, otherwise a status
@@ -316,7 +316,7 @@ public interface IPathVariableManager {
 	 * Returns a variable relative path equivalent to an absolute path for a
 	 * file or folder in the file system, according to the variables defined in
 	 * this project PathVariableManager. The file or folder need not to exist.
-	 * 
+	 *
 	 * @param location
 	 *            a path in the local file system
 	 * @return the corresponding variable relative path, or <code>null</code>

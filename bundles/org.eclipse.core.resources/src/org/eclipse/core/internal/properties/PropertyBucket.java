@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
@@ -37,7 +37,7 @@ public class PropertyBucket extends Bucket {
 		private String[][] value;
 
 		/**
-		 * Deletes the property with the given name, and returns the result array. Returns the original 
+		 * Deletes the property with the given name, and returns the result array. Returns the original
 		 * array if the property to be deleted could not be found. Returns <code>null</code> if the property was found
 		 * and the original array had size 1 (instead of a zero-length array).
 		 */
@@ -68,7 +68,7 @@ public class PropertyBucket extends Bucket {
 				existing[index][2] = propertyValue;
 				return existing;
 			}
-			// not found - insert 
+			// not found - insert
 			int insertPosition = -index - 1;
 			String[][] newValue = new String[existing.length + 1][];
 			if (insertPosition > 0)
@@ -129,7 +129,7 @@ public class PropertyBucket extends Bucket {
 			}
 		}
 
-		/** 
+		/**
 		 * @param path
 		 * @param value is a String[][] {{propertyKey, propertyValue}}
 		 */
@@ -140,7 +140,7 @@ public class PropertyBucket extends Bucket {
 
 		/**
 		 * Compacts the data array removing any null slots. If non-null slots
-		 * are found, the entry is marked for removal. 
+		 * are found, the entry is marked for removal.
 		 */
 		private void compact() {
 			if (!isDirty())
@@ -207,7 +207,7 @@ public class PropertyBucket extends Bucket {
 	 * PROPERTY ::= QUALIFIER LOCAL_NAME VALUE
 	 * QUALIFIER ::= INDEX | QNAME
 	 * INDEX -> byte int
-	 * QNAME -> byte string   
+	 * QNAME -> byte string
 	 * UUID ::= byte[16]
 	 * LAST_MODIFIED ::= byte[8]
 	 * </pre>
@@ -331,7 +331,7 @@ public class PropertyBucket extends Bucket {
 		String[][] properties = (String[][]) entryValue;
 		destination.writeShort(properties.length);
 		for (int j = 0; j < properties.length; j++) {
-			// writes the property key qualifier			
+			// writes the property key qualifier
 			int index = qualifierIndex.indexOf(properties[j][0]);
 			if (index == -1) {
 				destination.writeByte(QNAME);

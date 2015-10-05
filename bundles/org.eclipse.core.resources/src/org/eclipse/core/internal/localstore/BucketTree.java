@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -31,12 +31,12 @@ public class BucketTree {
 	public static final int DEPTH_ZERO = 0;
 
 	private final static int SEGMENT_QUOTA = 256; //two hex characters
-	
+
 	/**
 	 * Store all bucket names to avoid creating garbage when traversing the tree
 	 */
 	private static final char[][] HEX_STRINGS;
-	
+
 	static {
 		HEX_STRINGS = new char[SEGMENT_QUOTA][];
 		for (int i = 0; i < HEX_STRINGS.length; i++)
@@ -53,7 +53,7 @@ public class BucketTree {
 	}
 
 	/**
-	 * From a starting point in the tree, visit all nodes under it. 
+	 * From a starting point in the tree, visit all nodes under it.
 	 * @param visitor
 	 * @param base
 	 * @param depth
@@ -91,8 +91,8 @@ public class BucketTree {
 
 	/**
 	 * This will never be called for a bucket for the workspace root.
-	 *  
-	 * @return whether to continue visiting other branches 
+	 *
+	 * @return whether to continue visiting other branches
 	 */
 	private boolean internalAccept(Bucket.Visitor visitor, IPath base, File bucketDir, int depthRequested, int currentDepth) throws CoreException {
 		current.load(base.segment(0), bucketDir);
@@ -146,7 +146,7 @@ public class BucketTree {
 			stream.write(current.getVersion());
 			stream.close();
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath()); 
+			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		} finally {
 			FileUtil.safeClose(stream);

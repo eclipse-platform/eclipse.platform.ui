@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -336,7 +336,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	}
 
 	/**
-	 * Returns true if there are cycles in the graph of nature 
+	 * Returns true if there are cycles in the graph of nature
 	 * dependencies starting at root i.  Returns false otherwise.
 	 * Marks all descriptors that are involved in the cycle as invalid.
 	 */
@@ -387,7 +387,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	}
 
 	/**
-	 * Checks if the two natures have overlapping "one-of-nature" set 
+	 * Checks if the two natures have overlapping "one-of-nature" set
 	 * memberships.  Returns the name of one such overlap, or null if
 	 * there is no set overlap.
 	 */
@@ -427,7 +427,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 
 	/* (non-Javadoc)
 	 * Returns true if the given nature is enabled for the given project.
-	 * 
+	 *
 	 * @see IProject#isNatureEnabled(String)
 	 */
 	public boolean isNatureEnabled(Project project, String id) {
@@ -499,11 +499,11 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/**
 	 * Validates the given nature additions in the nature set for this
 	 * project.  Tolerates existing inconsistencies in the nature set.
-	 * @param newNatures the complete new set of nature IDs for the project, 
+	 * @param newNatures the complete new set of nature IDs for the project,
 	 * 	including additions
 	 * @param additions the subset of newNatures that represents natures
 	 * 	being added
-	 * @return An OK status if all additions are valid, and an error status 
+	 * @return An OK status if all additions are valid, and an error status
 	 * 	if any of the additions introduce new inconsistencies.
 	 */
 	protected IStatus validateAdditions(HashSet<String> newNatures, HashSet<String> additions, IProject project) {
@@ -511,16 +511,16 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//perform checks in order from least expensive to most expensive
 		for (Iterator<String> added = additions.iterator(); added.hasNext();) {
 			String id = added.next();
-			// check for adding a nature that is not available. 
+			// check for adding a nature that is not available.
 			IProjectNatureDescriptor desc = getNatureDescriptor(id);
 			if (desc == null) {
 				return failure(NLS.bind(Messages.natures_missingNature, id));
 			}
-			// check for adding a nature that creates a circular dependency 
+			// check for adding a nature that creates a circular dependency
 			if (((ProjectNatureDescriptor) desc).hasCycle) {
 				return failure(NLS.bind(Messages.natures_hasCycle, id));
 			}
-			// check for adding a nature that has a missing prerequisite. 
+			// check for adding a nature that has a missing prerequisite.
 			String[] required = desc.getRequiredNatureIds();
 			for (int i = 0; i < required.length; i++) {
 				if (!newNatures.contains(required[i])) {
@@ -551,7 +551,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 
 	/**
 	 * Validates whether a project with the given set of natures should allow
-	 * linked resources.  Returns an OK status if linking is allowed, 
+	 * linked resources.  Returns an OK status if linking is allowed,
 	 * otherwise a non-OK status indicating why linking is not allowed.
 	 * Linking is allowed if there is no project nature that explicitly disallows it.
 	 * No validation is done on the nature ids themselves (ids that don't have
@@ -571,11 +571,11 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/**
 	 * Validates the given nature removals in the nature set for this
 	 * project.  Tolerates existing inconsistencies in the nature set.
-	 * 
-	 * @param newNatures the complete new set of nature IDs for the project, 
+	 *
+	 * @param newNatures the complete new set of nature IDs for the project,
 	 * 	excluding deletions
 	 * @param deletions the nature IDs that are being removed from the set.
-	 * @return An OK status if all removals are valid, and a not OK status 
+	 * @return An OK status if all removals are valid, and a not OK status
 	 * 	if any of the deletions introduce new inconsistencies.
 	 */
 	protected IStatus validateRemovals(HashSet<String> newNatures, HashSet<String> deletions) {

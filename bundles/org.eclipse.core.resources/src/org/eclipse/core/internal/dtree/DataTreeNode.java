@@ -131,9 +131,9 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns a new node containing a child with the given local name in 
+	 * Returns a new node containing a child with the given local name in
 	 * addition to the receiver's current children and data.
-	 * 
+	 *
 	 * @param localName
 	 *	name of new child
 	 * @param childNode
@@ -300,7 +300,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * Returns the data for the node 
+	 * Returns the data for the node
 	 */
 	@Override
 	public Object getData() {
@@ -322,7 +322,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		data = o;
 	}
 
-	/** 
+	/**
 	 * Simplifies the given node, and answers its replacement.
 	 */
 	@Override
@@ -332,7 +332,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 			return this;
 		}
 		/* Can't just call simplify on children since this will miss the case
-		 where a child exists in the parent but does not in this. 
+		 where a child exists in the parent but does not in this.
 		 See PR 1FH5RYA. */
 		DataTreeNode parentsNode = (DataTreeNode) parent.copyCompleteSubtree(key);
 		return parentsNode.forwardDeltaWith(this, comparer);

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -53,14 +53,14 @@ public interface ISaveParticipant extends EventListener {
 	 *
 	 * @param context the save context object
 	 * @exception CoreException if this method fails to snapshot
-	 *   the state of this workspace 
+	 *   the state of this workspace
 	 */
 	public void prepareToSave(ISaveContext context) throws CoreException;
 
 	/**
 	 * Tells this participant to rollback its important state.
 	 * The context's previous state number indicates what it was prior
-	 * to the failed save. 
+	 * to the failed save.
 	 * Exceptions are not expected to be thrown at this point, so they
 	 * should be handled internally.
 	 * <p>
@@ -88,23 +88,23 @@ public interface ISaveParticipant extends EventListener {
 	 * in the event of a crash. The only difference is in the space-time
 	 * tradeoffs that the participant should make.
 	 * <ul>
-	 * <li>Full saves: the participant is 
-	 * encouraged to save additional non-essential information that will aid 
+	 * <li>Full saves: the participant is
+	 * encouraged to save additional non-essential information that will aid
 	 * it in retaining user state and configuration information and quickly getting
-	 * back in sync with the state of the platform at a later point. 
+	 * back in sync with the state of the platform at a later point.
 	 * </li>
-	 * <li>Snapshots: the participant is discouraged from saving non-essential 
+	 * <li>Snapshots: the participant is discouraged from saving non-essential
 	 * information that could be recomputed in the unlikely event of a crash.
 	 * This lifecycle event will happen often and participant actions should take
 	 * an absolute minimum of time.
 	 * </li>
-	 * <li>Project saves: the participant should only save project related data. 
+	 * <li>Project saves: the participant should only save project related data.
 	 * It is discouraged from saving non-essential information that could be recomputed
 	 * in the unlikely event of a crash.
 	 * </li>
 	 * </ul>
 	 * For instance, the Java IDE gathers various user preferences and would want to
-	 * make sure that the current settings are safe and sound after a 
+	 * make sure that the current settings are safe and sound after a
 	 * <code>save</code> (if not saved immediately).
 	 * The Java IDE would likely save computed image builder state on full saves,
 	 * because this would allow the Java IDE to be restarted later and not
@@ -115,7 +115,7 @@ public interface ISaveParticipant extends EventListener {
 	 * state.
 	 * </p>
 	 * <p>
-	 * The following snippet shows how a plug-in participant would write 
+	 * The following snippet shows how a plug-in participant would write
 	 * its important state to a file whose name is based on the save
 	 * number for this save operation.
 	 * <pre>

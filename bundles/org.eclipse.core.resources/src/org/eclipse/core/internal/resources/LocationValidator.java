@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
@@ -211,7 +211,7 @@ public class LocationValidator {
 	}
 
 	/**
-	 * Validates that the given workspace path is valid for the given type.  If 
+	 * Validates that the given workspace path is valid for the given type.  If
 	 * <code>lastSegmentOnly</code> is true, it is assumed that all segments except
 	 * the last one have previously been validated.  This is an optimization for validating
 	 * a leaf resource when it is known that the parent exists (and thus its parent path

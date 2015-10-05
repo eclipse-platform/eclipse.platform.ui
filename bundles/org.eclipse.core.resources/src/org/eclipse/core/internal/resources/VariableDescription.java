@@ -14,7 +14,7 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * 
+ *
  */
 public class VariableDescription implements Comparable<VariableDescription> {
 	private String name;

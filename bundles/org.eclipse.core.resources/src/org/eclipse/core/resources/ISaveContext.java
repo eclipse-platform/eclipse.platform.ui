@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
  * Note that <code>IWorkspace.save</code> uses a
  * different save context for each registered participant,
  * allowing each to declare whether they have actively
- * participated and decide whether to receive a resource 
+ * participated and decide whether to receive a resource
  * delta on reactivation.
  * </p>
  *
@@ -32,21 +32,21 @@ public interface ISaveContext {
 	 * Constants related to save kind
 	 *====================================================================*/
 
-	/** 
+	/**
 	 * Type constant which identifies a full save.
 	 *
 	 * @see ISaveContext#getKind()
 	 */
 	public static final int FULL_SAVE = 1;
 
-	/** 
+	/**
 	 * Type constant which identifies a snapshot.
 	 *
 	 * @see ISaveContext#getKind()
 	 */
 	public static final int SNAPSHOT = 2;
 
-	/** 
+	/**
 	 * Type constant which identifies a project save.
 	 *
 	 * @see ISaveContext#getKind()
@@ -80,11 +80,11 @@ public interface ISaveContext {
 	 * which the plug-in actively participated, or <code>0</code>
 	 * if the plug-in has never actively participated in a save before.
 	 * <p>
-	 * In the event of an unsuccessful save, this is the value to 
+	 * In the event of an unsuccessful save, this is the value to
 	 * <code>rollback</code> to.
 	 * </p>
 	 *
-	 * @return the previous save number if positive, or <code>0</code> 
+	 * @return the previous save number if positive, or <code>0</code>
 	 *		if never saved before
 	 * @see ISaveParticipant#rollback(ISaveContext)
 	 */
@@ -103,7 +103,7 @@ public interface ISaveContext {
 
 	/**
 	 * Returns the number for this save. This number is
-	 * guaranteed to be <code>1</code> more than the 
+	 * guaranteed to be <code>1</code> more than the
 	 * previous save number.
 	 * <p>
 	 * This is the value to use when, for example, creating files
@@ -116,7 +116,7 @@ public interface ISaveContext {
 	public int getSaveNumber();
 
 	/**
-	 * Returns the current location for the given file or 
+	 * Returns the current location for the given file or
 	 * <code>null</code> if none.
 	 *
 	 * @return the location of a given file or <code>null</code>
@@ -139,11 +139,11 @@ public interface ISaveContext {
 	 * <p>
 	 * Each save participant must manage the deletion of its old state files.  Old state files
 	 * can be discovered using <code>getPreviousSaveNumber</code> or by using
-	 * <code>getFiles</code> to discover the current files and comparing that to the 
+	 * <code>getFiles</code> to discover the current files and comparing that to the
 	 * list of files on disk.
 	 * </p>
 	 * @param file the logical name of the participant's data file
-	 * @param location the real (i.e., filesystem) name by which the file should be known 
+	 * @param location the real (i.e., filesystem) name by which the file should be known
 	 *		for this save, or <code>null</code> to remove the entry
 	 * @see #lookup(IPath)
 	 * @see #getSaveNumber()
@@ -155,7 +155,7 @@ public interface ISaveContext {
 	/**
 	 * Indicates that the saved workspace tree should be remembered so that a delta
 	 * will be available in a subsequent session when the plug-in re-registers
-	 * to participate in saves. If this method is not called, no resource delta will 
+	 * to participate in saves. If this method is not called, no resource delta will
 	 * be made available. This facility is not available for marker deltas.
 	 * Plug-ins must assume that all markers may have changed when they are activated.
 	 * <p>

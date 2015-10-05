@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -16,25 +16,25 @@ import org.eclipse.core.resources.IResource;
  * An <code>IRefreshResult</code> is provided to an auto-refresh
  * monitor.  The result is used to submit resources to be refreshed, and
  * for reporting failure of the monitor.
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IRefreshResult {
 	/**
-	 * Notifies that the given monitor has encountered a failure from which it 
+	 * Notifies that the given monitor has encountered a failure from which it
 	 * cannot recover while monitoring the given resource.
 	 * <p>
 	 * If the given resource is <code>null</code> it indicates that the
 	 * monitor has failed completely, and the refresh manager will have to
 	 * take over the monitoring responsibilities for all resources that the
 	 * monitor was monitoring.
-	 * 
-	 * @param monitor a monitor which has encountered a failure that it 
+	 *
+	 * @param monitor a monitor which has encountered a failure that it
 	 * cannot recover from
 	 * @param resource the resource that the monitor can no longer
-	 * monitor, or <code>null</code> to indicate that the monitor can no 
+	 * monitor, or <code>null</code> to indicate that the monitor can no
 	 * longer monitor any of the resources it was monitoring
 	 */
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource);
@@ -42,7 +42,7 @@ public interface IRefreshResult {
 	/**
 	 * Requests that the provided resource be refreshed.  The refresh will
 	 * occur in the background during the next scheduled refresh.
-	 * 
+	 *
 	 * @param resource the resource to refresh
 	 */
 	public void refresh(IResource resource);
