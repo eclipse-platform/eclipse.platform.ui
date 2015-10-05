@@ -17,8 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -322,8 +321,8 @@ public class TabbedPropertySheetPage
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
 			 */
-			IContributedContentsView view = (IContributedContentsView) part
-				.getAdapter(IContributedContentsView.class);
+			IContributedContentsView view = (IContributedContentsView) Adapters.getAdapter(part,
+					IContributedContentsView.class, true);
 			if (view == null
 				|| (view.getContributingPart() != null && !view
 					.getContributingPart().equals(contributor))) {
@@ -868,27 +867,9 @@ public class TabbedPropertySheetPage
      *            the selected element
      * @return the TabbedPropertySheetPageContributor or null if not applicable
      */
-    private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(
-            Object object) {
-        if (object instanceof ITabbedPropertySheetPageContributor) {
-            return (ITabbedPropertySheetPageContributor) object;
-        }
-
-        if (object instanceof IAdaptable
-            && ((IAdaptable) object)
-                .getAdapter(ITabbedPropertySheetPageContributor.class) != null) {
-            return (ITabbedPropertySheetPageContributor) (((IAdaptable) object)
-                .getAdapter(ITabbedPropertySheetPageContributor.class));
-        }
-
-        if (Platform.getAdapterManager().hasAdapter(object,
-            ITabbedPropertySheetPageContributor.class.getName())) {
-            return (ITabbedPropertySheetPageContributor) Platform
-                .getAdapterManager().loadAdapter(object,
-                    ITabbedPropertySheetPageContributor.class.getName());
-        }
-
-        return null;
+	private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(Object object) {
+		return (ITabbedPropertySheetPageContributor) Adapters.getAdapter(object,
+				ITabbedPropertySheetPageContributor.class, true);
 	}
 
 	/**
