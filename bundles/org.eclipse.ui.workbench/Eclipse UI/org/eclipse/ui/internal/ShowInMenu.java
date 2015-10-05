@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -49,7 +50,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IWorkbenchContribution;
@@ -296,7 +296,7 @@ public class ShowInMenu extends ContributionItem implements
 				}
 			}
 		}
-		IShowInTargetList targetList = getShowInTargetList(sourcePart);
+		IShowInTargetList targetList = Adapters.getAdapter(sourcePart, IShowInTargetList.class, true);
 		if (targetList != null) {
 			String[] partIds = targetList.getShowInTargetIds();
 			if (partIds != null) {
@@ -331,30 +331,6 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	/**
-	 * Returns the <code>IShowInSource</code> provided by the source part, or
-	 * <code>null</code> if it does not provide one.
-	 *
-	 * @param sourcePart
-	 *            the source part
-	 * @return an <code>IShowInSource</code> or <code>null</code>
-	 */
-	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
-		return Util.getAdapter(sourcePart, IShowInSource.class);
-	}
-
-	/**
-	 * Returns the <code>IShowInTargetList</code> for the given source part,
-	 * or <code>null</code> if it does not provide one.
-	 *
-	 * @param sourcePart
-	 *            the source part or <code>null</code>
-	 * @return the <code>IShowInTargetList</code> or <code>null</code>
-	 */
-	private IShowInTargetList getShowInTargetList(IWorkbenchPart sourcePart) {
-		return Util.getAdapter(sourcePart, IShowInTargetList.class);
-	}
-
-	/**
 	 * Returns the <code>ShowInContext</code> to show in the selected target,
 	 * or <code>null</code> if there is no valid context to show.
 	 * <p>
@@ -369,7 +345,7 @@ public class ShowInMenu extends ContributionItem implements
 	 */
 	protected ShowInContext getContext(IWorkbenchPart sourcePart) {
 		if (sourcePart != null) {
-			IShowInSource source = getShowInSource(sourcePart);
+			IShowInSource source = Adapters.getAdapter(sourcePart, IShowInSource.class, true);
 			if (source != null) {
 				ShowInContext context = source.getShowInContext();
 				if (context != null) {

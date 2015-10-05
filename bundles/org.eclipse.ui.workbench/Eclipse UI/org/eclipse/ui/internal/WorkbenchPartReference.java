@@ -16,6 +16,7 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -521,7 +522,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
 
-		ISizeProvider sizeProvider = Util.getAdapter(legacyPart, ISizeProvider.class);
+		ISizeProvider sizeProvider = Adapters.getAdapter(legacyPart, ISizeProvider.class, true);
         if (sizeProvider != null) {
             return sizeProvider.computePreferredSize(width, availableParallel, availablePerpendicular, preferredResult);
         }
@@ -531,7 +532,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
     @Override
 	public int getSizeFlags(boolean width) {
-		ISizeProvider sizeProvider = Util.getAdapter(legacyPart, ISizeProvider.class);
+		ISizeProvider sizeProvider = Adapters.getAdapter(legacyPart, ISizeProvider.class, true);
         if (sizeProvider != null) {
             return sizeProvider.getSizeFlags(width);
         }

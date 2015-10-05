@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -451,7 +451,7 @@ public class ActionExpression {
 		}
 
 		private IActionFilter getActionFilter(Object object) {
-			return Util.getAdapter(object, IActionFilter.class);
+			return Adapters.getAdapter(object, IActionFilter.class, true);
 		}
 
 		/**
@@ -492,7 +492,7 @@ public class ActionExpression {
 				return false;
 			}
 
-			Object res = Util.getAdapter(object, resourceClass);
+			Object res = Adapters.getAdapter(object, resourceClass, true);
 			if (res == null) {
 				return false;
 			}
