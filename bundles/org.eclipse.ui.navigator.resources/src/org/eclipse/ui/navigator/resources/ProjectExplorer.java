@@ -11,25 +11,19 @@
  ******************************************************************************/
 package org.eclipse.ui.navigator.resources;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.CommandException;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IWorkbench;
@@ -119,13 +113,10 @@ public final class ProjectExplorer extends CommonNavigator {
 				setContentDescription(label);
 				return;
 			}
-			if (input instanceof IAdaptable) {
-				IWorkbenchAdapter wbadapter = ((IAdaptable) input)
-						.getAdapter(IWorkbenchAdapter.class);
-				if (wbadapter != null) {
-					setContentDescription(wbadapter.getLabel(input));
-					return;
-				}
+			IWorkbenchAdapter wbadapter = Adapters.getAdapter(input, IWorkbenchAdapter.class, true);
+			if (wbadapter != null) {
+				setContentDescription(wbadapter.getLabel(input));
+				return;
 			}
 			setContentDescription(input.toString());
 			return;

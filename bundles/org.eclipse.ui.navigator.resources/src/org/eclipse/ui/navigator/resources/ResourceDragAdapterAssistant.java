@@ -17,9 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -110,26 +109,12 @@ public class ResourceDragAdapterAssistant extends
 		IResource resource = null;
 		for (Iterator<?> iter = aSelection.iterator(); iter.hasNext();) {
 			Object selected = iter.next();
-			resource = adaptToResource(selected);
+			resource = Adapters.getAdapter(selected, IRESOURCE_TYPE, true);
 			if (resource != null) {
 				resources.add(resource);
 		}
 		}
 		return resources.toArray(new IResource[resources.size()]);
-	}
-
-	private IResource adaptToResource(Object selected) {
-		IResource resource;
-		if (selected instanceof IResource) {
-			resource = (IResource) selected;
-		} else if (selected instanceof IAdaptable) {
-			resource = ((IAdaptable) selected)
-					.getAdapter(IRESOURCE_TYPE);
-		} else {
-			resource = Platform.getAdapterManager().getAdapter(
-					selected, IRESOURCE_TYPE);
-		}
-		return resource;
 	}
 
 }
