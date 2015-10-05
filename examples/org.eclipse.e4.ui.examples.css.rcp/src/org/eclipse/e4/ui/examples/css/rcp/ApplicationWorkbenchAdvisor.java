@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.rcp;
 
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.swt.widgets.Display;
