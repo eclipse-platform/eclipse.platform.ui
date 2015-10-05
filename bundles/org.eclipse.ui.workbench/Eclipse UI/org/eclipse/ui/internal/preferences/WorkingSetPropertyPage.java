@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
@@ -84,12 +85,7 @@ public class WorkingSetPropertyPage extends WizardPropertyPage {
 	@Override
 	public void setElement(IAdaptable element) {
 		super.setElement(element);
-
-		if (element instanceof IWorkingSet) {
-			fWorkingSet= (IWorkingSet)element;
-		} else {
-			fWorkingSet= element.getAdapter(IWorkingSet.class);
-		}
+		fWorkingSet = Adapters.getAdapter(element, IWorkingSet.class, true);
 	}
 
 	/**

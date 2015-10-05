@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -68,7 +69,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			Image result = null;
 			if (element != null) {
 				StatusAdapter statusAdapter = ((StatusAdapter) element);
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
 				if (job != null) {
 					result = getIcon(job);
 				}
@@ -85,14 +86,14 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			StatusAdapter statusAdapter = (StatusAdapter) element;
 			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
 			if (!isMulti()) {
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
 				if (job != null) {
 					text = getPrimaryMessage(statusAdapter);
 				} else {
 					text = getSecondaryMessage(statusAdapter);
 				}
 			} else {
-				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
 				if (job != null) {
 					text = job.getName();
 				} else {
@@ -267,7 +268,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 */
 	public String getMainMessage(StatusAdapter statusAdapter) {
 		if (!isMulti()) {
-			Job job = (Job) (statusAdapter.getAdapter(Job.class));
+			Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
 			// job
 			if (job != null) {
 				return NLS
@@ -282,7 +283,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		// with timestamp if available).
 		// we display secondary message or status
 		if (isMulti()) {
-			Job job = (Job) (statusAdapter.getAdapter(Job.class));
+			Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
 			// job
 			if (job != null) {
 				return getPrimaryMessage(statusAdapter);

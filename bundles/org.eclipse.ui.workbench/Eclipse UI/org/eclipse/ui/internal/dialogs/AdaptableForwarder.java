@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * Class that wraps an object and forwards adapter calls if possible, otherwise
@@ -33,7 +33,7 @@ public class AdaptableForwarder implements IAdaptable {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
-        return Util.getAdapter(element, adapter);
+	public <T> T getAdapter(Class<T> adapter) {
+		return Adapters.getAdapter(element, adapter, true);
 	}
 }

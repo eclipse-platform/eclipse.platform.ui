@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -29,7 +30,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -102,7 +102,7 @@ public class NewWizardShortcutAction extends Action implements
                 IEditorInput input = ((IEditorPart) part).getEditorInput();
                 Class fileClass = LegacyResourceSupport.getFileClass();
                 if (input != null && fileClass != null) {
-                    Object file = Util.getAdapter(input, fileClass);
+					Object file = Adapters.getAdapter(input, fileClass, true);
                     if (file != null) {
                         selectionToPass = new StructuredSelection(file);
                     }
@@ -159,6 +159,6 @@ public class NewWizardShortcutAction extends Action implements
      * @since 3.1
      */
     private IPluginContribution getPluginContribution() {
-		return Util.getAdapter(wizardElement, IPluginContribution.class);
+		return Adapters.getAdapter(wizardElement, IPluginContribution.class, true);
 	}
 }

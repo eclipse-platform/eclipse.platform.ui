@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.testing.ContributionInfoMessages;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.testing.ContributionInfo;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -147,7 +147,7 @@ public class SpyHandler extends AbstractHandler {
 		if (data instanceof ContributionInfo) {
 			return (ContributionInfo) data;
 		}
-		ContributionInfo result = Util.getAdapter(data, ContributionInfo.class);
+		ContributionInfo result = Adapters.getAdapter(data, ContributionInfo.class, true);
 		if (optionalElementType != null && result == null && data != null) {
 			Bundle bundle = FrameworkUtil.getBundle(data.getClass());
 			if (bundle != null) {

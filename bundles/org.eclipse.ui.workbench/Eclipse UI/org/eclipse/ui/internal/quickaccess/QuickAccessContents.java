@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -212,7 +213,8 @@ public abstract class QuickAccessContents {
 	 */
 	public TriggerSequence getTriggerSequence() {
 		if (keySequence == null) {
-			IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+			IBindingService bindingService =
+					Adapters.getAdapter(PlatformUI.getWorkbench(), IBindingService.class, true);
 			keySequence = bindingService.getBestActiveBindingFor(QUICK_ACCESS_COMMAND_ID);
 		}
 		return keySequence;
