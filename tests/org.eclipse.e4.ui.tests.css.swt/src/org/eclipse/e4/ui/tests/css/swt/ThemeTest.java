@@ -31,7 +31,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 
@@ -70,17 +69,15 @@ public class ThemeTest extends CSSSWTTestCase {
 		Dictionary<String, String> properties = new Hashtable<String, String>();
 		properties.put(EventConstants.EVENT_TOPIC,
 				IThemeEngine.Events.THEME_CHANGED);
-		themeListenerRegistration = context.registerService(EventHandler.class, new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				ITheme theme = (ITheme)event.getProperty(IThemeEngine.Events.THEME);
-				success[0] = IThemeEngine.Events.THEME_CHANGED.equals(event.getTopic())
-						&& theme != null
-						&& theme.getId().equals("test")
-						&& event.getProperty(IThemeEngine.Events.DEVICE) == display
-						&& event.getProperty(IThemeEngine.Events.THEME_ENGINE) == themer
-						&& event.getProperty(IThemeEngine.Events.RESTORE) == Boolean.TRUE;
-			}}, properties);
+		themeListenerRegistration = context.registerService(EventHandler.class, event -> {
+			ITheme theme = (ITheme)event.getProperty(IThemeEngine.Events.THEME);
+			success[0] = IThemeEngine.Events.THEME_CHANGED.equals(event.getTopic())
+					&& theme != null
+					&& theme.getId().equals("test")
+					&& event.getProperty(IThemeEngine.Events.DEVICE) == display
+					&& event.getProperty(IThemeEngine.Events.THEME_ENGINE) == themer
+					&& event.getProperty(IThemeEngine.Events.RESTORE) == Boolean.TRUE;
+		}, properties);
 
 		assertFalse(success[0]);
 		themer.setTheme(new Theme("test", "Test"), true);

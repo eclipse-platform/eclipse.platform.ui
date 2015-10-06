@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.StringReader;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -36,12 +35,7 @@ public class CSSSWTTestCase {
 	public CSSEngine createEngine(String styleSheet, Display display) {
 		engine = new CSSSWTEngineImpl(display);
 
-		engine.setErrorHandler(new CSSErrorHandler() {
-			@Override
-			public void error(Exception e) {
-				fail(e.getMessage());
-			}
-		});
+		engine.setErrorHandler(e -> fail(e.getMessage()));
 
 		try {
 			engine.parseStyleSheet(new StringReader(styleSheet));
