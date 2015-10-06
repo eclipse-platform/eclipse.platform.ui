@@ -4,3 +4,4 @@ Bug 438659 - [Metadata] comparator errors in weekly I-build: I20140701-0800
 Bug 460715 - Comparator error in I20150224-0800 implies org.eclipse.ui.tests.navigator needs to be "touched"
 Bug 472126 - Unusual comparator error in I-build and M-build
 Bug 472126 - Unusual comparator error in I-build and M-build
+Bug 479158 - ui.tests.navigator shows up in comparator "errors"
