@@ -17,8 +17,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -69,12 +67,7 @@ public class FilterInputDialog extends TitleAreaDialog {
 
 		textFilter = new Text(container, SWT.BORDER);
 		textFilter.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
-		textFilter.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				checkInput();
-			}
-		});
+		textFilter.addModifyListener(e -> checkInput());
 		new Label(container, SWT.NONE); // Placeholder to push noteLabel to the second column.
 		Label noteLabel = new Label(container, SWT.NONE);
 		noteLabel.setText(Messages.FilterInputDialog_note_label);

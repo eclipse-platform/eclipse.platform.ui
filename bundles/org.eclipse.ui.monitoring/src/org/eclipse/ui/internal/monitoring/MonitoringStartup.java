@@ -55,18 +55,10 @@ public class MonitoringStartup implements IStartup {
 		final EventLoopMonitorThread thread = temporaryThread;
 		final Display display = MonitoringPlugin.getDefault().getWorkbench().getDisplay();
 		// Final setup and start asynchronously on the display thread.
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				// If we're still running when display gets disposed, shutdown the thread.
-				display.disposeExec(new Runnable() {
-					@Override
-					public void run() {
-						thread.shutdown();
-					}
-				});
-				thread.start();
-			}
+		display.asyncExec(() -> {
+			// If we're still running when display gets disposed, shutdown the thread.
+			display.disposeExec(() -> thread.shutdown());
+			thread.start();
 		});
 
 		return thread;

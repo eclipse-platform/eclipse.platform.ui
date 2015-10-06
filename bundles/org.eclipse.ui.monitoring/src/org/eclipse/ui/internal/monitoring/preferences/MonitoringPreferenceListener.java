@@ -64,12 +64,7 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 			final Display display = MonitoringPlugin.getDefault().getWorkbench().getDisplay();
 			// Schedule the event to restart the thread after all preferences have had enough time
 			// to propagate.
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					refreshMonitoringThread();
-				}
-			});
+			display.asyncExec(() -> refreshMonitoringThread());
 		}
 	}
 
