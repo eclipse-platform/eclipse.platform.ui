@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 479181
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
@@ -289,7 +290,7 @@ public final class BindingService implements IBindingService {
 
 		// weeds out any of the deleted system bindings using the binding
 		// manager
-		HashSet<Binding> activeBindings = new HashSet<>(manager.getActiveBindingsDisregardingContextFlat());
+		HashSet<Binding> activeBindings = new HashSet<Binding>(manager.getActiveBindingsDisregardingContextFlat());
 
 		// get all of the (active) model bindings that point to the actual runtime
 		// bindings
