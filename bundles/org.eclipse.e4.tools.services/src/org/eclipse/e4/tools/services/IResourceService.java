@@ -22,15 +22,15 @@ public interface IResourceService {
 		public String getId();
 		public void dispose();
 	}
-	
+
 	public interface IDiposeableResourcePool extends IResourcePool {
 		public void dispose();
 	}
-	
+
 	public IPooledResource<Image> getImage(Display display, String key);
 	public IPooledResource<Color> getColor(Display display, String key);
 	public IPooledResource<Font> getFont(Display display, String key);
-	
+
 	public IDiposeableResourcePool getResourcePool(Display display);
 	public IResourcePool getControlPool(Control control);
 }

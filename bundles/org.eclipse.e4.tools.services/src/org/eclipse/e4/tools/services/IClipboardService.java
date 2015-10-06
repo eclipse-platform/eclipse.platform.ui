@@ -15,7 +15,7 @@ public interface IClipboardService {
 	public void paste();
 	public void cut();
 	public void setHandler(Handler handler);
-	
+
 	public interface Handler {
 		public void paste();
 		public void copy();

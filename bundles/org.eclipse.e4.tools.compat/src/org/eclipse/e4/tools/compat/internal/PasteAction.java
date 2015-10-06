@@ -19,7 +19,7 @@ public class PasteAction extends Action {
 		super(Messages.PasteAction);
 		this.service = service;
 	}
-	
+
 	@Override
 	public void run() {
 		service.paste();

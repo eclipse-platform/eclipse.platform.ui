@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 /**
  * Wrapper class for accessing translations out of a {@link ResourceBundle}.
- * 
+ *
  * @author Dirk Fauth
  *
  */
@@ -25,9 +25,9 @@ public class ResourceBundleTranslationProvider {
 	 * The {@link ResourceBundle} to use for translations.
 	 */
 	private ResourceBundle resourceBundle;
-	
+
 	/**
-	 * 
+	 *
 	 * @param resourceBundle The {@link ResourceBundle} to use for translations.
 	 * 			Can be <code>null</code>, which will lead to simply return the key
 	 * 			modified by prefixing and suffixing it with "!" when calling translate(String).

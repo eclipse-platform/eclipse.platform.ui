@@ -15,12 +15,12 @@ import org.eclipse.jface.action.Action;
 
 public class CutAction extends Action {
 	private IClipboardService service;
-	
+
 	public CutAction(IClipboardService service) {
 		super(Messages.CutAction);
 		this.service = service;
 	}
-	
+
 	@Override
 	public void run() {
 		service.cut();

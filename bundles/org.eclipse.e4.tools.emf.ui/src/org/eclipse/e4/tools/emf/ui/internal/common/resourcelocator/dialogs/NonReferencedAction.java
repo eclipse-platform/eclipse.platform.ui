@@ -13,7 +13,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
 /**
  * Actions used to resolve non referenced resource issues.
- * 
+ *
  * @author Steven Spungin
  *
  */

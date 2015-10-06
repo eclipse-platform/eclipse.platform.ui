@@ -23,7 +23,7 @@ public class Util {
 	public static boolean isTypeOrSuper(EClass eClass, EClass element) {
 		return eClass.equals(element) || element.getEAllSuperTypes().contains(eClass);
 	}
-	
+
 	public static String getBundleSymbolicName(IProject project) {
 		BundleContext context = FrameworkUtil.getBundle(AddonContributionEditor.class).getBundleContext();
 		ServiceReference<IBundleProjectService> ref = context.getServiceReference(IBundleProjectService.class);
@@ -35,7 +35,7 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 }

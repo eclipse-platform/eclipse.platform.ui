@@ -12,7 +12,7 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 /**
  * A callback used for a provider to notify a client of status changes
- * 
+ *
  * @author Steven Spungin
  *
  */

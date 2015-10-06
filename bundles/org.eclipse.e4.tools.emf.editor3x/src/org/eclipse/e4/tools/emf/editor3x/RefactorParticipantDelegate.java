@@ -44,7 +44,7 @@ class RefactorParticipantDelegate {
 	 *
 	 * @param pProgressMonitor
 	 * @param pModel
-	 * 
+	 *
 	 * @return a set of changes in a {@link CompositeChange}
 	 * @throws CoreException
 	 * @throws OperationCanceledException

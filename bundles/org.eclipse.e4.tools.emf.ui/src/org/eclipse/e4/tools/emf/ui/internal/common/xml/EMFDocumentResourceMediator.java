@@ -128,7 +128,7 @@ public class EMFDocumentResourceMediator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The region for the start of the text, or null if not found or the
 	 *         text is empty.
 	 */
