@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences.legacy;
 
+import java.lang.reflect.Field;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * Provides initialization of the legacy preferences as described in
@@ -39,20 +43,50 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 		Plugin plugin = null;
 		if (object instanceof Plugin)
 			plugin = (Plugin) object;
-		// No extension exists. Get the plug-in object and call #initializeDefaultPluginPreferences().
-		// We can only call this if the runtime compatibility layer is installed.
-		if (plugin == null && InternalPlatform.getDefault().getBundle(org.eclipse.core.internal.runtime.CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
-			plugin = Platform.getPlugin(name);
-		if (plugin == null) {
-			if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
-				InternalPlatform.message("No plug-in object available to set plug-in default preference overrides for:" + name); //$NON-NLS-1$
-			return null;
+		else {
+			plugin = getActivator(name);
+			if (plugin == null) {
+				if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
+					InternalPlatform.message("No plug-in object available to set plug-in default preference overrides for:" + name); //$NON-NLS-1$
+				return null;
+			}
 		}
+
 		if (InternalPlatform.DEBUG_PLUGIN_PREFERENCES)
-			InternalPlatform.message("Applying plug-in default preference overrides for plug-in: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
+			InternalPlatform.message("Applying plug-in default preference overrides for plug-in: " + plugin.getBundle().getBundleId()); //$NON-NLS-1$
 
 		plugin.internalInitializeDefaultPluginPreferences();
 		return plugin;
+	}
+
+	private Plugin getActivator(String name) {
+		Bundle bundle = InternalPlatform.getDefault().getBundle(name);
+		if (bundle == null)
+			return null;
+
+		BundleContext context = bundle.getBundleContext();
+
+		/*
+		 * Reflection is required since there is no OSGi API to retrieve the
+		 * activator. Originally Platform.getPlugin(String) was used, but that
+		 * is no longer available after removing the runtine.compatiblity layer.
+		 */
+		try {
+			Field field = context.getClass().getDeclaredField("activator"); //$NON-NLS-1$
+			field.setAccessible(true);
+			Object activator = field.get(context);
+			if (activator instanceof Plugin)
+				return (Plugin) activator;
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
+			log(ex, name);
+		}
+
+		return null;
+	}
+
+	private static void log(Exception ex, String name) {
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, NLS.bind(Messages.plugin_unableToGetActivator, name), ex);
+		InternalPlatform.getDefault().log(status);
 	}
 
 }

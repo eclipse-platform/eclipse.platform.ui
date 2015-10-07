@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -813,10 +813,7 @@ public final class InternalPlatform {
 		// so we don't want to enforce it here.
 		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<String,String>());
 
-		// Only register this interface if compatibility is installed - the check for a bundle presence
-		// is a quick test that doesn't consume much.
-		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
-			legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<String, String>());
+		legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<String, String>());
 	}
 
 	private void stopServices() {
