@@ -44,6 +44,7 @@ public class OpenMessageDialogHandler extends AbstractHandler {
 
 	private static final int CANCEL_RETURN_CODE = -1;
 	
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		String title = event.getParameter(PARAM_ID_TITLE);

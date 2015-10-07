@@ -28,10 +28,12 @@ public class TreeTaskExplorer extends TaskExplorer {
 	private TreeViewer viewer;
 
 	
+	@Override
 	public String getId() {
 		return ICompositeCheatsheetTags.TREE;
 	}	
 
+	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		Tree tree = new Tree(parent, toolkit.getOrientation());
 		toolkit.adapt(tree, false, false);
@@ -40,30 +42,37 @@ public class TreeTaskExplorer extends TaskExplorer {
 		viewer.setLabelProvider(new TreeLabelProvider());
 	}
 	
+	@Override
 	public void taskUpdated(ICompositeCheatSheetTask task) {
 		viewer.update(task, null);
 	}
 
+	@Override
 	public Control getControl() {
 		return viewer.getControl();
 	}
 
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		return viewer;
 	}
 
+	@Override
 	public void setCompositeCheatSheet(ICompositeCheatSheet compositeCheatSheet) {
 		viewer.setInput(compositeCheatSheet);
 	}
 
+	@Override
 	public void dispose() {
 		viewer.getLabelProvider().dispose();		
 	}
 
+	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		viewer.setSelection(selection, reveal);
 	}

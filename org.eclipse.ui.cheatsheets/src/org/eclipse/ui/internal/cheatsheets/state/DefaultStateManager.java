@@ -37,6 +37,7 @@ public class DefaultStateManager implements ICheatSheetStateManager {
 	private CheatSheetElement element;
 	private boolean propertiesRead = false;
 
+	@Override
 	public Properties getProperties() {
 		if (!propertiesRead) {
 			props = saveHelper.loadState(element.getID());
@@ -45,6 +46,7 @@ public class DefaultStateManager implements ICheatSheetStateManager {
 		return props;
 	}
 
+	@Override
 	public CheatSheetManager getCheatSheetManager() {	
 		CheatSheetManager result = new CheatSheetManager(element);
 		if (getProperties() != null) {
@@ -53,10 +55,12 @@ public class DefaultStateManager implements ICheatSheetStateManager {
 		return result;
 	}
 
+	@Override
 	public void setElement(CheatSheetElement element) {
 		this.element = element;
 	}
 
+	@Override
 	public IStatus saveState(Properties properties, CheatSheetManager manager) {
 		return saveHelper.saveState(properties, manager);
 	}

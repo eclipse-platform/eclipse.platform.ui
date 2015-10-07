@@ -34,16 +34,19 @@ public class CheatsheetTaskEditor extends TaskEditor {
 	private CheatSheetViewer viewer;
 	private IEditableTask task;
 
+	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		viewer = (CheatSheetViewer)CheatSheetViewerFactory.createCheatSheetView();
 		viewer.createPartControl(parent);
 	}
 	
+	@Override
 	public Control getControl() {
 		return viewer.getControl();
 	}
 
 
+	@Override
 	public void setInput(IEditableTask task, IMemento memento) {
 		this.task = task;	
 		Dictionary params = task.getParameters();
@@ -92,6 +95,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 	 */
 	private class TaskListener extends CheatSheetListener {
 
+		@Override
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			if (event.getEventType() == ICheatSheetEvent.CHEATSHEET_COMPLETED) {
 				task.complete();
@@ -99,6 +103,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		}	
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		viewer.saveState(memento);
 	}

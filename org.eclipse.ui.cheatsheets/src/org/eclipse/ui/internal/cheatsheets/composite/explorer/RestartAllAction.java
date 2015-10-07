@@ -33,6 +33,7 @@ public class RestartAllAction extends Action {
 		this.setImageDescriptor(restartImage);
 	}
 	
+	@Override
 	public void run() {
 		if (confirmRestart()) {
 		    ((CompositeCheatSheetModel)model).resetAllTasks(null);

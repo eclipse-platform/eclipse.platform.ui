@@ -91,6 +91,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		saveHelper = new CompositeCheatSheetSaveHelper(stateManager);
 	}
 
+	@Override
 	public void createPart(Composite parent) {
 		init(parent.getDisplay());
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
@@ -117,6 +118,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		gd.heightHint = 10;
 		sash.setLayoutData(gd);
 		sash.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				Point size = sash.getSize();
 				if (size.x>size.y)
@@ -176,6 +178,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		((Composite)children[1]).layout();
 	}
 
+	@Override
 	public void dispose() {
 		mform.dispose();
 		super.dispose();
@@ -200,6 +203,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 			updateSelectedTask(model.getRootTask());
 		}
 		model.addObserver(new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)arg;
 				if (currentExplorer!=null)
@@ -267,6 +271,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		return explorer;
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateForSelection(event.getSelection());
 	}
@@ -397,6 +402,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	 * description panel.
 	 */
 	private final class DescriptionLinkListener extends HyperlinkAdapter {
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			String ref = (String)e.getHref();
 			if (ref.equals(START_HREF)) {
@@ -434,6 +440,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	 * end review panel
 	 */
 	private final class EndReviewListener extends HyperlinkAdapter {
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			String ref = (String)e.getHref();
 			if (ref.startsWith(END_REVIEW_TAG)) {
@@ -478,14 +485,17 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		return editable.getEditor();	
 	}
 
+	@Override
 	public Control getControl() {
 		return form;
 	}
 
+	@Override
 	protected String getTitle() {
 		return model.getName();
 	}
 
+	@Override
 	public void initialized() {
 		// Open the model
 		model.setSaveHelper(saveHelper);
@@ -495,6 +505,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		initialized  = true;
 	}
 
+	@Override
 	public int contributeToViewMenu(Menu menu, int index) {	
 		if (!initialized) {
 			return index;
@@ -508,6 +519,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		item.setText(Messages.RESTART_ALL_MENU);
 		item.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_RESTART_ALL));
 		item.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (model != null) {
 					if (RestartAllAction.confirmRestart()) {
@@ -541,7 +553,8 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
     		item.setSelection(isCurrentExplorer);
     		item.setImage(TaskExplorerManager.getInstance().getImage(id));
     		item.addSelectionListener(new SelectionAdapter() {
-    			public void widgetSelected(SelectionEvent e) {
+    			@Override
+				public void widgetSelected(SelectionEvent e) {
     				setCurrentExplorerFromId(id);
     			}
     		});

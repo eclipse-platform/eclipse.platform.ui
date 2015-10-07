@@ -147,6 +147,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
 		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			if (WorkbenchActivityHelper.filterItem(element)) {
@@ -174,6 +175,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	}
 
 	private class CheatsheetLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof WorkbenchAdapter) {
 				return ((WorkbenchAdapter) obj).getLabel(null);
@@ -181,6 +183,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			return super.getText(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof CheatSheetElement) {
 				CheatSheetElement element = (CheatSheetElement)obj;
@@ -216,6 +219,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	/*
 	 * (non-Javadoc) Method declared on Window.
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (title != null) {
@@ -227,6 +231,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 
@@ -236,6 +241,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		
@@ -294,6 +300,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 
 		// Add double-click listener
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 				Object obj = selection.getFirstElement();
@@ -355,10 +362,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	
 	private class RadioSelectionListener implements SelectionListener {
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			checkRadioButtons();			
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// do nothing
 		}
@@ -366,6 +375,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	
 	private class BrowseListener implements SelectionListener {
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			// Launch a file dialog to select a cheatsheet file
 			FileDialog fileDlg = new FileDialog(getShell());
@@ -381,6 +391,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			}
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// do nothing			
 		}
@@ -388,6 +399,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	
 	private class FileAndUrlListener implements ModifyListener {
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			setOkButton();
 		}	
@@ -424,6 +436,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (showAllButton.getSelection()) {
 					treeViewer.resetFilters();
@@ -480,6 +493,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	protected IContentProvider getCheatSheetProvider() {
 		// want to get the cheatsheets of the collection element
 		return new BaseWorkbenchContentProvider() {
+			@Override
 			public Object[] getChildren(Object o) {
 				Object[] cheatsheets;
 				Object[] subCategories;
@@ -523,6 +537,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	 * @param newSelection
 	 *            ISelection
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
 		Object obj = getSingleSelection(selectionEvent.getSelection());
 		if (obj instanceof CheatSheetCollectionElement) {
@@ -555,6 +570,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void okPressed() {
 		/*
 		 * Prevent the cheat sheet from opening inside this dialog's tray
@@ -811,6 +827,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
      * 
      * @since 3.2
      */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);

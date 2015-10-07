@@ -37,6 +37,7 @@ public class ResetTaskAction extends Action {
 		this.setImageDescriptor(restartImage);
 	}
 	
+	@Override
 	public void run() {
 		AbstractTask[] restartTasks = TaskStateUtilities.getRestartTasks(task);
 		if (restartTasks.length == 0) return;

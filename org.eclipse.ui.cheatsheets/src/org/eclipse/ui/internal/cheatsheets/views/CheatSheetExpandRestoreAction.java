@@ -42,6 +42,7 @@ public class CheatSheetExpandRestoreAction extends Action {
 	/*
 	 * @see Action#actionPerformed
 	 */
+	@Override
 	public void run() {
 		viewer.toggleExpandRestore();	
 	}

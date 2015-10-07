@@ -42,6 +42,7 @@ public class CheatSheetCollectionSorter extends ViewerComparator {
 	 * 			a value less than <code>0</code> if o1 is less than o2;
 	 *			and a value greater than <code>0</code> if o1 is greater than o2.
 	 */
+	@Override
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		String name1 = ((WorkbenchAdapter)o1).getLabel(o1);
 		String name2 = ((WorkbenchAdapter)o2).getLabel(o2);
@@ -56,6 +57,7 @@ public class CheatSheetCollectionSorter extends ViewerComparator {
 	 *	Return true if this sorter is affected by a property 
 	 *	change of propertyName on the specified element.
 	 */
+	@Override
 	public boolean isSorterProperty(Object object, String propertyId) {
 		return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 	}

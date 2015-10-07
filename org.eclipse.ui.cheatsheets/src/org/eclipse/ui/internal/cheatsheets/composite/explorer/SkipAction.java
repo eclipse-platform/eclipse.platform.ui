@@ -32,6 +32,7 @@ public class SkipAction extends Action {
 		this.setImageDescriptor(skipImage);
 	}
 	
+	@Override
 	public void run() {
 	    task.setState(ICompositeCheatSheetTask.SKIPPED);
 	}

@@ -29,6 +29,7 @@ public class CheatSheetEvent implements ICheatSheetEvent {
 	/**
 	 * @return
 	 */
+	@Override
 	public int getEventType() {
 		return type;
 	}
@@ -36,6 +37,7 @@ public class CheatSheetEvent implements ICheatSheetEvent {
 	/**
 	 * @return
 	 */
+	@Override
 	public String getCheatSheetID() {
 		return cheatsheetID;
 	}
@@ -43,6 +45,7 @@ public class CheatSheetEvent implements ICheatSheetEvent {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.events.ICheatSheetEvent#getCheatSheetManager()
 	 */
+	@Override
 	public ICheatSheetManager getCheatSheetManager() {
 		return csm;
 	}

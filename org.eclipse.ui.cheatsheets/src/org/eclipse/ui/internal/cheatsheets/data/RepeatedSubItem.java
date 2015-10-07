@@ -47,6 +47,7 @@ public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	/**
 	 * @param subItem the SubItem to add.
 	 */
+	@Override
 	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
 			subItems = new ArrayList();
@@ -58,6 +59,7 @@ public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	 * Returns a list which will always only contain at most 1 entry.
 	 * @return Returns the subItems.
 	 */
+	@Override
 	public ArrayList getSubItems() {
 		return subItems;
 	}

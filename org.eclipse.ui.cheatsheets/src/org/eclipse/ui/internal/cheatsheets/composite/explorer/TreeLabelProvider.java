@@ -65,6 +65,7 @@ public class TreeLabelProvider extends LabelProvider {
 		imageMap = new HashMap();
 	}
 
+	@Override
 	public String getText(Object obj) {
 		String result;
 		if (obj instanceof ICompositeCheatSheetTask) {
@@ -78,6 +79,7 @@ public class TreeLabelProvider extends LabelProvider {
 		return result;
 	}
 
+	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof ICompositeCheatSheetTask) {
 			ICompositeCheatSheetTask task = (ICompositeCheatSheetTask) obj;
@@ -196,6 +198,7 @@ public class TreeLabelProvider extends LabelProvider {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		if (imageMap != null) {
 			for (Iterator iter = imageMap.values().iterator(); iter.hasNext(); ) {

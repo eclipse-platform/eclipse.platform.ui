@@ -327,6 +327,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		Sorter sorter = new Sorter() {
 			private Collator collator = Collator.getInstance();
 
+			@Override
 			public boolean compare(Object o1, Object o2) {
 				String s1 = ((CategoryNode) o1).getPath();
 				String s2 = ((CategoryNode) o2).getPath();
@@ -650,6 +651,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	/**
 	 * Implement this method to read element attributes.
 	 */
+	@Override
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_CATEGORY)) {
 			deferCategory(element);
@@ -677,6 +679,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] cheatSheetDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, CHEAT_SHEET_CONTENT);
 		if (cheatSheetDeltas.length > 0) {

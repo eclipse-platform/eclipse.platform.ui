@@ -70,6 +70,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		return documentBuilder;
 	}
 		
+	@Override
 	public void addStatus(int severity, String message, Throwable exception) { 
 		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}

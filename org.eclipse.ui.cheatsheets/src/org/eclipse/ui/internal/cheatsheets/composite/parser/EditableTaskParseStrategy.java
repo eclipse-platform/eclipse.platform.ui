@@ -22,10 +22,12 @@ public class EditableTaskParseStrategy implements ITaskParseStrategy {
 	
 	private boolean editableChildErrorReported;
 	
+	@Override
 	public void init() {
 		editableChildErrorReported = false;
 	}
 
+	@Override
 	public boolean parseElementNode(Node childNode, Node parentNode,
 			AbstractTask parentTask, IStatusContainer status) {	
 		boolean isElementHandled = true;
@@ -44,6 +46,7 @@ public class EditableTaskParseStrategy implements ITaskParseStrategy {
 		return isElementHandled;
 	}
 
+	@Override
 	public void parsingComplete(AbstractTask parentTask, IStatusContainer status) {
 		if (parentTask.getKind() == null) {
 			String message = NLS.bind(

@@ -37,6 +37,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 	 * 
 	 * @return a set of hrefs for documents managed by this participant.
 	 */
+	@Override
 	public Set getAllDocuments(String locale) {
 		HashSet set = new HashSet();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
@@ -64,6 +65,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 		return set;
 	}
 
+	@Override
 	public Set getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
@@ -79,6 +81,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 		return set;
 	}
 
+	@Override
 	protected void handleStartElement(String name, Attributes attributes,
 			IParsedXMLContent data) {
 		if (name.equals(IParserTags.CHEATSHEET)) {
@@ -97,9 +100,11 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 	    }
 	}
 
+	@Override
 	protected void handleEndElement(String name, IParsedXMLContent data) {
 	}
 
+	@Override
 	protected void handleText(String text, IParsedXMLContent data) {
 		String stackPath = getElementStackPath();
 		String top = getTopElement();
@@ -120,6 +125,7 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 		}
 	}
 
+	@Override
 	public boolean open(String id) {
 		Action openAction = new OpenCheatSheetAction(id);
 		openAction.run();

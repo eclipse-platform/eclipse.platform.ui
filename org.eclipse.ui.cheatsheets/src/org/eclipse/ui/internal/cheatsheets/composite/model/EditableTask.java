@@ -37,10 +37,12 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 		parserStrategy = new EditableTaskParseStrategy();
 	}
 	
+	@Override
 	public ITaskParseStrategy getParserStrategy() {
 		return parserStrategy;
 	}
 
+	@Override
 	public ICompositeCheatSheetTask[] getSubtasks() {
 		return EMPTY;
 	}

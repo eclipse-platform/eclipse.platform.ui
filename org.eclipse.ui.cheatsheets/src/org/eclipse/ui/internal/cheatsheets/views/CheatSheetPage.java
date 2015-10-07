@@ -56,6 +56,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		this.viewer = cheatSheetViewer;
 	}
 
+	@Override
 	public void createPart(Composite parent) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetPage.createPart()"); //$NON-NLS-1$		
 		super.createPart(parent);
@@ -108,12 +109,14 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	 * @param parent
 	 *            the SWT parent for the title area composite
 	 */
+	@Override
 	protected String getTitle() {
 		if (cheatSheet != null && cheatSheet.getTitle() != null)
 			return cheatSheet.getTitle();
 		return ICheatSheetResource.EMPTY_STRING;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 
@@ -133,6 +136,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		introColor = null;
 	}
 
+	@Override
 	protected void init(Display display) {
 		super.init(display);
 		computeColors(display);
@@ -216,6 +220,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		return ((bg.getBlue() + bg.getRed() + bg.getGreen()) < 380);
 	}
 
+	@Override
 	public void initialized() {
 		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
 			ViewItem item = (ViewItem) iter.next();
@@ -241,6 +246,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		item.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RETURN));
 		
 		item.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				viewer.restart();
 			}
@@ -248,6 +254,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		return index;
 	}
 
+	@Override
 	public int contributeToViewMenu(Menu menu, int index) {
 		return contributeRestartItem(menu, index);
 	}

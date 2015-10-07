@@ -22,6 +22,7 @@ public class TaskSetCompletionStrategy implements TaskGroup.CompletionStrategy {
 	 * IN_PROGRESS otherwise
 	 * @return
 	 */
+	@Override
 	public int computeState(TaskGroup taskGroup) {
 		boolean noChildrenStarted = true;
 		boolean allChildrenCompleted = true;

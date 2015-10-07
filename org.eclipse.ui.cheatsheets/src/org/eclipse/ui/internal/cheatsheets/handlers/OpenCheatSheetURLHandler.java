@@ -31,6 +31,7 @@ public class OpenCheatSheetURLHandler extends AbstractHandler {
 
 	private static final String PARAM_ID_URL = "url"; //$NON-NLS-1$
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		String cheatSheetId = event.getParameter(PARAM_ID_CHEAT_SHEET_ID);

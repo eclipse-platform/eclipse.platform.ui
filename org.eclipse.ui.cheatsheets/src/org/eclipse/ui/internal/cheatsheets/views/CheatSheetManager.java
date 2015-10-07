@@ -46,6 +46,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getCheatSheetID()
 	 */
+	@Override
 	public String getCheatSheetID() {
 		return cheatsheetID;
 	}
@@ -74,6 +75,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		dataTable = data;
 	}
 
+	@Override
 	public String getData(String key) {
 		if (dataTable == null)
 			return null;
@@ -141,6 +143,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#setData(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setData(String key, String data) {
 		if (key == null) {
 			throw new IllegalArgumentException();
@@ -185,6 +188,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 	}
 
+	@Override
 	public ICheatSheetManager getParent() {
 		return parent;
 	}
@@ -193,6 +197,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		this.parent = parent;
 	}
 
+	@Override
 	public Set getKeySet() {
 		if (dataTable == null) {
 			return new HashSet();

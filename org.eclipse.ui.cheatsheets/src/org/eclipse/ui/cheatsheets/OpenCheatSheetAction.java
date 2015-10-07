@@ -112,6 +112,7 @@ public final class OpenCheatSheetAction extends Action {
 	 * for the cheat sheet with the id passed to this action.
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		Shell shell = Display.getDefault().getActiveShell();
 		// are we in a dialog that can show a cheat sheet?

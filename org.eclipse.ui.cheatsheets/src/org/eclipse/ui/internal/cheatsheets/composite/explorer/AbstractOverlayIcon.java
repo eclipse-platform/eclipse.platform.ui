@@ -66,6 +66,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 
 	protected abstract ImageData getBaseImageData();
 
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData base = getBaseImageData();
 		drawImage(base, 0, 0);
@@ -110,6 +111,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 		}
 	}
 
+	@Override
 	protected Point getSize() {
 		return fSize;
 	}

@@ -22,6 +22,7 @@ import org.eclipse.core.commands.IParameterValues;
  */
 public class CheatSheetParameterValues implements IParameterValues {
 
+	@Override
 	public Map getParameterValues() {
 		Map values = new TreeMap();
 

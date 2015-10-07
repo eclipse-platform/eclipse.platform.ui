@@ -45,10 +45,12 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 		return new TaskSetCompletionStrategy();
 	}
 
+	@Override
 	public ITaskParseStrategy getParserStrategy() {
 		return parserStrategy;
 	}
 	
+	@Override
 	public ICompositeCheatSheetTask[] getSubtasks() {
 		if (subtasks==null) return EMPTY;
 		return (ICompositeCheatSheetTask[])subtasks.toArray(new ICompositeCheatSheetTask[subtasks.size()]);

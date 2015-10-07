@@ -54,6 +54,7 @@ public class CheatSheetExtensionFactory implements IExecutableExtensionFactory,
 	 * 
 	 * @see org.eclipse.core.runtime.IExecutableExtensionFactory#create()
 	 */
+	@Override
 	public Object create() throws CoreException {
 		if (HELP_MENU_ACTION.equals(id))
 			return configure(new CheatSheetHelpMenuAction());
@@ -68,6 +69,7 @@ public class CheatSheetExtensionFactory implements IExecutableExtensionFactory,
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 		if (data instanceof String)

@@ -74,6 +74,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * This part doesn't require a context menu.
 	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
@@ -81,6 +82,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * Returns the part's top Control.
 	 */
+	@Override
 	public Control getControl() {
 		return viewer.getControl();
 	}
@@ -88,6 +90,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * This part doesn't use any global actions.
 	 */
+	@Override
 	public IAction getGlobalAction(String id) {
 		return null;
 	}
@@ -97,6 +100,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @param the unique id for the part
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -107,6 +111,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @param control the Control in focus
 	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return viewer.hasFocusControl(control);
 	}
@@ -114,6 +119,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * Initializes the part.
 	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.id = id;
 	}
@@ -121,12 +127,14 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * No filtering required.
 	 */
+	@Override
 	public void refilter() {
 	}
 	
 	/**
 	 * The cheat sheet automatically saves its state; no action required.
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 	}
 	
@@ -135,6 +143,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	 * 
 	 * @param whether or not the part should be visible
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		viewer.getControl().setVisible(visible);
 	}
@@ -142,12 +151,14 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * No action needed for this part here.
 	 */
+	@Override
 	public void stop() {
 	}
 	
 	/**
 	 * No action needed for this part here.
 	 */
+	@Override
 	public void toggleRoleFilter() {
 	}
 }

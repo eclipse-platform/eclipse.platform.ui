@@ -31,6 +31,7 @@ public class OverlayIcon extends AbstractOverlayIcon {
 			fBase = ImageDescriptor.getMissingImageDescriptor();
 	}
 
+	@Override
 	protected ImageData getBaseImageData() {
 		return fBase.getImageData();
 	}

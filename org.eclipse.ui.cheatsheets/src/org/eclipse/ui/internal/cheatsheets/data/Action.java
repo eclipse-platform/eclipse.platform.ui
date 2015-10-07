@@ -65,6 +65,7 @@ public class Action extends AbstractExecutable {
 		this.pluginID = pluginId;
 	}
 
+	@Override
 	public boolean handleAttribute(Node attribute) {
 		if (attribute.getNodeName().equals(IParserTags.PLUGINID)) {
 			hasPluginId = true;
@@ -78,6 +79,7 @@ public class Action extends AbstractExecutable {
 		return false;
 	}
 
+	@Override
 	public String checkAttributes(Node node) {
 		if(!hasClassAttr) {
 			return NLS.bind(Messages.ERROR_PARSING_NO_CLASS, (new Object[] {node.getNodeName()}));
@@ -91,15 +93,18 @@ public class Action extends AbstractExecutable {
 		return null;
 	}
 
+	@Override
 	public boolean isCheatSheetManagerUsed() {
 		return true;
 	}
 
 
+	@Override
 	public IStatus execute(CheatSheetManager csm) {
 		return new ActionRunner().runAction(this, csm);
 	}
 
+	@Override
 	public boolean hasParams() {
 		return true;
 	}

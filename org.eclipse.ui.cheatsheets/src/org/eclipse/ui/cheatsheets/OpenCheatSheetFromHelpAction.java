@@ -42,6 +42,7 @@ public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
 	 * registered cheat sheet in order for the action to work.
 	 * @see ILiveHelpAction#setInitializationString(String)
 	 */
+	@Override
 	public void setInitializationString(String data) {
 		cheatsheetID = data;
 	}
@@ -49,9 +50,11 @@ public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
 	/* (non-javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		// Active help does not run on the UI thread, so we must use syncExec
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				new OpenCheatSheetAction(cheatsheetID).run();
 			}

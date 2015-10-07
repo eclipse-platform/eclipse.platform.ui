@@ -622,6 +622,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 *
 	 * @param parent the parent control
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		control = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -633,6 +634,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		control.setLayout(layout);
 
 		control.addDisposeListener(new DisposeListener(){
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
 			}
@@ -683,6 +685,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			Display.getCurrent().removeFilter(SWT.Show, listener);
 
 			helpPart.getControl().addListener(SWT.Dispose, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					control.setVisible(true);
 					Display.getCurrent().addFilter(SWT.Show, listener);
@@ -716,6 +719,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getCheatSheetID()
 	 */
+	@Override
 	public String getCheatSheetID() {
 		if(getContent() != null) {
 			return getContent().getID();
@@ -736,6 +740,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return control;
 	}
@@ -797,6 +802,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		 */
 		if (!inDialog && isInDialogItem() && (Platform.getBundle("org.eclipse.help.ui") != null)) { //$NON-NLS-1$
 			listener = new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					if (isTrayDialog(event.widget)) {
 						dialogOpened((TrayDialog)((Shell)event.widget).getData());
@@ -1198,6 +1204,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		//need this to have current item selected. (Assumes that when you reactivate the view you will work with current item.)
 		if (currentItem != null) {
@@ -1211,6 +1218,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String)
 	 */
+	@Override
 	public void setInput(String id) {
 		setInput(id, new DefaultStateManager());
 	}
@@ -1249,6 +1257,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String, java.lang.String, java.net.URL)
 	 */
+	@Override
 	public void setInput(String id, String name, URL url) {
 		setInput(id, name, url, new DefaultStateManager(), false);
 	}
@@ -1316,6 +1325,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 	}
 
+	@Override
 	public int contributeToViewMenu(Menu menu, int index) {
 		if (currentPage instanceof IMenuContributor) {
 			return ((IMenuContributor)currentPage).contributeToViewMenu(menu, index);
@@ -1339,6 +1349,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}
 	}
 
+	@Override
 	public void reset(Map cheatSheetData) {
 		if (currentPage instanceof CheatSheetPage) {
 			restart();

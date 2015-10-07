@@ -48,6 +48,7 @@ public class CheatSheetView extends ViewPart {
 		expandRestoreAction = new CheatSheetExpandRestoreAction(Messages.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP, false, viewer);
 		
 		copyAction = new Action("copy") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				viewer.copy();
 			}
@@ -86,6 +87,7 @@ public class CheatSheetView extends ViewPart {
 	 *
 	 * @param parent the parent control
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		CheatSheetStopWatch.startStopWatch("CheatSheetView.createPartControl"); //$NON-NLS-1$
 
@@ -108,6 +110,7 @@ public class CheatSheetView extends ViewPart {
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -143,6 +146,7 @@ public class CheatSheetView extends ViewPart {
 	 * a fresh state.  Subclasses may override the implementation to perform any
 	 * state restoration as needed.
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
 		this.memento = memento;
@@ -176,6 +180,7 @@ public class CheatSheetView extends ViewPart {
 	/* (non-Javadoc)
 	 * Method declared on IViewPart.
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if(viewer != null) {
 			CheatSheetElement element = viewer.getContent();
@@ -204,6 +209,7 @@ public class CheatSheetView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {		
 		if(viewer != null) {
 			viewer.setFocus();

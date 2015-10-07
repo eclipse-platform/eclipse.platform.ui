@@ -36,18 +36,22 @@ public class CheatSheetCommand extends AbstractExecutable {
 		return serialization;
 	}
 
+	@Override
 	public boolean isCheatSheetManagerUsed() {
 		return true;
 	}
 
+	@Override
 	public IStatus execute(CheatSheetManager csm) {
 		return new CommandRunner().executeCommand(this, csm);
 	}
 
+	@Override
 	public boolean hasParams() {
 		return false;
 	}
 
+	@Override
 	public boolean handleAttribute(Node attribute) {
 		if (IParserTags.SERIALIZATION.equals(attribute.getNodeName())) {
 		    setSerialization(attribute.getNodeValue());
@@ -60,6 +64,7 @@ public class CheatSheetCommand extends AbstractExecutable {
 		return false;
 	}
 
+	@Override
 	public String checkAttributes(Node node) {
 		if(!serializationFound) {
 			return NLS.bind(Messages.ERROR_PARSING_NO_SERIALIZATION, (new Object[] {node.getNodeName()}));

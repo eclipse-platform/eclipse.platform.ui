@@ -89,6 +89,7 @@ public abstract class RegistryReader {
 		// more than one extension for an extension point is
 		// dependent in the order listed in the XML file.
 		Sorter sorter = new Sorter() {
+			@Override
 			public boolean compare(Object extension1, Object extension2) {
 				String s1 = ((IExtension) extension1).getContributor().getName().toUpperCase();
 				String s2 = ((IExtension) extension2).getContributor().getName().toUpperCase();

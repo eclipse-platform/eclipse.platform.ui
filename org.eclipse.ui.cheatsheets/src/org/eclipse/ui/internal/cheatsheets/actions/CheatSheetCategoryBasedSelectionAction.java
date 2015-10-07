@@ -54,6 +54,7 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 	/**
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		CheatSheetCollectionElement cheatSheets = (CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
 

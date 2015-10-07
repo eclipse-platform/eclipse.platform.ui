@@ -22,6 +22,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 public class DialogIntegerValueConverter extends
 		AbstractParameterValueConverter {
 
+	@Override
 	public Object convertToObject(String parameterValue)
 			throws ParameterValueConversionException {
 
@@ -34,6 +35,7 @@ public class DialogIntegerValueConverter extends
 		}
 	}
 
+	@Override
 	public String convertToString(Object parameterValue)
 			throws ParameterValueConversionException {
 

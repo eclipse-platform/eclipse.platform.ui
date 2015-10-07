@@ -29,14 +29,17 @@ public class TrayStateManager implements ICheatSheetStateManager {
 	private Properties properties;
 	private CheatSheetManager manager;
 
+	@Override
 	public Properties getProperties() {
 		return properties;
 	}
 
+	@Override
 	public void setElement(CheatSheetElement element) {
         // element not used
 	}
 
+	@Override
 	public CheatSheetManager getCheatSheetManager() {
 		return manager;
 	}
@@ -45,6 +48,7 @@ public class TrayStateManager implements ICheatSheetStateManager {
 	 * Save the properties and cheat sheet manager locally so they can be passed
 	 * to and from a cheat sheet viewer in a tray dialog.
 	 */
+	@Override
 	public IStatus saveState(Properties properties, CheatSheetManager manager) {
         this.properties = properties;
 		this.manager = manager;

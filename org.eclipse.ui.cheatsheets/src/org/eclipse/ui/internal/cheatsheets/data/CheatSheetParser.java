@@ -96,6 +96,7 @@ public class CheatSheetParser implements IStatusContainer {
 		return status;
 	}
 	
+	@Override
 	public void addStatus(int severity, String message, Throwable exception) { 
 		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}
@@ -1073,6 +1074,7 @@ public class CheatSheetParser implements IStatusContainer {
 		private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 		private static final String NAME_PATH = "path"; //$NON-NLS-1$
 		
+		@Override
 		public short handle(UAElement element, String id) {
 			if (id != null && ELEMENT_PARAM.equals(element.getElementName())) {
 				String name = element.getAttribute(ATTRIBUTE_NAME);

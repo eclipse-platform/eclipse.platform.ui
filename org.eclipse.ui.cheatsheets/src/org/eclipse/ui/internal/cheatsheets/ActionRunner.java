@@ -56,6 +56,7 @@ public class ActionRunner {
 		final boolean[] listenerFired = { false };
 		final boolean[] listenerResult = { false };
 		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if(event.getProperty().equals(IAction.RESULT) && event.getNewValue() instanceof Boolean) {
 					listenerFired[0] = true;

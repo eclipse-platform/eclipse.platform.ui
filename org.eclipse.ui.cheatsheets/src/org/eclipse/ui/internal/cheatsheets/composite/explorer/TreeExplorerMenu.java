@@ -35,6 +35,7 @@ public class TreeExplorerMenu {
 		MenuManager menuMgr = new MenuManager(null);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				fillContextMenu(manager);
 			}

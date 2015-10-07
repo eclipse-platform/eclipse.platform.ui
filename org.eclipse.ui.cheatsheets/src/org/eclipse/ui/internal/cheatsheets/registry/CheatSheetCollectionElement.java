@@ -124,6 +124,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	/**
 	 * Returns the label for this collection.
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return name;
 	}
@@ -131,6 +132,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	/**
 	 * Returns the logical parent of the given object in its tree.
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return parent;
 	}
@@ -176,6 +178,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	/**
 	 * For debugging purposes.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer("CheatSheetCollection, "); //$NON-NLS-1$
 		buf.append(childCollections.size());
@@ -185,10 +188,12 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 		return buf.toString();
 	}
 
+	@Override
 	public String getLocalId() {
 		return getId();
 	}
 
+	@Override
 	public String getPluginId() {
 		return pluginId;
 	}

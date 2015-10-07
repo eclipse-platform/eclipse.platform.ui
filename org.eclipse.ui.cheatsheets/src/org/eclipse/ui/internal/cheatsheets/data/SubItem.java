@@ -75,6 +75,7 @@ public class SubItem extends AbstractSubItem implements IExecutableItem, IPerfor
 	/**
 	 * @return Returns the action.
 	 */
+	@Override
 	public AbstractExecutable getExecutable() {
 		return executable;
 	}
@@ -82,6 +83,7 @@ public class SubItem extends AbstractSubItem implements IExecutableItem, IPerfor
 	/**
 	 * @param Executable The Executable to set.
 	 */
+	@Override
 	public void setExecutable(AbstractExecutable executable) {
 		this.executable = executable;
 	}
@@ -89,6 +91,7 @@ public class SubItem extends AbstractSubItem implements IExecutableItem, IPerfor
 	/**
 	 * @return Returns the performWhen.
 	 */
+	@Override
 	public PerformWhen getPerformWhen() {
 		return performWhen;
 	}
@@ -96,6 +99,7 @@ public class SubItem extends AbstractSubItem implements IExecutableItem, IPerfor
 	/**
 	 * @param performWhen The performWhen to set.
 	 */
+	@Override
 	public void setPerformWhen(PerformWhen performWhen) {
 		this.performWhen = performWhen;
 	}

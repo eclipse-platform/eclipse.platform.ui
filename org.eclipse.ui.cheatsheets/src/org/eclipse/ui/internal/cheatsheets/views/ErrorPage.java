@@ -82,6 +82,7 @@ public class ErrorPage extends Page {
 		this.status = status;
 	}
 
+	@Override
 	public void createPart(Composite parent) {
 		super.createPart(parent);
 		if (status != null) {
@@ -134,10 +135,12 @@ public class ErrorPage extends Page {
 	 *
 	 * @param parent the SWT parent for the title area composite
 	 */
+	@Override
 	protected String getTitle() {
 		return Messages.ERROR_LOADING_CHEATSHEET_CONTENT;
 	}
 
+	@Override
 	public void initialized() {
 		// No initialization required
 	}

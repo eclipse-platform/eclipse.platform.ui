@@ -120,6 +120,7 @@ public abstract class ViewItem {
 
 		
 		mainItemComposite.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				page.getForm().reflow(true);
 			}
@@ -154,6 +155,7 @@ public abstract class ViewItem {
 			number++;
 			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, Messages.HELP_BUTTON_TOOLTIP);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					// If we have a context id, handle this first and ignore an hrefs
 					if(item.getContextId() != null) {
@@ -190,6 +192,7 @@ public abstract class ViewItem {
 
 		bodyText = page.getToolkit().createFormText(bodyWrapperComposite, false);
 		bodyText.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Action copyAction = viewer.getCopyAction();
 				if (copyAction!=null)
@@ -197,11 +200,13 @@ public abstract class ViewItem {
 			}
 		});
 		bodyText.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				Action copyAction = viewer.getCopyAction();
 				if (copyAction!=null)
 					copyAction.setEnabled(bodyText.canCopy());
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				Action copyAction = viewer.getCopyAction();
 				if (copyAction!=null)

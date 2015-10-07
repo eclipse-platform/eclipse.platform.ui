@@ -146,6 +146,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		CheatSheetPlugin.getPlugin().getLog().log(errorStatus);
 	}
 	
+	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		IPath path = ICONS_PATH.append(T_OBJ).append("cheatsheet_obj.gif");//$NON-NLS-1$
 		ImageDescriptor imageDescriptor = createImageDescriptor(getPlugin().getBundle(), path);
@@ -239,6 +240,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	 */
 	private void restoreCheatSheetHistory() {
 		SafeRunner.run(new SafeRunnable() {
+			@Override
 			public void run() {
 				IMemento memento;				
 				memento = readMemento(HISTORY_FILENAME);
@@ -249,6 +251,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 					}
 				}
 			}
+			@Override
 			public void handleException(Throwable e) {
 				String message = Messages.ERROR_READING_STATE_FILE;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
@@ -302,6 +305,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	 */
 	private void saveCheatSheetHistory() {
 		SafeRunner.run(new SafeRunnable() {
+			@Override
 			public void run() {
 				XMLMemento memento = XMLMemento.createWriteRoot(MEMENTO_TAG_CHEATSHEET);
 
@@ -316,6 +320,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 					CheatSheetPlugin.getPlugin().getLog().log(status);
 				}
 			}
+			@Override
 			public void handleException(Throwable e) {
 				String message = Messages.ERROR_WRITING_STATE_FILE;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
@@ -357,9 +362,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
@@ -368,9 +371,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		// allow the MRU history to be lazily initialized by getCheatSheetHistory
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		

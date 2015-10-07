@@ -66,22 +66,27 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		requiredTasks = new ArrayList();
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getKind() {
 		return kind;
 	}
 
+	@Override
 	public Dictionary getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -94,10 +99,12 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		this.completionMessage = completionMessage;
 	}
 
+	@Override
 	public String getCompletionMessage() {
 		return completionMessage;
 	}
 
+	@Override
 	public ICompositeCheatSheetTask[] getRequiredTasks() {
 		if (requiredTasks==null) return EMPTY;
 		return (ICompositeCheatSheetTask[])requiredTasks.toArray(new ICompositeCheatSheetTask[requiredTasks.size()]);
@@ -117,6 +124,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		task.successorTasks.add(this);
 	}
 
+	@Override
 	public int getState() {
 		return state;
 	}
@@ -125,6 +133,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		setState(COMPLETED);
 	}
 
+	@Override
 	public boolean requiredTasksCompleted() {
 		boolean startable = true;
 		ICompositeCheatSheetTask[] requiredTasks = getRequiredTasks();
@@ -190,18 +199,21 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 
 	}
 
+	@Override
 	public ICompositeCheatSheet getCompositeCheatSheet() {
 		return model;
 	}
 	
 	public abstract ITaskParseStrategy getParserStrategy();
 
+	@Override
 	public abstract ICompositeCheatSheetTask[] getSubtasks();
 
 	public void setSkippable(boolean skippable) {
 		this.skippable = skippable;
 	}
 
+	@Override
 	public boolean isSkippable() {
 		return skippable;
 	}
@@ -210,10 +222,12 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		this.parent = parent;
 	}
 
+	@Override
 	public ITaskGroup getParent() {
 		return parent;
 	}
 	
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

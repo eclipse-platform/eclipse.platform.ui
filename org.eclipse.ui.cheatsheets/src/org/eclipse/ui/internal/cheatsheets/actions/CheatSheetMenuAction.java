@@ -43,6 +43,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
+	@Override
 	public void dispose() {
 		setMenu(null);
 		CheatSheetPlugin.getPlugin().getCheatSheetHistory().removeListener(this);
@@ -61,6 +62,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -68,6 +70,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
@@ -78,6 +81,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 	}
 
@@ -88,6 +92,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 		// Add listener to repopulate the menu each time
 		// it is shown because of dynamic history list
 		fMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				if (fRecreateMenu) {
 					Menu m = (Menu)e.widget;
@@ -105,6 +110,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
 	 */
+	@Override
 	public void propertyChanged(Object source, int propId) {
 		fRecreateMenu = true;
 	}
@@ -112,12 +118,14 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 	/* (non-Javadoc)
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
+	@Override
 	public void run(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

@@ -31,6 +31,7 @@ public class StartAction extends Action {
 		this.setImageDescriptor(startImage);
 	}
 	
+	@Override
 	public void run() {
 		task.setState(ICompositeCheatSheetTask.IN_PROGRESS);
 	}

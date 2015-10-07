@@ -37,6 +37,7 @@ public class OpenPerspective extends Action implements ICheatSheetAction {
 	/**
 	 * @see Action#run()
 	 */
+	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
 		try {
 			if(params == null || params[0] == null) {

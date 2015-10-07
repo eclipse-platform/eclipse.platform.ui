@@ -34,14 +34,17 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 public class ConfirmRestartDialog extends Dialog {
 
 	public class TaskLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return treeLabelProvider.getText(obj);
 		}
 		
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return treeLabelProvider.getImage(obj);
 		}
 		
+		@Override
 		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().
 					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
@@ -53,13 +56,16 @@ public class ConfirmRestartDialog extends Dialog {
 		
 		Object[] input;
 		
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			input = (Object[])newInput;
 		}
 		
+		@Override
 		public void dispose() {
 		}	
 		
+		@Override
 		public Object[] getElements(Object parent) {
 			return input;
 		}
@@ -76,6 +82,7 @@ public class ConfirmRestartDialog extends Dialog {
 		this.treeLabelProvider = treeLabelProvider;
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
@@ -94,6 +101,7 @@ public class ConfirmRestartDialog extends Dialog {
 		return composite;
 	}
 	
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RETURN));

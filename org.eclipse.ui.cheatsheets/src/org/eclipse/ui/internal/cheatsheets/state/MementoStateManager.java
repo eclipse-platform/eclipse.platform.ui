@@ -48,6 +48,7 @@ public class MementoStateManager implements ICheatSheetStateManager {
 	/**
 	 * Load properties from the memento.
 	 */
+	@Override
 	public Properties getProperties() {
 		if (memento == null) {
 			return null;
@@ -58,6 +59,7 @@ public class MementoStateManager implements ICheatSheetStateManager {
 		return props;
 	}
 
+	@Override
 	public CheatSheetManager getCheatSheetManager() {
 		CheatSheetManager result = new CheatSheetManager(element);
 		if (getProperties() != null) {
@@ -67,10 +69,12 @@ public class MementoStateManager implements ICheatSheetStateManager {
 		return result;
 	}
 
+	@Override
 	public void setElement(CheatSheetElement element) {
 		this.element = element;
 	}
 
+	@Override
 	public IStatus saveState(Properties properties, CheatSheetManager manager) {
 		// The real save will use a memento, this is an empty method
 		return Status.OK_STATUS;

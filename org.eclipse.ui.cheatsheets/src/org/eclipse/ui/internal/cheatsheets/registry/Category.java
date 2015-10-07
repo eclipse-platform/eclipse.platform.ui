@@ -108,6 +108,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	/*
 	 * (non-Javadoc) Method declared on IAdaptable.
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class)
 			return this;
@@ -120,6 +121,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	/*
 	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		return getElements().toArray();
 	}
@@ -127,6 +129,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	/*
 	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
@@ -134,6 +137,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	/*
 	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
 	 */
+	@Override
 	public String getLabel(Object o) {
 		return getLabel();
 	}
@@ -242,6 +246,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	 * 
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return null;
 	}
@@ -251,6 +256,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	 * 
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
+	@Override
 	public String getLocalId() {
 		return id;
 	}
@@ -260,6 +266,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	 * 
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
+	@Override
 	public String getPluginId() {
 		return configurationElement == null ? pluginId : configurationElement
 				.getContributor().getName();

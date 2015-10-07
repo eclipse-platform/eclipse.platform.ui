@@ -25,9 +25,11 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 	public TaskGroupParseStrategy() {
 	}
 	
+	@Override
 	public void init() {	
 	}
 	
+	@Override
 	public boolean parseElementNode(Node childNode, Node parentNode,
 			AbstractTask parentTask, IStatusContainer status) 
     {
@@ -35,6 +37,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 		return false;
 	}
 
+	@Override
 	public void parsingComplete(AbstractTask parentTask, IStatusContainer status) {
 		String kind = parentTask.getKind();
 		if (ITaskGroup.SEQUENCE.equals(kind)) {

@@ -58,10 +58,12 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		return description;
 	}
 
+	@Override
 	public String getTaskExplorerId() {
 		return explorerId;
 	}
 	
+	@Override
 	public ICompositeCheatSheetTask getRootTask() {
 		return rootTask;
 	}
@@ -127,6 +129,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		 return saveHelper.getTaskMemento(id);
 	}
 
+	@Override
 	public ICheatSheetManager getCheatSheetManager() {
 		return manager;
 	}

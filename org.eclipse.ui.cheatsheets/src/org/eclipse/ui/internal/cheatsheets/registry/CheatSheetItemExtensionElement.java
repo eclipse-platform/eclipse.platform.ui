@@ -39,6 +39,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 	 * associated with this object. Returns <code>null</code> if
 	 * no such object can be found.
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;

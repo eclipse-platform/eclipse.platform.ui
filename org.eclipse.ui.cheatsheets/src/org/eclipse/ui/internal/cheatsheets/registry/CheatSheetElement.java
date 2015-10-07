@@ -48,6 +48,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	 * associated with this object. Returns <code>null</code> if
 	 * no such object can be found.
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
@@ -93,6 +94,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	/**
 	 * Returns the name of this cheatsheet element.
 	 */
+	@Override
 	public String getLabel(Object element) {
 		return name;
 	}
@@ -180,10 +182,12 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 		return null;
 	}
 
+	@Override
 	public String getLocalId() {
 		return id;
 	}
 
+	@Override
 	public String getPluginId() {
 		return configurationElement.getContributor().getName();
 	}

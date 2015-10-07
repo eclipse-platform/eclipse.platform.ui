@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 class TreeContentProvider implements ITreeContentProvider {
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ICompositeCheatSheet) {
 			final Object[] rootTask = {((ICompositeCheatSheet) parentElement).getRootTask()};
@@ -28,6 +29,7 @@ class TreeContentProvider implements ITreeContentProvider {
 		return new Object[0];
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof  AbstractTask) {
 			return ((AbstractTask)element).getParent();
@@ -35,6 +37,7 @@ class TreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ICompositeCheatSheet)
 			return true;
@@ -43,13 +46,16 @@ class TreeContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 }

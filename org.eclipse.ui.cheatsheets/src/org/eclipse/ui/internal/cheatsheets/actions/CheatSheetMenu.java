@@ -51,6 +51,7 @@ public class CheatSheetMenu extends ContributionItem {
 	private Comparator comparator = new Comparator() {
 		private Collator collator = Collator.getInstance();
 
+		@Override
 		public int compare(Object ob1, Object ob2) {
 			if(ob1 == null || ob2 == null) {
 				return -1;
@@ -89,6 +90,7 @@ public class CheatSheetMenu extends ContributionItem {
 		mi.setImage(CheatSheetPlugin.getPlugin().getImageRegistry().get(key));
 		mi.setSelection(bCheck);
 		mi.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				run(element, e);
 			}
@@ -102,6 +104,7 @@ public class CheatSheetMenu extends ContributionItem {
 		MenuItem mi = new MenuItem(menu, SWT.PUSH, index);
 		mi.setText(Messages.CHEAT_SHEET_OTHER_MENU);
 		mi.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				runOther(e);
 			}
@@ -111,6 +114,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/* (non-Javadoc)
 	 * Fills the menu with cheatsheet items.
 	 */
+	@Override
 	public void fill(Menu menu, int index) {
 		// Get the checked cheatsheet.
 		String checkID = null;
@@ -269,6 +273,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/* (non-Javadoc)
 	 * Returns whether this menu is dynamic.
 	 */
+	@Override
 	public boolean isDynamic() {
 		return true;
 	}
@@ -276,6 +281,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IContributionItem#isVisible()
 	 */
+	@Override
 	public boolean isVisible() {
 		return getActiveWorkbenchPage() != null;
 	}

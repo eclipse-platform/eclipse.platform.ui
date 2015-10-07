@@ -31,19 +31,23 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 public class NoSaveStateManager implements ICheatSheetStateManager {
 
 	private CheatSheetElement element;
+	@Override
 	public Properties getProperties() {
 		return null;
 	}
 
+	@Override
 	public CheatSheetManager getCheatSheetManager() {	
 		CheatSheetManager result = new CheatSheetManager(element);
 		return result;
 	}
 
+	@Override
 	public void setElement(CheatSheetElement element) {
 		this.element = element;
 	}
 
+	@Override
 	public IStatus saveState(Properties properties, CheatSheetManager manager) {
 		return Status.OK_STATUS;
 	}

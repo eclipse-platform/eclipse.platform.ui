@@ -35,6 +35,7 @@ public class OpenInputDialogHandler extends AbstractHandler {
 
 	private static final String PARAM_ID_CANCEL_RETURNS = "cancelReturns"; //$NON-NLS-1$
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		String title = event.getParameter(PARAM_ID_TITLE);
