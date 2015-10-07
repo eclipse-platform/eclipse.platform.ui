@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,17 +48,14 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 	 * @return Image or <code>null</code>
 	 */
 	private Image getImage(MarkerItem item) {
-
-		int severity = -1;
-		if (item.getMarker() == null)
-			severity = ((MarkerCategory) item).getHighestSeverity();
-		else
-			severity = MarkerSupportInternalUtilities.getSeverity(item);
-
-		if (severity >= IMarker.SEVERITY_WARNING)
-			return MarkerSupportInternalUtilities.getSeverityImage(severity);
-		return null;
-
+		if (item.getMarker() == null) {
+			int severity = ((MarkerCategory) item).getHighestSeverity();
+			if (severity >= IMarker.SEVERITY_WARNING)
+				return MarkerSupportInternalUtilities.getSeverityImage(severity);
+			return null;
+		}
+		int severity = MarkerSupportInternalUtilities.getSeverity(item);
+		return MarkerSupportInternalUtilities.getSeverityImage(severity);
 	}
 
 	@Override

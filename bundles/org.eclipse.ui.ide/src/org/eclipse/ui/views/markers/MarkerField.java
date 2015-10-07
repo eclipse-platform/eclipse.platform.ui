@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,8 @@ public abstract class MarkerField {
 						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_WARNING);
 					} else if (image == MarkerSupportInternalUtilities.getSeverityImage(IMarker.SEVERITY_ERROR)) {
 						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR);
+					} else if (image == MarkerSupportInternalUtilities.getSeverityImage(IMarker.SEVERITY_INFO)) {
+						image = WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_INFO);
 					} else if (image != null) {
 						descriptors[IDecoration.BOTTOM_RIGHT] = getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
 					}

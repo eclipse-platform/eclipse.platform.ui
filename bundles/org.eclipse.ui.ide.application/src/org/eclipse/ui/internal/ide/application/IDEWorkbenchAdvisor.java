@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -696,6 +696,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_ERROR,
 				PATH_OBJECT + "quickfix_error_obj.png", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_OBJS_FIXABLE_INFO,
+				PATH_OBJECT + "quickfix_info_obj.png", true); //$NON-NLS-1$
 
 
 		// task objects
