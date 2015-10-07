@@ -32,7 +32,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 	/**
 	 *
 	 */
-	private static final String INITIAL_TRIM_VISIBILIY = "initalTrimVisibilityValue"; //$NON-NLS-1$
+	private static final String INITIAL_TRIM_VISIBILIY = "initialTrimVisibilityValue"; //$NON-NLS-1$
 	private static final String WINDOWS_WITH_MINIMIZED_TRIMBARS = "windowsWithMinimizedTrimbars"; //$NON-NLS-1$
 
 	@Override
@@ -63,7 +63,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 		for (MTrimBar tc : tcList) {
 			boolean visible = true;
 			String initialTrimVisibility = tc.getPersistedState().get(INITIAL_TRIM_VISIBILIY);
-			if (initialTrimVisibility != null && initialTrimVisibility.length() > 0) {
+			if (initialTrimVisibility != null && initialTrimVisibility.isEmpty()) {
 				visible = Boolean.parseBoolean(initialTrimVisibility);
 				tc.getPersistedState().remove(INITIAL_TRIM_VISIBILIY);
 			}
