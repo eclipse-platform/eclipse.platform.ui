@@ -322,6 +322,10 @@
             sequence="M4+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.window.hidetrimbars"
+            sequence="M1+M2+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.window.nextEditor"
             sequence="M1+F6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -1162,6 +1166,12 @@
             description="%command.maximizePart.description"
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.maximizePart" />
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.HideTrimBarsHandler"
+            description="%command.windowsHideTrimbars.description"
+            id="org.eclipse.ui.window.hidetrimbars"
+            name="%command.windowsHideTrimbars.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.internal.handlers.MinimizePartHandler"
@@ -2256,7 +2266,7 @@
             </with>
          </enabledWhen>
       </handler>
-      <handler
+       <handler
             class="org.eclipse.ui.internal.handlers.MaximizePartHandler"
             commandId="org.eclipse.ui.window.maximizePart">
          <enabledWhen>
