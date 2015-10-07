@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Julian Chen - Bug 92572, jclRM
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - Bug 265532
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 478771
+ *     Julian Chen - fix for bug #92572, jclRM
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - fix for bug 265532
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -19,6 +18,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
 import org.eclipse.core.internal.preferences.exchange.IProductPreferencesService;
+import org.eclipse.core.internal.preferences.legacy.InitLegacyPreferences;
 import org.eclipse.core.internal.preferences.legacy.ProductPreferencesService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -813,6 +813,10 @@ public final class InternalPlatform {
 		// so we don't want to enforce it here.
 		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<String,String>());
 
+		// Only register this interface if compatibility is installed - the check for a bundle presence
+		// is a quick test that doesn't consume much.
+		if (getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
+			legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<String, String>());
 	}
 
 	private void stopServices() {
