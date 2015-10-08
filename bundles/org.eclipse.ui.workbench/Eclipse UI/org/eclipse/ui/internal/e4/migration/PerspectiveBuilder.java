@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -33,6 +37,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PerspectiveTagger;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayoutUtils;
@@ -40,6 +45,8 @@ import org.eclipse.ui.internal.e4.migration.InfoReader.PageReader;
 import org.eclipse.ui.internal.e4.migration.InfoReader.PartState;
 import org.eclipse.ui.internal.e4.migration.PerspectiveReader.DetachedWindowReader;
 import org.eclipse.ui.internal.e4.migration.PerspectiveReader.ViewLayoutReader;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.registry.StickyViewDescriptor;
 
 public class PerspectiveBuilder {
@@ -100,6 +107,7 @@ public class PerspectiveBuilder {
 		addNewWizardTags();
 		addShowViewTags();
 		addHiddenItems();
+		addShowInTags();
 
 		for (InfoReader info : perspReader.getInfos()) {
 			if (info.isEditorArea()) {
@@ -493,6 +501,76 @@ public class PerspectiveBuilder {
 		for (String actionSetId : perspReader.getActionSetIds()) {
 			tags.add(ModeledPageLayout.ACTION_SET_TAG + actionSetId);
 		}
+	}
+
+	private void addShowInTags() {
+		String origId = null;
+		if (perspReader.isCustom()) {
+			origId = perspReader.getBasicPerspectiveId();
+		} else {
+			origId = perspReader.getId();
+		}
+		ArrayList<String> list = getShowInPartFromRegistry(origId);
+		if (list != null) {
+			for (String showIn : list) {
+				tags.add(ModeledPageLayout.SHOW_IN_PART_TAG + showIn);
+			}
+		}
+		return;
+	}
+
+	public static ArrayList<String> getShowInPartFromRegistry(String targetId) {
+		ArrayList<String> list = new ArrayList<>();
+		IExtension[] extensions = getPerspectiveExtensions();
+		if (extensions != null) {
+			for (int i = 0; i < extensions.length; i++) {
+				list.addAll(getExtensionShowInPartFromRegistry(extensions[i], targetId));
+			}
+		}
+		return list;
+	}
+
+	private static IExtension[] getPerspectiveExtensions() {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
+        if (point == null) {
+			return null;
+		}
+		IExtension[] extensions = point.getExtensions();
+        extensions = RegistryReader.orderExtensions(extensions);
+		return extensions;
+	}
+
+	private static ArrayList<String> getExtensionShowInPartFromRegistry(IExtension extension, String targetId) {
+		ArrayList<String> list = new ArrayList<>();
+		IConfigurationElement[] configElements = extension.getConfigurationElements();
+		for (int j = 0; j < configElements.length; j++) {
+			String type = configElements[j].getName();
+			if (type.equals(IWorkbenchRegistryConstants.TAG_PERSPECTIVE_EXTENSION)) {
+				String id = configElements[j].getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
+				if (targetId.equals(id) || "*".equals(id)) { //$NON-NLS-1$
+					list.addAll(getConfigElementShowInPartsFromRegistry(configElements[j]));
+				}
+			}
+		}
+		return list;
+	}
+
+	private static ArrayList<String> getConfigElementShowInPartsFromRegistry(IConfigurationElement configElement) {
+		ArrayList<String> list = new ArrayList<>();
+		String tag = IWorkbenchRegistryConstants.TAG_SHOW_IN_PART;
+		IConfigurationElement[] children = configElement.getChildren();
+		for (int nX = 0; nX < children.length; nX++) {
+			IConfigurationElement child = children[nX];
+			String ctype = child.getName();
+			if (tag.equals(ctype)) {
+				String tid = child.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				if (tid != null) {
+					list.add(tid);
+				}
+			}
+		}
+		return list;
 	}
 
 	private void addNewWizardTags() {
