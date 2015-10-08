@@ -65,6 +65,8 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 			return null;
 
 		BundleContext context = bundle.getBundleContext();
+		if (context == null)
+			return null;
 
 		/*
 		 * Reflection is required since there is no OSGi API to retrieve the
