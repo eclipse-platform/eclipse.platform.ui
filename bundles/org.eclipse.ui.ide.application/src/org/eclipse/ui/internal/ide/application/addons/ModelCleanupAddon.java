@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle;
+import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -49,8 +50,13 @@ import org.osgi.service.event.Event;
  * Currently it only covered part descriptors but it is planned to extend this
  * addon to also remove other broken model contributions
  */
+@SuppressWarnings("restriction")
 public class ModelCleanupAddon {
 
+	/**
+	 * See URIHelper#BUNDLECLASS_SCHEMA constant.
+	 */
+	private static final int BUNDLECLASS_SCHEMA_LENGTH = 14;
 	private static String COMPATIBILITY_EDITOR_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor"; //$NON-NLS-1$
 	private static String COMPATIBILITY_VIEW_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"; //$NON-NLS-1$
 
@@ -85,20 +91,35 @@ public class ModelCleanupAddon {
 		}
 	}
 
-	/**
-	 * @param bundle
-	 * @param iterator
-	 */
 	private boolean isValidPartDescriptor(Bundle bundle, MPartDescriptor partDescriptor) {
 		String contributionURI = partDescriptor.getContributionURI();
-		if (!(COMPATIBILITY_EDITOR_URI.equals(contributionURI)) && !(COMPATIBILITY_VIEW_URI.equals(contributionURI))) {
-			if (!URIHelper.isBundleClassUri(contributionURI))
-				return false;
+		if (!URIHelper.isBundleClassUri(contributionURI)) {
+			return false;
 		}
-		String[] bundleClass = contributionURI.substring(14).split("/"); //$NON-NLS-1$
-		String bundleSymbolicName = bundleClass[0];
-		String className = bundleClass[1];
 
+		String originalCompatibilityViewClass = partDescriptor.getPersistedState()
+				.get(ViewRegistry.ORIGINAL_COMPATIBILITY_VIEW_CLASS);
+		// if the originalCompatibilityViewClass is not null, the given
+		// MPartDescriptor is based on a ViewPart (not e4view)
+		// See createDescriptor method of the ViewRegistry
+		if (COMPATIBILITY_VIEW_URI.equals(contributionURI) && originalCompatibilityViewClass != null) {
+			String originalCompatibilityViewBundle = partDescriptor.getPersistedState()
+					.get(ViewRegistry.ORIGINAL_COMPATIBILITY_VIEW_BUNDLE);
+			return checkPartDescriptorByBundleSymbolicNameAndClass(bundle, originalCompatibilityViewBundle,
+					originalCompatibilityViewClass);
+		} else if (!COMPATIBILITY_EDITOR_URI.equals(contributionURI)) {
+			// check for e4views and usual MPartDescriptors
+			String[] bundleClass = contributionURI.substring(BUNDLECLASS_SCHEMA_LENGTH).split("/"); //$NON-NLS-1$
+			String bundleSymbolicName = bundleClass[0];
+			String className = bundleClass[1];
+			return checkPartDescriptorByBundleSymbolicNameAndClass(bundle, bundleSymbolicName, className);
+		}
+
+		return true;
+	}
+
+	private boolean checkPartDescriptorByBundleSymbolicNameAndClass(Bundle bundle, String bundleSymbolicName,
+			String className) {
 		Collection<BundleWiring> wirings = findWirings(bundleSymbolicName, bundle.getBundleContext());
 		if (!isPartDescriptorClassAvailable(wirings, className)) {
 			// remove PartDescriptor, if there is not wiring available
@@ -114,10 +135,18 @@ public class ModelCleanupAddon {
 			return false;
 		}
 
+		String classPackageName;
+		String classResourceName;
+		int indexLastDot = className.lastIndexOf('.');
+		if (indexLastDot < 0) {
+			classPackageName = "/"; //$NON-NLS-1$
+			classResourceName = className;
+		} else {
+			classPackageName = '/' + className.substring(0, indexLastDot).replace('.', '/');
+			classResourceName = className.substring(indexLastDot + 1) + ".class"; //$NON-NLS-1$
+		}
 		for (BundleWiring bundleWiring : wirings) {
-			Class<?> partsClass = findClass(className, bundleWiring);
-			if (null == partsClass) {
-				// class for PartDescriptor cannot be found
+			if (!checkClassResource(classPackageName, classResourceName, bundleWiring)) {
 				return false;
 			}
 		}
@@ -168,18 +197,15 @@ public class ModelCleanupAddon {
 		return result;
 	}
 
-	private Class<?> findClass(String className, BundleWiring wiring) {
+	private boolean checkClassResource(String classPackageName, String classFileName, BundleWiring wiring) {
 		if (wiring == null) {
-			return null;
+			return false;
 		}
 		if ((wiring.getRevision().getTypes() & BundleRevision.TYPE_FRAGMENT) != 0) {
 			// fragment case; need to get the host wiring
 			wiring = wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE).get(0).getProviderWiring();
 		}
-		try {
-			return wiring.getClassLoader().loadClass(className);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
+		Collection<String> classResourcePaths = wiring.listResources(classPackageName, classFileName, 0);
+		return classResourcePaths != null && !classResourcePaths.isEmpty();
 	}
 }
