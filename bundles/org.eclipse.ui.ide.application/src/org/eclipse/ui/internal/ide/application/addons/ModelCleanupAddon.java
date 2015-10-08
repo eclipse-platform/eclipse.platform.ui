@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.addons;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -115,18 +114,10 @@ public class ModelCleanupAddon {
 			return false;
 		}
 
-		String classPackageName;
-		String classResourceName;
-		int indexLastDot = className.lastIndexOf('.');
-		if (indexLastDot < 0) {
-			classPackageName = "/"; //$NON-NLS-1$
-			classResourceName = className;
-		} else {
-			classPackageName = className.substring(0, indexLastDot).replace('.', '/');
-			classResourceName = className.substring(indexLastDot + 1) + ".class"; //$NON-NLS-1$
-		}
 		for (BundleWiring bundleWiring : wirings) {
-			if (!checkClassResource(classPackageName, classResourceName, bundleWiring)) {
+			Class<?> partsClass = findClass(className, bundleWiring);
+			if (null == partsClass) {
+				// class for PartDescriptor cannot be found
 				return false;
 			}
 		}
@@ -177,15 +168,18 @@ public class ModelCleanupAddon {
 		return result;
 	}
 
-	private boolean checkClassResource(String classPackageName, String classFileName, BundleWiring wiring) {
+	private Class<?> findClass(String className, BundleWiring wiring) {
 		if (wiring == null) {
-			return false;
+			return null;
 		}
 		if ((wiring.getRevision().getTypes() & BundleRevision.TYPE_FRAGMENT) != 0) {
 			// fragment case; need to get the host wiring
 			wiring = wiring.getRequiredWires(HostNamespace.HOST_NAMESPACE).get(0).getProviderWiring();
 		}
-		List<URL> classURLs = wiring.findEntries(classPackageName, classFileName, 0);
-		return classURLs != null && !classURLs.isEmpty();
+		try {
+			return wiring.getClassLoader().loadClass(className);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
 	}
 }
