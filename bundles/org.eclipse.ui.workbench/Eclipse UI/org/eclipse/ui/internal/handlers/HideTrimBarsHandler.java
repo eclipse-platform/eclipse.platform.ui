@@ -22,10 +22,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * CodeFocus handler - see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=427999
- *
- * @see org.eclipse.core.commands.IHandler
- * @see org.eclipse.core.commands.AbstractHandler
+ * Handler which allows to hide all trimbars. It adds a tag to the corresponding
+ * window. If triggered again, it restores the original visibility of the
+ * trimbars.
  */
 public class HideTrimBarsHandler extends AbstractHandler {
 
@@ -63,7 +62,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 		for (MTrimBar tc : tcList) {
 			boolean visible = true;
 			String initialTrimVisibility = tc.getPersistedState().get(INITIAL_TRIM_VISIBILIY);
-			if (initialTrimVisibility != null && initialTrimVisibility.isEmpty()) {
+			if (initialTrimVisibility != null && !initialTrimVisibility.isEmpty()) {
 				visible = Boolean.parseBoolean(initialTrimVisibility);
 				tc.getPersistedState().remove(INITIAL_TRIM_VISIBILIY);
 			}
@@ -74,7 +73,7 @@ public class HideTrimBarsHandler extends AbstractHandler {
 	private void enableCodeFocus(MTrimmedWindow window, EModelService modelService) {
 		List<MTrimBar> tcList = modelService.findElements(window, null, MTrimBar.class, null);
 		for (MTrimBar tc : tcList) {
-			// remember the visibility state in case some trmbars are already
+			// remember the visibility state in case some trimbars are already
 			// not visible
 			tc.getPersistedState().put(INITIAL_TRIM_VISIBILIY, String.valueOf(tc.isVisible()));
 			tc.setVisible(false);
