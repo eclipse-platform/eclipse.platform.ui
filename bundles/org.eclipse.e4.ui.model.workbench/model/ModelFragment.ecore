@@ -42,12 +42,14 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>&#xD;&#xA;@since 1.0"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="featurename" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="featurename" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentElementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentElementId" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&lt;p>&#xD;&#xA;&lt;strong>Developers&lt;/strong>:&#xD;&#xA;Add more detailed documentation by editing this comment in &#xD;&#xA;/org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. &#xD;&#xA;There is a GenModel/documentation node under each type and attribute.&#xD;&#xA;&lt;/p>"/>
       </eAnnotations>
