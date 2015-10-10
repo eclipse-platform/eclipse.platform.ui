@@ -2843,8 +2843,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 		workbenchAutoSave = b;
 	}
 
-	private volatile boolean initDone = false;
-
 	/**
 	 * Internal method for running the workbench UI. This entails processing and
 	 * dispatching events until the workbench is closed or restarted.
@@ -2926,55 +2924,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 			final boolean[] initOK = new boolean[1];
 
-			if (getSplash() != null) {
-
-				final Throwable[] error = new Throwable[1];
-				Thread initThread = new Thread() {
-					@Override
-					public void run() {
-						try {
-							// declare us to be a startup thread so that our
-							// syncs will be executed
-							UISynchronizer.startupThread.set(Boolean.TRUE);
-							initOK[0] = Workbench.this.init();
-						} catch (Throwable e) {
-							error[0] = e;
-						} finally {
-							initDone = true;
-							yield();
-							try {
-								Thread.sleep(5);
-							} catch (InterruptedException e) {
-								// this is a no-op in this case.
-							}
-							display.wake();
-						}
-					}
-				};
-				initThread.start();
-				while (true) {
-					if (!display.readAndDispatch()) {
-						if (initDone)
-							break;
-						display.sleep();
-					}
-				}
-				Throwable throwable = error[0];
-				if (throwable != null) {
-					if (throwable instanceof Error)
-						throw (Error) throwable;
-					if (throwable instanceof Exception)
-						throw (Exception) throwable;
-
-					// how very exotic - something that isn't playing by the
-					// rules. Wrap it in an error and bail
-					throw new Error(throwable);
-				}
-			} else {
-				// initialize workbench and restore or open one window
-				initOK[0] = init();
-
-			}
+			// initialize workbench and restore or open one window
+			initOK[0] = init();
 
 			if (initOK[0] && runEventLoop) {
 				// Same registration as in E4Workbench
