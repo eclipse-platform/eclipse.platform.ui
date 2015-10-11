@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -68,7 +68,7 @@ public class ContainerCreator {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount());
+				SubMonitor subMonitor = SubMonitor.convert(monitor, FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount());
 				if (fContainer != null)
 					return;
 
@@ -91,7 +91,7 @@ public class ContainerCreator {
 					if (resource != null) {
 						if (resource instanceof IContainer) {
 							fContainer= (IContainer) resource;
-							monitor.worked(1);
+							subMonitor.worked(1);
 						} else {
 							// fContainerFullPath specifies a file as directory
 							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, resource.getFullPath()), null));
@@ -100,15 +100,11 @@ public class ContainerCreator {
 					else {
 						if (i == 0) {
 							IProject projectHandle= createProjectHandle(root, currentSegment);
-							IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-							fContainer= createProject(projectHandle, subMonitor);
-							subMonitor.done();
+							fContainer= createProject(projectHandle, subMonitor.newChild(1));
 						}
 						else {
 							IFolder folderHandle= createFolderHandle(fContainer, currentSegment);
-							IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-							fContainer= createFolder(folderHandle, subMonitor);
-							subMonitor.done();
+							fContainer= createFolder(folderHandle, subMonitor.newChild(1));
 						}
 					}
 				}
@@ -138,26 +134,16 @@ public class ContainerCreator {
 	}
 
 	private IProject createProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 100);//$NON-NLS-1$
-		try {
+		SubMonitor subMonitor= SubMonitor.convert(monitor, 2);
+		projectHandle.create(subMonitor.newChild(1));
 
-			IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 50);
-			projectHandle.create(subMonitor);
-			subMonitor.done();
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
 
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
+		projectHandle.open(subMonitor.newChild(1));
 
-			subMonitor= new SubProgressMonitor(monitor, 50);
-			projectHandle.open(subMonitor);
-			subMonitor.done();
-
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
-
-		} finally {
-			monitor.done();
-		}
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
 
 		return projectHandle;
 	}

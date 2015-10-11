@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -639,15 +639,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				}
 
 			} else {
-				try {
-					monitor.beginTask(TextEditorMessages.FileDocumentProvider_task_saving, 2000);
-					ContainerCreator creator = new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
-					creator.createContainer(new SubProgressMonitor(monitor, 1000));
-					file.create(stream, false, new SubProgressMonitor(monitor, 1000));
-				}
-				finally {
-					monitor.done();
-				}
+				SubMonitor subMonitor= SubMonitor.convert(monitor, TextEditorMessages.FileDocumentProvider_task_saving, 2);
+				ContainerCreator creator= new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
+				creator.createContainer(subMonitor.newChild(1));
+				file.create(stream, false, subMonitor.newChild(1));
 			}
 
 		} else {
