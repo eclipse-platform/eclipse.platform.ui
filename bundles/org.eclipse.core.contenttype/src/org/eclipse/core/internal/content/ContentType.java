@@ -21,9 +21,6 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-/**
- * @see IContentType
- */
 public final class ContentType implements IContentType, IContentTypeInfo {
 
 	/* A placeholder for missing/invalid binary/text describers. */
@@ -132,9 +129,6 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		this.manager = manager;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
 		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
@@ -201,10 +195,6 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return aliasTargetId;
 	}
 
-	/**
-	 * @see IContentType
-	 */
-
 	@Override
 	public IContentType getBaseType() {
 		return baseType;
@@ -223,17 +213,11 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return this;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public String getDefaultCharset() {
 		return getDefaultProperty(IContentDescription.CHARSET);
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public IContentDescription getDefaultDescription() {
 		return defaultDescription;
@@ -306,25 +290,16 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return baseType.getDescriber();
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
 		return internalGetDescriptionFor(ContentTypeManager.readBuffer(contents), options);
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
 		return internalGetDescriptionFor(ContentTypeManager.readBuffer(contents), options);
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public String[] getFileSpecs(int typeMask) {
 		if (fileSpecs.isEmpty())
@@ -340,17 +315,11 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return result.toArray(new String[result.size()]);
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public String getName() {
 		return name;
@@ -526,25 +495,16 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return target != null;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public boolean isAssociatedWith(String fileName) {
 		return isAssociatedWith(fileName, manager.getContext());
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public boolean isAssociatedWith(String fileName, IScopeContext context) {
 		return internalIsAssociatedWith(fileName, context) != NOT_ASSOCIATED;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public boolean isKindOf(IContentType another) {
 		if (another == null)
@@ -573,9 +533,6 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			internalAddFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
 		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
@@ -604,9 +561,6 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		target = newTarget;
 	}
 
-	/**
-	 * @see IContentType
-	 */
 	@Override
 	public void setDefaultCharset(String newCharset) throws CoreException {
 		synchronized (this) {

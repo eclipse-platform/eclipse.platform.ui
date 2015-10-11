@@ -107,9 +107,6 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		this.contentType = contentType;
 	}
 
-	/*
-	 * @see IContentTypeSettings
-	 */
 	@Override
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
 		addFileSpec(context, contentType.getId(), fileSpec, type);

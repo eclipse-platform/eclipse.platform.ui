@@ -153,9 +153,6 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		return VALID;
 	}
 
-	/* (Intentionally not included in javadoc)
-	 * @see IContentDescriber#describe(InputStream, IContentDescription)
-	 */
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		return describe(contents, description, new HashMap<String, Object>());
@@ -174,9 +171,6 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		return checkCriteria(new InputSource(contents), properties);
 	}
 
-	/* (Intentionally not included in javadoc)
-	 * @see IContentDescriber#describe(Reader, IContentDescription)
-	 */
 	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		return describe(contents, description, new HashMap<String, Object>());
@@ -232,9 +226,6 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 		properties.put(RESULT, Boolean.TRUE);
 	}
 
-	/* (Intentionally not included in javadoc)
-	 * @see IExecutableExtension#setInitializationData
-	 */
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
 		if (data instanceof String)

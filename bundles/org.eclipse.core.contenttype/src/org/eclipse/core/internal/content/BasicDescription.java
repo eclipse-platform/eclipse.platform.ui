@@ -21,9 +21,6 @@ public abstract class BasicDescription implements IContentDescription {
 		this.contentTypeInfo = contentTypeInfo;
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public IContentType getContentType() {
 		ContentType contentType = contentTypeInfo.getContentType();

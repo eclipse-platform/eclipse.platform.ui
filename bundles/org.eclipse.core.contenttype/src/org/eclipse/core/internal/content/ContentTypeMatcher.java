@@ -30,9 +30,6 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		this.context = context;
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
@@ -40,9 +37,6 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		return all.length > 0 ? new ContentTypeHandler((ContentType) all[0], currentCatalog.getGeneration()) : null;
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentType findContentTypeFor(String fileName) {
 		// basic implementation just gets all content types
@@ -51,9 +45,6 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		return associated.length == 0 ? null : new ContentTypeHandler((ContentType) associated[0], currentCatalog.getGeneration());
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
@@ -65,9 +56,6 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		return result;
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentType[] findContentTypesFor(String fileName) {
 		ContentTypeCatalog currentCatalog = getCatalog();
@@ -83,17 +71,11 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		return ContentTypeManager.getInstance().getCatalog();
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
 		return getCatalog().getDescriptionFor(this, contents, fileName, options);
 	}
 
-	/**
-	 * @see IContentTypeMatcher
-	 */
 	@Override
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
 		return getCatalog().getDescriptionFor(this, contents, fileName, options);

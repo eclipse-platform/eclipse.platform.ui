@@ -177,9 +177,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		contentTypeListeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see IContentTypeManager#removeContentTypeChangeListener(IContentTypeChangeListener)
-	 */
 	@Override
 	public void removeContentTypeChangeListener(IContentTypeChangeListener listener) {
 		contentTypeListeners.remove(listener);

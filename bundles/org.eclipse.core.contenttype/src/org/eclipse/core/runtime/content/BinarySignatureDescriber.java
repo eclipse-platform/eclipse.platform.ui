@@ -75,17 +75,11 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 		return VALID;
 	}
 
-	/* (Intentionally not included in javadoc)
-	 * @see IContentDescriber#getSupportedOptions
-	 */
 	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return new QualifiedName[0];
 	}
 
-	/* (Intentionally not included in javadoc)
-	 * @see IExecutableExtension#setInitializationData
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		try {

@@ -42,9 +42,6 @@ public final class ContentDescription extends BasicDescription {
 			throw new IllegalStateException("Content description is immutable"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public String getCharset() {
 		byte[] bom = (byte[]) getProperty(BYTE_ORDER_MARK);
@@ -71,9 +68,6 @@ public final class ContentDescription extends BasicDescription {
 		return null;
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public Object getProperty(QualifiedName key) {
 		Object describedProperty = getDescribedProperty(key);
@@ -82,9 +76,6 @@ public final class ContentDescription extends BasicDescription {
 		return contentTypeInfo.getDefaultProperty(key);
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public boolean isRequested(QualifiedName propertyKey) {
 		// all options requested
@@ -126,9 +117,6 @@ public final class ContentDescription extends BasicDescription {
 		this.contentTypeInfo = info;
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public void setProperty(QualifiedName newKey, Object newValue) {
 		assertMutable();

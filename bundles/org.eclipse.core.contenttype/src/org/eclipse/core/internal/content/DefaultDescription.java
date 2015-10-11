@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.content;
 
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.content.IContentDescription;
 
 /**
  * A content description for which all  properties have default values.
@@ -30,17 +29,11 @@ public final class DefaultDescription extends BasicDescription {
 		return contentTypeInfo.equals(((DefaultDescription) obj).contentTypeInfo);
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public String getCharset() {
 		return (String) getProperty(CHARSET);
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public Object getProperty(QualifiedName key) {
 		return contentTypeInfo.getDefaultProperty(key);
@@ -51,17 +44,11 @@ public final class DefaultDescription extends BasicDescription {
 		return contentTypeInfo.getContentType().hashCode();
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public boolean isRequested(QualifiedName key) {
 		return false;
 	}
 
-	/**
-	 * @see IContentDescription
-	 */
 	@Override
 	public void setProperty(QualifiedName key, Object value) {
 		throw new IllegalStateException();
