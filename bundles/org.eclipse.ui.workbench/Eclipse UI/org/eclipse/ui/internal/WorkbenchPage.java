@@ -5375,13 +5375,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 	};
 
-	/**
-	 * this should work with hide and show editors.
-	 */
-	public void resetHiddenEditors() {
-		E4Util.unsupported("resetHiddenEditors not supported yet"); //$NON-NLS-1$
-	}
-
 	public String getHiddenItems() {
 		MPerspective perspective = getCurrentPerspective();
 		if (perspective == null)
