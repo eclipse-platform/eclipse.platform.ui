@@ -2655,34 +2655,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-     * Tell the workbench window a visible state for the fastview bar. This is
-     * only applicable if the window configurer also wishes the fast view bar to
-     * be visible.
-     *
-     * @param visible
-     *            <code>true</code> or <code>false</code>
-     * @since 3.2
-     * @deprecated discontinued support for fast views
-     */
-    @Deprecated
-    public void setFastViewBarVisible(boolean visible) {
-        // not supported anymore
-    }
-
-     /**
-	 * Returns the visible state for the fastview bar of the workbench window.
-	 *
-	 * @return <code>false</code>
-	 * @since 3.2
-	 * @deprecated discontinued support for fast views
-	 */
-    @Deprecated
-    public boolean getFastViewBarVisible() {
-        // not supported anymore
-        return false;
-    }
-
-	/**
 	 * @param visible
 	 *            whether the perspective bar should be shown. This is only
 	 *            applicable if the window configurer also wishes either the
@@ -2710,15 +2682,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public boolean getStatusLineVisible() {
 		return statusLineVisible;
 	}
-
-    /**
-     * @return <code>false</code>
-     * @deprecated discontinued support for fast views
-     */
-    @Deprecated
-    public boolean getShowFastViewBars() {
-        return false;
-    }
 
 	protected boolean showTopSeperator() {
 		return false;
