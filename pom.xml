@@ -76,49 +76,8 @@
     <module>examples/org.eclipse.ui.forms.examples</module>
     <module>examples/org.eclipse.ui.examples.rcp.mail</module>
      -->
-
-    <module>bundles/org.eclipse.core.commands</module>
-    <module>bundles/org.eclipse.core.databinding</module>
-    <module>bundles/org.eclipse.core.databinding.beans</module>
-    <module>bundles/org.eclipse.core.databinding.observable</module>
-    <module>bundles/org.eclipse.core.databinding.property</module>
-    <module>bundles/org.eclipse.e4.core.commands</module>
-    <module>bundles/org.eclipse.e4.emf.xpath</module>
-    <module>bundles/org.eclipse.e4.ui.bindings</module>
-    <module>bundles/org.eclipse.e4.ui.css.core</module>
-    <module>bundles/org.eclipse.e4.ui.css.swt</module>
-    <module>bundles/org.eclipse.e4.ui.css.swt.theme</module>
-    <module>bundles/org.eclipse.e4.ui.di</module>
-    <module>bundles/org.eclipse.e4.ui.dialogs</module>
-    <module>bundles/org.eclipse.e4.ui.model.workbench</module>
-    <module>bundles/org.eclipse.e4.ui.progress</module>
-    <module>bundles/org.eclipse.e4.ui.services</module>
-    <module>bundles/org.eclipse.e4.ui.widgets</module>
-    <module>bundles/org.eclipse.e4.ui.workbench</module>
-    <module>bundles/org.eclipse.e4.ui.workbench.addons.swt</module>
-    <module>bundles/org.eclipse.e4.ui.workbench.renderers.swt</module>
-    <module>bundles/org.eclipse.e4.ui.workbench.renderers.swt.cocoa</module>
-    <module>bundles/org.eclipse.e4.ui.workbench.swt</module>
-    <module>bundles/org.eclipse.e4.ui.workbench3</module>
-    <module>bundles/org.eclipse.jface</module>
-    <module>bundles/org.eclipse.jface.databinding</module>
-    <module>bundles/org.eclipse.ui</module>
-    <module>bundles/org.eclipse.ui.browser</module>
-    <module>bundles/org.eclipse.ui.forms</module>
-    <module>bundles/org.eclipse.ui.views</module>
-    <module>bundles/org.eclipse.ui.views.properties.tabbed</module>
-    <module>bundles/org.eclipse.ui.workbench</module>
-    <module>bundles/org.eclipse.ui.monitoring</module>
-    <module>bundles/org.eclipse.ui.navigator</module>
-    <module>bundles/org.eclipse.ui.themes</module>
-    <module>features/org.eclipse.e4.rcp</module>
-    <module>bundles/org.eclipse.ui.ide</module>
-    <module>bundles/org.eclipse.ui.ide.application</module>
-    <module>bundles/org.eclipse.ui.win32</module>
-    <module>bundles/org.eclipse.ui.cocoa</module>
-    <module>bundles/org.eclipse.e4.ui.swt.gtk</module>
-    <module>bundles/org.eclipse.ui.navigator.resources</module>
-
+ 
+    <module>bundles</module>
     <module>tests</module>
 
   </modules>
