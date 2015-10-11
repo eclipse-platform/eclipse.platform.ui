@@ -363,9 +363,7 @@ public class WorkbenchMessages extends NLS {
 
 
 	public static String WorkbenchWindow_close;
-	public static String WorkbenchPage_PerspectiveFormat;
 	public static String WorkbenchPage_ErrorCreatingPerspective;
-	public static String WorkbenchPage_UndefinedPerspective;
 
 	public static String SelectWorkingSetAction_text;
 	public static String SelectWorkingSetAction_toolTip;
@@ -447,7 +445,6 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_allowInplaceEditingButton;
 	public static String WorkbenchPreference_useIPersistableEditorButton;
 	public static String WorkbenchPreference_promptWhenStillOpenButton;
-	public static String WorkbenchPreference_showTextOnPerspectiveBar;
 	public static String WorkbenchPreference_stickyCycleButton;
 	public static String WorkbenchPreference_RunInBackgroundButton;
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
@@ -582,7 +579,6 @@ public class WorkbenchMessages extends NLS {
 	public static String PropertyDialog_messageTitle;
 	public static String PropertyDialog_noPropertyMessage;
 	public static String PropertyDialog_propertyMessage;
-	public static String PropertyPageNode_errorTitle;
 	public static String PropertyPageNode_errorMessage;
 
 	public static String SystemInPlaceDescription_name;
@@ -620,23 +616,16 @@ public class WorkbenchMessages extends NLS {
 	public static String EditorManager_saveResourcesMessage;
 	public static String EditorManager_saveResourcesOptionallyMessage;
 	public static String EditorManager_saveResourcesTitle;
-	public static String EditorManager_exceptionRestoringEditor;
-	public static String EditorManager_unableToCreateEditor;
 	public static String EditorManager_systemEditorError;
-	public static String EditorManager_invalidDescriptor;
-	public static String EditorManager_instantiationError;
-    public static String EditorManager_errorInInit;
 	public static String EditorManager_siteIncorrect;
 	public static String EditorManager_unknownEditorIDMessage;
 	public static String EditorManager_errorOpeningExternalEditor;
-	public static String EditorManager_unableToOpenExternalEditor;
 	public static String EditorManager_operationFailed;
 	public static String EditorManager_saveChangesQuestion;
 	public static String EditorManager_closeWithoutPromptingOption;
 	public static String EditorManager_saveChangesOptionallyQuestion;
     public static String EditorManager_missing_editor_descriptor;
     public static String EditorManager_no_in_place_support;
-    public static String EditorManager_invalid_editor_descriptor;
     public static String EditorManager_no_persisted_state;
     public static String EditorManager_no_input_factory_ID;
     public static String EditorManager_bad_element_factory;
@@ -645,7 +634,6 @@ public class WorkbenchMessages extends NLS {
     public static String EditorManager_backgroundSaveJobName;
 	public static String EditorManager_largeDocumentWarning;
 
-	public static String EditorPane_pinEditor;
 
 	public static String ExternalEditor_errorMessage;
 	public static String Save;
