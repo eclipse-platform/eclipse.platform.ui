@@ -36,14 +36,12 @@ final class ContributionRoot implements
 
 	private List topLevelItems = new ArrayList();
 	private Map<IContributionItem, Expression> itemsToExpressions = new HashMap<>();
-	// private WorkbenchMenuService menuService;
 	Set restriction;
 	private ContributionManager mgr;
 	private AbstractContributionFactory factory;
 
 	public ContributionRoot(IMenuService menuService, Set restriction,
 			ContributionManager mgr, AbstractContributionFactory factory) {
-		// this.menuService = (WorkbenchMenuService) menuService;
 		this.restriction = restriction;
 		this.mgr = mgr;
 		this.factory = factory;

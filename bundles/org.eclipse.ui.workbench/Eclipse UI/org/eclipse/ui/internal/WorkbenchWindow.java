@@ -177,7 +177,6 @@ import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.menus.SlaveMenuService;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
@@ -2239,7 +2238,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		IEvaluationService es = (IEvaluationService) serviceLocator
 				.getService(IEvaluationService.class);
 		IEvaluationContext currentState = es.getCurrentState();
-		boolean changeDetected = false;
 		for (int i = 0; i < refs.length; i++) {
 			EvaluationReference reference = refs[i];
 			reference.setPostingChanges(true);
@@ -2248,16 +2246,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			reference.clearResult();
 			boolean ns = reference.evaluate(currentState);
 			if (os != ns) {
-				changeDetected = true;
 				reference.getListener().propertyChange(
 						new PropertyChangeEvent(reference, reference.getProperty(), valueOf(os),
 								valueOf(ns)));
-			}
-		}
-		if (changeDetected) {
-			IMenuService ms = getWorkbench().getService(IMenuService.class);
-			if (ms instanceof WorkbenchMenuService) {
-				((WorkbenchMenuService) ms).updateManagers();
 			}
 		}
 	}
