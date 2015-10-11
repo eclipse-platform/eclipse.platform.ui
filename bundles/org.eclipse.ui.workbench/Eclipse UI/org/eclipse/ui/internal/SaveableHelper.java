@@ -115,13 +115,13 @@ public class SaveableHelper {
 					String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion,
 							LegacyActionTools.escapeMnemonics(part.getTitle()));
 					// Show a dialog.
-					String[] buttons = new String[] {
-							IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL,
-							IDialogConstants.CANCEL_LABEL };
 					MessageDialog d = new MessageDialog(window.getShell(),
 							WorkbenchMessages.Save_Resource, null, message,
-							MessageDialog.QUESTION, buttons, 0) {
+							MessageDialog.QUESTION, 
+							0, 
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL) {
 						@Override
 						protected int getShellStyle() {
 							return super.getShellStyle() | SWT.SHEET;

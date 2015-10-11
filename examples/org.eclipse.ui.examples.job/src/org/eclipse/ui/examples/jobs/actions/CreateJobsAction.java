@@ -50,8 +50,7 @@ public class CreateJobsAction implements IWorkbenchWindowActionDelegate {
 	private boolean askForExclusive() {
 		MessageDialog dialog = new MessageDialog(window.getShell(), "Likes to be left alone?", //$NON-NLS-1$
 				null, "Press yes if the jobs should be run one at a time, and no otherwise", //$NON-NLS-1$
-				MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 1 // no is the default
-		);
+				MessageDialog.QUESTION, 1, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL);
 		return dialog.open() == 0;
 	}
 
