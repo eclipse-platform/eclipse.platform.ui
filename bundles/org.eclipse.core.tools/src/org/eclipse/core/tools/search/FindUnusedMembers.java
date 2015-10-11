@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Ongoing maintenance
  *******************************************************************************/
 package org.eclipse.core.tools.search;
 
@@ -39,9 +40,6 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			output = writer;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMethod)
-		 */
 		@Override
 		public void unusedElementFound(IMember member) throws CoreException {
 			try {
@@ -101,23 +99,19 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 
 	private void doSearchCU(ICompilationUnit cu, IProgressMonitor monitor) throws CoreException {
 		IType[] allTypes = cu.getAllTypes();
-		monitor.beginTask("Processing " + cu.getElementName(), allTypes.length + 1); //$NON-NLS-1$
-		try {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Processing " + cu.getElementName(), allTypes.length + 1); //$NON-NLS-1$
 
-			ASTParser astParser = ASTParser.newParser(AST.JLS3);
-			astParser.setResolveBindings(true);
-			astParser.setProject(cu.getJavaProject());
+		ASTParser astParser = ASTParser.newParser(AST.JLS8);
+		astParser.setResolveBindings(true);
+		astParser.setProject(cu.getJavaProject());
 
-			IBinding[] bindings = astParser.createBindings(allTypes, new NullProgressMonitor());
-			for (int i = 0; i < bindings.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				ITypeBinding typeBinding = (ITypeBinding) bindings[i];
-				monitor.subTask("Processing '" + typeBinding.getQualifiedName() + "'"); //$NON-NLS-1$//$NON-NLS-2$
-				doSearchType(typeBinding, new NullProgressMonitor());
-			}
-		} finally {
-			monitor.done();
+		IBinding[] bindings = astParser.createBindings(allTypes, subMonitor.newChild(1));
+		for (IBinding binding : bindings) {
+			if (monitor.isCanceled())
+				throw new OperationCanceledException();
+			ITypeBinding typeBinding = (ITypeBinding) binding;
+			subMonitor.setTaskName("Processing '" + typeBinding.getQualifiedName() + "'"); //$NON-NLS-1$//$NON-NLS-2$
+			doSearchType(typeBinding, subMonitor.newChild(1));
 		}
 	}
 
@@ -128,46 +122,37 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 	public void doSearchType(ITypeBinding typeBinding, IProgressMonitor monitor) throws CoreException {
 		IMethodBinding[] methods = typeBinding.getDeclaredMethods();
 		IVariableBinding[] fields = typeBinding.getDeclaredFields();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching for references.", //$NON-NLS-1$
+				methods.length + fields.length);
 
-		monitor.beginTask("Searching for references.", methods.length + fields.length); //$NON-NLS-1$
-
-		try {
-			for (int i = 0; i < methods.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-
-				IMethodBinding methodBinding = methods[i];
-				if (methodOverrides(methodBinding))
-					continue;
-
-				IMethod method = (IMethod) methodBinding.getJavaElement();
-				if (method == null)
-					continue;
-
-				if (hasReferences(method, new SubProgressMonitor(monitor, 1)))
-					continue;
-				result.unusedElementFound(method);
-				unusedMemberCount++;
-			}
-			for (int i = 0; i < fields.length; i++) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-
-				IVariableBinding fieldBinding = fields[i];
-				IField field = (IField) fieldBinding.getJavaElement();
-				if (field == null)
-					continue;
-				if (hasReferences(field, new SubProgressMonitor(monitor, 1)))
-					continue;
-				result.unusedElementFound(field);
-				unusedMemberCount++;
-			}
-
+		for (IMethodBinding methodBinding : methods) {
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
-		} finally {
-			monitor.done();
+
+			if (methodOverrides(methodBinding))
+				continue;
+
+			IMethod method = (IMethod) methodBinding.getJavaElement();
+			if (method == null)
+				continue;
+
+			if (hasReferences(method, subMonitor.newChild(1)))
+				continue;
+			result.unusedElementFound(method);
+			unusedMemberCount++;
 		}
+		for (IVariableBinding fieldBinding : fields) {
+			IField field = (IField) fieldBinding.getJavaElement();
+			if (field == null)
+				continue;
+			if (hasReferences(field, subMonitor.split(1)))
+				continue;
+			result.unusedElementFound(field);
+			unusedMemberCount++;
+		}
+
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
 	}
 
 	public int getUnusedMethodCount() {
@@ -191,7 +176,8 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 					}
 				}
 			};
-			new SearchEngine().search(pattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, monitor);
+			new SearchEngine().search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
+					searchScope, requestor, monitor);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		} catch (ReferenceFound e) {
@@ -201,15 +187,9 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 	}
 
 	public void process(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		try {
-			monitor.beginTask("Searching unused members", this.units.length); //$NON-NLS-1$
-			for (int i = 0; i < this.units.length; i++) {
-				doSearchCU(units[i], new SubProgressMonitor(monitor, 1));
-			}
-		} finally {
-			monitor.done();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching unused members", this.units.length); //$NON-NLS-1$
+		for (ICompilationUnit unit : this.units) {
+			doSearchCU(unit, subMonitor.split(1));
 		}
 	}
 

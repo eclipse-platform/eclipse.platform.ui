@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars.Vogel <Lars.Vogel@vogell.com> - Ongoing maintenance
  *******************************************************************************/
 
 package org.eclipse.core.tools.search;
@@ -30,33 +31,21 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 		fQuery = query;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
-	 */
 	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
-	 */
 	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (getMatchCount() == 1)
@@ -64,25 +53,16 @@ public class FindUnusedSearchResult extends AbstractTextSearchResult implements 
 		return getMatchCount() + " unused elements found"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
-	 */
 	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
-	 */
 	@Override
 	public String getTooltip() {
 		return getLabel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.tools.search.FindUnusedMembers.IResultReporter#unusedElementFound(org.eclipse.jdt.core.IMember)
-	 */
 	@Override
 	public void unusedElementFound(IMember member) throws CoreException {
 		ISourceRange nameRange = member.getNameRange();

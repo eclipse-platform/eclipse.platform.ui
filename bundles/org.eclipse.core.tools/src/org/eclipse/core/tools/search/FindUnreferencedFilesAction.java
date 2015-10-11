@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Ongoing maintenance
  *******************************************************************************/
 package org.eclipse.core.tools.search;
-
-import org.eclipse.search.ui.text.TextSearchQueryProvider;
 
 import java.util.Iterator;
 import org.eclipse.core.resources.*;
@@ -21,7 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.search.ui.*;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search2.internal.ui.text2.DefaultTextSearchQueryProvider;
+import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.ui.*;
 
 public class FindUnreferencedFilesAction implements IObjectActionDelegate {
@@ -30,14 +29,14 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart part) {
-		//not needed
+		// not needed
 	}
 
 	@Override
 	public void run(IAction action) {
 		try {
-			for (Iterator it = selection.iterator(); it.hasNext();) {
-				IResource resource = (IResource)it.next();
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
+				IResource resource = (IResource) it.next();
 				findReferences(resource);
 			}
 		} catch (CoreException e) {
@@ -47,9 +46,9 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 
 	private void findReferences(IResource resource) throws CoreException {
 		if (resource instanceof IContainer) {
-			IResource[] children = ((IContainer)resource).members();
-			for (int i = 0; i < children.length; i++) {
-				findReferences(children[i]);
+			IResource[] children = ((IContainer) resource).members();
+			for (IResource element : children) {
+				findReferences(element);
 			}
 		} else if (resource instanceof IFile) {
 			String name = resource.getName();
@@ -58,7 +57,7 @@ public class FindUnreferencedFilesAction implements IObjectActionDelegate {
 			NewSearchUI.runQueryInForeground(context, query);
 			ISearchResult result = query.getSearchResult();
 			if (result instanceof AbstractTextSearchResult) {
-				int matches = ((AbstractTextSearchResult)result).getMatchCount();
+				int matches = ((AbstractTextSearchResult) result).getMatchCount();
 				if (matches == 0) {
 					System.out.println("Orphan file: " + resource.getFullPath());
 				}

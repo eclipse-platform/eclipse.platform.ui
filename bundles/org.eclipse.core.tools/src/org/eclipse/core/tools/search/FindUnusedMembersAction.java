@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Ongoing maintenance
  *******************************************************************************/
 package org.eclipse.core.tools.search;
 
@@ -38,14 +39,13 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart part) {
 		this.part = part;
-		//not needed
 	}
 
 	@Override
 	public void run(IAction action) {
-		ArrayList allCus = new ArrayList();
+		List<IJavaElement> allCus = new ArrayList<>();
 		try {
-			for (Iterator it = selection.iterator(); it.hasNext();) {
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				Object element = it.next();
 				if (element instanceof IJavaElement)
 					collectCompilationUnits((IJavaElement) element, allCus);
@@ -60,7 +60,7 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 			return;
 		}
 
-		ICompilationUnit[] cus = (ICompilationUnit[]) allCus.toArray(new ICompilationUnit[allCus.size()]);
+		ICompilationUnit[] cus = allCus.toArray(new ICompilationUnit[allCus.size()]);
 
 		if (SHOW_RESULTS_IN_SEARCH_VIEW) {
 			NewSearchUI.runQueryInBackground(new FindUnusedSearchQuery(cus));
@@ -98,18 +98,18 @@ public class FindUnusedMembersAction implements IObjectActionDelegate {
 		}
 	}
 
-	private void collectCompilationUnits(IJavaElement current, Collection res) throws JavaModelException {
+	private void collectCompilationUnits(IJavaElement current, Collection<IJavaElement> res) throws JavaModelException {
 		if (current instanceof IJavaProject || current instanceof IPackageFragmentRoot) {
 			IJavaElement[] children = ((IParent) current).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				collectCompilationUnits(children[i], res);
+			for (IJavaElement element : children) {
+				collectCompilationUnits(element, res);
 			}
 		} else if (current instanceof IPackageFragment) {
 			//uncomment this condition to only search API packages
 //			if (current.getElementName().indexOf("internal") > 0) { //$NON-NLS-1$
 				IJavaElement[] children = ((IParent) current).getChildren();
-				for (int i = 0; i < children.length; i++) {
-					collectCompilationUnits(children[i], res);
+			for (IJavaElement element : children) {
+				collectCompilationUnits(element, res);
 				}
 //			}
 		} else if (current instanceof ICompilationUnit)
