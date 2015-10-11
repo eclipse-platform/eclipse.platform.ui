@@ -79,24 +79,6 @@
    <extension point="org.eclipse.ui.views">
       <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
       <view
-            name="Activated Plug-ins"
-            icon="icons/plugin.gif"
-            category="org.eclipse.core.tools.runtime"
-            class="org.eclipse.core.tools.runtime.ActivePluginsView"
-            id="org.eclipse.core.tools.runtime.ActivePluginsView"/>
-      <view
-            name="Loaded Classes"
-            icon="icons/classes.gif"
-            category="org.eclipse.core.tools.runtime"
-            class="org.eclipse.core.tools.runtime.LoadedClassesView"
-            id="org.eclipse.core.tools.runtime.LoadedClassesView"/>
-      <view
-            name="Plug-in Datasheet"
-            icon="icons/datasheet.gif"
-            category="org.eclipse.core.tools.runtime"
-            class="org.eclipse.core.tools.runtime.PluginDataSheetView"
-            id="org.eclipse.core.tools.runtime.PluginDataSheetView"/>
-      <view
             name="Stack Trace"
             icon="icons/trace.gif"
             category="org.eclipse.core.tools.runtime"
