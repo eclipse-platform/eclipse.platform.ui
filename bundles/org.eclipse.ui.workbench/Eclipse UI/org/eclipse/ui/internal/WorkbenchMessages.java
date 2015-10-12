@@ -643,13 +643,6 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	// Views Framework
 	// ==============================================================================
-
-
-	public static String ViewPane_minimizeView;
-	public static String ViewPane_moveView;
-	public static String ViewPane_moveFolder;
-
-
 	public static String ViewLabel_unknown;
 
 	public static String ViewFactory_initException;
@@ -714,7 +707,6 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	public static String EditorManager_openNewEditorLabel;
 	public static String EditorManager_reuseEditorDialogTitle;
-	public static String PinEditorAction_text;
 	public static String PinEditorAction_toolTip;
 	public static String WorkbenchPreference_reuseEditors;
 	public static String WorkbenchPreference_reuseDirtyEditorGroupTitle;
@@ -795,41 +787,12 @@ public class WorkbenchMessages extends NLS {
 
 	// paramter 0 is the feature name, parameter 1 is the version and parameter 2 is the Id
 	public static String SystemSummary_featureVersion;
-	public static String SystemMenuMovePane_PaneName;
 
 	public static String SystemSummary_descriptorIdVersionState;
 
 	// =================================================================
 	// Editor List
 	// =================================================================
-	public static String EditorList_saveSelected_text;
-	public static String EditorList_saveSelected_toolTip;
-	public static String EditorList_closeSelected_text;
-	public static String EditorList_closeSelected_toolTip;
-
-	public static String EditorList_selectClean_text;
-	public static String EditorList_selectClean_toolTip;
-	public static String EditorList_invertSelection_text;
-	public static String EditorList_invertSelection_toolTip;
-	public static String EditorList_selectAll_text;
-	public static String EditorList_selectAll_toolTip;
-
-	public static String EditorList_FullName_text;
-	public static String EditorList_FullName_toolTip;
-
-	public static String EditorList_SortBy_text;
-	public static String EditorList_SortByName_text;
-	public static String EditorList_SortByName_toolTip;
-	public static String EditorList_SortByMostRecentlyUsed_text;
-	public static String EditorList_SortByMostRecentlyUsed_toolTip;
-
-	public static String EditorList_ApplyTo_text;
-	public static String EditorList_DisplayAllWindows_text;
-	public static String EditorList_DisplayAllWindows_toolTip;
-	public static String EditorList_DisplayAllPage_text;
-	public static String EditorList_DisplayAllPage_toolTip;
-	public static String EditorList_DisplayTabGroup_text;
-	public static String EditorList_DisplayTabGroup_toolTip;
 	public static String DecorationScheduler_UpdateJobName;
 	public static String DecorationScheduler_CalculationJobName;
 	public static String DecorationScheduler_UpdatingTask;
@@ -842,14 +805,6 @@ public class WorkbenchMessages extends NLS {
 	public static String PerspectiveBar_saveAs;
 	public static String PerspectiveBar_reset;
 
-
-	public static String Perspective_couldNotBeFound;
-
-	public static String PerspectiveSwitcher_dockOn;
-	public static String PerspectiveSwitcher_topRight;
-	public static String PerspectiveSwitcher_topLeft;
-	public static String PerspectiveSwitcher_left;
-
 	public static String WorkbenchPlugin_extension;
 
 	public static String EventLoopProgressMonitor_OpenDialogJobName;
@@ -861,16 +816,10 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredTree_FilteredDialogTitle;
 	public static String FilteredTree_AccessibleListenerClearButton;
 	public static String FilteredTree_AccessibleListenerFiltered;
-	public static String Workbench_restoreDisabled;
-	public static String Workbench_noStateToRestore;
-	public static String Workbench_noWindowsRestored;
 	public static String Workbench_startingPlugins;
 	public static String ScopedPreferenceStore_DefaultAddedError;
 
 	public static String WorkbenchEncoding_invalidCharset;
-
-	public static String Dynamic_resetPerspectiveMessage;
-	public static String Dynamic_resetPerspectiveTitle;
 
 	//==============================================================
 	// Undo/Redo Support
@@ -915,11 +864,6 @@ public class WorkbenchMessages extends NLS {
 	public static String SetMarkAction_text;
 	public static String ClearMarkAction_text;
 	public static String ShowMaxAction_text;
-//	public static String ShowKyrsoftViewAction_text;
-//	public static String ShowKyrsoftViewAction_KyrsoftNotInstalled;
-//	public static String ShowKyrsoftViewAction_OpenPerspectiveFirst;
-//	public static String ShowKyrsoftViewAction_ErrorShowingKyrsoftView;
-
 
 	public static String SplitValues_Horizontal;
 
