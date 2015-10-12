@@ -7,12 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Francis Upton - <francisu@ieee.org> -
- *     		Fix for Bug 217777 [Workbench] Workbench event loop does not terminate if Display is closed
- *     Tristan Hume - <trishume@gmail.com> -
- *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
- *     		Implemented workbench auto-save to correctly restore state in case of crash.
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708, 418661, 456897, 472654
+ *     Francis Upton - <francisu@ieee.org> - Bug 217777
+ *     Tristan Hume - <trishume@gmail.com> - Bug 2369
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422533, 440136, 445724, 366708, 418661, 456897, 472654, 481516
  *     Terry Parker <tparker@google.com> - Bug 416673
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *     Snjezana Peco <snjeza.peco@gmail.com> - Bug 405542
@@ -352,8 +349,6 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 */
 	public static final String EARLY_STARTUP_FAMILY = "earlyStartup"; //$NON-NLS-1$
 
-	static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
-
 	/**
 	 * Holds onto the only instance of Workbench.
 	 */
@@ -368,7 +363,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 	/**
 	 * Signals that the workbench should create a splash implementation when
-	 * instantiated. Intial value is <code>true</code>.
+	 * instantiated. Initial value is <code>true</code>.
 	 *
 	 * @since 3.3
 	 */
@@ -2486,53 +2481,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 		return isStarting && isRunning();
 	}
 
-	/*
-	 * If a perspective was specified on the command line (-perspective) then
-	 * force that perspective to open in the active window.
-	 */
-	void forceOpenPerspective() {
-		if (getWorkbenchWindowCount() == 0) {
-			// there should be an open window by now, bail out.
-			return;
-		}
-
-		String perspId = null;
-		String[] commandLineArgs = Platform.getCommandLineArgs();
-		for (int i = 0; i < commandLineArgs.length - 1; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
-				perspId = commandLineArgs[i + 1];
-				break;
-			}
-		}
-		if (perspId == null) {
-			return;
-		}
-		IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspId);
-		if (desc == null) {
-			return;
-		}
-
-		IWorkbenchWindow win = getActiveWorkbenchWindow();
-		if (win == null) {
-			win = getWorkbenchWindows()[0];
-		}
-
-		final String threadPerspId = perspId;
-		final IWorkbenchWindow threadWin = win;
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-			@Override
-			public void runWithException() throws Throwable {
-				try {
-					showPerspective(threadPerspId, threadWin);
-				} catch (WorkbenchException e) {
-					String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
-					WorkbenchPlugin.log(msg, new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-							msg, e));
-				}
-			}
-		});
-	}
-
 	/**
 	 * Opens the initial workbench window.
 	 */
@@ -3292,15 +3240,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 		return workbenchContextSupport;
 	}
 
-	/**
-	 * This method should not be called outside the framework.
-	 *
-	 * @return The context manager.
-	 */
-	public ContextManager getContextManager() {
-		return contextManager;
-	}
-
 	private final IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
 
 		@Override
@@ -3443,13 +3382,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	public final void largeUpdateStart() {
 		if (largeUpdates++ == 0) {
-			// TODO Consider whether these lines still need to be here.
-			// workbenchCommandSupport.setProcessing(false);
-			// workbenchContextSupport.setProcessing(false);
-
 			final IWorkbenchWindow[] windows = getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				IWorkbenchWindow window = windows[i];
+			for (IWorkbenchWindow window : windows) {
 				if (window instanceof WorkbenchWindow) {
 					((WorkbenchWindow) window).largeUpdateStart();
 				}
@@ -3471,14 +3405,10 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	public final void largeUpdateEnd() {
 		if (--largeUpdates == 0) {
-			// TODO Consider whether these lines still need to be here.
-			// workbenchCommandSupport.setProcessing(true);
-			// workbenchContextSupport.setProcessing(true);
 
 			// Perform window-specific blocking.
 			final IWorkbenchWindow[] windows = getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				IWorkbenchWindow window = windows[i];
+			for (IWorkbenchWindow window : windows) {
 				if (window instanceof WorkbenchWindow) {
 					((WorkbenchWindow) window).largeUpdateEnd();
 				}
@@ -3658,10 +3588,6 @@ UIEvents.Context.TOPIC_CONTEXT,
 	 */
 	private boolean matchesFilter(ISaveableFilter filter, Saveable saveable, IWorkbenchPart[] parts) {
 		return filter == null || filter.select(saveable, parts);
-	}
-
-	public ServiceLocator getServiceLocator() {
-		return serviceLocator;
 	}
 
 	@Override
