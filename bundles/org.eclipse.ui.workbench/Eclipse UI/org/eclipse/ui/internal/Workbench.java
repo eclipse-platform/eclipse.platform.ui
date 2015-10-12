@@ -592,8 +592,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 	 *         {@link IWorkbench#restart IWorkbench.restart}; other values
 	 *         reserved for future use
 	 */
-	public static final int createAndRunWorkbench(final Display display,
-			final WorkbenchAdvisor advisor) {
+	public static final int createAndRunWorkbench(final Display display, final WorkbenchAdvisor advisor) {
 		final int[] returnCode = new int[1];
 		Realm.runWithDefault(DisplayRealm.getRealm(display), new Runnable() {
 			@Override
