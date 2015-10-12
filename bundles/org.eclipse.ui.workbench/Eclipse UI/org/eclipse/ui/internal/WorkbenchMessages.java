@@ -635,45 +635,26 @@ public class WorkbenchMessages extends NLS {
 	public static String OpenPerspectiveMenu_pageProblemsTitle;
 	public static String OpenPerspectiveMenu_errorUnknownInput;
 
-	public static String Perspective_oneError;
-	public static String Perspective_multipleErrors;
-
-	public static String Perspective_problemRestoringTitle;
-	public static String Perspective_errorReadingState;
 	public static String Perspective_localCopyLabel;
-	public static String Perspective_problemLoadingTitle;
 	public static String WorkbenchPage_problemRestoringTitle;
-	public static String WorkbenchPage_errorReadingState;
 
-	public static String Perspective_problemSavingTitle;
-	public static String Perspective_problemSavingMessage;
 
-	public static String Perspective_unableToLoad;
-	public static String Perspective_couldNotFind;
 
 	// ==============================================================================
 	// Views Framework
 	// ==============================================================================
-	public static String Menu;
-	public static String ViewMenu;
 
-	public static String StandardSystemToolbar_Minimize;
-	public static String StandardSystemToolbar_Maximize;
-	public static String StandardSystemToolbar_Restore;
 
 	public static String ViewPane_minimizeView;
 	public static String ViewPane_moveView;
 	public static String ViewPane_moveFolder;
 
-	public static String EditorPane_moveEditor;
 
 	public static String ViewLabel_unknown;
 
 	public static String ViewFactory_initException;
 	public static String ViewFactory_siteException;
 	public static String ViewFactory_couldNotCreate;
-	public static String ViewFactory_noMultiple;
-	public static String ViewFactory_couldNotSave;
 	// ==============================================================================
 	// Workbench
 	// ==============================================================================
@@ -683,7 +664,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String WorkbenchPage_UnknownLabel;
 
-	public static String WorkbenchPage_editorAlreadyOpenedMsg;
 
 	// These four keys are marked as unused by the NLS search, but they are indirectly used
 	// and should be removed.
@@ -692,15 +672,6 @@ public class WorkbenchMessages extends NLS {
 	public static String PartPane_sizeTop;
 	public static String PartPane_sizeBottom;
 
-	public static String PartPane_detach;
-	public static String PartPane_restore;
-	public static String PartPane_move;
-	public static String PartPane_size;
-	public static String PartPane_maximize;
-	public static String PartPane_close;
-	public static String PartPane_closeOthers;
-	public static String PartPane_closeAll;
-	public static String PartPane_newEditor;
 	public static String PluginAction_operationNotAvailableMessage;
 	public static String PluginAction_disabledMessage;
 	public static String ActionDescriptor_invalidLabel;
@@ -716,12 +687,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPage_IllegalSecondaryId;
 	public static String WorkbenchPage_IllegalViewMode;
 	public static String WorkbenchPart_AutoTitleFormat;
-	public static String EditorPart_AutoTitleFormat;
-	public static String Abnormal_Workbench_Conditi;
 
 
 	public static String AbstractWorkingSetManager_updatersActivating;
-	public static String WorkbenchPage_ErrorActivatingView;
 	public static String DecoratorManager_ErrorActivatingDecorator;
 
 	public static String EditorRegistry_errorTitle;
@@ -730,43 +698,16 @@ public class WorkbenchMessages extends NLS {
 	public static String ErrorClosing;
 	public static String ErrorClosingNoArg;
 	public static String ErrorClosingOneArg;
-	public static String ErrorReadingState;
 
-	public static String Invalid_workbench_state_ve;
-	public static String Workbench_incompatibleUIState;
-	public static String Workbench_incompatibleSavedStateVersion;
-	public static String ProblemSavingState;
 	public static String SavingProblem;
 
 	public static String Problems_Opening_Page;
-	public static String Restoring_Problems;
 
-	public static String Workspace_problemsTitle;
-
-	public static String Workbench_problemsRestoringMsg;
 	public static String Workbench_problemsSavingMsg;
 	public static String Workbench_problemsRestoring;
 	public static String Workbench_problemsSaving;
-	public static String WorkbenchWindow_problemsRestoringWindow;
-	public static String WorkbenchWindow_problemsSavingWindow;
-	public static String EditorManager_problemsRestoringEditors;
-	public static String EditorManager_problemsSavingEditors;
-	public static String RootLayoutContainer_problemsRestoringPerspective;
-	public static String RootLayoutContainer_problemsSavingPerspective;
-	public static String ViewFactory_problemsSavingViews;
 
-	public static String EditorManager_unableToSaveEditor;
-	public static String Perspective_problemsRestoringPerspective;
-	public static String Perspective_problemsSavingPerspective;
-	public static String Perspective_problemsRestoringViews;
-	public static String WorkbenchWindow_unableToRestorePerspective;
-	public static String WorkbenchPage_unableToRestorePerspective;
-	public static String WorkbenchPage_unableToSavePerspective;
-	public static String Perspective_unableToRestorePerspective;
 	public static String PageLayout_missingRefPart;
-	public static String PageLayout_duplicateRefPart;
-	public static String PartStack_incorrectPartInFolder;
-
 
 	// ==============================================================================
 	// Keys used in the reuse editor which is released as experimental.
