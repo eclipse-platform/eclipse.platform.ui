@@ -435,7 +435,6 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	// Preference Pages
 	// ==============================================================================
-	public static String PreferenceNode_errorTitle;
 	public static String PreferenceNode_errorMessage;
     public static String PreferenceNode_NotFound;
 	public static String Preference_note;
@@ -776,7 +775,6 @@ public class WorkbenchMessages extends NLS {
 	// =================================================================
 	// System Summary
 	// =================================================================
-	public static String SystemSummary_title;
 	public static String SystemSummary_timeStamp;
 	public static String SystemSummary_systemProperties;
 	public static String SystemSummary_features;
@@ -916,12 +914,7 @@ public class WorkbenchMessages extends NLS {
     public static String TrimCommon_Close;
 
     // Trim area Display Names
-    public static String TrimCommon_Main_TrimName;
-    public static String TrimCommon_PerspectiveSwitcher_TrimName;
-    public static String TrimCommon_HeapStatus_TrimName;
-    public static String TrimCommon_IntroBar_TrimName;
     public static String TrimCommon_Progress_TrimName;
-    public static String TrimCommon_StatusLine_TrimName;
 
     // FilteredItemsSelectionDialog
     public static String FilteredItemsSelectionDialog_cacheSearchJob_taskName;
@@ -944,7 +937,6 @@ public class WorkbenchMessages extends NLS {
     // AbstractSearcher
     public static String FilteredItemsSelectionDialog_jobLabel;
     public static String FilteredItemsSelectionDialog_jobError;
-    public static String FilteredItemsSelectionDialog_jobCancel;
 
     // GranualProgressMonitor
     public static String FilteredItemsSelectionDialog_taskProgressMessage;
@@ -967,16 +959,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSets_CannotSave;
 
 	// StatusDialog
-	public static String WorkbenchStatusDialog_ActionLabel;
-	public static String WorkbenchStatusDialog_CopyThisReport;
-	public static String WorkbenchStatusDialog_ExplanationLabel;
-	public static String WorkbenchStatusDialog_NotAvailable;
 	public static String WorkbenchStatusDialog_SupportTooltip;
 	public static String WorkbenchStatusDialog_SupportHyperlink;
-	public static String WorkbenchStatusDialog_StatusLabel;
-	public static String WorkbenchStatusDialog_TimestampNotAvailable;
 	public static String WorkbenchStatusDialog_StatusWithChildren;
-	public static String WorkbenchStatusDialog_NoMessageAvailable;
 	public static String WorkbenchStatusDialog_SeeDetails;
 	public static String WorkbenchStatusDialog_MultipleProblemsHaveOccured;
 	public static String WorkbenchStatusDialog_ProblemOccurred;
