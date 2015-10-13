@@ -66,30 +66,43 @@ public class PreferenceConverter {
 
     private static final String ENTRY_SEPARATOR = ";"; //$NON-NLS-1$
 
-    /**
-     * The default-default value for <code>FontData[]</code> preferences.
-     */
-    public static final FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
+	/**
+	 * The default-default value for <code>FontData[]</code> preferences.
+	 * Read-only.
+	 *
+	 * @deprecated this is not thread-safe and may contain invalid data at
+	 *             startup. Call {@link #getFontDataArrayDefaultDefault()} from
+	 *             the UI thread instead.
+	 */
+	@Deprecated
+	public static FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
 
-    /**
-     * The default-default value for <code>FontData</code> preferences.
-     */
-    public static final FontData FONTDATA_DEFAULT_DEFAULT;
-    static {
-		Display display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault ();
-		}
+	/**
+	 * The default-default value for <code>FontData</code> preferences.
+	 * Read-only.
+	 *
+	 * @deprecated this is not thread-safe and may contain invalid data at
+	 *             startup. Call {@link #getFontDataArrayDefaultDefault()}} from
+	 *             the UI thread instead.
+	 */
+	@Deprecated
+	public static FontData FONTDATA_DEFAULT_DEFAULT;
 
-        FONTDATA_ARRAY_DEFAULT_DEFAULT = display.getSystemFont().getFontData();
-        /**
-         * The default-default value for <code>FontData</code> preferences.
-         * This is left in for compatibility purposes. It is recommended that
-         * FONTDATA_ARRAY_DEFAULT_DEFAULT is actually used.
-         */
+	private static FontData[] fontDataArrayDefaultDefault;
 
-        FONTDATA_DEFAULT_DEFAULT = FONTDATA_ARRAY_DEFAULT_DEFAULT[0];
-    }
+	static {
+		Display display = Display.getDefault();
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				// Ensure that the deprecated FONTDATA_DEFAULT_DEFAULT and
+				// FONTDATA_ARRAY_DEFAULT values
+				// are initialized as soon as possible
+				FONTDATA_ARRAY_DEFAULT_DEFAULT = getFontDataArrayDefaultDefault();
+				FONTDATA_DEFAULT_DEFAULT = getFontDataArrayDefaultDefault()[0];
+			}
+		});
+	}
 
 	/**
 	 * private constructor to prevent instantiation.
@@ -126,8 +139,10 @@ public class PreferenceConverter {
      * @since 3.0
      */
     public static FontData[] basicGetFontData(String value) {
+		FontData[] defaultResult = getFontDataArrayDefaultDefault();
+
         if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value)) {
-			return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+			return defaultResult;
 		}
 
         //Read in all of them to get the value
@@ -139,9 +154,9 @@ public class PreferenceConverter {
             try {
                 fontData[i] = new FontData(tokenizer.nextToken());
             } catch (SWTException error) {
-                return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+				return defaultResult;
             } catch (IllegalArgumentException error) {
-                return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+				return defaultResult;
             }
         }
         return fontData;
@@ -301,6 +316,24 @@ public class PreferenceConverter {
             String name) {
         return basicGetFontData(store.getString(name));
     }
+
+	/**
+	 * The default-default value for <code>FontData[]</code> preferences. Must
+	 * be called from the UI thread.
+	 *
+	 * @return the default-default value for <code>FontData[]</code>
+	 *         preferences.
+	 * @since 3.12
+	 */
+	public static FontData[] getFontDataArrayDefaultDefault() {
+		Display display = Display.getCurrent();
+
+		if (fontDataArrayDefaultDefault == null) {
+			fontDataArrayDefaultDefault = display.getSystemFont().getFontData();
+		}
+
+		return fontDataArrayDefaultDefault;
+	}
 
     /**
      * Returns the current value of the first entry of the

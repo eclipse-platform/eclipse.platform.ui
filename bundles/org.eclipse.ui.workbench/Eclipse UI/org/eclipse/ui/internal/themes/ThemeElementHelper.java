@@ -133,7 +133,7 @@ public final class ThemeElementHelper {
         }
 
         if (setInRegistry) {
-			if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
+			if (prefFont == null || prefFont == PreferenceConverter.getFontDataArrayDefaultDefault()) {
 				if (definition.getValue() != null) {
 					prefFont = definition.getValue();
 				} else if (definition.getDefaultsTo() != null) {

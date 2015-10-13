@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.tests.themes;
 
-import static org.eclipse.jface.preference.PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT;
 import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -25,11 +24,10 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.swt.graphics.FontData;
@@ -41,6 +39,8 @@ import org.eclipse.ui.internal.themes.ThemesExtension;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager.WorkbenchThemeChangedHandler;
 import org.osgi.service.event.Event;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.5
@@ -92,7 +92,8 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(colorDefinition);
 
 		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
-		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), eq(FONTDATA_ARRAY_DEFAULT_DEFAULT));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"),
+				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
 		verify(fontRegistry, never()).put(eq("fontDefinition2"), any(FontData[].class));
 		verify(colorRegistry, times(2)).put(eq("colorDefinition"), any(RGB.class));
 		verify(colorRegistry, times(1)).put(eq("colorDefinition"), eq(EMPTY_COLOR_VALUE));
@@ -282,9 +283,11 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(stylingEngine, times(1)).style(colorDefinition2);
 
 		verify(fontRegistry, times(2)).put(eq("fontDefinition1"), any(FontData[].class));
-		verify(fontRegistry, times(1)).put(eq("fontDefinition1"), eq(FONTDATA_ARRAY_DEFAULT_DEFAULT));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition1"),
+				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
 		verify(fontRegistry, times(2)).put(eq("fontDefinition2"), any(FontData[].class));
-		verify(fontRegistry, times(1)).put(eq("fontDefinition2"), eq(FONTDATA_ARRAY_DEFAULT_DEFAULT));
+		verify(fontRegistry, times(1)).put(eq("fontDefinition2"),
+				eq(PreferenceConverter.getFontDataArrayDefaultDefault()));
 		verify(colorRegistry, times(2)).put(eq("colorDefinition1"), any(RGB.class));
 		verify(colorRegistry, times(1)).put(eq("colorDefinition1"), eq(EMPTY_COLOR_VALUE));
 		verify(colorRegistry, times(2)).put(eq("colorDefinition2"), any(RGB.class));
@@ -354,7 +357,8 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		//then
 		verify(fontDefinition1, times(1)).isOverridden();
 		verify(fontDefinition1, times(1)).resetToDefaultValue();
-		verify(fontRegistry, times(1)).put(fontDefinition1.getId(), FONTDATA_ARRAY_DEFAULT_DEFAULT);
+		verify(fontRegistry, times(1)).put(fontDefinition1.getId(),
+				PreferenceConverter.getFontDataArrayDefaultDefault());
 
 		verify(fontDefinition2, times(1)).isOverridden();
 		verify(fontDefinition2, times(1)).resetToDefaultValue();
