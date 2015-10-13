@@ -40,6 +40,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.migration.PerspectiveBuilder;
 import org.eclipse.ui.internal.e4.migration.PerspectiveReader;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
@@ -121,10 +122,32 @@ public class ImportExportPespectiveHandler {
 		MPerspective perspective = null;
 		try {
 			perspective = perspFromString((String) event.getNewValue());
+			addShowInTags(perspective);
 		} catch (IOException e) {
 			logError(event, e);
 		}
 		addPerspectiveToWorkbench(perspective);
+	}
+
+	private void addShowInTags(MPerspective perspective) {
+		if (perspective != null) {
+			String targetId = getOriginalId(perspective.getElementId());
+			ArrayList<String> showInTags = PerspectiveBuilder.getShowInPartFromRegistry(targetId);
+			if (showInTags != null) {
+				List<String> newTags = new ArrayList<>();
+				for (String showIn : showInTags) {
+					newTags.add(ModeledPageLayout.SHOW_IN_PART_TAG + showIn);
+				}
+				perspective.getTags().addAll(newTags);
+			}
+		}
+	}
+
+	private String getOriginalId(String id) {
+		int index = id.lastIndexOf('.');
+		if (index == -1)
+			return id;
+		return id.substring(0, index);
 	}
 
 	private void importPerspective3x(PreferenceChangeEvent event) {
