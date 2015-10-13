@@ -30,9 +30,6 @@ public class SWTRenderersMessages extends NLS {
 
 	public static String viewMenu;
 
-	public static String tabScrollingLeft;
-	public static String tabScrollingRight;
-
 	static {
 		// load message values from bundle file
 		reloadMessages();
