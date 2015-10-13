@@ -38,9 +38,6 @@ public class CommonNavigatorMessages extends NLS {
 	public static String NavigatorViewerDescriptor_Popup_Menu_Overridden;
 
 	/** */
-	public static String StructuredViewerManager_0;
-
-	/** */
 	public static String TextAction_selectAll;
 
 	/** */

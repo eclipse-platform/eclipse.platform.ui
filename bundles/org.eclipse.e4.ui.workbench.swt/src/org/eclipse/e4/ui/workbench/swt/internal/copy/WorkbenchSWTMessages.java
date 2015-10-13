@@ -27,7 +27,6 @@ public class WorkbenchSWTMessages extends NLS {
 	public static String ViewLabel_unknown;
 	public static String ShowView_noDesc;
 	public static String ShowView_selectViewHelp;
-	public static String ICategory_other;
 	public static String ICategory_general;
 	public static String ShowView_shellTitle;
 
