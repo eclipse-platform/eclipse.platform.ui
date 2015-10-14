@@ -14,7 +14,7 @@
       title="Open the CVS Repository Exploring perspective"
       href="/org.eclipse.platform.doc.user/tasks/tasks-1h.htm">
     <description>
-      From the main menu, select Window &gt; Open Perspective &gt; Other...,
+      From the main menu, select Window &gt; Perspective &gt; Open Perspective &gt; Other...,
       then select the <b>CVS Repository Exploring</b> perspective.
     </description>
     <command
