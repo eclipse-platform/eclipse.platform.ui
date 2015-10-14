@@ -974,7 +974,7 @@ public class InternalDialog extends TrayDialog {
 	private IAction getGotoAction() {
 		Object property = null;
 
-		Job job = Adapters.getAdapter(getCurrentStatusAdapter(), Job.class, true);
+		Job job = Adapters.adapt(getCurrentStatusAdapter(), Job.class);
 		if (job != null) {
 			property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 		}

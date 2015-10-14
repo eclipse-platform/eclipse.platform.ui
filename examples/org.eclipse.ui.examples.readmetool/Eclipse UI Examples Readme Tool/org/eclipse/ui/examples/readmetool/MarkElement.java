@@ -91,7 +91,7 @@ public class MarkElement implements IWorkbenchAdapter, IAdaptable {
 
     @Override
 	public ImageDescriptor getImageDescriptor(Object object) {
-        IWorkbenchAdapter parentElement = Adapters.getAdapter(parent, IWorkbenchAdapter.class, true);
+        IWorkbenchAdapter parentElement = Adapters.adapt(parent, IWorkbenchAdapter.class);
         if (parentElement != null) {
             return parentElement.getImageDescriptor(object);
         }

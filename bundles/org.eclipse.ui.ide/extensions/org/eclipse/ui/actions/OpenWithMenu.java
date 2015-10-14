@@ -283,11 +283,11 @@ public class OpenWithMenu extends ContributionItem {
      * Converts the IAdaptable file to IFile or null.
      */
     private IFile getFileResource() {
-		IFile file = Adapters.getAdapter(adaptable, IFile.class, true);
+		IFile file = Adapters.adapt(adaptable, IFile.class);
 		if (file != null) {
 			return file;
         }
-		IResource resource = Adapters.getAdapter(adaptable, IResource.class, true);
+		IResource resource = Adapters.adapt(adaptable, IResource.class);
         if (resource instanceof IFile) {
             return (IFile) resource;
         }

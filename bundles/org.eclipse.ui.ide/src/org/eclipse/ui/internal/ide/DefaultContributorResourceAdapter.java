@@ -50,12 +50,12 @@ public class DefaultContributorResourceAdapter implements
      */
     @Override
 	public IResource getAdaptedResource(IAdaptable adaptable) {
-		return Adapters.getAdapter(adaptable, IResource.class, true);
+		return Adapters.adapt(adaptable, IResource.class);
     }
 
     @Override
 	public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
-		return Adapters.getAdapter(adaptable, ResourceMapping.class, true);
+		return Adapters.adapt(adaptable, ResourceMapping.class);
     }
 }
 

@@ -85,7 +85,7 @@ public class WorkingSetPropertyPage extends WizardPropertyPage {
 	@Override
 	public void setElement(IAdaptable element) {
 		super.setElement(element);
-		fWorkingSet = Adapters.getAdapter(element, IWorkingSet.class, true);
+		fWorkingSet = Adapters.adapt(element, IWorkingSet.class);
 	}
 
 	/**

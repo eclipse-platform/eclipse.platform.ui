@@ -118,7 +118,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         currentResourceSelection = null;
         if (selection.size() == 1) {
             Object firstElement = selection.getFirstElement();
-			currentResourceSelection = Adapters.getAdapter(firstElement, IResource.class, true);
+			currentResourceSelection = Adapters.adapt(firstElement, IResource.class);
         }
 
         if (currentResourceSelection != null) {

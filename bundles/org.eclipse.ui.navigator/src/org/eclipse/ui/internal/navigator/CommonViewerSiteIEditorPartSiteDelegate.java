@@ -52,7 +52,7 @@ public class CommonViewerSiteIEditorPartSiteDelegate implements
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return Adapters.getAdapter(editorSite, adapter, true);
+		return Adapters.adapt(editorSite, adapter);
 	}
 
 	@Override

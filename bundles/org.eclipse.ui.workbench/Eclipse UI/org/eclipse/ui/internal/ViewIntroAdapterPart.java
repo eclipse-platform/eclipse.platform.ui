@@ -165,7 +165,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 
     @Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return Adapters.getAdapter(introPart, adapter, true);
+		return Adapters.adapt(introPart, adapter);
     }
 
     @Override

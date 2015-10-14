@@ -102,7 +102,7 @@ public class NewWizardShortcutAction extends Action implements
                 IEditorInput input = ((IEditorPart) part).getEditorInput();
                 Class fileClass = LegacyResourceSupport.getFileClass();
                 if (input != null && fileClass != null) {
-					Object file = Adapters.getAdapter(input, fileClass, true);
+					Object file = Adapters.adapt(input, fileClass);
                     if (file != null) {
                         selectionToPass = new StructuredSelection(file);
                     }
@@ -159,6 +159,6 @@ public class NewWizardShortcutAction extends Action implements
      * @since 3.1
      */
     private IPluginContribution getPluginContribution() {
-		return Adapters.getAdapter(wizardElement, IPluginContribution.class, true);
+		return Adapters.adapt(wizardElement, IPluginContribution.class);
 	}
 }

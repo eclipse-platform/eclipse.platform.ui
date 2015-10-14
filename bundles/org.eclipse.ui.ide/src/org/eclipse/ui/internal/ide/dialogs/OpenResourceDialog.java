@@ -128,7 +128,7 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 					}
 				}
 				private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
-					return Adapters.getAdapter(targetPart, IShowInTarget.class, true);
+					return Adapters.adapt(targetPart, IShowInTarget.class);
 				}
 			};
 			action.setId(targetId);

@@ -69,7 +69,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			Image result = null;
 			if (element != null) {
 				StatusAdapter statusAdapter = ((StatusAdapter) element);
-				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
+				Job job = Adapters.adapt(statusAdapter, Job.class);
 				if (job != null) {
 					result = getIcon(job);
 				}
@@ -86,14 +86,14 @@ public class LabelProviderWrapper extends ViewerComparator implements
 			StatusAdapter statusAdapter = (StatusAdapter) element;
 			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
 			if (!isMulti()) {
-				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
+				Job job = Adapters.adapt(statusAdapter, Job.class);
 				if (job != null) {
 					text = getPrimaryMessage(statusAdapter);
 				} else {
 					text = getSecondaryMessage(statusAdapter);
 				}
 			} else {
-				Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
+				Job job = Adapters.adapt(statusAdapter, Job.class);
 				if (job != null) {
 					text = job.getName();
 				} else {
@@ -268,7 +268,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 	 */
 	public String getMainMessage(StatusAdapter statusAdapter) {
 		if (!isMulti()) {
-			Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
+			Job job = Adapters.adapt(statusAdapter, Job.class);
 			// job
 			if (job != null) {
 				return NLS
@@ -283,7 +283,7 @@ public class LabelProviderWrapper extends ViewerComparator implements
 		// with timestamp if available).
 		// we display secondary message or status
 		if (isMulti()) {
-			Job job = Adapters.getAdapter(statusAdapter, Job.class, true);
+			Job job = Adapters.adapt(statusAdapter, Job.class);
 			// job
 			if (job != null) {
 				return getPrimaryMessage(statusAdapter);

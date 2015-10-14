@@ -67,7 +67,7 @@ public class MarkersPropertyPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		// initialize resources/properties
 
-		IMarker element = Adapters.getAdapter(getElement(), IMarker.class, true);
+		IMarker element = Adapters.adapt(getElement(), IMarker.class);
 		IResource resource = null;
 
 		if (element != null) {

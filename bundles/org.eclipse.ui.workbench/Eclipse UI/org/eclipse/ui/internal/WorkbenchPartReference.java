@@ -522,7 +522,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
 
-		ISizeProvider sizeProvider = Adapters.getAdapter(legacyPart, ISizeProvider.class, true);
+		ISizeProvider sizeProvider = Adapters.adapt(legacyPart, ISizeProvider.class);
         if (sizeProvider != null) {
             return sizeProvider.computePreferredSize(width, availableParallel, availablePerpendicular, preferredResult);
         }
@@ -532,7 +532,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
     @Override
 	public int getSizeFlags(boolean width) {
-		ISizeProvider sizeProvider = Adapters.getAdapter(legacyPart, ISizeProvider.class, true);
+		ISizeProvider sizeProvider = Adapters.adapt(legacyPart, ISizeProvider.class);
         if (sizeProvider != null) {
             return sizeProvider.getSizeFlags(width);
         }

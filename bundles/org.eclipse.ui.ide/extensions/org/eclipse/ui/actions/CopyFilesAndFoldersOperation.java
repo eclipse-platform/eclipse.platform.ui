@@ -1048,7 +1048,7 @@ public class CopyFilesAndFoldersOperation {
 	 *         <code>null</code> if the resource does not adapt to IFile
 	 */
 	protected IFile getFile(IResource resource) {
-		return Adapters.getAdapter(resource, IFile.class, true);
+		return Adapters.adapt(resource, IFile.class);
 	}
 
 	/**
@@ -1080,7 +1080,7 @@ public class CopyFilesAndFoldersOperation {
 	 *         <code>null</code> if the resource does not adapt to IFolder
 	 */
 	protected IFolder getFolder(IResource resource) {
-		return Adapters.getAdapter(resource, IFolder.class, true);
+		return Adapters.adapt(resource, IFolder.class);
 	}
 
 	/**

@@ -112,7 +112,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 				sb.append(" ..."); //$NON-NLS-1$
 				break;
 			}
-			IWorkbenchAdapter adapter = Adapters.getAdapter(element, IWorkbenchAdapter.class, true);
+			IWorkbenchAdapter adapter = Adapters.adapt(element, IWorkbenchAdapter.class);
 			if (adapter != null) {
 				if (sb.length() > 0)
 					sb.append(", "); //$NON-NLS-1$

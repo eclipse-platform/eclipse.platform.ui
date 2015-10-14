@@ -232,7 +232,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
         if (workingSetElement.equals(element)) {
 			return true;
 		}
-		IResource workingSetResource = Adapters.getAdapter(workingSetElement, IResource.class, true);
+		IResource workingSetResource = Adapters.adapt(workingSetElement, IResource.class);
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
             if (resourcePath.isPrefixOf(elementPath)) {

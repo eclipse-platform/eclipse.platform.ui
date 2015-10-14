@@ -1196,7 +1196,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			// see bug 138823 - prevent some subclasses from causing
 			// an infinite loop
 			if (innerEditor != null && innerEditor != this) {
-				result = Adapters.getAdapter(innerEditor, adapter, true);
+				result = Adapters.adapt(innerEditor, adapter);
 			}
 		}
 		return result;

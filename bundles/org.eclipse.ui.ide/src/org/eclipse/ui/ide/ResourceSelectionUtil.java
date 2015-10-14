@@ -79,7 +79,7 @@ public class ResourceSelectionUtil {
 		List<IResource> result = new ArrayList<>();
 		while (adaptables.hasNext()) {
 			Object next = adaptables.next();
-			IResource resource = Adapters.getAdapter(next, IResource.class, true);
+			IResource resource = Adapters.adapt(next, IResource.class);
 			if (resource == null) {
 				return null;
 			}

@@ -366,7 +366,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=108144
 			IWorkbenchPart part = site.getPart();
 			if (part != null) {
-				return Adapters.getAdapter(part, adapter, true);
+				return Adapters.adapt(part, adapter);
 			}
 		}
 		return null;

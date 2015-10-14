@@ -214,7 +214,7 @@ public abstract class QuickAccessContents {
 	public TriggerSequence getTriggerSequence() {
 		if (keySequence == null) {
 			IBindingService bindingService =
-					Adapters.getAdapter(PlatformUI.getWorkbench(), IBindingService.class, true);
+					Adapters.adapt(PlatformUI.getWorkbench(), IBindingService.class);
 			keySequence = bindingService.getBestActiveBindingFor(QUICK_ACCESS_COMMAND_ID);
 		}
 		return keySequence;

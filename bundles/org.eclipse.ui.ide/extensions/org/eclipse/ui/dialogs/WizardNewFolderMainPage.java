@@ -694,7 +694,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		Iterator it = currentSelection.iterator();
 		if (it.hasNext()) {
 			Object next = it.next();
-			IResource selectedResource = Adapters.getAdapter(next, IResource.class, true);
+			IResource selectedResource = Adapters.adapt(next, IResource.class);
 			if (selectedResource != null) {
 				if (selectedResource.getType() == IResource.FILE) {
 					selectedResource = selectedResource.getParent();

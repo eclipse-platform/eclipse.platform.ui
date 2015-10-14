@@ -225,7 +225,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	                        .getActivePart();
 	                if (part instanceof IEditorPart) {
 	                    IEditorInput input = ((IEditorPart) part).getEditorInput();
-						Object resource = Adapters.getAdapter(input, resourceClass, true);
+						Object resource = Adapters.adapt(input, resourceClass);
 	                    if (resource != null) {
 	                        selectionToPass = new StructuredSelection(resource);
 	                    }

@@ -47,7 +47,7 @@ public class CommonViewerSiteIPageSiteDelegate implements ICommonViewerSite {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return Adapters.getAdapter(pageSite, adapter, true);
+		return Adapters.adapt(pageSite, adapter);
 	}
 
 	@Override

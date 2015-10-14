@@ -430,7 +430,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 		// TODO: Check if this is necessary. No IResource should
 		// adapt to IFile unless it *is* an IFile. An instanceof check
 		// might be better
-		return Adapters.getAdapter(resource, IFile.class, true);
+		return Adapters.adapt(resource, IFile.class);
     }
 
     /**
@@ -444,7 +444,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 		// TODO: Check if this is necessary. No IResource should
 		// adapt to IFolder unless it *is* an IFolder. An instanceof
 		// check might be better
-		return Adapters.getAdapter(resource, IFolder.class, true);
+		return Adapters.adapt(resource, IFolder.class);
     }
 
     /**

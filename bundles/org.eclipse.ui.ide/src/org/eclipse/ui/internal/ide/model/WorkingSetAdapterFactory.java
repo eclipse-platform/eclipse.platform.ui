@@ -131,14 +131,14 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 
 	static ResourceMapping getResourceMapping(Object o) {
 		// First, ask the object directly for a resource mapping
-		ResourceMapping mapping = Adapters.getAdapter(o, ResourceMapping.class, true);
+		ResourceMapping mapping = Adapters.adapt(o, ResourceMapping.class);
 		if (mapping != null) {
 			return mapping;
 		}
 		// If this fails, ask for a resource and convert to a resource mapping
-		IResource resource = Adapters.getAdapter(o, IResource.class, true);
+		IResource resource = Adapters.adapt(o, IResource.class);
 		if (resource != null) {
-			mapping = Adapters.getAdapter(resource, ResourceMapping.class, true);
+			mapping = Adapters.adapt(resource, ResourceMapping.class);
 			if (mapping != null) {
 				return mapping;
 			}
@@ -162,7 +162,7 @@ public class WorkingSetAdapterFactory implements IAdapterFactory {
 			// the mapping for that resource
 			IResource resource = resourceAdapter.getAdaptedResource(element);
 			if (resource != null) {
-				ResourceMapping mapping = Adapters.getAdapter(resource, ResourceMapping.class, true);
+				ResourceMapping mapping = Adapters.adapt(resource, ResourceMapping.class);
 				if (mapping != null) {
 					return mapping;
 				}

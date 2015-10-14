@@ -84,7 +84,7 @@ public class ObjectFilterTest {
      */
     private boolean preciselyMatches(Object object) {
         // Get the action filter.
-        IActionFilter filter = Adapters.getAdapter(object, IActionFilter.class, true);
+        IActionFilter filter = Adapters.adapt(object, IActionFilter.class);
         if (filter == null) {
 			return false;
 		}

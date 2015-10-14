@@ -59,7 +59,7 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 		if (element instanceof ResourceMapping)
 			element = ((ResourceMapping) element).getModelObject();
 
-		IResource resource = Adapters.getAdapter(element, IResource.class, true);
+		IResource resource = Adapters.adapt(element, IResource.class);
 		if (resource != null) {
 			ResourceAttributes resourceAttributes = resource.getResourceAttributes();
 			if (resourceAttributes != null && resourceAttributes.isSymbolicLink())

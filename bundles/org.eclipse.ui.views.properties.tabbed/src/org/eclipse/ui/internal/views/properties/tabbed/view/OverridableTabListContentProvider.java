@@ -106,7 +106,7 @@ class OverridableTabListContentProvider extends TabListContentProvider
 	private void init(TabbedPropertyViewer newTabbedPropertyViewer) {
 		this.tabbedPropertyViewer = newTabbedPropertyViewer;
 		currentPart = tabbedPropertyViewer.getWorkbenchPart();
-		IPropertySheetPage page = (IPropertySheetPage) Adapters.getAdapter(currentPart, IPropertySheetPage.class, true);
+		IPropertySheetPage page = (IPropertySheetPage) Adapters.adapt(currentPart, IPropertySheetPage.class);
 		if (page instanceof TabbedPropertySheetPage) {
 			tabbedPropertySheetPage = (TabbedPropertySheetPage) page;
 		} else {
@@ -119,7 +119,7 @@ class OverridableTabListContentProvider extends TabListContentProvider
 			if (view != null) {
 				IWorkbenchPart part = view.getContributingPart();
 				if (part != null) {
-					page = (IPropertySheetPage) Adapters.getAdapter(part, IPropertySheetPage.class, true);
+					page = (IPropertySheetPage) Adapters.adapt(part, IPropertySheetPage.class);
 					if (page instanceof TabbedPropertySheetPage) {
 						tabbedPropertySheetPage = (TabbedPropertySheetPage) page;
 					}

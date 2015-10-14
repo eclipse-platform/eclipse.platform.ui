@@ -113,7 +113,7 @@ public final class ProjectExplorer extends CommonNavigator {
 				setContentDescription(label);
 				return;
 			}
-			IWorkbenchAdapter wbadapter = Adapters.getAdapter(input, IWorkbenchAdapter.class, true);
+			IWorkbenchAdapter wbadapter = Adapters.adapt(input, IWorkbenchAdapter.class);
 			if (wbadapter != null) {
 				setContentDescription(wbadapter.getLabel(input));
 				return;

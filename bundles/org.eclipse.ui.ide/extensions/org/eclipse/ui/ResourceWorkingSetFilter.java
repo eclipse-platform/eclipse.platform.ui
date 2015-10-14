@@ -58,7 +58,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
             return true;
         }
         
-        IResource resource = Adapters.getAdapter(element, IResource.class, true);
+        IResource resource = Adapters.adapt(element, IResource.class);
         if (resource != null) {
             return isEnclosed(resource);
         }
@@ -130,7 +130,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
         if (workingSetElement.equals(element)) {
 			return true;
 		}
-		workingSetResource = Adapters.getAdapter(workingSetElement, IResource.class, true);
+		workingSetResource = Adapters.adapt(workingSetElement, IResource.class);
         if (workingSetResource != null) {
             IPath resourcePath = workingSetResource.getFullPath();
             if (resourcePath.isPrefixOf(elementPath)) {

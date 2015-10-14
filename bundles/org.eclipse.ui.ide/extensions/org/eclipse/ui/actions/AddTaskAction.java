@@ -86,7 +86,7 @@ public class AddTaskAction extends SelectionListenerAction {
 		}
 
         Object element = selection.getFirstElement();
-		IResource resource = Adapters.getAdapter(element, IResource.class, true);
+		IResource resource = Adapters.adapt(element, IResource.class);
 
         if (resource != null && resource instanceof IProject) {
             IProject project = (IProject) resource;

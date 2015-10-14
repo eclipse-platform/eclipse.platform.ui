@@ -958,7 +958,7 @@ public class WorkspaceUndoUtil {
 	 * @return the Shell that can be used to show information
 	 */
 	public static Shell getShell(IAdaptable uiInfo) {
-		Shell shell = Adapters.getAdapter(uiInfo, Shell.class, true);
+		Shell shell = Adapters.adapt(uiInfo, Shell.class);
 		if (shell != null) {
 			return shell;
 		}

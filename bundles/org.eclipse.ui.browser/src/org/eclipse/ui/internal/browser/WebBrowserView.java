@@ -126,7 +126,7 @@ public class WebBrowserView extends ViewPart implements
 
 	private URL getURLFrom(Object adapt) {
 		// test for path
-		IPath path = Adapters.getAdapter(adapt, IPath.class, true);
+		IPath path = Adapters.adapt(adapt, IPath.class);
 		if (path != null) {
 			File file = path.toFile();
 			if (file.exists() && isWebFile(file.getName()))
@@ -136,7 +136,7 @@ public class WebBrowserView extends ViewPart implements
 					return null;
 				}
 		}
-		return Adapters.getAdapter(adapt, URL.class, true);
+		return Adapters.adapt(adapt, URL.class);
 	}
 
 	public void removeSelectionListener() {

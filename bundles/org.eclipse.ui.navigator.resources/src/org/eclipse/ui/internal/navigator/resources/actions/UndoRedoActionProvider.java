@@ -35,7 +35,7 @@ public class UndoRedoActionProvider extends CommonActionProvider {
 
 	@Override
 	public void init(ICommonActionExtensionSite anActionSite) {
-		IUndoContext workspaceContext = Adapters.getAdapter(ResourcesPlugin.getWorkspace(), IUndoContext.class, true);
+		IUndoContext workspaceContext = Adapters.adapt(ResourcesPlugin.getWorkspace(), IUndoContext.class);
 		undoRedoGroup = new UndoRedoActionGroup(((ICommonViewerWorkbenchSite) anActionSite.getViewSite()).getSite(),
 				workspaceContext, true);
 	}

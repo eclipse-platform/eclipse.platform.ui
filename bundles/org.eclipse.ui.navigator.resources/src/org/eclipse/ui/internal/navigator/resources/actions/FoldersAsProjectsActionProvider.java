@@ -37,7 +37,7 @@ public class FoldersAsProjectsActionProvider extends CommonActionProvider {
 			return;
 		}
 		Object object = selection.getFirstElement();
-		IFolder folder = Adapters.getAdapter(object, IFolder.class, true);
+		IFolder folder = Adapters.adapt(object, IFolder.class);
 		if (folder == null) {
 			return;
 		}

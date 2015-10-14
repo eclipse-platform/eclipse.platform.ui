@@ -403,7 +403,7 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 	}
 
 	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
-		return Adapters.getAdapter(sourcePart, IShowInSource.class, true);
+		return Adapters.adapt(sourcePart, IShowInSource.class);
 	}
 
 	private ShowInContext getContext(IWorkbenchPart sourcePart) {

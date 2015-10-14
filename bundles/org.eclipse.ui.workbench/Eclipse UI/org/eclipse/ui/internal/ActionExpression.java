@@ -451,7 +451,7 @@ public class ActionExpression {
 		}
 
 		private IActionFilter getActionFilter(Object object) {
-			return Adapters.getAdapter(object, IActionFilter.class, true);
+			return Adapters.adapt(object, IActionFilter.class);
 		}
 
 		/**
@@ -492,7 +492,7 @@ public class ActionExpression {
 				return false;
 			}
 
-			Object res = Adapters.getAdapter(object, resourceClass, true);
+			Object res = Adapters.adapt(object, resourceClass);
 			if (res == null) {
 				return false;
 			}

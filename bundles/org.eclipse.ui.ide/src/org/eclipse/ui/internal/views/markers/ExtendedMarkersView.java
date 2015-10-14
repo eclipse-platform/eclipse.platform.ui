@@ -503,7 +503,7 @@ public class ExtendedMarkersView extends ViewPart {
 	private void addHelpListener() {
 		// Set help on the view itself
 		viewer.getControl().addHelpListener(e -> {
-			IContextProvider provider = Adapters.getAdapter(ExtendedMarkersView.this, IContextProvider.class, true);
+			IContextProvider provider = Adapters.adapt(ExtendedMarkersView.this, IContextProvider.class);
 			if (provider == null)
 				return;
 
@@ -1026,7 +1026,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		builder.restoreState(m);
 
-		IWorkbenchSiteProgressService service = Adapters.getAdapter(site, IWorkbenchSiteProgressService.class, true);
+		IWorkbenchSiteProgressService service = Adapters.adapt(site, IWorkbenchSiteProgressService.class);
 		if (service != null) {
 			builder.setProgressService(service);
 		}
@@ -1708,7 +1708,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @since 3.7
 	 */
 	protected IUndoContext getUndoContext() {
-		return Adapters.getAdapter(ResourcesPlugin.getWorkspace(), IUndoContext.class, true);
+		return Adapters.adapt(ResourcesPlugin.getWorkspace(), IUndoContext.class);
 	}
 
 	/**

@@ -67,7 +67,7 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
      * or null if there is none.
      */
     protected IResource getResource(Object o) {
-		return Adapters.getAdapter(o, IResource.class, true);
+		return Adapters.adapt(o, IResource.class);
     }
 
     /**

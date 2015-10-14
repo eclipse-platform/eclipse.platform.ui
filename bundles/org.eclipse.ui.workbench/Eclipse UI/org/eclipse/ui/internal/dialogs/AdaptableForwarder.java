@@ -34,6 +34,6 @@ public class AdaptableForwarder implements IAdaptable {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		return Adapters.getAdapter(element, adapter, true);
+		return Adapters.adapt(element, adapter);
 	}
 }

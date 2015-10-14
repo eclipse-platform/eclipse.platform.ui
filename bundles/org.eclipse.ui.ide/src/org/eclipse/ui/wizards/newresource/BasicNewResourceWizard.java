@@ -161,7 +161,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
             IWorkbenchPart part = (IWorkbenchPart) itr.next();
 
             // get the part's ISetSelectionTarget implementation
-			ISetSelectionTarget target = Adapters.getAdapter(part, ISetSelectionTarget.class, true);
+			ISetSelectionTarget target = Adapters.adapt(part, ISetSelectionTarget.class);
 
             if (target != null) {
                 // select and reveal resource

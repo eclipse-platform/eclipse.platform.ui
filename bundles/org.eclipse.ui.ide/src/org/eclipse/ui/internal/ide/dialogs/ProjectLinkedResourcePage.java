@@ -63,7 +63,7 @@ public class ProjectLinkedResourcePage extends PropertyPage implements
 				IIDEHelpContextIds.LINKED_RESOURCE_PAGE);
 
 		IAdaptable adaptable = getElement();
-		IProject project = Adapters.getAdapter(adaptable, IProject.class, true);
+		IProject project = Adapters.adapt(adaptable, IProject.class);
 		if (project != null) {
 			pathVariablesGroup.setResource(project);
 			linkedResourceEditor.setProject(project);

@@ -347,19 +347,19 @@ class MarkerResourceUtil {
 	static Object adapt2ResourceElement(Object object) {
 		IResource resource = null;
 		if (object instanceof IAdaptable) {
-			ITaskListResourceAdapter adapter = Adapters.getAdapter(object, ITaskListResourceAdapter.class, true);
+			ITaskListResourceAdapter adapter = Adapters.adapt(object, ITaskListResourceAdapter.class);
 			if (adapter != null) {
 				resource = adapter.getAffectedResource((IAdaptable) object);
 			}
 		}
 		if (resource == null) {
-			resource = Adapters.getAdapter(object, IResource.class, true);
+			resource = Adapters.adapt(object, IResource.class);
 		}
 		if (resource == null) {
-			resource = Adapters.getAdapter(object, IFile.class, true);
+			resource = Adapters.adapt(object, IFile.class);
 		}
 		if (resource == null) {
-			ResourceMapping mapping = Adapters.getAdapter(object, ResourceMapping.class, true);
+			ResourceMapping mapping = Adapters.adapt(object, ResourceMapping.class);
 			if (mapping != null) {
 				return mapping;
 			}

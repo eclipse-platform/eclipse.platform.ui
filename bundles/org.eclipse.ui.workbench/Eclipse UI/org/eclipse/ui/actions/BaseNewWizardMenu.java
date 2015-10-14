@@ -180,7 +180,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
                 action = new NewWizardShortcutAction(workbenchWindow,
 						wizardDesc);
 				actions.put(id, action);
-				IConfigurationElement element = Adapters.getAdapter(wizardDesc, IConfigurationElement.class, true);
+				IConfigurationElement element = Adapters.adapt(wizardDesc, IConfigurationElement.class);
 				if (element != null) {
 					workbenchWindow.getExtensionTracker().registerObject(
 							element.getDeclaringExtension(), action,

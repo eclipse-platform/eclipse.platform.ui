@@ -284,7 +284,7 @@ public class QuickAccessDialog extends PopupDialog {
 		if (invokingCommandKeySequences == null) {
 			if (invokingCommand != null) {
 				IBindingService bindingService =
-						Adapters.getAdapter(window.getWorkbench(), IBindingService.class, true);
+						Adapters.adapt(window.getWorkbench(), IBindingService.class);
 				invokingCommandKeySequences = bindingService.getActiveBindingsFor(invokingCommand.getId());
 			}
 		}

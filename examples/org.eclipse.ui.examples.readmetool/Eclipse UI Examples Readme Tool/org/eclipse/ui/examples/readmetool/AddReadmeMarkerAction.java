@@ -117,6 +117,6 @@ public class AddReadmeMarkerAction extends Action {
      */
     protected IResource getResource() {
         IEditorInput input = textEditor.getEditorInput();
-        return Adapters.getAdapter(input, IResource.class, true);
+        return Adapters.adapt(input, IResource.class);
     }
 }

@@ -123,7 +123,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 
 		Object selectedObject = ((IStructuredSelection) selection)
 				.getFirstElement();
-		IResource item = Adapters.getAdapter(selectedObject, IResource.class, true);
+		IResource item = Adapters.adapt(selectedObject, IResource.class);
 		return item;
 	}
 
@@ -136,7 +136,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput)input).getFile();
 		}
-		return Adapters.getAdapter(input, IResource.class, true);
+		return Adapters.adapt(input, IResource.class);
 	}
 
 	/**
