@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 478686
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
@@ -237,18 +238,16 @@ public final class ResourceUtil {
 
 
 	/**
-     * Returns the specified adapter for the given element, or <code>null</code>
-     * if no such adapter was found.
-     *
-     * @param element the model element
-	 * @param adapterType the type of adapter to look up
-	 * @param forceLoad <code>true</code> to force loading of the plug-in providing the adapter,
-	 *   <code>false</code> otherwise
-     * @return the adapter
-     * @since 3.2
-     */
+	 * See Javadoc of {@link Adapters#adapt(Object, Class, boolean)}.
+	 *
+	 * @since 3.2
+	 *
+	 * @deprecated Use {@link Adapters#adapt(Object, Class, boolean)}
+	 *             instead
+	 */
+	@Deprecated
 	public static <T> T getAdapter(Object element, Class<T> adapterType, boolean forceLoad) {
-		return Adapters.getAdapter(element, adapterType, forceLoad);
+		return Adapters.adapt(element, adapterType, forceLoad);
 	}
 
 }
