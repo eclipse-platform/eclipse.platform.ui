@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Gunnar Wagenknecht and others.
+ * Copyright (c) 2005, 2006 Gunnar Wagenknecht and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *    Gunnar Wagenknecht - initial API and implementation
- *    Stefan Winkler <stefan@winklerweb.net> - Bug 477848
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
@@ -117,10 +116,11 @@ public class PropertySheetSorter  {
 	 *            the elements to sort
 	 */
 	public void sort(IPropertySheetEntry[] entries) {
-		Arrays.sort(entries, new Comparator<IPropertySheetEntry>() {
+		Arrays.sort(entries, new Comparator() {
 			@Override
-			public int compare(IPropertySheetEntry a, IPropertySheetEntry b) {
-				return PropertySheetSorter.this.compare(a, b);
+			public int compare(Object a, Object b) {
+				return PropertySheetSorter.this.compare(
+						(IPropertySheetEntry) a, (IPropertySheetEntry) b);
 			}
 		});
 	}
@@ -132,10 +132,12 @@ public class PropertySheetSorter  {
 	 *            the categories to sort
 	 */
 	void sort(PropertySheetCategory[] categories) {
-		Arrays.sort(categories, new Comparator<PropertySheetCategory>() {
+		Arrays.sort(categories, new Comparator() {
 			@Override
-			public int compare(PropertySheetCategory a, PropertySheetCategory b) {
-				return PropertySheetSorter.this.compareCategories(a.getCategoryName(), b.getCategoryName());
+			public int compare(Object a, Object b) {
+				return PropertySheetSorter.this.compareCategories(
+						((PropertySheetCategory) a).getCategoryName(),
+						((PropertySheetCategory) b).getCategoryName());
 			}
 		});
 	}
