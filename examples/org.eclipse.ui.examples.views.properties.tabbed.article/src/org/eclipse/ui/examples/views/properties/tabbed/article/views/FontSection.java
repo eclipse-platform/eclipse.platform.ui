@@ -98,8 +98,7 @@ public class FontSection
 				if (fData != null) {
 					value = fData.toString();
 
-					ButtonElementProperties properties = (ButtonElementProperties) Adapters.getAdapter(buttonElement,
-							IPropertySource.class, true);
+					ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);
 					properties.setPropertyValue(ButtonElementProperties.PROPERTY_FONT, value);
 					fontText.setText(StringConverter.asString(fData));
 				}

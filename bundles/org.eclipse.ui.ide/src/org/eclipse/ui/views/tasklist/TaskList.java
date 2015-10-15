@@ -1554,8 +1554,8 @@ public class TaskList extends ViewPart {
                 Object object = iterator.next();
 
 				if (object instanceof IAdaptable) {
-					ITaskListResourceAdapter taskListResourceAdapter = Adapters.getAdapter(object,
-							ITaskListResourceAdapter.class, true);
+					ITaskListResourceAdapter taskListResourceAdapter = Adapters.adapt(object,
+							ITaskListResourceAdapter.class);
 					if (taskListResourceAdapter == null) {
 						taskListResourceAdapter = DefaultTaskListResourceAdapter.getDefault();
 					}

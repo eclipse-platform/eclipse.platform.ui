@@ -62,8 +62,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 			if (part.getTags().contains("Editor")) { //$NON-NLS-1$
 				if (includeEditor) {
 					IEditorPart activeEditor = page.getActiveEditor();
-					IEditorDescriptor editorDescriptor = Adapters.getAdapter(activeEditor, IEditorDescriptor.class,
-							true);
+					IEditorDescriptor editorDescriptor = Adapters.adapt(activeEditor, IEditorDescriptor.class);
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(WorkbenchMessages.CyclePartAction_editor);
 					item.setImage(activeEditor.getTitleImage());

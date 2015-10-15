@@ -321,8 +321,8 @@ public class TabbedPropertySheetPage
 			 * Is the part is a IContributedContentsView for the contributor,
 			 * for example, outline view.
 			 */
-			IContributedContentsView view = (IContributedContentsView) Adapters.getAdapter(part,
-					IContributedContentsView.class, true);
+			IContributedContentsView view = (IContributedContentsView) Adapters.adapt(part,
+					IContributedContentsView.class);
 			if (view == null
 				|| (view.getContributingPart() != null && !view
 					.getContributingPart().equals(contributor))) {
@@ -868,8 +868,7 @@ public class TabbedPropertySheetPage
      * @return the TabbedPropertySheetPageContributor or null if not applicable
      */
 	private ITabbedPropertySheetPageContributor getTabbedPropertySheetPageContributor(Object object) {
-		return (ITabbedPropertySheetPageContributor) Adapters.getAdapter(object,
-				ITabbedPropertySheetPageContributor.class, true);
+		return (ITabbedPropertySheetPageContributor) Adapters.adapt(object, ITabbedPropertySheetPageContributor.class);
 	}
 
 	/**
