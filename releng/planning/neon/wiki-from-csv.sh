@@ -1,7 +1,7 @@
 #!/bin/bash
 
 create_wiki_header() {
-echo "Overview page of the work done for the Eclipse 4.5 service and 4.6 release"
+echo "Overview page of the work done for the Eclipse 4.5 service and 4.6 release. For the general themes of this release please see [https://wiki.eclipse.org/Platform_UI/Plan/4.6 Eclipse Neon Platform UI targets] "
 echo ""
 echo "'''This list is generated automatically, please do not update manually'''"
 echo ""
