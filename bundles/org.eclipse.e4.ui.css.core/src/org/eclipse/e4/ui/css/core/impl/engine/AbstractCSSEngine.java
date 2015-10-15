@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Red Hat Inc. (mistria) - Bug 413348: fix stream leak
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428715
  *     Brian de Alwis (MTI) - Performance tweaks (Bug 430829)
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 479896
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
@@ -58,8 +59,10 @@ import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
 import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.w3c.css.sac.AttributeCondition;
+import org.w3c.css.sac.CombinatorCondition;
 import org.w3c.css.sac.Condition;
 import org.w3c.css.sac.ConditionalSelector;
+import org.w3c.css.sac.DescendantSelector;
 import org.w3c.css.sac.InputSource;
 import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
@@ -423,8 +426,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				/*
 				 * Style all children recursive.
 				 */
-				NodeList nodes = elt instanceof ChildVisibilityAwareElement ? ((ChildVisibilityAwareElement) elt)
-						.getVisibleChildNodes() : elt.getChildNodes();
+				NodeList nodes = elt instanceof ChildVisibilityAwareElement
+						? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes() : elt.getChildNodes();
 				if (nodes != null) {
 					for (int k = 0; k < nodes.getLength(); k++) {
 						applyStyles(nodes.item(k), applyStylesToChildNodes);
@@ -465,15 +468,34 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		for (int j = 0; j < selectorList.getLength(); j++) {
 			Selector item = selectorList.item(j);
 			// search for conditional selectors
+			ConditionalSelector conditional = null;
 			if (item instanceof ConditionalSelector) {
-				Condition condition = ((ConditionalSelector) item).getCondition();
+				conditional = (ConditionalSelector) item;
+			} else if (item instanceof DescendantSelector) {
+				if (((DescendantSelector) item).getSimpleSelector() instanceof ConditionalSelector) {
+					conditional = (ConditionalSelector) ((DescendantSelector) item).getSimpleSelector();
+				} else if (((DescendantSelector) item).getAncestorSelector() instanceof ConditionalSelector) {
+					conditional = (ConditionalSelector) ((DescendantSelector) item).getAncestorSelector();
+				}
+			}
+			if (conditional != null) {
+				Condition condition = conditional.getCondition();
 				// we're only interested in attribute selector conditions
+				AttributeCondition attr = null;
 				if (condition instanceof AttributeCondition) {
-					String value = ((AttributeCondition) condition).getValue();
+					attr = (AttributeCondition) condition;
+				} else if (condition instanceof CombinatorCondition) {
+					if (((CombinatorCondition) condition).getSecondCondition() instanceof AttributeCondition) {
+						attr = (AttributeCondition) ((CombinatorCondition) condition).getSecondCondition();
+					} else if (((CombinatorCondition) condition).getFirstCondition() instanceof AttributeCondition) {
+						attr = (AttributeCondition) ((CombinatorCondition) condition).getFirstCondition();
+					}
+				}
+				if (attr != null) {
+					String value = attr.getValue();
 					if (value.equals(pseudoInstance)) {
 						// if we match the pseudo, apply the style
-						applyStyleDeclaration(element, styleWithPseudoInstance,
-								pseudoInstance);
+						applyStyleDeclaration(element, styleWithPseudoInstance, pseudoInstance);
 						return;
 					}
 				}
