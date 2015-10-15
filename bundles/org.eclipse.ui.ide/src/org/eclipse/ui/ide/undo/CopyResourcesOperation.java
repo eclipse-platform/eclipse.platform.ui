@@ -151,7 +151,7 @@ public class CopyResourcesOperation extends
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
 			overwrites = WorkspaceUndoUtil.copy(new IResource[] { resources[i] }, getDestinationPath(resources[i], i),
-					resourcesAtDestination, subMonitor.newChild(1), uiInfo, true, fCreateGroups, fCreateLinks,
+					resourcesAtDestination, subMonitor.split(1), uiInfo, true, fCreateGroups, fCreateLinks,
 					fRelativeToVariable);
 			// Accumulate the overwrites into the full list
 			for (int j = 0; j < overwrites.length; j++) {
@@ -163,7 +163,7 @@ public class CopyResourcesOperation extends
 		if (resourceDescriptions != null) {
 			for (int i = 0; i < resourceDescriptions.length; i++) {
 				if (resourceDescriptions[i] != null) {
-					resourceDescriptions[i].createResource(subMonitor.newChild(1));
+					resourceDescriptions[i].createResource(subMonitor.split(1));
 				}
 			}
 		}
@@ -188,9 +188,9 @@ public class CopyResourcesOperation extends
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 		subMonitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		// undoing a copy is first deleting the copied resources...
-		WorkspaceUndoUtil.delete(resources, subMonitor.newChild(1), uiInfo, true);
+		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// then restoring any overwritten by the previous copy...
-		WorkspaceUndoUtil.recreate(resourceDescriptions, subMonitor.newChild(1), uiInfo);
+		WorkspaceUndoUtil.recreate(resourceDescriptions, subMonitor.split(1), uiInfo);
 		setResourceDescriptions(new ResourceDescription[0]);
 		// then setting the target resources back to the original ones.
 		// Note that the destination paths never changed since they

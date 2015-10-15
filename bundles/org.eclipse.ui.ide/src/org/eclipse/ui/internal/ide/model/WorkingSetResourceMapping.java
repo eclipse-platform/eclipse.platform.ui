@@ -77,7 +77,7 @@ public class WorkingSetResourceMapping extends ResourceMapping {
 		List<ResourceTraversal> result = new ArrayList<>();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
-			result.addAll(Arrays.asList(mapping.getTraversals(context, subMonitor.newChild(1))));
+			result.addAll(Arrays.asList(mapping.getTraversals(context, subMonitor.split(1))));
 		}
 		return result.toArray(new ResourceTraversal[result.size()]);
 	}

@@ -154,7 +154,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		subMonitor.setTaskName(getOperationMessage());
 		for (IResource resource : resources) {
 			try {
-				invokeOperation(resource, subMonitor.newChild(1));
+				invokeOperation(resource, subMonitor.split(1));
 			} catch (CoreException e) {
 				errors = recordError(errors, e);
 			}

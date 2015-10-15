@@ -87,16 +87,16 @@ public class ProjectDescription extends ContainerDescription {
 		IProject projectHandle = (IProject) resource;
 		subMonitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
 		if (projectDescription == null) {
-			projectHandle.create(subMonitor.newChild(100));
+			projectHandle.create(subMonitor.split(100));
 		} else {
-			projectHandle.create(projectDescription, subMonitor.newChild(100));
+			projectHandle.create(projectDescription, subMonitor.split(100));
 		}
 
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 		if (openOnCreate) {
-			projectHandle.open(IResource.NONE, subMonitor.newChild(100));
+			projectHandle.open(IResource.NONE, subMonitor.split(100));
 		}
 	}
 

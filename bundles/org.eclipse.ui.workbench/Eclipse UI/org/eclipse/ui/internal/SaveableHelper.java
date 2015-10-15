@@ -198,7 +198,7 @@ public class SaveableHelper {
 							subMonitor.worked(1);
 							continue;
 						}
-						doSaveModel(model, subMonitor.newChild(1), window, confirm);
+						doSaveModel(model, subMonitor.split(1), window, confirm);
 						if (subMonitor.isCanceled()) {
 							break;
 						}
@@ -354,7 +354,7 @@ public class SaveableHelper {
 			final IJobRunnable[] backgroundSaveRunnable = new IJobRunnable[1];
 			try {
 				SubMonitor subMonitor = SubMonitor.convert(progressMonitor, 3);
-				backgroundSaveRunnable[0] = model.doSave(subMonitor.newChild(2), shellProvider);
+				backgroundSaveRunnable[0] = model.doSave(subMonitor.split(2), shellProvider);
 				if (backgroundSaveRunnable[0] == null) {
 					// no further work needs to be done
 					return;
@@ -362,7 +362,7 @@ public class SaveableHelper {
 				if (blockUntilSaved) {
 					// for now, block on close by running the runnable in the UI
 					// thread
-					IStatus result = backgroundSaveRunnable[0].run(subMonitor.newChild(1));
+					IStatus result = backgroundSaveRunnable[0].run(subMonitor.split(1));
 					if (!result.isOK()) {
 						StatusUtil.handleStatus(result, StatusManager.SHOW, shellProvider.getShell());
 						progressMonitor.setCanceled(true);

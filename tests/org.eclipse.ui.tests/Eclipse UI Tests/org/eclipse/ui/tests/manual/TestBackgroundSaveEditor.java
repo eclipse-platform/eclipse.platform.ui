@@ -67,9 +67,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 		@Override
 		public void doSave(IProgressMonitor monitor) throws CoreException {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
-			IJobRunnable runnable = doSave(subMonitor.newChild(1), getSite());
+			IJobRunnable runnable = doSave(subMonitor.split(1), getSite());
 			if (runnable != null) {
-				runnable.run(subMonitor.newChild(1));
+				runnable.run(subMonitor.split(1));
 			}
 		}
 

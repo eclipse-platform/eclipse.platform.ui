@@ -79,7 +79,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	protected void copy(IResource[] resources, IPath destination, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, resources.length);
 		for (int i = 0; i < resources.length; i++) {
-			SubMonitor iterationMonitor = subMonitor.newChild(1).setWorkRemaining(100);
+			SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(100);
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
 			IWorkspace workspace = source.getWorkspace();
@@ -90,31 +90,31 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				// move the children of the folder.
 				if (homogenousResources(source, existing)) {
 					IResource[] children = ((IContainer) source).members();
-					copy(children, destinationPath, iterationMonitor.newChild(100));
+					copy(children, destinationPath, iterationMonitor.split(100));
 					delete(source, subMonitor);
 				} else {
 					// delete the destination folder, moving a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
-					delete(existing, iterationMonitor.newChild(50));
+					delete(existing, iterationMonitor.split(50));
 					source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
-							iterationMonitor.newChild(50));
+							iterationMonitor.split(50));
 				}
 			} else {
 				// if we're merging folders, we could be overwriting an existing
 				// file
 				if (existing != null) {
 					if (homogenousResources(source, existing)) {
-						moveExisting(source, existing, iterationMonitor.newChild(100));
+						moveExisting(source, existing, iterationMonitor.split(100));
 					} else {
 						// Moving a linked resource over unlinked or vice versa.
 						// Can't use setContents here. Fixes bug 28772.
-						delete(existing, iterationMonitor.newChild(50));
+						delete(existing, iterationMonitor.split(50));
 						source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
-								iterationMonitor.newChild(50));
+								iterationMonitor.split(50));
 					}
 				} else {
 					source.move(destinationPath, IResource.SHALLOW | IResource.KEEP_HISTORY,
-							iterationMonitor.newChild(100));
+							iterationMonitor.split(100));
 				}
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -203,8 +203,8 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			IFile sourceFile = getFile(source);
 
 			if (sourceFile != null) {
-				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, subMonitor.newChild(1));
-				delete(sourceFile, subMonitor.newChild(1));
+				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, subMonitor.split(1));
+				delete(sourceFile, subMonitor.split(1));
 			}
 		}
 	}

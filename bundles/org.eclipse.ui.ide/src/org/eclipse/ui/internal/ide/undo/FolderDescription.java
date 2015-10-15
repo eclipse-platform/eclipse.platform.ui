@@ -87,21 +87,21 @@ public class FolderDescription extends ContainerDescription {
 			throw new OperationCanceledException();
 		}
 		if (filters != null) {
-			SubMonitor loopMonitor = subMonitor.newChild(100).setWorkRemaining(filters.length);
+			SubMonitor loopMonitor = subMonitor.split(100).setWorkRemaining(filters.length);
 			for (int i = 0; i < filters.length; i++) {
 				folderHandle.createFilter(filters[i].getType(), filters[i].getFileInfoMatcherDescription(), 0,
-						loopMonitor.newChild(1));
+						loopMonitor.split(1));
 			}
 		}
 		subMonitor.setWorkRemaining(200);
 		if (location != null) {
-			folderHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.newChild(100));
+			folderHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.split(100));
 		} else {
-			folderHandle.create(virtual ? IResource.VIRTUAL : 0, true, subMonitor.newChild(100));
+			folderHandle.create(virtual ? IResource.VIRTUAL : 0, true, subMonitor.split(100));
 		}
 		if (subMonitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		createChildResources(folderHandle, subMonitor.newChild(100));
+		createChildResources(folderHandle, subMonitor.split(100));
 	}
 }

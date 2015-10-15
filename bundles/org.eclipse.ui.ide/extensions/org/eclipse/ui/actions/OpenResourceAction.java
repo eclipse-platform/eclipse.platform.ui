@@ -225,7 +225,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			 */
 			private void doOpenWithReferences(IProject project, IProgressMonitor mon) throws CoreException {
 				SubMonitor subMonitor = SubMonitor.convert(mon, openProjectReferences ? 2 : 1);
-				project.open(subMonitor.newChild(1));
+				project.open(subMonitor.split(1));
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
@@ -250,9 +250,9 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					}
 				}
 				if (openProjectReferences) {
-					SubMonitor loopMonitor = subMonitor.newChild(1).setWorkRemaining(references.length);
+					SubMonitor loopMonitor = subMonitor.split(1).setWorkRemaining(references.length);
 					for (int i = 0; i < references.length; i++) {
-						doOpenWithReferences(references[i], loopMonitor.newChild(1));
+						doOpenWithReferences(references[i], loopMonitor.split(1));
 					}
 				}
 			}
@@ -271,7 +271,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					if (!project.exists() || project.isOpen()) {
 						continue;
 					}
-					doOpenWithReferences(project, subMonitor.newChild(1));
+					doOpenWithReferences(project, subMonitor.split(1));
 				}
 				return Status.OK_STATUS;
 			}

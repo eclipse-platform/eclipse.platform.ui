@@ -185,7 +185,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, members.length);
 			for (int i = 0; i < members.length; i++) {
 				members[i].parent = parentHandle;
-				members[i].createResource(subMonitor.newChild(1));
+				members[i].createResource(subMonitor.split(1));
 			}
 		}
 	}
@@ -196,7 +196,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 			SubMonitor subMonitor = SubMonitor.convert(mon, UndoMessages.FolderDescription_SavingUndoInfoProgress,
 					members.length);
 			for (int i = 0; i < members.length; i++) {
-				SubMonitor iterationMonitor = subMonitor.newChild(1);
+				SubMonitor iterationMonitor = subMonitor.split(1);
 				if (members[i] instanceof FileDescription) {
 					IPath path = resource.getFullPath().append(
 							((FileDescription) members[i]).name);

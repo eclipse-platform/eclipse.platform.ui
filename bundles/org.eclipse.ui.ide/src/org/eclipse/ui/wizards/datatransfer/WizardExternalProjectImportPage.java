@@ -438,11 +438,11 @@ public class WizardExternalProjectImportPage extends WizardPage {
 			protected void execute(IProgressMonitor monitor)
                     throws CoreException {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-				project.create(description, subMonitor.newChild(50));
+				project.create(description, subMonitor.split(50));
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				project.open(IResource.BACKGROUND_REFRESH, subMonitor.newChild(50));
+				project.open(IResource.BACKGROUND_REFRESH, subMonitor.split(50));
             }
         };
 

@@ -662,7 +662,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						subMonitor.worked(1);
 						continue;
 					}
-					SaveableHelper.doSaveModel(model, subMonitor.newChild(1),
+					SaveableHelper.doSaveModel(model, subMonitor.split(1),
 							shellProvider, blockUntilSaved);
 					if (subMonitor.isCanceled())
 						break;

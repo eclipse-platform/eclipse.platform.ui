@@ -132,7 +132,7 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 1);
 		// Delete the project that was copied
-		WorkspaceUndoUtil.delete(resources, subMonitor.newChild(1), uiInfo, true);
+		WorkspaceUndoUtil.delete(resources, subMonitor.split(1), uiInfo, true);
 		// Set the target resource to the original
 		setTargetResources(new IResource[] { originalProject });
 		setResourceDescriptions(new ResourceDescription[0]);

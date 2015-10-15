@@ -229,7 +229,7 @@ public class RefreshAction extends WorkspaceAction {
 				while (resourcesEnum.hasNext()) {
 					try {
 						IResource resource = resourcesEnum.next();
-						refreshResource(resource, subMonitor.newChild(1));
+						refreshResource(resource, subMonitor.split(1));
 					} catch (CoreException e) {
 						errors = recordError(errors, e);
 					}

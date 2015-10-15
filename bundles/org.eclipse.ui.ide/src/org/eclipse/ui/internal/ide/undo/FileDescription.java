@@ -146,7 +146,7 @@ public class FileDescription extends AbstractResourceDescription {
 				throw new OperationCanceledException();
 			}
 			if (location != null) {
-				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.newChild(200));
+				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.split(200));
 			} else {
 				InputStream contents = new ByteArrayInputStream(
 						UndoMessages.FileDescription_ContentsCouldNotBeRestored
@@ -159,8 +159,8 @@ public class FileDescription extends AbstractResourceDescription {
 						&& fileContentDescription.exists()) {
 					contents = fileContentDescription.getContents();
 				}
-				fileHandle.create(contents, false, subMonitor.newChild(100));
-				fileHandle.setCharset(charset, subMonitor.newChild(100));
+				fileHandle.create(contents, false, subMonitor.split(100));
+				fileHandle.setCharset(charset, subMonitor.split(100));
 			}
 			if (subMonitor.isCanceled()) {
 				throw new OperationCanceledException();

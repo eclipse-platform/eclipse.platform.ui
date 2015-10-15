@@ -79,7 +79,7 @@ class QuickFixWizard extends Wizard {
 				if (subMonitor.isCanceled())
 					return;
 				QuickFixPage wizardPage = (QuickFixPage) pages[i];
-				wizardPage.performFinish(subMonitor.newChild(10));
+				wizardPage.performFinish(subMonitor.split(10));
 			}
 		};
 

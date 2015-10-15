@@ -284,7 +284,7 @@ public class BuildAction extends WorkspaceAction {
 					// Backwards compatibility: check shouldPerformResourcePruning().
 					// Previously if this returned true, the full reference graph is built, otherwise just build the selected configurations
 					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(),
-							progress.newChild(1));
+							progress.split(1));
 				} catch (CoreException e) {
 					status = e.getStatus();
 				}

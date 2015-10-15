@@ -555,7 +555,7 @@ return true;
 						break;
 					String fullPath = selectedResources[i].getFullPath().toPortableString();
 					try {
-						selectedResources[i].delete(true, subMonitor.newChild(1));
+						selectedResources[i].delete(true, subMonitor.split(1));
 						removedResources.add(selectedResources[i]);
 						fBrokenResources.remove(fullPath);
 						fFixedResources.remove(fullPath);
