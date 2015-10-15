@@ -456,7 +456,7 @@ public class OleEditor extends EditorPart {
      */
     private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
         // Check input type.
-		IPathEditorInput pathEditorInput = Adapters.getAdapter(input, IPathEditorInput.class, true);
+		IPathEditorInput pathEditorInput = Adapters.adapt(input, IPathEditorInput.class);
         if (pathEditorInput == null)
             throw new PartInitException(OleMessages.format(
                     "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
