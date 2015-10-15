@@ -403,6 +403,40 @@ public class SubMonitorTest extends TestCase {
 		}
 	}
 
+	public void testIsCanceled() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(npm);
+		assertTrue("subMonitor should not be canceled", !subMonitor.isCanceled());
+		npm.setCanceled(true);
+		assertTrue("subMonitor should be canceled", subMonitor.isCanceled());
+	}
+
+	public void testSuppressIsCanceled() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(npm).newChild(0, SubMonitor.SUPPRESS_ISCANCELED);
+
+		assertTrue("subMonitor should not be canceled", !subMonitor.isCanceled());
+		npm.setCanceled(true);
+		assertTrue("subMonitor should not be canceled", !subMonitor.isCanceled());
+	}
+
+	public void testSuppressIsCanceledFlagIsInherited() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(npm).newChild(0, SubMonitor.SUPPRESS_ISCANCELED).newChild(0);
+
+		assertTrue("subMonitor should not be canceled", !subMonitor.isCanceled());
+		npm.setCanceled(true);
+		assertTrue("subMonitor should not be canceled", !subMonitor.isCanceled());
+	}
+
+	public void testSuppressIsCanceledAffectsSplit() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(npm, 100).newChild(100, SubMonitor.SUPPRESS_ISCANCELED);
+		npm.setCanceled(true);
+		// Should not throw an OperationCanceledException.
+		subMonitor.split(50);
+	}
+
 	/**
 	 * Tests the style bits in SubProgressMonitor
 	 */
