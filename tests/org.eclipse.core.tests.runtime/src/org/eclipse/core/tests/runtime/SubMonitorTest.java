@@ -17,8 +17,7 @@ package org.eclipse.core.tests.runtime;
 
 import java.util.*;
 import junit.framework.TestCase;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.*;
 import org.junit.Assert;
 
 /**
@@ -341,6 +340,71 @@ public class SubMonitorTest extends TestCase {
 		return results.toArray(new String[results.size()]);
 	}
 
+	public void testSplitPerformsAutoCancel() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		npm.setCanceled(true);
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		try {
+			subMonitor.split(500);
+			fail("split should have thrown an exception");
+		} catch (OperationCanceledException exception) {
+		}
+	}
+
+	public void testNewChildDoesNotAutoCancel() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		npm.setCanceled(true);
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		subMonitor.newChild(500);
+	}
+
+	public void testSplitDoesNotThrowExceptionIfParentNotCanceled() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		subMonitor.split(500);
+	}
+
+	public void testAutoCancelDoesNothingForTrivialConversions() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		npm.setCanceled(true);
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		subMonitor.split(1000);
+	}
+
+	public void testAutoCancelDoesNothingForSingleTrivialOperation() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		npm.setCanceled(true);
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		subMonitor.split(0);
+	}
+
+	public void testAutoCancelThrowsExceptionEventuallyForManyTrivialOperations() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		npm.setCanceled(true);
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		try {
+			for (int counter = 0; counter < 1000; counter++) {
+				subMonitor.split(0);
+			}
+			fail("split should have thrown an exception");
+		} catch (OperationCanceledException exception) {
+		}
+	}
+
+	public void testConsumingEndOfMonitorNotTreatedAsTrivial() {
+		NullProgressMonitor npm = new NullProgressMonitor();
+		boolean threwException = false;
+		SubMonitor subMonitor = SubMonitor.convert(npm, 1000);
+		subMonitor.newChild(500);
+		try {
+			npm.setCanceled(true);
+			subMonitor.split(500);
+		} catch (OperationCanceledException exception) {
+			threwException = true;
+		}
+		assertTrue("split should have thrown an exception", threwException);
+	}
+
 	/**
 	 * Tests the style bits in SubProgressMonitor
 	 */
@@ -459,12 +523,14 @@ public class SubMonitorTest extends TestCase {
 		// Output the code for the observed results, in case one of them has changed intentionally
 		for (Map.Entry<String, String[]> entry : results.entrySet()) {
 			String[] expectedResult = expected.get(entry.getKey());
-			if (expectedResult == null)
+			if (expectedResult == null) {
 				expectedResult = new String[0];
+			}
 
 			String[] value = entry.getValue();
-			if (compareArray(value, expectedResult))
+			if (compareArray(value, expectedResult)) {
 				continue;
+			}
 
 			System.out.print("expected.put(\"" + entry.getKey() + "\", new String[] {");
 			failure = entry.getKey();
@@ -472,34 +538,40 @@ public class SubMonitorTest extends TestCase {
 			System.out.println(list + "});");
 		}
 
-		if (failure != null) // Now actually throw an assertation if one of the results failed
+		if (failure != null) {
 			Assert.assertEquals(failure, concatArray(expected.get(failure)), concatArray(results.get(failure)));
+		}
 	}
 
 	private boolean compareArray(String[] value, String[] expectedResult) {
-		if (value == null || expectedResult == null)
+		if (value == null || expectedResult == null) {
 			return value == null && expectedResult == null;
+		}
 
-		if (value.length != expectedResult.length)
+		if (value.length != expectedResult.length) {
 			return false;
+		}
 		for (int i = 0; i < expectedResult.length; i++) {
 			String next = expectedResult[i];
-			if (!next.equals(value[i]))
+			if (!next.equals(value[i])) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	private String concatArray(String[] value) {
-		if (value == null)
+		if (value == null) {
 			return "";
+		}
 
 		StringBuffer buf = new StringBuffer();
 		boolean isFirst = true;
 		for (int i = 0; i < value.length; i++) {
 			String nextValue = value[i];
-			if (!isFirst)
+			if (!isFirst) {
 				buf.append(", ");
+			}
 			isFirst = false;
 			buf.append("\"" + nextValue + "\"");
 		}

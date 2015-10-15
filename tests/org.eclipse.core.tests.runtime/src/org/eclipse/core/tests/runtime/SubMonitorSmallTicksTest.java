@@ -49,6 +49,14 @@ public class SubMonitorSmallTicksTest extends TestCase {
 		}
 	}
 
+	public void testSplit() {
+		SubMonitor bigTicksChild = smallTicksChild.newChild(10).setWorkRemaining(TOTAL_WORK);
+		for (int i = 0; i < TOTAL_WORK; i++) {
+			bigTicksChild.split(1);
+		}
+		bigTicksChild.done();
+	}
+
 	@Override
 	protected void tearDown() throws Exception {
 		smallTicksChild.done();
