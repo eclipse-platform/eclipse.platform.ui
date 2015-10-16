@@ -23,7 +23,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
@@ -439,9 +438,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
                     throws CoreException {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 				project.create(description, subMonitor.split(50));
-				if (subMonitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
 				project.open(IResource.BACKGROUND_REFRESH, subMonitor.split(50));
             }
         };

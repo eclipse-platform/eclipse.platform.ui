@@ -24,9 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -113,57 +112,41 @@ public class NewHockeyleagueProjectWizard
 		// create the new project operation
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 
-			protected void execute(IProgressMonitor monitor)
-				throws CoreException {
+			protected void execute(IProgressMonitor monitor) throws CoreException {
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "Creating New Project", 2);//$NON-NLS-1$
+
+				subMonitor.setTaskName("Create a project descriptor");//$NON-NLS-1$
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				final IProjectDescription description = workspace
+					.newProjectDescription(newProjectHandle.getName());
+				description.setLocation(newProjectPath);
+
+				subMonitor.setTaskName("Create the new project");//$NON-NLS-1$
+				newProjectHandle.create(description, subMonitor.split(1));
+
+				subMonitor.setTaskName("Open the new project");//$NON-NLS-1$
+				newProjectHandle.open(subMonitor.split(1));
+
+				subMonitor.setTaskName("Create the new file");//$NON-NLS-1$
+				newFile[0] = newProjectHandle
+					.getFile("example.hockeyleague");//$NON-NLS-1$
+				ResourceSet resourceSet = new ResourceSetImpl();
+
+				URI fileURI = URI.createPlatformResourceURI(newFile[0]
+					.getFullPath().toString());
+
+				Resource resource = resourceSet.createResource(fileURI);
+
+				// Add the initial model object to the contents.
+				//
+				createInitialModel(resource);
+
 				try {
-					monitor.beginTask("Creating New Project", 3000);//$NON-NLS-1$
-
-					monitor.setTaskName("Create a project descriptor");//$NON-NLS-1$
-					monitor.worked(1000);
-					IWorkspace workspace = ResourcesPlugin.getWorkspace();
-					final IProjectDescription description = workspace
-						.newProjectDescription(newProjectHandle.getName());
-					description.setLocation(newProjectPath);
-
-					monitor.setTaskName("Create the new project");//$NON-NLS-1$
-					newProjectHandle.create(description,
-						new SubProgressMonitor(monitor, 1000));
-
-					if (monitor.isCanceled())
-						throw new OperationCanceledException();
-
-					monitor.setTaskName("Open the new project");//$NON-NLS-1$
-					newProjectHandle
-						.open(new SubProgressMonitor(monitor, 1000));
-
-					if (monitor.isCanceled())
-						throw new OperationCanceledException();
-
-					monitor.setTaskName("Create the new file");//$NON-NLS-1$
-					monitor.worked(1000);
-					newFile[0] = newProjectHandle
-						.getFile("example.hockeyleague");//$NON-NLS-1$
-					ResourceSet resourceSet = new ResourceSetImpl();
-
-					URI fileURI = URI.createPlatformResourceURI(newFile[0]
-						.getFullPath().toString());
-
-					Resource resource = resourceSet.createResource(fileURI);
-
-					// Add the initial model object to the contents.
+					// Save the contents of the resource to the file system.
 					//
-					createInitialModel(resource);
-
-					try {
-						// Save the contents of the resource to the file system.
-						//
-						resource.save(Collections.EMPTY_MAP);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-				} finally {
-					monitor.done();
+					resource.save(Collections.EMPTY_MAP);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		};

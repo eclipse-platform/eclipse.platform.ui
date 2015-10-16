@@ -342,10 +342,6 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				throw e;
 			}
 		}
-
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
 	}
 
 	/**

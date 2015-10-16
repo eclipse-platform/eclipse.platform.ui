@@ -53,9 +53,6 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 						MarkerMessages.markCompletedAction_title, true);
 
 				subMonitor.worked(20);
-				if (subMonitor.isCanceled()) {
-					return;
-				}
 				execute(op, MarkerMessages.markCompletedAction_title, subMonitor.split(80), null);
 			});
 		} catch (InvocationTargetException e) {

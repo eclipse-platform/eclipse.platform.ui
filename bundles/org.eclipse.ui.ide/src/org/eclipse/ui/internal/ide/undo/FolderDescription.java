@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 
 /**
@@ -83,9 +82,6 @@ public class FolderDescription extends ContainerDescription {
 		IFolder folderHandle = (IFolder) resource;
 		SubMonitor subMonitor = SubMonitor.convert(mon, 300);
 		subMonitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
 		if (filters != null) {
 			SubMonitor loopMonitor = subMonitor.split(100).setWorkRemaining(filters.length);
 			for (int i = 0; i < filters.length; i++) {
@@ -98,9 +94,6 @@ public class FolderDescription extends ContainerDescription {
 			folderHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL, subMonitor.split(100));
 		} else {
 			folderHandle.create(virtual ? IResource.VIRTUAL : 0, true, subMonitor.split(100));
-		}
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
 		}
 		createChildResources(folderHandle, subMonitor.split(100));
 	}

@@ -747,10 +747,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
 	void importRecursivelyFrom(Object fileSystemObject, int policy, IProgressMonitor mon) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 100);
-		if (subMonitor.isCanceled()) {
-			throw new OperationCanceledException();
-		}
-
         if (!provider.isFolder(fileSystemObject)) {
 			importFile(fileSystemObject, policy, subMonitor.split(100));
             return;

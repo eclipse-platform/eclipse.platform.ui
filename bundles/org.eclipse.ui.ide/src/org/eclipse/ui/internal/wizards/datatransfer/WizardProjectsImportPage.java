@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -1191,9 +1190,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			@Override
 			protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, selected.length);
-				if (subMonitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
 				// Import as many projects as we can; accumulate errors to
 				// report to the user
 				MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
