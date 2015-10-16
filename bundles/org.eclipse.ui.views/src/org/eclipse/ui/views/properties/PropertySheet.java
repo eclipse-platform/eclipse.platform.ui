@@ -314,6 +314,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		if (part == null || !part.equals(currentPart)) {
 			return;
 		}
+		boolean visible = getSite() != null && getSite().getPage().isPartVisible(this);
+		if (!visible) {
+			return;
+		}
 
 		// we ignore null selection, or if we are pinned, or our own selection
 		// or same selection

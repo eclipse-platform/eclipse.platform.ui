@@ -464,7 +464,7 @@ public class PartServiceImpl implements EPartService {
 
 	@Override
 	public boolean isPartVisible(MPart part) {
-		if (isInContainer(part)) {
+		if (isInActivePerspective(part)) {
 			MUIElement element = part;
 			MElementContainer<?> parent = part.getParent();
 			if (parent == null) {
@@ -487,6 +487,19 @@ public class PartServiceImpl implements EPartService {
 			return element.isVisible();
 		}
 		return false;
+	}
+
+	private boolean isInActivePerspective(MUIElement element) {
+		if (modelService.isHostedElement(element, getWindow()))
+			return true;
+		MPerspective persp = modelService.getPerspectiveFor(element);
+		if (persp == null) {
+			List<MUIElement> allPerspectiveElements = modelService.findElements(workbenchWindow, null, MUIElement.class,
+					null, EModelService.PRESENTATION);
+			return allPerspectiveElements.contains(element);
+		}
+		boolean inCurrentPerspective = persp == persp.getParent().getSelectedElement();
+		return inCurrentPerspective;
 	}
 
 	private boolean isInContainer(MUIElement element) {
