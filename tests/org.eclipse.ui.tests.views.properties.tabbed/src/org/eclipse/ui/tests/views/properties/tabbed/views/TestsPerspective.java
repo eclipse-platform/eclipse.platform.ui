@@ -14,6 +14,7 @@ package org.eclipse.ui.tests.views.properties.tabbed.views;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.tests.views.properties.tabbed.decorations.views.DecorationTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.override.OverrideTestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.text.TextTestsView;
@@ -42,6 +43,7 @@ public class TestsPerspective implements IPerspectiveFactory {
 		IFolderLayout top = layout.createFolder(
 				"top", IPageLayout.TOP, (float) 0.25, editorArea);//$NON-NLS-1$
 		top.addView(TextTestsView.TEXT_TESTS_VIEW_ID);
+		top.addPlaceholder(DecorationTestsView.DECORATION_TESTS_VIEW_ID);
 		IFolderLayout bottom = layout.createFolder(
 				"bottom", IPageLayout.BOTTOM, (float) 0.25,//$NON-NLS-1$
 				editorArea);

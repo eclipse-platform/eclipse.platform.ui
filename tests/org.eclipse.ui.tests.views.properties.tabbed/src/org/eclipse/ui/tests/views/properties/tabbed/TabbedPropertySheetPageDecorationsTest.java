@@ -47,20 +47,26 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
         assertNotNull(workbenchWindow);
         IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
         assertNotNull(workbenchPage);
-        workbenchPage.closeAllPerspectives(false, false);
+		closeIntroView(workbenchPage);
+		processUiEvents();
+		workbenchPage.closeAllPerspectives(false, false);
+		processUiEvents();
 
         /**
          * Open the tests perspective.
          */
         PlatformUI.getWorkbench().showPerspective(
             TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
-
+		processUiEvents();
         /**
          * Select the Decoration Tests view.
          */
         IViewPart view = workbenchPage.showView(DecorationTestsView.DECORATION_TESTS_VIEW_ID);
+		processUiEvents();
+
         assertNotNull(view);
         assertTrue(view instanceof DecorationTestsView);
+		assertTrue(workbenchPage.isPartVisible(view));
         decorationTestsView = (DecorationTestsView) view;
 
         /**
@@ -74,6 +80,13 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
         assertEquals(treeNodes.length, 8);
     }
 
+	private void closeIntroView(IWorkbenchPage workbenchPage) {
+		IViewPart intro = workbenchPage.findView("org.eclipse.ui.internal.introview");
+		if (intro != null) {
+			workbenchPage.hideView(intro);
+		}
+	}
+
     @Override
 	protected void tearDown()
         throws Exception {
@@ -82,15 +95,19 @@ public class TabbedPropertySheetPageDecorationsTest extends TestCase {
         /**
 		 * Bug 175070: Make sure the views have finished painting.
          */
-        while (Display.getCurrent().readAndDispatch()) {
-            //
-        }
+		processUiEvents();
 
         /**
          * Deselect everything in the Tests view.
          */
         setSelection(new TreeNode[] {} );
     }
+
+	private void processUiEvents() {
+		while (Display.getCurrent().readAndDispatch()) {
+            //
+        }
+	}
 
     /**
      * Set the selection in the view to cause the properties view to change.

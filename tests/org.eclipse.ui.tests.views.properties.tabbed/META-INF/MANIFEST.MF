@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed,
  org.eclipse.jface.text
 Bundle-Vendor: %Plugin.providerName
-Bundle-ClassPath: uitptests.jar
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.ui.tests.views.properties.tabbed,
