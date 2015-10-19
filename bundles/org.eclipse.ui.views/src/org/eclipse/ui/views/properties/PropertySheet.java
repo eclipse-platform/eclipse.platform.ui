@@ -427,11 +427,11 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	        IExtensionPoint ep = registry.getExtensionPoint(EXT_POINT);
 			if (ep != null) {
 				IExtension[] extensions = ep.getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-					for (int j = 0; j < elements.length; j++) {
-						if ("excludeSources".equalsIgnoreCase(elements[j].getName())) { //$NON-NLS-1$
-							String id = elements[j].getAttribute("id"); //$NON-NLS-1$
+				for (IExtension extension : extensions) {
+					IConfigurationElement[] elements = extension.getConfigurationElements();
+					for (IConfigurationElement element : elements) {
+						if ("excludeSources".equalsIgnoreCase(element.getName())) { //$NON-NLS-1$
+							String id = element.getAttribute("id"); //$NON-NLS-1$
 							if (id != null)
 								ignoredViews.add(id);
 						}

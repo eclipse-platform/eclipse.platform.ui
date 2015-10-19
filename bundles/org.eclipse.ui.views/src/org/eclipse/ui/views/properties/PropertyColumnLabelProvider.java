@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,7 @@ public class PropertyColumnLabelProvider extends ColumnLabelProvider {
 				.getPropertySource(object);
 		IPropertyDescriptor[] propertyDescriptors = propertySource
 				.getPropertyDescriptors();
-		for (int i = 0; i < propertyDescriptors.length; i++) {
-			IPropertyDescriptor propertyDescriptor = propertyDescriptors[i];
+		for (IPropertyDescriptor propertyDescriptor : propertyDescriptors) {
 			if (propertyID.equals(propertyDescriptor.getId())) {
 				return propertyDescriptor.getLabelProvider().getText(
 						propertySource.getPropertyValue(propertyID));
@@ -67,8 +66,7 @@ public class PropertyColumnLabelProvider extends ColumnLabelProvider {
 				.getPropertySource(object);
 		IPropertyDescriptor[] propertyDescriptors = propertySource
 				.getPropertyDescriptors();
-		for (int i = 0; i < propertyDescriptors.length; i++) {
-			IPropertyDescriptor propertyDescriptor = propertyDescriptors[i];
+		for (IPropertyDescriptor propertyDescriptor : propertyDescriptors) {
 			if (propertyID.equals(propertyDescriptor.getId())) {
 				return propertyDescriptor.getLabelProvider().getImage(
 						propertySource.getPropertyValue(propertyID));

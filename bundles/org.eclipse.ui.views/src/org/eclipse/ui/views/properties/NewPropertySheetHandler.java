@@ -114,8 +114,7 @@ public class NewPropertySheetHandler extends AbstractHandler {
 			secondaryId = Long.toString(System.currentTimeMillis());
 		} else {
 			IViewReference[] refs = page.getViewReferences();
-			for (int i = 0; i < refs.length; i++) {
-				IViewReference viewReference = refs[i];
+			for (IViewReference viewReference : refs) {
 				if (IPageLayout.ID_PROP_SHEET.equals(viewReference.getId())) {
 					secondaryId = Long.toString(System.currentTimeMillis());
 					PropertySheet sheet = (PropertySheet) viewReference
