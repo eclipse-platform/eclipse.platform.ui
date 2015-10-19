@@ -144,18 +144,6 @@
       </objectContribution>
       <objectContribution
             adaptable="true"
-            id="org.eclipse.core.tools.contribution2"
-            objectClass="org.eclipse.jdt.core.IJavaElement">
-         <action
-               label="Find Unreferenced Members"
-               class="org.eclipse.core.tools.search.FindUnusedMembersAction"
-               menubarPath="additions"
-               enablesFor="*"
-               id="org.eclipse.core.tools.search.FindUnusedMembersAction">
-         </action>
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
             id="org.eclipse.core.tools.contribution3"
             objectClass="org.eclipse.core.resources.IResource">
          <action
@@ -175,6 +163,39 @@
 			searchResultClass="org.eclipse.core.tools.search.FindUnusedSearchResult"
 			class="org.eclipse.core.tools.search.FindUnusedSearchResultPage">
 		</viewPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.jdt.ui.source.menu">
+         <command
+               commandId="org.eclipse.core.tools.command.findunusedmembers"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <with
+                        variable="selection">
+                     <iterate
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.jdt.core.IJavaElement">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.core.tools.search.FindUnusedMemberHandler"
+            id="org.eclipse.core.tools.command.findunusedmembers"
+            name="Find unused members">
+      </command>
    </extension>  
    
 </plugin>
