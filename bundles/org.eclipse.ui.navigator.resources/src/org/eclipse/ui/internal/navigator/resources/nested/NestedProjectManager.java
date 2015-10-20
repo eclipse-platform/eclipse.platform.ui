@@ -11,7 +11,8 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
-import java.util.SortedMap;
+import java.util.Collections;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
@@ -31,7 +32,10 @@ public class NestedProjectManager {
 
 	private static NestedProjectManager INSTANCE = new NestedProjectManager();
 
-	private SortedMap<IPath, IProject> locationsToProjects = new TreeMap<IPath, IProject>(new PathComparator());
+	private Map<IPath, IProject> locationsToProjects = Collections
+			.synchronizedMap(new TreeMap<IPath, IProject>(new PathComparator()));
+
+	private int knownProjectsCount;
 
 	private NestedProjectManager() {
 		refreshProjectsList();
@@ -47,7 +51,7 @@ public class NestedProjectManager {
 	}
 
 	private void refreshProjectsListIfNeeded() {
-		if (this.locationsToProjects.size() != ResourcesPlugin.getWorkspace().getRoot().getProjects().length) {
+		if (knownProjectsCount != ResourcesPlugin.getWorkspace().getRoot().getProjects().length) {
 			// TODO: find other cheap checks to try in condition
 			// Need to find a cheap way to react to project refactoring (moved
 			// or renamed...)
@@ -56,18 +60,18 @@ public class NestedProjectManager {
 	}
 
 	private void refreshProjectsList() {
-		this.locationsToProjects.clear();
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			this.locationsToProjects.put(project.getLocation(), project);
+		locationsToProjects.clear();
+		IProject[] knownProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		knownProjectsCount = knownProjects.length;
+		for (IProject project : knownProjects) {
+			IPath location = project.getLocation();
+			if (location != null) {
+				locationsToProjects.put(location, project);
+			}
 		}
 	}
 
 	public static NestedProjectManager getInstance() {
-		synchronized (INSTANCE) {
-			if (INSTANCE == null) {
-				INSTANCE = new NestedProjectManager();
-			}
-		}
 		return INSTANCE;
 	}
 
@@ -80,8 +84,12 @@ public class NestedProjectManager {
 			return null;
 		}
 		refreshProjectsListIfNeeded();
-		IProject res = this.locationsToProjects.get(folder.getLocation());
-		if (res != null && (!res.exists() || !res.getLocation().equals(folder.getLocation()))) {
+		IPath location = folder.getLocation();
+		if (location == null) {
+			return null;
+		}
+		IProject res = locationsToProjects.get(location);
+		if (res != null && (!res.exists() || !location.equals(res.getLocation()))) {
 			// project was deleted and state not refreshed
 			refreshProjectsList();
 			return getProject(folder);
@@ -103,9 +111,13 @@ public class NestedProjectManager {
 		if (!project.exists()) {
 			return false;
 		}
-		IPath queriedLocation = project.getLocation().removeLastSegments(1);
+		IPath location = project.getLocation();
+		if (location == null) {
+			return false;
+		}
+		IPath queriedLocation = location.removeLastSegments(1);
 		while (queriedLocation.segmentCount() > 0) {
-			if (this.locationsToProjects.containsKey(queriedLocation)) {
+			if (locationsToProjects.containsKey(queriedLocation)) {
 				return true;
 			}
 			queriedLocation = queriedLocation.removeLastSegments(1);
@@ -114,22 +126,31 @@ public class NestedProjectManager {
 	}
 
 	public IContainer getMostDirectOpenContainer(IProject project) {
+		IPath location = project.getLocation();
+		if (location == null) {
+			return null;
+		}
 		IProject mostDirectParentProject = null;
-		IPath queriedLocation = project.getLocation().removeLastSegments(1);
+		IPath queriedLocation = location.removeLastSegments(1);
 		while (mostDirectParentProject == null && queriedLocation.segmentCount() > 0) {
-			if (this.locationsToProjects.containsKey(queriedLocation)) {
-				mostDirectParentProject = this.locationsToProjects.get(queriedLocation);
+			mostDirectParentProject = locationsToProjects.get(queriedLocation);
+			if (mostDirectParentProject != null && mostDirectParentProject.getLocation() == null) {
+				mostDirectParentProject = null;
 			}
 			queriedLocation = queriedLocation.removeLastSegments(1);
 		}
 		if (mostDirectParentProject != null) {
-			IPath parentContainerAbsolutePath = project.getLocation().removeLastSegments(1);
-			if (parentContainerAbsolutePath.equals(mostDirectParentProject.getLocation())) {
-				return mostDirectParentProject;
-			} else {
-				IPath parentFolderPathRelativeToProject = parentContainerAbsolutePath.removeFirstSegments(mostDirectParentProject.getLocation().segmentCount());
-				return mostDirectParentProject.getFolder(parentFolderPathRelativeToProject);
+			IPath parentContainerAbsolutePath = location.removeLastSegments(1);
+			IPath location2 = mostDirectParentProject.getLocation();
+			if (location2 == null) {
+				return null;
 			}
+			if (parentContainerAbsolutePath.equals(location2)) {
+				return mostDirectParentProject;
+			}
+			IPath parentFolderPathRelativeToProject = parentContainerAbsolutePath
+					.removeFirstSegments(location2.segmentCount());
+			return mostDirectParentProject.getFolder(parentFolderPathRelativeToProject);
 		}
 		return null;
 	}
