@@ -136,6 +136,10 @@ public class InfoReader extends MementoReader {
 			return getString(IWorkbenchConstants.TAG_CONTENT);
 		}
 
+		String getLabel() {
+			return getString(IWorkbenchConstants.TAG_LABEL);
+		}
+
 	}
 
 }
