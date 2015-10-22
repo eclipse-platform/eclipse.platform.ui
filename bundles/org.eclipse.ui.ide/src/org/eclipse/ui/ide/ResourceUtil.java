@@ -51,9 +51,6 @@ public final class ResourceUtil {
      * @return the file corresponding to the editor input, or <code>null</code>
      */
     public static IFile getFile(IEditorInput editorInput) {
-		if (editorInput == null) {
-			return null;
-		}
         // Note: do not treat IFileEditorInput as a special case.  Use the adapter mechanism instead.
         // See Bug 87288 [IDE] [EditorMgmt] Should avoid explicit checks for [I]FileEditorInput
 		return Adapters.adapt(editorInput, IFile.class);
@@ -78,7 +75,7 @@ public final class ResourceUtil {
 			return resource;
 		}
         // the input may adapt to IFile but not IResource
-        return getFile(editorInput);
+		return Adapters.adapt(editorInput, IFile.class);
     }
 
     /**
@@ -120,13 +117,7 @@ public final class ResourceUtil {
      * @since 3.2
      */
     public static IResource getResource(Object element) {
-		if (element == null) {
-			return null;
-		}
-		if (element instanceof IResource) {
-			return (IResource) element;
-		}
-		return getAdapter(element, IResource.class, true);
+		return Adapters.adapt(element, IResource.class);
     }
 
     /**
@@ -154,15 +145,15 @@ public final class ResourceUtil {
 		}
 
 		// try for IFile adapter (before IResource adapter, since it's more specific)
-		Object adapter = getAdapter(element, IFile.class, true);
-		if (adapter instanceof IFile) {
-			return (IFile) adapter;
+		IFile file = Adapters.adapt(element, IFile.class);
+		if (file != null) {
+			return file;
 		}
 
 		// try for IResource adapter
-		adapter = getAdapter(element, IResource.class, true);
-		if (adapter instanceof IFile) {
-			return (IFile) adapter;
+		IResource resource = Adapters.adapt(element, IResource.class);
+		if (resource instanceof IFile) {
+			return (IFile) resource;
 		}
 		return null;
     }
@@ -176,21 +167,7 @@ public final class ResourceUtil {
      * @since 3.2
      */
     public static ResourceMapping getResourceMapping(Object element) {
-		if (element == null) {
-			return null;
-		}
-
-		// try direct instanceof check
-		if (element instanceof ResourceMapping) {
-			return (ResourceMapping) element;
-		}
-
-		// try for ResourceMapping adapter
-		Object adapter = getAdapter(element, ResourceMapping.class, true);
-		if (adapter instanceof ResourceMapping) {
-			return (ResourceMapping) adapter;
-		}
-		return null;
+		return Adapters.adapt(element, ResourceMapping.class);
 	}
 
     /**
@@ -224,7 +201,7 @@ public final class ResourceUtil {
 	    		return null;
 	    	}
 	    	ResourceTraversal traversal = traversals[0];
-	    	// TODO: need to honour traversal flags
+			// TODO: need to honor traversal flags
 	    	IResource[] resources = traversal.getResources();
 	    	if (resources.length != 1) {
 	    		return null;
@@ -242,12 +219,10 @@ public final class ResourceUtil {
 	 *
 	 * @since 3.2
 	 *
-	 * @deprecated Use {@link Adapters#adapt(Object, Class, boolean)}
-	 *             instead
+	 * @deprecated Use {@link Adapters#adapt(Object, Class, boolean)} instead.
 	 */
 	@Deprecated
 	public static <T> T getAdapter(Object element, Class<T> adapterType, boolean forceLoad) {
 		return Adapters.adapt(element, adapterType, forceLoad);
 	}
-
 }
