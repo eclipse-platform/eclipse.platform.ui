@@ -318,11 +318,15 @@ public class E4Application implements IApplication {
 		Optional<String> themeId = highContrastMode ? Optional.of(HIGH_CONTRAST_THEME_ID)
 				: getArgValue(E4Application.THEME_ID, applicationContext, false);
 
-		context.set(E4Application.THEME_ID, themeId.filter(tId -> cssURI != null).orElse(DEFAULT_THEME_ID));
+		if (!themeId.isPresent() && !cssURI.isPresent()) {
+			context.set(E4Application.THEME_ID, DEFAULT_THEME_ID);
+		} else {
+			context.set(E4Application.THEME_ID, themeId.orElseGet(() -> null));
+		}
 
 
 		// validate static CSS URI
-		cssURI.filter(cssURIValue -> cssURIValue.startsWith("platform:/plugin/")).ifPresent(cssURIValue -> {
+		cssURI.filter(cssURIValue -> !cssURIValue.startsWith("platform:/plugin/")).ifPresent(cssURIValue -> {
 			System.err.println(
 					"Warning. Use the \"platform:/plugin/Bundle-SymbolicName/path/filename.extension\" URI for the  parameter:   "
 							+ IWorkbench.CSS_URI_ARG); // $NON-NLS-1$
