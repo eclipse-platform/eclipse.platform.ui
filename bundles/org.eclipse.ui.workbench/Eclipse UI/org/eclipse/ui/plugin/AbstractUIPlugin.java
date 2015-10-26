@@ -715,13 +715,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 			// If not found, reinterpret imageFilePath as full URL.
 			// This is unspecified, but apparently widely-used, see bug 395126.
 			try {
-				fullPathString = new URL(imageFilePath);
+				url = new URL(imageFilePath);
 			} catch (MalformedURLException e) {
 				return null;
-			}
-			URL platformURL = FileLocator.find(fullPathString);
-			if (platformURL != null) {
-				url = fullPathString;
 			}
 		}
 		// create image descriptor with the platform:/ URL
