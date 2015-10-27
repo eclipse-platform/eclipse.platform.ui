@@ -12,10 +12,8 @@ package org.eclipse.ui.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.IMemento;
@@ -49,6 +47,12 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
     private Map extraData = new HashMap();
 
     /**
+     * Indicates whether workbench state should be saved on close and
+     * restored on subsequent open.
+     */
+    private boolean saveAndRestore = false;
+
+    /**
      * Indicates whether the workbench is being force to close. During
      * an emergency close, no interaction with the user should be done.
      */
@@ -64,9 +68,6 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
      */
 	private boolean exitOnLastWindowClose = true;
 
-	@Inject
-	private IEclipseContext e4Context;
-
     /**
      * Creates a new workbench configurer.
      * <p>
@@ -74,7 +75,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
      * only via {@link WorkbenchAdvisor#initialize WorkbenchAdvisor.initialize}
      * </p>
      */
-	/* package */ WorkbenchConfigurer() {
+    /* package */WorkbenchConfigurer() {
         super();
     }
 
@@ -109,13 +110,13 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 
     @Override
 	public boolean getSaveAndRestore() {
-		return (boolean) e4Context.get(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE);
+        return saveAndRestore;
     }
 
     @Override
 	public void setSaveAndRestore(boolean enabled) {
-		e4Context.set(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE, enabled);
-	}
+        saveAndRestore = enabled;
+    }
 
     @Override
 	public Object getData(String key) {
