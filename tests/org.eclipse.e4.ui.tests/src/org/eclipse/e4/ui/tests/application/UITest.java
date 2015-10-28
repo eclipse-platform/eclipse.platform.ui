@@ -10,18 +10,15 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertTrue;
-
+import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.junit.After;
-import org.junit.Before;
 
-public class UITest {
+public class UITest extends TestCase {
 
 	final static private String engineURI = "bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.application.HeadlessContextPresentationEngine"; //$NON-NLS-1$
 
@@ -30,8 +27,9 @@ public class UITest {
 
 	private IPresentationEngine engine;
 
-	@Before
-	public void setUp() throws Exception {
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
 
 		application = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		applicationContext = E4Application.createDefaultContext();
@@ -41,9 +39,10 @@ public class UITest {
 		E4Application.initializeServices(application);
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@Override
+	protected void tearDown() throws Exception {
 		applicationContext.dispose(); // used by the tests to dispose GUI?
+		super.tearDown();
 	}
 
 	protected IPresentationEngine getEngine() {

@@ -11,11 +11,8 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.util.List;
+import junit.framework.TestCase;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -26,11 +23,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.junit.Test;
 
-public class ModelRobustnessTest {
+public class ModelRobustnessTest extends TestCase {
 
-	@Test
 	public void testLoadingInvalidContainments() {
 		// E4XMIResourceFactory factory = new E4XMIResourceFactory();
 		URI uri = URI.createPlatformPluginURI(
@@ -68,7 +63,6 @@ public class ModelRobustnessTest {
 				.getElementId());
 	}
 
-	@Test
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testAddingInvalidElements() {
 		MApplication app = MApplicationFactory.INSTANCE.createApplication();

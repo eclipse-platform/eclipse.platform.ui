@@ -11,11 +11,9 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -23,9 +21,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.junit.Test;
 
-public class Bug308220Test {
+public class Bug308220Test extends TestCase {
 
 	static class WindowService {
 		Object activePart;
@@ -37,7 +34,6 @@ public class Bug308220Test {
 		}
 	}
 
-	@Test
 	public void testBug308220() throws Exception {
 		IEclipseContext app = EclipseContextFactory.create();
 

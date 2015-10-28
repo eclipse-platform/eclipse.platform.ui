@@ -11,10 +11,6 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -43,7 +39,6 @@ import org.eclipse.e4.ui.workbench.UIEvents.UIElement;
 import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
 import org.eclipse.e4.ui.workbench.UIEvents.Window;
 import org.eclipse.emf.common.notify.Notifier;
-import org.junit.Test;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -117,7 +112,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 					atts.add(attIds[i]);
 			}
 
-			return atts.toArray(new String[atts.size()]);
+			return (String[]) atts.toArray(new String[atts.size()]);
 		}
 	}
 
@@ -213,7 +208,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		return application;
 	}
 
-	@Test
 	public void testAllTopics() {
 		IEventBroker eventBroker = (IEventBroker) applicationContext
 				.get(IEventBroker.class.getName());
@@ -336,7 +330,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	}
 
 	// Verify bug 374534
-	@Test
 	public void testBrokerCleanup() {
 		final String testTopic = "test/374534";
 		IEventBroker appEB = applicationContext.get(IEventBroker.class);

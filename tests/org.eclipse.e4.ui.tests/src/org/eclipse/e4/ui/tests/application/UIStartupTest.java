@@ -11,9 +11,6 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.ResourceUtility;
@@ -27,27 +24,22 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 	protected Display display;
 
-	@Before
 	@Override
-	public void setUp() throws Exception {
+	protected void setUp() throws Exception {
 		display = Display.getDefault();
 		super.setUp();
 		while (display.readAndDispatch())
 			;
 	}
 
-	@After
 	@Override
-	public void tearDown() throws Exception {
+	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 
@@ -61,7 +53,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		return "bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine"; //$NON-NLS-1$
 	}
 
-	@Test
 	@Override
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
@@ -69,14 +60,12 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNotNull(context.getActiveChild());
 	}
 
-	@Test
 	public void testGet_ActiveShell() throws Exception {
 		IEclipseContext context = application.getContext();
 
 		assertNull(context.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
-	@Test
 	@Override
 	public void testGet_ActivePart() throws Exception {
 		IEclipseContext context = application.getContext();
@@ -84,42 +73,36 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNotNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	@Test
 	public void testGet_ActiveContexts2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
 		assertNotNull(context.get(IServiceConstants.ACTIVE_CONTEXTS));
 	}
 
-	@Test
 	public void testGet_Selection2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
 		assertNull(context.get(IServiceConstants.ACTIVE_SELECTION));
 	}
 
-	@Test
 	public void testGet_ActiveChild2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
 		assertNotNull(context.getActiveChild());
 	}
 
-	@Test
 	public void testGet_ActivePart2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
 		assertNotNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	@Test
 	public void testGet_ActiveShell2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
 		assertNull(context.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
-	@Test
 	@Override
 	public void testGetFirstPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
@@ -132,7 +115,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		});
 	}
 
-	@Test
 	@Override
 	public void testGetSecondPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
@@ -144,6 +126,17 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 			}
 		});
 	}
+
+	// @Override
+	// public void test_SwitchActiveChildInContext() {
+	// // need to wrap this since the renderer will try build the UI for the
+	// // part if it hasn't been built
+	// Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+	// public void run() {
+	// UIStartupTest.super.test_SwitchActiveChildInContext();
+	// }
+	// });
+	// }
 
 	private static MWindowElement getNonContainer(MWindowElement activeChild) {
 		if (activeChild instanceof MElementContainer<?>) {
