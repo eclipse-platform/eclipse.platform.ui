@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2015 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Tom Schindl - cell editing
  *     Matthew Hall - bugs 260329, 260337
  *     Heiko Ahlig - bug 267712
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283, 297495
  *******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -213,8 +213,8 @@ public class Snippet032TableViewerColumnEditing {
 			IBeanValueProperty propFirstname = BeanProperties.value(
 					Person.class, "firstName");
 
-			IValueProperty cellEditorControlText = CellEditorProperties
-					.control().value(WidgetProperties.text());
+			IValueProperty cellEditorControlText = CellEditorProperties.control()
+					.value(WidgetProperties.text(SWT.Modify));
 
 			columnName.setEditingSupport(ObservableValueEditingSupport.create(
 					peopleViewer, bindingContext,
