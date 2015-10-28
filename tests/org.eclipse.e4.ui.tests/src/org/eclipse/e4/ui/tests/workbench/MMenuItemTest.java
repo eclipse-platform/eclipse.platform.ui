@@ -11,8 +11,13 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import javax.inject.Named;
-import junit.framework.TestCase;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -56,13 +61,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class MMenuItemTest extends TestCase {
+public class MMenuItemTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
@@ -71,8 +79,8 @@ public class MMenuItemTest extends TestCase {
 				PartRenderingEngine.engineURI);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
 		}
@@ -114,46 +122,57 @@ public class MMenuItemTest extends TestCase {
 		assertEquals(afterExpected, menuItemWidget.getText());
 	}
 
+	@Test
 	public void testMMenuItem_Text_NullNull() {
 		testMMenuItem_Text(null, "", null, "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_NullEmpty() {
 		testMMenuItem_Text(null, "", "", "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_NullString() {
 		testMMenuItem_Text(null, "", "label", "label");
 	}
 
+	@Test
 	public void testMMenuItem_Text_EmptyNull() {
 		testMMenuItem_Text("", "", null, "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_EmptyEmpty() {
 		testMMenuItem_Text("", "", "", "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_EmptyString() {
 		testMMenuItem_Text("", "", "label", "label");
 	}
 
+	@Test
 	public void testMMenuItem_Text_StringNull() {
 		testMMenuItem_Text("label", "label", null, "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_StringEmpty() {
 		testMMenuItem_Text("label", "label", "", "");
 	}
 
+	@Test
 	public void testMMenuItem_Text_StringStringUnchanged() {
 		testMMenuItem_Text("label", "label", "label", "label");
 	}
 
+	@Test
 	public void testMMenuItem_Text_StringStringChanged() {
 		testMMenuItem_Text("label", "label", "label2", "label2");
 	}
 
+	@Test
 	public void testMMenuItem_RadioItems() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -213,6 +232,7 @@ public class MMenuItemTest extends TestCase {
 		assertTrue(menuItemWidget2.getSelection());
 	}
 
+	@Test
 	public void testMDirectMenuItem_Check_Bug316752() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -243,6 +263,7 @@ public class MMenuItemTest extends TestCase {
 		assertTrue(menuItemWidget.getSelection());
 	}
 
+	@Test
 	public void testMHandledMenuItem_Check_Bug316752() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -280,6 +301,7 @@ public class MMenuItemTest extends TestCase {
 		assertTrue(menuItemWidget.getSelection());
 	}
 
+	@Test
 	public void testMHandledMenuItem_Check_Bug463280() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -316,6 +338,7 @@ public class MMenuItemTest extends TestCase {
 		assertFalse(menuItemWidget.getText().startsWith("&&"));
 	}
 
+	@Test
 	public void testSubMenuCreation() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -363,6 +386,7 @@ public class MMenuItemTest extends TestCase {
 		assertEquals(3, fileManager.getSize());
 	}
 
+	@Test
 	public void testTbrItem() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -411,6 +435,7 @@ public class MMenuItemTest extends TestCase {
 		assertEquals(2, fileManager.getSize());
 	}
 
+	@Test
 	public void testInvisibleItem() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -461,6 +486,7 @@ public class MMenuItemTest extends TestCase {
 		assertEquals(false, fileManager.getItems()[2].isVisible());
 	}
 
+	@Test
 	public void testMenuContribution() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -506,6 +532,7 @@ public class MMenuItemTest extends TestCase {
 		assertEquals("mmc.item1", fileManager.getItems()[3].getId());
 	}
 
+	@Test
 	public void testWithVisible() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -593,6 +620,7 @@ public class MMenuItemTest extends TestCase {
 		fileWidget.notifyListeners(SWT.Hide, hide);
 	}
 
+	@Test
 	public void testMenuBarVisibility() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -660,6 +688,7 @@ public class MMenuItemTest extends TestCase {
 		assertFalse(vanishManager.getMenu().isDisposed());
 	}
 
+	@Test
 	public void testElementHierarchyInContext_DirectItem() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 
@@ -724,6 +753,7 @@ public class MMenuItemTest extends TestCase {
 		assertTrue(executed[0]);
 	}
 
+	@Test
 	public void testElementHierarchyInContext_HandledItem() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 

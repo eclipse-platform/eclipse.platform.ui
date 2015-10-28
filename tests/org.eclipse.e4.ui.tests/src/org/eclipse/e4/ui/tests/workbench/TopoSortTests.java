@@ -11,21 +11,23 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.TestCase;
 import org.eclipse.e4.ui.internal.workbench.TopologicalSort;
+import org.junit.Test;
 
 /**
  * A set of tests for the {@link TopologicalSort} class
  */
-public class TopoSortTests extends TestCase {
+public class TopoSortTests {
 	/** Should this sorter configure as requirements, dependencies, or both */
 	enum Type {
 		REQUIREMENTS, DEPENDENCIES, BOTH
-	};
+	}
 
 	/**
 	 * A simple topological sorter that uses the test data from
@@ -107,6 +109,7 @@ public class TopoSortTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testTopoSorter() {
 		TestSorter ts = new TestSorter();
 		for (Type type : Type.values()) {
@@ -182,6 +185,7 @@ public class TopoSortTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCycles() {
 		CycleTestSorter ts = new CycleTestSorter();
 		for (Type type : Type.values()) {

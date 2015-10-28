@@ -11,7 +11,12 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -36,29 +41,33 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /*
  *
  */
-public class NewMWindowTest extends TestCase {
+public class NewMWindowTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
 		}
 		appContext.dispose();
 	}
 
+	@Test
 	public void testCreateWindow() {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
@@ -70,6 +79,7 @@ public class NewMWindowTest extends TestCase {
 		assertEquals(topWidget, appContext.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
+	@Test
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView();
 		wb = new E4Workbench(window, appContext);
@@ -93,6 +103,7 @@ public class NewMWindowTest extends TestCase {
 		assertTrue(viewPart[0] instanceof Tree);
 	}
 
+	@Test
 	public void testContextChildren() {
 		final MWindow window = createWindowWithOneView();
 		wb = new E4Workbench(window, appContext);
@@ -134,6 +145,7 @@ public class NewMWindowTest extends TestCase {
 		assertEquals(window, contextPart.getParent().getParent().getParent());
 	}
 
+	@Test
 	public void testCreateMenu() {
 		final MWindow window = createWindowWithOneViewAndMenu();
 		wb = new E4Workbench(window, appContext);

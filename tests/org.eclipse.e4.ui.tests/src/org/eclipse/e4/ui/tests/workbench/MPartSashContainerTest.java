@@ -11,7 +11,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -22,26 +23,30 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class MPartSashContainerTest extends TestCase {
+public class MPartSashContainerTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
 		}
 		appContext.dispose();
 	}
 
+	@Test
 	public void testPartSashContainer_Horizontal() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE

@@ -11,9 +11,10 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -25,8 +26,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class Bug308317Test extends TestCase {
+public class Bug308317Test {
 
 	static class PartConsumer {
 
@@ -44,16 +48,17 @@ public class Bug308317Test extends TestCase {
 
 	protected IEclipseContext appContext;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		appContext.dispose();
 	}
 
+	@Test
 	public void testBug308317() throws Exception {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();

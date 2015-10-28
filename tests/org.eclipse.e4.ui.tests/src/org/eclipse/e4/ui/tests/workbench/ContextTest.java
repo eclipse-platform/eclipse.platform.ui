@@ -11,34 +11,41 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
  */
-public class ContextTest extends TestCase {
+public class ContextTest {
 	private static final String WINDOW_ID = "org.eclipse.ui.contexts.window";
 	private static final String DIALOG_ID = "org.eclipse.ui.contexts.dialog";
 	private static final String DIALOG_AND_WINDOW_ID = "org.eclipse.ui.contexts.dialogAndWindow";
 	private IEclipseContext appContext;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		appContext.dispose();
 	}
 
+	@Test
 	public void testOneContext() throws Exception {
 
 		defineContexts(appContext);
@@ -51,6 +58,7 @@ public class ContextTest extends TestCase {
 		assertEquals(1, cs.getActiveContextIds().size());
 	}
 
+	@Test
 	public void testTwoContexts() throws Exception {
 
 		defineContexts(appContext);
@@ -74,6 +82,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 	}
 
+	@Test
 	public void testTwoContextsBottom() throws Exception {
 
 		defineContexts(appContext);
@@ -106,6 +115,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 	}
 
+	@Test
 	public void testThreeContexts() throws Exception {
 
 		defineContexts(appContext);
@@ -169,34 +179,6 @@ public class ContextTest extends TestCase {
 		assertFalse(windowService.getActiveContextIds().contains(DIALOG_ID));
 		assertTrue(windowService.getActiveContextIds().contains(WINDOW_ID));
 	}
-
-	/*
-	 *
-	 * public void testThreeContexts() throws Exception { IEclipseContext
-	 * appContext = createGlobalContext();
-	 *
-	 * defineCommands(appContext);
-	 *
-	 * EHandlerService service = (EHandlerService) appContext
-	 * .get(EHandlerService.class.getName()); TestHandler handler = new
-	 * TestHandler(true, HELP_COMMAND_ID);
-	 * service.activateHandler(HELP_COMMAND_ID, handler);
-	 *
-	 * IEclipseContext window = createContext(appContext, "windowContext");
-	 * appContext.set(IServiceConstants.ACTIVE_CHILD, window); EHandlerService
-	 * windowService = (EHandlerService) window
-	 * .get(EHandlerService.class.getName()); String windowRC = HELP_COMMAND_ID
-	 * + ".window"; TestHandler windowHandler = new TestHandler(true, windowRC);
-	 * windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
-	 * assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID));
-	 *
-	 * IEclipseContext dialog = createContext(appContext, "dialogContext");
-	 * appContext.set(IServiceConstants.ACTIVE_CHILD, dialog);
-	 * assertEquals(HELP_COMMAND_ID, service.executeHandler(HELP_COMMAND_ID));
-	 *
-	 * appContext.set(IServiceConstants.ACTIVE_CHILD, window);
-	 * assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID)); }
-	 */
 
 	private void defineContexts(IEclipseContext appContext) {
 		EContextService cs = (EContextService) appContext

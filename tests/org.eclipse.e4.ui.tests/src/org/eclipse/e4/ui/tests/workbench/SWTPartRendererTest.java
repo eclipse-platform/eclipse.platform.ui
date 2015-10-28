@@ -11,12 +11,15 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -28,15 +31,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SWTPartRendererTest extends TestCase {
+public class SWTPartRendererTest {
 	private SWTPartRenderer renderer;
 	private Shell shell;
 	private MPart part;
 	private IEclipseContext context;
 	private Map<String, Object[]> stylingEngineExecutedMethods;
 
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		renderer = new SWTPartRenderer() {
 			@Override
@@ -67,6 +72,7 @@ public class SWTPartRendererTest extends TestCase {
 
 	}
 
+	@Test
 	public void testSetCSSInfo() throws Exception {
 		Button button = new Button(shell, SWT.PUSH);
 
@@ -82,6 +88,7 @@ public class SWTPartRendererTest extends TestCase {
 				setClassnameAndIdParams[2].toString());
 	}
 
+	@Test
 	public void testSetCSSInfoWhenUIElementWithTags() throws Exception {
 		Button button = new Button(shell, SWT.PUSH);
 		part.getTags().add("tag1");
@@ -99,6 +106,7 @@ public class SWTPartRendererTest extends TestCase {
 				setClassnameAndIdParams[2].toString());
 	}
 
+	@Test
 	public void testSetCSSInfoWhenNoCSSStylingEngineInContext()
 			throws Exception {
 		Button button = new Button(shell, SWT.PUSH);

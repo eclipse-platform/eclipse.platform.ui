@@ -11,10 +11,14 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -37,12 +41,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Ensure that setting focus to a widget within an non-active part causes the
  * part to be activated while not changing the focus.
  */
-public class PartFocusTest extends TestCase {
+public class PartFocusTest {
 
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
@@ -55,8 +63,8 @@ public class PartFocusTest extends TestCase {
 
 	protected MPart otherPart;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
@@ -126,17 +134,14 @@ public class PartFocusTest extends TestCase {
 		assertTrue(((PartBackend) otherPart.getObject()).text1.isFocusControl());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (wb != null) {
 			wb.close();
 		}
 		appContext.dispose();
 	}
 
-	/**
-	 *
-	 */
 	private void processEvents() {
 		// renderer.run(window, appContext);
 		Display display = Display.getCurrent();
@@ -152,6 +157,7 @@ public class PartFocusTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testFocusChangesOnExplicitPartActivation() {
 		assertFalse(((PartBackend) part.getObject()).text1.isFocusControl());
 		eps.activate(part);
@@ -159,6 +165,8 @@ public class PartFocusTest extends TestCase {
 		assertTrue(((PartBackend) part.getObject()).text1.isFocusControl());
 	}
 
+	@Ignore
+	@Test
 	public void XXXtestNoFocusChangeOnExplicitWidgetSelection() {
 		assertFalse(((PartBackend) part.getObject()).text1.isFocusControl());
 		((TextField) toolControl.getObject()).text.setFocus();
@@ -168,6 +176,7 @@ public class PartFocusTest extends TestCase {
 		assertTrue(((TextField) toolControl.getObject()).text.isFocusControl());
 	}
 
+	@Test
 	public void testNoActivationOnExplicitInPartWidgetSelection() {
 		assertTrue(eps.getActivePart() == otherPart);
 		assertTrue(((PartBackend) otherPart.getObject()).text1.isFocusControl());
