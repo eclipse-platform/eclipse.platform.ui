@@ -266,8 +266,10 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		}
 	}
 
-	public void unsetLogService() {
-		setLogService(null);
+	public void unsetLogService(LogService logService) {
+		if (this.logService == logService) {
+			this.logService = null;
+		}
 	}
 
 	public void setLogService(LogService logService) {

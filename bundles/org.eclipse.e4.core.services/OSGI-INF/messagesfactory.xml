@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.core.services.nls.IMessageFactoryService"/>
    </service>
-   <reference bind="setLogService" cardinality="0..1" interface="org.osgi.service.log.LogService" name="LogService" policy="dynamic" unbind="unsetLogSerivce"/>
+   <reference bind="setLogService" cardinality="0..1" interface="org.osgi.service.log.LogService" name="LogService" policy="dynamic" unbind="unsetLogService"/>
 </scr:component>
