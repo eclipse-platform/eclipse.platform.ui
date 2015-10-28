@@ -11,9 +11,15 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -26,19 +32,22 @@ public class EventBrokerTest extends UITest {
 	private AtomicInteger seen;
 	private IEclipseContext context;
 
+	@Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		seen = new AtomicInteger(0);
 		context = application.getContext().createChild(getClass().getName());
 	}
 
+	@After
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		context.dispose();
 	}
 
+	@Test
 	public void testPublish() {
 		IEventBroker eb = context.get(IEventBroker.class);
 		assertNotNull(eb);
@@ -58,6 +67,7 @@ public class EventBrokerTest extends UITest {
 	/**
 	 * ensure handlers are automatically unsubscribed when a broker is disposed
 	 */
+	@Test
 	public void testUnsubscribeOnDispose() {
 		// create two IEBs: the parent to publish the event, the child to
 		// receive
@@ -85,6 +95,7 @@ public class EventBrokerTest extends UITest {
 				seen.get());
 	}
 
+	@Test
 	public void testMultipleSubscriptions() {
 		IEventBroker eb = context.get(IEventBroker.class);
 		assertNotNull(eb);

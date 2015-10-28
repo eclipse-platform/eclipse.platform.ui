@@ -11,6 +11,10 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -19,6 +23,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.common.util.EList;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -38,6 +44,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		return application;
 	}
 
+	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -63,6 +70,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 
 	}
 
+	@Test
 	public void testAdd() {
 		applicationElement.getTags().add("0");
 		assertEquals(1, eventCount);
@@ -78,6 +86,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals("0", event.getProperty(UIEvents.EventTags.NEW_VALUE));
 	}
 
+	@Test
 	public void testAddMany() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -94,6 +103,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 				event.getProperty(UIEvents.EventTags.NEW_VALUE));
 	}
 
+	@Test
 	public void testRemove() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -114,6 +124,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals(null, event.getProperty(UIEvents.EventTags.NEW_VALUE));
 	}
 
+	@Test
 	public void testRemoveMany() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -138,6 +149,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals(2, removedPositions[1]);
 	}
 
+	@Test
 	public void testRetain() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -157,6 +169,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 				event.getProperty(UIEvents.EventTags.TYPE));
 	}
 
+	@Test
 	public void testClear() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -178,6 +191,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 		assertEquals(null, event.getProperty(UIEvents.EventTags.POSITION));
 	}
 
+	@Test
 	public void testMove() {
 		applicationElement.getTags().addAll(Arrays.asList("0", "1", "2"));
 		assertEquals(1, eventCount);
@@ -200,6 +214,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 				event.getProperty(UIEvents.EventTags.POSITION));
 	}
 
+	@Test
 	public void testSet() {
 		// set the elementId to "aaa" and then to null
 		applicationElement.setElementId("aaa");

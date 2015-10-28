@@ -11,6 +11,11 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +47,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public abstract class HeadlessApplicationTest extends
 		HeadlessApplicationElementTest {
@@ -50,8 +58,9 @@ public abstract class HeadlessApplicationTest extends
 
 	protected IPresentationEngine renderer;
 
+	@Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 
 		application = (MApplication) applicationElement;
@@ -65,8 +74,9 @@ public abstract class HeadlessApplicationTest extends
 		}
 	}
 
+	@After
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		for (MWindow window : application.getChildren()) {
 			renderer.removeGui(window);
 		}
@@ -81,72 +91,35 @@ public abstract class HeadlessApplicationTest extends
 	private void addActiveChildEventHandling() {
 	}
 
+	@Test
 	public void testGet_ActiveContexts() throws Exception {
 		IEclipseContext context = application.getContext();
 
 		assertNotNull(context.get(IServiceConstants.ACTIVE_CONTEXTS));
 	}
 
+	@Test
 	public void testGet_Selection() throws Exception {
 		IEclipseContext context = application.getContext();
 
 		assertNull(context.get(IServiceConstants.ACTIVE_SELECTION));
 	}
 
+	@Test
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
 
 		assertNull(context.getActiveChild());
 	}
 
+	@Test
 	public void testGet_ActivePart() throws Exception {
 		IEclipseContext context = application.getContext();
 
 		assertNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	// public void test_SwitchActiveChildInContext() {
-	// IEclipseContext context = application.getContext();
-	//
-	// MPart[] parts = getTwoParts();
-	//
-	// parts[0].getParent().setActiveChild(parts[0]);
-	//
-	// IEclipseContext activeChildContext = (IEclipseContext) context
-	// .get(IContextConstants.ACTIVE_CHILD);
-	// while (activeChildContext != null) {
-	// if (parts[0].getContext().equals(activeChildContext)) {
-	// break;
-	// }
-	//
-	// activeChildContext = (IEclipseContext) activeChildContext
-	// .get(IContextConstants.ACTIVE_CHILD);
-	// }
-	//
-	// assertEquals(parts[0].getContext(), activeChildContext);
-	//
-	// // the OSGi context should not have been affected by the recursion
-	// assertEquals(null, osgiContext.get(IContextConstants.ACTIVE_CHILD));
-	//
-	// parts[1].getParent().setActiveChild(parts[1]);
-	//
-	// activeChildContext = (IEclipseContext) context
-	// .get(IContextConstants.ACTIVE_CHILD);
-	// while (activeChildContext != null) {
-	// if (parts[1].getContext().equals(activeChildContext)) {
-	// break;
-	// }
-	//
-	// activeChildContext = (IEclipseContext) activeChildContext
-	// .get(IContextConstants.ACTIVE_CHILD);
-	// }
-	//
-	// assertEquals(parts[1].getContext(), activeChildContext);
-	//
-	// // the OSGi context should not have been affected by the recursion
-	// assertEquals(null, osgiContext.get(IContextConstants.ACTIVE_CHILD));
-	// }
-
+	@Test
 	public void test_SwitchActivePartsInContext() throws Exception {
 		IEclipseContext context = application.getContext();
 
@@ -177,12 +150,14 @@ public abstract class HeadlessApplicationTest extends
 		assertNotNull(context.getContext());
 	}
 
+	@Test
 	public void testGetFirstPart_GetContext() {
 		// set the active part to ensure that it's actually been rendered
 		getFirstPart().getParent().setSelectedElement(getFirstPart());
 		test_GetContext(getFirstPart());
 	}
 
+	@Test
 	public void testGetSecondPart_GetContext() {
 		// set the active part to ensure that it's actually been rendered
 		getSecondPart().getParent().setSelectedElement(getSecondPart());
@@ -200,11 +175,13 @@ public abstract class HeadlessApplicationTest extends
 		}
 	}
 
+	@Test
 	public void testModify() {
 		testGetFirstPart_GetContext();
 		testModify(getFirstPart());
 	}
 
+	@Test
 	public void testModify2() {
 		testGetSecondPart_GetContext();
 		testModify(getSecondPart());

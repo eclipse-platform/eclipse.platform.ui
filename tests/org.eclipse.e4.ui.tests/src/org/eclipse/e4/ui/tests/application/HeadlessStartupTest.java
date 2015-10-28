@@ -11,26 +11,25 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import junit.framework.TestCase;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
+import org.junit.After;
+import org.junit.Before;
 
-public abstract class HeadlessStartupTest extends TestCase {
+public abstract class HeadlessStartupTest {
 
 	protected IEclipseContext applicationContext;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		applicationContext = createApplicationContext();
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		applicationContext.dispose();
 	}
 
