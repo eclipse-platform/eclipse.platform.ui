@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -18,6 +20,7 @@ import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerKeySequenceTest extends
 		ModelReconcilerTest {
@@ -56,38 +59,47 @@ public abstract class ModelReconcilerKeySequenceTest extends
 		assertEquals(after, keyBinding.getKeySequence());
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_NullNull() {
 		testKeySequence_KeySequence(null, null);
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_NullEmpty() {
 		testKeySequence_KeySequence(null, "");
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_NullString() {
 		testKeySequence_KeySequence(null, "Ctrl+S");
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_EmptyNull() {
 		testKeySequence_KeySequence("", null);
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_EmptyEmpty() {
 		testKeySequence_KeySequence("", "");
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_EmptyString() {
 		testKeySequence_KeySequence("", "Ctrl+S");
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_StringNull() {
 		testKeySequence_KeySequence("Ctrl+S", null);
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_StringEmpty() {
 		testKeySequence_KeySequence("Ctrl+S", "");
 	}
 
+	@Test
 	public void testKeySequence_KeySequence_StringString() {
 		testKeySequence_KeySequence("Ctrl+S", "Ctrl+D");
 	}

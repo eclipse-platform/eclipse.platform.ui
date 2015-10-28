@@ -11,6 +11,9 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.internal.workbench.ModelReconcilingService;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -22,9 +25,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 
+	@Test
 	public void testNonConflictingIds() {
 		MApplication application = createApplication();
 
@@ -38,6 +43,7 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		assertFalse(getId(application).equals(getId(window)));
 	}
 
+	@Test
 	public void testNonConflictingIds2() {
 		MApplication application = createApplication();
 
@@ -75,6 +81,7 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		assertFalse(window1Id.equals(window2Id));
 	}
 
+	@Test
 	public void testNonConflictingIds3_Bug303841() {
 		MApplication application = createApplication();
 

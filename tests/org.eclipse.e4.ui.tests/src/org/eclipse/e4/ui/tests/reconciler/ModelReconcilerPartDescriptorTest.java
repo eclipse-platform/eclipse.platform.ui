@@ -11,12 +11,15 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerPartDescriptorTest extends
 		ModelReconcilerTest {
@@ -50,18 +53,22 @@ public abstract class ModelReconcilerPartDescriptorTest extends
 		assertEquals(after, descriptor.isAllowMultiple());
 	}
 
+	@Test
 	public void testPartDescriptor_AllowMultiple_TrueTrue() {
 		testPartDescriptor_AllowMultiple(true, true);
 	}
 
+	@Test
 	public void testPartDescriptor_AllowMultiple_TrueFalse() {
 		testPartDescriptor_AllowMultiple(true, false);
 	}
 
+	@Test
 	public void testPartDescriptor_AllowMultiple_FalseTrue() {
 		testPartDescriptor_AllowMultiple(false, true);
 	}
 
+	@Test
 	public void testPartDescriptor_AllowMultiple_FalseFalse() {
 		testPartDescriptor_AllowMultiple(false, false);
 	}
@@ -95,42 +102,52 @@ public abstract class ModelReconcilerPartDescriptorTest extends
 		assertEquals(after, descriptor.getCategory());
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullNull() {
 		testUIItem_Tooltip(null, null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullEmpty() {
 		testUIItem_Tooltip(null, "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullString() {
 		testUIItem_Tooltip(null, "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyNull() {
 		testUIItem_Tooltip("", null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyEmpty() {
 		testUIItem_Tooltip("", "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyString() {
 		testUIItem_Tooltip("", "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringNull() {
 		testUIItem_Tooltip("toolTip", null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringEmpty() {
 		testUIItem_Tooltip("toolTip", "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringStringUnchanged() {
 		testUIItem_Tooltip("toolTip", "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringStringChanged() {
 		testUIItem_Tooltip("toolTip", "toolTip2");
 	}

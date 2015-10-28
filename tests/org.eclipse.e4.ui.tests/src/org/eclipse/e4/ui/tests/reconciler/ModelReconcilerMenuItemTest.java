@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -19,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerMenuItemTest extends ModelReconcilerTest {
 
@@ -63,42 +66,52 @@ public abstract class ModelReconcilerMenuItemTest extends ModelReconcilerTest {
 		assertEquals(after, menuItem.getMnemonics());
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_NullNull() {
 		testMenuItem_Mnemonics(null, null);
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_NullEmpty() {
 		testMenuItem_Mnemonics(null, "");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_NullString() {
 		testMenuItem_Mnemonics(null, "m");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_EmptyNull() {
 		testMenuItem_Mnemonics("", null);
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_EmptyEmpty() {
 		testMenuItem_Mnemonics("", "");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_EmptyString() {
 		testMenuItem_Mnemonics("", "m");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_StringNull() {
 		testMenuItem_Mnemonics("m", null);
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_StringEmpty() {
 		testMenuItem_Mnemonics("m", "");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_StringStringUnchanged() {
 		testMenuItem_Mnemonics("m", "m");
 	}
 
+	@Test
 	public void testMenuItem_Mnemonics_StringStringChanged() {
 		testMenuItem_Mnemonics("m", "n");
 	}

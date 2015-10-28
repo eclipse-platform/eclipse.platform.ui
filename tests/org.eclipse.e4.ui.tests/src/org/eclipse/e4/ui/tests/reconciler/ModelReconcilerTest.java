@@ -11,6 +11,9 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.StringWriter;
 import java.util.Collection;
 import javax.xml.transform.OutputKeys;
@@ -22,20 +25,24 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.After;
+import org.junit.Before;
 import org.w3c.dom.Node;
 
 public abstract class ModelReconcilerTest extends ModelResourceTest {
 
 	protected IModelReconcilingService service;
 
+	@Before
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		service = getModelReconcilingService();
 		super.setUp();
 	}
 
+	@After
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		service = null;
 	}

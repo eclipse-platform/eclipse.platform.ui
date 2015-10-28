@@ -11,6 +11,11 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -29,10 +34,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconcilerTest {
 
+	@Test
 	public void testElementContainer_Children_Add() {
 		MApplication application = createApplication();
 
@@ -64,6 +71,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals("newPart", part.getLabel());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add2() {
 		MApplication application = createApplication();
 
@@ -102,6 +110,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals("newPart", part.getLabel());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add3() {
 		MApplication application = createApplication();
 
@@ -138,6 +147,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals("newPart", part.getLabel());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add4() {
 		MApplication application = createApplication();
 
@@ -169,6 +179,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals("newEditor", editor.getLabel());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add5() {
 		MApplication application = createApplication();
 
@@ -208,6 +219,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals("newEditor", perspective.getLabel());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add6() {
 		MApplication application = createApplication();
 
@@ -238,6 +250,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(window.getChildren().get(0) instanceof MPerspectiveStack);
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove() {
 		MApplication application = createApplication();
 
@@ -270,6 +283,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(0, window.getChildren().size());
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove2() {
 		MApplication application = createApplication();
 
@@ -311,6 +325,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part2, window.getChildren().get(0));
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove3() {
 		MApplication application = createApplication();
 
@@ -347,6 +362,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(0, stack.getChildren().size());
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove4() {
 		MApplication application = createApplication();
 
@@ -388,6 +404,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part2, stack.getChildren().get(0));
 	}
 
+	@Test
 	public void testElementContainer_Children_MovedFromOneStackToAnother() {
 		MApplication application = createApplication();
 
@@ -441,6 +458,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(stack2Children.contains(part2));
 	}
 
+	@Test
 	public void testElementContainer_Children_Repositioned() {
 		MApplication application = createApplication();
 
@@ -486,6 +504,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part1, stack.getChildren().get(1));
 	}
 
+	@Test
 	public void testElementContainer_Children_Add_Multiple() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -528,6 +547,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(partSashContainer.getChildren().get(0) instanceof MPart);
 	}
 
+	@Test
 	public void testElementContainer_Children_Add_PartSashContainer() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -587,6 +607,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(partSashContainer2.getChildren().get(0) instanceof MPart);
 	}
 
+	@Test
 	public void testElementContainer_Children_Add_TrimBar() {
 		MApplication application = createApplication();
 		MTrimmedWindow window = createTrimmedWindow(application);
@@ -620,6 +641,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertNotNull(window.getTrimBars().get(0));
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove_TrimBar() {
 		MApplication application = createApplication();
 		MTrimmedWindow window = createTrimmedWindow(application);
@@ -656,6 +678,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(0, window.getTrimBars().size());
 	}
 
+	@Test
 	public void testElementContainer_Children_Add_ToolBar() {
 		MApplication application = createApplication();
 		MTrimmedWindow window = createTrimmedWindow(application);
@@ -699,6 +722,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertTrue(trimBar.getChildren().get(0) instanceof MToolBar);
 	}
 
+	@Test
 	public void testElementContainer_Children_Remove_ToolBar() {
 		MApplication application = createApplication();
 		MTrimmedWindow window = createTrimmedWindow(application);
@@ -747,6 +771,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(0, trimBar.getChildren().size());
 	}
 
+	@Test
 	public void testElementContainer_Children_SwitchParent_ToolBar() {
 		MApplication application = createApplication();
 		MTrimmedWindow window = createTrimmedWindow(application);
@@ -806,6 +831,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(0, toolBar.getChildren().size());
 	}
 
+	@Test
 	public void testElementContainer_ActiveChild() {
 		MApplication application = createApplication();
 
@@ -845,6 +871,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part1, stack.getSelectedElement());
 	}
 
+	@Test
 	public void testElementContainer_ActiveChild2() {
 		MApplication application = createApplication();
 
@@ -943,6 +970,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part, partSashContainer.getSelectedElement());
 	}
 
+	@Test
 	public void testElementContainer_ActiveChild3_False() {
 		testElementContainer_ActiveChild3(false);
 	}

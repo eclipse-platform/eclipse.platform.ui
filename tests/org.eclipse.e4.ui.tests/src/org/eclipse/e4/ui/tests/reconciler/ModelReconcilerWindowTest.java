@@ -11,6 +11,11 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -21,9 +26,11 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
+	@Test
 	public void testWindow_X() {
 		MApplication application = createApplication();
 
@@ -51,6 +58,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(200, window.getX());
 	}
 
+	@Test
 	public void testWindow_Y() {
 		MApplication application = createApplication();
 
@@ -78,6 +86,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(200, window.getY());
 	}
 
+	@Test
 	public void testWindow_Width() {
 		MApplication application = createApplication();
 
@@ -105,6 +114,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(200, window.getWidth());
 	}
 
+	@Test
 	public void testWindow_Height() {
 		MApplication application = createApplication();
 
@@ -132,6 +142,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(200, window.getHeight());
 	}
 
+	@Test
 	public void testWindow_Menu_Set() {
 		MApplication application = createApplication();
 
@@ -160,6 +171,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertNotNull(menu);
 	}
 
+	@Test
 	public void testWindow_Menu_Unset() {
 		MApplication application = createApplication();
 
@@ -221,6 +233,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(after, menu.isToBeRendered());
 	}
 
+	@Test
 	public void testWindow_Menu_Children_Add() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -261,6 +274,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals("File", menu.getChildren().get(0).getLabel());
 	}
 
+	@Test
 	public void testWindow_Menu_Children_Remove() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -303,18 +317,22 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(0, menu.getChildren().size());
 	}
 
+	@Test
 	public void testWindow_Menu_Visible_TrueTrue() {
 		testWindow_Menu_Visible(true, true);
 	}
 
+	@Test
 	public void testWindow_Menu_Visible_TrueFalse() {
 		testWindow_Menu_Visible(true, false);
 	}
 
+	@Test
 	public void testWindow_Menu_Visible_FalseTrue() {
 		testWindow_Menu_Visible(false, true);
 	}
 
+	@Test
 	public void testWindow_Menu_Visible_FalseFalse() {
 		testWindow_Menu_Visible(false, false);
 	}
@@ -323,6 +341,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	 * Tests that a window's main menu can change and also additional menus
 	 * added to the main menu will be persisted correctly.
 	 */
+	@Test
 	public void testWindow_NestedMenu() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -364,6 +383,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals("itemLabel", menu.getChildren().get(0).getLabel());
 	}
 
+	@Test
 	public void testWindow_SharedElements_Add() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -395,6 +415,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertTrue(window.getSharedElements().get(0) instanceof MPart);
 	}
 
+	@Test
 	public void testWindow_SharedElements_Remove() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);

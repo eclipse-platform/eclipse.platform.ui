@@ -11,16 +11,20 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerMenuContributionsTest extends
 		ModelReconcilerTest {
 
+	@Test
 	public void testMenuContributions_MenuContributions_Add() {
 		MApplication application = createApplication();
 
@@ -50,6 +54,7 @@ public abstract class ModelReconcilerMenuContributionsTest extends
 		assertEquals("contributionId", contribution.getElementId());
 	}
 
+	@Test
 	public void testMenuContributions_MenuContributions_Remove() {
 		MApplication application = createApplication();
 

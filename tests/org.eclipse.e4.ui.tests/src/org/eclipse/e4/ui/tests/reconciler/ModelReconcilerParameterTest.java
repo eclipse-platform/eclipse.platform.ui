@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -26,6 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 
@@ -80,42 +83,52 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 		assertEquals(after, parameter.getName());
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_NullNull() {
 		testHandledToolItem_Parameters_Name(null, null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_NullEmpty() {
 		testHandledToolItem_Parameters_Name(null, "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_NullString() {
 		testHandledToolItem_Parameters_Name(null, "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_EmptyNull() {
 		testHandledToolItem_Parameters_Name("", null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_EmptyEmpty() {
 		testHandledToolItem_Parameters_Name("", "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_EmptyString() {
 		testHandledToolItem_Parameters_Name("", "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_StringNull() {
 		testHandledToolItem_Parameters_Name("name", null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_StringEmpty() {
 		testHandledToolItem_Parameters_Name("name", "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_StringStringUnchanged() {
 		testHandledToolItem_Parameters_Name("name", "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Name_StringStringChanged() {
 		testHandledToolItem_Parameters_Name("name", "name2");
 	}
@@ -172,42 +185,52 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 		assertEquals(after, parameter.getValue());
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_NullNull() {
 		testHandledToolItem_Parameters_Value(null, null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_NullEmpty() {
 		testHandledToolItem_Parameters_Value(null, "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_NullString() {
 		testHandledToolItem_Parameters_Value(null, "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_EmptyNull() {
 		testHandledToolItem_Parameters_Value("", null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_EmptyEmpty() {
 		testHandledToolItem_Parameters_Value("", "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_EmptyString() {
 		testHandledToolItem_Parameters_Value("", "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_StringNull() {
 		testHandledToolItem_Parameters_Value("name", null);
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_StringEmpty() {
 		testHandledToolItem_Parameters_Value("name", "");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_StringStringUnchanged() {
 		testHandledToolItem_Parameters_Value("name", "name");
 	}
 
+	@Test
 	public void testHandledToolItem_Parameters_Value_StringStringChanged() {
 		testHandledToolItem_Parameters_Value("name", "name2");
 	}
@@ -261,42 +284,52 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 		assertEquals(after, parameter.getName());
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_NullNull() {
 		testHandledMenuItem_Parameters_Name(null, null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_NullEmpty() {
 		testHandledMenuItem_Parameters_Name(null, "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_NullString() {
 		testHandledMenuItem_Parameters_Name(null, "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_EmptyNull() {
 		testHandledMenuItem_Parameters_Name("", null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_EmptyEmpty() {
 		testHandledMenuItem_Parameters_Name("", "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_EmptyString() {
 		testHandledMenuItem_Parameters_Name("", "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_StringNull() {
 		testHandledMenuItem_Parameters_Name("name", null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_StringEmpty() {
 		testHandledMenuItem_Parameters_Name("name", "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_StringStringUnchanged() {
 		testHandledMenuItem_Parameters_Name("name", "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Name_StringStringChanged() {
 		testHandledMenuItem_Parameters_Name("name", "name2");
 	}
@@ -351,42 +384,52 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 		assertEquals(after, parameter.getValue());
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_NullNull() {
 		testHandledMenuItem_Parameters_Value(null, null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_NullEmpty() {
 		testHandledMenuItem_Parameters_Value(null, "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_NullString() {
 		testHandledMenuItem_Parameters_Value(null, "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_EmptyNull() {
 		testHandledMenuItem_Parameters_Value("", null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_EmptyEmpty() {
 		testHandledMenuItem_Parameters_Value("", "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_EmptyString() {
 		testHandledMenuItem_Parameters_Value("", "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_StringNull() {
 		testHandledMenuItem_Parameters_Value("name", null);
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_StringEmpty() {
 		testHandledMenuItem_Parameters_Value("name", "");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_StringStringUnchanged() {
 		testHandledMenuItem_Parameters_Value("name", "name");
 	}
 
+	@Test
 	public void testHandledMenuItem_Parameters_Value_StringStringChanged() {
 		testHandledMenuItem_Parameters_Value("name", "name2");
 	}

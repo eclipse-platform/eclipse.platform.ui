@@ -11,6 +11,10 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -25,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
@@ -59,18 +64,22 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(after, part.isToBeRendered());
 	}
 
+	@Test
 	public void testUIElement_ToBeRendered_TrueTrue() {
 		testUIElement_ToBeRendered(true, true);
 	}
 
+	@Test
 	public void testUIElement_ToBeRendered_TrueFalse() {
 		testUIElement_ToBeRendered(true, false);
 	}
 
+	@Test
 	public void testUIElement_ToBeRendered_FalseTrue() {
 		testUIElement_ToBeRendered(false, true);
 	}
 
+	@Test
 	public void testUIElement_ToBeRendered_FalseFalse() {
 		testUIElement_ToBeRendered(false, false);
 	}
@@ -106,22 +115,27 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(after, part.isVisible());
 	}
 
+	@Test
 	public void testUIElement_Visible_TrueTrue() {
 		testUIElement_Visible(true, true);
 	}
 
+	@Test
 	public void testUIElement_Visible_TrueFalse() {
 		testUIElement_Visible(true, false);
 	}
 
+	@Test
 	public void testUIElement_Visible_FalseTrue() {
 		testUIElement_Visible(false, true);
 	}
 
+	@Test
 	public void testUIElement_Visible_FalseFalse() {
 		testUIElement_Visible(false, false);
 	}
 
+	@Test
 	public void testUIElement_Visible_Unmodified() {
 		boolean defaultValue = ((Boolean) UiPackageImpl.eINSTANCE
 				.getUIElement_ToBeRendered().getDefaultValue()).booleanValue();
@@ -188,22 +202,27 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(before, window.getWidget());
 	}
 
+	@Test
 	public void testUIElement_Widget_NullNull() {
 		testUIElement_Widget(null, null);
 	}
 
+	@Test
 	public void testUIElement_Widget_NullObject() {
 		testUIElement_Widget(null, new Object());
 	}
 
+	@Test
 	public void testUIElement_Widget_ObjectNull() {
 		testUIElement_Widget(new Object(), null);
 	}
 
+	@Test
 	public void testUIElement_Widget_ObjectObject() {
 		testUIElement_Widget(new Object(), new Object());
 	}
 
+	@Test
 	public void testUIElement_ContainerData_Unmodified() {
 		MApplication application = createApplication();
 
@@ -263,14 +282,17 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(containerData, window.getContainerData());
 	}
 
+	@Test
 	public void testUIElement_ContainerDataUnchanged_Null() {
 		testUIElement_ContainerDataUnchanged(null);
 	}
 
+	@Test
 	public void testUIElement_ContainerDataUnchanged_Empty() {
 		testUIElement_ContainerDataUnchanged("");
 	}
 
+	@Test
 	public void testUIElement_ContainerDataUnchanged_String() {
 		testUIElement_ContainerDataUnchanged("newData");
 	}
@@ -302,42 +324,52 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(after, window.getContainerData());
 	}
 
+	@Test
 	public void testUIElement_ContainerData_NullNull() {
 		testUIElement_ContainerData(null, null);
 	}
 
+	@Test
 	public void testUIElement_ContainerData_NullEmpty() {
 		testUIElement_ContainerData(null, "");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_NullString() {
 		testUIElement_ContainerData(null, "newData");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_EmptyNull() {
 		testUIElement_ContainerData("", null);
 	}
 
+	@Test
 	public void testUIElement_ContainerData_EmptyEmpty() {
 		testUIElement_ContainerData("", "");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_EmptyString() {
 		testUIElement_ContainerData("", "newData");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_StringNull() {
 		testUIElement_ContainerData("newData", null);
 	}
 
+	@Test
 	public void testUIElement_ContainerData_StringEmpty() {
 		testUIElement_ContainerData("newData", "");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_StringStringUnchanged() {
 		testUIElement_ContainerData("newData", "newData");
 	}
 
+	@Test
 	public void testUIElement_ContainerData_StringStringChanged() {
 		testUIElement_ContainerData("newData", "newData2");
 	}
@@ -371,22 +403,27 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals(before, window.getRenderer());
 	}
 
+	@Test
 	public void testUIElement_Renderer_NullNull() {
 		testUIElement_Renderer(null, null);
 	}
 
+	@Test
 	public void testUIElement_Renderer_NullObject() {
 		testUIElement_Renderer(null, new Object());
 	}
 
+	@Test
 	public void testUIElement_Renderer_ObjectNull() {
 		testUIElement_Renderer(new Object(), null);
 	}
 
+	@Test
 	public void testUIElement_Renderer_ObjectObject() {
 		testUIElement_Renderer(new Object(), new Object());
 	}
 
+	@Test
 	public void testUIElement_VisibleWhen() {
 		MApplication application = createApplication();
 
@@ -418,6 +455,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		assertEquals("id", expression.getCoreExpressionId());
 	}
 
+	@Test
 	public void testUIElement_CurSharedRef_Set() {
 		MApplication application = createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();

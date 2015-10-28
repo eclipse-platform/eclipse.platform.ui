@@ -11,14 +11,18 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 
+	@Test
 	public void testUIItem_IconURI_Unmodified() {
 		MApplication application = createApplication();
 
@@ -74,14 +78,17 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(iconURI, window.getIconURI());
 	}
 
+	@Test
 	public void testUIItem_IconURIUnchanged_Null() {
 		testUIItem_IconURIUnchanged(null);
 	}
 
+	@Test
 	public void testUIItem_IconURIUnchanged_Empty() {
 		testUIItem_IconURIUnchanged("");
 	}
 
+	@Test
 	public void testUIItem_IconURIUnchanged_String() {
 		testUIItem_IconURIUnchanged("iconURI");
 	}
@@ -114,46 +121,57 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(after, window.getIconURI());
 	}
 
+	@Test
 	public void testUIItem_IconURI_NullNull() {
 		testUIItem_IconURI(null, null);
 	}
 
+	@Test
 	public void testUIItem_IconURI_NullEmpty() {
 		testUIItem_IconURI(null, "");
 	}
 
+	@Test
 	public void testUIItem_IconURI_NullString() {
 		testUIItem_IconURI(null, "iconURI");
 	}
 
+	@Test
 	public void testUIItem_IconURI_EmptyNull() {
 		testUIItem_IconURI("", null);
 	}
 
+	@Test
 	public void testUIItem_IconURI_EmptyEmpty() {
 		testUIItem_IconURI("", "");
 	}
 
+	@Test
 	public void testUIItem_IconURI_EmptyString() {
 		testUIItem_IconURI("", "iconURI");
 	}
 
+	@Test
 	public void testUIItem_IconURI_StringNull() {
 		testUIItem_IconURI("iconURI", null);
 	}
 
+	@Test
 	public void testUIItem_IconURI_StringEmpty() {
 		testUIItem_IconURI("iconURI", "");
 	}
 
+	@Test
 	public void testUIItem_IconURI_StringStringUnchanged() {
 		testUIItem_IconURI("iconURI", "iconURI");
 	}
 
+	@Test
 	public void testUIItem_IconURI_StringStringChanged() {
 		testUIItem_IconURI("iconURI", "iconURI2");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_Unmodified() {
 		MApplication application = createApplication();
 
@@ -210,14 +228,17 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(toolTip, window.getTooltip());
 	}
 
+	@Test
 	public void testUIItem_TooltipUnchanged_Null() {
 		testUIItem_TooltipUnchanged(null);
 	}
 
+	@Test
 	public void testUIItem_TooltipUnchanged_Empty() {
 		testUIItem_TooltipUnchanged("");
 	}
 
+	@Test
 	public void testUIItem_TooltipUnchanged_String() {
 		testUIItem_TooltipUnchanged("toolTip");
 	}
@@ -249,46 +270,57 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(after, window.getTooltip());
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullNull() {
 		testUIItem_Tooltip(null, null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullEmpty() {
 		testUIItem_Tooltip(null, "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_NullString() {
 		testUIItem_Tooltip(null, "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyNull() {
 		testUIItem_Tooltip("", null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyEmpty() {
 		testUIItem_Tooltip("", "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_EmptyString() {
 		testUIItem_Tooltip("", "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringNull() {
 		testUIItem_Tooltip("toolTip", null);
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringEmpty() {
 		testUIItem_Tooltip("toolTip", "");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringStringUnchanged() {
 		testUIItem_Tooltip("toolTip", "toolTip");
 	}
 
+	@Test
 	public void testUIItem_Tooltip_StringStringChanged() {
 		testUIItem_Tooltip("toolTip", "toolTip2");
 	}
 
+	@Test
 	public void testUIItem_Label_Unmodified() {
 		MApplication application = createApplication();
 
@@ -344,14 +376,17 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(name, window.getLabel());
 	}
 
+	@Test
 	public void testUIItem_LabelUnchanged_Null() {
 		testUIItem_LabelUnchanged(null);
 	}
 
+	@Test
 	public void testUIItem_LabelUnchanged_Empty() {
 		testUIItem_LabelUnchanged("");
 	}
 
+	@Test
 	public void testUIItem_LabelUnchanged_String() {
 		testUIItem_LabelUnchanged("name");
 	}
@@ -383,42 +418,52 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(after, window.getLabel());
 	}
 
+	@Test
 	public void testUIItem_Label_NullNull() {
 		testUIItem_Label(null, null);
 	}
 
+	@Test
 	public void testUIItem_Label_NullEmpty() {
 		testUIItem_Label(null, "");
 	}
 
+	@Test
 	public void testUIItem_Label_NullString() {
 		testUIItem_Label(null, "name");
 	}
 
+	@Test
 	public void testUIItem_Label_EmptyNull() {
 		testUIItem_Label("", null);
 	}
 
+	@Test
 	public void testUIItem_Label_EmptyEmpty() {
 		testUIItem_Label("", "");
 	}
 
+	@Test
 	public void testUIItem_Label_EmptyString() {
 		testUIItem_Label("", "name");
 	}
 
+	@Test
 	public void testUIItem_Label_StringNull() {
 		testUIItem_Label("name", null);
 	}
 
+	@Test
 	public void testUIItem_Label_StringEmpty() {
 		testUIItem_Label("name", "");
 	}
 
+	@Test
 	public void testUIItem_Label_StringStringUnchanged() {
 		testUIItem_Label("name", "name");
 	}
 
+	@Test
 	public void testUIItem_Label_StringStringChanged() {
 		testUIItem_Label("name", "name2");
 	}

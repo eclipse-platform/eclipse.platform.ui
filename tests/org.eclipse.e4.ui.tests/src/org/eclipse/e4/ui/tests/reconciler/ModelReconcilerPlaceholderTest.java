@@ -11,6 +11,9 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -22,10 +25,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerPlaceholderTest extends
 		ModelReconcilerTest {
 
+	@Test
 	public void testPlaceholder_Ref_Set() {
 		MApplication application = createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
@@ -96,6 +101,7 @@ public abstract class ModelReconcilerPlaceholderTest extends
 		assertEquals(part, placeholder.getRef());
 	}
 
+	@Test
 	public void testPlaceholder_Ref_Unset() {
 		MApplication application = createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();

@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -18,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerGenericTileTest extends
 		ModelReconcilerTest {
@@ -64,34 +67,42 @@ public abstract class ModelReconcilerGenericTileTest extends
 		}
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_TrueTrueTrue() {
 		testGenericTile_Horizontal(true, true, true);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_TrueTrueFalse() {
 		testGenericTile_Horizontal(true, true, false);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_TrueFalseTrue() {
 		testGenericTile_Horizontal(true, false, true);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_TrueFalseFalse() {
 		testGenericTile_Horizontal(true, false, false);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_FalseTrueTrue() {
 		testGenericTile_Horizontal(false, true, true);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_FalseTrueFalse() {
 		testGenericTile_Horizontal(false, true, false);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_FalseFalseTrue() {
 		testGenericTile_Horizontal(false, false, true);
 	}
 
+	@Test
 	public void testGenericTile_Horizontal_FalseFalseFalse() {
 		testGenericTile_Horizontal(false, false, false);
 	}

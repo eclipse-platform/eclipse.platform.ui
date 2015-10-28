@@ -11,12 +11,15 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerMenuContributionTest extends
 		ModelReconcilerTest {
@@ -55,22 +58,27 @@ public abstract class ModelReconcilerMenuContributionTest extends
 		assertEquals(after, contribution.getPositionInParent());
 	}
 
+	@Test
 	public void testMenuContribution_PositionInParent_EmptyEmpty() {
 		testMenuContribution_PositionInParent("", "");
 	}
 
+	@Test
 	public void testMenuContribution_PositionInParent_EmptyString() {
 		testMenuContribution_PositionInParent("", "id");
 	}
 
+	@Test
 	public void testMenuContribution_PositionInParent_StringEmpty() {
 		testMenuContribution_PositionInParent("id", "");
 	}
 
+	@Test
 	public void testMenuContribution_PositionInParent_StringStringUnchanged() {
 		testMenuContribution_PositionInParent("id", "id");
 	}
 
+	@Test
 	public void testMenuContribution_PositionInParent_StringStringChanged() {
 		testMenuContribution_PositionInParent("id", "id2");
 	}
@@ -108,42 +116,52 @@ public abstract class ModelReconcilerMenuContributionTest extends
 		assertEquals(after, contribution.getParentId());
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_NullNull() {
 		testMenuContribution_ParentID(null, null);
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_NullEmpty() {
 		testMenuContribution_ParentID(null, "");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_NullString() {
 		testMenuContribution_ParentID(null, "id");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_EmptyNull() {
 		testMenuContribution_ParentID("", null);
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_EmptyEmpty() {
 		testMenuContribution_ParentID("", "");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_EmptyString() {
 		testMenuContribution_ParentID("", "id");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_StringNull() {
 		testMenuContribution_ParentID("id", null);
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_StringEmpty() {
 		testMenuContribution_ParentID("id", "");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_StringStringUnchanged() {
 		testMenuContribution_ParentID("id", "id");
 	}
 
+	@Test
 	public void testMenuContribution_ParentID_StringStringChanged() {
 		testMenuContribution_ParentID("id", "id2");
 	}

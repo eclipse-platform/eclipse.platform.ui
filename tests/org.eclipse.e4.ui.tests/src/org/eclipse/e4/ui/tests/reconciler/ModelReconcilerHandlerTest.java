@@ -11,6 +11,9 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -18,9 +21,11 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.junit.Test;
 
 public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 
+	@Test
 	public void testHandler_Command_Set() {
 		MApplication application = createApplication();
 
@@ -54,6 +59,7 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 		assertEquals(command, handler.getCommand());
 	}
 
+	@Test
 	public void testHandler_Command_Unset() {
 		MApplication application = createApplication();
 
