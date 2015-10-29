@@ -1052,7 +1052,7 @@ public class ExpressionTests extends TestCase {
 		long instanceDelta= System.currentTimeMillis() - instanceStart;
 
 		assertTrue("cachedDelta: " + cachedDelta + ", instanceDelta: " + instanceDelta,
-				cachedDelta * 1.8 < instanceDelta);
+				cachedDelta * 1.5 < instanceDelta);
 	}
 
 }
