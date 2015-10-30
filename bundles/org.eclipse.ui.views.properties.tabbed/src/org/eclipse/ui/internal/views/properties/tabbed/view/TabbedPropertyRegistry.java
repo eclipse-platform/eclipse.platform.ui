@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2010 IBM Corporation and others.
+ * Copyright (c) 2001, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -405,8 +405,7 @@ public class TabbedPropertyRegistry {
 			}
 		}
 		// could not append the section to any of the existing tabs - log error
-		String message = MessageFormat.format(NO_TAB_ERROR, new Object[] {
-				section.getId(), section.getTargetTab() });
+		String message = MessageFormat.format(NO_TAB_ERROR, section.getId(), section.getTargetTab());
 		IStatus status = new Status(IStatus.ERROR, TabbedPropertyViewPlugin
 				.getPlugin().getBundle().getSymbolicName(),
 				TabbedPropertyViewStatusCodes.NO_TAB_ERROR, message, null);
@@ -533,8 +532,7 @@ public class TabbedPropertyRegistry {
 			String category) {
 		String pluginId = configurationElement.getDeclaringExtension()
 				.getNamespaceIdentifier();
-		String message = MessageFormat.format(TAB_ERROR, new Object[] {
-				pluginId, category });
+		String message = MessageFormat.format(TAB_ERROR, pluginId, category );
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, null);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
