@@ -518,8 +518,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
                     if (!ColorsAndFontsPreferencePage.equals(def.getCategoryId(), myCategory)) {
                     	if (isDefault(themeElement))
-							return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_default"), new Object[] { themeElement.getName(), def.getName() }); //$NON-NLS-1$
-               			return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_override"), new Object[] { themeElement.getName(), def.getName() }); //$NON-NLS-1$
+							return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_default"), themeElement.getName(), def.getName() ); //$NON-NLS-1$
+               			return MessageFormat.format(RESOURCE_BUNDLE.getString("defaultFormat_override"), themeElement.getName(), def.getName() ); //$NON-NLS-1$
                     }
                 }
             }
