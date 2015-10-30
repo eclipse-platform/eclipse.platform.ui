@@ -17,6 +17,7 @@
  * Christian Georgi (SAP) - Bug 423882 - Warn user if workspace is newer than IDE
  * Lars Vogel <Lars.Vogel@vogella.com> - Bug 431862
  * Christian Georgi (SAP SE)           - bug 432480, bug 458811
+ * Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -939,6 +940,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_browseLabel;
 	public static String ChooseWorkspaceDialog_directoryBrowserTitle;
 	public static String ChooseWorkspaceDialog_directoryBrowserMessage;
+	public static String ChooseWorkspaceDialog_removeWorkspaceSelection;
+	public static String ChooseWorkspaceDialog_recentWorkspaces;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
 
 	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;

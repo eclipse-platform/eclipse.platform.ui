@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Eric Rizzo - added API to set the list of recent workspaces.
  *     Jan-Ove Weichel <ovi.weichel@gmail.com> - Bug 463039
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -79,6 +80,8 @@ public class ChooseWorkspaceData {
 	private static final int PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS = 3;
 
     private boolean showDialog = true;
+
+	private boolean showRecentWorkspaces;
 
     private String initialDefault;
 
@@ -168,6 +171,13 @@ public class ChooseWorkspaceData {
         return showDialog;
     }
 
+	/**
+	 * Returns whether the "Recent Workspaces" should be shown
+	 */
+	public boolean isShowRecentWorkspaces() {
+		return showRecentWorkspaces;
+	}
+
     /**
      * Return an array of recent workspaces sorted with the most recently used at
      * the start.
@@ -192,6 +202,13 @@ public class ChooseWorkspaceData {
     public void toggleShowDialog() {
         showDialog = !showDialog;
     }
+
+	/**
+	 * Set if the "Recent Workspaces" should be shown
+	 */
+	public void setShowRecentWorkspaces(boolean showRecentWorkspaces) {
+		this.showRecentWorkspaces = showRecentWorkspaces;
+	}
 
     /**
      * Sets the list of recent workspaces.
@@ -247,7 +264,10 @@ public class ChooseWorkspaceData {
 		node.putInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL,
 				PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS);
 
-		// 6. store the node
+		// 6. store if the "Recent Workspaces" should be shown
+		node.putBoolean(IDE.Preferences.SHOW_RECENT_WORKSPACES, showRecentWorkspaces);
+
+		// 7. store the node
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
@@ -420,6 +440,9 @@ public class ChooseWorkspaceData {
 		String workspacePathPref = store
 				.getString(IDE.Preferences.RECENT_WORKSPACES);
 		recentWorkspaces = decodeStoredWorkspacePaths(protocol, max, workspacePathPref);
+
+		// 5. get value for showRecentWorkspaces
+		showRecentWorkspaces = store.getBoolean(IDE.Preferences.SHOW_RECENT_WORKSPACES);
 
 		return true;
 	}

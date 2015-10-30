@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
@@ -188,6 +189,7 @@ public final class IDE {
 	 */
 	public interface Preferences {
 
+
 		/**
 		 * A named preference for how a new perspective should be opened when a
 		 * new project is created.
@@ -217,6 +219,13 @@ public final class IDE {
 		 * @since 3.1
 		 */
 		public static final String SHOW_WORKSPACE_SELECTION_DIALOG = "SHOW_WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
+
+		/**
+		 * Specifies whether the "Recent Workspaces" should be shown
+		 *
+		 * @since 3.12
+		 */
+		public static final String SHOW_RECENT_WORKSPACES = "SHOW_RECENT_WORKSPACES"; //$NON-NLS-1$
 
 		/**
 		 * <p>
