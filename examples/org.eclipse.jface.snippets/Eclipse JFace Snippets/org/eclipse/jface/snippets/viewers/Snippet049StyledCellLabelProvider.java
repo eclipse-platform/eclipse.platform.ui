@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class Snippet049StyledCellLabelProvider {
 				// With JFace 3.4, the font information (bold in this example) will be ignored.
 				Styler style= file.isDirectory() ? fBoldStyler: null;
 				StyledString styledString= new StyledString(file.getName(), style);
-				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
+				String decoration = MessageFormat.format(" ({0} bytes)", new Long(file.length())); //$NON-NLS-1$
 				styledString.append(decoration, StyledString.COUNTER_STYLER);
 
 				cell.setText(styledString.toString());
