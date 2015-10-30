@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
@@ -25,13 +26,17 @@ import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.SharedElementsDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -214,7 +219,10 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 				}
 			});
 
-			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__REF).observeDetail(getMaster()), t2m, m2t);
+			context.bindValue(textProp.observe(t),
+					EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__REF)
+					.observeDetail(getMaster()),
+					t2m, m2t);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
@@ -268,6 +276,29 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return null;
+	}
+
+	@Override
+	public FeaturePath[] getLabelProperties() {
+		return new FeaturePath[] { FeaturePath.fromList(AdvancedPackageImpl.Literals.PLACEHOLDER__REF) };
+	}
+
+
+	/**
+	 * If model is saved (becomes not dirty) must refresh the bindings so as to
+	 * have the correct name in the ref editor
+	 */
+	@Inject
+	@Optional
+	public void refreshOnSave(
+			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event) {
+		// When application model is saved, must refresh values (bug 472706)
+		final Object type = event.getProperty(EventTags.TYPE);
+		final Object newValue = event.getProperty(EventTags.NEW_VALUE);
+
+		if (UIEvents.EventTypes.SET.equals(type) && Boolean.FALSE.equals(newValue)) {
+			context.updateTargets();
+		}
 	}
 
 }

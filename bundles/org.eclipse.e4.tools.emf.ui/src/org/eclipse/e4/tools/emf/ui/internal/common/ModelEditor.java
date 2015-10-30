@@ -13,6 +13,7 @@
  * Steven Spungin <steven@spungin.tv> - Bug 396902, 431755, 431735, 424730, 424730, 391089, 437236, 437552, Ongoing
  * Maintenance
  * Simon Scholz <simon.scholz@vogella.com> - Bug 475365
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 472706
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
@@ -149,6 +150,7 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.dialogs.filteredtree.FilteredTree;
 import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -167,6 +169,8 @@ import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -1090,7 +1094,7 @@ public class ModelEditor implements IGotoObject {
 				.getProperty(ORG_ECLIPSE_E4_TOOLS_MODELEDITOR_FILTEREDTREE_ENABLED_XMITAB_DISABLED);
 		if (property != null || preferences.getBoolean(ModelEditorPreferences.TAB_FORM_SEARCH_SHOW, false)) {
 			final FilteredTree viewParent = new FilteredTree(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL
- | SWT.V_SCROLL, new PatternFilter(true));
+					| SWT.V_SCROLL, new PatternFilter(true));
 			tempViewer = viewParent.getViewer();
 		} else {
 			tempViewer = new TreeViewerEx(treeArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL,
@@ -1978,6 +1982,22 @@ public class ModelEditor implements IGotoObject {
 			}
 		}
 		return null;
+	}
+
+
+	@Inject
+	@Optional
+	public void refreshOnSave(
+			@UIEventTopic(UIEvents.Dirtyable.TOPIC_DIRTY) org.osgi.service.event.Event event) {
+		// If the application model is saved (-> becomes undirty) we must
+		// refresh tree (bug 472706)
+		final Object type = event.getProperty(EventTags.TYPE);
+		final Object newValue = event.getProperty(EventTags.NEW_VALUE);
+
+		if (UIEvents.EventTypes.SET.equals(type) && Boolean.FALSE.equals(newValue)) {
+			viewer.refresh(true);
+		}
+
 	}
 
 }
