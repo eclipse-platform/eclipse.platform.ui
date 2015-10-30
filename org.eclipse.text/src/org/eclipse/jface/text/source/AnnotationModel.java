@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -738,9 +739,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			Position[] positions= document.getPositions(IDocument.DEFAULT_CATEGORY, offset, length, canStartBefore, canEndAfter);
 			return new AnnotationsInterator(positions, fPositions);
 		} catch (BadPositionCategoryException e) {
-			//can not happen
-			Assert.isTrue(false);
-			return null;
+			// can happen if e.g. the document doesn't contain such a category, or when removed in a different thread
+			return Collections.EMPTY_LIST.iterator();
 		}
 	}
 
