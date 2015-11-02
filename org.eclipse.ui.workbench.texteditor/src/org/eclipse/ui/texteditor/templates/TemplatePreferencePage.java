@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1300,6 +1301,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			return;
 
 		try {
+			ArrayList selection= new ArrayList();
 			TemplateReaderWriter reader= new TemplateReaderWriter();
 			File file= new File(path);
 			if (file.exists()) {
@@ -1309,6 +1311,15 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					for (int i= 0; i < datas.length; i++) {
 						TemplatePersistenceData data= datas[i];
 						fTemplateStore.add(data);
+						String id= data.getId();
+						if (id == null) {
+							selection.add(data);
+						} else {
+							data= fTemplateStore.getTemplateData(id);
+							if (data != null) {
+								selection.add(data);
+							}
+						}
 					}
 				} finally {
 					try {
@@ -1322,6 +1333,8 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTableViewer.refresh();
 			fTableViewer.setAllChecked(false);
 			fTableViewer.setCheckedElements(getEnabledTemplates());
+			fTableViewer.setSelection(new StructuredSelection(selection), true);
+			selectionChanged1();
 
 		} catch (FileNotFoundException e) {
 			openReadErrorDialog(e);
@@ -1406,10 +1419,16 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	}
 
 	private void restoreDeleted() {
+		TemplatePersistenceData[] oldTemplates= fTemplateStore.getTemplateData(false);
 		fTemplateStore.restoreDeleted();
+		TemplatePersistenceData[] newTemplates= fTemplateStore.getTemplateData(false);
 		fTableViewer.refresh();
 		fTableViewer.setCheckedElements(getEnabledTemplates());
-		updateButtons();
+		ArrayList selection= new ArrayList();
+		selection.addAll(Arrays.asList(newTemplates));
+		selection.removeAll(Arrays.asList(oldTemplates));
+		fTableViewer.setSelection(new StructuredSelection(selection), true);
+		selectionChanged1();
 	}
 
 	private void revert() {
