@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2012 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2015 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -14,9 +14,7 @@
 
 package org.eclipse.ant.tests.ui.testplugin;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.ant.tests.ui.APITests;
 import org.eclipse.ant.tests.ui.AntUtilTests;
 import org.eclipse.ant.tests.ui.AntViewTests;
 import org.eclipse.ant.tests.ui.BuildTests;
@@ -38,6 +36,9 @@ import org.eclipse.ant.tests.ui.editor.formatter.XmlTagFormatterTest;
 import org.eclipse.ant.tests.ui.externaltools.BuilderCoreUtilsTests;
 import org.eclipse.ant.tests.ui.externaltools.MigrationTests;
 import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test suite for the Ant UI
@@ -69,6 +70,7 @@ public class AntUITests extends TestSuite {
 		suite.addTest(new TestSuite(PropertyTests.class));
 		suite.addTest(new TestSuite(OccurrencesFinderTests.class));
 		suite.addTest(new TestSuite(StackTests.class));
+		suite.addTest(new TestSuite(APITests.class));
 		return suite;
 	}
 }

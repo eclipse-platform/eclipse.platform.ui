@@ -63,8 +63,7 @@ import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.AbstractVMInstall;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -129,8 +128,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 				if (vmver.length() > 3) {
 					vmver = vmver.substring(0, 3);
 				}
-				int ver = (int) (CompilerOptions.versionToJdkLevel(vmver) >>> 16);
-				if (ver < ClassFileConstants.MAJOR_VERSION_1_7) {
+				// int ver = (int) (CompilerOptions.versionToJdkLevel(vmver) >>> 16);
+				if (JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_1_7) < 0) {
 					IStatus status = new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, 1, AntLaunchConfigurationMessages.AntLaunchDelegate_Launching__0__2, null);
 					throw new CoreException(status);
 				}
