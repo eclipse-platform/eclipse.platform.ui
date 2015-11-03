@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,7 +144,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				int verticalRulerWidth= fVerticalRuler.getWidth();
 				final Control verticalRulerControl= fVerticalRuler.getControl();
 				int oldWidth= verticalRulerControl.getBounds().width;
-				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
+				ScrollBar horizontalBar= textWidget.getHorizontalBar();
+				boolean hScrolVisible = horizontalBar != null && horizontalBar.isVisible();
+				int rulerHeight = clArea.height - topTrim;
+				if(hScrolVisible)
+					rulerHeight -= scrollbarHeight;
+				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, rulerHeight);
 				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth)
 					verticalRulerControl.redraw();
 

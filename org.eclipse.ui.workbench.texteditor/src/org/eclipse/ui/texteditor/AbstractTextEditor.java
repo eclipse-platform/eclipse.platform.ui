@@ -7499,7 +7499,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 				styledText.setWordWrap(enable);
 				if (fVerticalRuler != null) {
-					fVerticalRuler.update();
+					// update ruler layout so that it can consider
+					// changed horizontal scrollbar visibility
+					boolean updated = false;
+					if(viewer instanceof ITextViewerExtension){
+						Control control= ((ITextViewerExtension)viewer).getControl();
+						if(control instanceof Composite){
+							((Composite)control).layout();
+							updated = true;
+						}
+					}
+					if(!updated) {
+						fVerticalRuler.update();
+					}
 				}
 			}
 		}
