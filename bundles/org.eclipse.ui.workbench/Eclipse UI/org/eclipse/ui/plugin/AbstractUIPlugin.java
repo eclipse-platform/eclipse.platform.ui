@@ -150,26 +150,12 @@ public abstract class AbstractUIPlugin extends Plugin {
     private BundleListener bundleListener;
 
     /**
-     * Creates an abstract UI plug-in runtime object for the given plug-in
-     * descriptor.
-     * <p>
-     * Note that instances of plug-in runtime classes are automatically created
-     * by the platform in the course of plug-in activation.
-     * <p>
-     *
-     * @param descriptor the plug-in descriptor
-     * @see Plugin#Plugin(org.eclipse.core.runtime.IPluginDescriptor descriptor)
-     * @deprecated
-     * In Eclipse 3.0 this constructor has been replaced by
-     * {@link #AbstractUIPlugin()}. Implementations of
-     * <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to
-     * <code>MyPlugin()</code> and call <code>super()</code> instead of
-     * <code>super(descriptor)</code>.
-     * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is
-     * called only for plug-ins which explicitly require the
-     * org.eclipse.core.runtime.compatibility plug-in (or, as in this case,
-     * subclasses which might).
-     */
+	 * The {@link #AbstractUIPlugin(IPluginDescriptor)} constructor was called
+	 * only for plug-ins which explicitly require the
+	 * org.eclipse.core.runtime.compatibility plug-in.
+	 *
+	 * It is not called anymore as Eclipse 4.6 removed this plug-in.
+	 */
     @Deprecated
 	public AbstractUIPlugin(IPluginDescriptor descriptor) {
         super(descriptor);
@@ -538,23 +524,12 @@ public abstract class AbstractUIPlugin extends Plugin {
     }
 
     /**
-     * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
-     * method does nothing.  Subclasses may extend this method, but must send
-     * super first.
-     * <p>
-     * WARNING: Plug-ins may not be started in the UI thread.
-     * The <code>startup()</code> method should not assume that its code runs in
-     * the UI thread, otherwise SWT thread exceptions may occur on startup.'
-     * @deprecated
-     * In Eclipse 3.0, <code>startup</code> has been replaced by {@link Plugin#start(BundleContext context)}.
-     * Implementations of <code>startup</code> should be changed to extend
-     * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>
-     * instead of <code>super.startup()</code>. Like <code>super.startup()</code>,
-     * <code>super.stop(context)</code> must be called as the very first thing.
-     * The <code>startup</code> method is called only for plug-ins which explicitly require the
-     * org.eclipse.core.runtime.compatibility plug-in; in contrast,
-     * the <code>start</code> method is always called.
-     */
+	 * The startup method was called
+	 * only for plug-ins which explicitly require the
+	 * org.eclipse.core.runtime.compatibility plug-in.
+	 *
+	 * It is not called anymore as Eclipse 4.6 removed this plug-in.
+	 */
     @Deprecated
 	@Override
 	public void startup() throws CoreException {
