@@ -296,7 +296,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 		final Object type = event.getProperty(EventTags.TYPE);
 		final Object newValue = event.getProperty(EventTags.NEW_VALUE);
 
-		if (UIEvents.EventTypes.SET.equals(type) && Boolean.FALSE.equals(newValue)) {
+		if (UIEvents.EventTypes.SET.equals(type) && Boolean.FALSE.equals(newValue) && context != null) {
 			context.updateTargets();
 		}
 	}
