@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481319
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481319, 481318
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
