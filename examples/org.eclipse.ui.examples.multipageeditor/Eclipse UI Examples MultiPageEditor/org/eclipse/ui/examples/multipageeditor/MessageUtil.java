@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 480928
  *******************************************************************************/
 package org.eclipse.ui.examples.multipageeditor;
 
-import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -26,18 +26,6 @@ import java.util.ResourceBundle;
 
     private MessageUtil() {
         // prevent instantiation of class
-    }
-
-    /**
-     * Returns the formatted message for the given key in
-     * the resource bundle. 
-     *
-     * @param key the resource name
-     * @param args the message arguments
-     * @return the string
-     */
-    public static String format(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
     }
 
     /**
