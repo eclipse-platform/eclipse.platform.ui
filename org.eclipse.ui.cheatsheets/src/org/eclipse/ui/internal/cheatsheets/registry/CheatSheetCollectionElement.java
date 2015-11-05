@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 /**
  * Instances of this class are a collection of CheatSheetCollectionElements,
- * thereby facilitating the definition of tree structures composed of 
+ * thereby facilitating the definition of tree structures composed of
  * these elements. Instances also store a list of cheatsheets.
  */
 public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPluginContribution {
@@ -203,6 +203,6 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	}
 
 	public void add(CheatSheetCollectionElement newElement) {
-		childCollections.add(newElement);	
+		childCollections.add(newElement);
 	}
 }

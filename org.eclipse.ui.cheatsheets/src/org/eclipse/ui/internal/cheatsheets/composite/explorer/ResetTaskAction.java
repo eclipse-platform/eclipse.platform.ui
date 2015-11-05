@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,10 +33,10 @@ public class ResetTaskAction extends Action {
         this.task = (AbstractTask) task;
 		this.setText(Messages.COMPOSITE_MENU_RESET);
 		IPath path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append("return_to_start.gif");//$NON-NLS-1$
-		ImageDescriptor restartImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);	
+		ImageDescriptor restartImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 		this.setImageDescriptor(restartImage);
 	}
-	
+
 	@Override
 	public void run() {
 		AbstractTask[] restartTasks = TaskStateUtilities.getRestartTasks(task);

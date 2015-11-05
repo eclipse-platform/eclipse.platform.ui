@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,23 +21,23 @@ import org.w3c.dom.Node;
  */
 
 public abstract class AbstractExecutable {
-	
+
 	private String[] params;
 	private boolean confirm = false;
 	private String when;
 	private boolean required = true;
-	
+
 	/**
 	 * This method returns an array of parameters specified to be passed to the action class
 	 * when it is run in the cheat sheet.
-	 * @return an array of string parameters that are passed to the action class when it is run	 
+	 * @return an array of string parameters that are passed to the action class when it is run
 	 */
 	public String[] getParams() {
 		return params;
 	}
 
 	/**
-	 * This method returns the expression to be used when determining if this action should used. 
+	 * This method returns the expression to be used when determining if this action should used.
 	 * @return the when expression to be used for this action
 	 */
 	public String getWhen() {
@@ -51,7 +51,7 @@ public abstract class AbstractExecutable {
 	public boolean isConfirm() {
 		return confirm;
 	}
-	
+
 	/**
 	 * @return true if this step or substep can only be completed by performing
 	 * this executable.
@@ -61,7 +61,7 @@ public abstract class AbstractExecutable {
 	}
 
 	/**
-	 * This method allows you to set the string parameters to be passed to the action class on running it 
+	 * This method allows you to set the string parameters to be passed to the action class on running it
 	 * in the cheat sheet.
 	 * @param params an array of strings that is passed to the action class on running the action
 	 */
@@ -76,14 +76,14 @@ public abstract class AbstractExecutable {
 	public void setConfirm(boolean value) {
 		this.confirm = value;
 	}
-	
+
 	/**
 	 * Set whether this executable can be by passed.
-	 * @param required if true this action must be performed to complete this 
+	 * @param required if true this action must be performed to complete this
 	 * step or substep.
 	 */
 	public void setRequired(boolean required) {
-		this.required = required;		
+		this.required = required;
 	}
 
 	/**
@@ -107,16 +107,16 @@ public abstract class AbstractExecutable {
 	 * Check to see if all required attributes are present and are valid.
 	 * This method is called after any calls to handleAttributes have been made
 	 * @param node the node for this executable.
-	 * @return null if the parameters are valid or an error message if the 
-	 * parameters are invalid or incomplete. 
+	 * @return null if the parameters are valid or an error message if the
+	 * parameters are invalid or incomplete.
 	 */
 	public abstract String checkAttributes(Node node);
-	
+
 	/**
 	 * @return true if calls to execute require a non-null CheatsheetManager
 	 */
 	public abstract boolean isCheatSheetManagerUsed();
-	
+
 	/**
 	 * Execute and return a status
 	 * @param csm A cheatsheet manager if this object uses a cheatsheet manager,
@@ -125,7 +125,7 @@ public abstract class AbstractExecutable {
 	 * completes with a failure result, error status if an exception was thrown
 	 * or the executable could not be initiated.
 	 */
-	public abstract IStatus execute(CheatSheetManager csm);	
+	public abstract IStatus execute(CheatSheetManager csm);
 
 	/**
 	 * @return true if this executable can have parameters

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class ViewUtilities {
 		if (message.indexOf('&') < 0) {
 			return message;
 		}
-		
+
 		int next = 0;
 		StringBuffer result = new StringBuffer();
 		int index = message.indexOf('&');
@@ -48,7 +48,7 @@ public class ViewUtilities {
 		result.append(message.substring(next));
 		return result.toString();
 	}
-	
+
 	/**
 	 * Get the cheaetSheetView, opening it if necessary and making visible
 	 * @return The cheat sheet view, or null if it could not be opened.
@@ -74,5 +74,5 @@ public class ViewUtilities {
 		}
 		return view;
 	}
-    
+
 }

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,10 +27,10 @@ public class StartAction extends Action {
 		this.task = (AbstractTask) task;
 		this.setText(Messages.COMPOSITE_MENU_START);
 		IPath path = CheatSheetPlugin.ICONS_PATH.append(CheatSheetPlugin.T_ELCL).append(START_CCS_TASK_GIF);
-		ImageDescriptor startImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);	
+		ImageDescriptor startImage = CheatSheetPlugin.createImageDescriptor(CheatSheetPlugin.getPlugin().getBundle(), path);
 		this.setImageDescriptor(startImage);
 	}
-	
+
 	@Override
 	public void run() {
 		task.setState(ICompositeCheatSheetTask.IN_PROGRESS);

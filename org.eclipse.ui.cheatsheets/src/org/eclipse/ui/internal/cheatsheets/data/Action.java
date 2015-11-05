@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ public class Action extends AbstractExecutable {
 	public Action() {
 		super();
 	}
-	
- 	
+
+
 	/**
 	 * This method returns the class specified to be run when the "click to perform" button is pressed for this item.
 	 * @return the class name to be run for the item
@@ -49,8 +49,8 @@ public class Action extends AbstractExecutable {
 	}
 
 	/**
-	 *  This method allows you to specify the class to be run when the perform button is pressed for this 
-	 * item in the cheat sheet. 
+	 *  This method allows you to specify the class to be run when the perform button is pressed for this
+	 * item in the cheat sheet.
 	 * @param classname the class to be run by the item in the cheat sheet
 	 */
 	public void setClass(String aclass) {

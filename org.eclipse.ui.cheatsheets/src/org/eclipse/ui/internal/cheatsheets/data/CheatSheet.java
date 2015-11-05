@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * 
+ *
  */
 public class CheatSheet implements ICheatSheet {
-	
+
 	protected String title;
 	private Item introItem;
 	private ArrayList items;
@@ -25,14 +25,14 @@ public class CheatSheet implements ICheatSheet {
 
 	/**
 	 * Creates a new cheat sheet.
-	 * 
+	 *
 	 */
 	public CheatSheet() {
 	}
 
 	/**
 	 * This method sets the title of cheat sheet.
-	 * 
+	 *
 	 * @param title the title of cheat sheet
 	 */
 	public void setTitle(String title) {
@@ -44,7 +44,7 @@ public class CheatSheet implements ICheatSheet {
 	 * @return the title of the cheat sheet
 	 */
 	public String getTitle(){
-		return title;	
+		return title;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class CheatSheet implements ICheatSheet {
 
 	/**
 	 * Adds an item to the cheat sheet.
-	 * 
+	 *
 	 * @param item the item to add
 	 */
 	public void addItem(Item item) {
@@ -82,7 +82,7 @@ public class CheatSheet implements ICheatSheet {
 
 	/**
 	 * Adds all the items from the collection to the cheat sheet.
-	 * 
+	 *
 	 * @param c the collection of items to add
 	 */
 	public void addItems(Collection c) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 /**
  * A state manager used to pass cheat sheet state to and from a tray dialog.
- * It does not save any data to a file, it just acts as a conduit between 
+ * It does not save any data to a file, it just acts as a conduit between
  * two different CheatSheetViewers
  */
 

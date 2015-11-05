@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
  */
 
 public interface ICheatSheetStateManager {
-	
+
 	/**
 	 * Will be called before any of the functions to get or save state
 	 * @param element
@@ -41,7 +41,7 @@ public interface ICheatSheetStateManager {
 	 * Load the cheat sheet manager from state file/memento/memory
 	 */
 	public CheatSheetManager getCheatSheetManager();
-	
+
 	/**
 	 * Save the properties and the cheat sheet manager
 	 * @param properties

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,16 +29,16 @@ public interface ICompositeCheatsheetTags {
 	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
 	public static final String DEPENDS_ON = "dependsOn"; //$NON-NLS-1$
 	public static final String STATE = "state"; //$NON-NLS-1$
-	
+
 	// Attribute values
 	public static final String TREE = "tree"; //$NON-NLS-1$
-	
+
     // Cheatsheet task parameters
 	public static final String CHEATSHEET_TASK_KIND = "cheatsheet"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_ID = "id"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_PATH = "path"; //$NON-NLS-1$
 	public static final String CHEATSHEET_TASK_SHOW_INTRO = "showIntro"; //$NON-NLS-1$
-	
+
     // Tags used in Memento
 	public static final String TASK_DATA = "taskData"; //$NON-NLS-1$
 	public static final String CHEAT_SHEET_MANAGER = "cheatSheetManager"; //$NON-NLS-1$
@@ -46,5 +46,5 @@ public interface ICompositeCheatsheetTags {
 	public static final String TASK_ID = "id"; //$NON-NLS-1$
 	public static final String SELECTED_TASK = "selectedTask"; //$NON-NLS-1$
 	public static final String LAYOUT_DATA = "layout"; //$NON-NLS-1$
-	
+
 }

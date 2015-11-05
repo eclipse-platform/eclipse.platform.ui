@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class CheatSheetSaveHelper {
 	protected IPath savePath;
 
 	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
-	
+
 	/**
 	 * Constructor for CheatSheetSaveHelper.
 	 */
@@ -61,7 +61,7 @@ public class CheatSheetSaveHelper {
 	 * Create the properties used to save the state of a cheatsheet
 	 * @param currentItemNum the current item
 	 * @param items a list of the items in this cheatsheet
-	 * @param buttonIsDown 
+	 * @param buttonIsDown
 	 * @param expandRestoreStates
 	 * @param csID the cheatsheet id
 	 * @param contentPath will be null if the cheatsheet was launched using information from
@@ -157,7 +157,7 @@ public class CheatSheetSaveHelper {
 	public Path getStateFile(String csID) {
 		return getStateFile(csID, savePath);
 	}
-	
+
 	protected Path getStateFile(String csID, IPath rootPath) {
 		return new Path(rootPath.append(csID + ".xml").toOSString()); //$NON-NLS-1$
 	}
@@ -196,13 +196,13 @@ public class CheatSheetSaveHelper {
 
 		return null;
 	}
-	
+
 	/**
 	 * @param saveProperties
 	 * @param contentPath
 	 * @param csm
 	 */
-	public IStatus saveState(Properties properties, CheatSheetManager csm) {	
+	public IStatus saveState(Properties properties, CheatSheetManager csm) {
 		String csID = (String) properties.get(IParserTags.ID);
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(IParserTags.CHEATSHEET_STATE);
         IStatus status = saveToMemento(properties, csm, writeMemento);
@@ -211,9 +211,9 @@ public class CheatSheetSaveHelper {
         }
 		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, csID + DOT_XML);
 	}
-	
+
 	public IStatus saveToMemento(Properties properties, CheatSheetManager csm, IMemento writeMemento) {
-		
+
 		String csID = (String) properties.get(IParserTags.ID);
 		try {
 			writeMemento.putString(IParserTags.BUTTONSTATE, (String) properties
@@ -253,10 +253,10 @@ public class CheatSheetSaveHelper {
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(csID + DOT_XML);
 		if (readMemento == null) {
 			return null;
-		}	
+		}
 		return loadFromMemento(readMemento);
 	}
-	
+
 	public Properties loadFromMemento(IMemento memento) {
 		Properties properties = new Properties();
 		properties.put(IParserTags.BUTTON, memento.getString(IParserTags.BUTTONSTATE));
@@ -287,7 +287,7 @@ public class CheatSheetSaveHelper {
 			childMemento.putString(IParserTags.ITEM,(String)iter.next());
 		}
 	}
-	
+
 
 	private void addMapToMemento(IMemento memento, Map map, String mapName) {
 		if (map == null) {
@@ -300,24 +300,24 @@ public class CheatSheetSaveHelper {
 			childMemento.putString(IParserTags.MANAGERDATAVALUE,(String)map.get(itemKey));
 		}
 	}
-	
-	
+
+
 	private void getMapFromMemento(IMemento memento, Properties properties, String mapName) {
 		IMemento[] children = memento.getChildren(mapName);
 		Map map = new Hashtable();
 		for (int i = 0; i < children.length; i++) {
-			map.put(children[i].getString(IParserTags.MANAGERDATAKEY), 
+			map.put(children[i].getString(IParserTags.MANAGERDATAKEY),
 					children[i].getString(IParserTags.MANAGERDATAVALUE));
-		}	
+		}
 		properties.put(mapName, map);
 	}
-	
+
 	private void getListOfStringsFromMemento(IMemento memento, Properties properties, String key) {
 		IMemento[] children = memento.getChildren(key);
 		List list = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			list.add(children[i].getString(IParserTags.ITEM));
-		}	
+		}
 		properties.put(key, list);
 	}
 

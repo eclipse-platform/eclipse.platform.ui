@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 /**
  * Class to save and restore composite cheatsheet state using a memento
  * There is a child memento for each task which contains keys for the
- * state complete. There is also a grandchild memento for 
+ * state complete. There is also a grandchild memento for
  * each task that has been started.
  */
 
@@ -42,7 +42,7 @@ public class CompositeCheatSheetSaveHelper {
 	private ICheatSheetStateManager stateManager;
 
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	public CompositeCheatSheetSaveHelper(ICheatSheetStateManager stateManager) {
 		super();
@@ -54,7 +54,7 @@ public class CompositeCheatSheetSaveHelper {
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(model.getId() + DOT_XML);
 		if (readMemento == null) {
 			return Status.OK_STATUS;
-		}	
+		}
         taskMementoMap = createTaskMap(readMemento);
         loadTaskState(taskMementoMap, (AbstractTask)model.getRootTask());
         loadCheatsheetManagerData(readMemento, model.getCheatSheetManager());
@@ -85,13 +85,13 @@ public class CompositeCheatSheetSaveHelper {
 			}
 		}
 		if (task instanceof TaskGroup) {
-			for (int i = 0; i < children.length; i++) {		
+			for (int i = 0; i < children.length; i++) {
 				loadTaskState(taskMap, (AbstractTask) children[i]);
 			}
 			((TaskGroup)task).checkState();
 		}
 	}
-	
+
 	private void loadCheatsheetManagerData(XMLMemento readMemento, ICheatSheetManager manager) {
 		if (manager == null) {
 			return;
@@ -104,7 +104,7 @@ public class CompositeCheatSheetSaveHelper {
 			manager.setData(key, value);
 		}
 	}
-	
+
 	private void loadLayoutData(XMLMemento readMemento, Map layoutData) {
 		if (layoutData == null) {
 			return;
@@ -121,14 +121,14 @@ public class CompositeCheatSheetSaveHelper {
 	/**
 	 * Save the state of a composite cheat sheet model
 	 * @param model
-	 * @param selectedTask 
+	 * @param selectedTask
 	 * @param layoutData Will contain pairs of name/value Strings used to save and restore layout
 	 * @return
 	 */
 	public IStatus saveCompositeState(CompositeCheatSheetModel model, Map layoutData) {
-		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;	
+		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
-		writeMemento.putString(IParserTags.ID, model.getId());		
+		writeMemento.putString(IParserTags.ID, model.getId());
         saveTaskState(writeMemento, (AbstractTask)model.getRootTask());
         saveCheatSheetManagerData(writeMemento, model.getCheatSheetManager());
 		taskMementoMap = createTaskMap(writeMemento);
@@ -141,7 +141,7 @@ public class CompositeCheatSheetSaveHelper {
 	private void saveCheatSheetManagerData(XMLMemento writeMemento, ICheatSheetManager manager) {
 		if (!(manager instanceof CheatSheetManager)) {
 			return;
-		}		
+		}
 		Map data = ((CheatSheetManager)manager).getData();
 		saveMap(writeMemento, data, ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
 	}
@@ -152,15 +152,15 @@ public class CompositeCheatSheetSaveHelper {
 			String value = (String) data.get(key);
 			IMemento childMemento = writeMemento.createChild(tag);
 			childMemento.putString(ICompositeCheatsheetTags.KEY, key);
-			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);		
+			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);
 		}
 	}
 
 	private void saveTaskState(IMemento writeMemento, AbstractTask task) {
 		IMemento childMemento = writeMemento.createChild(ICompositeCheatsheetTags.TASK);
 		childMemento.putString(ICompositeCheatsheetTags.TASK_ID, task.getId());
-		childMemento.putString(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState())); 
-		
+		childMemento.putString(ICompositeCheatsheetTags.STATE, Integer.toString(task.getState()));
+
 		// If this is an editable task that has been started, completed or skipped save the editor state
 		if (task instanceof IEditableTask && task.getState() != ICompositeCheatSheetTask.NOT_STARTED) {
 			TaskEditor editor = getEditor(task);
@@ -203,7 +203,7 @@ public class CompositeCheatSheetSaveHelper {
 	public void clearTaskMementos() {
 		taskMementoMap = null;
 	}
-	
+
 	public void clearTaskMemento(String id) {
 		if (taskMementoMap != null) {
 			taskMementoMap.remove(id);

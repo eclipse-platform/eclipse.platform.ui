@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import java.util.Set;
  * file), which is kept informed of life cycle events over the course of the
  * cheat sheet's life time.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -38,14 +38,14 @@ public interface ICheatSheetManager {
 
 	/**
 	 * Returns the id of the cheat sheet managed by this manager.
-	 * 
+	 *
 	 * @return the cheat sheet id
 	 */
 	public String getCheatSheetID();
 
 	/**
 	 * Returns the data value associated with the given key.
-	 * 
+	 *
 	 * @param key the key
 	 * @return the string data associated with the key, or
 	 * <code>null</code> none
@@ -58,10 +58,10 @@ public interface ICheatSheetManager {
 	 * Sets the data value associated with the given key.
 	 * <p>
 	 * Data associated with a cheat sheet manager is remembered
-	 * for the life of the manager. All data is discarded when 
+	 * for the life of the manager. All data is discarded when
 	 * the cheat sheet is completed (or restarted).
 	 * </p>
-	 * 
+	 *
 	 * @param key the key
 	 * @param data the string data associated with the key,
 	 * or <code>null</code> to remove
@@ -69,7 +69,7 @@ public interface ICheatSheetManager {
 	 * is <code>null</code>
 	 */
 	public void setData(String key, String data);
-	
+
 	/**
 	 * Get the cheat sheet manager for the enclosing composite cheat sheet.
 	 * @return The cheat sheet manager for the composite cheat sheet which contains
@@ -78,7 +78,7 @@ public interface ICheatSheetManager {
 	 * @since 3.2
 	 */
 	public ICheatSheetManager getParent();
-	
+
 	/**
 	 * Get the keys for the data in this cheat sheet manager
 	 * @return The set of keys.

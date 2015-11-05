@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class SubItemCompositeHolder {
 	private Control skipButton;
 	private Control completeButton;
 	private Control subitemLabel;
-	
+
 	SubItemCompositeHolder(SubItem subItem) {
 		super();
 		this.subItem = subItem;
@@ -95,7 +95,7 @@ public class SubItemCompositeHolder {
 	public SubItem getSubItem() {
 		return subItem;
 	}
-	
+
 	/**
 	 * Hide or reveal all the action/complete/skip buttons
 	 * @param isVisible
@@ -115,11 +115,11 @@ public class SubItemCompositeHolder {
 	public void setSubitemLabel(Control label) {
 		this.subitemLabel = label;
 	}
-	
+
 	public Control getSubitemLabel() {
 		return subitemLabel;
 	}
-	
+
 	public void setStartButton(ImageHyperlink startButton) {
 		this.startButton = startButton;
 	}
@@ -145,6 +145,6 @@ public class SubItemCompositeHolder {
 	}
 
 	public void setCheckDoneLabel(Label checkDoneLabel) {
-		this.checkDoneLabel = checkDoneLabel;		
+		this.checkDoneLabel = checkDoneLabel;
 	}
 }

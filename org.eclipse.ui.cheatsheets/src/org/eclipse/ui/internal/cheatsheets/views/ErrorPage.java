@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2008 IBM Corporation and others.
+ *  Copyright (c) 2002, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
 
 
 public class ErrorPage extends Page {
-	
+
 	/*
 	 * Class used to sort status with errors first, then warnings
 	 */
@@ -34,11 +34,11 @@ public class ErrorPage extends Page {
 		private List errors = new ArrayList();
 		private List warnings = new ArrayList();
 		private List info = new ArrayList();
-		
+
 		public StatusSorter(IStatus status) {
 			sortStatus(status);
 		}
-		
+
 		private void sortStatus(IStatus status) {
 			if (status.isMultiStatus()) {
 				IStatus[] children = status.getChildren();
@@ -56,9 +56,9 @@ public class ErrorPage extends Page {
 				default:
 					info.add(status);
 				}
-			}	
+			}
 		}
-		
+
 		public List getSortedStatus() {
 			List result = new ArrayList();
 			result.addAll(errors);
@@ -70,14 +70,14 @@ public class ErrorPage extends Page {
 
 	private String message;
 	private IStatus status;
-	
+
 	public ErrorPage() {
 	}
 
 	public ErrorPage(String errorMessage) {
 		this.message = errorMessage;
 	}
-	
+
 	public ErrorPage(IStatus status) {
 		this.status = status;
 	}
@@ -96,7 +96,7 @@ public class ErrorPage extends Page {
 			}
 			Label errorLabel = toolkit.createLabel(form.getBody(), errorString, SWT.WRAP);
 			errorLabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		}		
+		}
 	}
 
 	private void showStatus(IStatus status) {
@@ -109,10 +109,10 @@ public class ErrorPage extends Page {
 			Label messageLabel = toolkit.createLabel(form.getBody(), nextStatus.getMessage(), SWT.WRAP);
 			TableWrapData layoutData = new TableWrapData(TableWrapData.FILL_GRAB);
 			layoutData.indent = 10;
-			messageLabel.setLayoutData(layoutData);		
+			messageLabel.setLayoutData(layoutData);
 		}
 	}
-	
+
 	/**
      * Return the image for a status message
      *
@@ -120,7 +120,7 @@ public class ErrorPage extends Page {
      */
     private Image getImage(int severity) {
         switch(severity) {
-        case IStatus.ERROR: 
+        case IStatus.ERROR:
             return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.ERROR);
         case IStatus.WARNING:
             return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING);

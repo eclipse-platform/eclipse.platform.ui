@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,17 +23,17 @@ import java.net.URL;
  */
 
 public interface IEditableTask extends ICompositeCheatSheetTask {
-	
+
 	/**
 	 * Set the state of this task to COMPLETED
 	 */
 	public void complete();
-	
+
 	/**
-	 * Gets a URL which can be used to open the content file for this 
+	 * Gets a URL which can be used to open the content file for this
 	 * task if the content file is specified by a path.
 	 * @param path the path to the content file
-	 * @throws MalformedURLException 
+	 * @throws MalformedURLException
 	 * @return a URL to the content file
 	 */
 	public URL getInputUrl(String path) throws MalformedURLException;

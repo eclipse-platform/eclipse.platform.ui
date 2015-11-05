@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,17 +21,17 @@ public class CheatSheetStopWatch {
 	private Map table;
 
 	private CheatSheetStopWatch() {
-		
+
 	}
-	
+
 	public static CheatSheetStopWatch getInstance() {
 		if(stopWatch == null) {
 			stopWatch = new CheatSheetStopWatch();
 		}
-		
+
 		return stopWatch;
 	}
-	
+
 	public void start(String key) {
 
 		Entry entry = getEntry(key);
@@ -41,20 +41,20 @@ public class CheatSheetStopWatch {
 		} else {
 			resetEntry(entry);
 		}
-		
+
 		entry.start = System.currentTimeMillis();
 	}
-	
+
 	public void stop(String key) {
 		Entry entry = getEntry(key);
 		entry.stop = System.currentTimeMillis();
 	}
-	
+
 	public long totalElapsedTime(String key) {
 		Entry entry = getEntry(key);
 		return entry.stop - entry.start;
 	}
-	
+
 	public void lapTime(String key) {
 		Entry entry = getEntry(key);
 		if(entry.currentLap == -1) {
@@ -71,7 +71,7 @@ public class CheatSheetStopWatch {
 	}
 
 	/**
-	 * Contains the data for an entry in the stopwatch. 
+	 * Contains the data for an entry in the stopwatch.
 	 */
 	private static class Entry {
 		protected long start = -1;
@@ -79,7 +79,7 @@ public class CheatSheetStopWatch {
 		protected long currentLap = -1;
 		protected long previousLap = -1;
 	}
-	
+
 	private Entry getEntry(String key) {
 		return (Entry) getTable().get(key);
 	}
@@ -112,7 +112,7 @@ public class CheatSheetStopWatch {
 		}
 		return false;
 	}
-	
+
 	public static void startStopWatch(String key) {
 		if(isTracing()) {
 			getInstance().start(key);

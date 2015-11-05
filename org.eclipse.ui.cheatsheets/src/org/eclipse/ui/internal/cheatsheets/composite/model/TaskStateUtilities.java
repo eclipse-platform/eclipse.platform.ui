@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
  */
 
 public class TaskStateUtilities {
-	
+
 	/**
 	 * Find the most recent ancestor of this task that is blocked
 	 * @param task
@@ -36,13 +36,13 @@ public class TaskStateUtilities {
 		ITaskGroup parent = ((AbstractTask)task).getParent();
 		if (parent == null) {
 			return null;
-		} 
+		}
         if (!parent.requiredTasksCompleted()) {
 			return parent;
 		}
-		return findBlockedAncestor(parent);		
+		return findBlockedAncestor(parent);
 	}
-	
+
 	/**
 	 * Find the most recent ancestor of this task that is skipped
 	 * @param task
@@ -52,13 +52,13 @@ public class TaskStateUtilities {
 		ITaskGroup parent = ((AbstractTask)task).getParent();
 		if (parent == null) {
 			return null;
-		} 
+		}
         if (parent.getState() == ICompositeCheatSheetTask.SKIPPED) {
 			return parent;
 		}
-		return findSkippedAncestor(parent);			
+		return findSkippedAncestor(parent);
 	}
-	
+
 	/**
 	 * Find the most recent ancestor of this task that is completed
 	 * @param task
@@ -68,13 +68,13 @@ public class TaskStateUtilities {
 		ITaskGroup parent = ((AbstractTask)task).getParent();
 		if (parent == null) {
 			return null;
-		} 
+		}
         if (parent.getState() == ICompositeCheatSheetTask.COMPLETED) {
 			return parent;
 		}
-		return findCompletedAncestor(parent);		
+		return findCompletedAncestor(parent);
 	}
-	
+
 	/**
 	 * Determine whether a task can be skipped.
 	 * A task can be skipped if it is skippable, its state is not SKIPPED or completed
@@ -98,7 +98,7 @@ public class TaskStateUtilities {
 		if (!(task instanceof IEditableTask)) return false;
 		return isStartable(task);
 	}
-	
+
 	/**
 	 * Determines whether a task is in a state where it has net been started and
 	 * cannot be started. This is used to determine when to gray out the icon for a task.
@@ -119,7 +119,7 @@ public class TaskStateUtilities {
 	    if (findBlockedAncestor(task) != null) return false;
         return true;
 	}
-	
+
 	/**
 	 * Determine which tasks need to be restarted if this tasks is restarted
 	 */
@@ -130,7 +130,7 @@ public class TaskStateUtilities {
 		return (AbstractTask[])restartables.toArray(new AbstractTask[restartables.size()]);
 	}
 
-	
+
 	private static void addRestartableTasks(List restartables, ICompositeCheatSheetTask task, Set visited) {
 		if (visited.contains(task)) {
 			return;
@@ -141,13 +141,13 @@ public class TaskStateUtilities {
 		} else if (task.getState() == ICompositeCheatSheetTask.SKIPPED){
 			restartables.add(task);
 		}
-		
+
 		// Add all children
 		ICompositeCheatSheetTask[] children = task.getSubtasks();
 		for (int i = 0; i < children.length; i++) {
 			addRestartableTasks(restartables, children[i], visited);
 		}
-		
+
 		// Add all dependents that are started or in progress but not skipped
 		ICompositeCheatSheetTask[] successors = ((AbstractTask)task).getSuccessorTasks();
 		for (int i = 0; i < successors.length; i++) {
@@ -157,7 +157,7 @@ public class TaskStateUtilities {
 			}
 		}
 	}
-	
-	
+
+
 
 }

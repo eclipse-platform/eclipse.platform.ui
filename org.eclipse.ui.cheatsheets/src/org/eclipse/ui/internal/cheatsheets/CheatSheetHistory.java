@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,9 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 public class CheatSheetHistory {
 
 	private static final int DEFAULT_DEPTH = 5;
-	
+
 	private ArrayList history;
-	private CheatSheetRegistryReader reg; 
+	private CheatSheetRegistryReader reg;
 	private ListenerList listeners = new ListenerList();
 
 	public CheatSheetHistory(CheatSheetRegistryReader reg) {
@@ -41,12 +41,12 @@ public class CheatSheetHistory {
 
 	public void addListener(IPropertyListener l) {
 		listeners.add(l);
-	}	
-	
+	}
+
 	public void removeListener(IPropertyListener l) {
 		listeners.remove(l);
-	}	
-	
+	}
+
 	private void fireChange() {
 		Object[] array = listeners.getListeners();
 		for (int i = 0; i < array.length; i++) {
@@ -54,18 +54,18 @@ public class CheatSheetHistory {
 			element.propertyChanged(this, 0);
 		}
 	}
-	
+
 	public IStatus restoreState(IMemento memento) {
 		IMemento [] children = memento.getChildren("element"); //$NON-NLS-1$
 		for (int i = 0; i < children.length && i < DEFAULT_DEPTH; i++) {
 			CheatSheetElement element =
 				reg.findCheatSheet(children[i].getID());
-			if (element != null) 
+			if (element != null)
 				history.add(element);
 		}
 		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,ICheatSheetResource.EMPTY_STRING,null);
 	}
-	
+
 	public IStatus saveState(IMemento memento) {
 		Iterator iter = history.iterator();
 		while (iter.hasNext()) {
@@ -79,31 +79,31 @@ public class CheatSheetHistory {
 
 	public void add(String id) {
 		CheatSheetElement element = reg.findCheatSheet(id);
-		if (element != null) 
+		if (element != null)
 			add(element);
 	}
-	
+
 	public void add(CheatSheetElement element) {
 		// Avoid duplicates
 		if (history.contains(element))
 			return;
 
-		// If the shortcut list will be too long, remove oldest ones			
+		// If the shortcut list will be too long, remove oldest ones
 		int size = history.size();
 		int preferredSize = DEFAULT_DEPTH;
 		while (size >= preferredSize) {
 			size--;
 			history.remove(size);
 		}
-		
+
 		// Insert at top as most recent
 		history.add(0, element);
 		fireChange();
 	}
-	
+
 	public void refreshFromRegistry() {
 		boolean change = false;
-		
+
 		Iterator iter = history.iterator();
 		while (iter.hasNext()) {
 			CheatSheetElement element = (CheatSheetElement)iter.next();
@@ -112,7 +112,7 @@ public class CheatSheetHistory {
 				change = true;
 			}
 		}
-		
+
 		if (change)
 			fireChange();
 	}
@@ -120,7 +120,7 @@ public class CheatSheetHistory {
 	/**
 	 * Copy the requested number of items from the history into
 	 * the destination list at the given index.
-	 * 
+	 *
 	 * @param dest destination list to contain the items
 	 * @param destStart index in destination list to start copying items at
 	 * @param count number of items to copy from history
@@ -130,11 +130,11 @@ public class CheatSheetHistory {
 		int itemCount = count;
 		if (itemCount > history.size())
 			itemCount = history.size();
-			
+
 		for (int i = 0; i < itemCount; i++)
 			dest.add(destStart + i, history.get(i));
-			
+
 		return itemCount;
-	} 
+	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,15 +38,15 @@ public class CheatSheetExpandRestoreAction extends Action {
 		setImageDescriptor(collapseImage);
 		setCollapsed(initValue);
 	}
-	
+
 	/*
 	 * @see Action#actionPerformed
 	 */
 	@Override
 	public void run() {
-		viewer.toggleExpandRestore();	
+		viewer.toggleExpandRestore();
 	}
-	
+
 	public boolean isCollapsed() {
 		return collapsed;
 	}

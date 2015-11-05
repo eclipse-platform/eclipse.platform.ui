@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,18 +38,18 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	private URL contentURL;
 	private CheatSheetManager manager;
 	private Set stateChangedSet = new HashSet();
-	
+
 	public void setRootTask(ICompositeCheatSheetTask task) {
 		rootTask = task;
 	}
-	
+
 	public CompositeCheatSheetModel(String name, String description, String explorerId) {
 		this.name = name;
 	    this.description = description;
 	    this.explorerId = explorerId;
 	    this.dependencies = new TaskDependencies();
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -62,7 +62,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public String getTaskExplorerId() {
 		return explorerId;
 	}
-	
+
 	@Override
 	public ICompositeCheatSheetTask getRootTask() {
 		return rootTask;
@@ -75,15 +75,15 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public TaskDependencies getDependencies() {
 		return dependencies;
 	}
-	
+
 	public URL getContentUrl() {
 		return contentURL;
 	}
 
 	public void setContentUrl(URL newUrl) {
-		contentURL=newUrl;		
+		contentURL=newUrl;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -95,7 +95,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public void setSaveHelper(CompositeCheatSheetSaveHelper saveHelper) {
 		this.saveHelper = saveHelper;
 	}
-	
+
 	/**
 	 * Maintain a set of tasks which have been changed which will
 	 * be used to send events to observers.
@@ -106,9 +106,9 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 			stateChangedSet.add(task);
 		}
 	}
-	
+
 	/**
-	 * At this point we need to determine which blocked tasks  have 
+	 * At this point we need to determine which blocked tasks  have
 	 * become unblocked and which unblocked tasks are now blocked and
 	 * send events for those also.
 	 */
@@ -124,7 +124,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		}
 		stateChangedSet.clear();
 	}
-	
+
 	public IMemento getTaskMemento(String id) {
 		 return saveHelper.getTaskMemento(id);
 	}
@@ -133,15 +133,15 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public ICheatSheetManager getCheatSheetManager() {
 		return manager;
 	}
-	
+
 	public void setCheatSheetManager(CheatSheetManager manager) {
-		this.manager = manager;	
+		this.manager = manager;
 	}
 
 	public void loadState(Map layoutData) {
-		saveHelper.loadCompositeState(this, layoutData);	
+		saveHelper.loadCompositeState(this, layoutData);
 	}
-	
+
 	/*
 	 * Reset the state of a task and it's children
 	 */
@@ -152,7 +152,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 			if (saveHelper != null) {
 			    saveHelper.clearTaskMemento(task.getId());
 			}
-		} else if (task instanceof TaskGroup) { 
+		} else if (task instanceof TaskGroup) {
 			TaskGroup group = (TaskGroup)task;
 		    ICompositeCheatSheetTask[] subtasks = group.getSubtasks();
 		    for (int i = 0; i < subtasks.length; i++) {
@@ -170,7 +170,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
     			manager.setData(cheatSheetData);
     		}
         }
-        saveHelper.clearTaskMementos();	
+        saveHelper.clearTaskMementos();
 	    resetTask(getRootTask());
 	    sendTaskChangeEvents();
 	}
@@ -182,7 +182,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	public void resetTasks(ICompositeCheatSheetTask[] restartTasks) {
 		for (int i = 0; i < restartTasks.length; i++) {
 			resetTask(restartTasks[i]);
-		}	
+		}
 		sendTaskChangeEvents();
 	}
 

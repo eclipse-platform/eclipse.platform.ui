@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			return pluginId;
 		}
 	}
-	
+
 	/**
      * Represents a taskExplorer entry in the registry
 	 */
@@ -145,12 +145,12 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY_LABEL = Messages.CHEAT_SHEET_OTHER_CATEGORY;
     public final static String CHEAT_SHEET_CONTENT = "cheatSheetContent"; //$NON-NLS-1$
-	
+
     /**
 	 * Returns a list of cheatsheets, project and not.
 	 *
 	 * The return value for this method is cached since computing its value
-	 * requires non-trivial work.  
+	 * requires non-trivial work.
 	 */
 	public static CheatSheetRegistryReader getInstance() {
 		if (instance == null) {
@@ -170,7 +170,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	protected Map taskExplorers = new HashMap();
 	protected Map taskEditors = new HashMap();
 	private Map nestedCategoryIds = new HashMap();
-	
+
 	/**
 	 *	Create an instance of this class.
 	 */
@@ -191,9 +191,9 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 
 	/**
 	 * Returns a new CheatSheetElement configured according to the parameters
-	 * contained in the passed Registry.  
+	 * contained in the passed Registry.
 	 *
-	 * May answer null if there was not enough information in the Extension to create 
+	 * May answer null if there was not enough information in the Extension to create
 	 * an adequate cheatsheet
 	 */
 	protected CheatSheetElement createCheatSheetElement(IConfigurationElement element) {
@@ -275,7 +275,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 		return null;
 	}
-	
+
 	/**
 	 *	Returns the first task editor
 	 *  with a given id.
@@ -286,7 +286,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 		return (TaskEditorNode)taskEditors.get(id);
 	}
-	
+
 	/**
 	 *	Returns the first task explorer
 	 *  with a given id.
@@ -297,7 +297,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 		return (TaskExplorerNode)taskExplorers.get(id);
 	}
-	
+
 	/**
 	 * Get the list of explorer ids
 	 * @return an iterator for the explorer ids
@@ -355,7 +355,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		String[] categoryPath = category.getParentPath();
 		CheatSheetCollectionElement parent = currentResult; // ie.- root
 
-		// Traverse down into parent category.	
+		// Traverse down into parent category.
 		if (categoryPath != null) {
 			nestedCategoryIds.put(category.getId(), category);
 			for (int i = 0; i < categoryPath.length; i++) {
@@ -376,7 +376,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			return;
 
 		if (parent != null) {
-			CheatSheetCollectionElement collectionElement = 
+			CheatSheetCollectionElement collectionElement =
 				createCollectionElement(parent, category.getPluginId(), category.getId(), category.getLabel());
 			if (categoryPath != null) {
 				nestedCategoryIds.put(category.getId(), collectionElement);
@@ -389,7 +389,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 *	based upon its defining extension's CATEGORY tag value
 	 *
 	 *	@param element CheatSheetElement
-	 *	@param extension 
+	 *	@param extension
 	 *	@param currentResult CheatSheetCollectionElement
 	 */
 	private void finishCheatSheet(CheatSheetElement element, IConfigurationElement config, CheatSheetCollectionElement result) {
@@ -457,7 +457,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * Returns a list of cheatsheets, project and not.
 	 *
 	 * The return value for this method is cached since computing its value
-	 * requires non-trivial work.  
+	 * requires non-trivial work.
 	 */
 	public CheatSheetCollectionElement getCheatSheets() {
 		if (cheatsheets == null)
@@ -533,7 +533,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	}
 
 	/**
-	 * Removes the empty categories from a cheatsheet collection. 
+	 * Removes the empty categories from a cheatsheet collection.
 	 */
 	private void pruneEmptyCategories(CheatSheetCollectionElement parent) {
 		Object[] children = parent.getChildren();
@@ -544,10 +544,10 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	}
 
 	/**
-	 * Reads the cheatsheets in a registry.  
+	 * Reads the cheatsheets in a registry.
 	 * <p>
-	 * This implementation uses a defering strategy.  All of the elements 
-	 * (categories, cheatsheets) are read.  The categories are created as the read occurs. 
+	 * This implementation uses a defering strategy.  All of the elements
+	 * (categories, cheatsheets) are read.  The categories are created as the read occurs.
 	 * The cheatsheets are just stored for later addition after the read completes.
 	 * This ensures that cheatsheet categorization is performed after all categories
 	 * have been read.
@@ -602,9 +602,9 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		itemExtensionElement.setItemAttribute(itemAttribute);
 		itemExtensionElement.setConfigurationElement(element);
 
-		cheatsheetItemExtensions.add(itemExtensionElement);		
+		cheatsheetItemExtensions.add(itemExtensionElement);
 	}
-	
+
 	/*
 	 * Get a required attribute. Log an error if it has no value.
 	 */
@@ -615,7 +615,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 		return result;
 	}
-	
+
 	private void createTaskExplorerElement(IConfigurationElement element) {
 		String icon = element.getAttribute(ATT_ICON);
 		String className = getAndCheckAttribute(element, ATT_CLASS);
@@ -630,7 +630,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			node.setName(name);
 			node.setPluginId(pluginId);
 			taskExplorers.put(id, node);
-		} 
+		}
 	}
 
 	private void createTaskEditorElement(IConfigurationElement element) {
@@ -645,7 +645,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			node.setClassName(className);
 			node.setPluginId(pluginId);
 			taskEditors.put(id, node);
-		} 
+		}
 	}
 
 	/**
@@ -690,7 +690,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			cheatsheetItemExtensions = null;
 		}
 	}
-	
+
 	public void stop() {
 		IExtensionRegistry xregistry = Platform.getExtensionRegistry();
 		xregistry.removeRegistryChangeListener(instance);

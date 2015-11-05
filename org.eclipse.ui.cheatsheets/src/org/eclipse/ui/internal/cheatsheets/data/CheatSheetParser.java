@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,14 +52,14 @@ import org.xml.sax.SAXParseException;
 
 /**
  * Parser for the cheatsheet content files.
- * 
+ *
  * Construct an intance of the CheatSheetDomParser.
  * Call <code>parse()</code>.
  * Then get the content items by calling
  * <code>getIntroItem()</code> and <code>getItemsList()</code>.
  * The title of the cheatsheet can be retrieved by calling
  * <code>getTitle()</code>.
- * 
+ *
  */
 public class CheatSheetParser implements IStatusContainer {
 
@@ -68,18 +68,18 @@ public class CheatSheetParser implements IStatusContainer {
 	private DocumentBuilder documentBuilder;
 	private DocumentProcessor processor;
 	private ArrayList itemExtensionContainerList;
-	
+
 	// Cheatsheet kinds that can be parsed
 	public static final int COMPOSITE_ONLY = 1;
 	public static final int SIMPLE_ONLY = 2;
 	public static final int ANY = 3;
-	
+
 	private IStatus status;
 
 	private int commandCount;
 
 	private int actionCount;
-	
+
 
 	/**
 	 * Java constructor comment.
@@ -88,23 +88,23 @@ public class CheatSheetParser implements IStatusContainer {
 		super();
 		documentBuilder = CheatSheetPlugin.getPlugin().getDocumentBuilder();
 	}
-	
+
 	/**
 	 *  Gets the status of the last call to parse()
 	 */
 	public IStatus getStatus() {
 		return status;
 	}
-	
+
 	@Override
-	public void addStatus(int severity, String message, Throwable exception) { 
+	public void addStatus(int severity, String message, Throwable exception) {
 		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}
 
 	/**
-	 * Converts any characters required to escaped by an XML parser to 
+	 * Converts any characters required to escaped by an XML parser to
 	 * their escaped counterpart.
-	 * 
+	 *
 	 * Characters			XML escaped counterpart
 	 * <			->		&lt;
 	 * >			->		&gt;
@@ -120,13 +120,13 @@ public class CheatSheetParser implements IStatusContainer {
 	private StringBuffer escapeXMLCharacters(StringBuffer text) {
 		// Set the maximum length of the tags to ignore
 		final int MAXIMUM_TAG_LENGTH = 5;
-		
+
 		// Keep a local variable for the orignal string's length
 		int length = text.length();
-		
+
 		// Create the buffer to store the resulting string
 		StringBuffer result = new StringBuffer(length);
-		
+
 		// Loop for the characters of the original string
 		for(int i=0; i<length; i++) {
 			// Grab the next character and determine how to handle it
@@ -211,7 +211,7 @@ public class CheatSheetParser implements IStatusContainer {
 				return node;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -234,9 +234,9 @@ public class CheatSheetParser implements IStatusContainer {
 				Node attribute = attributes.item(x);
 				String attributeName = attribute.getNodeName();
 				if (attribute == null || attributeName == null)
-					continue;			
+					continue;
 				if (attributeName.equals(IParserTags.CONFIRM)) {
-					executable.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));} 
+					executable.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));}
 				else if (attributeName.equals(IParserTags.WHEN)) {
 					executable.setWhen(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.REQUIRED)) {
@@ -250,7 +250,7 @@ public class CheatSheetParser implements IStatusContainer {
 						}
 						String paramNum = attributeName.substring(IParserTags.PARAM.length());
 						int num = Integer.parseInt(paramNum)-1;
-						
+
 						if(num>-1 && num<9){
 							params[num] = attribute.getNodeValue();
 						} else {
@@ -382,7 +382,7 @@ public class CheatSheetParser implements IStatusContainer {
 		Assert.isNotNull(startNode);
 
 		Node descriptionNode = findNode(startNode, IParserTags.DESCRIPTION);
-		
+
 		if(descriptionNode != null) {
 			String text = handleMarkedUpText(descriptionNode, startNode, IParserTags.DESCRIPTION);
 			item.setDescription(text);
@@ -395,29 +395,29 @@ public class CheatSheetParser implements IStatusContainer {
 			throw new CheatSheetParserException(message);
 		}
 	}
-	
+
 	private void handleSubItemDescription(SubItem subItem, Node startNode) throws CheatSheetParserException {
 		Assert.isNotNull(subItem);
 		Assert.isNotNull(startNode);
 
 		Node descriptionNode = findNode(startNode, IParserTags.DESCRIPTION);
-		
+
 		if(descriptionNode != null) {
 			String text = handleMarkedUpText(descriptionNode, startNode, IParserTags.DESCRIPTION);
 			subItem.setLabel(text);
 			subItem.setFormatted(true);
-		} 
+		}
 	}
 
 	private String handleMarkedUpText(Node nodeContainingText, Node startNode, String nodeName ) {
-		NodeList nodes = nodeContainingText.getChildNodes();	
+		NodeList nodes = nodeContainingText.getChildNodes();
 		StringBuffer text = new StringBuffer();
-		
+
 		boolean containsMarkup = false;
-		
+
 		// The documentation for the content file specifies
 		// that leading whitespace should be ignored at the
-		// beginning of a description or after a <br/>. This 
+		// beginning of a description or after a <br/>. This
 		// applies also to <onCompletion> elements.
 		// See Bug 129208 and Bug 131185
 		boolean isLeadingTrimRequired = true;
@@ -440,7 +440,7 @@ public class CheatSheetParser implements IStatusContainer {
 					text.append(IParserTags.BOLD_END_TAG);
 					isLeadingTrimRequired = false;
 				} else if(node.getNodeName().equals(IParserTags.BREAK)) {
-					containsMarkup = true;	
+					containsMarkup = true;
 					text.append(IParserTags.BREAK_TAG);
 					isLeadingTrimRequired = true;
 				} else {
@@ -462,7 +462,7 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	// Replace any tabs with spaces
-	
+
 	private void deTab(StringBuffer text) {
 		for (int i = 0; i < text.length(); i++) {
 			if (text.charAt(i) == '\t') {
@@ -473,7 +473,7 @@ public class CheatSheetParser implements IStatusContainer {
 
 	private String trimLeadingWhitespace(String nodeValue) {
 		int firstNonWhitespaceIndex = 0;
-		while (firstNonWhitespaceIndex < nodeValue.length() && 
+		while (firstNonWhitespaceIndex < nodeValue.length() &&
 				Character.isWhitespace(nodeValue.charAt(firstNonWhitespaceIndex))) {
 			firstNonWhitespaceIndex++;
 		}
@@ -500,21 +500,21 @@ public class CheatSheetParser implements IStatusContainer {
 		addStatus(IStatus.WARNING, message, null);
 
 	}
-	
+
 	private void handleOnCompletion(Item item, Node onCompletionNode) {
 		String text = handleMarkedUpText(onCompletionNode, onCompletionNode, IParserTags.ON_COMPLETION);
 		item.setCompletionMessage(text);
 	}
-	
+
 	private void handleIntroNode(CheatSheet cheatSheet, Node introNode)
 			throws CheatSheetParserException {
 		Item introItem = new Item();
 		introItem.setTitle(Messages.CHEAT_SHEET_INTRO_TITLE);
 
 		handleIntroAttributes(introItem, introNode);
-		
+
         boolean hasDescription = false;
-		
+
 		NodeList nodes = introNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
@@ -576,9 +576,9 @@ public class CheatSheetParser implements IStatusContainer {
 		handleItemAttributes(item, itemNode);
 
 		boolean hasDescription = false;
-		
+
 		NodeList nodes = itemNode.getChildNodes();
-		
+
 		IncompatibleSiblingChecker checker = new IncompatibleSiblingChecker(this, itemNode);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
@@ -617,7 +617,7 @@ public class CheatSheetParser implements IStatusContainer {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_DESCRIPTION, (new Object[] {itemNode.getNodeName()}));
 			addStatus(IStatus.ERROR, message, null);
 		}
-		
+
 		return item;
 	}
 
@@ -795,7 +795,7 @@ public class CheatSheetParser implements IStatusContainer {
 		Assert.isTrue(subItemNode.getNodeName().equals(IParserTags.SUBITEM));
 
 		SubItem subItem = new SubItem();
-		
+
 		IncompatibleSiblingChecker checker = new IncompatibleSiblingChecker(this, subItemNode);
 
 		NodeList nodes = subItemNode.getChildNodes();
@@ -887,7 +887,7 @@ public class CheatSheetParser implements IStatusContainer {
 	public ICheatSheet parse(URL url, String pluginId, int cheatSheetKind) {
 		return parse(new ParserInput(url, pluginId, null), cheatSheetKind);
 	}
-	
+
 	public ICheatSheet parse(ParserInput input, int cheatSheetKind) {
 		status = Status.OK_STATUS;
 		commandCount = 0;
@@ -905,12 +905,12 @@ public class CheatSheetParser implements IStatusContainer {
 		URL url = input.getUrl();
 
 		if (input.getXml() != null) {
-			StringReader reader = new StringReader(input.getXml()); 
+			StringReader reader = new StringReader(input.getXml());
 			inputSource = new InputSource(reader);
 		} else if (input.getUrl() != null){
 			try {
 				is = url.openStream();
-	
+
 				if (is != null) {
 					inputSource = new InputSource(is);
 				}
@@ -922,7 +922,7 @@ public class CheatSheetParser implements IStatusContainer {
 		} else {
 			return null;
 		}
-		
+
 		if (input.getUrl() != null){
 			filename = url.getFile();
 		}
@@ -968,7 +968,7 @@ public class CheatSheetParser implements IStatusContainer {
 			documentPath = '/' + input.getPluginId() + input.getUrl().getPath();
 		}
 		processor.process(UAElementFactory.newElement(document.getDocumentElement()), documentPath);
-		
+
 		if ( cheatSheetKind == COMPOSITE_ONLY  ||  (cheatSheetKind == ANY && isComposite(document))) {
 			CompositeCheatSheetParser compositeParser = new CompositeCheatSheetParser();
 			CompositeCheatSheetModel result = compositeParser.parseCompositeCheatSheet(document, input.getUrl());
@@ -985,7 +985,7 @@ public class CheatSheetParser implements IStatusContainer {
 
 	private boolean isComposite(Document document) {
 		if (document != null) {
-			Node rootnode = document.getDocumentElement();		
+			Node rootnode = document.getDocumentElement();
 			// Is the root node compositeCheatsheet?
 			return rootnode.getNodeName().equals(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET) ;
 		}
@@ -996,7 +996,7 @@ public class CheatSheetParser implements IStatusContainer {
 		// If the document passed is null return a null tree and update the status
 		if (document != null) {
 			Node rootnode = document.getDocumentElement();
-			
+
 			// Is the root node really <cheatsheet>?
 			if( !rootnode.getNodeName().equals(IParserTags.CHEATSHEET) ) {
 				throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_ELEMENT);
@@ -1009,10 +1009,10 @@ public class CheatSheetParser implements IStatusContainer {
 
 			boolean hasItem = false;
 			boolean hasIntro = false;
-			
+
 			CheatSheetRegistryReader reader = CheatSheetRegistryReader.getInstance();
 			itemExtensionContainerList = reader.readItemExtensions();
-			
+
 			NodeList nodes = rootnode.getChildNodes();
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
@@ -1035,7 +1035,7 @@ public class CheatSheetParser implements IStatusContainer {
 					}
 				}
 			}
-			
+
 			if(!hasIntro) {
 				addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_INTRO, null);
 			}
@@ -1046,14 +1046,14 @@ public class CheatSheetParser implements IStatusContainer {
 			//handleIntro(cheatSheet, document);
 
 			//handleItems(cheatSheet, document);
-			
+
 			if (status.getSeverity() == IStatus.ERROR) {
 				return null;
 			}
-			
+
 			cheatSheet.setContainsCommandOrAction(actionCount != 0 || commandCount != 0);
 			return cheatSheet;
-		} 
+		}
 		throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
 	}
 
@@ -1062,18 +1062,18 @@ public class CheatSheetParser implements IStatusContainer {
 	 * qualified paths, e.g. for the path "tasks/mySimpleCheatSheet.xml" in composite cheat
 	 * sheet "/my.plugin/cheatsheets/myCompositeCheatSheet.xml", this normalizes to
 	 * "/my.plugin/cheatsheets/tasks/mySimpleCheatSheet.xml".
-	 * 
+	 *
 	 * This is necessary because with dynamic content we are pulling in tasks from other
 	 * plug-ins and those tasks have relative paths. It also only applies for cheat sheets
 	 * located in running plug-ins.
 	 */
 	private class NormalizeHandler extends ProcessorHandler {
-		
+
 		private static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$
 		private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 		private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 		private static final String NAME_PATH = "path"; //$NON-NLS-1$
-		
+
 		@Override
 		public short handle(UAElement element, String id) {
 			if (id != null && ELEMENT_PARAM.equals(element.getElementName())) {

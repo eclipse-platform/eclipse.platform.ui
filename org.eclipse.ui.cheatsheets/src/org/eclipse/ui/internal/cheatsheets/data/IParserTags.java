@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public interface IParserTags {
 	public static final String INTRO = "intro"; //$NON-NLS-1$
 	public static final String CONTEXTID = "contextId"; //$NON-NLS-1$
 	public static final String HREF = "href"; //$NON-NLS-1$
-	
+
 	/*
 	 * <!ELEMENT description ()>
 	 * <!ATTLIST description
@@ -49,8 +49,8 @@ public interface IParserTags {
 	public static final String BREAK_TAG = "<br/>"; //$NON-NLS-1$
 	public static final String FORM_START_TAG = "<form><p>"; //$NON-NLS-1$
 	public static final String FORM_END_TAG = "</p></form>"; //$NON-NLS-1$
-	
-	
+
+
 	/*
 	 * <!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)>
 	 * <!ATTLIST item
@@ -85,7 +85,7 @@ public interface IParserTags {
 	 */
 	public static final String CONDITIONALSUBITEM = "conditional-subitem"; //$NON-NLS-1$
 	public static final String CONDITION = "condition"; //$NON-NLS-1$
-	
+
 	/*
 	 * <!ELEMENT repeated-subitem (subitem)>
 	 * <!ATTLIST repeated-subitem
@@ -120,7 +120,7 @@ public interface IParserTags {
 	 * >
 	 */
 	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
-	
+
 	// Miscellaneous tags
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String SERIALIZATION = "serialization"; //$NON-NLS-1$
@@ -136,7 +136,7 @@ public interface IParserTags {
 	public static final String AMPERSAND = "&amp;"; //$NON-NLS-1$
 	public static final String APOSTROPHE = "&apos;"; //$NON-NLS-1$
 	public static final String QUOTE = "&quot;"; //$NON-NLS-1$
-	
+
 
 	// Cheat Sheet state data key
 	public static final String ID = "id";//$NON-NLS-1$
@@ -154,5 +154,5 @@ public interface IParserTags {
 	public static final String PATH = "path"; //$NON-NLS-1$
 	public static final String CHEATSHEET_STATE_REFERENCE = "CHEATSHEET_STATE_REFERENCE"; //$NON-NLS-1$
 	public static final String CHEATSHEET_STATE = "cheatsheetState"; //$NON-NLS-1$
-	
+
 }

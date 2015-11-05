@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,24 +51,24 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
  */
 
 public class DescriptionPanel {
-	
+
 	public static final String REVIEW_IMAGE = "review"; //$NON-NLS-1$
 	private static final String GOTO_IMAGE = "goto"; //$NON-NLS-1$
 	private static final String SKIP_IMAGE = "skip"; //$NON-NLS-1$
 	private static final String START_IMAGE = "start"; //$NON-NLS-1$
 	private static final String WARNING_IMAGE = "warning"; //$NON-NLS-1$
-	private static final String INFORMATION_IMAGE = "info"; //$NON-NLS-1$	
+	private static final String INFORMATION_IMAGE = "info"; //$NON-NLS-1$
 	private Composite panel;
 	private Composite control;
 	private FormText upperText;
 	private FormText lowerText;
 	private ScrolledForm form;
 	protected DescriptionPanel() {}
-	
+
 	public DescriptionPanel(ManagedForm mform, Composite parent) {
-		
+
 		FormToolkit toolkit = mform.getToolkit();
-		control = new Composite(parent, SWT.NULL);	
+		control = new Composite(parent, SWT.NULL);
 		final GridLayout controlLayout = new GridLayout();
 		controlLayout.marginHeight = 0;
 		controlLayout.marginWidth = 0;
@@ -77,23 +77,23 @@ public class DescriptionPanel {
 		panel = form.getBody();
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 		toolkit.adapt(panel);
-		
+
 		TableWrapLayout layout = new TableWrapLayout();
 		panel.setLayout(layout);
 
 		upperText = mform.getToolkit().createFormText(panel, false);
-		mform.getToolkit().adapt(upperText, false, false);	
-		
+		mform.getToolkit().adapt(upperText, false, false);
+
 		Composite separator = toolkit.createCompositeSeparator(panel);
-		
+
 	    TableWrapData data = new TableWrapData();
 	    data.align = TableWrapData.FILL;
 	    data.grabHorizontal = true;
 	    data.maxHeight = 1;
 	    separator.setLayoutData(data);
-	     
+
 		lowerText = mform.getToolkit().createFormText(panel, false);
-		mform.getToolkit().adapt(lowerText, false, false);	
+		mform.getToolkit().adapt(lowerText, false, false);
 
 		upperText.marginWidth = 5;
 		upperText.marginHeight = 5;
@@ -103,37 +103,37 @@ public class DescriptionPanel {
 		lowerText.marginHeight = 5;
 		lowerText.setImage(START_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START));
 		lowerText.setImage(SKIP_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_SKIP));
-		lowerText.setImage(GOTO_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_GOTO_TASK)); 
+		lowerText.setImage(GOTO_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_GOTO_TASK));
 		lowerText.setImage(REVIEW_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_REVIEW));
 		lowerText.setImage(WARNING_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.WARNING));
-		lowerText.setImage(INFORMATION_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION));	
+		lowerText.setImage(INFORMATION_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.INFORMATION));
 	}
-	
+
 	public Control getControl() {
 		return control;
 	}
-	
+
 	public void addHyperlinkListener(IHyperlinkListener listener) {
-		lowerText.addHyperlinkListener(listener);		
+		lowerText.addHyperlinkListener(listener);
 	}
-	
+
 	public void showDescription(final ICompositeCheatSheetTask task) {
 		StringBuffer upperMessage = new StringBuffer();
 		upperMessage.append("<form>"); //$NON-NLS-1$
 		upperMessage.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
 		upperMessage.append(MarkupParser.escapeText(task.getName()));
-		upperMessage.append("</span></p>"); //$NON-NLS-1$		
+		upperMessage.append("</span></p>"); //$NON-NLS-1$
 		upperMessage.append(MarkupParser.createParagraph(task.getDescription(), null));
 		upperMessage.append("</form>"); //$NON-NLS-1$
         upperText.setText(upperMessage.toString(), true, false);
-	
+
 		StringBuffer buf = new StringBuffer();
 		buf.append("<form>"); //$NON-NLS-1$
-		
+
         boolean startable = false;
         boolean isBlocked = false;
         boolean isSkippable = ((AbstractTask)task).isSkippable();
-		
+
 		if (task.getState() == ICompositeCheatSheetTask.COMPLETED) {
 			buf.append(MarkupParser.createParagraph(task.getCompletionMessage(), null));
 			isSkippable = false;
@@ -142,14 +142,14 @@ public class DescriptionPanel {
 			isSkippable = false;
 		} else if (TaskStateUtilities.findSkippedAncestor(task) != null) {
 			ICompositeCheatSheetTask skipped = TaskStateUtilities.findSkippedAncestor(task);
-			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED, 
-				(new Object[] {MarkupParser.escapeText((skipped.getName()))}));	
+			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED,
+				(new Object[] {MarkupParser.escapeText((skipped.getName()))}));
 			buf.append(MarkupParser.createParagraph(skipParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findCompletedAncestor(task) != null) {
 			ICompositeCheatSheetTask completed = TaskStateUtilities.findCompletedAncestor(task);
-			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED, 
-			   (new Object[] {MarkupParser.escapeText(completed.getName())}));	
+			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED,
+			   (new Object[] {MarkupParser.escapeText(completed.getName())}));
 			buf.append(MarkupParser.createParagraph(completedParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (!task.requiredTasksCompleted()) {
@@ -158,27 +158,27 @@ public class DescriptionPanel {
 		} else if (TaskStateUtilities.findBlockedAncestor(task) != null) {
 			isBlocked = true;
 			ICompositeCheatSheetTask blockedAncestor = TaskStateUtilities.findBlockedAncestor(task);
-			String blockingAncestorMsg = NLS.bind(Messages.PARENT_BLOCKED, 
-					(new Object[] {MarkupParser.escapeText(blockedAncestor.getName())}));	
+			String blockingAncestorMsg = NLS.bind(Messages.PARENT_BLOCKED,
+					(new Object[] {MarkupParser.escapeText(blockedAncestor.getName())}));
 			showBlockingTasks(blockingAncestorMsg , blockedAncestor, buf);
 		} else {
 			startable = task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.NOT_STARTED;
 		}
-		
+
 		if (startable) {
 			addHyperlink(buf, CompositeCheatSheetPage.START_HREF, START_IMAGE, Messages.COMPOSITE_PAGE_START_TASK);
 		}
 
 		if (task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.COMPLETED ) {
 			addHyperlink(buf, CompositeCheatSheetPage.REVIEW_TAG, REVIEW_IMAGE, Messages.COMPOSITE_PAGE_REVIEW_TASK);
-		}		
-		
+		}
+
 		if (isSkippable) {
 			String skipMessage;
 			if (task instanceof ITaskGroup) {
 				skipMessage = Messages.COMPOSITE_PAGE_SKIP_TASK_GROUP;
 			} else {
-				skipMessage = Messages.COMPOSITE_PAGE_SKIP_TASK;					
+				skipMessage = Messages.COMPOSITE_PAGE_SKIP_TASK;
 			}
 		    addHyperlink(buf, CompositeCheatSheetPage.SKIP_HREF, SKIP_IMAGE, skipMessage);
 		}
@@ -186,7 +186,7 @@ public class DescriptionPanel {
 		if (!startable && !isBlocked) {
 			showSuccesorTaskLinks(task, buf);
 		}
-	
+
 		buf.append("</form>"); //$NON-NLS-1$
 
 		lowerText.setText(buf.toString(), true, false);
@@ -202,7 +202,7 @@ public class DescriptionPanel {
 		buf.append("\"/> "); //$NON-NLS-1$
 		buf.append(message);
 		buf.append("</p>");	 //$NON-NLS-1$// Add the list of blocking tasks
-		
+
 		ICompositeCheatSheetTask[] requiredTasks = task.getRequiredTasks();
 		for (int i = 0; i < requiredTasks.length; i++) {
 			warnOfIncompleteTask(buf, requiredTasks[i]);
@@ -210,7 +210,7 @@ public class DescriptionPanel {
 		buf.append("<p>"); //$NON-NLS-1$
 		buf.append("</p>");	 //$NON-NLS-1$
 	}
-	
+
 	private void addHyperlink(StringBuffer buf, String href, String imageRef, String message) {
 		buf.append("<p><a href=\""); //$NON-NLS-1$
 		buf.append(href);
@@ -221,7 +221,7 @@ public class DescriptionPanel {
 		buf.append(message);
 		buf.append("</a></p>"); //$NON-NLS-1$
 	}
-	
+
 	/*
 	 * If this task is incomplete create a message to that effect
 	 */
@@ -232,23 +232,23 @@ public class DescriptionPanel {
 			buf.append("<a href=\""); //$NON-NLS-1$
 			buf.append(CompositeCheatSheetPage.GOTO_TASK_TAG);
 			buf.append(task.getId());
-			buf.append("\">"); //$NON-NLS-1$	
-			buf.append(NLS.bind(Messages.COMPOSITE_PAGE_TASK_NOT_COMPLETE, (new Object[] 
-			    {MarkupParser.escapeText(task.getName())})));	
-			buf.append("</a>"); //$NON-NLS-1$	
+			buf.append("\">"); //$NON-NLS-1$
+			buf.append(NLS.bind(Messages.COMPOSITE_PAGE_TASK_NOT_COMPLETE, (new Object[]
+			    {MarkupParser.escapeText(task.getName())})));
+			buf.append("</a>"); //$NON-NLS-1$
 			buf.append("</li>"); //$NON-NLS-1$
 	    }
 	}
-	
+
 	private void showSuccesorTaskLinks(ICompositeCheatSheetTask task, StringBuffer buf) {
 		// Add the links to the next tasks
 		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
 		for (int i = 0; i < successorTasks.length; i++) {
 			ICompositeCheatSheetTask successor = successorTasks[i];
-			String message = NLS.bind(Messages.COMPOSITE_PAGE_GOTO_TASK, (new Object[] 
+			String message = NLS.bind(Messages.COMPOSITE_PAGE_GOTO_TASK, (new Object[]
 			     {MarkupParser.escapeText(successor.getName())}));
 			addHyperlink(buf, CompositeCheatSheetPage.GOTO_TASK_TAG + successor.getId(), GOTO_IMAGE, message);
 		}
 	}
-	
+
 }

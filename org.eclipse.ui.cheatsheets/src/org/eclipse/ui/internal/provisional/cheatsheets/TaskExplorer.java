@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public abstract class TaskExplorer {
 	/**
 	 * Create a control which will display the structure of the composite cheat
 	 * sheet and allow tasks within the composite cheat sheet to be selected.
-	 * 
+	 *
 	 * @param parent
 	 * @param toolkit
 	 */
@@ -42,7 +42,7 @@ public abstract class TaskExplorer {
 
 	/**
 	 * Get the control created by a previous call to createControl
-	 * 
+	 *
 	 * @return the task explorer control
 	 */
 	public abstract Control getControl();
@@ -55,7 +55,7 @@ public abstract class TaskExplorer {
 	/**
 	 * Get the selection provider for this explorer. The selections returned by
 	 * the selection provider should represent IGuideTasks.
-	 * 
+	 *
 	 * @return the selection provider for the task explorer
 	 */
 	public abstract ISelectionProvider getSelectionProvider();
@@ -63,7 +63,7 @@ public abstract class TaskExplorer {
 	/**
 	 * Sets the composite cheat sheet to be displayed. createControl will
 	 * already have been called.
-	 * 
+	 *
 	 * @param compositeCheatSheet
 	 */
 	public abstract void setCompositeCheatSheet(ICompositeCheatSheet compositeCheatSheet);
@@ -77,7 +77,7 @@ public abstract class TaskExplorer {
 	/**
 	 * Called when the state of a task changes and the representation of the
 	 * task may need to be redrawn.
-	 * 
+	 *
 	 * @param task
 	 */
 	public abstract void taskUpdated(ICompositeCheatSheetTask task);
@@ -86,10 +86,10 @@ public abstract class TaskExplorer {
 	 * Called to set the provided selection and optionally reveal it
 	 * if the scroll bars are active and the selected tasks
 	 * are partially or fully hidden.
-	 * 
+	 *
 	 * @param selection the new selection
 	 * @param reveal if <code>true</code>, expose the task if hidden;
 	 * otherwise, just select.
-	 */	
+	 */
 	public abstract void setSelection(ISelection selection, boolean reveal);
 }

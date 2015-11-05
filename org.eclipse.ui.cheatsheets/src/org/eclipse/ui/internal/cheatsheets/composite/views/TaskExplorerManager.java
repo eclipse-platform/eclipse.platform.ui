@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,18 +36,18 @@ public class TaskExplorerManager {
 private static TaskExplorerManager instance;
 
     private Map images;
-	
+
 	private TaskExplorerManager() {
-	
+
 	}
-	
+
 	public static TaskExplorerManager getInstance() {
 		if (instance == null) {
 			instance = new TaskExplorerManager();
 		}
 		return instance;
 	}
-	
+
 	public TaskExplorer getExplorer(String explorerKind) {
 		CheatSheetRegistryReader.TaskExplorerNode explorerInfo =
 			CheatSheetRegistryReader.getInstance().findTaskExplorer(explorerKind);
@@ -74,7 +74,7 @@ private static TaskExplorerManager instance;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
-			
+
 			return explorerInstance;
 		}
 
@@ -98,17 +98,17 @@ private static TaskExplorerManager instance;
 			return ImageDescriptor.createFromURL(url);
 		} catch (IOException e) {
 			return null;
-		}		
+		}
 	}
-	
+
 	private Map getImages() {
 		if (images == null) {
 			initImages();
 		}
 		return images;
 	}
-	
-	
+
+
 	private void initImages() {
 		if (images == null) {
 			images = new HashMap();
@@ -119,7 +119,7 @@ private static TaskExplorerManager instance;
 					images.put(ids[i], descriptor.createImage());
 				}
 			}
-		}	
+		}
 	}
 
 	public String getName(String explorerKind) {

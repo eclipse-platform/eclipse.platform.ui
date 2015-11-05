@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,14 +24,14 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 
 	public TaskGroupParseStrategy() {
 	}
-	
+
 	@Override
-	public void init() {	
+	public void init() {
 	}
-	
+
 	@Override
 	public boolean parseElementNode(Node childNode, Node parentNode,
-			AbstractTask parentTask, IStatusContainer status) 
+			AbstractTask parentTask, IStatusContainer status)
     {
 		// Task children are handled by CompositeCheatSheetParser
 		return false;

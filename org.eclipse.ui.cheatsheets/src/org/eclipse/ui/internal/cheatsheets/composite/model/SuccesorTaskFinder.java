@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
 
 public class SuccesorTaskFinder {
-	
+
 	private AbstractTask currentTask;
 	ICompositeCheatSheetTask bestLaterTask;
 	ICompositeCheatSheetTask bestEarlierTask;
@@ -27,21 +27,21 @@ public class SuccesorTaskFinder {
 	public SuccesorTaskFinder(ICompositeCheatSheetTask task) {
 		currentTask = (AbstractTask)task;
 	}
-	
+
 	/**
 	 * Find the next recommended task or tasks to be completed.
 	 * Algorithm - visualize the tree as having its root at the top,
 	 * children below and to the left of their parents and then
-	 * search the tree from left to right. Look for 
+	 * search the tree from left to right. Look for
 	 * the best predecessor which is the first task to the
-	 * left of this task that is runnable and the best successor 
+	 * left of this task that is runnable and the best successor
 	 * which is the first task to the
-	 * right of this task which is runnable. 
+	 * right of this task which is runnable.
 	 * @param task The task which was just completed
 	 * @return An array of tasks which can be started
 	 */
-    public ICompositeCheatSheetTask[] getRecommendedSuccessors() 
-    {	
+    public ICompositeCheatSheetTask[] getRecommendedSuccessors()
+    {
     	// TODO this code could be moved to TaskGroup
     	if (ITaskGroup.CHOICE.equals(currentTask.getKind())) {
     		// For a choice if more than one child is runnable return it
@@ -100,14 +100,14 @@ public class SuccesorTaskFinder {
 		if (task == currentTask) {
 			seenThisTask = true;
 		}
-		if (task.getState() == ICompositeCheatSheetTask.COMPLETED || 
+		if (task.getState() == ICompositeCheatSheetTask.COMPLETED ||
 			task.getState() == ICompositeCheatSheetTask.SKIPPED ) {
 			if (isTaskAncestor(task, currentTask)) {
 				seenThisTask = true;
 			}
 			return;
 		}
-		
+
 		if ( isStartable(task) && task != currentTask) {
 			if (seenThisTask) {
 				if (bestLaterTask == null) {
@@ -123,7 +123,7 @@ public class SuccesorTaskFinder {
 		ICompositeCheatSheetTask[] subtasks = task.getSubtasks();
 		for (int i = 0; i < subtasks.length; i++) {
 			searchRunnableChildren(subtasks[i]);
-		}	
+		}
 
 	}
 

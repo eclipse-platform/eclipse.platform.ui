@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,14 +28,14 @@ public interface ICheatSheetResource {
 	public static final String MEMENTO_ID = "id"; //$NON-NLS-1$
 	public static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
 	public static final String MEMENTO_URL = "url"; //$NON-NLS-1$
-	
+
 	public static final String TRIGGER_POINT_ID = "org.eclipse.ui.cheatsheetSelectionDialog"; //$NON-NLS-1$
 
 
 	//
 	// Constants used to retrieve images from the cheatsheet image registry.
 	//
-	public static final String CHEATSHEET_OBJ = "CHEATSHEET_OBJ";//$NON-NLS-1$	
+	public static final String CHEATSHEET_OBJ = "CHEATSHEET_OBJ";//$NON-NLS-1$
 	public static final String COMPOSITE_OBJ = "COMPOSITE_OBJ";//$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_SKIP = "CHEATSHEET_ITEM_SKIP"; //$NON-NLS-1$
 	public static final String CHEATSHEET_ITEM_COMPLETE = "CHEATSHEET_ITEM_COMPLETE"; //$NON-NLS-1$

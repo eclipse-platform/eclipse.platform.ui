@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,10 @@ import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 
 /**
- * A menu for cheatsheet selection.  
+ * A menu for cheatsheet selection.
  * <p>
  * A <code>CheatSheetMenu</code> is used to populate a menu with
- * cheatsheet items.  If the user selects one of these items 
+ * cheatsheet items.  If the user selects one of these items
  * an action is performed to launch the selected cheatsheet.
  * </p><p>
  * The visible cheatsheet items within the menu are dynamic and reflect the
@@ -45,7 +45,7 @@ public class CheatSheetMenu extends ContributionItem {
 	private static CheatSheetRegistryReader reg;
 
 	private boolean showActive = false;
-	
+
 	private IMenuContributor menuContributor;
 
 	private Comparator comparator = new Comparator() {
@@ -63,7 +63,7 @@ public class CheatSheetMenu extends ContributionItem {
 	};
 
 	/**
-	 * Constructs a new instance of <code>CheatSheetMenu</code>.  
+	 * Constructs a new instance of <code>CheatSheetMenu</code>.
 	 */
 	public CheatSheetMenu() {
 		super("LaunchCheatSheetMenu"); //$NON-NLS-1$
@@ -82,7 +82,7 @@ public class CheatSheetMenu extends ContributionItem {
 		MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
 		mi.setText(element.getLabel(null));
 		String key;
-		if (element.isComposite()) { 
+		if (element.isComposite()) {
 			key = ICheatSheetResource.COMPOSITE_OBJ;
 		} else {
 			key = ICheatSheetResource.CHEATSHEET_OBJ;
@@ -144,7 +144,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/**
 	 * Method getActiveCheatSheetID returns the id of the active
 	 * cheatsheet or null.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getActiveCheatSheetID() {
@@ -167,7 +167,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/**
 	 * Method getActiveWorkbenchPage returns the active
 	 * workbench page or null.
-	 * 
+	 *
 	 * @return IWorkbenchPage
 	 */
 	private IWorkbenchPage getActiveWorkbenchPage() {
@@ -183,12 +183,12 @@ public class CheatSheetMenu extends ContributionItem {
 	 * in the menu.
 	 * <p>
 	 * By default, the list contains the most recently used cheatsheets
-	 * and then random cheatsheets until there are 5 present in the list. 
+	 * and then random cheatsheets until there are 5 present in the list.
 	 * </p><p>
 	 * Care should be taken to keep this list to a minimum (7 +/- 2 items
 	 * is a good guideline to follow).
 	 * </p>
-	 * 
+	 *
 	 * @return an <code>ArrayList<code> of cheatsheet items <code>CheatSheetElement</code>
 	 */
 	protected ArrayList getCheatSheetItems() {
@@ -217,7 +217,7 @@ public class CheatSheetMenu extends ContributionItem {
 	/**
 	 * Method addCheatSheets fills a list with cheatsheet elements until there
 	 * are no more empty slots.
-	 * 
+	 *
 	 * @param list - the list to file
 	 * @param cheatSheetsCollection - the collection to get the elements from
 	 * @param emptySlots - number of empty slots remaining
@@ -307,7 +307,7 @@ public class CheatSheetMenu extends ContributionItem {
 
 	/**
 	 * Sets the menuContributor
-	 * @param menuContributor an object which may add contributions to 
+	 * @param menuContributor an object which may add contributions to
 	 * the menu.
 	 */
 	public void setMenuContributor(IMenuContributor menuContributor) {

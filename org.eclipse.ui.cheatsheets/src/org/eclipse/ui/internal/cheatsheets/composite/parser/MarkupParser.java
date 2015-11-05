@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class MarkupParser {
 	public static String parseAndTrimTextMarkup(Node parentNode) {
 		return parseMarkup(parentNode).trim();
 	}
-	
+
 	private static String parseMarkup(Node parentNode) {
 	    NodeList children = parentNode.getChildNodes();
 		StringBuffer text = new StringBuffer();
@@ -43,7 +43,7 @@ public class MarkupParser {
 						text.append(attributeName);
 						text.append(" = \""); //$NON-NLS-1$
 						text.append(attribute.getNodeValue());
-						text.append('"');					
+						text.append('"');
 					}
 				}
 				text.append('>');
@@ -87,18 +87,18 @@ public class MarkupParser {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Add paragraph tags if not already present
 	 */
 	public static String createParagraph(String text, String imageTag) {
 		String result = ""; //$NON-NLS-1$
 		String trimmed = text.trim();
-		boolean addParagraphTags = trimmed.length() < 3 || trimmed.charAt(0)!='<' || 
+		boolean addParagraphTags = trimmed.length() < 3 || trimmed.charAt(0)!='<' ||
 		  (trimmed.charAt(1)!='p' && trimmed.charAt(1) != 'l');
 		if (addParagraphTags) {
 			result +=  "<p>"; //$NON-NLS-1$
-		} 
+		}
 
 		if (imageTag != null) {
 			result += "<img href=\""; //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class MarkupParser {
 		result += trimmed;
 
 		if (addParagraphTags) {
-			result += "</p>"; //$NON-NLS-1$ 
+			result += "</p>"; //$NON-NLS-1$
 		}
 		return result;
 	}

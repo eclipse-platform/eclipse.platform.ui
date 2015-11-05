@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -28,9 +28,9 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 
 /**
- * Action for opening a cheat sheet. The cheat sheet can be specified 
+ * Action for opening a cheat sheet. The cheat sheet can be specified
  * either by a cheat sheet id or by a URL of a cheat sheet content file.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -46,7 +46,7 @@ public final class OpenCheatSheetAction extends Action {
 	 * The cheat sheet content file is located via the
 	 * <code>org.eclipse.ui.cheatsheets.cheatSheetContent</code>
 	 * extension point.
-	 * 
+	 *
 	 * @param id the cheat sheet id
 	 * @exception IllegalArgumentException if <code>id</code>
 	 * is <code>null</code>
@@ -57,11 +57,11 @@ public final class OpenCheatSheetAction extends Action {
 		}
 		this.id = id;
 	}
-	
+
 	/**
-	 * Creates an action that opens the cheat sheet with the 
+	 * Creates an action that opens the cheat sheet with the
 	 * given cheat sheet content file.
-	 * 
+	 *
 	 * @param id the id to give this cheat sheet
 	 * @param name the name to give this cheat sheet
 	 * @param url URL of the cheat sheet content file
@@ -76,16 +76,16 @@ public final class OpenCheatSheetAction extends Action {
 		this.name = name;
 		this.url = url;
 	}
-	
+
 	/**
 	 * Creates an action that opens a cheat sheet using
 	 * XML passed in as a string.
-	 * 
+	 *
 	 * @param id the id to give this cheat sheet
 	 * @param name the name to give this cheat sheet
 	 * @param xml the cheatsheet content in xml format
 	 * @param baseURL is a URL which is only required if the cheat sheet is
-	 * a composite cheat sheet which has tasks which use path parameters in which 
+	 * a composite cheat sheet which has tasks which use path parameters in which
 	 * case the paths will be relative to baseURL. May be <code>null</code>
 	 * if this is not a composite cheat sheet
 	 * @exception IllegalArgumentException if the parameters

@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,11 +27,11 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskExplorer;
 public class TreeTaskExplorer extends TaskExplorer {
 	private TreeViewer viewer;
 
-	
+
 	@Override
 	public String getId() {
 		return ICompositeCheatsheetTags.TREE;
-	}	
+	}
 
 	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
@@ -41,7 +41,7 @@ public class TreeTaskExplorer extends TaskExplorer {
 		viewer.setContentProvider(new TreeContentProvider());
 		viewer.setLabelProvider(new TreeLabelProvider());
 	}
-	
+
 	@Override
 	public void taskUpdated(ICompositeCheatSheetTask task) {
 		viewer.update(task, null);
@@ -69,7 +69,7 @@ public class TreeTaskExplorer extends TaskExplorer {
 
 	@Override
 	public void dispose() {
-		viewer.getLabelProvider().dispose();		
+		viewer.getLabelProvider().dispose();
 	}
 
 	@Override

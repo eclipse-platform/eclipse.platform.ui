@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,41 +38,41 @@ public class ConfirmRestartDialog extends Dialog {
 		public String getColumnText(Object obj, int index) {
 			return treeLabelProvider.getText(obj);
 		}
-		
+
 		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return treeLabelProvider.getImage(obj);
 		}
-		
+
 		@Override
 		public Image getImage(Object obj) {
 			return PlatformUI.getWorkbench().
 					getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
-		
+
 	}
 
 	public class TaskContentProvider  implements IStructuredContentProvider {
-		
+
 		Object[] input;
-		
+
 		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			input = (Object[])newInput;
 		}
-		
+
 		@Override
 		public void dispose() {
-		}	
-		
+		}
+
 		@Override
 		public Object[] getElements(Object parent) {
 			return input;
 		}
 	}
-	
+
 	private AbstractTask[] tasks;
-	
+
 	private TreeLabelProvider treeLabelProvider;
 
 	protected ConfirmRestartDialog(Shell parentShell, AbstractTask[] restartTasks,
@@ -81,7 +81,7 @@ public class ConfirmRestartDialog extends Dialog {
 		this.tasks = restartTasks;
 		this.treeLabelProvider = treeLabelProvider;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -100,7 +100,7 @@ public class ConfirmRestartDialog extends Dialog {
 		viewer.getControl().setLayoutData(taskData);
 		return composite;
 	}
-	
+
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);

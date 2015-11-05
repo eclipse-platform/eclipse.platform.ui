@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,45 +30,45 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
  */
 
 public class TaskDependencies {
-	
+
 	private class Dependency {
 		private AbstractTask sourceTask;
-		
+
 		private String requiredTaskId;
-		
+
 		public Dependency(AbstractTask sourceTask, String requiredTaskId) {
 			this.sourceTask = sourceTask;
 			this.requiredTaskId = requiredTaskId;
 		}
-		
+
 		public AbstractTask getSourceTask() {
 			return sourceTask;
 		}
-		
+
 		public String getRequiredTaskId() {
 			return requiredTaskId;
 		}
 	}
-	
+
 	private List dependencies;
-	
+
 	private Map taskIdMap = new HashMap();
 
 	public void saveId(AbstractTask task) {
 		String id = task.getId();
 		if (id != null) {
 			taskIdMap.put(id, task);
-		}		
+		}
 	}
-	
+
 	public AbstractTask getTask(String id) {
 		return (AbstractTask)taskIdMap.get(id);
 	}
-	
+
 	public TaskDependencies() {
 		dependencies = new ArrayList();
 	}
-	
+
 	/**
 	 * Register a dependency between tasks
 	 * @param sourceTask a task which cannot be started until another task is completed
@@ -77,7 +77,7 @@ public class TaskDependencies {
 	public void addDependency(AbstractTask sourceTask, String requiredTaskId) {
 		dependencies.add(new Dependency(sourceTask, requiredTaskId));
 	}
-	
+
 	/**
 	 * Resolve all of the dependencies updating the individual tasks
 	 * @param model The composite cheat sheet
@@ -89,7 +89,7 @@ public class TaskDependencies {
 			 AbstractTask sourceTask = dep.getSourceTask();
 			 AbstractTask requiredTask = getTask(dep.requiredTaskId);
 			 if (requiredTask == null) {
-					String message = NLS.bind(Messages.ERROR_PARSING_INVALID_ID, (new Object[] {dep.getRequiredTaskId()}));	
+					String message = NLS.bind(Messages.ERROR_PARSING_INVALID_ID, (new Object[] {dep.getRequiredTaskId()}));
 					status.addStatus(IStatus.ERROR, message, null);
 			 } else if (!sourceTask.requiresTask(requiredTask)) {
 				 sourceTask.addRequiredTask(requiredTask);
@@ -137,7 +137,7 @@ public class TaskDependencies {
 					remainingTasks.add(nextTask);
 				} else {
 					makingProgress = true;
-				}				
+				}
 			}
 			tasks = remainingTasks;
 		}
@@ -171,12 +171,12 @@ public class TaskDependencies {
 					lastTask = thisTask;
 					thisTask = task.getName();
 					if (lastTask != null) {
-					    String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {lastTask, thisTask}));	
+					    String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {lastTask, thisTask}));
 					    status.addStatus(IStatus.ERROR, message, null);
 					}
 				}
 			}
-			String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {thisTask, firstTask}));	
+			String message = NLS.bind(Messages.ERROR_PARSING_CYCLE_CONTAINS, (new Object[] {thisTask, firstTask}));
 		    status.addStatus(IStatus.ERROR, message, null);
 		}
 	}

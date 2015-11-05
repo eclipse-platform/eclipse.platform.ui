@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A command handler to open an <code>InputDialog</code> and return the
  * result.
- * 
+ *
  * @since 3.2
  */
 public class OpenInputDialogHandler extends AbstractHandler {
@@ -49,7 +49,7 @@ public class OpenInputDialogHandler extends AbstractHandler {
 		InputDialog dialog = new InputDialog(shell, title, message,
 				initialValue, null);
 		int returnCode = dialog.open();
-		
+
 		if (returnCode == Window.CANCEL) {
 			String cancelReturns = event.getParameter(PARAM_ID_CANCEL_RETURNS);
 			if (cancelReturns != null)
@@ -57,7 +57,7 @@ public class OpenInputDialogHandler extends AbstractHandler {
 			else
 				throw new ExecutionException("dialog canceled"); //$NON-NLS-1$
 		}
-		
+
 		return dialog.getValue();
 	}
 

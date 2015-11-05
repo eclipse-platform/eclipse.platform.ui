@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,20 +23,20 @@ import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 public class EditableTask extends AbstractTask implements IEditableTask {
-	
+
 	private TaskEditor editor;
 
 	private ITaskParseStrategy parserStrategy;
-	
+
 	private boolean editorInitialized = false;
-	
+
 	private boolean underReview = false;
 
 	public EditableTask(CompositeCheatSheetModel model, String id, String name, String kind) {
 		super(model, id, name, kind);
 		parserStrategy = new EditableTaskParseStrategy();
 	}
-	
+
 	@Override
 	public ITaskParseStrategy getParserStrategy() {
 		return parserStrategy;
@@ -47,12 +47,12 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 		return EMPTY;
 	}
 
-	public void setStarted() {	
+	public void setStarted() {
 		if (state==NOT_STARTED) {
 			setState(IN_PROGRESS);
 		}
-	}	
-	
+	}
+
 	public void setEditor(TaskEditor editor) {
 		this.editor = editor;
 	}
@@ -62,10 +62,10 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 	}
 
 	public void reset() {
-		setStateNoNotify(NOT_STARTED);	
+		setStateNoNotify(NOT_STARTED);
 		editorInitialized = false;
 	}
-	
+
 	public void setInput(IMemento memento) {
 		if (editor != null) {
 			editor.setInput(this, memento);
@@ -83,6 +83,6 @@ public class EditableTask extends AbstractTask implements IEditableTask {
 
 	public boolean isUnderReview() {
 		return underReview;
-	}	
-	
+	}
+
 }

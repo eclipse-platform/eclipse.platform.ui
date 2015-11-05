@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 
 /**
  * This is the action used to contribute the CheatSheets menu to the workbench's
- * help menu.  
+ * help menu.
  */
 public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, IPropertyListener {
 	/**
@@ -48,7 +48,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 
 	/**
 	 * Fills the drop-down menu with cheat sheets history
-	 * 
+	 *
 	 * @param menu the menu to fill
 	 */
 	protected void fillMenu(Menu menu) {
@@ -94,7 +94,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 			}
 		});
 	}
-	
+
 	@Override
 	public void propertyChanged(Object source, int propId) {
 		fRecreateMenu = true;
@@ -110,7 +110,7 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 
 	/**
 	 * Sets this action's drop-down menu, disposing the previous menu.
-	 * 
+	 *
 	 * @param menu the new menu
 	 */
 	private void setMenu(Menu menu) {

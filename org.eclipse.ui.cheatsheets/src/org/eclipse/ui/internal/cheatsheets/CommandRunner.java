@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,9 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
  */
 
 public class CommandRunner {
-	
+
 	private ICommandService getCommandService() {
-		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(ICommandService.class);
 		    if (serviceObject != null) {
@@ -42,9 +42,9 @@ public class CommandRunner {
 		}
 		return null;
 	}
-	
+
 	private IHandlerService getHandlerService() {
-		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
 			Object serviceObject = wb.getAdapter(IHandlerService.class);
 		    if (serviceObject != null) {
@@ -54,11 +54,11 @@ public class CommandRunner {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Attempt to execute a command 
+	 * Attempt to execute a command
 	 * @param command a CheatSheetCommand created by the parser
-	 * @param csm 
+	 * @param csm
 	 * @return OK_STATUS if the command completes withour error, otherwise
 	 * an error status
 	 */
@@ -67,20 +67,20 @@ public class CommandRunner {
 		IHandlerService handlerService = getHandlerService();
 		if (commandService == null || handlerService == null) {
 			return new Status
-			(IStatus.ERROR, 
+			(IStatus.ERROR,
 			ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, 0,
 			Messages.ERROR_COMMAND_SERVICE_UNAVAILABLE, null);
 		}
 
 		ParameterizedCommand selectedCommand;
-		Object result;			
+		Object result;
 		String rawSerialization = command.getSerialization();
 		try {
 			String substitutedSerialization = csm.performVariableSubstitution(rawSerialization);
 			selectedCommand = commandService.deserialize(substitutedSerialization);
 			result = handlerService.executeCommand(selectedCommand, null);
 
-			
+
 			String returnsAttribute = command.getReturns();
 			if ((returnsAttribute != null) && (result != null)) {
 				ParameterType returnType = selectedCommand.getCommand().getReturnType();
@@ -94,22 +94,22 @@ public class CommandRunner {
 					}
 				}
 			}
-			
+
 		} catch (NotDefinedException e) {
 			String message = NLS.bind(Messages.ERROR_COMMAND_ID_NOT_FOUND, (new Object[] {rawSerialization}));
-			return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);		
+			return new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 		} catch (CommandException e) {
 			return commandFailureStatus(e);
 		} catch (Exception e) {
 			return commandFailureStatus(e);
 		}
-		
+
 		return Status.OK_STATUS;
 	}
-	
+
 	private IStatus commandFailureStatus(Exception exception) {
 		return new Status
-		(IStatus.ERROR, 
+		(IStatus.ERROR,
 		ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, 0,
 		Messages.ERROR_COMMAND_ERROR_STATUS, exception);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	private List listeners;
 	private Map dataTable = null;
 	private ICheatSheetManager parent;
-	
+
 	public CheatSheetManager(CheatSheetElement element) {
 		cheatsheetID = element.getID();
 		listeners = new ArrayList();
@@ -63,7 +63,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	public Map getData() {
 		return dataTable;
 	}
-	
+
 	/**
 	 * Initialize all variables
 	 * @param data a map containg values for all variables
@@ -78,7 +78,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 			return null;
 		return (String) dataTable.get(key);
 	}
-	
+
 	/**
 	 * Similar to get data except that if the key is prefixed with "parent."
 	 * get the data from the parent
@@ -101,12 +101,12 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 		return result;
 	}
-	
+
     /**
      * Substitute occurences of ${data} with values from the cheatsheetmanager.
      * @param input The input string
      * @param csm The cheatsheet manager
-     * @return The input string with substitutions made for any cheatsheet 
+     * @return The input string with substitutions made for any cheatsheet
      * variables encountered.
      */
 	public String performVariableSubstitution(String input)
@@ -154,9 +154,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 		dataTable.put(key, data);
 	}
-	
+
 	/**
-	 * Similar to setData except that if the key is prefixed by "parent." 
+	 * Similar to setData except that if the key is prefixed by "parent."
 	 * set the data in the parent.
 	 * @param qualifiedKey A key which may be prefixed by parent.
 	 * @param data The value to set
@@ -186,7 +186,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	public ICheatSheetManager getParent() {
 		return parent;
 	}
-	
+
 	public void setParent(ICheatSheetManager parent) {
 		this.parent = parent;
 	}

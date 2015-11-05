@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,12 +24,12 @@ public class ParserInput {
 	private String xml;
 	private String pluginId;
 	private String errorMessage;
-	
+
 	public ParserInput() {
 		url = null;
 		xml = null;
 	}
-	
+
 	public ParserInput(String xml, String basePath) {
 		this.xml = xml;
 		this.url = null;
@@ -42,18 +42,18 @@ public class ParserInput {
 			}
 		}
 	}
-	
+
 	public ParserInput(URL url, String pluginId, String errorMessage) {
 		this.url = url;
 		this.xml = null;
 		this.errorMessage = errorMessage;
 		this.pluginId = pluginId;
 	}
-	
+
 	public URL getUrl() {
 		return url;
 	}
-	
+
 	public String getXml() {
 		return xml;
 	}
@@ -61,7 +61,7 @@ public class ParserInput {
 	public String getPluginId() {
 		return pluginId;
 	}
-	
+
 	public String getErrorMessage() {
 		return errorMessage;
 	}

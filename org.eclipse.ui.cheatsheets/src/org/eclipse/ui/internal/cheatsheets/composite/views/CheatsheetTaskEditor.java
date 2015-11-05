@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		viewer = (CheatSheetViewer)CheatSheetViewerFactory.createCheatSheetView();
 		viewer.createPartControl(parent);
 	}
-	
+
 	@Override
 	public Control getControl() {
 		return viewer.getControl();
@@ -48,7 +48,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 
 	@Override
 	public void setInput(IEditableTask task, IMemento memento) {
-		this.task = task;	
+		this.task = task;
 		Dictionary params = task.getParameters();
 		String id = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_ID);
 		String path = (String)params.get(ICompositeCheatsheetTags.CHEATSHEET_TASK_PATH);
@@ -57,17 +57,17 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		if (showIntroParam != null) {
 			showIntro = showIntroParam.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
-		
+
 		MementoStateManager stateManager = new MementoStateManager(memento, task.getCompositeCheatSheet().getCheatSheetManager());
 		if (path != null) {
 			URL url;
 			try {
 				url = task.getInputUrl(path);
-				if (id == null) { 
+				if (id == null) {
 					id = task.getId();
 				}
 				if (url != null) {
-				    viewer.setInput(id, task.getName(), url, stateManager, false);	
+				    viewer.setInput(id, task.getName(), url, stateManager, false);
 				} else {
 					errorBadUrl(path);
 				}
@@ -86,10 +86,10 @@ public class CheatsheetTaskEditor extends TaskEditor {
 	}
 
 	private void errorBadUrl(String path) {
-		String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));			
+		String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));
 		viewer.showError(message);
 	}
-	
+
 	/*
 	 * Listener for the cheatsheet used by this class
 	 */
@@ -99,8 +99,8 @@ public class CheatsheetTaskEditor extends TaskEditor {
 		public void cheatSheetEvent(ICheatSheetEvent event) {
 			if (event.getEventType() == ICheatSheetEvent.CHEATSHEET_COMPLETED) {
 				task.complete();
-			}	
-		}	
+			}
+		}
 	}
 
 	@Override

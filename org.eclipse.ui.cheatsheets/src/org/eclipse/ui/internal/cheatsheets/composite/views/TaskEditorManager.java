@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,12 +30,12 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 import org.osgi.framework.Bundle;
 
 public class TaskEditorManager {
-	
+
 	private static TaskEditorManager instance;
-	
+
 	private TaskEditorManager() {
 	}
-	
+
 	public static TaskEditorManager getInstance() {
 		if (instance == null) {
 			instance = new TaskEditorManager();
@@ -69,7 +69,7 @@ public class TaskEditorManager {
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
 			}
-			
+
 			return editorInstance;
 		}
 

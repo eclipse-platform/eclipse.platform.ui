@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public class ActionRunner {
 						clonedParams[i] = value == null ? ICheatSheetResource.EMPTY_STRING : value;
 					}
 				}
-			}			
+			}
 			((ICheatSheetAction) action).run(clonedParams, csm);
 		} else {
 			try {
@@ -97,7 +97,7 @@ public class ActionRunner {
 		action.removePropertyChangeListener(propertyChangeListener);
 
 		if (status.isOK() && listenerFired[0]) {
-			if (!listenerResult[0]) {				
+			if (!listenerResult[0]) {
 			    status =new Status(IStatus.WARNING, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ACTION_FAILED, null);
 		    }
 		}

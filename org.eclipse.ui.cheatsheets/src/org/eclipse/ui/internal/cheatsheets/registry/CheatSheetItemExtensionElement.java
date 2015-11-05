@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 	}
 
 	/**
-	 * 
+	 *
 	 * @return IConfigurationElement
 	 */
 	public IConfigurationElement getConfigurationElement() {
@@ -74,7 +74,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param newConfigurationElement IConfigurationElement
 	 */
 	public void setConfigurationElement(IConfigurationElement newConfigurationElement) {
@@ -123,7 +123,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
-		
+
 		if (extElement != null){
 			return extElement;
 		}

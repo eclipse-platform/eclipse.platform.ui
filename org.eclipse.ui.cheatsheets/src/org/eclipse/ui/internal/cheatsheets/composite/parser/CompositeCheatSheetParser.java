@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,22 +39,22 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class CompositeCheatSheetParser implements IStatusContainer {
-	
+
 	private DocumentBuilder documentBuilder;
-	
+
 	private IStatus status;
-	
+
 	private int nextTaskId = 0;
-	
-	
+
+
 	/**
 	 *  Gets the status of the last call to parseGuide
 	 */
-	
+
 	public IStatus getStatus() {
 		return status;
 	}
-	
+
 	/**
 	 * Returns the DocumentBuilder to be used by composite cheat sheets.
 	 */
@@ -69,15 +69,15 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		}
 		return documentBuilder;
 	}
-		
+
 	@Override
-	public void addStatus(int severity, String message, Throwable exception) { 
+	public void addStatus(int severity, String message, Throwable exception) {
 		status = ParserStatusUtility.addStatus(status, severity, message, exception);
 	}
-	
+
 	/**
 	 * Parse a composite cheat sheet from a url. The parser status will be set as a result
-	 * of this operation, if the status is IStatus.ERROR the parser returns null  
+	 * of this operation, if the status is IStatus.ERROR the parser returns null
 	 * @param url The url of the input
 	 * @return A valid composite cheat sheet or null if there was an error
 	 */
@@ -89,7 +89,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			return null;
 		}
 
-		InputStream is = null;	
+		InputStream is = null;
 
 		try {
 			is = url.openStream();
@@ -104,8 +104,8 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			addStatus(IStatus.ERROR,  message,  e);
 			return null;
 		}
-		
-		Document document;	
+
+		Document document;
 		String filename = url.getFile();
 		try {
 			InputSource inputSource = new InputSource(is);
@@ -128,14 +128,14 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			} catch (Exception e) {
 			}
 		}
-		
+
 		CompositeCheatSheetModel result = parseCompositeCheatSheet(document, url);
-		return result;		
+		return result;
 	}
 
 	/**
 	 * Parse a composite cheatsheet. The parser status will be set as a result
-	 * of this operation, if the status is IStatus.ERROR the parser returns null  
+	 * of this operation, if the status is IStatus.ERROR the parser returns null
 	 * @param url The url of the input. This is only used so the model can record
 	 * its input location
 	 * @param document the document to be parse
@@ -148,18 +148,18 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			// If the document passed is null return a null tree and update the status
 			if (document != null) {
 				Node rootnode = document.getDocumentElement();
-				
+
 				// Is the root node correct?
 				if( !rootnode.getNodeName().equals(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET )) {
 					String message = NLS.bind(Messages.ERROR_PARSING_ROOT_NODE_TYPE, (
 							new Object[] {ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET}));
 					throw new CheatSheetParserException(message);
 				}
-				
+
 				String name = "";  //$NON-NLS-1$
 				boolean nameFound = false;
 				String explorerId = ICompositeCheatsheetTags.TREE;
-				
+
 				NamedNodeMap attributes = rootnode.getAttributes();
 				if (attributes != null) {
 					for (int x = 0; x < attributes.getLength(); x++) {
@@ -175,14 +175,14 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					}
 				}
 				CompositeCheatSheetModel compositeCS = new CompositeCheatSheetModel(name, name, explorerId);
-				
+
 				parseCompositeCheatSheetChildren(rootnode, compositeCS);
-				
+
 				compositeCS.getDependencies().resolveDependencies(this);
-				
+
 				if (compositeCS.getRootTask() == null) {
 					addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ROOT, null);
-				} 
+				}
 				if (!nameFound) {
 					addStatus(IStatus.ERROR, Messages.ERROR_PARSING_CCS_NO_NAME, null);
 				}
@@ -190,12 +190,12 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					compositeCS.setContentUrl(url);
 				    return compositeCS;
 				}
-			} 
+			}
 			return null;
 		} catch(CheatSheetParserException e) {
 			addStatus(IStatus.ERROR, e.getMessage(), null);
 			return null;
-		}	
+		}
 	}
 
 	private void parseCompositeCheatSheetChildren(Node compositeCSNode, CompositeCheatSheetModel model) {
@@ -205,21 +205,21 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			Node nextNode = childNodes.item(index);
 			if (isAbstractTask(nextNode.getNodeName()) ) {
 				AbstractTask task = parseAbstractTask(nextNode, model);
-			    if (model.getRootTask() == null ) { 
+			    if (model.getRootTask() == null ) {
 					model.setRootTask(task);
 					parseTaskChildren(nextNode, task, model);
 			    } else {
 				    addStatus(IStatus.ERROR, Messages.ERROR_PARSING_MULTIPLE_ROOT, null);
 			    }
 			}
-		}		
+		}
 	}
 
 	public static boolean isAbstractTask(String nodeName) {
 		return nodeName == ICompositeCheatsheetTags.TASK ||
 			nodeName == ICompositeCheatsheetTags.TASK_GROUP;
 	}
-	
+
 	private void parseTaskChildren(Node parentNode, AbstractTask parentTask, CompositeCheatSheetModel model) {
 		NodeList childNodes = parentNode.getChildNodes();
 		ITaskParseStrategy strategy = parentTask.getParserStrategy();
@@ -229,11 +229,11 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 			if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = childNode.getNodeName();
 				if (nodeName == IParserTags.PARAM) {
-					addParameter(parentTask, childNode.getAttributes());			
+					addParameter(parentTask, childNode.getAttributes());
 				} else if (nodeName == IParserTags.INTRO) {
 					parentTask.setDescription(MarkupParser.parseAndTrimTextMarkup(childNode));
 				} else if (nodeName == ICompositeCheatsheetTags.ON_COMPLETION) {
-					parentTask.setCompletionMessage(MarkupParser.parseAndTrimTextMarkup(childNode));						
+					parentTask.setCompletionMessage(MarkupParser.parseAndTrimTextMarkup(childNode));
 				} else if (nodeName == ICompositeCheatsheetTags.DEPENDS_ON) {
 					parseDependency(childNode, parentTask, model);
 				} else if (CompositeCheatSheetParser.isAbstractTask(nodeName)) {
@@ -253,7 +253,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 					}
 				}
 			}
-		}	
+		}
 		// Check for missing attributes and add dependencies if this was a sequence
 		strategy.parsingComplete(parentTask, this);
 	}
@@ -268,7 +268,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		     } else {
 		    	 addStatus(IStatus.ERROR, Messages.ERROR_PARSING_NO_ID, null);
 		     }
-		}	
+		}
 	}
 
 	private void addParameter(AbstractTask parentTask, NamedNodeMap attributes) {
@@ -286,7 +286,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				}
 				if (attributeName.equals(ICompositeCheatsheetTags.VALUE)) {
 					value= attribute.getNodeValue();
-				}	
+				}
 			}
 		}
 		if (name == null) {
@@ -298,7 +298,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		} else {
 			parentTask.getParameters().put(name, value);
 		}
-		
+
 	}
 
 	private AbstractTask parseAbstractTask(Node taskNode, CompositeCheatSheetModel model) {
@@ -322,10 +322,10 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 				}
 				if (attributeName.equals(IParserTags.ID)) {
 					id = attribute.getNodeValue();
-				}			
+				}
 				if (attributeName.equals(IParserTags.SKIP)) {
 					skippable = "true".equalsIgnoreCase(attribute.getNodeValue()); //$NON-NLS-1$
-				}				
+				}
 			}
 		}
 
@@ -360,7 +360,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		task.setCompletionMessage(Messages.COMPLETED_TASK);
 		return task;
 	}
-	
+
 	private String autoGenerateId() {
 		return "TaskId_" + nextTaskId++; //$NON-NLS-1$
 	}

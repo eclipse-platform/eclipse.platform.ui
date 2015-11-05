@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * An editor which provides the UI for a task within a composite cheat sheet.
  * A task editor is responsible for saving the state of the task whenever
  * it changes.
- * 
+ *
  */
 
 public abstract class TaskEditor {
@@ -41,7 +41,7 @@ public abstract class TaskEditor {
 	 * Starts editing the provided task. The editor is responsible
 	 * for saving its state. createControl() will always be called before setInput().
 	 * @param task The task associated with this editor
-	 * @param memento The state of this task saved from a previous invocation. 
+	 * @param memento The state of this task saved from a previous invocation.
 	 * The memento will be <b>null</b> if the task has not been previously started
 	 * or if it is being restarted. If the editor is being restored from a previous
 	 * session the memento will contain the last saved state.
