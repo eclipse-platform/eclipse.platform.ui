@@ -605,8 +605,7 @@ public abstract class Dialog extends Window {
 	 * @see #getCancelButton
 	 * @see #getOKButton()
 	 */
-	protected Button createButton(Composite parent, int id, String label,
-			boolean defaultButton) {
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button button = new Button(parent, SWT.PUSH);
