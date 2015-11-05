@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jface.dialogs.Dialog;
@@ -69,14 +68,13 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 			if (!set.isEditable())
 				return false;
 
-			Set workingSetTypeIds = getSupportedWorkingSetIds();
+			Set<String> workingSetTypeIds = getSupportedWorkingSetIds();
 			if (workingSetTypeIds == null)
 				return true;
-
-			for (Iterator i = workingSetTypeIds.iterator(); i.hasNext();) {
-				String workingSetTypeId = (String) i.next();
-				if (workingSetTypeId.equals(set.getId()))
+			for (String workingSetTypeId : workingSetTypeIds) {
+				if (workingSetTypeId.equals(set.getId())) {
 					return true;
+				}
 			}
 
 			return false;
@@ -99,8 +97,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	 * @param canEdit
 	 *            whether or not this dialog will display edit controls
 	 */
-	public SimpleWorkingSetSelectionDialog(Shell shell,
-			String[] workingSetTypeIds, IWorkingSet[] selectedWorkingSets,
+	public SimpleWorkingSetSelectionDialog(Shell shell, String[] workingSetTypeIds, IWorkingSet[] selectedWorkingSets,
 			boolean canEdit) {
 		super(shell, workingSetTypeIds, canEdit);
 		this.initialSelection = selectedWorkingSets;
