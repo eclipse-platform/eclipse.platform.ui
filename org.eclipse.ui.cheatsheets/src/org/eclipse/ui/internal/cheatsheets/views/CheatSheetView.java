@@ -136,16 +136,6 @@ public class CheatSheetView extends ViewPart {
 		return viewer;
 	}
 	
-	/* (non-Javadoc)
-	 * Initializes this view with the given view site.  A memento is passed to
-	 * the view which contains a snapshot of the views state from a previous
-	 * session.  Where possible, the view should try to recreate that state
-	 * within the part controls.
-	 * <p>
-	 * This implementation will ignore the memento and initialize the view in
-	 * a fresh state.  Subclasses may override the implementation to perform any
-	 * state restoration as needed.
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
@@ -177,9 +167,6 @@ public class CheatSheetView extends ViewPart {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IViewPart.
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		if(viewer != null) {

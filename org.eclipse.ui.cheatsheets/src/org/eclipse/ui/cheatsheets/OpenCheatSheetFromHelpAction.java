@@ -37,19 +37,15 @@ public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
 		super();
 	}
 
-	/* (non-javadoc)
+	/*
 	 * This method is called by the eclipse framework.  The initialization string must be the id of a 
 	 * registered cheat sheet in order for the action to work.
-	 * @see ILiveHelpAction#setInitializationString(String)
 	 */
 	@Override
 	public void setInitializationString(String data) {
 		cheatsheetID = data;
 	}
 
-	/* (non-javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
 	@Override
 	public void run() {
 		// Active help does not run on the UI thread, so we must use syncExec

@@ -40,9 +40,6 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 		CheatSheetPlugin.getPlugin().getCheatSheetHistory().addListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkbenchWindowActionDelegate#dispose
-	 */
 	@Override
 	public void dispose() {
 		setMenu(null);
@@ -59,17 +56,11 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 		cheatsheetMenuMenuItem.fill(menu, 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
 	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
@@ -78,9 +69,6 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 		return fMenu;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
 	@Override
 	public void init(IWorkbenchWindow window) {
 	}
@@ -107,24 +95,15 @@ public class CheatSheetMenuAction implements IWorkbenchWindowPulldownDelegate2, 
 		});
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
-	 */
 	@Override
 	public void propertyChanged(Object source, int propId) {
 		fRecreateMenu = true;
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkbenchWindowActionDelegate#run
-	 */
 	@Override
 	public void run(IAction action) {
 	}
 
-	/* (non-Javadoc)
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

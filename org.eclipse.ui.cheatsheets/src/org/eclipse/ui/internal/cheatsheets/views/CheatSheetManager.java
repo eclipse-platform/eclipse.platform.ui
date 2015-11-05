@@ -43,9 +43,6 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getCheatSheetID()
-	 */
 	@Override
 	public String getCheatSheetID() {
 		return cheatsheetID;
@@ -140,9 +137,6 @@ public class CheatSheetManager implements ICheatSheetManager {
 		dataTable = data;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#setData(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setData(String key, String data) {
 		if (key == null) {

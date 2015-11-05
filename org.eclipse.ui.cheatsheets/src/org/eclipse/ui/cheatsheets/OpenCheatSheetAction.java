@@ -105,12 +105,11 @@ public final class OpenCheatSheetAction extends Action {
 	}
 
 
-	/* (non-javadoc)
+	/*
 	 * This action will try to launch the cheat sheet view and populate
 	 * it with the content specified either in the URL or the content
 	 * file specified in the cheatsheetContent extension point
 	 * for the cheat sheet with the id passed to this action.
-	 * @see IAction#run()
 	 */
 	@Override
 	public void run() {

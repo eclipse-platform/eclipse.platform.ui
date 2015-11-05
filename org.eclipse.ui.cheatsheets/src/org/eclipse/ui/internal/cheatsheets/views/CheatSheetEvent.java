@@ -42,9 +42,6 @@ public class CheatSheetEvent implements ICheatSheetEvent {
 		return cheatsheetID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.events.ICheatSheetEvent#getCheatSheetManager()
-	 */
 	@Override
 	public ICheatSheetManager getCheatSheetManager() {
 		return csm;

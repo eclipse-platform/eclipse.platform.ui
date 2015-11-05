@@ -676,9 +676,6 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-	 */
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		IExtensionDelta[] cheatSheetDeltas = event.getExtensionDeltas(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, CHEAT_SHEET_CONTENT);

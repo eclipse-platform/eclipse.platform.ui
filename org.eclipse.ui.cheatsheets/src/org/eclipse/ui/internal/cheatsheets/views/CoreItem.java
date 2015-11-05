@@ -598,12 +598,6 @@ public class CoreItem extends ViewItem {
 	}
 	
 	
-	/*
-	 * (non-Javadoc)
-	 * Create a composite to hold the message defined in an onCompletion element
-	 * and a button to advance to the next step or return to the introduction if 
-	 * this is the last step.
-	 */
 	@Override
 	void createCompletionComposite(boolean isFinalItem) {
 		String completionMessage = viewer.getManager().performVariableSubstitution

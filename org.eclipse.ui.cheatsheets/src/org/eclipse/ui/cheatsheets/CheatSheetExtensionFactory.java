@@ -49,11 +49,6 @@ public class CheatSheetExtensionFactory implements IExecutableExtensionFactory,
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtensionFactory#create()
-	 */
 	@Override
 	public Object create() throws CoreException {
 		if (HELP_MENU_ACTION.equals(id))
@@ -63,12 +58,6 @@ public class CheatSheetExtensionFactory implements IExecutableExtensionFactory,
 				0, "Unknown id in data argument for " + getClass(), null)); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {

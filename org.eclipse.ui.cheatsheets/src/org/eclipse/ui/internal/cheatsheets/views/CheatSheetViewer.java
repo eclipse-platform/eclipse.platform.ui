@@ -716,9 +716,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return model;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getCheatSheetID()
-	 */
 	@Override
 	public String getCheatSheetID() {
 		if(getContent() != null) {
@@ -737,9 +734,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return contentElement;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return control;
@@ -1215,9 +1209,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String)
-	 */
 	@Override
 	public void setInput(String id) {
 		setInput(id, new DefaultStateManager());
@@ -1254,9 +1245,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setInput(String id)", "Time in CheatSheetViewer.setInput(String id) after getCheatSheetHistory() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String, java.lang.String, java.net.URL)
-	 */
 	@Override
 	public void setInput(String id, String name, URL url) {
 		setInput(id, name, url, new DefaultStateManager(), false);

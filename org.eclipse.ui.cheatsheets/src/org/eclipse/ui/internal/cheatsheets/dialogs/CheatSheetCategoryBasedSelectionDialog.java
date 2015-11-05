@@ -141,12 +141,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	private static class ActivityViewerFilter extends ViewerFilter {
 		private boolean hasEncounteredFilteredItem = false;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
@@ -216,9 +210,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Window.
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -228,9 +219,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		newShell.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_VIEW));
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
@@ -238,9 +226,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		enableOKButton(okButtonState);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
@@ -431,11 +416,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 				.setText(Messages.CheatSheetCategoryBasedSelectionDialog_showAll);
 		showAllButton.addSelectionListener(new SelectionAdapter() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (showAllButton.getSelection()) {
@@ -567,9 +547,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on Dialog.
-	 */
 	@Override
 	protected void okPressed() {
 		/*
@@ -822,11 +799,6 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		saveMRU(mostRecentFiles, STORE_FILE_MRU, selectFileCombo.getText());	
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
-     * 
-     * @since 3.2
-     */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
         IDialogSettings settings = CheatSheetPlugin.getPlugin().getDialogSettings();

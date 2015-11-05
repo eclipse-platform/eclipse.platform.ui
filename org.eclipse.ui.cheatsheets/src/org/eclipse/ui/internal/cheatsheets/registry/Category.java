@@ -105,9 +105,6 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 		elements.add(element);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAdaptable.
-	 */
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class)
@@ -118,25 +115,16 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 			return null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
 		return getElements().toArray();
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter.
-	 */
 	@Override
 	public String getLabel(Object o) {
 		return getLabel();
@@ -241,31 +229,16 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return configurationElement == null ? pluginId : configurationElement

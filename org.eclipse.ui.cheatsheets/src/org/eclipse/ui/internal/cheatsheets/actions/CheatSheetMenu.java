@@ -74,7 +74,7 @@ public class CheatSheetMenu extends ContributionItem {
 		showActive(true);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * Creates a menu item for a cheatsheet.
 	 */
 	private void createMenuItem(Menu menu, int index, final CheatSheetElement element, boolean bCheck) {
@@ -97,7 +97,7 @@ public class CheatSheetMenu extends ContributionItem {
 		});
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * Creates a menu item for "Other...".
 	 */
 	private void createOtherItem(Menu menu, int index) {
@@ -111,9 +111,6 @@ public class CheatSheetMenu extends ContributionItem {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * Fills the menu with cheatsheet items.
-	 */
 	@Override
 	public void fill(Menu menu, int index) {
 		// Get the checked cheatsheet.
@@ -244,7 +241,7 @@ public class CheatSheetMenu extends ContributionItem {
 		return emptySlots;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * Gets the most recently used (MRU) shortcut cheatsheets
 	 * (<code>CheatSheetElement</code> items)
 	 * <p>
@@ -270,17 +267,11 @@ public class CheatSheetMenu extends ContributionItem {
 		return showActive;
 	}
 
-	/* (non-Javadoc)
-	 * Returns whether this menu is dynamic.
-	 */
 	@Override
 	public boolean isDynamic() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#isVisible()
-	 */
 	@Override
 	public boolean isVisible() {
 		return getActiveWorkbenchPage() != null;
@@ -296,7 +287,7 @@ public class CheatSheetMenu extends ContributionItem {
 		new OpenCheatSheetAction(element.getID()).run();
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * Show the "other" dialog, select a cheatsheet, and launch it. Pass on the selection
 	 * event should the meny need it.
 	 */
