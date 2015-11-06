@@ -169,9 +169,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		catalog = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see IContentTypeManager#addContentTypeChangeListener(IContentTypeChangeListener)
-	 */
 	@Override
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener) {
 		contentTypeListeners.add(listener);

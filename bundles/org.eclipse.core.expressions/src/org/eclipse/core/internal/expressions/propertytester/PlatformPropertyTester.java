@@ -34,9 +34,6 @@ public class PlatformPropertyTester extends PropertyTester {
 	private static final String PROPERTY_IS_BUNDLE_INSTALLED = "isBundleInstalled"; //$NON-NLS-1$
 	private static final String PROPERTY_BUNDLE_STATE = "bundleState"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (Platform.class.equals(receiver)) {
