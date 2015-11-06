@@ -120,7 +120,7 @@ public class ControlElement extends WidgetElement {
 			return getControl().getEnabled();
 		}
 		if ("disabled".equals(s)) {
-			return getControl().getEnabled();
+			return !getControl().getEnabled();
 		}
 		if ("visible".equals(s)) {
 			return getControl().getVisible();
