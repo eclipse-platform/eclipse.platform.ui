@@ -11,6 +11,7 @@
  *     Bryan Hunt - Fix for Bug 245457
  *     Didier Villevalois - Fix for Bug 178534
  *     Robin Stocker - Fix for Bug 193034 (tool tip also on text)
+ *     Alena Laskavaia - Bug 481604
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -348,49 +349,40 @@ public class ExpandableComposite extends Canvas {
 				}
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
-			int tbarHeight = 0;
-			if (size.y > 0)
-				tbarHeight = size.y;
-			if (tcsize.y > 0)
-				tbarHeight = Math.max(tbarHeight, tcsize.y);
-			y += tbarHeight;
+			int height = Math.max(tcsize.y, size.y); // max of label/text client
+			height = Math.max(height, tsize.y); // or max of toggle
+			y += height;
 			if (hasTitleBar())
 				y += tvmargin;
-			if (getSeparatorControl() != null) {
+			Control separatorControl = getSeparatorControl();
+			if (separatorControl != null) {
 				y += VSPACE;
-				getSeparatorControl().setBounds(marginWidth, y,
+				separatorControl.setBounds(marginWidth, y,
 						clientArea.width - marginWidth - marginWidth,
 						SEPARATOR_HEIGHT);
 				y += SEPARATOR_HEIGHT;
-				if (expanded)
-					y += VSPACE;
 			}
-			if (expanded) {
+			if (expanded && client != null) {
 				int areaWidth = clientArea.width - marginWidth - thmargin;
 				int cx = marginWidth + thmargin;
 				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					cx = x;
 				}
 				areaWidth -= cx;
-				if (client != null) {
-					Point dsize = null;
-					Control desc = getDescriptionControl();
-					if (desc != null) {
-						dsize = descriptionCache.computeSize(areaWidth,
-								SWT.DEFAULT);
-						y += descriptionVerticalSpacing;
-						descriptionCache.setBounds(cx, y, areaWidth, dsize.y);
-						y += dsize.y + clientVerticalSpacing;
-					} else {
-						y += clientVerticalSpacing;
-						if (getSeparatorControl() != null)
-							y -= VSPACE;
+				Control desc = getDescriptionControl();
+				if (desc != null) {
+					if (separatorControl != null) {
+						y += VSPACE;
 					}
-					int cwidth = areaWidth;
-					int cheight = clientArea.height - marginHeight
-							- marginHeight - y;
-					clientCache.setBounds(cx, y, cwidth, cheight);
+					Point dsize = descriptionCache.computeSize(areaWidth, SWT.DEFAULT);
+					y += descriptionVerticalSpacing;
+					descriptionCache.setBounds(cx, y, areaWidth, dsize.y);
+					y += dsize.y;
 				}
+				y += clientVerticalSpacing;
+				int cwidth = areaWidth;
+				int cheight = clientArea.height - marginHeight - marginHeight - y;
+				clientCache.setBounds(cx, y, cwidth, cheight);
 			}
 		}
 
@@ -399,7 +391,7 @@ public class ExpandableComposite extends Canvas {
 				boolean changed) {
 			initCache(changed);
 
-			int width = 0, height = 0;
+			int width = 0;
 			Point tsize = NULL_SIZE;
 			int twidth = 0;
 			if (toggle != null) {
@@ -459,11 +451,12 @@ public class ExpandableComposite extends Canvas {
 				width += IGAP + tcsize.x;
 			if (toggle != null)
 				width += twidth;
-			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
+
+			int height = Math.max(tcsize.y, size.y); // max of label/text client
+			height = Math.max(height, tsize.y); // or max of toggle
+
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
-				if (expanded && client != null)
-					height += VSPACE;
 			}
 			// if (hasTitleBar())
 			// height += VSPACE;
@@ -490,23 +483,20 @@ public class ExpandableComposite extends Canvas {
 							dwHint -= twidth;
 					}
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
-				}
-				if (dsize != null) {
 					width = Math.max(width, dsize.x + clientIndent);
-					if (expanded)
-						height += descriptionVerticalSpacing + dsize.y
-								+ clientVerticalSpacing;
-				} else {
-					height += clientVerticalSpacing;
-					if (getSeparatorControl() != null)
-						height -= VSPACE;
+					if (expanded) {
+						if (getSeparatorControl() != null) {
+							height += VSPACE;
+						}
+						height += descriptionVerticalSpacing + dsize.y;
+					}
 				}
 				width = Math.max(width, csize.x + clientIndent);
-				if (expanded)
+				if (expanded) {
+					height += clientVerticalSpacing;
 					height += csize.y;
+				}
 			}
-			if (toggle != null)
-				height = height - size.y + Math.max(size.y, tsize.y);
 
 			Point result = new Point(width + marginWidth + marginWidth
 					+ thmargin + thmargin, height + marginHeight + marginHeight
