@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 268472)
  *     Matthew Hall - bug 300953
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 413611
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 481620
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.fieldassist;
@@ -136,8 +137,8 @@ public class ControlDecorationSupport {
 	private final Composite composite;
 	private final ControlDecorationUpdater updater;
 
-	private IObservableValue validationStatus;
-	private IObservableList targets;
+	private IObservableValue<IStatus> validationStatus;
+	private IObservableList<IObservable> targets;
 
 	private IDisposeListener disposeListener = new IDisposeListener() {
 		@Override
@@ -146,29 +147,21 @@ public class ControlDecorationSupport {
 		}
 	};
 
-	private IValueChangeListener statusChangeListener = new IValueChangeListener() {
+	private IValueChangeListener<IStatus> statusChangeListener = new IValueChangeListener<IStatus>() {
 		@Override
-		public void handleValueChange(ValueChangeEvent event) {
-			statusChanged((IStatus) validationStatus.getValue());
+		public void handleValueChange(ValueChangeEvent<? extends IStatus> event) {
+			statusChanged(validationStatus.getValue());
 		}
 	};
 
-	private IListChangeListener targetsChangeListener = new IListChangeListener() {
-		@Override
-		public void handleListChange(ListChangeEvent event) {
-			event.diff.accept(new ListDiffVisitor() {
-				@Override
-				public void handleAdd(int index, Object element) {
-					targetAdded((IObservable) element);
-				}
+	private IListChangeListener<IObservable> targetsChangeListener = new IListChangeListener<IObservable>() {
 
-				@Override
-				public void handleRemove(int index, Object element) {
-					targetRemoved((IObservable) element);
-				}
-			});
-			statusChanged((IStatus) validationStatus.getValue());
+		@Override
+		public void handleListChange(ListChangeEvent<? extends IObservable> event) {
+			event.diff.accept(new TargetsListDiffAdvisor<>());
+			statusChanged(validationStatus.getValue());
 		}
+
 	};
 
 	private static class TargetDecoration {
@@ -179,6 +172,20 @@ public class ControlDecorationSupport {
 			this.target = target;
 			this.decoration = decoration;
 		}
+	}
+
+	private class TargetsListDiffAdvisor<E extends IObservable> extends ListDiffVisitor<E> {
+
+		@Override
+		public void handleAdd(int index, E element) {
+			targetAdded(element);
+		}
+
+		@Override
+		public void handleRemove(int index, E element) {
+			targetRemoved(element);
+		}
+
 	}
 
 	private List<TargetDecoration> targetDecorations;
@@ -207,7 +214,7 @@ public class ControlDecorationSupport {
 		for (Iterator<?> it = targets.iterator(); it.hasNext();)
 			targetAdded((IObservable) it.next());
 
-		statusChanged((IStatus) validationStatus.getValue());
+		statusChanged(validationStatus.getValue());
 	}
 
 	private void targetAdded(IObservable target) {
