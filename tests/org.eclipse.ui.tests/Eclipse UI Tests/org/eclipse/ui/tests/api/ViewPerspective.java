@@ -21,6 +21,8 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class ViewPerspective implements IPerspectiveFactory {
 
+	public static final String ID = "org.eclipse.ui.tests.api.ViewPerspective";
+
     @Override
 	public void createInitialLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();
