@@ -13,11 +13,15 @@
 package org.eclipse.ui.tests.api;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -38,6 +42,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -49,6 +55,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -325,7 +332,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_VISIBLE2() throws PartInitException {
 		fActivePage.setPerspective(WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(
-						"org.eclipse.ui.tests.api.ViewPerspective"));
+						ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID3);
@@ -350,7 +357,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * part in its stack.
 	 */
 	public void testView_ACTIVE2() throws PartInitException {
-		fActivePage.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+		fActivePage.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId(ViewPerspective.ID));
 
 		// create a part to be active
 		fActivePage.showView(MockViewPart.ID3);
@@ -1032,13 +1039,134 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNull(fActivePage.findView(id));
 	}
 
+	/**
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=471782
+	 */
 	public void testFindViewReference() throws Throwable {
-		fActivePage.getWorkbenchWindow().getWorkbench().showPerspective(
-				SessionPerspective.ID, fActivePage.getWorkbenchWindow());
+		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findView(MockViewPart.ID));
+
 		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
+
+		fActivePage.showView(MockViewPart.ID2);
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNotNull(fActivePage.findView(MockViewPart.ID2));
+
+		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findView(SessionView.VIEW_ID));
+
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(SessionView.VIEW_ID));
+
+		fActivePage.showView(MockViewPart.ID2);
+		assertNotNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
 
 		fActivePage.showView(MockViewPart.ID4);
+		assertNotNull(fActivePage.findView(MockViewPart.ID4));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID4));
+	}
+
+	/**
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=471782
+	 */
+	public void testFindViewReferenceAfterShowViewCommand() throws Throwable {
+		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findView(MockViewPart.ID));
+
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
+
+		showViewViaCommand(MockViewPart.ID2);
+		assertNotNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
+
+		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNotNull(fActivePage.findView(SessionView.VIEW_ID));
+
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNotNull(fActivePage.findViewReference(SessionView.VIEW_ID));
+
+		showViewViaCommand(MockViewPart.ID2);
+		assertNotNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
+
+		showViewViaCommand(MockViewPart.ID4);
+		assertNotNull(fActivePage.findView(MockViewPart.ID4));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID4));
+	}
+
+	/**
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=471782
+	 */
+	public void testFindHistoryViewReferenceAfterShowViewCommand() throws Throwable {
+		String historyView = "org.eclipse.team.ui.GenericHistoryView";
+		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNotNull(fActivePage.findView(MockViewPart.ID));
+
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNull(fActivePage.findViewReference(historyView));
+		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
+
+		showViewViaCommand(historyView);
+		assertNotNull(fActivePage.findView(historyView));
+		assertNotNull(fActivePage.findViewReference(historyView));
+
+		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		assertNull(fActivePage.findView(MockViewPart.ID2));
+		assertNull(fActivePage.findView(MockViewPart.ID4));
+		assertNull(fActivePage.findView(historyView));
+		assertNotNull(fActivePage.findView(SessionView.VIEW_ID));
+
+		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
+		assertNull(fActivePage.findViewReference(MockViewPart.ID4));
+		assertNull(fActivePage.findViewReference(historyView));
+		assertNotNull(fActivePage.findViewReference(SessionView.VIEW_ID));
+
+		showViewViaCommand(historyView);
+		assertNotNull(fActivePage.findView(historyView));
+		assertNotNull(fActivePage.findViewReference(historyView));
+	}
+
+	private void showViewViaCommand(String viewId) throws Throwable {
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewId);
+
+		Command command = createCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
+		ExecutionEvent event = createEvent(command, parameters);
+		command.executeWithChecks(event);
+		while (fWorkbench.getDisplay().readAndDispatch()) {
+			// process events, who knows what is flying after command execution
+		}
+	}
+
+	private ExecutionEvent createEvent(Command command, Map<String, String> parameters) {
+		IWorkbench workbench = getWorkbench();
+		IHandlerService handlerService = workbench.getService(IHandlerService.class);
+		IEvaluationContext contextSnapshot = handlerService.createContextSnapshot(true);
+		ExecutionEvent event = new ExecutionEvent(command, parameters, null, contextSnapshot);
+		return event;
+	}
+
+	private Command createCommand(String id) {
+		ICommandService commandService = getWorkbench().getService(ICommandService.class);
+		return commandService.getCommand(id);
 	}
 
 	public void testFindSecondaryViewReference() throws Throwable {
@@ -1772,7 +1900,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_CREATE1() throws PartInitException {
 		fActivePage.setPerspective(fActivePage.getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
-							"org.eclipse.ui.tests.api.ViewPerspective"));
+							ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID);
@@ -1797,7 +1925,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_CREATE2() throws PartInitException {
 		fActivePage.setPerspective(fActivePage.getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
-						"org.eclipse.ui.tests.api.ViewPerspective"));
+						ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID3);
@@ -1822,7 +1950,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_CREATE3() throws PartInitException {
 		fActivePage.setPerspective(fActivePage.getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
-						"org.eclipse.ui.tests.api.ViewPerspective"));
+						ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID3);
@@ -1847,7 +1975,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_VISIBLE1() throws PartInitException {
 		fActivePage.setPerspective(fActivePage.getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
-						"org.eclipse.ui.tests.api.ViewPerspective"));
+						ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID);
@@ -1872,7 +2000,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testView_VISIBLE3() throws PartInitException {
 		fActivePage.setPerspective(fActivePage.getWorkbenchWindow().getWorkbench()
 					.getPerspectiveRegistry().findPerspectiveWithId(
-							"org.eclipse.ui.tests.api.ViewPerspective"));
+							ViewPerspective.ID));
 
 		// create a part to be active
 		IViewPart activePart = fActivePage.showView(MockViewPart.ID3);
