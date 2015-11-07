@@ -1166,13 +1166,6 @@ MenuManagerEventHelper.getInstance()
 	}
 
 	private void scheduleManagerUpdate(IContributionManager mgr) {
-		// Bug 467000: Avoid repeatedly updating menu managers
-		// This workaround is opt-in for 4.5
-		boolean workaroundEnabled = Boolean.getBoolean("eclipse.workaround.bug467000"); //$NON-NLS-1$
-		if (!workaroundEnabled) {
-			mgr.update(false);
-			return;
-		}
 		synchronized (mgrToUpdate) {
 			if (this.mgrToUpdate.isEmpty()) {
 				Display display = context.get(Display.class);
@@ -1192,8 +1185,8 @@ MenuManagerEventHelper.getInstance()
 					}
 					});
 				}
-				this.mgrToUpdate.add(mgr);
 			}
+			this.mgrToUpdate.add(mgr);
 		}
 	}
 }
