@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.tests.propertysheet;
 
+import java.lang.reflect.Field;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -34,11 +36,14 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.session.NonRestorableView;
+import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.NewPropertySheetHandler;
 import org.eclipse.ui.views.properties.PropertySheet;
+import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -49,7 +54,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * TestPropertySheetPage exposes certain members for testability
 	 */
-	private TestPropertySheetPage testPropertySheetPage = new TestPropertySheetPage();
+	private TestPropertySheetPage testPropertySheetPage;
 	private SelectionProviderView selectionProviderView;
 
 	/**
@@ -87,6 +92,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		testPropertySheetPage = new TestPropertySheetPage();
 		// open the property sheet with the TestPropertySheetPage
 		Platform.getAdapterManager().registerAdapters(testPropertySheetPage,
 				PropertySheet.class);
@@ -112,6 +118,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		Platform.removeLogListener(logListener);
 		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage,
 				PropertySheet.class);
+		testPropertySheetPage.dispose();
 		testPropertySheetPage = null;
 		selectionProviderView = null;
 
@@ -421,6 +428,11 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 			}
 		}
 
+		processUiEvents();
+		// TODO this is required here because the default page is never properly
+		// disposed.
+		testPropertySheetPage.dispose();
+
 		// show the view that will contribute to the 'Properties' view
 		activePage.showView(viewId);
 
@@ -482,4 +494,129 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	public void testBug278514TabbedProperties() throws Exception {
 		testBug278514(IPageLayout.ID_PROJECT_EXPLORER, false);
 	}
+
+	public void testPageDispose() throws Exception {
+		// close all perspectives
+		activePage.closeAllPerspectives(false, false);
+
+		// open the 'Resource' perspective
+		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+		activePage.setPerspective(desc);
+
+		// hide all 'Properties' view instances, if any
+		IViewReference[] viewReferences = activePage.getViewReferences();
+		for (IViewReference viewReference : viewReferences) {
+			if (IPageLayout.ID_PROP_SHEET.equals(viewReference.getId())) {
+				activePage.hideView(viewReference);
+			}
+		}
+
+		processUiEvents();
+		// TODO this is required here because the default page is never properly
+		// disposed.
+		testPropertySheetPage.dispose();
+
+		// at this place we get an "already disposed" error because we are tying
+		// to reuse default page
+		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
+	}
+
+	/**
+	 * Tests bug 425525 using a view that contributes to the 'Properties' view
+	 * without using a customized page. This test uses the 'Navigator' view to
+	 * achieve this.
+	 *
+	 * @see #testBug425525(String, boolean)
+	 */
+	public void testInitialSelectionWithNormalProperties() throws Exception {
+		testBug425525(IPageLayout.ID_RES_NAV, true);
+	}
+
+	/**
+	 * Tests bug 425525 using a view that contributes to the 'Properties' view
+	 * that uses a custom properties page. This test uses the 'Project Explorer'
+	 * view to achieve this. The 'Project Explorer' renders content within the
+	 * 'Properties' view using tabbed properties.
+	 *
+	 * @see #testBug425525(String, boolean)
+	 */
+	public void testInitialSelectionWithTabbedProperties() throws Exception {
+		testBug425525(IPageLayout.ID_PROJECT_EXPLORER, false);
+	}
+
+	private void testBug425525(String viewId, boolean standardPage) throws Exception {
+		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage, PropertySheet.class);
+
+		// close all perspectives
+		activePage.closeAllPerspectives(false, false);
+
+		// open the 'Resource' perspective
+		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+		activePage.setPerspective(desc);
+
+		// hide all 'Properties' view instances, if any
+		IViewReference[] viewReferences = activePage.getViewReferences();
+		for (IViewReference viewReference : viewReferences) {
+			if (IPageLayout.ID_PROP_SHEET.equals(viewReference.getId())) {
+				activePage.hideView(viewReference);
+			}
+		}
+
+		processUiEvents();
+		// TODO this is required here because the default page is never properly
+		// disposed.
+		testPropertySheetPage.dispose();
+
+		// create a project for properties rendering purposes
+		project = FileUtil.createProject("projectToSelect");
+
+		ISelection selection = new StructuredSelection(project);
+
+		// show the contributing view
+		IViewPart contributingView = activePage.showView(viewId);
+		// have the contributing view select the created project, this should
+		// populate the 'Properties' view
+		contributingView.getSite().getSelectionProvider().setSelection(selection);
+
+		processUiEvents();
+
+		// show the 'Properties' view: it should pick up content from the only
+		// one relevant part: view with given id
+		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
+
+		IPage currentPage = propertySheet.getCurrentPage();
+		if (standardPage) {
+			if (currentPage instanceof PropertySheetPage) {
+				PropertySheetPage psp = (PropertySheetPage) currentPage;
+				Field root = PropertySheetPage.class.getDeclaredField("rootEntry");
+				root.setAccessible(true);
+				PropertySheetEntry pse = (PropertySheetEntry) root.get(psp);
+				IPropertySheetEntry[] entries = pse.getChildEntries();
+				assertTrue("The 'Properties' view should be showing the content of the contributing view ("
+						+ contributingView.getTitle() + "), but shows nothing", entries.length > 0);
+			} else {
+				assertTrue(
+						"The 'Properties' view should be showing the content of the contributing view ("
+								+ contributingView.getTitle() + ") in a regular property page",
+						currentPage instanceof PropertySheetPage);
+			}
+		} else {
+			// verify that the contributing view uses non-standard property
+			// sheet page
+			assertFalse(
+					"The 'Properties' view should be showing the content of the contributing view ("
+							+ contributingView.getTitle() + ") in a non-standard customiezd page",
+					currentPage instanceof PropertySheetPage);
+		}
+
+	}
+
+	private void processUiEvents() {
+		while (fWorkbench.getDisplay().readAndDispatch()) {
+			;
+		}
+	}
+
 }

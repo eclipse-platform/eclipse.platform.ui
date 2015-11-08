@@ -31,7 +31,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
@@ -225,50 +224,40 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		if (page == null) {
 			return null;
 		}
+		ISelection originalSel = page.getSelection();
 		IWorkbenchPart activePart = page.getActivePart();
 		if (activePart != null && activePart != this) {
-			bootstrapSelection = page.getSelection();
+			bootstrapSelection = originalSel;
 			return activePart;
 		}
+		if (originalSel == null || originalSel.isEmpty()) {
+			return null;
+		}
+
 		IEditorPart activeEditor = page.getActiveEditor();
 		if (activeEditor != null && isImportant(activeEditor)) {
 			ISelection selection = activeEditor.getSite().getSelectionProvider().getSelection();
-			if ((selection instanceof IStructuredSelection) && !selection.isEmpty()) {
-				bootstrapSelection = selection;
+			if (originalSel.equals(selection)) {
+				bootstrapSelection = originalSel;
 				return activeEditor;
 			}
 		}
 		IViewReference[] viewrefs = page.getViewReferences();
-		IWorkbenchPart interesting = null;
 		for (IViewReference ref : viewrefs) {
 			IWorkbenchPart part = ref.getPart(false);
 			if (part == null || part == this || !page.isPartVisible(part)) {
 				continue;
 			}
-			IContributedContentsView view = Adapters.adapt(part, IContributedContentsView.class);
-			if (view != null) {
-				IWorkbenchPart contributingPart = view.getContributingPart();
-				if (contributingPart != null) {
-					part = contributingPart;
-				}
-			}
 			if (!isImportant(part)) {
 				continue;
 			}
 			ISelection selection = part.getSite().getSelectionProvider().getSelection();
-			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
-				continue;
+			if (originalSel.equals(selection)) {
+				bootstrapSelection = originalSel;
+				return part;
 			}
-			if (interesting != null) {
-				// only return something if there is only one interesting part?
-				return null;
-			}
-			interesting = part;
 		}
-		if (interesting != null) {
-			bootstrapSelection = interesting.getSite().getSelectionProvider().getSelection();
-		}
-		return interesting;
+		return null;
     }
 
     @Override
