@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.eclipse.e4.ui.css.core.css2.CSS2ColorHelper;
 import org.eclipse.e4.ui.css.core.css2.CSS2RGBColorImpl;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
@@ -41,7 +42,7 @@ import org.w3c.dom.css.RGBColor;
 public class CSSSWTColorHelper {
 	public static final String COLOR_DEFINITION_MARKER = "#";
 
-	private static final String HEX_COLOR_VALUE_PATTERN = "#[a-fA-F0-9]{6}";
+	private static final Pattern HEX_COLOR_VALUE_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
 
 	private static Field[] cachedFields;
 
@@ -91,7 +92,7 @@ public class CSSSWTColorHelper {
 
 	public static boolean hasColorDefinitionAsValue(String name) {
 		if (name.startsWith(COLOR_DEFINITION_MARKER)) {
-			return !name.matches(HEX_COLOR_VALUE_PATTERN);
+			return !HEX_COLOR_VALUE_PATTERN.matcher(name).matches();
 		}
 		return false;
 	}

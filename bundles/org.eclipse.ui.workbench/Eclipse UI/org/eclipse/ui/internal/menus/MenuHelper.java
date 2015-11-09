@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -103,6 +104,7 @@ public class MenuHelper {
 		WorkbenchSWTActivator.trace(Policy.MENUS, msg, error);
 	}
 
+	private static final Pattern SCHEME_PATTERN = Pattern.compile("\\p{Alpha}[\\p{Alnum}+.-]*:.*"); //$NON-NLS-1$
 	public static final String MAIN_MENU_ID = ActionSet.MAIN_MENU;
 	private static Field urlField;
 
@@ -362,7 +364,7 @@ public class MenuHelper {
 		// If iconPath doesn't specify a scheme, then try to transform to a URL
 		// RFC 3986: scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 		// This allows using data:, http:, or other custom URL schemes
-		if (!iconPath.matches("\\p{Alpha}[\\p{Alnum}+.-]*:.*")) { //$NON-NLS-1$
+		if (!SCHEME_PATTERN.matcher(iconPath).matches()) {
 			// First attempt to resolve in ISharedImages (e.g. "IMG_OBJ_FOLDER")
 			// as per bug 391232 & AbstractUIPlugin.imageDescriptorFromPlugin().
 			ImageDescriptor d = WorkbenchPlugin.getDefault().getSharedImages()
