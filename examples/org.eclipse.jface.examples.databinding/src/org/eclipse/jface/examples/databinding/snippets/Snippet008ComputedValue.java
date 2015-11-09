@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -65,8 +64,8 @@ public class Snippet008ComputedValue {
 
 				// Bind the formatted name Text to the formatted name
 				// observable.
-				dbc.bindValue(SWTObservables.observeText(ui.formattedName,
-						SWT.None), formattedName, new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
+				dbc.bindValue(WidgetProperties.text(SWT.None).observe(ui.formattedName), formattedName,
+						new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
 
 				shell.pack();
 				shell.open();

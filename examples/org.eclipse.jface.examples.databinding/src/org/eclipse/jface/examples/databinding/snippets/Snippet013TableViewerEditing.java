@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2015 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Tom Schindl - cell editing
  *     Matthew Hall - bugs 260329, 260337
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 434283
+ *     Patrik Suzzi - 479848
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -25,7 +26,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
@@ -172,8 +172,7 @@ public class Snippet013TableViewerEditing {
 		protected IObservableValue doCreateCellEditorObservable(
 				CellEditor cellEditor) {
 
-			return SWTObservables.observeText(cellEditor.getControl(),
-					SWT.Modify);
+			return WidgetProperties.text(SWT.Modify).observe(cellEditor.getControl());
 		}
 
 		@Override
