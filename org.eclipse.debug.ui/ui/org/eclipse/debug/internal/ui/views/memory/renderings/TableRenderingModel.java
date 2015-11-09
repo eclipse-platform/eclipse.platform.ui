@@ -298,6 +298,10 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 		int bytesPerLine = rendering.getBytesPerLine();
 		int numAddressableUnitPerLine = rendering.getAddressableUnitPerLine();
 		BigInteger address = (BigInteger) getKey(0);
+		if (address == null) { 
+			return;
+		}
+		 
 
 		int addressableSize = rendering.getAddressableSize();
 
