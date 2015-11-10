@@ -83,33 +83,12 @@ public class CoreTestsActivator implements BundleActivator {
 	public BundleContext getBundleContext() {
 		return bundleContext;
 	}
-	public IPreferencesService getPreferencesService() {
-		if (preferencesTracker == null) {
-			if (bundleContext == null)
-				return null;
-			preferencesTracker = new ServiceTracker<>(bundleContext, IPreferencesService.class.getName(), null);
-			preferencesTracker.open();
-		}
-		return preferencesTracker.getService();
-	}
 
-	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
-		if (debugTracker == null) {
-			debugTracker = new ServiceTracker<>(bundleContext, DebugOptions.class.getName(), null);
-			debugTracker.open();
-		}
-		DebugOptions options = debugTracker.getService();
-		if (options != null) {
-			String value = options.getOption(option);
-			if (value != null)
-				return value.equalsIgnoreCase("true"); //$NON-NLS-1$
-		}
-		return defaultValue;
-	}
 	public EventAdmin getEventAdmin() {
 		if (eventAdminTracker == null) {
-			if (bundleContext == null)
+			if (bundleContext == null) {
 				return null;
+			}
 			eventAdminTracker = new ServiceTracker<>(bundleContext, EventAdmin.class.getName(), null);
 			eventAdminTracker.open();
 		}
