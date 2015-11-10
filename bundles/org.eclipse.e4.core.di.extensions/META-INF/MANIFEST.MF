@@ -4,14 +4,14 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.e4.core.di.extensions;singleton:=true
 Bundle-Version: 0.13.200.qualifier
-Require-Bundle: org.eclipse.osgi;bundle-version="3.6.0",
- org.eclipse.equinox.preferences;bundle-version="3.3.0",
- org.eclipse.e4.core.di;bundle-version="0.9.0",
- org.eclipse.osgi.services;bundle-version="3.2.100"
+Require-Bundle: org.eclipse.e4.core.di;bundle-version="1.5.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: javax.annotation;version="1.0.0",
- javax.inject;version="1.0.0"
+ javax.inject;version="1.0.0",
+ org.eclipse.core.runtime.preferences;version="3.3.0",
+ org.osgi.framework;version="1.8.0",
+ org.osgi.service.event;version="1.3.1"
 Service-Component: OSGI-INF/preferences.xml, OSGI-INF/events.xml,
  OSGI-INF/osgiBundle.xml
 Export-Package: org.eclipse.e4.core.di.extensions;x-internal:=true,
