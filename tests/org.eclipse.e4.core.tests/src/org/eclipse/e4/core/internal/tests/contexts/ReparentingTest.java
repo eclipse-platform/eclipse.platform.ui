@@ -337,7 +337,6 @@ public class ReparentingTest {
 		Bug468048 b = ContextInjectionFactory.make(Bug468048.class, leaf);
 
 		assertEquals(Integer.valueOf(1), b.sample);
-		System.err.println("==========");
 		intermed.setParent(p2);
 		assertEquals(Integer.valueOf(2), b.sample);
 	}
