@@ -24,7 +24,4 @@ public class ExpressionTestPlugin extends Plugin {
 		return fgDefault;
 	}
 
-	public static String getPluginId() {
-		return "org.eclipse.core.expressions.tests"; //$NON-NLS-1$
-	}
 }
