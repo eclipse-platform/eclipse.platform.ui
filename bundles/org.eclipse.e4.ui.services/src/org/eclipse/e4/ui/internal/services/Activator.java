@@ -17,8 +17,6 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
 
-	public final static String PLUGIN_ID = "org.eclipse.e4.ui.services"; //$NON-NLS-1$
-
 	private static Activator singleton;
 
 	private ServiceTracker<EventAdmin, EventAdmin> eventAdminTracker;
