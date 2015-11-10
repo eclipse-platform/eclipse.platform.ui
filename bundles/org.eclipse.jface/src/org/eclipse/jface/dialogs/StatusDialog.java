@@ -14,13 +14,11 @@ package org.eclipse.jface.dialogs;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -56,8 +54,6 @@ public abstract class StatusDialog extends TrayDialog {
 	 */
 	private class MessageLine extends CLabel {
 
-		private Color fNormalMsgAreaBackground;
-
 		/**
 		 * Creates a new message line as a child of the given parent.
 		 *
@@ -76,7 +72,6 @@ public abstract class StatusDialog extends TrayDialog {
 		 */
 		public MessageLine(Composite parent, int style) {
 			super(parent, style);
-			fNormalMsgAreaBackground = getBackground();
 		}
 
 		/**
@@ -114,7 +109,6 @@ public abstract class StatusDialog extends TrayDialog {
 					// Foundation 1.0 compiler
 					// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
 					MessageLine.this.setImage(findImage(status));
-					setBackground(JFaceColors.getErrorBackground(getDisplay()));
 					return;
 				}
 			}
@@ -123,7 +117,6 @@ public abstract class StatusDialog extends TrayDialog {
 			// compiler
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
 			MessageLine.this.setImage(null);
-			setBackground(fNormalMsgAreaBackground);
 		}
 	}
 
