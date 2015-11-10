@@ -48,42 +48,15 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 import org.eclipse.e4.core.internal.di.osgi.LogHelper;
-import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 /**
  * Reflection-based dependency injector.
  */
 public class InjectorImpl implements IInjector {
 
-	final static private String DEBUG_INJECTION = "org.eclipse.e4.core.di/debug/injector"; //$NON-NLS-1$
-	final static private boolean shouldDebug = getBooleanOption(DEBUG_INJECTION, false);
-
-	private static boolean getBooleanOption(String option, boolean defaultValue) {
-		try {
-			Bundle bundle = FrameworkUtil.getBundle(InjectorImpl.class);
-			BundleContext context = bundle == null ? null : bundle.getBundleContext();
-			ServiceReference<DebugOptions> ref = context == null ? null
-					: context.getServiceReference(DebugOptions.class);
-			if (ref == null) {
-				return false;
-			}
-			try {
-				DebugOptions options = context.getService(ref);
-				if (options == null) {
-					return false;
-				}
-				return options.getBooleanOption(option, defaultValue);
-			} finally {
-				context.ungetService(ref);
-			}
-		} catch (Throwable t) {
-			return false;
-		}
-	}
+	final static private boolean shouldDebug = Boolean.getBoolean("org.eclipse.e4.core.di.debug"); //$NON-NLS-1$
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
