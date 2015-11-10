@@ -31,27 +31,6 @@ public final class ViewsPlugin extends AbstractUIPlugin {
 
 	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
-    private static ViewsPlugin instance;
-
-    /**
-     * Returns the singleton instance.
-     *
-     * @return the singleton instance.
-     */
-    public static ViewsPlugin getDefault() {
-        return instance;
-    }
-
-    /**
-     * Creates a new instance of the receiver.
-     *
-     * @see org.eclipse.core.runtime.Plugin#Plugin()
-     */
-    public ViewsPlugin() {
-        super();
-        instance = this;
-    }
-
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.
