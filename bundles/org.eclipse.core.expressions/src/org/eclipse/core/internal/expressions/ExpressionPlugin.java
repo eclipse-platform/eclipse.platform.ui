@@ -24,7 +24,7 @@ public class ExpressionPlugin extends Plugin {
 	private BundleContext fBundleContext;
 
 	public ExpressionPlugin() {
-		fgDefault= this;
+		fgDefault = this;
 	}
 
 	public static ExpressionPlugin getDefault() {
@@ -35,18 +35,12 @@ public class ExpressionPlugin extends Plugin {
 		return "org.eclipse.core.expressions"; //$NON-NLS-1$
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext= context;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fgBundleListener != null)
