@@ -620,11 +620,11 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
 			fTextViewer.getTextWidget().addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {
-					if(fTextViewer == null){
+					if (fTextViewer == null) {
 						return;
 					}
 					StyledText textWidget= fTextViewer.getTextWidget();
-					if(textWidget != null && textWidget.getWordWrap()) {
+					if (textWidget != null && textWidget.getWordWrap()) {
 						redraw();
 					}
 				}

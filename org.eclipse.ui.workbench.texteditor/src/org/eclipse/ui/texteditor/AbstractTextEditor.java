@@ -3602,8 +3602,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (ruler instanceof CompositeRuler)
 			updateContributedRulerColumns((CompositeRuler) ruler);
 
-		if(isWordWrapSupported())
+		if (isWordWrapSupported()) {
 			setWordWrap(getInitialWordWrapStatus());
+		}
 	}
 
 	/**
@@ -5965,30 +5966,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setAction(ITextEditorActionConstants.SHOW_INFORMATION, action);
 
 		final BlockSelectionModeToggleAction blockAction= new BlockSelectionModeToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleBlockSelectionMode.", this); //$NON-NLS-1$
-		action = blockAction;
+		action= blockAction;
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BLOCK_SELECTION_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
 		setAction(ITextEditorActionConstants.BLOCK_SELECTION_MODE, action);
 
-		if(isWordWrapSupported()){
+		if (isWordWrapSupported()) {
 			final WordWrapToggleAction wrapAction= new WordWrapToggleAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ToggleWordWrap.", this, getInitialWordWrapStatus()); //$NON-NLS-1$
-			action = wrapAction;
+			action= wrapAction;
 			action.setHelpContextId(IAbstractTextEditorHelpContextIds.WORD_WRAP_TOGGLE_ACTION);
 			action.setActionDefinitionId(ITextEditorActionDefinitionIds.WORD_WRAP);
 			setAction(ITextEditorActionConstants.WORD_WRAP, action);
 
 			blockAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
-					if(IAction.CHECKED == event.getProperty() &&
-							Boolean.TRUE.equals(event.getNewValue())){
+					if (IAction.CHECKED == event.getProperty() &&
+							Boolean.TRUE.equals(event.getNewValue())) {
 						wrapAction.setChecked(false);
 					}
 				}
 			});
 			wrapAction.addPropertyChangeListener(new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
-					if(IAction.CHECKED == event.getProperty() &&
-							Boolean.TRUE.equals(event.getNewValue())){
+					if (IAction.CHECKED == event.getProperty() &&
+							Boolean.TRUE.equals(event.getNewValue())) {
 						blockAction.setChecked(false);
 					}
 				}
@@ -7468,7 +7469,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see AbstractTextEditor#isWordWrapSupported()
 	 */
 	public final boolean isWordWrapEnabled() {
-		if(!isWordWrapSupported()){
+		if (!isWordWrapSupported()) {
 			return false;
 		}
 		ISourceViewer viewer= getSourceViewer();
@@ -7494,22 +7495,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (viewer != null) {
 			StyledText styledText= viewer.getTextWidget();
 			if (styledText != null) {
-				if(isBlockSelectionModeEnabled()){
+				if (isBlockSelectionModeEnabled()) {
 					setBlockSelectionMode(false);
 				}
 				styledText.setWordWrap(enable);
 				if (fVerticalRuler != null) {
 					// update ruler layout so that it can consider
 					// changed horizontal scrollbar visibility
-					boolean updated = false;
-					if(viewer instanceof ITextViewerExtension){
+					boolean updated= false;
+					if (viewer instanceof ITextViewerExtension) {
 						Control control= ((ITextViewerExtension)viewer).getControl();
-						if(control instanceof Composite){
+						if (control instanceof Composite) {
 							((Composite)control).layout();
-							updated = true;
+							updated= true;
 						}
 					}
-					if(!updated) {
+					if (!updated) {
 						fVerticalRuler.update();
 					}
 				}

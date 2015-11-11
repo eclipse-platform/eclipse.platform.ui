@@ -353,7 +353,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the ruler
 			fCachedTextWidget.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {
-					if(fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
+					if (fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
 						redraw();
 					}
 				}

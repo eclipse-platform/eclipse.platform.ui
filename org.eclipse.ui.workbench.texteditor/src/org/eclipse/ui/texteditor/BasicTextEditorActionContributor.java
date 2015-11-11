@@ -214,7 +214,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, getAction(editor, ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE, getAction(editor, ITextEditorActionConstants.BLOCK_SELECTION_MODE));
-		if(editor instanceof AbstractTextEditor && ((AbstractTextEditor)editor).isWordWrapSupported())
+		if (editor instanceof AbstractTextEditor && ((AbstractTextEditor)editor).isWordWrapSupported())
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.WORD_WRAP, getAction(editor, ITextEditorActionConstants.WORD_WRAP));
 
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));

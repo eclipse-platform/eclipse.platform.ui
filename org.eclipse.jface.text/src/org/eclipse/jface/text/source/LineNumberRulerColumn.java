@@ -593,7 +593,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the line ruler
 		fCachedTextWidget.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if(fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
+				if (fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
 					postRedraw();
 				}
 			}

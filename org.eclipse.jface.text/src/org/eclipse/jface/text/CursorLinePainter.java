@@ -187,8 +187,8 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 			height= textWidget.getLineHeight(widgetOffset);
 		} else {
 			int offsetEnd= widgetOffset + position.length - 1;
-			if(offsetEnd >= charCount){
-				offsetEnd = charCount - 1;
+			if (offsetEnd >= charCount) {
+				offsetEnd= charCount - 1;
 			}
 			height= textWidget.getTextBounds(widgetOffset, offsetEnd).height;
 		}

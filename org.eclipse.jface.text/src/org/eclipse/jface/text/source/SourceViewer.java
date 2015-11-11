@@ -145,10 +145,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				final Control verticalRulerControl= fVerticalRuler.getControl();
 				int oldWidth= verticalRulerControl.getBounds().width;
 				ScrollBar horizontalBar= textWidget.getHorizontalBar();
-				boolean hScrolVisible = horizontalBar != null && horizontalBar.isVisible();
-				int rulerHeight = clArea.height - topTrim;
-				if(hScrolVisible)
-					rulerHeight -= scrollbarHeight;
+				boolean hScrollVisible= horizontalBar != null && horizontalBar.isVisible();
+				int rulerHeight= clArea.height - topTrim;
+				if (hScrollVisible)
+					rulerHeight-= scrollbarHeight;
 				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, rulerHeight);
 				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth)
 					verticalRulerControl.redraw();
