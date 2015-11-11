@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Matthew Hall and others.
+ * Copyright (c) 2009, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 260337)
  *     Matthew Hall - bug 283428
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481928
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -42,8 +43,7 @@ public class ViewerSupport {
 	 * @param labelProperty
 	 *            the property to use for labels
 	 */
-	public static void bind(StructuredViewer viewer, IObservableList input,
-			IValueProperty labelProperty) {
+	public static void bind(StructuredViewer viewer, IObservableList input, IValueProperty labelProperty) {
 		bind(viewer, input, new IValueProperty[] { labelProperty });
 	}
 
@@ -59,8 +59,7 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(StructuredViewer viewer, IObservableList input,
-			IValueProperty[] labelProperties) {
+	public static void bind(StructuredViewer viewer, IObservableList input, IValueProperty... labelProperties) {
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
@@ -100,8 +99,7 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(StructuredViewer viewer, IObservableSet input,
-			IValueProperty[] labelProperties) {
+	public static void bind(StructuredViewer viewer, IObservableSet input, IValueProperty... labelProperties) {
 		ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
 		if (viewer.getInput() != null)
 			viewer.setInput(null);
@@ -148,8 +146,8 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input,
-			IListProperty childrenProperty, IValueProperty[] labelProperties) {
+	public static void bind(AbstractTreeViewer viewer, Object input, IListProperty childrenProperty,
+			IValueProperty... labelProperties) {
 		Realm realm = DisplayRealm.getRealm(viewer.getControl().getDisplay());
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				childrenProperty.listFactory(realm), null);
@@ -198,8 +196,8 @@ public class ViewerSupport {
 	 *            the respective properties to use for labels in each of the
 	 *            viewer's columns
 	 */
-	public static void bind(AbstractTreeViewer viewer, Object input,
-			ISetProperty childrenProperty, IValueProperty[] labelProperties) {
+	public static void bind(AbstractTreeViewer viewer, Object input, ISetProperty childrenProperty,
+			IValueProperty... labelProperties) {
 		Realm realm = DisplayRealm.getRealm(viewer.getControl().getDisplay());
 		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
 				childrenProperty.setFactory(realm), null);
