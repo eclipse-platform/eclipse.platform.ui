@@ -893,6 +893,14 @@ public class TreeViewer extends AbstractTreeViewer {
 		super.handleTreeCollapse(event);
 	}
 
+	/**
+	 * Sets the content provider used by this <code>TreeViewer</code>.
+	 * <p>
+	 * Content providers for tree viewers must implement either
+	 * {@link ITreeContentProvider}, or {@link ITreePathContentProvider}, or
+	 * {@link ILazyTreeContentProvider}, or
+	 * {@link ILazyTreePathContentProvider}.
+	 */
 	@Override
 	public void setContentProvider(IContentProvider provider) {
 		contentProviderIsLazy = (provider instanceof ILazyTreeContentProvider)

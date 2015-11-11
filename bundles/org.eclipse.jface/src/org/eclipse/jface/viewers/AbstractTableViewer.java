@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Widget;
  * This is a widget independent class implementors of
  * {@link org.eclipse.swt.widgets.Table} like widgets can use to provide a
  * viewer on top of their widget implementations.
+ * <p>
+ * <strong> This class is not intended to be subclassed outside of the JFace
+ * viewers framework.</strong>
+ * </p>
  *
  * @since 3.3
  */
@@ -1025,6 +1029,18 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				"Cannot get raw children with an ILazyContentProvider");//$NON-NLS-1$
 		return super.getRawChildren(parent);
 
+	}
+
+	/**
+	 * Sets the content provider used by this <code>AbstractTableViewer</code>.
+	 * <p>
+	 * Content providers for abstract table viewers must implement either
+	 * {@link IStructuredContentProvider} or {@link ILazyContentProvider}.
+	 */
+	@Override
+	public void setContentProvider(IContentProvider provider) {
+		// the actual check is in assertContentProviderType
+		super.setContentProvider(provider);
 	}
 
 	@Override

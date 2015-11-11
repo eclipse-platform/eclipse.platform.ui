@@ -33,9 +33,10 @@ import org.eclipse.swt.widgets.Widget;
  * (e.g., AbstractTreeViewer and AbstractTableViewer). Concrete subclasses of
  * {@link ColumnViewer} should implement a matching concrete subclass of {@link
  * ViewerColumn}.
- *
+ * <p>
  * <strong> This class is not intended to be subclassed outside of the JFace
  * viewers framework.</strong>
+ * </p>
  *
  * @since 3.3
  *
