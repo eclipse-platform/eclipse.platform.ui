@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2348,6 +2348,17 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setAutoExpandLevel(int level) {
 		expandToLevel = level;
+	}
+
+	/**
+	 * The <code>AbstractTreeViewer</code> implementation of this method
+	 * checks to ensure that the content provider is an
+	 * <code>ITreeContentProvider</code>.
+	 */
+	@Override
+	public void setContentProvider(IContentProvider provider) {
+		// the actual check is in assertContentProviderType
+		super.setContentProvider(provider);
 	}
 
 	@Override
