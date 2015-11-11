@@ -2719,7 +2719,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 		restoreWorkingSets();
 		restoreShowInMruPartIdsList();
+		configureExistingWindows();
     }
+
+	/*
+	 * Perform any configuration required for an existing MWindow. The
+	 * association of an MWindow to the WorkbenchWindow/WorkbenchPage can occur
+	 * at different times (see Bug 454056 for details).
+	 */
+	private void configureExistingWindows() {
+		List<MArea> elements = modelService.findElements(window, null, MArea.class, null);
+		for (MArea area : elements) {
+			Object widget = area.getWidget();
+			if (widget instanceof Control) {
+				installAreaDropSupport((Control) widget);
+				break;
+			}
+		}
+	}
 
 	public void restoreWorkingSets() {
 		String workingSetName = getWindowModel().getPersistedState().get(
