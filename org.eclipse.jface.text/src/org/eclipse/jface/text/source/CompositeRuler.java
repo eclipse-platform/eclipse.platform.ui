@@ -24,6 +24,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseListener;
@@ -213,6 +214,10 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			}
 			if (DisposeListener.class.equals(clazz)) {
 				control. addDisposeListener((DisposeListener) listener);
+				return;
+			}
+			if (GestureListener.class.equals(clazz)) {
+				control. addGestureListener((GestureListener) listener);
 				return;
 			}
 		}
@@ -430,6 +435,14 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 
 		/*
+		 * @see Control#removeGestureListener(GestureListener)
+		 */
+		public void removeGestureListener(GestureListener listener) {
+			removeListener(GestureListener.class, listener);
+			super.removeGestureListener(listener);
+		}
+
+		/*
 		 * @seeControl#addControlListener(ControlListener)
 		 */
 		public void addControlListener(ControlListener listener) {
@@ -507,6 +520,14 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		public void addDisposeListener(DisposeListener listener) {
 			super.addDisposeListener(listener);
 			addListener(DisposeListener.class, listener);
+		}
+
+		/*
+		 * @see Control#addGestureListener(GestureListener)
+		 */
+		public void addGestureListener(GestureListener listener) {
+			super.addGestureListener(listener);
+			addListener(GestureListener.class, listener);
 		}
 	}
 

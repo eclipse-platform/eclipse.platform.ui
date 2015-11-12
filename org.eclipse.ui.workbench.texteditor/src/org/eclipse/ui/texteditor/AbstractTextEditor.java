@@ -44,6 +44,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.GestureEvent;
+import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -3461,54 +3463,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeDragAndDrop(fSourceViewer);
 
 		StyledText styledText= fSourceViewer.getTextWidget();
-
-		/* gestures commented out until proper solution (i.e. preference page) can be found
-		 * for bug # 28417:
-		 *
-		final Map gestureMap= new HashMap();
-
-		gestureMap.put("E", IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY); //$NON-NLS-1$
-		gestureMap.put("N", IWorkbenchCommandConstants.FILE_SAVE); //$NON-NLS-1$
-		gestureMap.put("NW", IWorkbenchCommandConstants.FILE_SAVEALL); //$NON-NLS-1$
-		gestureMap.put("S", IWorkbenchCommandConstants.FILE_CLOSE); //$NON-NLS-1$
-		gestureMap.put("SW", IWorkbenchCommandConstants.FILE_CLOSEALL); //$NON-NLS-1$
-		gestureMap.put("W", IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY); //$NON-NLS-1$
-		gestureMap.put("EN", IWorkbenchCommandConstants.EDIT_COPY); //$NON-NLS-1$
-		gestureMap.put("ES", IWorkbenchCommandConstants.EDIT_PASTE); //$NON-NLS-1$
-		gestureMap.put("EW", IWorkbenchCommandConstants.EDIT_CUT); //$NON-NLS-1$
-
-		Capture capture= Capture.create();
-		capture.setControl(styledText);
-
-		capture.addCaptureListener(new CaptureListener() {
-			public void gesture(Gesture gesture) {
-				if (gesture.getPen() == 3) {
-					String actionId= (String) gestureMap.get(Util.recognize(gesture.getPoints(), 20));
-
-					if (actionId != null) {
-						IKeyBindingService keyBindingService= getEditorSite().getKeyBindingService();
-
-						if (keyBindingService instanceof KeyBindingService) {
-							IAction action= ((KeyBindingService) keyBindingService).getAction(actionId);
-
-							if (action != null) {
-								if (action instanceof IUpdate)
-									((IUpdate) action).update();
-
-								if (action.isEnabled())
-									action.run();
-							}
-						}
-
-						return;
-					}
-
-					fTextContextMenu.setVisible(true);
-				}
-			};
-		});
-		*/
-
 		styledText.addMouseListener(getCursorListener());
 		styledText.addKeyListener(getCursorListener());
 
@@ -3530,7 +3484,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		manager.addMenuListener(getContextMenuListener());
 		fTextContextMenu= manager.createContextMenu(styledText);
 
-		// comment this line if using gestures, above.
 		styledText.setMenu(fTextContextMenu);
 
 		if (fEditorContextMenuId != null)
@@ -3575,6 +3528,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (fRulerContextMenuId == null)
 			fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
+		
+		initializeZoomGestures(rulerControl, fSourceViewer);
 
 		getSite().setSelectionProvider(getSelectionProvider());
 
@@ -3934,6 +3889,52 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				e.setFont(font);
 			}
 		}
+	}
+
+	private void initializeZoomGestures(Control rulerControl, final ISourceViewer sourceViewer) {
+		final StyledText styledText= sourceViewer.getTextWidget();
+		GestureListener gestureListener= new GestureListener() {
+			private Font fMagnificationStartFont;
+			private int fLastHeight= -1;
+
+			public void gesture(GestureEvent e) {
+				if (e.detail == SWT.GESTURE_BEGIN) {
+					fMagnificationStartFont= styledText.getFont();
+				} else if (e.detail == SWT.GESTURE_END) {
+					fMagnificationStartFont= null;
+					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+				} else if (e.detail == SWT.GESTURE_ROTATE) {
+					if (Math.abs(e.rotation) > 45) {
+						fMagnificationStartFont= null; // don't observe magnify events after reset
+						initializeViewerFont(fSourceViewer);
+						updateCaret();
+						IStatusField statusField= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+						if (statusField != null) {
+							int newHeight= styledText.getFont().getFontData()[0].getHeight();
+							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_reset_message, new Integer(newHeight)));
+						}
+					}
+				} else if (e.detail == SWT.GESTURE_MAGNIFY && fMagnificationStartFont != null) {
+					FontData fontData= fMagnificationStartFont.getFontData()[0];
+					int startHeight= fontData.getHeight();
+					int newHeight= Math.max(1, (int) (startHeight * e.magnification));
+					if (newHeight != fLastHeight) {
+						fLastHeight= newHeight;
+						fontData.setHeight(newHeight);
+						Font newFont= new Font(fMagnificationStartFont.getDevice(), fontData);
+						setFont(sourceViewer, newFont);
+						disposeFont();
+						updateCaret();
+						IStatusField statusField= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+						if (statusField != null) {
+							statusField.setText(NLSUtility.format(EditorMessages.Editor_font_zoom_message, new Object[] { new Integer(startHeight), new Integer(newHeight) }));
+						}
+					}
+				}
+			}
+		};
+		styledText.addGestureListener(gestureListener);
+		rulerControl.addGestureListener(gestureListener);
 	}
 
 	/**

@@ -120,6 +120,8 @@ final class EditorMessages extends NLS {
 	public static String FindReplaceDialog_read_only;
 	public static String Editor_MoveLines_IllegalMove_status;
 	public static String Editor_error_clipboard_copy_failed_message;
+	public static String Editor_font_reset_message;
+	public static String Editor_font_zoom_message;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, EditorMessages.class);
