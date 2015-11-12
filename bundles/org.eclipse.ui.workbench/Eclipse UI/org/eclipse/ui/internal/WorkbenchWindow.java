@@ -1539,11 +1539,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * Assumes that busy cursor is active.
 	 */
 	private boolean busyClose(boolean remove) {
-		if (updateDisabled) {
-			// Avoid re-entrant invocations of this method (bug 381555).
+		if (closing)
 			return false;
-		}
-
 		// Whether the window was actually closed or not
 		boolean windowClosed = false;
 
