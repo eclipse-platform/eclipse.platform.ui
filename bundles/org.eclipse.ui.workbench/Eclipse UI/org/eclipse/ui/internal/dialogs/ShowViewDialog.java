@@ -63,8 +63,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
-public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
-		IDoubleClickListener {
+public class ShowViewDialog extends Dialog implements ISelectionChangedListener, IDoubleClickListener {
 
 	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog"; //$NON-NLS-1$
 
@@ -85,6 +84,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	private Button okButton;
 
 	private MApplication application;
+
 	private MPartDescriptor[] viewDescs = new MPartDescriptor[0];
 
 	private Label descriptionHint;
@@ -150,10 +150,10 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		okButton = createButton(parent, IDialogConstants.OK_ID,
-				JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY), true);
-		createButton(parent, IDialogConstants.CANCEL_ID,
-				JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY), false);
+		okButton = createButton(parent, IDialogConstants.OK_ID, JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY),
+				true);
+		createButton(parent, IDialogConstants.CANCEL_ID, JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY),
+				false);
 		updateButtons();
 	}
 
@@ -232,8 +232,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 			}
 		});
 
-		treeViewer.setLabelProvider(new ViewLabelProvider(context, modelService, partService, window,
-				dimmedForeground));
+		treeViewer.setLabelProvider(new ViewLabelProvider(context, modelService, partService, window,dimmedForeground));
 		treeViewer.setContentProvider(new ViewContentProvider(application));
 		treeViewer.setComparator(new ViewComparator());
 		treeViewer.setInput(application);
