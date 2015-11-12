@@ -16,33 +16,33 @@
 
 <templates>
 
-<template name="Inject -  Preference Value" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject -  Preference value as method injection" description="Injected Preference Value" id="org.eclipse.e4.tools.jdt.templates.preference" context="e4-members" enabled="true" autoinsert="false">@Inject
 void setPreferenceValue(@Named("preference-PREFERENCE_KEY") String preferenceValue) {
 	${cursor}
 }</template>
 
-<template name="Inject - Preferences" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Preferences service as field" description="Injected Preferences Service" id="org.eclipse.e4.tools.jdt.templates.preferences" context="e4-members" enabled="true" autoinsert="false">@Inject
 IEclipsePreferences preferences;</template>
 
-<template name="Inject - Logger" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Logger service as field" description="Injected Logger" id="org.eclipse.e4.tools.jdt.templates.logger" context="e4-members" enabled="true" autoinsert="false">@Inject
 Logger logger;</template>
 
-<template name="Inject - Eventbroker" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - Eventbroker service as field" description="Injected Event Broker" id="org.eclipse.e4.tools.jdt.templates.eventbroker" context="e4-members" enabled="true" autoinsert="false">@Inject
 IEventBroker eventBroker;
 ${imp:import(org.eclipse.e4.core.services.events.IEventBroker)}
 </template>
 
-<template name="ESelection service as field" description="Injected ESEectionService" id="org.eclipse.e4.tools.jdt.templates.selectionservice" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - ESelection service as field" description="Injected ESEectionService" id="org.eclipse.e4.tools.jdt.templates.selectionservice" context="e4-members" enabled="true" autoinsert="false">@Inject
 ESelectionService selectionService;
 ${imp:import(org.eclipse.e4.ui.workbench.modeling.ESelectionService)}
 </template>
 
-<template name="Injectject -  Event" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
-void handleSomeEvent(Payload payloadObject) {
+<template name="Inject -  Subscribe to event topic via method" description="Event Handler Method" id="org.eclipse.e4.tools.jdt.templates.eventhandler" context="e4-members" enabled="true" autoinsert="false">@EventHandler("some/event/topic")
+void subscribeTopic(String string) {
 	${cursor}
 }</template>
 
-<template name="Inject - Styling Engine" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
+<template name="Inject - IStylingEngine service as field" description="Injected Styling Engine" id="org.eclipse.e4.tools.jdt.templates.stylingengine" context="e4-members" enabled="true" autoinsert="false">@Inject
 IStylingEngine stylingEngine;</template>
 
 
