@@ -141,22 +141,6 @@ public class SashLayout extends Layout {
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 		});
-
-		host.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				// for (SashRect sr : sashes) {
-				// Color color;
-				// if (sr.container.isHorizontal())
-				// color = e.display.getSystemColor(SWT.COLOR_MAGENTA);
-				// else
-				// color = e.display.getSystemColor(SWT.COLOR_CYAN);
-				// e.gc.setForeground(color);
-				// e.gc.setBackground(color);
-				// e.gc.fillRectangle(sr.rect);
-				// }
-			}
-		});
 	}
 
 	@Override
