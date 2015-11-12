@@ -11,9 +11,14 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -43,8 +48,11 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class EModelServiceFindTest extends TestCase {
+public class EModelServiceFindTest {
 
 	private IEclipseContext applicationContext;
 
@@ -52,16 +60,14 @@ public class EModelServiceFindTest extends TestCase {
 
 	private EModelService modelService;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
 		modelService = new ModelServiceImpl(applicationContext);
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		applicationContext.dispose();
 	}
 
@@ -129,6 +135,7 @@ public class EModelServiceFindTest extends TestCase {
 		return app;
 	}
 
+	@Test
 	public void testFindElementsIdOnly() {
 		MApplication application = createApplication();
 
@@ -159,6 +166,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(1, elements5.size());
 	}
 
+	@Test
 	public void testFindElementsTypeOnly() {
 		MApplication application = createApplication();
 
@@ -202,6 +210,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(strings.size(), 0);
 	}
 
+	@Test
 	public void testFindElementsTagsOnly() {
 		MApplication application = createApplication();
 
@@ -243,6 +252,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(unmatchedTags.size(), 0);
 	}
 
+	@Test
 	public void testFindElementsCombinations() {
 		MApplication application = createApplication();
 
@@ -275,6 +285,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(badIdAndTypeAndTags.size(), 0);
 	}
 
+	@Test
 	public void testFindElements_NullCheck() {
 		MApplication application = createApplication();
 		EModelService modelService = (EModelService) application.getContext()
@@ -304,6 +315,7 @@ public class EModelServiceFindTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testFlags() {
 		MApplication application = createApplication();
 
@@ -356,6 +368,7 @@ public class EModelServiceFindTest extends TestCase {
 		return null;
 	}
 
+	@Test
 	public void testFindHandler() {
 		MApplication application = createApplication();
 
@@ -390,6 +403,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertNull(foundHandler);
 	}
 
+	@Test
 	public void testFindMKeyBindings() {
 		MApplication application = createApplication();
 		EModelService modelService = (EModelService) application.getContext()
@@ -415,6 +429,7 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(keyBinding, elements.get(0));
 	}
 
+	@Test
 	public void testBug314685() {
 		MApplication application = createApplication();
 		application.setContext(applicationContext);
