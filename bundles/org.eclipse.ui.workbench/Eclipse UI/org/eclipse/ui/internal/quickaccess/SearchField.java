@@ -108,13 +108,9 @@ public class SearchField {
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
 
-	// private Object invokingCommandKeySequences;
-	// private Object invokingCommand;
-
 	@PostConstruct
 	void createWidget(final Composite parent, MApplication application, MWindow window) {
 		this.window = window;
-		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
 		text = createText(comp);
