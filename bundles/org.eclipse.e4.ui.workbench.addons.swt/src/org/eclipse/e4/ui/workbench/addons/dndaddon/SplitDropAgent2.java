@@ -305,25 +305,17 @@ public class SplitDropAgent2 extends DropAgent {
 
 		// Adjust the relToElement based on the location of the dragElement
 		if (relToElement instanceof MArea) {
-			if (!isModified()) {
-				if (dragElementLocation == EModelService.IN_SHARED_AREA) {
-					MArea area = (MArea) relToElement;
-					relToElement = area.getChildren().get(0);
-				} else if (dragElementLocation == EModelService.IN_ACTIVE_PERSPECTIVE) {
-					relToElement = relToElement.getCurSharedRef();
-				}
-			} else {
-				if (dragElementLocation == EModelService.IN_SHARED_AREA) {
-					relToElement = relToElement.getCurSharedRef();
-				} else if (dragElementLocation == EModelService.IN_ACTIVE_PERSPECTIVE) {
-					MArea area = (MArea) relToElement;
-					relToElement = area.getChildren().get(0);
-				}
+			// make it difficult to drag outside parts into the shared area
+			boolean fromSharedArea = dragElementLocation == EModelService.IN_SHARED_AREA;
+			// if from shared area and no modifier, is ok
+			// if not from shared area and modifier is on, then ok
+			boolean shouldBePlacedInSharedArea = fromSharedArea == !isModified();
+			if (shouldBePlacedInSharedArea) {
+				MArea area = (MArea) relToElement;
+				relToElement = area.getChildren().get(0);
 			}
 		} else if (relToElement instanceof MPerspective) {
-			if (dragElementLocation == EModelService.OUTSIDE_PERSPECTIVE) {
-				relToElement = relToElement.getParent();
-			} else if (dragElementLocation == EModelService.IN_ACTIVE_PERSPECTIVE) {
+			if (dragElementLocation == EModelService.IN_ACTIVE_PERSPECTIVE) {
 				MPerspective persp = (MPerspective) relToElement;
 				relToElement = persp.getChildren().get(0);
 			}
