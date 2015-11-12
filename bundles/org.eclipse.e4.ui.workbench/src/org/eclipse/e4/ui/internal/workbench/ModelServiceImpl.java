@@ -700,6 +700,13 @@ public class ModelServiceImpl implements EModelService {
 	private void combine(MPartSashContainerElement toInsert, MPartSashContainerElement relTo,
 			MPartSashContainer newSash, boolean newFirst, float ratio) {
 		MElementContainer<MUIElement> curParent = relTo.getParent();
+		if (curParent == null) {
+			// if relTo is a shared element, use its current placeholder
+			MWindow win = getTopLevelWindowFor(relTo);
+			relTo = findPlaceholderFor(win, relTo);
+			curParent = relTo.getParent();
+		}
+		Assert.isLegal(relTo != null && curParent != null);
 		int index = curParent.getChildren().indexOf(relTo);
 		curParent.getChildren().remove(relTo);
 		if (newFirst) {

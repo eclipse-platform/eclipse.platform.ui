@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -176,5 +177,41 @@ public class EModelServiceInsertTest {
 	public void testInsertRightOf() {
 		MApplication application = createApplication();
 		testInsert(application, "theStack", EModelService.RIGHT_OF, .35f);
+	}
+
+	@Test
+	public void testInsertRightOfSharedStack() {
+		EModelService modelService = (EModelService) applicationContext.get(EModelService.class.getName());
+		assertNotNull(modelService);
+		app = modelService.createModelElement(MApplication.class);
+		app.setContext(applicationContext);
+		MWindow window = modelService.createModelElement(MWindow.class);
+		window.setElementId("main.Window");
+		app.getChildren().add(window);
+
+		MPartSashContainer psc = modelService.createModelElement(MPartSashContainer.class);
+		psc.setHorizontal(true);
+		psc.setElementId("topSash");
+		window.getChildren().add(psc);
+
+		MPartStack sharedStack = modelService.createModelElement(MPartStack.class);
+		sharedStack.setElementId("sharedStack");
+		window.getSharedElements().add(sharedStack);
+
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		part1.setElementId("part1");
+		sharedStack.getChildren().add(part1);
+
+		MPlaceholder sharedStackRef = modelService.createModelElement(MPlaceholder.class);
+		sharedStackRef.setElementId(sharedStack.getElementId());
+		sharedStackRef.setRef(sharedStack);
+
+		psc.getChildren().add(sharedStackRef);
+		// setup complete
+
+		MPart newPart = modelService.createModelElement(MPart.class);
+		newPart.setElementId("part2");
+
+		modelService.insert(newPart, sharedStack, EModelService.BELOW, 0.5f);
 	}
 }
