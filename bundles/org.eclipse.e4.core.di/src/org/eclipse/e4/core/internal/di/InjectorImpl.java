@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -908,8 +909,24 @@ public class InjectorImpl implements IInjector {
 		}
 		Method[] methods = getDeclaredMethods(objectClass);
 		for (Method method : methods) {
-			if (!method.isAnnotationPresent(annotation))
+			if (!method.isAnnotationPresent(annotation)) {
+				if (shouldDebug) {
+					for (Annotation a : method.getAnnotations()) {
+						if (annotation.getName().equals(a.annotationType().getName())) {
+							StringBuilder tmp = new StringBuilder();
+							tmp.append("Possbible annotation mismatch: method \""); //$NON-NLS-1$
+							tmp.append(method.toString());
+							tmp.append("\" annotated with \""); //$NON-NLS-1$
+							tmp.append(describeClass(a.annotationType()));
+							tmp.append("\" but was looking for \""); //$NON-NLS-1$
+							tmp.append(describeClass(annotation));
+							tmp.append("\""); //$NON-NLS-1$
+							LogHelper.logWarning(tmp.toString(), null);
+						}
+					}
+				}
 				continue;
+			}
 			if (isOverridden(method, classHierarchy))
 				continue;
 
@@ -924,6 +941,22 @@ public class InjectorImpl implements IInjector {
 			requestor.setResolvedArgs(actualArgs);
 			requestor.execute();
 		}
+	}
+
+	/** Provide a human-meaningful description of the provided class */
+	private String describeClass(Class<?> cl) {
+		Bundle b = FrameworkUtil.getBundle(cl);
+		if (b != null) {
+			return b.getSymbolicName() + ":" + b.getVersion() + ":" + cl.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		CodeSource clazzCS = cl.getProtectionDomain().getCodeSource();
+		if (clazzCS != null) {
+			return clazzCS.getLocation() + ">" + cl.getName(); //$NON-NLS-1$
+		}
+		if (cl.getClassLoader() == null) {
+			return cl.getName() + " [via bootstrap classloader]"; //$NON-NLS-1$
+		}
+		return cl.getName();
 	}
 
 	@Override

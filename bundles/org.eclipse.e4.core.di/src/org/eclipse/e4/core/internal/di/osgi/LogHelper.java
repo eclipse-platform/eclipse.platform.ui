@@ -30,7 +30,7 @@ public class LogHelper {
 		}
 	}
 
-	static final private String plugin_name = "org.eclipse.e4.core"; //$NON-NLS-1$
+	static final private String plugin_name = "org.eclipse.e4.core.di"; //$NON-NLS-1$
 
 	static public void logError(String msg, Throwable e) {
 		log(msg, FrameworkLogEntry.ERROR, e);
