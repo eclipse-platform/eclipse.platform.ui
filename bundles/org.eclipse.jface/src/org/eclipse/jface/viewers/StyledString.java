@@ -36,7 +36,7 @@ import org.eclipse.swt.graphics.TextStyle;
  *
  * @since 3.4
  */
-public class StyledString {
+public class StyledString implements CharSequence {
 
 	/**
 	 * A styler will be asked to apply its styles to one ore more ranges in the
@@ -156,8 +156,19 @@ public class StyledString {
 	 *
 	 * @return the length of the current string
 	 */
+	@Override
 	public int length() {
 		return fBuffer.length();
+	}
+
+	@Override
+	public CharSequence subSequence(int start, int end) {
+		return fBuffer.subSequence(start, end);
+	}
+
+	@Override
+	public char charAt(int index) {
+		return fBuffer.charAt(index);
 	}
 
 	/**
