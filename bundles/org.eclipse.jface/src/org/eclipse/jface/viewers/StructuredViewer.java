@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 402439, 475689
+ *     Thorsten Maack <tm@tmaack.de> - Bug 482163
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -1774,13 +1775,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	/**
 	 * Sets this viewer's sorter and triggers refiltering and resorting of this
 	 * viewer's element. Passing <code>null</code> turns sorting off.
-     * <p>
-     * It is recommended to use <code>setComparator()</code> instead.
-     * </p>
+	 * <p>
+	 *
+	 * @deprecated use <code>setComparator()</code> instead.
+	 *             </p>
 	 *
 	 * @param sorter
 	 *            a viewer sorter, or <code>null</code> if none
 	 */
+	@Deprecated
 	public void setSorter(ViewerSorter sorter) {
 		if (this.sorter != sorter) {
 			this.sorter = sorter;
