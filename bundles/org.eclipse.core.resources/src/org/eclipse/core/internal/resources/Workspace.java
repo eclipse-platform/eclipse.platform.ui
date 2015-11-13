@@ -173,7 +173,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * in the middle of a resource change notification.  This is used to cause
 	 * attempts to modify the workspace during notifications to fail.
 	 */
-	protected Thread treeLocked = null;
+	protected volatile Thread treeLocked = null;
 
 	/**
 	 * The currently installed file modification validator.
