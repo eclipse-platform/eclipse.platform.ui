@@ -182,8 +182,8 @@ public class SetBinding extends Binding {
 					for (Iterator iterator = diff.getRemovals().iterator(); iterator
 							.hasNext();) {
 						IStatus setterStatus = updateSetStrategy.doRemove(
-								destination, updateSetStrategy.convert(iterator
-										.next()));
+								destination,
+								updateSetStrategy.convert(iterator.next()));
 
 						mergeStatus(multiStatus, setterStatus);
 						// TODO - at this point, the two sets
@@ -194,8 +194,8 @@ public class SetBinding extends Binding {
 					for (Iterator iterator = diff.getAdditions().iterator(); iterator
 							.hasNext();) {
 						IStatus setterStatus = updateSetStrategy.doAdd(
-								destination, updateSetStrategy.convert(iterator
-										.next()));
+								destination,
+								updateSetStrategy.convert(iterator.next()));
 
 						mergeStatus(multiStatus, setterStatus);
 						// TODO - at this point, the two sets
@@ -203,7 +203,7 @@ public class SetBinding extends Binding {
 						// occurred...
 					}
 				} finally {
-					validationStatusObservable.setValue(multiStatus);
+					setValidationStatus(multiStatus);
 
 					if (destination == getTarget()) {
 						updatingTarget = false;
@@ -211,6 +211,15 @@ public class SetBinding extends Binding {
 						updatingModel = false;
 					}
 				}
+			}
+		});
+	}
+
+	private void setValidationStatus(final IStatus status) {
+		validationStatusObservable.getRealm().exec(new Runnable() {
+			@Override
+			public void run() {
+				validationStatusObservable.setValue(status);
 			}
 		});
 	}

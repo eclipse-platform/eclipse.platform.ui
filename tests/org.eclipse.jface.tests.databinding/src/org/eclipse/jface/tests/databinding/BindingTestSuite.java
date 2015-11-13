@@ -84,6 +84,7 @@ import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
 import org.eclipse.core.tests.internal.databinding.ConverterValuePropertyTest;
+import org.eclipse.core.tests.internal.databinding.DifferentRealmsBindingTest;
 import org.eclipse.core.tests.internal.databinding.IdentityMapTest;
 import org.eclipse.core.tests.internal.databinding.IdentitySetTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
@@ -327,6 +328,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
 		addTestSuite(ConverterValuePropertyTest.class);
+		addTestSuite(DifferentRealmsBindingTest.class);
 		addTestSuite(IdentityMapTest.class);
 		addTestSuite(IdentitySetTest.class);
 		addTestSuite(QueueTest.class);
