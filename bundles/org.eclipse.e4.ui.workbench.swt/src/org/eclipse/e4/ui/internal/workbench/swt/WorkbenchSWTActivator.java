@@ -118,25 +118,6 @@ public class WorkbenchSWTActivator implements BundleActivator { // extends
 		return locationTracker.getService();
 	}
 
-	/**
-	 * @param bundleName
-	 *            the bundle id
-	 * @return A bundle if found, or <code>null</code>
-	 */
-	public Bundle getBundleForName(String bundleName) {
-		Bundle[] bundles = getBundleAdmin().getBundles(bundleName, null);
-		if (bundles == null) {
-			return null;
-		}
-		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
-	}
-
 	public static void trace(String option, String msg, Throwable error) {
 		final DebugOptions debugOptions = activator.getDebugOptions();
 		if (debugOptions.isDebugEnabled()
