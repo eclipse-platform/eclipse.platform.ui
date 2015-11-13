@@ -1539,8 +1539,33 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * Assumes that busy cursor is active.
 	 */
 	private boolean busyClose(boolean remove) {
-		if (closing)
+		/*
+		 * Warning: Intricate flow of control and re-entrant invocations of this
+		 * method:
+		 *
+		 * - busyClose(true) is called from WorkbenchWindow#close() when the
+		 * user closes a workbench window.
+		 *
+		 * - busyClose(false) is called from Workbench#close(int, boolean). This
+		 * happens on File > Exit/Restart, [Mac] Quit Eclipse, AND ... tadaa ...
+		 * from busyClose(true) when the user closes the last window => [Case A]
+		 *
+		 * Additional complication: busyClose(true) can also be called again
+		 * when someone runs an event loop during the shutdown sequence. In that
+		 * case, the nested busyClose(true) should be dropped (bug 381555) =>
+		 * [Case B]
+		 */
+		if (closing) {
+			// [Case A] Window is already closing.
 			return false;
+		}
+		if (updateDisabled && remove) {
+			// [Case B] User closed this window, which triggered
+			// "workbench.close()", during which the user tried to close this
+			// window again.
+			return false;
+		}
+
 		// Whether the window was actually closed or not
 		boolean windowClosed = false;
 
