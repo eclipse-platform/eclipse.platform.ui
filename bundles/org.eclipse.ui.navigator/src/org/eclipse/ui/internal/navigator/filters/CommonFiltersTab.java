@@ -19,8 +19,8 @@ import java.util.Set;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -79,7 +79,7 @@ public class CommonFiltersTab extends CustomizationTab {
 
 		getTableViewer().setContentProvider(filterContentProvider);
 		getTableViewer().setLabelProvider(filterLabelProvider);
-		getTableViewer().setSorter(new CommonFilterSorter());
+		getTableViewer().setComparator(new CommonFilterComparator());
 		getTableViewer().setInput(getContentService());
 
 		getTableViewer().addFilter(patternFilter);
@@ -255,7 +255,7 @@ public class CommonFiltersTab extends CustomizationTab {
 		}
 	}
 
-	private class CommonFilterSorter extends ViewerSorter {
+	private class CommonFilterComparator extends ViewerComparator {
 
 		@Override
 		public void sort(Viewer viewer, Object[] elements) {
