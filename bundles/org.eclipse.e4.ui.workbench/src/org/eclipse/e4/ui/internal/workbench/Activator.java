@@ -18,8 +18,6 @@ import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.BundleTracker;
@@ -80,24 +78,6 @@ public class Activator implements BundleActivator {
 	 */
 	public BundleContext getContext() {
 		return context;
-	}
-
-	/**
-	 * @return the instance Location service
-	 */
-	public Location getInstanceLocation() {
-		if (locationTracker == null) {
-			Filter filter = null;
-			try {
-				filter = context.createFilter(Location.INSTANCE_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this. It should never happen as we have tested the
-				// above format.
-			}
-			locationTracker = new ServiceTracker<>(context, filter, null);
-			locationTracker.open();
-		}
-		return locationTracker.getService();
 	}
 
 	@Override
