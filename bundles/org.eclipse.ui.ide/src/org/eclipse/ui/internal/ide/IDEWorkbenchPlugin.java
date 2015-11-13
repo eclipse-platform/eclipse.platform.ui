@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -59,10 +58,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     // Default instance of the receiver
     private static IDEWorkbenchPlugin inst;
 
-    // Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
-    // All other plugins, examples, or test cases must *not* use this flag.
-    public static boolean DEBUG = false;
-
     /**
      * The IDE workbench plugin ID.
      */
@@ -80,8 +75,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     public static final String PL_MARKER_HELP = "markerHelp"; //$NON-NLS-1$
 
     public static final String PL_MARKER_RESOLUTION = "markerResolution"; //$NON-NLS-1$
-
-    public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 
     public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
 
@@ -293,18 +286,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
         return (AboutInfo[]) infos.toArray(new AboutInfo[infos.size()]);
     }
-
-    /**
-     * Returns the about information of the primary feature.
-     *
-     * @return info about the primary feature, or <code>null</code> if there
-     * is no primary feature or if this information is unavailable
-     */
-    public AboutInfo getPrimaryInfo() {
-        IProduct product = Platform.getProduct();
-        return product == null ? null : new AboutInfo(product);
-    }
-
 	/**
 	 * Get the workbench image with the given path relative to
 	 * ICON_PATH.
