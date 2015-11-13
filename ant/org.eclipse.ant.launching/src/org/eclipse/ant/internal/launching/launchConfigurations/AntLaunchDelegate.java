@@ -79,7 +79,6 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Launch delegate for Ant builds
  */
-@SuppressWarnings("restriction")
 public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger"; //$NON-NLS-1$
