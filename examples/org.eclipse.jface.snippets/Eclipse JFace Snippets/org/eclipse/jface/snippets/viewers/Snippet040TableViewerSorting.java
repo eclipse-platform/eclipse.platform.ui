@@ -106,7 +106,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		ColumnViewerSorter cSorter = new ColumnViewerSorter(viewer, column) {
+		ColumnViewerComparator cSorter = new ColumnViewerComparator(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -141,7 +141,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		new ColumnViewerSorter(viewer, column) {
+		new ColumnViewerComparator(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -176,7 +176,7 @@ public class Snippet040TableViewerSorting {
 
 		});
 
-		new ColumnViewerSorter(viewer, column) {
+		new ColumnViewerComparator(viewer, column) {
 
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -190,7 +190,7 @@ public class Snippet040TableViewerSorting {
 		viewer.setInput(createModel());
 		viewer.getTable().setLinesVisible(true);
 		viewer.getTable().setHeaderVisible(true);
-		cSorter.setSorter(cSorter, ColumnViewerSorter.ASC);
+		cSorter.setSorter(cSorter, ColumnViewerComparator.ASC);
 	}
 
 	private TableViewerColumn createColumnFor(TableViewer viewer, String label) {
@@ -212,7 +212,7 @@ public class Snippet040TableViewerSorting {
 				new Person("Hendrik", "Still", "hendrik.still@gammas.de") };
 	}
 
-	private static abstract class ColumnViewerSorter extends ViewerComparator {
+	private static abstract class ColumnViewerComparator extends ViewerComparator {
 
 		public static final int ASC = 1;
 		public static final int NONE = 0;
@@ -222,7 +222,7 @@ public class Snippet040TableViewerSorting {
 		private TableViewerColumn column;
 		private ColumnViewer viewer;
 
-		public ColumnViewerSorter(ColumnViewer viewer, TableViewerColumn column) {
+		public ColumnViewerComparator(ColumnViewer viewer, TableViewerColumn column) {
 			this.column = column;
 			this.viewer = viewer;
 			SelectionAdapter selectionAdapter = createSelectionAdapter();
@@ -234,25 +234,25 @@ public class Snippet040TableViewerSorting {
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (ColumnViewerSorter.this.viewer.getComparator() != null) {
-						if (ColumnViewerSorter.this.viewer.getComparator() == ColumnViewerSorter.this) {
-							int tdirection = ColumnViewerSorter.this.direction;
+					if (ColumnViewerComparator.this.viewer.getComparator() != null) {
+						if (ColumnViewerComparator.this.viewer.getComparator() == ColumnViewerComparator.this) {
+							int tdirection = ColumnViewerComparator.this.direction;
 							if (tdirection == ASC) {
-								setSorter(ColumnViewerSorter.this, DESC);
+								setSorter(ColumnViewerComparator.this, DESC);
 							} else if (tdirection == DESC) {
-								setSorter(ColumnViewerSorter.this, NONE);
+								setSorter(ColumnViewerComparator.this, NONE);
 							}
 						} else {
-							setSorter(ColumnViewerSorter.this, ASC);
+							setSorter(ColumnViewerComparator.this, ASC);
 						}
 					} else {
-						setSorter(ColumnViewerSorter.this, ASC);
+						setSorter(ColumnViewerComparator.this, ASC);
 					}
 				}
 			};
 		}
 
-		public void setSorter(ColumnViewerSorter sorter, int direction) {
+		public void setSorter(ColumnViewerComparator sorter, int direction) {
 			Table columnParent = column.getColumn().getParent();
 			if (direction == NONE) {
 				columnParent.setSortColumn(null);
@@ -262,8 +262,7 @@ public class Snippet040TableViewerSorting {
 			} else {
 				columnParent.setSortColumn(column.getColumn());
 				sorter.direction = direction;
-				columnParent.setSortDirection(direction == ASC ? SWT.DOWN
-						: SWT.UP);
+				columnParent.setSortDirection(direction == ASC ? SWT.DOWN : SWT.UP);
 
 				if (viewer.getComparator() == sorter) {
 					viewer.refresh();
