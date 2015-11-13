@@ -161,11 +161,17 @@ public class StyledString implements CharSequence {
 		return fBuffer.length();
 	}
 
+	/**
+	 * @since 3.12
+	 */
 	@Override
 	public CharSequence subSequence(int start, int end) {
 		return fBuffer.subSequence(start, end);
 	}
 
+	/**
+	 * @since 3.12
+	 */
 	@Override
 	public char charAt(int index) {
 		return fBuffer.charAt(index);
