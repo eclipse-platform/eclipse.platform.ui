@@ -84,7 +84,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * that snapshot should not be scheduled if a nested operation occurs during
 	 * save.
 	 */
-	private boolean isSaving = false;
+	private volatile boolean isSaving = false;
 
 	/**
 	 * The number of empty (non-changing) operations since the last snapshot.
@@ -117,7 +117,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected final DelayedSnapshotJob snapshotJob;
 
-	protected boolean snapshotRequested;
+	protected volatile boolean snapshotRequested;
 	private IStatus snapshotRequestor;
 	protected Workspace workspace;
 	//declare debug messages as fields to get sharing
