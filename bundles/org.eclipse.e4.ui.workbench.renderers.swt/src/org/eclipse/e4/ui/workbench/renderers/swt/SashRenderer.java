@@ -132,7 +132,7 @@ public class SashRenderer extends SWTPartRenderer {
 		super.childRendered(parentElement, element);
 
 		// Ensure that the element's 'containerInfo' is initialized
-		int weight = getWeight(element);
+		int weight = getLayoutWeight(element);
 		if (weight == UNDEFINED_WEIGHT) {
 			element.setContainerData(Integer.toString(DEFAULT_WEIGHT));
 		}
@@ -177,7 +177,7 @@ public class SashRenderer extends SWTPartRenderer {
 	/*
 	 *
 	 */
-	private static int getWeight(MUIElement element) {
+	private static int getLayoutWeight(MUIElement element) {
 		String info = element.getContainerData();
 		if (info == null || info.length() == 0) {
 			element.setContainerData(Integer.toString(10000));
