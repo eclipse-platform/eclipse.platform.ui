@@ -132,8 +132,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  *
  * @since 3.3
  */
-public abstract class FilteredItemsSelectionDialog extends
-		SelectionStatusDialog {
+public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog {
 
 	private static final String DIALOG_BOUNDS_SETTINGS = "DialogBoundsSettings"; //$NON-NLS-1$
 
