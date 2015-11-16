@@ -97,7 +97,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 	private ResourceChangeListenerList listeners;
 
-	protected boolean notificationRequested = false;
+	protected volatile boolean notificationRequested = false;
 	private Job notifyJob;
 	Workspace workspace;
 
