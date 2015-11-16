@@ -77,19 +77,21 @@ public abstract class Page implements IPageBookViewPage {
     public abstract Control getControl();
 
     /**
-     * Subclasses should reimplement <code>init</code>.
-     * 
-     * @Deprecated use <code>init</code> instead.
-     */
-    public void makeContributions(IMenuManager menuManager,
-            IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+	 * Subclasses should reimplement <code>init</code>.
+	 *
+	 * @deprecated Please use the <code>init</code> method instead.
+	 */
+    @Deprecated
+	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager,
+			IStatusLineManager statusLineManager) {
     }
 
     /**
-     * Subclasses should reimplement <code>init</code>.
-     * 
-     * @Deprecated use <code>init</code> instead.
-     */
+	 * Subclasses should reimplement <code>init</code>.
+	 *
+	 * @deprecated Please use the <code>init</code> method instead.
+	 */
+	@Deprecated
     @Override
     public void setActionBars(IActionBars actionBars) {
         makeContributions(actionBars.getMenuManager(), actionBars
