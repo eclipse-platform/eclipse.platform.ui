@@ -66,8 +66,8 @@ import org.eclipse.core.internal.databinding.observable.SideEffect;
  * });
  * </pre>
  * <p>
- * The above example uses a {@link ISideEffect} to fill in a label with a user's
- * name. It will react automatically to changes in the username and the
+ * The above example uses an {@link ISideEffect} to fill in a label with a
+ * user's name. It will react automatically to changes in the username and the
  * showFullNamePreference.
  * <p>
  * The same thing could be accomplished by attaching listeners to all three
@@ -87,8 +87,8 @@ import org.eclipse.core.internal.databinding.observable.SideEffect;
  * </ul>
  * <p>
  * Please be aware of a common anti-pattern. Don't create new observables inside
- * a {@link ISideEffect} unless you remember them for future runs. Creating new
- * observables inside a {@link ISideEffect} can easily create infinite loops.
+ * an {@link ISideEffect} unless you remember them for future runs. Creating new
+ * observables inside an {@link ISideEffect} can easily create infinite loops.
  *
  * <pre>
  * // Bad: May create an infinite loop, since each AvatarObservable instance may
