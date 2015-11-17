@@ -19,10 +19,10 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.SideEffect;
 
 /**
- * A {@link ISideEffect} allows you to run code whenever one or more observables
- * change. A {@link ISideEffect} is a lot like a listener except that it doesn't
- * need to be attached to anything. Instead, it reacts automatically to changes
- * in tracked getters that are invoked by the listener.
+ * An {@link ISideEffect} allows you to run code whenever one or more
+ * observables change. An {@link ISideEffect} is a lot like a listener except
+ * that it doesn't need to be attached to anything. Instead, it reacts
+ * automatically to changes in tracked getters that are invoked by the listener.
  * <p>
  * Observables form a directed graph of dependencies. Classes like
  * {@link WritableValue} form the inputs to the graph (nodes which have only
@@ -52,19 +52,19 @@ import org.eclipse.core.internal.databinding.observable.SideEffect;
  *
  * Example usage:
  *
- * <code><pre>
- * IObservableValue<String> firstName = ...
- * IObservableValue<String> lastName = ...
- * IObservableValue<Boolean> showFullNamePreference = ...
+ * <pre>
+ * IObservableValue&lt;String&gt; firstName = ...
+ * IObservableValue&lt;String&gt; lastName = ...
+ * IObservableValue&lt;Boolean&gt; showFullNamePreference = ...
  * Label userName = ...
  *
- * ISideEffect sideEffect = ISideEffect.create(() -> {
+ * ISideEffect sideEffect = ISideEffect.create(() -&gt; {
  *     String name = showFullNamePreference.get()
  *         ? (firstName.get() + " " + lastName.get())
  *         : firstName.get();
  *     userName.setText("Your name is " + name);
  * });
- * </pre></code>
+ * </pre>
  * <p>
  * The above example uses a {@link ISideEffect} to fill in a label with a user's
  * name. It will react automatically to changes in the username and the
@@ -90,26 +90,26 @@ import org.eclipse.core.internal.databinding.observable.SideEffect;
  * a {@link ISideEffect} unless you remember them for future runs. Creating new
  * observables inside a {@link ISideEffect} can easily create infinite loops.
  *
- * <code><pre>
+ * <pre>
  * // Bad: May create an infinite loop, since each AvatarObservable instance may
  * // fire an asynchronous event after creation
  * void createControls() {
- *   ISideEffect sideEffect = ISideEffect.create(() -> {
- *       IObservableValue<Image> myAvatar = new AvatarObservable();
+ * 	ISideEffect sideEffect = ISideEffect.create(() -&gt; {
+ * 		IObservableValue&lt;Image&gt; myAvatar = new AvatarObservable();
  *
- *       myIcon.setImage(myAvatar.getValue());
- *   });
+ * 		myIcon.setImage(myAvatar.getValue());
+ * 	});
  * }
  *
  * // Good: The AvatarObservable instance is remembered between invocations of
  * // the side-effect.
  * void createControls() {
- *   final IObservableValue<Image> myAvatar = new AvatarObservable();
- *   ISideEffect sideEffect = ISideEffect.create(() -> {
- *       myIcon.setImage(myAvatar.getValue());
- *   });
+ * 	final IObservableValue&lt;Image&gt; myAvatar = new AvatarObservable();
+ * 	ISideEffect sideEffect = ISideEffect.create(() -&gt; {
+ * 		myIcon.setImage(myAvatar.getValue());
+ * 	});
  * }
- * </pre></code>
+ * </pre>
  *
  * @since 1.6
  * @noimplement This interface is not intended to be implemented by clients.
@@ -314,8 +314,8 @@ public interface ISideEffect {
 	 * in a message box without doing any file I/O on the UI thread.
 	 * <p>
 	 *
-	 * <code><pre>
-	 * IObservableValue<String> loadFileAsString(String filename) {
+	 * <pre>
+	 * IObservableValue&lt;String&gt; loadFileAsString(String filename) {
 	 *   // Uses another thread to load the given filename. The resulting observable returns
 	 *   // null if the file is not yet loaded or contains the file contents if the file is
 	 *   // fully loaded
@@ -323,12 +323,12 @@ public interface ISideEffect {
 	 * }
 	 *
 	 * void showFileContents(Shell parentShell, String filename) {
-	 *   IObservableValue<String> webPageContent = loadFileAsString(filename);
-	 *   ISideEffect.runOnce(webPageContent::getValue, (content) -> {
+	 *   IObservableValue&lt;String&gt; webPageContent = loadFileAsString(filename);
+	 *   ISideEffect.runOnce(webPageContent::getValue, (content) -&gt; {
 	 *   	MessageDialog.openInformation(parentShell, "Your file contains", content);
 	 *   })
 	 * }
-	 * </pre></code>
+	 * </pre>
 	 *
 	 * @param supplier
 	 *            supplier which returns null if the side-effect should continue
