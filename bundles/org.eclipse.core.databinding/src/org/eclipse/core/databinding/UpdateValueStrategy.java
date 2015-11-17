@@ -584,4 +584,15 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		}
 	}
 
+	/**
+	 * Create an {@link UpdateValueStrategy} with a converter
+	 *
+	 * @param converter
+	 *            the converter
+	 * @return the update value strategy
+	 * @since 1.6
+	 */
+	public static UpdateValueStrategy create(IConverter converter) {
+		return new UpdateValueStrategy().setConverter(converter);
+	}
 }
