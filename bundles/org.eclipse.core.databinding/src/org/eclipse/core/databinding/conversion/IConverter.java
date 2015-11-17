@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.conversion;
 
+import java.util.function.Function;
+
 /**
  * A one-way converter.
  *
@@ -50,4 +52,37 @@ public interface IConverter {
 	 * @return the converted object, of type {@link #getToType()}
 	 */
 	public Object convert(Object fromObject);
+
+	/**
+	 * Create a converter
+	 *
+	 * @param fromType
+	 *            the from type
+	 * @param toType
+	 *            the to type
+	 * @param conversion
+	 *            the conversion method
+	 * @return a new converter instance
+	 * @since 1.6
+	 */
+	public static IConverter create(Object fromType, Object toType, @SuppressWarnings("rawtypes") Function conversion) {
+		return new IConverter() {
+
+			@Override
+			public Object getFromType() {
+				return fromType;
+			}
+
+			@Override
+			public Object getToType() {
+				return toType;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public Object convert(Object fromObject) {
+				return conversion.apply(fromObject);
+			}
+		};
+	}
 }
