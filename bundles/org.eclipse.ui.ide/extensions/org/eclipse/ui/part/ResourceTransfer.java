@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -164,7 +165,12 @@ public class ResourceTransfer extends ByteArrayTransfer {
         try {
             int count = in.readInt();
 			if (count > MAX_RESOURCES_TO_TRANSFER) {
-				String message = "Transfer aborted, too many resources: " + count; //$NON-NLS-1$
+				String message = "Transfer aborted, too many resources: " + count + "."; //$NON-NLS-1$ //$NON-NLS-2$
+				if (Util.isLinux()) {
+					message += "\nIf you are running in x11vnc environment please consider to switch to vncserver " + //$NON-NLS-1$
+							"+ vncviewer or to run x11vnc without clipboard support " + //$NON-NLS-1$
+							"(use '-noclipboard' and '-nosetclipboard' arguments)."; //$NON-NLS-1$
+				}
 				IDEWorkbenchPlugin.log(message, new IllegalArgumentException(
 						"Maximum limit of resources to transfer is: " + MAX_RESOURCES_TO_TRANSFER)); //$NON-NLS-1$
 				return null;
