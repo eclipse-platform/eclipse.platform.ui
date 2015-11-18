@@ -928,9 +928,11 @@ public final class MutableActivityManager extends AbstractActivityManager
      */
     private Job getUpdateJob() {
         if (deferredIdentifierJob == null) {
-            deferredIdentifierJob = Job.create("Identifier Update Job", new IJobFunction() { //$NON-NLS-1$
+			deferredIdentifierJob = Job.create("Activity Identifier Update", new IJobFunction() { //$NON-NLS-1$
                 @Override
 				public IStatus run(IProgressMonitor monitor) {
+					final Map identifierEventsByIdentifierId = new HashMap();
+
                     while (!deferredIdentifiers.isEmpty()) {
                         Identifier identifier = (Identifier) deferredIdentifiers.remove(0);
                         Set activityIds = new HashSet();
@@ -948,21 +950,20 @@ public final class MutableActivityManager extends AbstractActivityManager
                         if (activityIdsChanged) {
                             IdentifierEvent identifierEvent = new IdentifierEvent(identifier, activityIdsChanged,
                                     false);
-                            final Map identifierEventsByIdentifierId = new HashMap(1);
                             identifierEventsByIdentifierId.put(identifier.getId(),
                                     identifierEvent);
-                            UIJob notifyJob = new UIJob("Identifier Update Job") { //$NON-NLS-1$
-
-								@Override
-								public IStatus runInUIThread(
-										IProgressMonitor monitor) {
-									notifyIdentifiers(identifierEventsByIdentifierId);
-									return Status.OK_STATUS;
-								}
-                            };
-                            notifyJob.setSystem(true);
-                            notifyJob.schedule();
-                        }
+						}
+					}
+					if (!identifierEventsByIdentifierId.isEmpty()) {
+						UIJob notifyJob = new UIJob("Activity Identifier Update UI") { //$NON-NLS-1$
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								notifyIdentifiers(identifierEventsByIdentifierId);
+								return Status.OK_STATUS;
+							}
+						};
+						notifyJob.setSystem(true);
+						notifyJob.schedule();
                     }
                     return Status.OK_STATUS;
                 }
