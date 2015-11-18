@@ -508,24 +508,39 @@ public class ModelServiceImpl implements EModelService {
 
 		MUIElement appElement = refWin == null ? null : refWin.getParent();
 		if (appElement instanceof MApplication) {
-			// use appContext as MApplication.getContext() is null during the processing of
-			// the model processor classes
-			EPlaceholderResolver resolver = appContext.get(EPlaceholderResolver.class);
-			// Re-resolve any placeholder references
-			List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class, null);
-			List<MPlaceholder> unresolved = new ArrayList<>();
-			for (MPlaceholder ph : phList) {
-				resolver.resolvePlaceholderRef(ph, refWin);
-				if (ph.getRef() == null) {
-					unresolved.add(ph);
-				}
-			}
-			for (MPlaceholder ph : unresolved) {
-				replacePlaceholder(ph);
-			}
+			handleNullRefPlaceHolders(element, refWin, true);
 		}
 
 		return element;
+	}
+
+	private void handleNullRefPlaceHolders(MUIElement element, MWindow refWin, boolean resolve) {
+		// use appContext as MApplication.getContext() is null during the processing of
+		// the model processor classes
+		EPlaceholderResolver resolver = appContext.get(EPlaceholderResolver.class);
+		// Re-resolve any placeholder references
+		List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class, null);
+		List<MPlaceholder> nullRefList = new ArrayList<>();
+		for (MPlaceholder ph : phList) {
+			if (resolve) {
+				resolver.resolvePlaceholderRef(ph, refWin);
+			}
+			if (ph.getRef() == null) {
+				nullRefList.add(ph);
+			}
+		}
+		for (MPlaceholder ph : nullRefList) {
+			replacePlaceholder(ph);
+		}
+		return;
+	}
+
+	/**
+	 * @param element
+	 * @param refWin
+	 */
+	public void handleNullRefPlaceHolders(MUIElement element, MWindow refWin) {
+		handleNullRefPlaceHolders(element, refWin, false);
 	}
 
 	private void replacePlaceholder(MPlaceholder ph) {
@@ -967,7 +982,8 @@ public class ModelServiceImpl implements EModelService {
 	public MPerspective getActivePerspective(MWindow window) {
 		List<MPerspectiveStack> pStacks = findElements(window, null, MPerspectiveStack.class, null);
 		if (pStacks.size() == 1) {
-			return pStacks.get(0).getSelectedElement();
+			MPerspective perspective = pStacks.get(0).getSelectedElement();
+			return perspective;
 		}
 
 		return null;

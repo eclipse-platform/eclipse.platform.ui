@@ -90,7 +90,7 @@ public class ImportExportPespectiveHandler {
 	private List<String> importedPersps = new ArrayList<>();
 	private Map<String, String> minMaxPersistedState;
 
-	private Boolean impExpEnabled;
+	private static Boolean impExpEnabled;
 
 	@PostConstruct
 	private void init() {
@@ -350,7 +350,7 @@ public class ImportExportPespectiveHandler {
 
 	}
 
-	private boolean isImpExpEnabled() {
+	public static boolean isImpExpEnabled() {
 		if (impExpEnabled == null) {
 			String propertyStr = System.getProperty("e4.impExpPerspectiveEnabled"); //$NON-NLS-1$
 			if (propertyStr == null) {
