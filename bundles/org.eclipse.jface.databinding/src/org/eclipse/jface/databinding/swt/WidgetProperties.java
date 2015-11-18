@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2015 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563,
- *                    169876, 306203
+ *     Matthew Hall - bugs 256543, 213893, 262320, 262946, 264286, 266563, 169876, 306203
  *     Eugen Neufeld - bug 461560
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 482486
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -281,14 +281,14 @@ public class WidgetProperties {
 	 * or {@link Text}.
 	 *
 	 * @param events
-	 *            array of SWT event types to register for change events. May
+	 *            varags of SWT event types to register for change events. May
 	 *            include {@link SWT#None}, {@link SWT#Modify},
 	 *            {@link SWT#FocusOut} or {@link SWT#DefaultSelection}.
 	 *
 	 * @return a value property for observing the text of a {@link StyledText}
 	 *         or {@link Text}.
 	 */
-	public static IWidgetValueProperty text(int[] events) {
+	public static IWidgetValueProperty text(int... events) {
 		return new WidgetTextWithEventsProperty(events.clone());
 	}
 
