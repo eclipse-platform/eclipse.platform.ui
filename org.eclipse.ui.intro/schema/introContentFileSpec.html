@@ -143,6 +143,11 @@ no parameters required<br>
 additional parameters - any additional parameters are passed to actions that implement <code>org.eclipse.ui.intro.config.IIntroAction</code><br>
 <br>
 
+<b>execute</b> - executes the specified command.  See the <code>serialize()</code> method on <code>org.eclipse.core.command.ParameterizedCommand</code> for details of the command serialization format. Since 3.2.<br>
+<i>command</i> - a serialized <code>ParameterizedCommand</code><br>
+<i>standby (optional) = ("true" | "false") "false"</i> - indicate whether to set the intro into standby mode after executing the command<br>
+<br>
+
 <b>setStandbyMode</b> - sets the state of the intro part<br>
 <i>standby = ("true" 
  "false")</i> - true to put the intro part in its partially visible standy mode, and false to make it fully visible<br>
@@ -173,7 +178,7 @@ no parameters required<br>
 <i>standby (optional) = ("true" 
  "false") "false"</i> - indicate whether to set the intro into standby mode after showing the page<br><br>
 
-If any of the parameters passed to these actions have special characters (ie: characters that are illegal in a URL), then they should be encoded using UTF-8 url encoding. To recieve these parametrs in there decoded state a special parameter, <i>decode = ("true" "false")</i>  can be used to force a decode of these parameters when the Intro framework processes them.<br>
+If any of the parameters passed to these actions have special characters (ie: characters that are illegal in a URL), then they should be encoded using UTF-8 url encoding. To receive these parametrs in there decoded state a special parameter, <i>decode = ("true" "false")</i>  can be used to force a decode of these parameters when the Intro framework processes them.<br>
 For example, the following Intro url: <br><i>
 http://org.eclipse.ui.intro/showMessage?message=This+is+a+message</i><br>
 will process the message parameter as "This+is+a+message"<br>
