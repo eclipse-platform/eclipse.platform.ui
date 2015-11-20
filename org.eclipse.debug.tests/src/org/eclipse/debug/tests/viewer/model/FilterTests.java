@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems and others.
+ * Copyright (c) 2009, 2015 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -370,6 +370,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
      * Fire CONTENT delta on parent.
      */
     private void doTestRefreshToUnfilterElements(ViewerFilter[] filters) throws InterruptedException {
+		ViewerFilter[] filters1 = filters;
         // Populate a view with a large model (only first 100 elements will be visible in virtual viewer).
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -391,8 +392,9 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 		}
 
         // Turn off filters and refresh.
-        filters = new ViewerFilter[0];
-        fViewer.setFilters(filters);
+		filters1 = new ViewerFilter[0];
+		fViewer.setFilters(filters1);
+
         fListener.reset();
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) {
@@ -401,7 +403,7 @@ abstract public class FilterTests extends TestCase implements ITestModelUpdatesL
 			}
 		}
 
-        model.validateData(fViewer, TreePath.EMPTY, false, filters);
+		model.validateData(fViewer, TreePath.EMPTY, false, filters1);
     }    
 
     public void testPreserveExpandedOnMultLevelContent() throws InterruptedException {
