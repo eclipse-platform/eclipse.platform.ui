@@ -198,6 +198,7 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.migration.WorkbenchMigrationProcessor;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -212,6 +213,7 @@ import org.eclipse.ui.internal.model.ContributionService;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.ImportExportPespectiveHandler;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.services.EvaluationService;
@@ -280,7 +282,9 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 	public static String WORKBENCH_AUTO_SAVE_JOB = "Workbench Auto-Save Job"; //$NON-NLS-1$
 
-	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
+	public static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
+
+	public static final String EDITOR_TAG = "Editor"; //$NON-NLS-1$
 
 	private final class StartupProgressBundleListener implements SynchronousBundleListener {
 
@@ -338,7 +342,7 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 	static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-	static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
+	public static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
 
 	/**
 	 * Holds onto the only instance of Workbench.
@@ -549,6 +553,10 @@ public final class Workbench extends EventManager implements IWorkbench,
 		return instance;
 	}
 
+	private static boolean isFirstE4WorkbenchRun(MApplication app) {
+		return app.getContext().containsKey(E4Workbench.NO_SAVED_MODEL_FOUND);
+	}
+
 	/**
 	 * Creates the workbench and associates it with the the given display and
 	 * workbench advisor, and runs the workbench UI. This entails processing and
@@ -601,6 +609,32 @@ public final class Workbench extends EventManager implements IWorkbench,
 					E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(),
 							display);
 
+					MApplication appModel = e4Workbench.getApplication();
+					IEclipseContext context = e4Workbench.getContext();
+
+					WorkbenchMigrationProcessor migrationProcessor = null;
+					// migration is enabled by default
+					if (ImportExportPespectiveHandler.isImpExpEnabled()) {
+						try {
+							migrationProcessor = ContextInjectionFactory.make(
+									WorkbenchMigrationProcessor.class, context);
+						} catch (@SuppressWarnings("restriction") InjectionException e) {
+							WorkbenchPlugin.log(e);
+						}
+					}
+
+					if (migrationProcessor != null && isFirstE4WorkbenchRun(appModel)
+							&& migrationProcessor.isLegacyWorkbenchDetected()) {
+						try {
+							WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.INFO,
+									"Workbench migration started", null)); //$NON-NLS-1$
+							migrationProcessor.migrate();
+						} catch (Exception e) {
+							WorkbenchPlugin.log("Workbench migration failed", e); //$NON-NLS-1$
+							migrationProcessor.restoreDefaultModel();
+						}
+					}
+
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());
@@ -627,10 +661,17 @@ public final class Workbench extends EventManager implements IWorkbench,
 							WorkbenchPlugin.getDefault().addBundleListener(bundleListener);
 						}
 					}
-					MApplication appModel = e4Workbench.getApplication();
+
 					setSearchContribution(appModel, true);
 					// run the legacy workbench once
 					returnCode[0] = workbench.runUI();
+					if (migrationProcessor != null && migrationProcessor.isWorkbenchMigrated()) {
+						migrationProcessor.updatePartsAfterMigration(WorkbenchPlugin.getDefault()
+								.getPerspectiveRegistry(), WorkbenchPlugin.getDefault()
+								.getViewRegistry());
+						WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.INFO,
+								"Workbench migration finished", null)); //$NON-NLS-1$
+					}
 					if (returnCode[0] == PlatformUI.RETURN_OK) {
 						// run the e4 event loop and instantiate ... well, stuff
 						e4Workbench.createAndRunUI(e4Workbench.getApplication());

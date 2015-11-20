@@ -51,6 +51,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.internal.workbench.ModelServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -3951,6 +3952,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		IPerspectiveDescriptor lastPerspective = getPerspective();
 		if (lastPerspective != null && lastPerspective.getId().equals(perspective.getId())) {
 			// no change
+			MPerspectiveStack perspectives = getPerspectiveStack();
+			for (MPerspective mperspective : perspectives.getChildren()) {
+				if (mperspective.getElementId().equals(perspective.getId())) {
+					((ModelServiceImpl) modelService).handleNullRefPlaceHolders(mperspective,
+							window);
+				}
+			}
 			return;
 		}
 
@@ -3964,6 +3972,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				mperspective.getContext().activate();
+				((ModelServiceImpl) modelService).handleNullRefPlaceHolders(mperspective, window);
 				return;
 			}
 		}
@@ -3988,6 +3997,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 			reader.extendLayout(getExtensionTracker(), perspective.getId(), modelLayout);
 		}
+
+		((ModelServiceImpl) modelService).handleNullRefPlaceHolders(modelPerspective, window);
 
 		modelPerspective.setLabel(perspective.getLabel());
 
