@@ -13,6 +13,9 @@ package org.eclipse.e4.core.internal.di;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.annotations.GroupUpdates;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -24,6 +27,9 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
  * @noextend This class is not intended to be subclassed by clients.
  */
 abstract public class Requestor<L extends AnnotatedElement> implements IRequestor {
+
+	private static final Map<AnnotatedElement, IObjectDescriptor[]> descriptorCache = Collections
+			.synchronizedMap(new WeakHashMap<>());
 
 	/** The request location; may be null */
 	final protected L location;
@@ -165,9 +171,10 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 		return false;
 	}
 
-	public IObjectDescriptor[] getDependentObjects() {
-		if (objectDescriptors == null)
-			objectDescriptors = calcDependentObjects();
+	public synchronized IObjectDescriptor[] getDependentObjects() {
+		if (objectDescriptors == null) {
+			objectDescriptors = descriptorCache.computeIfAbsent(location, l -> calcDependentObjects());
+		}
 		return objectDescriptors;
 	}
 

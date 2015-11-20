@@ -13,6 +13,7 @@ package org.eclipse.e4.core.internal.di;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -99,9 +100,12 @@ public class InjectorImpl implements IInjector {
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
 	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
+	private Map<Class<? extends Annotation>, Map<AnnotatedElement, Boolean>> annotationsPresent = new HashMap<>();
 
 	// Performance improvement:
 	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<Class<?>, Method[]>();
+	private Map<Class<?>, Field[]> fieldsCache = new WeakHashMap<Class<?>, Field[]>();
+	private Map<Class<?>, Constructor<?>[]> constructorsCache = new WeakHashMap<Class<?>, Constructor<?>[]>();
 	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<Class<?>, Map<Method, Boolean>>();
 
 	private Set<Class<?>> classesBeingCreated = new HashSet<Class<?>>(5);
@@ -330,7 +334,7 @@ public class InjectorImpl implements IInjector {
 			if (shouldDebug)
 				classesBeingCreated.add(clazz);
 
-			boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
+			boolean isSingleton = isAnnotationPresent(clazz, Singleton.class);
 			if (isSingleton) {
 				synchronized (singletonCache) {
 					if (singletonCache.containsKey(clazz))
@@ -338,7 +342,7 @@ public class InjectorImpl implements IInjector {
 				}
 			}
 
-			Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+			Constructor<?>[] constructors = getDeclaredConstructors(clazz);
 			// Sort the constructors by descending number of constructor arguments
 			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<Constructor<?>>(constructors.length);
 			for (Constructor<?> constructor : constructors)
@@ -359,7 +363,7 @@ public class InjectorImpl implements IInjector {
 					continue;
 
 				// unless this is the default constructor, it has to be tagged
-				if (!constructor.isAnnotationPresent(Inject.class) && constructor.getParameterTypes().length != 0)
+				if (!isAnnotationPresent(constructor, Inject.class) && constructor.getParameterTypes().length != 0)
 					continue;
 
 				ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier, tempSupplier);
@@ -594,12 +598,8 @@ public class InjectorImpl implements IInjector {
 		if (qualifiers == null)
 			return null;
 		for (Annotation qualifier : qualifiers) {
-			String key;
-			Type type = qualifier.annotationType();
-			if (type instanceof Class<?>) {
-				key = ((Class<?>) type).getName();
-			} else
-				continue;
+			Class<?> type = qualifier.annotationType();
+			String key = ((Class<?>) type).getName();
 
 			ExtendedObjectSupplier supplier;
 			try {
@@ -676,14 +676,14 @@ public class InjectorImpl implements IInjector {
 	 */
 	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, boolean track, List<Requestor<?>> requestors) {
 		boolean injectedStatic = false;
-		Field[] fields = objectsClass.getDeclaredFields();
+		Field[] fields = getDeclaredFields(objectsClass);
 		for (Field field : fields) {
 			if (Modifier.isStatic(field.getModifiers())) {
 				if (hasInjectedStatic(objectsClass))
 					continue;
 				injectedStatic = true;
 			}
-			if (!field.isAnnotationPresent(Inject.class))
+			if (!isAnnotationPresent(field, Inject.class))
 				continue;
 			requestors.add(new FieldRequestor(field, this, objectSupplier, tempSupplier, userObject, track));
 		}
@@ -722,7 +722,7 @@ public class InjectorImpl implements IInjector {
 					continue;
 				injectedStatic = true;
 			}
-			if (!method.isAnnotationPresent(Inject.class))
+			if (!isAnnotationPresent(method, Inject.class))
 				continue;
 			requestors.add(new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, track));
 		}
@@ -783,6 +783,25 @@ public class InjectorImpl implements IInjector {
 		return false;
 	}
 
+	private Constructor<?>[] getDeclaredConstructors(Class<?> c) {
+		Constructor<?>[] constructors = constructorsCache.get(c);
+		if (constructors == null) {
+			constructors = c.getDeclaredConstructors();
+			// Sort the constructors by descending number of constructor
+			// arguments
+			Arrays.sort(constructors, new Comparator<Constructor<?>>() {
+				@Override
+				public int compare(Constructor<?> c1, Constructor<?> c2) {
+					int l1 = c1.getParameterTypes().length;
+					int l2 = c2.getParameterTypes().length;
+					return l2 - l1;
+				}
+			});
+			constructorsCache.put(c, constructors);
+		}
+		return constructors;
+	}
+
 	private Method[] getDeclaredMethods(Class<?> c) {
 		Method[] methods = methodsCache.get(c);
 		if (methods == null) {
@@ -790,6 +809,15 @@ public class InjectorImpl implements IInjector {
 			methodsCache.put(c, methods);
 		}
 		return methods;
+	}
+
+	private Field[] getDeclaredFields(Class<?> c) {
+		Field[] fields = fieldsCache.get(c);
+		if (fields == null) {
+			fields = c.getDeclaredFields();
+			fieldsCache.put(c, fields);
+		}
+		return fields;
 	}
 
 	private Class<?> getDesiredClass(Type desiredType) {
@@ -909,7 +937,7 @@ public class InjectorImpl implements IInjector {
 		}
 		Method[] methods = getDeclaredMethods(objectClass);
 		for (Method method : methods) {
-			if (!method.isAnnotationPresent(annotation)) {
+			if (!isAnnotationPresent(method, annotation)) {
 				if (shouldDebug) {
 					for (Annotation a : method.getAnnotations()) {
 						if (annotation.getName().equals(a.annotationType().getName())) {
@@ -934,7 +962,7 @@ public class InjectorImpl implements IInjector {
 			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
-				if (method.isAnnotationPresent(Optional.class))
+				if (isAnnotationPresent(method, Optional.class))
 					continue;
 				reportUnresolvedArgument(requestor, unresolved);
 			}
@@ -964,4 +992,21 @@ public class InjectorImpl implements IInjector {
 		defaultSupplier = objectSupplier;
 	}
 
+	private boolean isAnnotationPresent(AnnotatedElement annotatedElement,
+			Class<? extends Annotation> annotation) {
+		Map<AnnotatedElement, Boolean> cache = annotationsPresent.get(annotation);
+		if (cache == null) {
+			cache = new WeakHashMap<>();
+			annotationsPresent.put(annotation, cache);
+		}
+
+		Boolean present = cache.get(annotatedElement);
+		if (present != null) {
+			return present;
+		}
+
+		boolean isPresent = annotatedElement.isAnnotationPresent(annotation);
+		cache.put(annotatedElement, isPresent);
+		return isPresent;
+	}
 }
