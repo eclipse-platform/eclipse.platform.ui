@@ -842,6 +842,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 			try {
 				if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
 					StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
+					if (current instanceof ICompletionProposalExtension3 && current instanceof ICompletionProposalExtension7) {
+						Font font;
+						if (Helper.okToUse(fProposalShell)) {
+							font= fProposalShell.getFont();
+						} else {
+							font= JFaceResources.getDefaultFont();
+						}
+						styledString= ((ICompletionProposalExtension7)current).emphasizeMatch(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset, font);
+					}
 					displayString= styledString.getString();
 					styleRanges= styledString.getStyleRanges();
 				} else
