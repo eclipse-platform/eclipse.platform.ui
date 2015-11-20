@@ -86,6 +86,14 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	List<MCommand> getCommands();
 
 	/**
+	 * Returns the model element for the command identified via the elementId or
+	 * null if the element cannot be found
+	 *
+	 * @since 1.2
+	 */
+	MCommand getCommand(String elementId);
+
+	/**
 	 * Returns the value of the '<em><b>Addons</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MAddon}.
 	 * <!-- begin-user-doc -->

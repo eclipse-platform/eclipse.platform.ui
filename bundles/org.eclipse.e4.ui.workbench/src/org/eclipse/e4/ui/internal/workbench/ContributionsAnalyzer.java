@@ -406,13 +406,7 @@ public final class ContributionsAnalyzer {
 	}
 
 	public static MCommand getCommandById(MApplication app, String cmdId) {
-		final List<MCommand> cmds = app.getCommands();
-		for (MCommand cmd : cmds) {
-			if (cmdId.equals(cmd.getElementId())) {
-				return cmd;
-			}
-		}
-		return null;
+		return app.getCommand(cmdId);
 	}
 
 	static class Key {

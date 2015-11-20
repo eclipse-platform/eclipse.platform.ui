@@ -595,13 +595,7 @@ public final class BindingService implements IBindingService {
 		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
 
 		String id = parmCmd.getId();
-		MCommand cmd = null;
-		for (MCommand appCommand : application.getCommands()) {
-			if (id.equals(appCommand.getElementId())) {
-				cmd = appCommand;
-				break;
-			}
-		}
+		MCommand cmd = application.getCommand(id);
 		if (cmd == null) {
 			return null;
 		}
