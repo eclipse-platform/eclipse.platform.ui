@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ import org.eclipse.debug.internal.ui.views.launch.Decoration;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.views.launch.StandardDecoration;
-
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -377,7 +376,9 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				result.setEditorInput(editorInput);
 				result.setEditorId(editorId);
 				result.setSourceElement(sourceElement);
-				fLookupResults.put(key, result);
+				if (key instanceof IStackFrame) {
+					fLookupResults.put(key, result);
+				}
 			}
 		}
 		return result;
