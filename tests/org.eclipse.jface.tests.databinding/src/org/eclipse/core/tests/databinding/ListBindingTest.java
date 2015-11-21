@@ -15,7 +15,6 @@ package org.eclipse.core.tests.databinding;
 
 import static org.eclipse.core.databinding.UpdateListStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateListStrategy.POLICY_UPDATE;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -38,9 +37,9 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -51,6 +50,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableList model;
 	private DataBindingContext dbc;
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
@@ -60,6 +60,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		dbc.dispose();
@@ -377,5 +378,39 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		target.add("first");
 		dbc.bindList(target, model, new UpdateListStrategy(POLICY_UPDATE), new UpdateListStrategy(POLICY_NEVER));
 		assertEquals(model.size(), target.size());
+	}
+
+	/**
+	 * test for bug 326507
+	 */
+	@Test
+	public void testConversion() {
+		UpdateListStrategy modelToTarget = new UpdateListStrategy();
+		modelToTarget.setConverter(new IConverter() {
+
+			@Override
+			public Object getFromType() {
+				return String.class;
+			}
+
+			@Override
+			public Object getToType() {
+				return String.class;
+			}
+
+			@Override
+			public Object convert(Object fromObject) {
+				return ((String) fromObject) + "converted";
+			}
+
+		});
+
+		dbc.bindList(target, model, new UpdateListStrategy(), modelToTarget);
+
+		model.add("1");
+		assertEquals("1converted", target.get(0));
+
+		model.set(0, "2");
+		assertEquals("2converted", target.get(0));
 	}
 }
