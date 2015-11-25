@@ -526,7 +526,7 @@ public class Project extends Container implements IProject {
 	 * Implements all build methods on IProject.
 	 */
 	protected void internalBuild(final IBuildConfiguration config, final int trigger, final String builderName, final Map<String, String> args, IProgressMonitor monitor) throws CoreException {
-		workspace.run(new IWorkspaceRunnable() {
+		workspace.run(new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
 				innerMonitor = Policy.monitorFor(innerMonitor);

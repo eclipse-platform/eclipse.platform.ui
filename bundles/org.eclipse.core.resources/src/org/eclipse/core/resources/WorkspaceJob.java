@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * even if the other operation has not yet completed.
  * </p>
  * <p>
- * A WorkspaceJob is the asynchronous equivalent of IWorkspaceRunnable
+ * A WorkspaceJob is the asynchronous equivalent of ICoreRunnable
  * </p>
  * <p>
  * Note that the workspace is not locked against other threads during the execution
@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * interface <tt>IResourceRuleFactory</tt> is used to create a  scheduling rule
  * for a particular workspace modification operation.
  * </p>
- * @see IWorkspaceRunnable
+ * @see ICoreRunnable
  * @see org.eclipse.core.resources.IResourceRuleFactory
  * @see IWorkspace#run(ICoreRunnable, ISchedulingRule, int, IProgressMonitor)
  * @since 3.0
@@ -65,16 +65,16 @@ public abstract class WorkspaceJob extends InternalWorkspaceJob {
 
 	/**
 	 * Runs the operation, reporting progress to and accepting
-	 * cancelation requests from the given progress monitor.
+	 * cancellation requests from the given progress monitor.
 	 * <p>
 	 * Implementors of this method should check the progress monitor
-	 * for cancelation when it is safe and appropriate to do so.  The cancelation
+	 * for cancellation when it is safe and appropriate to do so.  The cancellation
 	 * request should be propagated to the caller by throwing
 	 * <code>OperationCanceledException</code>.
 	 * </p>
 	 *
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting and cancelation are not desired
+	 *     reporting and cancellation are not desired
 	 * @return the result of running the operation
 	 * @exception CoreException if this operation fails.
 	 */

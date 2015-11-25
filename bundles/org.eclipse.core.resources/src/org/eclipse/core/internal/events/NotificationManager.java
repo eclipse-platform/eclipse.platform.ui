@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class NotificationManager implements IManager, ILifecycleListener {
 	class NotifyJob extends Job {
-		private final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
+		private final ICoreRunnable noop = new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) {
 				// do nothing

@@ -582,7 +582,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		final String finalQualifier = qualifier;
 		final BackingStoreException[] bse = new BackingStoreException[1];
 		try {
-			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			ICoreRunnable operation = new ICoreRunnable() {
 				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {

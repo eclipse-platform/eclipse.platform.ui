@@ -82,7 +82,7 @@ public class Synchronizer implements ISynchronizer {
 		Assert.isLegal(partner != null);
 		Assert.isLegal(root != null);
 
-		IWorkspaceRunnable body = new IWorkspaceRunnable() {
+		ICoreRunnable body = new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IResourceVisitor visitor = new IResourceVisitor() {

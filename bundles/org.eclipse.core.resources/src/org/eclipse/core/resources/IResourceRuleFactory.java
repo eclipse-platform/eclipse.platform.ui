@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * rules.  All workspace API methods that modify the workspace will automatically
  * obtain any scheduling rules needed to perform the modification.  However, if you
  * are aggregating a set of changes to the workspace using <code>WorkspaceJob</code>
- * or <code>IWorkspaceRunnable</code> you can use scheduling rules to lock a
+ * or <code>ICoreRunnable</code> you can use scheduling rules to lock a
  * portion of the workspace for the duration of the job or runnable.  If you
  * provide a non-null scheduling rule, a runtime exception will occur if you try to
  * modify a portion of the workspace that is not covered by the rule for the runnable or job.
