@@ -13,7 +13,8 @@
    <extension-point id="filesystemSupport" name="%ExtPoint.fileSystemSupport" schema="schema/filesystemSupport.exsd"/>
    <extension-point id="editorAssociationOverride" name="%ExtPoint.editorAssociationOverride" schema="schema/editorAssociationOverride.exsd"/>
    <extension-point id="unassociatedEditorStrategy" name="%ExtPoint.unassociatedEditorStrategy" schema="schema/unassociatedEditorStrategy.exsd"/>
-
+   <extension-point id="projectConfigurators" name="%ExtPoint.projectConfigurator" schema="schema/projectConfigurators.exsd"/>
+   
    <extension
          point="org.eclipse.ui.importWizards">
 
@@ -2427,6 +2428,108 @@
             interactive="true"
             label="%askUserViaPopup">
       </strategy>
+   </extension>
+
+   <!-- Smart Import -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:file?after=new.ext">
+         <command
+               commandId="org.eclipse.e4.ui.importer.openDirectory"
+               id="org.eclipse.e4.ui.importer.openDirectory.menu"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <command
+               commandId="org.eclipse.e4.ui.importer.configureProject"
+               id="org.eclipse.e4.ui.importer.configureProject.popupMenu"
+               style="push">
+               <visibleWhen>
+				<with variable="selection">
+					<count value="1"/>
+					<iterate ifEmpty="false">
+						<instanceof value="org.eclipse.core.resources.IProject"/>
+					</iterate>
+				</with>
+	       	  </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.e4.ui.importer.openDirectory"
+            name="%importProjectsFromFolder_menu">
+      </command>
+      <command
+            id="org.eclipse.e4.ui.importer.configureProject"
+            name="%configureProject_contextMenu">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.wizards.datatransfer.OpenFolderCommand"
+            commandId="org.eclipse.e4.ui.importer.openDirectory">
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.wizards.datatransfer.ConfigureProjectHandler"
+            commandId="org.eclipse.e4.ui.importer.configureProject">
+            <enabledWhen>
+                <with variable="selection">
+                    <count value="1"/>
+                    <iterate ifEmpty="false">
+                        <instanceof value="org.eclipse.core.resources.IProject"/>
+                    </iterate>
+                </with>
+            </enabledWhen>            
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.e4.ui.importer.openDirectory"
+            icon="$nl$/icons/full/etool16/importdir_wiz.png">
+      </image>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.ide.projectConfigurators">
+      <projectConfigurator
+            class="org.eclipse.ui.internal.wizards.datatransfer.EclipseWorkspaceConfigurator"
+            label="%importer.eclipseWorkspace">
+         <activeWhen>
+            <hasFolder
+                  path=".metadata">
+            </hasFolder>
+         </activeWhen>
+      </projectConfigurator>
+   </extension>
+      <extension
+         point="org.eclipse.ui.ide.projectConfigurators">
+      <projectConfigurator
+            class="org.eclipse.ui.internal.wizards.datatransfer.EclipseProjectConfigurator"
+            label="%importer.eclipseProject">
+      </projectConfigurator>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <wizard
+            category="org.eclipse.ui.Basic"
+            class="org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard"
+            icon="$nl$/icons/full/etool16/importdir_wiz.png"
+            id="org.eclipse.e4.ui.importer.wizard"
+            name="%importProjectsFromFolderWizard_name">
+         <description>
+            %importProjectsFromFolderWizard_description
+         </description>
+      </wizard>
    </extension>
 
 </plugin>

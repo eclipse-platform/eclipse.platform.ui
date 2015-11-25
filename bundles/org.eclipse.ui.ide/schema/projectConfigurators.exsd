@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.ide" id="projectConfigurator" name="Project Configurator"/>
+      </appInfo>
+      <documentation>
+         This extension point allow contributors to add an import strategy.
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="projectConfigurator"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="projectConfigurator">
+      <complexType>
+         <sequence>
+            <element ref="activeWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  class defining the import startegy contribution. This class is responsible of 3 things:
+                  &lt;ul&gt;
+                    &lt;li&gt;Detecting and deciding whether a given folder is meant to be an Eclipse project in workspace, generally depending on the existence of particular files, pattern or text&lt;/li&gt;
+                    &lt;li&gt;Whether it applies on an existing Eclipse project, generally depending on the existence of particular files, pattern or text&lt;/li&gt;
+                    &lt;li&gt;Apply configuration for new or existing Eclipse project in workspace&lt;/li&gt;
+                  &lt;/ul&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.wizard.datatransfer.ProjectConfigurator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  label of the configurator, presented to user.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="activeWhen">
+      <annotation>
+         <documentation>
+            A core Expression that controls the enablement of the Project Configuration. Will be checked before loading Project Configuration
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="0" maxOccurs="1">
+            <element ref="not"/>
+            <element ref="or"/>
+            <element ref="and"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+            <element ref="hasFile"/>
+            <element ref="hasFileRecursively"/>
+            <element ref="hasFileWithSuffixRecursively"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="hasFile">
+      <complexType>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  File is this expression looking for. This is a relative path to the container on which expression will apply.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hasFileRecursively">
+      <complexType>
+         <attribute name="filename" type="string" use="required">
+            <annotation>
+               <documentation>
+                  File name the expression will recursively look for, in the contextual container.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hasFileWithSuffixRecursively">
+      <complexType>
+         <attribute name="suffix" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Suffix for a file. Expression will recursively look for files with this suffix in the contextual container.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         See in same plugin, contribution of the EclipseProjectConfiguror.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         API is currently instable. Feature is incubation.
+      </documentation>
+   </annotation>
+
+
+
+</schema>
