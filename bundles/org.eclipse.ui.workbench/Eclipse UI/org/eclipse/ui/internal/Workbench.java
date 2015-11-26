@@ -14,6 +14,7 @@
  *     Sergey Prigogin <eclipse.sprigogin@gmail.com> - Bug 438324
  *     Snjezana Peco <snjeza.peco@gmail.com> - Bug 405542
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
+ *     Mickael Istria (Red Hat Inc.) - Bug 469918
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -126,6 +127,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.BidiUtils;
@@ -142,6 +144,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -255,6 +258,7 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.testing.ContributionInfo;
+import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -1842,6 +1846,32 @@ public final class Workbench extends EventManager implements IWorkbench,
 
 				ThemeElementHelper.populateRegistry(getThemeManager().getCurrentTheme(),
 						fontDefinitions, PrefUtil.getInternalPreferenceStore());
+				final IPropertyChangeListener themeToPreferencesFontSynchronizer = new IPropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent event) {
+						if (event.getNewValue() instanceof FontData[]) {
+							FontData[] fontData = (FontData[]) event.getNewValue();
+							PrefUtil.getInternalPreferenceStore().setValue(event.getProperty(),
+									PreferenceConverter.getStoredRepresentation(fontData));
+						}
+					}
+				};
+				getThemeManager().getCurrentTheme().getFontRegistry().addListener(themeToPreferencesFontSynchronizer);
+				getThemeManager().addPropertyChangeListener(new IPropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent event) {
+						if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty())) {
+							Object oldValue = event.getOldValue();
+							if (oldValue != null && oldValue instanceof ITheme) {
+								((ITheme) oldValue).removePropertyChangeListener(themeToPreferencesFontSynchronizer);
+							}
+							Object newValue = event.getNewValue();
+							if (newValue != null && newValue instanceof ITheme) {
+								((ITheme) newValue).addPropertyChangeListener(themeToPreferencesFontSynchronizer);
+							}
+						}
+					}
+				});
 			}
 		});
 	}
