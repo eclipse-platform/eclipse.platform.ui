@@ -161,11 +161,9 @@ public class FilteredTree extends Composite {
 
 		IPath disabledPath = new Path("$nl$/icons/full/dtool16/clear_co.png");
 		URL disabledURL = FileLocator.find(bundle, disabledPath, null);
-		ImageDescriptor disabledDesc = ImageDescriptor
-				.createFromURL(disabledURL);
+		ImageDescriptor disabledDesc = ImageDescriptor.createFromURL(disabledURL);
 		if (disabledDesc != null) {
-			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON,
-					disabledDesc);
+			JFaceResources.getImageRegistry().put(DISABLED_CLEAR_ICON, disabledDesc);
 		}
 	}
 
@@ -267,8 +265,7 @@ public class FilteredTree extends Composite {
 			Text testText = null;
 			try {
 				testText = new Text(composite, SWT.SEARCH | SWT.ICON_CANCEL);
-				useNativeSearchField = Boolean.valueOf(
-						(testText.getStyle() & SWT.ICON_CANCEL) != 0);
+				useNativeSearchField = Boolean.valueOf((testText.getStyle() & SWT.ICON_CANCEL) != 0);
 			} finally {
 				if (testText != null) {
 					testText.dispose();
@@ -392,16 +389,14 @@ public class FilteredTree extends Composite {
 					return Status.OK_STATUS;
 				}
 
-				boolean initial = initialText != null
-						&& initialText.equals(text);
+				boolean initial = initialText != null && initialText.equals(text);
 				if (initial) {
 					patternFilter.setPattern(null);
 				} else if (text != null) {
 					patternFilter.setPattern(text);
 				}
 
-				Control redrawFalseControl = treeComposite != null ? treeComposite
-						: treeViewer.getControl();
+				Control redrawFalseControl = treeComposite != null ? treeComposite : treeViewer.getControl();
 				try {
 					// don't want the user to see updates that will be made to
 					// the tree
@@ -413,8 +408,7 @@ public class FilteredTree extends Composite {
 						TreeItem[] is = treeViewer.getTree().getItems();
 						for (TreeItem item : is) {
 							if (item.getExpanded()) {
-								treeViewer.setExpandedState(item.getData(),
-										false);
+								treeViewer.setExpandedState(item.getData(), false);
 							}
 						}
 					}
@@ -430,14 +424,11 @@ public class FilteredTree extends Composite {
 						 */
 						TreeItem[] items = getViewer().getTree().getItems();
 						int treeHeight = getViewer().getTree().getBounds().height;
-						int numVisibleItems = treeHeight
-								/ getViewer().getTree().getItemHeight();
-						long stopTime = SOFT_MAX_EXPAND_TIME
-								+ System.currentTimeMillis();
+						int numVisibleItems = treeHeight / getViewer().getTree().getItemHeight();
+						long stopTime = SOFT_MAX_EXPAND_TIME + System.currentTimeMillis();
 						boolean cancel = false;
 						if (items.length > 0
-								&& recursiveExpand(items, monitor, stopTime,
-										new int[] { numVisibleItems })) {
+								&& recursiveExpand(items, monitor, stopTime, new int[] { numVisibleItems })) {
 							cancel = true;
 						}
 
@@ -456,8 +447,7 @@ public class FilteredTree extends Composite {
 				} finally {
 					// done updating the tree - set redraw back to true
 					TreeItem[] items = getViewer().getTree().getItems();
-					if (items.length > 0
-							&& getViewer().getTree().getSelectionCount() == 0) {
+					if (items.length > 0 && getViewer().getTree().getSelectionCount() == 0) {
 						treeViewer.getTree().setTopItem(items[0]);
 					}
 					redrawFalseControl.setRedraw(true);
@@ -475,15 +465,13 @@ public class FilteredTree extends Composite {
 			 * @param numItemsLeft
 			 * @return true if canceled
 			 */
-			private boolean recursiveExpand(TreeItem[] items,
-					IProgressMonitor monitor, long cancelTime,
+			private boolean recursiveExpand(TreeItem[] items, IProgressMonitor monitor, long cancelTime,
 					int[] numItemsLeft) {
 				boolean canceled = false;
 				for (int i = 0; !canceled && i < items.length; i++) {
 					TreeItem item = items[i];
 					boolean visible = numItemsLeft[0]-- >= 0;
-					if (monitor.isCanceled()
-							|| (!visible && System.currentTimeMillis() > cancelTime)) {
+					if (monitor.isCanceled() || (!visible && System.currentTimeMillis() > cancelTime)) {
 						canceled = true;
 					} else {
 						Object itemData = item.getData();
@@ -495,8 +483,7 @@ public class FilteredTree extends Composite {
 							}
 							TreeItem[] children = item.getItems();
 							if (items.length > 0) {
-								canceled = recursiveExpand(children, monitor,
-										cancelTime, numItemsLeft);
+								canceled = recursiveExpand(children, monitor, cancelTime, numItemsLeft);
 							}
 						}
 					}
@@ -524,56 +511,49 @@ public class FilteredTree extends Composite {
 	 */
 	protected void createFilterText(Composite parent) {
 		filterText = doCreateFilterText(parent);
-		filterText.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {
-					@Override
-					public void getName(AccessibleEvent e) {
-						String filterTextString = filterText.getText();
-						if (filterTextString.length() == 0
-								|| filterTextString.equals(initialText)) {
-							e.result = initialText;
-						} else {
-							e.result = NLS
-									.bind(
-											E4DialogMessages.FilteredTree_AccessibleListenerFiltered,
-											new String[] {
-													filterTextString,
-													String.valueOf(getFilteredItemsCount()) });
-						}
-					}
+		filterText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
+			public void getName(AccessibleEvent e) {
+				String filterTextString = filterText.getText();
+				if (filterTextString.length() == 0 || filterTextString.equals(initialText)) {
+					e.result = initialText;
+				} else {
+					e.result = NLS.bind(E4DialogMessages.FilteredTree_AccessibleListenerFiltered,
+							new String[] { filterTextString, String.valueOf(getFilteredItemsCount()) });
+				}
+			}
 
-					/**
-					 * Return the number of filtered items
-					 *
-					 * @return int
-					 */
-					private int getFilteredItemsCount() {
-						int total = 0;
-						TreeItem[] items = getViewer().getTree().getItems();
-						for (TreeItem item : items) {
-							total += itemCount(item);
+			/**
+			 * Return the number of filtered items
+			 *
+			 * @return int
+			 */
+			private int getFilteredItemsCount() {
+				int total = 0;
+				TreeItem[] items = getViewer().getTree().getItems();
+				for (TreeItem item : items) {
+					total += itemCount(item);
 
-						}
-						return total;
-					}
+				}
+				return total;
+			}
 
-					/**
-					 * Return the count of treeItem and it's children to
-					 * infinite depth.
-					 *
-					 * @param treeItem
-					 * @return int
-					 */
-					private int itemCount(TreeItem treeItem) {
-						int count = 1;
-						TreeItem[] children = treeItem.getItems();
-						for (TreeItem element : children) {
-							count += itemCount(element);
+			/**
+			 * Return the count of treeItem and it's children to infinite depth.
+			 *
+			 * @param treeItem
+			 * @return int
+			 */
+			private int itemCount(TreeItem treeItem) {
+				int count = 1;
+				TreeItem[] children = treeItem.getItems();
+				for (TreeItem element : children) {
+					count += itemCount(element);
 
-						}
-						return count;
-					}
-				});
+				}
+				return count;
+			}
+		});
 
 		filterText.addFocusListener(new FocusAdapter() {
 
@@ -622,10 +602,8 @@ public class FilteredTree extends Composite {
 						// if the initial filter text hasn't changed, do not try
 						// to match
 						boolean hasFocus = getViewer().getTree().setFocus();
-						boolean textChanged = !getInitialText().equals(
-								filterText.getText().trim());
-						if (hasFocus && textChanged
-								&& filterText.getText().trim().length() > 0) {
+						boolean textChanged = !getInitialText().equals(filterText.getText().trim());
+						if (hasFocus && textChanged && filterText.getText().trim().length() > 0) {
 							Tree tree = getViewer().getTree();
 							TreeItem item;
 							if (tree.getSelectionCount() > 0) {
@@ -686,8 +664,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected Text doCreateFilterText(Composite parent) {
 		if (useNativeSearchField(parent)) {
-			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH
-					| SWT.ICON_CANCEL);
+			return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 		}
 		return new Text(parent, SWT.SINGLE);
 	}
@@ -701,8 +678,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected void textChanged() {
 		narrowingDown = previousFilterText == null
-				|| previousFilterText
-				.equals(E4DialogMessages.FilteredTree_FilterMessage)
+				|| previousFilterText.equals(E4DialogMessages.FilteredTree_FilterMessage)
 				|| getFilterString().startsWith(previousFilterText);
 		previousFilterText = getFilterString();
 		// cancel currently running job first, to prevent unnecessary redraw
@@ -736,7 +712,6 @@ public class FilteredTree extends Composite {
 		}
 	}
 
-
 	/**
 	 * Create the button that clears the text.
 	 *
@@ -751,20 +726,17 @@ public class FilteredTree extends Composite {
 			final Label clearButton = new Label(parent, SWT.NONE);
 			ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources(), clearButton);
 
-			final Image inactiveImage = resourceManager.createImage(JFaceResources.getImageRegistry().getDescriptor(
-					DISABLED_CLEAR_ICON));
-			final Image activeImage = resourceManager.createImage(JFaceResources.getImageRegistry()
-					.getDescriptor(CLEAR_ICON));
-			final Image pressedImage = resourceManager.createImage(JFaceResources.getImageRegistry().getDescriptor(
-					PRESSED_CLEAR_ICON));
+			final Image inactiveImage = resourceManager
+					.createImage(JFaceResources.getImageRegistry().getDescriptor(DISABLED_CLEAR_ICON));
+			final Image activeImage = resourceManager
+					.createImage(JFaceResources.getImageRegistry().getDescriptor(CLEAR_ICON));
+			final Image pressedImage = resourceManager
+					.createImage(JFaceResources.getImageRegistry().getDescriptor(PRESSED_CLEAR_ICON));
 
-			clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER,
-					false, false));
+			clearButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 			clearButton.setImage(inactiveImage);
-			clearButton.setBackground(parent.getDisplay().getSystemColor(
-					SWT.COLOR_LIST_BACKGROUND));
-			clearButton
-			.setToolTipText(E4DialogMessages.FilteredTree_ClearToolTip);
+			clearButton.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+			clearButton.setToolTipText(E4DialogMessages.FilteredTree_ClearToolTip);
 			clearButton.addMouseListener(new MouseAdapter() {
 
 				private MouseMoveListener fMoveListener;
@@ -803,8 +775,7 @@ public class FilteredTree extends Composite {
 
 				private boolean isMouseInButton(MouseEvent e) {
 					Point buttonSize = clearButton.getSize();
-					return 0 <= e.x && e.x < buttonSize.x && 0 <= e.y
-							&& e.y < buttonSize.y;
+					return 0 <= e.x && e.x < buttonSize.x && 0 <= e.y && e.y < buttonSize.y;
 				}
 			});
 			clearButton.addMouseTrackListener(new MouseTrackListener() {
@@ -822,20 +793,18 @@ public class FilteredTree extends Composite {
 				public void mouseHover(MouseEvent e) {
 				}
 			});
-			clearButton.getAccessible().addAccessibleListener(
-					new AccessibleAdapter() {
-						@Override
-						public void getName(AccessibleEvent e) {
-							e.result = E4DialogMessages.FilteredTree_AccessibleListenerClearButton;
-						}
-					});
-			clearButton.getAccessible().addAccessibleControlListener(
-					new AccessibleControlAdapter() {
-						@Override
-						public void getRole(AccessibleControlEvent e) {
-							e.detail = ACC.ROLE_PUSHBUTTON;
-						}
-					});
+			clearButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+				@Override
+				public void getName(AccessibleEvent e) {
+					e.result = E4DialogMessages.FilteredTree_AccessibleListenerClearButton;
+				}
+			});
+			clearButton.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
+				@Override
+				public void getRole(AccessibleControlEvent e) {
+					e.detail = ACC.ROLE_PUSHBUTTON;
+				}
+			});
 			this.clearButtonControl = clearButton;
 		}
 	}
@@ -917,8 +886,7 @@ public class FilteredTree extends Composite {
 				getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						if (!filterText.isDisposed()
-								&& filterText.isFocusControl()) {
+						if (!filterText.isDisposed() && filterText.isFocusControl()) {
 							setFilterText(initialText);
 							textChanged();
 						}
@@ -964,8 +932,7 @@ public class FilteredTree extends Composite {
 	 *
 	 * @return bold font
 	 */
-	public static Font getBoldFont(Object element, FilteredTree tree,
-			PatternFilter filter) {
+	public static Font getBoldFont(Object element, FilteredTree tree, PatternFilter filter) {
 		String filterText = tree.getFilterString();
 
 		if (filterText == null) {
@@ -976,18 +943,15 @@ public class FilteredTree extends Composite {
 		String initialText = tree.getInitialText();
 		if (!filterText.equals("") && !filterText.equals(initialText)) {//$NON-NLS-1$
 			if (tree.getPatternFilter() != filter) {
-				boolean initial = initialText != null
-						&& initialText.equals(filterText);
+				boolean initial = initialText != null && initialText.equals(filterText);
 				if (initial) {
 					filter.setPattern(null);
 				} else if (filterText != null) {
 					filter.setPattern(filterText);
 				}
 			}
-			if (filter.isElementVisible(tree.getViewer(), element)
-					&& filter.isLeafMatch(tree.getViewer(), element)) {
-				return JFaceResources.getFontRegistry().getBold(
-						JFaceResources.DIALOG_FONT);
+			if (filter.isElementVisible(tree.getViewer(), element) && filter.isLeafMatch(tree.getViewer(), element)) {
+				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 			}
 		}
 		return null;
@@ -1047,8 +1011,7 @@ public class FilteredTree extends Composite {
 		}
 
 		@Override
-		public void insert(Object parentElementOrTreePath, Object element,
-				int position) {
+		public void insert(Object parentElementOrTreePath, Object element, int position) {
 			getPatternFilter().clearCaches();
 			super.insert(parentElementOrTreePath, element, position);
 		}
@@ -1096,8 +1059,7 @@ public class FilteredTree extends Composite {
 		}
 
 		@Override
-		public void replace(Object parentElementOrTreePath, int index,
-				Object element) {
+		public void replace(Object parentElementOrTreePath, int index, Object element) {
 			getPatternFilter().clearCaches();
 			super.replace(parentElementOrTreePath, index, element);
 		}
