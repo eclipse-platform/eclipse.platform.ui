@@ -158,7 +158,7 @@ public class ContributorsTest extends TestCase {
 		String fullPath = RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/elementsByContributor/" + fileName + "/plugin.xml";
 		URL urlA = RuntimeTestsPlugin.getContext().getBundle().getEntry(fullPath);
 		InputStream is = urlA.openStream();
-		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName); 
+		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName);
 		return registry.addContribution(is, nonBundleContributor, false, urlA.getFile(), null, null);
 	}
 
