@@ -26,28 +26,9 @@ public class CoreToolsPlugin extends AbstractUIPlugin {
 	public static String PI_TOOLS = "org.eclipse.core.tools"; //$NON-NLS-1$
 	private BundleContext context;
 
-	static {
-//		if (StatsManager.MONITOR_ACTIVATION)
-//			initializeBootClasses();
-	}
-
 	public static CoreToolsPlugin getDefault() {
 		return instance;
 	}
-
-//	private static void initializeBootClasses() {
-//		if (!VMClassloaderInfo.hasNatives)
-//			return;
-//		ClassloaderStats loader = ClassloaderStats.getLoader("org.eclipse.osgi"); //$NON-NLS-1$
-//		//class loading trace option not enabled
-//		if (loader == null)
-//			return;
-//		VMClassInfo[] classes = VMClassloaderInfo.getBaseClasses();
-//		String[] names = new String[classes.length];
-//		for (int i = 0; i < classes.length; i++)
-//			names[i] = classes[i].getName();
-//		loader.addBaseClasses(names);
-//	}
 
 	/**
 	 * find an icon - caller must dispose of it
