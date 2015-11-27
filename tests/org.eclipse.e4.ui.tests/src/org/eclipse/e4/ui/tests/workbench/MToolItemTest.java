@@ -73,7 +73,7 @@ public class MToolItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -159,7 +159,7 @@ public class MToolItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -248,7 +248,7 @@ public class MToolItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);

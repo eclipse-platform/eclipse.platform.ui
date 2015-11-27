@@ -52,8 +52,7 @@ public class StackRendererTest {
 	@Before
 	public void setUp() throws Exception {
 		context = E4Application.createDefaultContext();
-		context.set(E4Workbench.PRESENTATION_URI_ARG,
-				PartRenderingEngine.engineURI);
+		context.set(E4Workbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
 
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -69,7 +68,7 @@ public class StackRendererTest {
 		partStack.getChildren().add(part);
 
 		application.setContext(context);
-		context.set(MApplication.class.getName(), application);
+		context.set(MApplication.class, application);
 
 		executedMethodsListener = new CTabItemStylingMethodsListener(part);
 
@@ -118,8 +117,7 @@ public class StackRendererTest {
 	@Test
 	public void testTabStateHandlerWhenSelectionChangedEvent() throws Exception {
 		// given
-		MPlaceholder placeHolder = AdvancedFactoryImpl.eINSTANCE
-				.createPlaceholder();
+		MPlaceholder placeHolder = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
 		placeHolder.setRef(part);
 
 		HashMap<String, Object> params = new HashMap<String, Object>();

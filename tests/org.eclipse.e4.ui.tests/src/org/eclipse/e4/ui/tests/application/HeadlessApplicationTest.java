@@ -255,7 +255,7 @@ public abstract class HeadlessApplicationTest extends
 
 		MApplication application = (MApplication) resource.getContents().get(0);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application); // XXX
+		appContext.set(MApplication.class, application); // XXX
 		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
 
 		ECommandService cs = (ECommandService) appContext

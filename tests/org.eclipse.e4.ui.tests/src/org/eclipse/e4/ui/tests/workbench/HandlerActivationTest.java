@@ -135,7 +135,7 @@ public class HandlerActivationTest {
 		application.getCommands().add(command);
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
 		ContextInjectionFactory.make(HandlerProcessingAddon.class, appContext);

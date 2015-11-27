@@ -94,7 +94,7 @@ public class Bug308317Test {
 		partB.setContext(partContextB);
 
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		PartConsumer getter = ContextInjectionFactory.make(PartConsumer.class,
 				window.getContext());

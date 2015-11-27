@@ -67,7 +67,7 @@ public class Bug299755Test {
 	public void testBug299755() throws Exception {
 		// create a top-level context
 		IEclipseContext windowContext = EclipseContextFactory.create();
-		windowContext.set(Object.class.getName(), new Object());
+		windowContext.set(Object.class, new Object());
 		// put the event broker inside
 		windowContext.set(InjectionObject.class.getName(),
 				new ContextFunction() {

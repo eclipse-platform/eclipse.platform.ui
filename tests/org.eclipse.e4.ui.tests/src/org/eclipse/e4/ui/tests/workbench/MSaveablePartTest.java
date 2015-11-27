@@ -58,7 +58,7 @@ public class MSaveablePartTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);

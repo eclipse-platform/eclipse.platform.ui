@@ -97,8 +97,7 @@ public class EModelServiceInsertTest {
 	}
 
 	private void testInsert(MApplication app, String relToId, int where, float ratio) {
-		EModelService modelService = (EModelService) app.getContext().get(
-				EModelService.class.getName());
+		EModelService modelService = app.getContext().get(EModelService.class);
 		assertNotNull(modelService);
 
 		MUIElement relTo = modelService.find(relToId, app);

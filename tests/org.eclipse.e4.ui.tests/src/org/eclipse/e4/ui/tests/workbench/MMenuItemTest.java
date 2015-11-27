@@ -102,7 +102,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -190,7 +190,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -248,7 +248,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -284,7 +284,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -322,7 +322,7 @@ public class MMenuItemTest {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -368,7 +368,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -417,7 +417,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -466,7 +466,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -516,7 +516,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 		application.getMenuContributions().add(createContribution(false));
 
 		wb = new E4Workbench(window, appContext);
@@ -562,7 +562,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 		application.getMenuContributions().add(createContribution(true));
 
 		wb = new E4Workbench(window, appContext);
@@ -650,7 +650,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 		createMenuContribution(application);
 
 		wb = new E4Workbench(window, appContext);
@@ -729,7 +729,7 @@ public class MMenuItemTest {
 				.createApplication();
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
@@ -804,7 +804,7 @@ public class MMenuItemTest {
 		application.getCommands().add(command);
 		application.getChildren().add(window);
 		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
+		appContext.set(MApplication.class, application);
 		// The handler processing addon cannot run until the context
 		// contains the MApplication
 		ContextInjectionFactory.make(CommandProcessingAddon.class, appContext);
