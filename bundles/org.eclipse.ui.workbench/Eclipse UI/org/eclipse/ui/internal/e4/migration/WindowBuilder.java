@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.e4.migration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.addons.minmax.TrimStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
@@ -69,6 +73,10 @@ public class WindowBuilder {
 	private ModeledPageLayoutUtils layoutUtils;
 
 	private MArea editorArea;
+
+	private List<MPerspective> perspectives;
+
+	public static String PERSPECTIVES = "perspectives"; //$NON-NLS-1$
 
 	@PostConstruct
 	private void postConstruct() {
@@ -119,6 +127,12 @@ public class WindowBuilder {
 			}
 		}
 
+		List<String> tags = window.getTags();
+		if (windowReader.isMinimized()) {
+			tags.add(IPresentationEngine.WINDOW_MINIMIZED_TAG);
+		} else if (windowReader.isMaximized()) {
+			tags.add(IPresentationEngine.WINDOW_MAXIMIZED_TAG);
+		}
 		sharedElements = window.getSharedElements();
 	}
 
@@ -126,7 +140,7 @@ public class WindowBuilder {
 		addEditorArea();
 		addEditors();
 		addViews();
-
+		perspectives = new ArrayList<>();
 		mainSash = modelService.createModelElement(MPartSashContainer.class);
 		mainSash.setHorizontal(true);
 
@@ -139,7 +153,8 @@ public class WindowBuilder {
 
 		for (PerspectiveReader perspReader : windowReader.getPerspectiveReaders()) {
 			PerspectiveBuilder builder = factory.createPerspectiveBuilder(perspReader);
-			perspectiveStack.getChildren().add(builder.createPerspective());
+			MPerspective perspective = builder.createPerspective(windowReader.getDefaultFastViewSide());
+			perspectiveStack.getChildren().add(perspective);
 			MPlaceholder eaPlaceholder = builder.getEditorAreaPlaceholder();
 			if (eaPlaceholder != null) {
 				eaPlaceholder.setRef(editorArea);
@@ -150,6 +165,7 @@ public class WindowBuilder {
 					viewPlaceholder.setRef(getSharedView(id));
 				}
 			}
+			perspectives.add(perspective);
 		}
 
 		String activePerspectiveId = windowReader.getActivePerspectiveId();
@@ -163,11 +179,102 @@ public class WindowBuilder {
 				}
 				if (activePerspectiveId.equals(id)) {
 					perspectiveStack.setSelectedElement(persp);
+					createTrimBars(persp);
 					break;
 				}
 			}
 		}
 		addStickyFolder();
+		window.getTransientData().put(PERSPECTIVES, perspectives);
+	}
+
+	private void createTrimBars(MPerspective perspective) {
+		// Find any minimized stacks and show their trim
+		List<MUIElement> minimizedElements = modelService.findElements(perspective, null, MUIElement.class,
+				Arrays.asList(IPresentationEngine.MINIMIZED));
+		for (MUIElement element : minimizedElements) {
+			createTrim(element, perspective);
+		}
+	}
+
+	private int getBarIndex(MUIElement element, String trimStr) {
+		if (trimStr == null)
+			return -1;
+
+		String[] stacks = trimStr.split("#"); //$NON-NLS-1$
+		for (String stackInfo : stacks) {
+			String[] vals = stackInfo.split(" "); //$NON-NLS-1$
+			if (vals[0].equals(element.getElementId())) {
+				return Integer.parseInt(vals[1]);
+			}
+		}
+		return -1;
+	}
+
+	private int getIndex(MUIElement element, String trimStr) {
+		if (trimStr == null)
+			return -1;
+
+		String[] stacks = trimStr.split("#"); //$NON-NLS-1$
+		for (String stackInfo : stacks) {
+			String[] vals = stackInfo.split(" "); //$NON-NLS-1$
+			if (vals[0].equals(element.getElementId())) {
+				return Integer.parseInt(vals[2]);
+			}
+		}
+		return -1;
+	}
+
+	private void createTrim(MUIElement element, MPerspective perspective) {
+		if (!(window instanceof MTrimmedWindow)) {
+			return;
+		}
+		String trimStr = perspective.getPersistedState().get("trims"); //$NON-NLS-1$
+		MTrimmedWindow win = (MTrimmedWindow) window;
+
+		// Is there already a TrimControl there ?
+		String trimId = element.getElementId() + getMinimizedElementSuffix(perspective);
+		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
+
+		if (trimStack == null) {
+			trimStack = MenuFactoryImpl.eINSTANCE.createToolControl();
+			trimStack.setElementId(trimId);
+			trimStack.setContributionURI(TrimStack.CONTRIBUTION_URI);
+			trimStack.getTags().add("TrimStack"); //$NON-NLS-1$
+
+			// Check if we have a cached location
+			MTrimBar bar = getBarForElement(element, win, trimStr);
+			int index = getIndex(element, trimStr);
+			if (index == -1 || index >= bar.getChildren().size())
+				bar.getChildren().add(trimStack);
+			else
+				bar.getChildren().add(index, trimStack);
+
+			bar.setVisible(true);
+
+		} else {
+			// get the parent trim bar, see bug 320756
+			MUIElement parent = trimStack.getParent();
+			parent.setVisible(true);
+			trimStack.setToBeRendered(true);
+		}
+	}
+
+	private String getMinimizedElementSuffix(MPerspective perspective) {
+		String id = "(minimized)"; //$NON-NLS-1$
+		if (perspective != null) {
+			id = '(' + perspective.getElementId() + ')';
+		}
+		return id;
+	}
+
+	private MTrimBar getBarForElement(MUIElement element, MTrimmedWindow window, String trimStr) {
+		SideValue side = SideValue.get(getBarIndex(element, trimStr));
+		if (side == null) {
+			side = SideValue.BOTTOM;
+		}
+		MTrimBar bar = modelService.getTrim(window, side);
+		return bar;
 	}
 
 	private void addEditors() {
@@ -290,14 +397,16 @@ public class WindowBuilder {
 				break;
 			}
 		}
-		if (part == null) {
-			part = modelService.createModelElement(MPart.class);
-			part.setElementId(id);
-			part.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
-			part.getTags().add(ViewRegistry.VIEW_TAG);
-			sharedElements.add(part);
-		}
+		/*
+		 * if (part == null) { part =
+		 * modelService.createModelElement(MPart.class); part.setElementId(id);
+		 * part.setContributionURI(CompatibilityPart.COMPATIBILITY_VIEW_URI);
+		 * part.getTags().add(ViewRegistry.VIEW_TAG); sharedElements.add(part);
+		 * }
+		 */
 		return part;
 	}
+
+
 
 }

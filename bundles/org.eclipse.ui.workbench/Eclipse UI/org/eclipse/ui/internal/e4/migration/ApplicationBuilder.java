@@ -13,11 +13,14 @@ package org.eclipse.ui.internal.e4.migration;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.extensions.Preference;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
@@ -42,6 +45,8 @@ public class ApplicationBuilder {
 	@Preference(nodePath = "org.eclipse.ui.workbench")
 	private IEclipsePreferences preferences;
 
+	private Map<String, String> minMaxPersistedState;
+
 	void createApplication() {
 		List<MWindow> windows = application.getChildren();
 		for (WindowReader windowReader : reader.getWindowReaders()) {
@@ -50,6 +55,13 @@ public class ApplicationBuilder {
 			windows.add(window);
 			if (windowBuilder.isSelected()) {
 				application.setSelectedElement(window);
+			}
+			Object list = window.getTransientData().remove(WindowBuilder.PERSPECTIVES);
+			if (list instanceof List<?>) {
+				List<MPerspective> perspectiveList = (List<MPerspective>) list;
+				for (MPerspective perspective : perspectiveList) {
+					importToolbarsLocation(perspective);
+				}
 			}
 		}
 		addClosedPerspectives();
@@ -78,4 +90,29 @@ public class ApplicationBuilder {
 				new MementoSerializer(reader.getMruMemento()).serialize());
 	}
 
+	private void importToolbarsLocation(MPerspective persp) {
+		String trimsData = persp.getPersistedState().get("trims"); //$NON-NLS-1$
+		if (trimsData == null || trimsData.trim().isEmpty()) {
+			return;
+		}
+		persp.getPersistedState().remove("trims"); //$NON-NLS-1$
+		Map<String, String> minMaxPersState = getMinMaxPersistedState();
+		if (minMaxPersState == null) {
+			return;
+		}
+		minMaxPersState.put(persp.getElementId(), trimsData);
+	}
+
+	private Map<String, String> getMinMaxPersistedState() {
+		if (minMaxPersistedState != null) {
+			return minMaxPersistedState;
+		}
+		for (MAddon addon : application.getAddons()) {
+			if ("MinMax Addon".equals(addon.getElementId())) { //$NON-NLS-1$
+				minMaxPersistedState = addon.getPersistedState();
+				break;
+			}
+		}
+		return minMaxPersistedState;
+	}
 }
