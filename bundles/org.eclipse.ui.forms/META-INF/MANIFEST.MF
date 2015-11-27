@@ -22,4 +22,4 @@ Import-Package: com.ibm.icu.text,
  javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
