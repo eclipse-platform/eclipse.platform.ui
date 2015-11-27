@@ -46,7 +46,7 @@ public class ViewerComparator {
 	/**
 	 * The comparator to use to sort a viewer's contents.
 	 */
-	private Comparator comparator;
+	private Comparator<? super String> comparator;
 
 	/**
      * Creates a new {@link ViewerComparator}, which uses the default comparator
@@ -58,12 +58,15 @@ public class ViewerComparator {
 	}
 
 	/**
-     * Creates a new {@link ViewerComparator}, which uses the given comparator
-     * to sort strings.
-     *
+	 * Creates a new {@link ViewerComparator}, which uses the given comparator
+	 * to sort strings. The default implementation of
+	 * {@link ViewerComparator#compare(Viewer, Object, Object)} expects this
+	 * comparator to be able to compare the {@link String}s provided by the
+	 * viewer's label provider.
+	 *
 	 * @param comparator
 	 */
-	public ViewerComparator(Comparator comparator){
+	public ViewerComparator(Comparator<? super String> comparator) {
 		this.comparator = comparator;
 	}
 
@@ -72,7 +75,7 @@ public class ViewerComparator {
 	 *
 	 * @return the comparator used to sort strings
 	 */
-	protected Comparator getComparator() {
+	protected Comparator<? super String> getComparator() {
 		if (comparator == null){
 			comparator = Policy.getComparator();
 		}
@@ -173,9 +176,10 @@ public class ViewerComparator {
     /**
      * Sorts the given elements in-place, modifying the given array.
      * <p>
-     * The default implementation of this method uses the
-     * java.util.Arrays#sort algorithm on the given array,
-     * calling <code>compare</code> to compare elements.
+	 * The default implementation of this method uses the
+	 * {@link java.util.Arrays#sort(Object[], Comparator)} algorithm on the
+	 * given array, calling {@link #compare(Viewer, Object, Object)} to compare
+	 * elements.
      * </p>
      * <p>
      * Subclasses may reimplement this method to provide a more optimized implementation.
