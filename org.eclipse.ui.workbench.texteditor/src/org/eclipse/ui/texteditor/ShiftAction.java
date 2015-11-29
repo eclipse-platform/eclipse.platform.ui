@@ -62,6 +62,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
 	 */
+	@Override
 	public void run() {
 		if (fOperationCode == -1 || fOperationTarget == null)
 			return;
@@ -81,15 +82,14 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 			display= shell.getDisplay();
 
 		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
 			public void run() {
 				fOperationTarget.doOperation(fOperationCode);
 			}
 		});
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		super.update();
 		if (!isEnabled())
@@ -130,17 +130,13 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 
 	}
 
-	/*
-	 * @see TextEditorAction#setEditor(ITextEditor)
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
 		fOperationTarget= null;
 	}
 
-	/*
-	 * @see IReadOnlyDependent#isEnabled(boolean)
-	 */
+	@Override
 	public boolean isEnabled(boolean isWritable) {
 
 		if (!isWritable)

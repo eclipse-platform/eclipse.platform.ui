@@ -88,6 +88,7 @@ public class FindReplaceDialogTest extends TestCase {
 		fFindReplaceDialog= new Accessor(fFindReplaceDialogStubAccessor.invoke("getDialog", null), "org.eclipse.ui.texteditor.FindReplaceDialog", getClass().getClassLoader());
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (fFindReplaceDialog != null) {
 			fFindReplaceDialog.invoke("close", null);

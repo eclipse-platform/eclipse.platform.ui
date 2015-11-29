@@ -57,6 +57,7 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 *
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
+	@Override
 	Set entrySet();
 
 	/**
@@ -64,6 +65,7 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 *
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
+	@Override
 	Set keySet();
 
 	/**
@@ -71,5 +73,6 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 *
 	 * The returned collection is not synchronized on this annotation map's lock object.
 	 */
+	@Override
 	Collection values();
 }

@@ -20,6 +20,7 @@ package org.eclipse.jface.text;
  * @deprecated since 3.1 use {@link org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy} instead
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class DefaultAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy implements IAutoIndentStrategy {
 
 	/**

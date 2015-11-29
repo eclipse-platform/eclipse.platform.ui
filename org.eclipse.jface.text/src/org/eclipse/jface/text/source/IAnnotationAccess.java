@@ -41,6 +41,7 @@ public interface IAnnotationAccess {
 	 * @return the type of the given annotation or <code>null</code> if it has none.
 	 * @deprecated use <code>Annotation.getType()</code>
 	 */
+	@Deprecated
 	Object getType(Annotation annotation);
 
 	/**
@@ -52,6 +53,7 @@ public interface IAnnotationAccess {
 	 *
 	 * @deprecated assumed to always return <code>true</code>
 	 */
+	@Deprecated
 	boolean isMultiLine(Annotation annotation);
 
 	/**
@@ -62,5 +64,6 @@ public interface IAnnotationAccess {
 	 * 	<code>false</code> otherwise
 	 * @deprecated use <code>Annotation.isPersistent()</code>
 	 */
+	@Deprecated
 	boolean isTemporary(Annotation annotation);
 }

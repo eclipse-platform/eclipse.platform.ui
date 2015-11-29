@@ -390,6 +390,7 @@ public final class MarkerUtilities {
 	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {
 
 		IWorkspaceRunnable r= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IMarker marker= resource.createMarker(markerType);
 				marker.setAttributes(attributes);

@@ -143,9 +143,7 @@ public class LinkedModeModel {
 			fEdit= edit;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentExtension.IReplace#perform(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocumentListener)
-		 */
+		@Override
 		public void perform(IDocument document, IDocumentListener owner) throws RuntimeException, MalformedTreeException {
 			document.removeDocumentListener(owner);
 			fIsChanging= true;
@@ -178,6 +176,7 @@ public class LinkedModeModel {
 		 *
 		 * @param event {@inheritDoc}
 		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			// don't react on changes executed by the parent model
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
@@ -197,6 +196,7 @@ public class LinkedModeModel {
 		 *
 		 * @param event {@inheritDoc}
 		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 			if (fExit) {
 				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);

@@ -59,17 +59,13 @@ public class DocumentUndoManagerTest extends TestCase {
 	/** The undo manager. */
 	private IDocumentUndoManager fUndoManager;
 
-	/*
-	 *  @see TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() {
 		fUndoManager= null;
 	}
 
 
-	/*
-	 *  @see TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() {
 		fUndoManager.disconnect(this);
 		fUndoManager= null;

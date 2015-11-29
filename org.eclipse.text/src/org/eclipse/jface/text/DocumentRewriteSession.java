@@ -41,9 +41,7 @@ public class DocumentRewriteSession {
 		return fSessionType;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return new StringBuffer().append(hashCode()).toString();
 	}

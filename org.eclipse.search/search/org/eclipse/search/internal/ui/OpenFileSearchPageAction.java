@@ -33,10 +33,12 @@ public class OpenFileSearchPageAction implements IWorkbenchWindowActionDelegate 
 	public OpenFileSearchPageAction() {
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fWindow == null || fWindow.getActivePage() == null) {
 			SearchPlugin.beep();
@@ -46,10 +48,12 @@ public class OpenFileSearchPageAction implements IWorkbenchWindowActionDelegate 
 		NewSearchUI.openSearchDialog(fWindow, TEXT_SEARCH_PAGE_ID);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing since the action isn't selection dependent.
 	}
 
+	@Override
 	public void dispose() {
 		fWindow= null;
 	}

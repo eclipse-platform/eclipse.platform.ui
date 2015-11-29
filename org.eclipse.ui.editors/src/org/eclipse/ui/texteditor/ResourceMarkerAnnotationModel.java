@@ -45,9 +45,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * Internal resource change listener.
 	 */
 	class ResourceChangeListener implements IResourceChangeListener {
-		/*
-		 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-		 */
+		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
 			if (delta != null && fResource != null) {
@@ -78,9 +76,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		fWorkspace= resource.getWorkspace();
 	}
 
-	/*
-	 * @see AbstractMarkerAnnotationModel#isAcceptable(IMarker)
-	 */
+	@Override
 	protected boolean isAcceptable(IMarker marker) {
 		return marker != null && fResource.equals(marker.getResource());
 	}
@@ -170,9 +166,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			addMarkerAnnotation((IMarker)iter.next());
 	}
 
-	/*
-	 * @see AbstractMarkerAnnotationModel#listenToMarkerChanges(boolean)
-	 */
+	@Override
 	protected void listenToMarkerChanges(boolean listen) {
 		if (listen)
 			fWorkspace.addResourceChangeListener(fResourceChangeListener);
@@ -180,11 +174,10 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			fWorkspace.removeResourceChangeListener(fResourceChangeListener);
 	}
 
-	/*
-	 * @see AbstractMarkerAnnotationModel#deleteMarkers(IMarker[])
-	 */
+	@Override
 	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
 		fWorkspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i= 0; i < markers.length; ++i) {
 					markers[i].delete();
@@ -193,9 +186,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		}, null, IWorkspace.AVOID_UPDATE, null);
 	}
 
-	/*
-	 * @see AbstractMarkerAnnotationModel#retrieveMarkers()
-	 */
+	@Override
 	protected IMarker[] retrieveMarkers() throws CoreException {
 		return fResource.findMarkers(IMarker.MARKER, true, IResource.DEPTH_ZERO);
 	}

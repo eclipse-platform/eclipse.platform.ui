@@ -50,17 +50,13 @@ public class SegmentedModeTest extends TestCase {
 		return ORIGINAL_CONTENT;
 	}
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 	}

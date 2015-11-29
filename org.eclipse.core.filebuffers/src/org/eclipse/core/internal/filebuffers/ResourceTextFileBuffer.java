@@ -61,15 +61,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 	private class DocumentListener implements IDocumentListener {
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 			if (fCanBeSaved && fSynchronizationStamp == event.getModificationStamp()) {
 				fCanBeSaved= false;
@@ -142,16 +138,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		super(manager);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getDocument()
-	 */
+	@Override
 	public IDocument getDocument() {
 		return fDocument;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
-	 */
+	@Override
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
@@ -173,16 +165,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		return (ResourceTextFileBufferManager)fManager;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getEncoding()
-	 */
+	@Override
 	public String getEncoding() {
 		return fEncoding;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#setEncoding(java.lang.String)
-	 */
+	@Override
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
 		fExplicitEncoding= encoding;
@@ -197,9 +185,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getStatus()
-	 */
+	@Override
 	public IStatus getStatus() {
 		if (!isDisconnected()) {
 			if (fStatus != null)
@@ -209,10 +195,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		return STATUS_ERROR;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getContentType()
-	 * @since 3.1
-	 */
+	@Override
 	public IContentType getContentType() throws CoreException {
 		try {
 			if (isDirty()) {
@@ -239,25 +222,19 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#addFileBufferContentListeners()
-	 */
+	@Override
 	protected void addFileBufferContentListeners() {
 		if (fDocument != null)
 			fDocument.addDocumentListener(fDocumentListener);
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#removeFileBufferContentListeners()
-	 */
+	@Override
 	protected void removeFileBufferContentListeners() {
 		if (fDocument != null)
 			fDocument.removeDocumentListener(fDocumentListener);
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#initializeFileBufferContent(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {
 		try {
 			fEncoding= null;
@@ -306,9 +283,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fBOM= (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#connected()
-	 */
+	@Override
 	protected void connected() {
 		super.connected();
 		if (fAnnotationModel != null)
@@ -318,6 +293,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
 	 */
+	@Override
 	protected void dispose() {
 		try {
 			fDocument.removePositionCategory(IDocument.DEFAULT_CATEGORY);
@@ -330,9 +306,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		super.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.FileBuffer#commitFileBufferContent(org.eclipse.core.runtime.IProgressMonitor, boolean)
-	 */
+	@Override
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		if (!isSynchronized() && !overwrite) {
 			String message= NLSUtility.format(FileBuffersMessages.FileBuffer_error_outOfSync, getFileStore().toURI());
@@ -487,9 +461,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		cacheBOM();
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#handleFileContentChanged()
-	 */
+	@Override
 	protected void handleFileContentChanged(boolean revert, boolean updateModificationStamp) throws CoreException {
 
 		IDocument document= getManager().createEmptyDocument(fFile);

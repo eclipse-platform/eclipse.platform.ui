@@ -47,9 +47,7 @@ public class HTMLPrinter {
 		if (display != null && !display.isDisposed()) {
 			try {
 				display.asyncExec(new Runnable() {
-					/*
-					 * @see java.lang.Runnable#run()
-					 */
+					@Override
 					public void run() {
 						cacheColors(display);
 						installColorUpdater(display);
@@ -73,6 +71,7 @@ public class HTMLPrinter {
 	
 	private static void installColorUpdater(final Display display) {
 		display.addListener(SWT.Settings, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				cacheColors(display);
 			}

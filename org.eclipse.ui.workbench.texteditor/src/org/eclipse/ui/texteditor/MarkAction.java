@@ -49,9 +49,7 @@ public class MarkAction extends TextEditorAction {
 		fType= type;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 
 		ITextEditor editor= getTextEditor();

@@ -71,6 +71,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	 * providing a custom source viewer configuration, subclasses may extend
 	 * this method.
 	 */
+	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
@@ -80,10 +81,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		setInsertMode(INSERT);
 	}
 
-	/*
-	 * @see IWorkbenchPart#dispose()
-	 * @since 2.0
-	 */
+	@Override
 	public void dispose() {
 		if (fEncodingSupport != null) {
 			fEncodingSupport.dispose();
@@ -106,26 +104,18 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		fEncodingSupport.initialize(this);
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/*
-	 * @see AbstractTextEditor#createActions()
-	 * @since 2.0
-	 */
+	@Override
 	protected void createActions() {
 		installEncodingSupport();
 		super.createActions();
 	}
 
-	/*
-	 * @see StatusTextEditor#getStatusHeader(IStatus)
-	 * @since 2.0
-	 */
+	@Override
 	protected String getStatusHeader(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusHeader(status);
@@ -135,10 +125,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		return super.getStatusHeader(status);
 	}
 
-	/*
-	 * @see StatusTextEditor#getStatusBanner(IStatus)
-	 * @since 2.0
-	 */
+	@Override
 	protected String getStatusBanner(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusBanner(status);
@@ -148,10 +135,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		return super.getStatusBanner(status);
 	}
 
-	/*
-	 * @see StatusTextEditor#getStatusMessage(IStatus)
-	 * @since 2.0
-	 */
+	@Override
 	protected String getStatusMessage(IStatus status) {
 		if (fEncodingSupport != null) {
 			String message= fEncodingSupport.getStatusMessage(status);
@@ -161,40 +145,28 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		return super.getStatusMessage(status);
 	}
 
-	/*
-	 * @see AbstractTextEditor#doSetInput(IEditorInput)
-	 * @since 2.0
-	 */
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
 
-	/*
-	 * @see IAdaptable#getAdapter(java.lang.Class)
-	 * @since 2.0
-	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IEncodingSupport.class.equals(adapter))
 			return fEncodingSupport;
 		return super.getAdapter(adapter);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updatePropertyDependentActions()
-	 * @since 2.0
-	 */
+	@Override
 	protected void updatePropertyDependentActions() {
 		super.updatePropertyDependentActions();
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
-	 * @since 3.3
-	 */
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		if (event.getProperty().equals(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
 			ISourceViewer viewer= getSourceViewer();
@@ -218,10 +190,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		super.handlePreferenceStoreChanged(event);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 * @since 3.0
-	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);

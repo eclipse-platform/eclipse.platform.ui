@@ -57,11 +57,13 @@ public class TextEditTests extends TestCase {
 		return new TestSuite(THIS);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fDocument= new Document("0123456789");
 		fRoot= new MultiTextEdit();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fRoot= null;
 		fRoot= null;
@@ -1226,9 +1228,11 @@ public class TextEditTests extends TestCase {
 		RangeMarker r1= new RangeMarker(3,2);
 		ms.addChild(r1);
 		ms.setSourceModifier(new ISourceModifier() {
+			@Override
 			public ISourceModifier copy() {
 				return this;
 			}
+			@Override
 			public ReplaceEdit[] getModifications(String source) {
 				return new ReplaceEdit[] { new ReplaceEdit(1,1,"aa") };
 			}
@@ -1252,9 +1256,11 @@ public class TextEditTests extends TestCase {
 		RangeMarker r3= new RangeMarker(4,2);
 		ms.addChild(r3);
 		ms.setSourceModifier(new ISourceModifier() {
+			@Override
 			public ISourceModifier copy() {
 				return this;
 			}
+			@Override
 			public ReplaceEdit[] getModifications(String source) {
 				return new ReplaceEdit[] { new ReplaceEdit(0,2,"aa") };
 			}
@@ -1275,9 +1281,11 @@ public class TextEditTests extends TestCase {
 		RangeMarker r1= new RangeMarker(3,2);
 		ms.addChild(r1);
 		ms.setSourceModifier(new ISourceModifier() {
+			@Override
 			public ISourceModifier copy() {
 				return this;
 			}
+			@Override
 			public ReplaceEdit[] getModifications(String source) {
 				return new ReplaceEdit[] { new ReplaceEdit(0,2,"aa") };
 			}
@@ -1296,9 +1304,11 @@ public class TextEditTests extends TestCase {
 		RangeMarker r1= new RangeMarker(3,2);
 		ms.addChild(r1);
 		ms.setSourceModifier(new ISourceModifier() {
+			@Override
 			public ISourceModifier copy() {
 				return this;
 			}
+			@Override
 			public ReplaceEdit[] getModifications(String source) {
 				return new ReplaceEdit[] { new ReplaceEdit(2,2,"aa") };
 			}

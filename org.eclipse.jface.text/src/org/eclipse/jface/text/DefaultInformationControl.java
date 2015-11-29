@@ -64,6 +64,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 * @return the manipulated information
 		 * @deprecated As of 3.2, replaced by {@link DefaultInformationControl.IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
 		 */
+		@Deprecated
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
 
@@ -227,6 +228,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @param presenter the presenter to be used
 	 * @deprecated As of 3.4, replaced by simpler constructors
 	 */
+	@Deprecated
 	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter) {
 		this(parent, shellStyle, style, presenter, null);
 	}
@@ -245,6 +247,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @since 3.0
 	 * @deprecated As of 3.4, replaced by simpler constructors
 	 */
+	@Deprecated
 	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
 		super(parentShell, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle, statusFieldText, null);
 		fAdditionalTextStyles= style;
@@ -262,6 +265,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @param presenter the presenter to be used
 	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, DefaultInformationControl.IInformationPresenter)}
 	 */
+	@Deprecated
 	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter) {
 		this(parent, textStyles, presenter, null);
 	}
@@ -278,6 +282,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @since 3.0
 	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, String, DefaultInformationControl.IInformationPresenter)}
 	 */
+	@Deprecated
 	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter, String statusFieldText) {
 		super(parent, statusFieldText);
 		fAdditionalTextStyles= textStyles;
@@ -285,9 +290,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		create();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createContent(Composite parent) {
 		fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | fAdditionalTextStyles);
 		fText.setForeground(parent.getForeground());
@@ -303,9 +306,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		}
 	}
 
-	/*
-	 * @see IInformationControl#setInformation(String)
-	 */
+	@Override
 	public void setInformation(String content) {
 		if (fPresenter == null) {
 			fText.setText(content);
@@ -346,9 +347,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		}
 	}
 
-	/*
-	 * @see IInformationControl#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			if (fText.getWordWrap()) {
@@ -363,9 +362,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		super.setVisible(visible);
 	}
 
-	/*
-	 * @see IInformationControl#computeSizeHint()
-	 */
+	@Override
 	public Point computeSizeHint() {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
 		int widthHint= SWT.DEFAULT;
@@ -376,32 +373,24 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		return getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim()
-	 */
+	@Override
 	public Rectangle computeTrim() {
 		return Geometry.add(super.computeTrim(), fText.computeTrim(0, 0, 0, 0));
 	}
 
-	/*
-	 * @see IInformationControl#setForegroundColor(Color)
-	 */
+	@Override
 	public void setForegroundColor(Color foreground) {
 		super.setForegroundColor(foreground);
 		fText.setForeground(foreground);
 	}
 
-	/*
-	 * @see IInformationControl#setBackgroundColor(Color)
-	 */
+	@Override
 	public void setBackgroundColor(Color background) {
 		super.setBackgroundColor(background);
 		fText.setBackground(background);
 	}
 
-	/*
-	 * @see IInformationControlExtension#hasContents()
-	 */
+	@Override
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
 	}
@@ -411,18 +400,15 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @since 3.0
 	 * @deprecated As of 3.2, no longer used and called
 	 */
+	@Deprecated
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
-	 * @since 3.4
-	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
-			/*
-			 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-			 */
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, (ToolBarManager) null, fPresenter);
 			}

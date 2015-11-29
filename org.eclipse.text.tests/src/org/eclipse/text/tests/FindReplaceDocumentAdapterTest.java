@@ -45,6 +45,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 	}
 
 
+	@Override
 	protected void setUp() {
 
 		fDocument= new Document();
@@ -71,6 +72,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		return new TestSuite(FindReplaceDocumentAdapterTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fDocument= null;
 	}

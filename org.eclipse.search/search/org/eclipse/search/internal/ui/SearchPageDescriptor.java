@@ -292,6 +292,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	/*
 	 * Implements a method from IComparable
 	 */
+	@Override
 	public int compareTo(Object o) {
 		int myPos= getTabPosition();
 		int objsPos= ((SearchPageDescriptor)o).getTabPosition();
@@ -366,17 +367,13 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
-    public String getLocalId() {
+    @Override
+	public String getLocalId() {
         return getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
-    public String getPluginId() {
+    @Override
+	public String getPluginId() {
         return fElement.getContributor().getName();
     }
 }

@@ -36,9 +36,7 @@ public class ExclusivePositionUpdaterTest extends TestCase {
 	private static final String CATEGORY= "testcategory";
 	private Position fPos;
 	private IDocument fDoc;
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fUpdater= new DefaultPositionUpdater(CATEGORY);
 		fDoc= new Document("ccccccccccccccccccccccccccccccccccccccccccccc");
@@ -49,9 +47,7 @@ public class ExclusivePositionUpdaterTest extends TestCase {
 		fDoc.addPosition(CATEGORY, fPos);
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fDoc.removePositionUpdater(fUpdater);
 		fDoc.removePositionCategory(CATEGORY);

@@ -32,47 +32,35 @@ public abstract class AbstractContributedRulerColumn implements IContributedRule
 	private ITextEditor fEditor;
 
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#getDescriptor()
-	 */
+	@Override
 	public final RulerColumnDescriptor getDescriptor() {
 		return fDescriptor;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#setDescriptor(org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor)
-	 */
+	@Override
 	public final void setDescriptor(RulerColumnDescriptor descriptor) {
 		Assert.isLegal(descriptor != null);
 		Assert.isTrue(fDescriptor == null);
 		fDescriptor= descriptor;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 */
+	@Override
 	public final void setEditor(ITextEditor editor) {
 		Assert.isLegal(editor != null);
 		Assert.isTrue(fEditor == null);
 		fEditor= editor;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#getEditor()
-	 */
+	@Override
 	public final ITextEditor getEditor() {
 		return fEditor;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#columnCreated()
-	 */
+	@Override
 	public void columnCreated() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.IContributedRulerColumn#columnRemoved()
-	 */
+	@Override
 	public void columnRemoved() {
 	}
 }

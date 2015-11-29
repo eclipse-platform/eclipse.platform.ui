@@ -58,6 +58,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 *
 	 * @deprecated use DefaultDamagerRepairer(ITokenScanner) instead
 	 */
+	@Deprecated
 	public DefaultDamagerRepairer(ITokenScanner scanner, TextAttribute defaultTextAttribute) {
 
 		Assert.isNotNull(defaultTextAttribute);
@@ -84,6 +85,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 * @see IPresentationDamager#setDocument(IDocument)
 	 * @see IPresentationRepairer#setDocument(IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 		fDocument= document;
 	}
@@ -124,6 +126,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 	 *         clipped by the given partition. If there was a partitioning change then the whole
 	 *         partition is returned.
 	 */
+	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
 
 		if (!documentPartitioningChanged) {
@@ -152,9 +155,7 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 
 	//---- IPresentationRepairer
 
-	/*
-	 * @see IPresentationRepairer#createPresentation(TextPresentation, ITypedRegion)
-	 */
+	@Override
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 
 		if (fScanner == null) {

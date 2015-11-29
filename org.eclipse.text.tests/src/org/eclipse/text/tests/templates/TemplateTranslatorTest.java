@@ -34,10 +34,7 @@ public class TemplateTranslatorTest extends TestCase {
 
 	private TemplateTranslator fTranslator;
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 * @since 3.3
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTranslator= new TemplateTranslator();

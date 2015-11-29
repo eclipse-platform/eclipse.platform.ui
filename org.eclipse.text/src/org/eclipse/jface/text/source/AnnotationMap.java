@@ -49,142 +49,110 @@ class AnnotationMap implements IAnnotationMap {
         fInternalMap= new HashMap(capacity);
     }
 
-    /*
-     * @see org.eclipse.jface.text.source.ISynchronizable#setLockObject(java.lang.Object)
-     */
-    public synchronized void setLockObject(Object lockObject) {
+    @Override
+	public synchronized void setLockObject(Object lockObject) {
         fLockObject= lockObject;
     }
 
-    /*
-     * @see org.eclipse.jface.text.source.ISynchronizable#getLockObject()
-     */
-    public synchronized Object getLockObject() {
+    @Override
+	public synchronized Object getLockObject() {
         if (fLockObject == null)
         	return fInternalLockObject;
         return fLockObject;
     }
 
-    /*
-     * @see org.eclipse.jface.text.source.IAnnotationMap#valuesIterator()
-     */
-    public Iterator valuesIterator() {
+    @Override
+	public Iterator valuesIterator() {
         synchronized (getLockObject()) {
             return new ArrayList(fInternalMap.values()).iterator();
         }
     }
 
-    /*
-     * @see org.eclipse.jface.text.source.IAnnotationMap#keySetIterator()
-     */
-    public Iterator keySetIterator() {
+    @Override
+	public Iterator keySetIterator() {
         synchronized (getLockObject()) {
             return new ArrayList(fInternalMap.keySet()).iterator();
         }
     }
 
-    /*
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
-    public boolean containsKey(Object annotation) {
+    @Override
+	public boolean containsKey(Object annotation) {
         synchronized (getLockObject()) {
             return fInternalMap.containsKey(annotation);
         }
     }
 
-    /*
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
-    public Object put(Object annotation, Object position) {
+    @Override
+	public Object put(Object annotation, Object position) {
         synchronized (getLockObject()) {
             return fInternalMap.put(annotation, position);
         }
     }
 
-    /*
-     * @see java.util.Map#get(java.lang.Object)
-     */
-    public Object get(Object annotation) {
+    @Override
+	public Object get(Object annotation) {
         synchronized (getLockObject()) {
             return fInternalMap.get(annotation);
         }
     }
 
-    /*
-     * @see java.util.Map#clear()
-     */
-    public void clear() {
+    @Override
+	public void clear() {
         synchronized (getLockObject()) {
             fInternalMap.clear();
         }
     }
 
-    /*
-     * @see java.util.Map#remove(java.lang.Object)
-     */
-    public Object remove(Object annotation) {
+    @Override
+	public Object remove(Object annotation) {
         synchronized (getLockObject()) {
             return fInternalMap.remove(annotation);
         }
     }
 
-    /*
-     * @see java.util.Map#size()
-     */
-    public int size() {
+    @Override
+	public int size() {
         synchronized (getLockObject()) {
             return fInternalMap.size();
         }
     }
 
-    /*
-     * @see java.util.Map#isEmpty()
-     */
-    public boolean isEmpty() {
+    @Override
+	public boolean isEmpty() {
         synchronized (getLockObject()) {
 			return fInternalMap.isEmpty();
 		}
     }
 
-	/*
-	 * @see java.util.Map#containsValue(java.lang.Object)
-	 */
+	@Override
 	public boolean containsValue(Object value) {
 		synchronized(getLockObject()) {
 			return fInternalMap.containsValue(value);
 		}
 	}
 
-	/*
-	 * @see java.util.Map#putAll(java.util.Map)
-	 */
+	@Override
 	public void putAll(Map map) {
 		synchronized (getLockObject()) {
 			fInternalMap.putAll(map);
 		}
 	}
 
-	/*
-	 * @see IAnnotationMap#entrySet()
-	 */
+	@Override
 	public Set entrySet() {
 		synchronized (getLockObject()) {
 			return fInternalMap.entrySet();
 		}
 	}
 
-	/*
-	 * @see IAnnotationMap#keySet()
-	 */
+	@Override
 	public Set keySet() {
 		synchronized (getLockObject()) {
 			return fInternalMap.keySet();
 		}
 	}
 
-	/*
-	 * @see IAnnotationMap#values()
-	 */
+	@Override
 	public Collection values() {
 		synchronized (getLockObject()) {
 			return fInternalMap.values();

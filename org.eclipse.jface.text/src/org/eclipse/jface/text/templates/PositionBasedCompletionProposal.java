@@ -85,9 +85,7 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 		fAdditionalProposalInfo= additionalProposalInfo;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 		try {
 			document.replace(fReplacementPosition.getOffset(), fReplacementPosition.getLength(), fReplacementString);
@@ -96,65 +94,47 @@ final class PositionBasedCompletionProposal implements ICompletionProposal, ICom
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementPosition.getOffset() + fCursorPosition, 0);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		if (fDisplayString != null)
 			return fDisplayString;
 		return fReplacementString;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return fAdditionalProposalInfo;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
-	 */
+	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 		apply(viewer.getDocument());
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
-	 */
+	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void unselected(ITextViewer viewer) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
 			String content= document.get(fReplacementPosition.getOffset(), offset - fReplacementPosition.getOffset());

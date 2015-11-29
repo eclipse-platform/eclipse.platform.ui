@@ -27,44 +27,32 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  */
 public final class NoCompletionsProposal implements ICompletionProposal {
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 		// do nothing
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 			return SpellingMessages.NoCompletionsProposal_displayString;
 		}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}

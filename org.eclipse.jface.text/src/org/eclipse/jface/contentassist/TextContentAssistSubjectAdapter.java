@@ -38,6 +38,7 @@ import org.eclipse.jface.text.IDocument;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
+@Deprecated
 public class TextContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
 	/**
@@ -53,9 +54,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		private InternalDocument() {
 			super(fText.getText());
 			fModifyListener= new ModifyListener() {
-				/*
-				 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-				 */
+				@Override
 				public void modifyText(ModifyEvent e) {
 					set(fText.getText());
 				}
@@ -63,9 +62,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 			fText.addModifyListener(fModifyListener);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.AbstractDocument#replace(int, int, java.lang.String)
-		 */
+		@Override
 		public void replace(int pos, int length, String text) throws BadLocationException {
 			super.replace(pos, length, text);
 			fText.removeModifyListener(fModifyListener);
@@ -89,30 +86,22 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		fText= text;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fText;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getLineHeight()
-	 */
+	@Override
 	public int getLineHeight() {
 		return fText.getLineHeight();
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getCaretOffset()
-	 */
+	@Override
 	public int getCaretOffset() {
 		return fText.getCaretPosition();
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getLocationAtOffset(int)
-	 */
+	@Override
 	public Point getLocationAtOffset(int offset) {
 		Point caretLocation= fText.getCaretLocation();
 		/*
@@ -122,23 +111,17 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return caretLocation;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getWidgetSelectionRange()
-	 */
+	@Override
 	public Point getWidgetSelectionRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getSelectedRange()
-	 */
+	@Override
 	public Point getSelectedRange() {
 		return new Point(fText.getSelection().x, Math.abs(fText.getSelection().y - fText.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getDocument()
-	 */
+	@Override
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fText.getData("document"); //$NON-NLS-1$
 		if (document == null) {
@@ -148,30 +131,22 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return document;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
-	 */
+	@Override
 	public void setSelectedRange(int i, int j) {
 		fText.setSelection(new Point(i, i+j));
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#revealRange(int, int)
-	 */
+	@Override
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fText.setSelection(new Point(i, i+j));
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#addSelectionListener(org.eclipse.swt.events.SelectionListener)
-	 */
+	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fText.addSelectionListener(selectionListener);
 		Listener listener= new Listener() {
-			/*
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
+			@Override
 			public void handleEvent(Event e) {
 				selectionListener.widgetSelected(new SelectionEvent(e));
 
@@ -182,9 +157,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
-	 */
+	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fText.removeSelectionListener(selectionListener);
 		Object listener= fModifyListeners.get(selectionListener);

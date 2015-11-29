@@ -163,9 +163,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * position updates the templates
 	 */
 	private final class SelectionChangedListener implements ISelectionChangedListener {
-		/*
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			String[] contextTypes= getEditorContextTypeIds();
 			if (needUpdate(contextTypes)) {
@@ -209,9 +207,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * position.
 	 */
 	private final class EditorDropTargetListener extends DropTargetAdapter {
-		/*
-		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-		 */
+		@Override
 		public void dragEnter(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
@@ -219,9 +215,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			event.detail= DND.DROP_COPY;
 		}
 
-		/*
-		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-		 */
+		@Override
 		public void dragOperationChanged(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
@@ -229,9 +223,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			event.detail= DND.DROP_COPY;
 		}
 
-		/*
-		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
-		 */
+		@Override
 		public void dragOver(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
@@ -244,9 +236,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				event.detail= DND.DROP_COPY;
 		}
 
-		/*
-		 * @see org.eclipse.swt.dnd.DropTargetAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
-		 */
+		@Override
 		public void drop(DropTargetEvent event) {
 			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
@@ -266,12 +256,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * description and context types by names.
 	 */
 	private static final class TemplateViewerComparator extends ViewerComparator {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public int compare(Viewer viewer, Object object1, Object object2) {
 			if ((object1 instanceof TemplatePersistenceData)
 					&& (object2 instanceof TemplatePersistenceData)) {
@@ -291,9 +276,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			return super.compare(viewer, object1, object2);
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ViewerComparator#isSorterProperty(java.lang.Object, java.lang.String)
-		 */
+		@Override
 		public boolean isSorterProperty(Object element, String property) {
 			return false;
 		}
@@ -305,9 +288,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private final class TemplateLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex != 0)
 				return null;
@@ -316,9 +297,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			return AbstractTemplatesPage.this.getImage(((TemplatePersistenceData) element).getTemplate());
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof TemplatePersistenceData)
 				return getTemplateColumnText((TemplatePersistenceData) element, columnIndex);
@@ -353,9 +332,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private final class TemplatesContentProvider implements ITreeContentProvider {
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof TemplatePersistenceData)
 				return new Object[0];
@@ -377,9 +354,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					.toArray(new TemplatePersistenceData[templateList.size()]);
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof TemplatePersistenceData) {
 				TemplatePersistenceData templateData= (TemplatePersistenceData) element;
@@ -389,9 +364,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
+		@Override
 		public boolean hasChildren(Object parentElement) {
 			if (parentElement instanceof TemplatePersistenceData)
 				return false;
@@ -411,9 +384,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			List contextTypes= new ArrayList();
 
@@ -429,15 +400,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			return fActiveTypes == null || fActiveTypes.contains(contextType.getId());
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -517,9 +484,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		setupPasteOperation();
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.Page#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite ancestor) {
 		setupActions();
 
@@ -535,8 +500,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		int sashSize= fPreferenceStore.getInt(SASH_SIZE_PREF_ID);
 		fControl.setWeights(new int[] { sashSize, 100 - sashSize });
 		fTemplateChangeListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				getShell().getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						refresh();
 					}
@@ -547,22 +514,16 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		updateContextTypes(getEditorContextTypeIds());
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.Page#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.Page#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fControl;
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.Page#dispose()
-	 */
+	@Override
 	public void dispose() {
 		ISelectionProvider selectionProvider= fViewer.getSelectionProvider();
 		if (selectionProvider instanceof IPostSelectionProvider)
@@ -690,6 +651,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * @return the template store
 	 * @since 3.6 public, before it was protected
 	 */
+	@Override
 	abstract public TemplateStore getTemplateStore();
 
 	/**
@@ -759,6 +721,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void setupPasteOperation() {
 		fEditorOldPasteAction= fTextEditor.getAction(ITextEditorActionConstants.PASTE);
 		fEditorPasteAction= new Action(TemplatesMessages.TemplatesPage_paste) {
+			@Override
 			public void run() {
 				Clipboard clipboard= new Clipboard(getShell().getDisplay());
 				try {
@@ -772,6 +735,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				}
 			}
 
+			@Override
 			public void runWithEvent(Event event) {
 				run();
 			}
@@ -852,6 +816,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void createActions() {
 		fInsertAction= new Action(TemplatesMessages.TemplatesPage_insert) {
+			@Override
 			public void run() {
 				TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 				insertTemplate(selectedTemplates[0].getTemplate());
@@ -864,6 +829,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fInsertAction.setToolTipText(TemplatesMessages.TemplatesPage_insert_tooltip);
 
 		fAddAction= new Action(TemplatesMessages.TemplatesPage_new) {
+			@Override
 			public void run() {
 				addTemplate();
 			}
@@ -873,6 +839,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fAddAction.setToolTipText(TemplatesMessages.TemplatesPage_new_tooltip);
 
 		fEditAction= new Action(TemplatesMessages.TemplatesPage_edit) {
+			@Override
 			public void run() {
 				editTemplate();
 			}
@@ -884,6 +851,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fEditAction.setToolTipText(TemplatesMessages.TemplatesPage_edit_tooltip);
 
 		fRemoveAction= new Action(TemplatesMessages.TemplatesPage_remove) {
+			@Override
 			public void run() {
 				removeTemplates();
 			}
@@ -896,6 +864,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		fLinkWithEditorAction= new Action(TemplatesMessages.TemplatesPage_link_to_editor,
 				IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				fPreferenceStore.setValue(LINK_ACTION_PREF_ID, fLinkWithEditorAction.isChecked());
 				refresh();
@@ -907,6 +876,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fLinkWithEditorAction
 				.setToolTipText(TemplatesMessages.TemplatesPage_link_to_editor_tooltip);
 		fCollapseAllAction= new Action(TemplatesMessages.TemplatesPage_collapse_all) {
+			@Override
 			public void run() {
 				fTreeViewer.collapseAll();
 			}
@@ -917,6 +887,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		if (getPreferencePageId() != null) {
 			fPreferencePageAction= new Action(TemplatesMessages.TemplatesPage_preference_page) {
+				@Override
 				public void run() {
 					showPreferencePage();
 				}
@@ -926,6 +897,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 
 		fPasteAction= new Action() {
+			@Override
 			public void run() {
 				Clipboard clipboard= new Clipboard(getShell().getDisplay());
 				try {
@@ -933,6 +905,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					if (pattern != null) {
 						final Template template= new Template(createTemplateName(), TemplatesMessages.TemplatesPage_paste_description, getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
 						getShell().getDisplay().asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								addTemplate(template);
 							}
@@ -950,6 +923,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		};
 
 		fCopyAction= new Action() {
+			@Override
 			public void run() {
 				Clipboard clipboard= new Clipboard(getShell().getDisplay());
 				try {
@@ -1050,9 +1024,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 		columnLayout.setColumnData(columnName, new ColumnPixelData(minWidth, true));
 		columnName.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int nameWidth= ((TreeColumn) e.getSource()).getWidth();
 				fPreferenceStore.setValue(COLUMN_NAME_WIDTH_PREF_ID, nameWidth);
@@ -1067,9 +1043,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 		columnLayout.setColumnData(columnDescription, new ColumnPixelData(minWidth, false));
 		columnDescription.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int descriptionWidth= ((TreeColumn) e.getSource()).getWidth();
 				fPreferenceStore.setValue(COLUMN_DESCRIPTION_WIDTH_PREF_ID, descriptionWidth);
@@ -1092,6 +1070,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fTreeViewer.setComparator(new TemplateViewerComparator());
 		fTreeViewer.setInput(getTemplatePreferenceStore());
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent e) {
 				updateSelectedItems();
 				TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
@@ -1101,6 +1080,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		});
 
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				updateSelectedItems();
 				updateButtons();
@@ -1125,9 +1105,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fPatternViewer= createPatternViewer(viewForm);
 		viewForm.setContent(fPatternViewer.getControl());
 		viewForm.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int[] weights= fControl.getWeights();
 				int sashSize= (int) (weights[0] * 100.0 / (weights[0] + weights[1]));
@@ -1143,6 +1125,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		MenuManager menuMgr= new MenuManager(POPUP_MENU_ID);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				fillContextMenu(manager);
 			}
@@ -1236,6 +1219,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * @return selected templates
 	 * @since 3.6 public, before it was private
 	 */
+	@Override
 	public TemplatePersistenceData[] getSelectedTemplates() {
 		return fSelectedTemplates;
 	}
@@ -1421,20 +1405,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void initializeDND() {
 		DragSourceAdapter dragListener= new DragSourceAdapter() {
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
-			 */
+			@Override
 			public void dragStart(DragSourceEvent event) {
 				if (getSelectedTemplates().length == 0) {
 					event.doit= false;
 				}
 			}
 
-			/*
-			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
-			 */
+			@Override
 			public void dragSetData(DragSourceEvent event) {
 				if (TemplatesTransfer.getInstance().isSupportedType(event.dataType)) {
 					event.data= getSelectedTemplates();
@@ -1447,25 +1425,19 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			Transfer textTransfer= TextTransfer.getInstance();
 			Transfer templateTransfer= TemplatesTransfer.getInstance();
 
-			/*
-			 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
+			@Override
 			public void dragEnter(DropTargetEvent event) {
 				if (event.detail == DND.DROP_DEFAULT)
 					event.detail= DND.DROP_COPY;
 			}
 
-			/*
-			 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
+			@Override
 			public void dragOperationChanged(DropTargetEvent event) {
 				if (event.detail == DND.DROP_DEFAULT)
 					event.detail= DND.DROP_COPY;
 			}
 
-			/*
-			 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
+			@Override
 			public void dragOver(DropTargetEvent event) {
 				event.feedback |= DND.FEEDBACK_SCROLL;
 				if (event.item == null) {
@@ -1492,9 +1464,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				}
 			}
 
-			/*
-			 * @see org.eclipse.swt.dnd.DropTargetAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
-			 */
+			@Override
 			public void drop(DropTargetEvent event) {
 				if (event.item == null)
 					return;
@@ -1510,6 +1480,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 							TemplatesMessages.TemplatesPage_paste_description, contextId, text,
 							true);
 					getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							addTemplate(template);
 						}
@@ -1520,6 +1491,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 					final TemplatePersistenceData[] templates= (TemplatePersistenceData[]) event.data;
 					final int dropType= event.detail;
 					getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (dropType == DND.DROP_COPY)
 								copyTemplates(templates, contextId);

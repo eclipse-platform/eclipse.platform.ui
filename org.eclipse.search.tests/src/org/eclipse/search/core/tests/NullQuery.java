@@ -18,24 +18,26 @@ import org.eclipse.search.ui.ISearchResult;
 
 public class NullQuery implements ISearchQuery {
 	
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#getName()
-	 */
+	@Override
 	public String getLabel() {
 		return "Null Query"; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean canRerun() {
 		return true;
 	}
 
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
 
+	@Override
 	public ISearchResult getSearchResult() {
 		return new NullSearchResult(this);
 	}

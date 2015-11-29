@@ -107,9 +107,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 			fParentProvider= parentProvider;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#connect(java.lang.Object)
-	 */
+	@Override
 	public void connect(Object element) throws CoreException {
 		fParentProvider.connect(element);
 		IDocument document= fParentProvider.getDocument(element);
@@ -120,107 +118,77 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#disconnect(java.lang.Object)
-	 */
+	@Override
 	public void disconnect(Object element) {
 		fParentProvider.disconnect(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getDocument(java.lang.Object)
-	 */
+	@Override
 	public IDocument getDocument(Object element) {
 		return fParentProvider.getDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#resetDocument(java.lang.Object)
-	 */
+	@Override
 	public void resetDocument(Object element) throws CoreException {
 		fParentProvider.resetDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#saveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
-	 */
+	@Override
 	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		fParentProvider.saveDocument(monitor, element, document, overwrite);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getModificationStamp(java.lang.Object)
-	 */
+	@Override
 	public long getModificationStamp(Object element) {
 		return fParentProvider.getModificationStamp(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getSynchronizationStamp(java.lang.Object)
-	 */
+	@Override
 	public long getSynchronizationStamp(Object element) {
 		return fParentProvider.getSynchronizationStamp(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#isDeleted(java.lang.Object)
-	 */
+	@Override
 	public boolean isDeleted(Object element) {
 		return fParentProvider.isDeleted(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#mustSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public boolean mustSaveDocument(Object element) {
 		return fParentProvider.mustSaveDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#canSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public boolean canSaveDocument(Object element) {
 		return fParentProvider.canSaveDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getAnnotationModel(java.lang.Object)
-	 */
+	@Override
 	public IAnnotationModel getAnnotationModel(Object element) {
 		return fParentProvider.getAnnotationModel(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#aboutToChange(java.lang.Object)
-	 */
+	@Override
 	public void aboutToChange(Object element) {
 		fParentProvider.aboutToChange(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#changed(java.lang.Object)
-	 */
+	@Override
 	public void changed(Object element) {
 		fParentProvider.changed(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#addElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
-	 */
+	@Override
 	public void addElementStateListener(IElementStateListener listener) {
 		fParentProvider.addElementStateListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#removeElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
-	 */
+	@Override
 	public void removeElementStateListener(IElementStateListener listener) {
 		fParentProvider.removeElementStateListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isReadOnly(java.lang.Object)
-	 */
+	@Override
 	public boolean isReadOnly(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -229,9 +197,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isModifiable(java.lang.Object)
-	 */
+	@Override
 	public boolean isModifiable(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -240,9 +206,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#validateState(java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void validateState(Object element, Object computationContext) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -250,9 +214,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isStateValidated(java.lang.Object)
-	 */
+	@Override
 	public boolean isStateValidated(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -261,9 +223,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#updateStateCache(java.lang.Object)
-	 */
+	@Override
 	public void updateStateCache(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -271,9 +231,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#setCanSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public void setCanSaveDocument(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -281,9 +239,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#getStatus(java.lang.Object)
-	 */
+	@Override
 	public IStatus getStatus(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -292,9 +248,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(java.lang.Object)
-	 */
+	@Override
 	public void synchronize(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)fParentProvider;
@@ -302,9 +256,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		if (fParentProvider instanceof IDocumentProviderExtension2) {
 			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2)fParentProvider;
@@ -312,9 +264,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#getProgressMonitor()
-	 */
+	@Override
 	public IProgressMonitor getProgressMonitor() {
 		if (fParentProvider instanceof IDocumentProviderExtension2) {
 			IDocumentProviderExtension2 extension= (IDocumentProviderExtension2)fParentProvider;
@@ -323,9 +273,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
-	 */
+	@Override
 	public boolean isSynchronized(Object element) {
 		if (fParentProvider instanceof IDocumentProviderExtension3) {
 			IDocumentProviderExtension3 extension= (IDocumentProviderExtension3)fParentProvider;
@@ -334,10 +282,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
-	 * @since 3.2
-	 */
+	@Override
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
 		if (fParentProvider instanceof IDocumentProviderExtension5) {
 			IDocumentProviderExtension5 extension= (IDocumentProviderExtension5)fParentProvider;
@@ -346,10 +291,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public IContentType getContentType(Object element) throws CoreException {
 		if (fParentProvider instanceof IDocumentProviderExtension4) {
 			IDocumentProviderExtension4 extension= (IDocumentProviderExtension4)fParentProvider;
@@ -358,9 +300,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#getDefaultEncoding()
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
 			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;
@@ -369,9 +309,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#getEncoding(java.lang.Object)
-	 */
+	@Override
 	public String getEncoding(Object element) {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
 			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;
@@ -380,9 +318,7 @@ public class ForwardingDocumentProvider implements IDocumentProvider, IDocumentP
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#setEncoding(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public void setEncoding(Object element, String encoding) {
 		if (fParentProvider instanceof IStorageDocumentProvider) {
 			IStorageDocumentProvider provider= (IStorageDocumentProvider)fParentProvider;

@@ -64,9 +64,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 			super(category);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.DefaultPositionUpdater#notDeleted()
-		 */
+		@Override
 		protected final boolean notDeleted() {
 
 			if (fOffset < fPosition.offset && (fPosition.offset + fPosition.length < fOffset + fLength)) {
@@ -120,9 +118,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		fType= type;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatterExtension#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.formatter.IFormattingContext)
-	 */
+	@Override
 	public final void format(final IDocument medium, final IFormattingContext context) {
 
 		context.setProperty(FormattingContextProperties.CONTEXT_MEDIUM, medium);
@@ -147,9 +143,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatter#format(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public final void format(final IDocument medium, final IRegion region) {
 
 		final FormattingContext context= new FormattingContext();
@@ -281,9 +275,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IContentFormatter#getFormattingStrategy(java.lang.String)
-	 */
+	@Override
 	public final IFormattingStrategy getFormattingStrategy(final String type) {
 		return null;
 	}

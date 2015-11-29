@@ -28,17 +28,20 @@ public class LineTrackerTest3 extends AbstractLineTrackerTest {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() {
 		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\n" });
 		set("x\nx\nx\nx\nx\n");
 	}
 
+	@Override
 	protected void tearDown() {
 		fTracker= null;
 		fText= null;
 	}
 
+	@Override
 	protected int getLineOffset(int line, int[] lines) {
 		int offset= 0;
 		for (int i= 0; i < line; i++)

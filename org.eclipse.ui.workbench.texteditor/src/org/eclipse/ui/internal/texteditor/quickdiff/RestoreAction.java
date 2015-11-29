@@ -41,9 +41,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		super(PREFIX, editor, isRulerAction);
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
-	 */
+	@Override
 	public boolean computeEnablement() {
 		if (!super.computeEnablement())
 			return false;
@@ -73,9 +71,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction#runCompoundChange()
-	 */
+	@Override
 	public void runCompoundChange() {
 		if (!isEnabled())
 			return;

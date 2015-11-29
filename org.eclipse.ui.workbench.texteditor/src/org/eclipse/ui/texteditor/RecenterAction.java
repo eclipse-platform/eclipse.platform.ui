@@ -48,9 +48,7 @@ public class RecenterAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		if (!(editor instanceof AbstractTextEditor))

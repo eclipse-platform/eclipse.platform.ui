@@ -22,6 +22,7 @@ public class GapTextStoreTest extends TextStoreTest {
 		return new TestSuite(GapTextStoreTest.class);
 	}
 
+	@Override
 	protected ITextStore createTextStore() {
 		return new GapTextStore(256, 4096, 0.1f);
 	}

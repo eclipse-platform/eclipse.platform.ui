@@ -45,9 +45,7 @@ public class HippieCompletionTest extends TestCase {
 		super(name);
 	}
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		documents= new IDocument[5];
 		documents[0]= new Document("package ui.TestPackage;\n" +

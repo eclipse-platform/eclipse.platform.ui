@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 /**
  * @deprecated old search
  */
+@Deprecated
 class ShowNextResultAction extends Action {
 
 	private SearchResultViewer fViewer;
@@ -29,6 +30,7 @@ class ShowNextResultAction extends Action {
 		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_NEXT);
 	}
 
+	@Override
 	public void run() {
 		fViewer.showNextResult();
 	}

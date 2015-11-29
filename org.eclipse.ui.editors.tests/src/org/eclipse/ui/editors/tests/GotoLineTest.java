@@ -59,17 +59,13 @@ public class GotoLineTest extends TestCase {
 		return ORIGINAL_CONTENT;
 	}
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("GoToLineTestProject/goToLineTests/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;

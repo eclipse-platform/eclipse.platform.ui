@@ -37,6 +37,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 2.0
  * @deprecated since 3.0 not longer in use, no longer supported
  */
+@Deprecated
 public class PropagatingFontFieldEditor extends FontFieldEditor {
 
 	/** The editor's parent widget */
@@ -58,9 +59,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		fDefaultFontLabel= defaultFontLabel == null ? "" : defaultFontLabel; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see FontFieldEditor#doLoad()
-	 */
+	@Override
 	protected void doLoad() {
 		if (getPreferenceStore().isDefault(getPreferenceName()))
 			loadDefault();
@@ -68,9 +67,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 		checkForDefault();
 	}
 
-	/*
-	 * @see FontFieldEditor#doLoadDefault()
-	 */
+	@Override
 	protected void doLoadDefault() {
 		super.doLoadDefault();
 		checkForDefault();
@@ -121,6 +118,7 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 */
 	public static void startPropagate(final IPreferenceStore source, final String sourceKey, final IPreferenceStore target, final String targetKey) {
 		source.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (sourceKey.equals(event.getProperty()))
 					propagateFont(source, sourceKey, target, targetKey);

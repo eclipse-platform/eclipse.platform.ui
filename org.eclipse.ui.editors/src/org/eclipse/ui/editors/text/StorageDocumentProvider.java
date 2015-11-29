@@ -114,6 +114,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 *
 	 * @deprecated use encoding based version instead
 	 */
+	@Deprecated
 	protected void setDocumentContent(IDocument document, InputStream contentStream) throws CoreException {
 		setDocumentContent(document, contentStream, null);
 	}
@@ -172,6 +173,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @deprecated use the encoding based version instead
 	 * @since 2.0
 	 */
+	@Deprecated
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		return setDocumentContent(document, editorInput, null);
 	}
@@ -203,9 +205,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return false;
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
-	 */
+	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		return null;
 	}
@@ -219,9 +219,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return new Document();
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createDocument(Object)
-	 */
+	@Override
 	protected IDocument createDocument(Object element) throws CoreException {
 
 		if (element instanceof IEditorInput) {
@@ -247,10 +245,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	protected void setupDocument(Object element, IDocument document) {
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createElementInfo(Object)
-	 * @since 2.0
-	 */
+	@Override
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 
@@ -274,9 +269,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return super.createElementInfo(element);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
-	 */
+	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 	}
 
@@ -323,10 +316,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 	}
 
-	/*
-	 * @see IDocumentProviderExtension#isReadOnly(Object)
-	 * @since 2.0
-	 */
+	@Override
 	public boolean isReadOnly(Object element) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
@@ -344,10 +334,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return super.isReadOnly(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
-	 * @since 3.2
-	 */
+	@Override
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
 		IStatus status= ex.getStatus();
 		if (status == null || status instanceof MultiStatus)
@@ -359,10 +346,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 
-	/*
-	 * @see IDocumentProviderExtension#isModifiable(Object)
-	 * @since 2.0
-	 */
+	@Override
 	public boolean isModifiable(Object element) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
@@ -380,10 +364,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return super.isModifiable(element);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#doUpdateStateCache(Object)
-	 * @since 2.0
-	 */
+	@Override
 	protected void doUpdateStateCache(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
@@ -393,18 +374,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		super.doUpdateStateCache(element);
 	}
 
-	/*
-	 * @see IStorageDocumentProvider#getDefaultEncoding()
-	 * @since 2.0
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		return ResourcesPlugin.getEncoding();
 	}
 
-	/*
-	 * @see IStorageDocumentProvider#getEncoding(Object)
-	 * @since 2.0
-	 */
+	@Override
 	public String getEncoding(Object element) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
@@ -415,10 +390,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return null;
 	}
 
-	/*
-	 * @see IStorageDocumentProvider#setEncoding(Object, String)
-	 * @since 2.0
-	 */
+	@Override
 	public void setEncoding(Object element, String encoding) {
 		if (element instanceof IStorageEditorInput) {
 			StorageInfo info= (StorageInfo) getElementInfo(element);
@@ -433,10 +405,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public IContentType getContentType(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			IStorage storage= ((IStorageEditorInput) element).getStorage();
@@ -514,10 +483,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		// Default is to do nothing
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.0
-	 */
+	@Override
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		return null;
 	}

@@ -57,9 +57,7 @@ public class WorkspaceOperationRunner implements IRunnableContext {
 		return fProgressMonitor;
 	}
 
-	/*
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
+	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (runnable instanceof ISchedulingRuleProvider)
 			run(runnable, ((ISchedulingRuleProvider)runnable).getSchedulingRule());

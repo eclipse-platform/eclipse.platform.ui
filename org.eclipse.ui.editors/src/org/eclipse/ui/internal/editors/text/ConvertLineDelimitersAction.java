@@ -67,16 +67,19 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		return label;
 	}
 
+	@Override
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return location != null && manager.isTextFileLocation(location, fStrictCheckIfTextLocation);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		super.selectionChanged(action, selection);
 		fStrictCheckIfTextLocation= !(selection instanceof ITextSelection);
 	}
 
+	@Override
 	protected IFile[] collectFiles(final IResource[] resources) {
 		fStrictCheckIfTextLocation= fStrictCheckIfTextLocation || resources.length != 1 || resources[0].getType() != IResource.FILE;
 		if (containsOnlyFiles(resources)) {
@@ -85,12 +88,14 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		}
 
     	final IFilter filter= new IFilter() {
+			@Override
 			public boolean accept(IResource resource) {
 				return resource != null && isAcceptableLocation(resource.getFullPath());
 			}
 		};
 
 		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), getDialogTitle(), TextEditorMessages.ConvertLineDelimitersAction_dialog_description, filter) {
+			@Override
 			protected Composite createSelectionButtonGroup(Composite parent) {
 				Composite buttonGroup= super.createSelectionButtonGroup(parent);
 				
@@ -100,6 +105,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 				button.setFont(JFaceResources.getDialogFont());
 				button.setSelection(fStrictCheckIfTextLocation);
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent event) {
 						fStrictCheckIfTextLocation= button.getSelection();
 						refresh();

@@ -28,6 +28,7 @@ public class RemoveAllMatchesAction extends Action {
 		fPage= page;
 	}
 
+	@Override
 	public void run() {
 		AbstractTextSearchResult search= fPage.getInput();
 		if (search != null)

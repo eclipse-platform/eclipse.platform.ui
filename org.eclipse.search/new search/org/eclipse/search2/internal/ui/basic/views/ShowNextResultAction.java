@@ -28,6 +28,7 @@ public class ShowNextResultAction extends Action {
 		fPage= page;
 	}
 
+	@Override
 	public void run() {
 		fPage.gotoNextMatch();
 	}

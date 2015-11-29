@@ -274,6 +274,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "ConvertLineDelimitersToWindows"; //$NON-NLS-1$
 
 	/**
@@ -282,6 +283,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_UNIX= "ConvertLineDelimitersToUNIX"; //$NON-NLS-1$
 
 	/**
@@ -290,6 +292,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 2.0
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_MAC= "ConvertLineDelimitersToMAC"; //$NON-NLS-1$
 
 	/**

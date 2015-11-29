@@ -57,6 +57,7 @@ public class SearchResultPageTest extends TestCase {
 		return allTests();
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		SearchTestPlugin.ensureWelcomePageClosed();

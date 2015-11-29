@@ -38,6 +38,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * @since 2.0
  * @deprecated since 3.0. there is no replacement, use org.eclipse.ui.forms to define a component with a similar look and function.
  */
+@Deprecated
 public class InfoForm {
 
 	/** The form's root widget */
@@ -69,6 +70,7 @@ public class InfoForm {
 		fSeparatorColor= new Color(display, 152, 170, 203);
 
 		fPropertyChangeListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				handlePropertyChange(event);
 			}
@@ -80,6 +82,7 @@ public class InfoForm {
 		fScrolledComposite.setExpandHorizontal(true);
 		fScrolledComposite.setExpandVertical(true);
 		fScrolledComposite.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				JFaceResources.getFontRegistry().removeListener(fPropertyChangeListener);
 				fScrolledComposite= null;

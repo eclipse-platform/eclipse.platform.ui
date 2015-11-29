@@ -160,6 +160,7 @@ public class SourceViewerConfiguration {
 	 * @return the auto indent strategy or <code>null</code> if automatic indentation is not to be enabled
 	 * @deprecated since 3.1 use {@link #getAutoEditStrategies(ISourceViewer, String)} instead
 	 */
+	@Deprecated
 	public org.eclipse.jface.text.IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
 		return new org.eclipse.jface.text.DefaultAutoIndentStrategy();
 	}
@@ -328,6 +329,7 @@ public class SourceViewerConfiguration {
 	 */
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent);
 			}

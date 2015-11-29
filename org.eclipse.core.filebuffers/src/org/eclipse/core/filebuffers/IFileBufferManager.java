@@ -53,6 +53,7 @@ public interface IFileBufferManager {
 	 * @throws CoreException if the file could not successfully be connected
 	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
+	@Deprecated
 	void connect(IPath location, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -110,6 +111,7 @@ public interface IFileBufferManager {
 	 * @throws CoreException if the file could not successfully be disconnected
 	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
+	@Deprecated
 	void disconnect(IPath location, IProgressMonitor monitor) throws CoreException;
 
 	/**
@@ -165,6 +167,7 @@ public interface IFileBufferManager {
 	 * @return the file buffer managed for that location or <code>null</code>
 	 * @deprecated As of 3.3, replaced by {@link #getFileBuffer(IPath, LocationKind)}
 	 */
+	@Deprecated
 	IFileBuffer getFileBuffer(IPath location);
 
 	/**
@@ -262,6 +265,7 @@ public interface IFileBufferManager {
 	 * @param location the location
 	 * @deprecated As of 3.1, replaced by {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
+	@Deprecated
 	void requestSynchronizationContext(IPath location);
 
 	/**
@@ -278,6 +282,7 @@ public interface IFileBufferManager {
 	 * @param location the location
 	 * @deprecated As of 3.1, replaced by {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
+	@Deprecated
 	void releaseSynchronizationContext(IPath location);
 
 	/**

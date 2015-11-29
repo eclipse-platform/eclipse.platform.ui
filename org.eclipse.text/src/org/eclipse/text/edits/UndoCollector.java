@@ -46,6 +46,7 @@ class UndoCollector implements IDocumentListener {
 		}
 	}
 
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		fLength+= getDelta(event);
 	}
@@ -55,6 +56,7 @@ class UndoCollector implements IDocumentListener {
 		return text == null ? -event.getLength() : (text.length() - event.getLength());
 	}
 
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		int offset= event.getOffset();
 		int currentLength= event.getLength();

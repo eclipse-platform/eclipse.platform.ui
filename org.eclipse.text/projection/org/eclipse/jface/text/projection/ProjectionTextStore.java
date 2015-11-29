@@ -35,16 +35,12 @@ class ProjectionTextStore implements ITextStore {
 		private int fOffset;
 		private int fLength;
 
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getLength()
-		 */
+		@Override
 		public int getLength() {
 			return fLength;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IRegion#getOffset()
-		 */
+		@Override
 		public int getOffset() {
 			return fOffset;
 		}
@@ -85,9 +81,7 @@ class ProjectionTextStore implements ITextStore {
 		throw new IllegalStateException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
-	 */
+	@Override
 	public void set(String contents) {
 
 		IRegion masterRegion= fMapping.getCoverage();
@@ -101,9 +95,7 @@ class ProjectionTextStore implements ITextStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
-	 */
+	@Override
 	public void replace(int offset, int length, String text) {
 		fReusableRegion.update(offset, length);
 		try {
@@ -114,16 +106,12 @@ class ProjectionTextStore implements ITextStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return fMapping.getImageLength();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#get(int)
-	 */
+	@Override
 	public char get(int offset) {
 		try {
 			int originOffset= fMapping.toOriginOffset(offset);
@@ -136,9 +124,7 @@ class ProjectionTextStore implements ITextStore {
 		return (char) 0;
 	}
 
-	/*
-	 * @see ITextStore#get(int, int)
-	 */
+	@Override
 	public String get(int offset, int length) {
 		try {
 			IRegion[] fragments= fMapping.toExactOriginRegions(new Region(offset, length));

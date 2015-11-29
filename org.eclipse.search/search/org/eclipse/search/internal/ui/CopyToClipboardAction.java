@@ -69,6 +69,7 @@ public class CopyToClipboardAction extends Action {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void runWithEvent(Event event) {
 		// bugzilla 126062: allow combos and text fields of the view to fill
 		// the clipboard
@@ -99,6 +100,7 @@ public class CopyToClipboardAction extends Action {
 	/*
 	 * Implements method from IAction
 	 */
+	@Override
 	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
 		if (shell == null || fViewer == null)

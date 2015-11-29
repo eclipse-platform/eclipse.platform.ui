@@ -488,22 +488,27 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 			fString= str;
 		}
 
+		@Override
 		public char get(int offset) {
 			return fString.charAt(offset);
 		}
 
+		@Override
 		public String get(int offset, int length) {
 			return fString.substring(offset, offset + length);
 		}
 
+		@Override
 		public int getLength() {
 			return fString.length();
 		}
 
+		@Override
 		public void replace(int offset, int length, String text) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void set(String text) {
 			fString= text;
 		}

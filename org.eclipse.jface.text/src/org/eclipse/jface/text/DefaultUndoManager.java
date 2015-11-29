@@ -69,6 +69,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @deprecated As of 3.2, replaced by {@link TextViewerUndoManager}
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 	/**
@@ -127,10 +128,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fPreservedText= null;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
-		 * @since 3.1
-		 */
+		@Override
 		public void dispose() {
 		    reinitialize();
 		}
@@ -151,10 +149,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
-		 * @since 3.1
-		 */
+		@Override
 		public boolean canUndo() {
 
 			if (isConnected() && isValid()) {
@@ -208,10 +203,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
-		 * @since 3.1
-		 */
+		@Override
 		public boolean canRedo() {
 			if (isConnected() && isValid()) {
 				IDocument doc= fTextViewer.getDocument();
@@ -226,18 +218,12 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
-		 * @since 3.1
-		 */
+		@Override
 		public boolean canExecute() {
 		    return isConnected();
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-		 * @since 3.1
-		 */
+		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
 			// Text commands execute as they are typed, so executing one has no effect.
 		    return Status.OK_STATUS;
@@ -256,6 +242,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @param uiInfo	an adaptable that can provide UI info if needed
 		 * @return the status
 		 */
+		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
 				undoTextChange();
@@ -290,6 +277,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @param uiInfo	an adaptable that can provide UI info if needed
 		 * @return the status
 		 */
+		@Override
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
 				redoTextChange();
@@ -382,10 +370,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		    	fText != null;
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 * @since 3.1
-		 */
+		@Override
 		public String toString() {
 			String delimiter= ", "; //$NON-NLS-1$
 		    StringBuffer text= new StringBuffer(super.toString());
@@ -460,9 +445,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			fCommands.add(command);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#undo()
-		 */
+		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			resetProcessChangeSate();
 
@@ -483,9 +466,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#redo()
-		 */
+		@Override
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			resetProcessChangeSate();
 
@@ -510,6 +491,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		 */
 
+		@Override
 		protected void updateCommand() {
 			// first gather the data from the buffers
 			super.updateCommand();
@@ -531,6 +513,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		/*
 		 * @see TextCommand#createCurrent
 		 */
+		@Override
 		protected TextCommand createCurrent() {
 
 			if (!fFoldingIntoCompoundChange)
@@ -540,9 +523,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			return this;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#commit()
-		 */
+		@Override
 		protected void commit() {
 			// if there is pending data, update the command
 			if (fStart > -1)
@@ -557,6 +538,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @return true if the command is valid.
 		 * @since 3.1
 		 */
+		@Override
 		protected boolean isValid() {
 			if (isConnected())
 				return (fStart > -1 || fCommands.size() > 0);
@@ -569,6 +551,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @return the undo modification stamp
 		 * @since 3.1
 		 */
+		@Override
 		protected long getUndoModificationStamp() {
 			if (fStart > -1)
 				return super.getUndoModificationStamp();
@@ -584,6 +567,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @return the redo modification stamp
 		 * @since 3.1
 		 */
+		@Override
 		protected long getRedoModificationStamp() {
 			if (fStart > -1)
 				return super.getRedoModificationStamp();
@@ -602,6 +586,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		/*
 		 * @see MouseListener#mouseDoubleClick
 		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
 
@@ -609,6 +594,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * If the right mouse button is pressed, the current editing command is closed
 		 * @see MouseListener#mouseDown
 		 */
+		@Override
 		public void mouseDown(MouseEvent e) {
 			if (e.button == 1)
 				commit();
@@ -617,12 +603,14 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		/*
 		 * @see MouseListener#mouseUp
 		 */
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
 		/*
 		 * @see KeyListener#keyPressed
 		 */
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 
@@ -630,6 +618,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * On cursor keys, the current editing command is closed
 		 * @see KeyListener#keyPressed
 		 */
+		@Override
 		public void keyPressed(KeyEvent e) {
 			switch (e.keyCode) {
 				case SWT.ARROW_UP:
@@ -649,9 +638,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 
 		private String fReplacedText;
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			try {
 				fReplacedText= event.getDocument().get(event.getOffset(), event.getLength());
@@ -661,9 +648,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 			fPreservedRedoModificationStamp= event.getModificationStamp();
 
@@ -700,9 +685,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 */
 	class TextInputListener implements ITextInputListener {
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			if (oldInput != null && fDocumentListener != null) {
 				oldInput.removeDocumentListener(fDocumentListener);
@@ -710,9 +693,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput != null) {
 				if (fDocumentListener == null)
@@ -730,6 +711,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	class HistoryListener implements IOperationHistoryListener {
 		private IUndoableOperation fOperation;
 
+		@Override
 		public void historyNotification(final OperationHistoryEvent event) {
 			final int type= event.getEventType();
 			switch (type) {
@@ -738,6 +720,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				// if this is one of our operations
 				if (event.getOperation().hasContext(fUndoContext)) {
 					fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
+						@Override
 						public void run() {
 							// if we are undoing/redoing a command we generated, then ignore
 							// the document changes associated with this undo or redo.
@@ -769,6 +752,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (event.getOperation() == fOperation) {
 					fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
+						@Override
 						public void run() {
 							listenToTextChanges(true);
 							fOperation= null;
@@ -863,6 +847,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/*
 	 * @see IUndoManager#beginCompoundChange
 	 */
+	@Override
 	public void beginCompoundChange() {
 		if (isConnected()) {
 			fFoldingIntoCompoundChange= true;
@@ -874,6 +859,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	/*
 	 * @see IUndoManager#endCompoundChange
 	 */
+	@Override
 	public void endCompoundChange() {
 		if (isConnected()) {
 			fFoldingIntoCompoundChange= false;
@@ -1193,6 +1179,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			else
 				display= Display.getDefault();
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					MessageDialog.openError(finalShell, title, ex.getLocalizedMessage());
 				}
@@ -1200,9 +1187,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#setMaximalUndoLevel(int)
-	 */
+	@Override
 	public void setMaximalUndoLevel(int undoLevel) {
 		fUndoLevel= Math.max(0, undoLevel);
 		if (isConnected()) {
@@ -1210,9 +1195,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void connect(ITextViewer textViewer) {
 		if (!isConnected() && textViewer != null) {
 			fTextViewer= textViewer;
@@ -1233,9 +1216,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#disconnect()
-	 */
+	@Override
 	public void disconnect() {
 		if (isConnected()) {
 
@@ -1250,9 +1231,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#reset()
-	 */
+	@Override
 	public void reset() {
 		if (isConnected()) {
 			initializeCommandStack();
@@ -1267,23 +1246,17 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#redoable()
-	 */
+	@Override
 	public boolean redoable() {
 	    return fHistory.canRedo(fUndoContext);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#undoable()
-	 */
+	@Override
 	public boolean undoable() {
 	    return fHistory.canUndo(fUndoContext);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#redo()
-	 */
+	@Override
 	public void redo() {
 		if (isConnected() && redoable()) {
 			try {
@@ -1294,9 +1267,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#undo()
-	 */
+	@Override
 	public void undo() {
 		if (isConnected() && undoable()) {
 			try {
@@ -1325,10 +1296,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		fTextViewer.revealRange(offset, length);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManagerExtension#getUndoContext()
-	 * @since 3.1
-	 */
+	@Override
 	public IUndoContext getUndoContext() {
 		return fUndoContext;
 	}

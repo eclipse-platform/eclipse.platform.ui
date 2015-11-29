@@ -48,9 +48,7 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		if (getTextEditor() != null) {
 			IVerticalRulerInfo service= (IVerticalRulerInfo) getTextEditor().getAdapter(IVerticalRulerInfo.class);
@@ -75,15 +73,11 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 		return provider.getAnnotationModel(getTextEditor().getEditorInput());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationSelected(org.eclipse.ui.texteditor.VerticalRulerEvent)
-	 */
+	@Override
 	public void annotationSelected(VerticalRulerEvent event) {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationDefaultSelected(org.eclipse.ui.texteditor.VerticalRulerEvent)
-	 */
+	@Override
 	public void annotationDefaultSelected(VerticalRulerEvent event) {
 		Annotation a= event.getSelectedAnnotation();
 		IAnnotationModel model= getAnnotationModel();
@@ -94,9 +88,7 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 		getTextEditor().selectAndReveal(position.offset, position.length);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IVerticalRulerListener#annotationContextMenuAboutToShow(org.eclipse.ui.texteditor.VerticalRulerEvent, org.eclipse.swt.widgets.Menu)
-	 */
+	@Override
 	public void annotationContextMenuAboutToShow(VerticalRulerEvent event, Menu menu) {
 	}
 }

@@ -48,9 +48,7 @@ public class JoinLinesAction extends TextEditorAction {
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 
 		ITextEditor editor= getTextEditor();
@@ -118,9 +116,7 @@ public class JoinLinesAction extends TextEditorAction {
 		return (ITextSelection) selection;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		super.update();
 		if (!isEnabled())

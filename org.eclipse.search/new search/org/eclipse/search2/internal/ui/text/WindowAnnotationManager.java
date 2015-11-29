@@ -38,32 +38,40 @@ public class WindowAnnotationManager {
 
 		initEditors();
 		fPartListener= new IPartListener2() {
+			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {
 				startHighlighting(getEditor(partRef));
 			}
 
+			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 				startHighlighting(getEditor(partRef));
 			}
 
+			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				stopHighlighting(getEditor(partRef));
 			}
 
+			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 			}
 
+			@Override
 			public void partOpened(IWorkbenchPartReference partRef) {
 			}
 
+			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {
 				stopHighlighting(getEditor(partRef));
 			}
 
+			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {
 				startHighlighting(getEditor(partRef));
 			}
 
+			@Override
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 				updateHighlighting(getEditor(partRef));
 			}

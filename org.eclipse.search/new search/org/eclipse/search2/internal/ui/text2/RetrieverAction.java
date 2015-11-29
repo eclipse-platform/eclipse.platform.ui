@@ -60,6 +60,7 @@ abstract public class RetrieverAction extends Action {
 	public RetrieverAction() {
 	}
 
+	@Override
 	public void run() {
 		IWorkbenchPage page= getWorkbenchPage();
 		if (page == null) {

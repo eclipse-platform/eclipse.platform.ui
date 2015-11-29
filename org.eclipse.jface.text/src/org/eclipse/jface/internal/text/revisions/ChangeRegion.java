@@ -156,9 +156,7 @@ public final class ChangeRegion {
 		return Math.max(0, cutCount);
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "ChangeRegion [" + fRevision.toString() + ", [" + fLines.getStartLine() + "+" + fLines.getNumberOfLines() + ")]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}

@@ -74,10 +74,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		fPartitioning= partitioning;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilerExtension#getDocumentPartitioning()
-	 * @since 3.0
-	 */
+	@Override
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
@@ -108,9 +105,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		}
 	}
 
-	/*
-	 * @see IReconciler#getReconcilingStrategy(String)
-	 */
+	@Override
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 
 		Assert.isNotNull(contentType);
@@ -130,6 +125,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	 * @param dirtyRegion the dirty region to be processed
 	 * @see AbstractReconciler#process(DirtyRegion)
 	 */
+	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 
 		IRegion region= dirtyRegion;
@@ -152,10 +148,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		}
 	}
 
-	/*
-	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
-	 * @since 2.0
-	 */
+	@Override
 	protected void reconcilerDocumentChanged(IDocument document) {
 		if (fStrategies != null) {
 			Iterator e= fStrategies.values().iterator();
@@ -166,10 +159,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		}
 	}
 
-	/*
-	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
-	 * @since 2.0
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
 
@@ -185,10 +175,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		}
 	}
 
-	/*
-	 * @see AbstractReconciler#initialProcess()
-	 * @since 2.0
-	 */
+	@Override
 	protected void initialProcess() {
 		ITypedRegion[] regions= computePartitioning(0, getDocument().getLength());
 		List contentTypes= new ArrayList(regions.length);

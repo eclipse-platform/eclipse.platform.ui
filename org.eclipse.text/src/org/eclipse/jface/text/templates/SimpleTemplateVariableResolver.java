@@ -43,6 +43,7 @@ public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 	/*
 	 * @see TemplateVariableResolver#evaluate(TemplateContext)
 	 */
+	@Override
 	protected String resolve(TemplateContext context) {
 		return fEvaluationString;
 	}
@@ -54,6 +55,7 @@ public class SimpleTemplateVariableResolver extends TemplateVariableResolver {
 	 * @param context {@inheritDoc}
 	 * @return <code>true</code>
 	 */
+	@Override
 	protected boolean isUnambiguous(TemplateContext context) {
 		return true;
 	}

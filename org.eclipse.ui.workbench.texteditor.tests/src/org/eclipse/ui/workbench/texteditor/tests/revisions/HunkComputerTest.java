@@ -38,45 +38,55 @@ public class HunkComputerTest extends TestCase {
 	private int[] fDiffInformation;
 	private ILineDiffer fDiffer= new ILineDiffer() {
 
+		@Override
 		public ILineDiffInfo getLineInfo(final int line) {
 			return new ILineDiffInfo() {
 
+				@Override
 				public int getChangeType() {
 					return fDiffInformation[line * 2];
 				}
 
+				@Override
 				public String[] getOriginalText() {
 					throw new UnsupportedOperationException();
 				}
 
+				@Override
 				public int getRemovedLinesAbove() {
 					return fDiffInformation[line * 2 + 1];
 				}
 
+				@Override
 				public int getRemovedLinesBelow() {
 					if (fRemovedBelow == null)
 						return 0;
 					return fRemovedBelow[line];
 				}
 
+				@Override
 				public boolean hasChanges() {
 					throw new UnsupportedOperationException();
 				}
 
 			};
 		}
+		@Override
 		public int restoreAfterLine(int line) throws BadLocationException {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void revertBlock(int line) throws BadLocationException {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void revertLine(int line) throws BadLocationException {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public void revertSelection(int line, int nLines) throws BadLocationException {
 			throw new UnsupportedOperationException();
 		}

@@ -152,6 +152,7 @@ public final class EditorsUI {
 	 * @see org.eclipse.core.runtime.Plugin#getPluginPreferences()
 	 * @deprecated As of 3.5, replaced by {@link #getPreferenceStore()}
 	 */
+	@Deprecated
 	public static org.eclipse.core.runtime.Preferences getPluginPreferences() {
 		return EditorsPlugin.getDefault().getPluginPreferences();
 	}

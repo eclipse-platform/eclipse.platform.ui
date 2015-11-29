@@ -28,17 +28,13 @@ import org.eclipse.core.filebuffers.LocationKind;
  */
 public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions {
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
-	 */
+	@Override
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IPath filePath= folder.getLocation().append("NonExistingWorkspaceFile");
@@ -77,43 +73,34 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
+	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertNotNull(fileStore);
 		fileStore.fetchInfo().setAttribute(EFS.ATTRIBUTE_READ_ONLY, state);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
-	 */
+	@Override
 	protected boolean isStateValidationSupported() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
-	 */
+	@Override
 	protected boolean deleteUnderlyingFile() throws Exception {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
-	 */
+	@Override
 	protected IPath moveUnderlyingFile() throws Exception {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
-	 */
+	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
-	 */
+	@Override
 	protected Class getAnnotationModelClass() throws Exception {
 		return null;
 	}

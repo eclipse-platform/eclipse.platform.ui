@@ -184,6 +184,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			 *
 			 * @see Action#firePropertyChange(String, Object, Object)
 			 */
+			@Override
 			public void update() {
 				// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
 				if (fOperationCode == ITextOperationTarget.REDO || fOperationCode == ITextOperationTarget.REDO)
@@ -201,6 +202,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			/**
 			 * @see Action#run()
 			 */
+			@Override
 			public void run() {
 				if (fOperationCode != -1 && fOperationTarget != null) {
 					fOperationTarget.doOperation(fOperationCode);
@@ -258,6 +260,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			}
 			Collections.sort(contexts, new Comparator() {
 				Collator fCollator= Collator.getInstance();
+				@Override
 				public int compare(Object o1, Object o2) {
 					return fCollator.compare(((String[])o1)[1], ((String[])o2)[1]);
 				}
@@ -272,17 +275,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTemplateProcessor.setContextType(type);
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-		 * @since 3.4
-		 */
+		@Override
 		protected boolean isResizable() {
 			return true;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.templates.StatusDialog#create()
-		 */
+		@Override
 		public void create() {
 			super.create();
 			// update initial OK button to be disabled for new templates
@@ -294,9 +292,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 		}
 		}
 
-		/*
-		 * @see Dialog#createDialogArea(Composite)
-		 */
+		@Override
 		protected Control createDialogArea(Composite ancestor) {
 			Composite parent= new Composite(ancestor, SWT.NONE);
 			GridLayout layout= new GridLayout();
@@ -309,6 +305,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 			ModifyListener listener= new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					doTextWidgetChanged(e.widget);
 				}
@@ -329,9 +326,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				fNameText.addModifyListener(listener);
 				fNameText.addFocusListener(new FocusListener() {
 
+					@Override
 					public void focusGained(FocusEvent e) {
 					}
 
+					@Override
 					public void focusLost(FocusEvent e) {
 						if (fSuppressError) {
 							fSuppressError= false;
@@ -382,11 +381,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fInsertVariableButton.setLayoutData(getButtonGridData(fInsertVariableButton));
 			fInsertVariableButton.setText(TemplatesMessages.EditTemplateDialog_insert_variable);
 			fInsertVariableButton.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fPatternEditor.getTextWidget().setFocus();
 					fPatternEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {}
 			});
 
@@ -508,6 +509,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			control.setLayoutData(data);
 
 			viewer.addTextListener(new ITextListener() {
+				@Override
 				public void textChanged(TextEvent event) {
 					if (event .getDocumentEvent() != null)
 						doSourceChanged(event.getDocumentEvent().getDocument());
@@ -515,6 +517,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			});
 
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					updateSelectionDependentActions();
 				}
@@ -532,6 +535,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		protected SourceViewer createViewer(Composite parent) {
 			SourceViewer viewer= new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 			SourceViewerConfiguration configuration= new SourceViewerConfiguration() {
+				@Override
 				public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 					ContentAssistant assistant= new ContentAssistant();
@@ -552,16 +556,19 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 			getShell().addDisposeListener(new DisposeListener() {
 
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					handlerService.deactivateHandlers(handlerActivations);
 				}
 			});
 
 			fPatternEditor.getTextWidget().addFocusListener(new FocusListener() {
+				@Override
 				public void focusLost(FocusEvent e) {
 					handlerService.deactivateHandlers(handlerActivations);
 				}
 
+				@Override
 				public void focusGained(FocusEvent e) {
 					IAction action= (IAction)fGlobalActions.get(ITextEditorActionConstants.REDO);
 					handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), expression));
@@ -608,6 +615,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			MenuManager manager= new MenuManager(null, null);
 			manager.setRemoveAllWhenShown(true);
 			manager.addMenuListener(new IMenuListener() {
+				@Override
 				public void menuAboutToShow(IMenuManager mgr) {
 					fillContextMenu(mgr);
 				}
@@ -698,6 +706,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		/*
 		 * @since 3.1
 		 */
+		@Override
 		protected void okPressed() {
 			String name= fNameText == null ? fOriginalTemplate.getName() : fNameText.getText();
 			boolean isAutoInsertable= fAutoInsertCheckbox != null && fAutoInsertCheckbox.getSelection();
@@ -726,10 +735,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			return fTemplateProcessor;
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-		 * @since 3.2
-		 */
+		@Override
 		protected IDialogSettings getDialogBoundsSettings() {
 			String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 			IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
@@ -747,16 +753,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 */
 	private class TemplateLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			TemplatePersistenceData data = (TemplatePersistenceData) element;
 			Template template= data.getTemplate();
@@ -850,15 +852,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fContextTypeRegistry= registry;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#createContents(Composite)
-	 */
+	@Override
 	protected Control createContents(Composite ancestor) {
 		Composite parent= new Composite(ancestor, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -933,18 +931,21 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		table.setSortDirection(viewerComparator.getDirection());
 		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent e) {
 				edit();
 			}
 		});
 
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				selectionChanged1();
 			}
 		});
 
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				TemplatePersistenceData d= (TemplatePersistenceData) event.getElement();
 				d.setEnabled(event.getChecked());
@@ -964,6 +965,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fAddButton.setText(TemplatesMessages.TemplatePreferencePage_new);
 		fAddButton.setLayoutData(getButtonGridData(fAddButton));
 		fAddButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				add();
 			}
@@ -973,6 +975,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fEditButton.setText(TemplatesMessages.TemplatePreferencePage_edit);
 		fEditButton.setLayoutData(getButtonGridData(fEditButton));
 		fEditButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				edit();
 			}
@@ -982,6 +985,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fRemoveButton.setText(TemplatesMessages.TemplatePreferencePage_remove);
 		fRemoveButton.setLayoutData(getButtonGridData(fRemoveButton));
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				remove();
 			}
@@ -993,6 +997,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fRestoreButton.setText(TemplatesMessages.TemplatePreferencePage_restore);
 		fRestoreButton.setLayoutData(getButtonGridData(fRestoreButton));
 		fRestoreButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				restoreDeleted();
 			}
@@ -1002,6 +1007,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fRevertButton.setText(TemplatesMessages.TemplatePreferencePage_revert);
 		fRevertButton.setLayoutData(getButtonGridData(fRevertButton));
 		fRevertButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				revert();
 			}
@@ -1013,6 +1019,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fImportButton.setText(TemplatesMessages.TemplatePreferencePage_import);
 		fImportButton.setLayoutData(getButtonGridData(fImportButton));
 		fImportButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				import_();
 			}
@@ -1022,6 +1029,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fExportButton.setText(TemplatesMessages.TemplatePreferencePage_export);
 		fExportButton.setLayoutData(getButtonGridData(fExportButton));
 		fExportButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				export();
 			}
@@ -1235,6 +1243,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 * @return an <code>EditTemplateDialog</code> which will be opened.
 	 * @deprecated not called any longer as of 3.1 - use {@link #editTemplate(Template, boolean, boolean)}
 	 */
+	@Deprecated
 	protected Dialog createTemplateEditDialog(Template template, boolean edit, boolean isNameModifiable) {
 		return new EditTemplateDialog(getShell(), template, edit, isNameModifiable, fContextTypeRegistry);
 	}
@@ -1445,18 +1454,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.refresh();
 	}
 
-	/*
-	 * @see Control#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible)
 			setTitle(TemplatesMessages.TemplatePreferencePage_title);
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		if (isShowFormatterSetting()) {
 			IPreferenceStore prefs= getPreferenceStore();
@@ -1471,9 +1476,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setCheckedElements(getEnabledTemplates());
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		if (isShowFormatterSetting()) {
 			IPreferenceStore prefs= getPreferenceStore();
@@ -1498,9 +1501,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return DEFAULT_FORMATTER_PREFERENCE_KEY;
 	}
 
-	/*
-	 * @see PreferencePage#performCancel()
-	 */
+	@Override
 	public boolean performCancel() {
 		try {
 			fTemplateStore.load();
@@ -1576,6 +1577,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			}
 		}
 
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 
 			if (viewer instanceof TableViewer) {
@@ -1605,6 +1607,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fViewerComparator= vc;
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			fViewerComparator.setColumn(fColumnIndex);
 			int dir= fViewerComparator.getDirection();

@@ -38,6 +38,7 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 		setActionDefinitionId("org.eclipse.search.ui.performTextSearchProject"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fEditor= null;
 		IWorkbenchPage page= getWorkbenchPage();
@@ -53,6 +54,7 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 		action.setEnabled(fEditor != null);
 	}
 
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart editor) {
 		if (editor != null && editor.getEditorInput() instanceof IFileEditorInput) {
 			fEditor= editor;
@@ -72,6 +74,7 @@ public class FindInProjectActionDelegate extends FindInRecentScopeActionDelegate
 		return null;
 	}
 
+	@Override
 	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
 		IProject proj= getCurrentProject();
 		if (proj != null) {

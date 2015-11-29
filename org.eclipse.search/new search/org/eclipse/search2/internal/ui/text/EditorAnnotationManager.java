@@ -116,6 +116,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	}
 
 
+	@Override
 	public synchronized void searchResultChanged(SearchResultEvent e) {
 		ISearchResult searchResult= e.getSearchResult();
 		if (searchResult instanceof AbstractTextSearchResult) {

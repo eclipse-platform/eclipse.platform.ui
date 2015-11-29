@@ -43,16 +43,12 @@ public class URLHyperlink implements IHyperlink {
 		fURLString= urlString;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkRegion()
-	 */
+	@Override
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#open()
-	 */
+	@Override
 	public void open() {
 		if (fURLString != null) {
 			Program.launch(fURLString);
@@ -60,16 +56,12 @@ public class URLHyperlink implements IHyperlink {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getTypeLabel()
-	 */
+	@Override
 	public String getTypeLabel() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkText()
-	 */
+	@Override
 	public String getHyperlinkText() {
 		return MessageFormat.format(HyperlinkMessages.getString("URLHyperlink.hyperlinkText"), new Object[] { fURLString }); //$NON-NLS-1$
 	}

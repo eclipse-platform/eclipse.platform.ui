@@ -31,16 +31,12 @@ public final class LineRange implements ILineRange {
 		fNumberOfLines= numberOfLines;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getStartLine()
-	 */
+	@Override
 	public int getStartLine() {
 		return fStartLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getNumberOfLines()
-	 */
+	@Override
 	public int getNumberOfLines() {
 		return fNumberOfLines;
 	}

@@ -49,23 +49,17 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 	protected abstract void setDescription();
 	protected abstract void setPreferenceStore();
 
-	/*
-	 * @see IWorkbenchPreferencePage#init()
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpId());
 	}
 
-	/*
-	 * @see PreferencePage#createContents(Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 
 		fOverlayStore.load();
@@ -83,9 +77,7 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		fConfigurationBlock.initialize();
 	}
 
-    /*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 
 		if (!fConfigurationBlock.canPerformOk())
@@ -98,9 +90,7 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		return true;
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 
 		fOverlayStore.loadDefaults();
@@ -109,9 +99,7 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		super.performDefaults();
 	}
 
-	/*
-	 * @see DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		fConfigurationBlock.dispose();
@@ -124,10 +112,7 @@ abstract class AbstractConfigurationBlockPreferencePage extends PreferencePage i
 		super.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 * @since 3.4
-	 */
+	@Override
 	public void applyData(Object data) {
 		fConfigurationBlock.applyData(data);
 	}

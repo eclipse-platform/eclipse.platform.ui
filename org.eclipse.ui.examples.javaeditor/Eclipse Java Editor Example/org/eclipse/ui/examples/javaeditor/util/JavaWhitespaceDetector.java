@@ -18,9 +18,7 @@ import org.eclipse.jface.text.rules.IWhitespaceDetector;
  */
 public class JavaWhitespaceDetector implements IWhitespaceDetector {
 
-	/* (non-Javadoc)
-	 * Method declared on IWhitespaceDetector
-	 */
+	@Override
 	public boolean isWhitespace(char character) {
 		return Character.isWhitespace(character);
 	}

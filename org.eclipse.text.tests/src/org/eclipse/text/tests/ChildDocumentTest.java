@@ -90,6 +90,7 @@ public class ChildDocumentTest extends TestCase {
 		}
 	}
 
+	@Override
 	protected void setUp() {
 
 		fParent= new Document();
@@ -139,6 +140,7 @@ public class ChildDocumentTest extends TestCase {
 		return new TestSuite(ChildDocumentTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fDocument= null;
 	}

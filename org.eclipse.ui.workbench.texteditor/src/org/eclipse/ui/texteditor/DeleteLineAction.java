@@ -166,9 +166,7 @@ public class DeleteLineAction extends TextEditorAction {
 		return (ITextSelection) selection;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 
 		if (fTarget == null)
@@ -199,9 +197,7 @@ public class DeleteLineAction extends TextEditorAction {
 		}
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 
 		super.update();

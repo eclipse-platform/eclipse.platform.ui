@@ -91,9 +91,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public Closer() {
 		}
 
-		/*
-		 * @see IInformationControlCloser#setSubjectControl(Control)
-		 */
+		@Override
 		public void setSubjectControl(Control control) {
 			fSubjectControl= control;
 		}
@@ -101,13 +99,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		/*
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
+		@Override
 		public void setInformationControl(IInformationControl control) {
 			// NOTE: we use getCurrentInformationControl() from the outer class
 		}
 
-		/*
-		 * @see IInformationControlCloser#start(Rectangle)
-		 */
+		@Override
 		public void start(Rectangle subjectArea) {
 
 			if (fIsActive)
@@ -149,9 +146,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 
-		/*
-		 * @see IInformationControlCloser#stop()
-		 */
+		@Override
 		public void stop() {
 			if (!fIsActive)
 				return;
@@ -193,9 +188,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fDisplay= null;
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl())) {
 				if (!fSubjectArea.contains(event.x, event.y)) {
@@ -209,70 +202,49 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent event) {
 		}
 
-		/*
-		 * @see MouseListener#mouseDown(MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent event) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see ControlListener#controlResized(ControlEvent)
-		 */
+		@Override
 		public void controlResized(ControlEvent event) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see ControlListener#controlMoved(ControlEvent)
-		 */
+		@Override
 		public void controlMoved(ControlEvent event) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see KeyListener#keyReleased(KeyEvent)
-		 */
+		@Override
 		public void keyReleased(KeyEvent event) {
 		}
 
-		/*
-		 * @see KeyListener#keyPressed(KeyEvent)
-		 */
+		@Override
 		public void keyPressed(KeyEvent event) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 * @since 3.1
-		 */
+		@Override
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.Activate:
@@ -315,6 +287,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 										delayedICP.setDelayedInputChangeListener(inputChangeListener);
 										// cancel automatic input updating after a small timeout:
 										control.getShell().getDisplay().timerExec(1000, new Runnable() {
+											@Override
 											public void run() {
 												delayedICP.setDelayedInputChangeListener(null);
 											}
@@ -323,6 +296,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 									// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
 									control.getShell().getDisplay().asyncExec(new Runnable() {
+										@Override
 										public void run() {
 											replaceInformationControl(true);
 										}
@@ -490,6 +464,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 *
 		 * @param event the mouse hover event
 		 */
+		@Override
 		public void mouseHover(MouseEvent event) {
 			if (fIsComputing || fIsInRestartMode ||
 					(fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControl.getShell() != fSubjectControl.getShell().getDisplay().getActiveShell())) {
@@ -535,15 +510,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 
-		/*
-		 * @see MouseTrackListener#mouseEnter(MouseEvent)
-		 */
+		@Override
 		public void mouseEnter(MouseEvent e) {
 		}
 
-		/*
-		 * @see MouseTrackListener#mouseExit(MouseEvent)
-		 */
+		@Override
 		public void mouseExit(MouseEvent e) {
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl()) || !inKeepUpZone(e.x, e.y, fSubjectControl, fSubjectArea, false)) {
 				fMouseLostWhileComputing= true;
@@ -551,9 +522,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 
-		/*
-		 * @see MouseMoveListener#mouseMove(MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl())) {
 				if (!fSubjectArea.contains(event.x, event.y))
@@ -564,17 +533,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 
-		/*
-		 * @see ShellListener#shellDeactivated(ShellEvent)
-		 */
+		@Override
 		public void shellDeactivated(ShellEvent e) {
 			fShellDeactivatedWhileComputing= true;
 			deactivate();
 		}
 
-		/*
-		 * @see ShellListener#shellIconified(ShellEvent)
-		 */
+		@Override
 		public void shellIconified(ShellEvent e) {
 			fShellDeactivatedWhileComputing= true;
 			deactivate();
@@ -780,9 +745,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		return fEnrichMode != null && canReplace(iControl);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	protected void hideInformationControl() {
 		cancelReplacingDelay();
 		super.hideInformationControl();
@@ -801,9 +764,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		fEnrichMode= mode;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl(boolean)
-	 */
+	@Override
 	void replaceInformationControl(boolean takeFocus) {
 		fWaitForMouseUp= false;
 		super.replaceInformationControl(takeFocus);
@@ -858,11 +819,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 
 		fReplacingDelayJob= new Job("AbstractHoverInformationControlManager Replace Delayer") { //$NON-NLS-1$
+			@Override
 			public IStatus run(final IProgressMonitor monitor) {
 		        if (monitor.isCanceled() || display.isDisposed()) {
 					return Status.CANCEL_STATUS;
 				}
 				display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						fReplacingDelayJob= null;
 						if (monitor.isCanceled())
@@ -881,9 +844,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		fReplacingDelayJob.schedule(HOVER_AUTO_REPLACING_DELAY);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#presentInformation()
-	 */
+	@Override
 	protected void presentInformation() {
 		if (fMouseTracker == null) {
 			super.presentInformation();
@@ -907,6 +868,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * {@inheritDoc}
 	 * @deprecated visibility will be changed to protected
 	 */
+	@Deprecated
+	@Override
 	public void setEnabled(boolean enabled) {
 
 		boolean was= isEnabled();
@@ -924,6 +887,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	/**
 	 * Disposes this manager's information control.
 	 */
+	@Override
 	public void dispose() {
 		if (fMouseTracker != null) {
 			fMouseTracker.stop();
@@ -972,8 +936,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
+	@Override
 	public InternalAccessor getInternalAccessor() {
 		return new MyInternalAccessor() {
+			@Override
 			public void setHoverEnrichMode(EnrichMode mode) {
 				AbstractHoverInformationControlManager.this.setHoverEnrichMode(mode);
 			}

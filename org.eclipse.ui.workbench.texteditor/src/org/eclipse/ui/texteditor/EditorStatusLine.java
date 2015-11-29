@@ -31,9 +31,7 @@ class EditorStatusLine implements IEditorStatusLine {
 	 * Clears the status line on selection changed.
 	 */
 	private class StatusLineClearer implements ISelectionChangedListener {
-		/*
-		 * @see ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			fStatusLineManager.setErrorMessage(null, null);
 			fStatusLineManager.setMessage(null, null);
@@ -85,9 +83,7 @@ class EditorStatusLine implements IEditorStatusLine {
 		return fSelectionProvider;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IStatusLine#setMessage(boolean, String, Image)
-	 */
+	@Override
 	public void setMessage(boolean error, String message, Image image) {
 
 		if (error)

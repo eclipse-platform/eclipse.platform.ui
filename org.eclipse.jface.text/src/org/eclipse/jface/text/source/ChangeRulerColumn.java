@@ -60,29 +60,21 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 */
 	private class MouseHandler implements MouseListener, MouseMoveListener {
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
@@ -93,17 +85,13 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 */
 	private class InternalListener implements IViewportListener, ITextListener {
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
 				redraw();
 		}
 
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
+		@Override
 		public void textChanged(TextEvent event) {
 
 			if (!event.getViewerRedrawState())
@@ -162,6 +150,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 *
 	 * @deprecated since 3.2 use {@link #ChangeRulerColumn(ISharedTextColors)} instead
 	 */
+	@Deprecated
 	public ChangeRulerColumn() {
 		fRevisionPainter= null;
 		fDiffPainter= new DiffPainter(this, null);
@@ -190,9 +179,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		return fBackground;
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
-	 */
+	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
 		fParentRuler= parentRuler;
@@ -203,6 +190,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		fCanvas.setBackground(getBackground());
 
 		fCanvas.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
 					doubleBufferPaint(event.gc);
@@ -210,6 +198,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		});
 
 		fCanvas.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 				fCachedTextViewer= null;
@@ -292,6 +281,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	 * @deprecated as of 3.2 the number of lines in the viewport cannot be computed because
 	 *             StyledText supports variable line heights
 	 */
+	@Deprecated
 	protected int getVisibleLinesInViewport() {
 		// Hack to reduce amount of copied code.
 		return LineNumberRulerColumn.getVisibleLinesInViewport(fCachedTextWidget);
@@ -327,9 +317,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 			fDiffPainter.paint(gc, visibleModelLines);
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#redraw()
-	 */
+	@Override
 	public void redraw() {
 
 		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
@@ -344,9 +332,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setFont(Font)
-	 */
+	@Override
 	public void setFont(Font font) {
 	}
 
@@ -360,23 +346,17 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		return fParentRuler;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		return getParentRuler().getLineOfLastMouseButtonActivity();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		return getParentRuler().toDocumentLineNumber(y_coordinate);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
+	@Override
 	public IAnnotationHover getHover() {
 		int activeLine= getParentRuler().getLineOfLastMouseButtonActivity();
 		if (fRevisionPainter.hasHover(activeLine))
@@ -386,17 +366,13 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setHover(org.eclipse.jface.text.source.IAnnotationHover)
-	 */
+	@Override
 	public void setHover(IAnnotationHover hover) {
 		fRevisionPainter.setHover(hover);
 		fDiffPainter.setHover(hover);
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 		setAnnotationModel(model);
 		fRevisionPainter.setModel(model);
@@ -408,9 +384,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 			fAnnotationModel= model;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setBackground(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setBackground(Color background) {
 		fBackground= background;
 		if (fCanvas != null && !fCanvas.isDisposed())
@@ -419,44 +393,32 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		fDiffPainter.setBackground(background);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setAddedColor(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setAddedColor(Color addedColor) {
 		fDiffPainter.setAddedColor(addedColor);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setChangedColor(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setChangedColor(Color changedColor) {
 		fDiffPainter.setChangedColor(changedColor);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setDeletedColor(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setDeletedColor(Color deletedColor) {
 		fDiffPainter.setDeletedColor(deletedColor);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
-	 */
+	@Override
 	public IAnnotationModel getModel() {
 		return fAnnotationModel;
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getWidth()
-	 */
+	@Override
 	public int getWidth() {
 		return fWidth;
 	}
@@ -469,6 +431,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
 				d.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						redraw();
 					}
@@ -477,16 +440,12 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
@@ -542,9 +501,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		return visibleModelLines;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumn#setRevisionInformation(org.eclipse.jface.text.revisions.RevisionInformation)
-	 */
+	@Override
 	public void setRevisionInformation(RevisionInformation info) {
 		fRevisionPainter.setRevisionInformation(info);
 		fRevisionPainter.setBackground(getBackground());

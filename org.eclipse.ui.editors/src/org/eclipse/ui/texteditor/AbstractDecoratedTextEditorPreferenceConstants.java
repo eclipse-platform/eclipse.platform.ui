@@ -135,6 +135,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated as of 3.0 there are no UNKNOWN annotations any more
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION= "othersIndication"; //$NON-NLS-1$
 
 	/**
@@ -149,6 +150,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @see PreferenceConverter
 	 * @deprecated As of 3.0, there are no UNKNOWN annotations any more
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
 
 	/**
@@ -159,6 +161,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0, there are no UNKNOWN annotations any more
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER= "othersIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**

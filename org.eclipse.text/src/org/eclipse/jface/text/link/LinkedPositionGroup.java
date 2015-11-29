@@ -407,6 +407,7 @@ public class LinkedPositionGroup {
 	 * @return <code>true</code> if this group is empty, <code>false</code> otherwise
 	 * @deprecated As of 3.1, replaced by {@link #isEmpty()}
 	 */
+	@Deprecated
 	public boolean isEmtpy() {
 		return isEmpty();
 	}

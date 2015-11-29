@@ -27,9 +27,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 	private static final String CATEGORY= "testcategory";
 	private Position fPos;
 	private IDocument fDoc;
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fUpdater= new InclusivePositionUpdater(CATEGORY);
 		fDoc= new Document("ccccccccccccccccccccccccccccccccccccccccccccc");
@@ -39,9 +37,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 		fDoc.addPosition(CATEGORY, fPos);
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fDoc.removePositionUpdater(fUpdater);
 		fDoc.removePositionCategory(CATEGORY);

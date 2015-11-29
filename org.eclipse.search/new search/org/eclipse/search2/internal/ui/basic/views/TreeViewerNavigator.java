@@ -28,6 +28,7 @@ public class TreeViewerNavigator implements INavigate {
 		fPage= page;
 	}
 
+	@Override
 	public void navigateNext(boolean forward) {
 		TreeItem currentItem= getCurrentItem(forward);
 		if (currentItem == null)

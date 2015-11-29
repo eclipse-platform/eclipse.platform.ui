@@ -65,6 +65,7 @@ public class NewTextSearchActionGroup extends ActionGroup {
 
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		// view must exist if we create a context menu for it.
 
@@ -102,9 +103,7 @@ public class NewTextSearchActionGroup extends ActionGroup {
 		menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, submenu);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared in ActionGroup
-	 */
+	@Override
 	public void fillActionBars(IActionBars actionBar) {
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);

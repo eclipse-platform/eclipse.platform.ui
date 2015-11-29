@@ -79,6 +79,7 @@ import org.eclipse.search.ui.SearchUI;
  * a java search.
  * @deprecated old search
  */
+@Deprecated
 public class SearchResultViewer extends TableViewer {
 
 	private SearchResultView fOuterPart;
@@ -144,6 +145,7 @@ public class SearchResultViewer extends TableViewer {
 
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (fLastSelection == null || !fLastSelection.equals(event.getSelection())) {
 						fLastSelection= event.getSelection();
@@ -154,6 +156,7 @@ public class SearchResultViewer extends TableViewer {
 		);
 
 		addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				showResult();
 			}
@@ -163,6 +166,7 @@ public class SearchResultViewer extends TableViewer {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(
 			new IMenuListener() {
+				@Override
 				public void menuAboutToShow(IMenuManager mgr) {
 					SearchPlugin.createStandardGroups(mgr);
 					fillContextMenu(mgr);
@@ -195,6 +199,7 @@ public class SearchResultViewer extends TableViewer {
 		}
 	}
 
+	@Override
 	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
 		super.doUpdateItem(item, element, fullMap);
 		if (((SearchResultViewEntry)element).isPotentialMatch()) {
@@ -263,6 +268,7 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 
+	@Override
 	protected void inputChanged(Object input, Object oldInput) {
 		fLastSelection= null;
 		getTable().removeAll();
@@ -411,6 +417,7 @@ public class SearchResultViewer extends TableViewer {
 
 		// need to hook F5 to table
 		getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.F5) {
 					fSearchAgainAction.run();
@@ -596,6 +603,7 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		fLastSelection= null;
 		Menu menu= getTable().getMenu();
@@ -665,9 +673,7 @@ public class SearchResultViewer extends TableViewer {
 		fSortDropDownAction.saveState(memento);
 	}
 
-	/*
-	 * @see ContentViewer#handleLabelProviderChanged(LabelProviderChangedEvent)
-	 */
+	@Override
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] changed= event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
@@ -691,9 +697,7 @@ public class SearchResultViewer extends TableViewer {
 		super.handleLabelProviderChanged(event);
 	}
 
-	/*
-	 * @see StructuredViewer#mapElement(Object, Widget)
-	 */
+	@Override
 	protected void mapElement(Object element, Widget item) {
 		super.mapElement(element, item);
 		if (item instanceof Item) {
@@ -701,9 +705,7 @@ public class SearchResultViewer extends TableViewer {
 		}
 	}
 
-	/*
-	 * @see StructuredViewer#unmapElement(Object, Widget)
-	 */
+	@Override
 	protected void unmapElement(Object element, Widget item) {
 		if (item instanceof Item) {
 			fResourceToItemsMapper.removeFromMap(element, (Item)item);
@@ -711,14 +713,13 @@ public class SearchResultViewer extends TableViewer {
 		super.unmapElement(element, item);
 	}
 
-	/*
-	 * @see StructuredViewer#unmapAllElements()
-	 */
+	@Override
 	protected void unmapAllElements() {
 		fResourceToItemsMapper.clearMap();
 		super.unmapAllElements();
 	}
 
+	@Override
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		// see bug 44891
 		getTable().setRedraw(false);

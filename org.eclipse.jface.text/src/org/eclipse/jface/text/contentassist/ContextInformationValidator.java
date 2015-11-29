@@ -39,17 +39,13 @@ public final class ContextInformationValidator implements IContextInformationVal
 		fProcessor= processor;
 	}
 
-	/*
-	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
-	 */
+	@Override
 	public void install(IContextInformation contextInformation, ITextViewer viewer, int offset) {
 		fContextInformation= contextInformation;
 		fViewer= viewer;
 	}
 
-	/*
-	 * @see IContentAssistTipCloser#isContextInformationValid(int)
-	 */
+	@Override
 	public boolean isContextInformationValid(int offset) {
 		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, offset);
 		if (infos != null && infos.length > 0) {

@@ -90,23 +90,17 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		/** Indicates whether this closer is active. */
 		private boolean fIsActive= false;
 
-		/*
-		 * @see IInformationControlCloser#setSubjectControl(Control)
-		 */
+		@Override
 		public void setSubjectControl(Control control) {
 			fSubjectControl= control;
 		}
 
-		/*
-		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
-		 */
+		@Override
 		public void setInformationControl(IInformationControl control) {
 			fInformationControlToClose= control;
 		}
 
-		/*
-		 * @see IInformationControlCloser#start(Rectangle)
-		 */
+		@Override
 		public void start(Rectangle informationArea) {
 
 			if (fIsActive)
@@ -126,9 +120,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			fTextViewer.addViewportListener(this);
 		}
 
-		/*
-		 * @see IInformationControlCloser#stop()
-		 */
+		@Override
 		public void stop() {
 
 			if (!fIsActive)
@@ -148,53 +140,40 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			}
 		}
 
-		/*
-		 * @see ControlListener#controlResized(ControlEvent)
-		 */
-		 public void controlResized(ControlEvent e) {
+		 @Override
+		public void controlResized(ControlEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see ControlListener#controlMoved(ControlEvent)
-		 */
-		 public void controlMoved(ControlEvent e) {
+		 @Override
+		public void controlMoved(ControlEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see MouseListener#mouseDown(MouseEvent)
-		 */
-		 public void mouseDown(MouseEvent e) {
+		 @Override
+		public void mouseDown(MouseEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see FocusListener#focusGained(FocusEvent)
-		 */
+		@Override
 		public void focusGained(FocusEvent e) {
 		}
 
-		/*
-		 * @see FocusListener#focusLost(FocusEvent)
-		 */
-		 public void focusLost(FocusEvent e) {
+		 @Override
+		public void focusLost(FocusEvent e) {
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
 				// Without the asyncExec, mouse clicks to the workbench window are swallowed.
+				@Override
 				public void run() {
 					if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl())
 						hideInformationControl();
@@ -202,23 +181,17 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			});
 		}
 
-		/*
-		 * @see IViewportListenerListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int topIndex) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see KeyListener#keyPressed(KeyEvent)
-		 */
+		@Override
 		public void keyPressed(KeyEvent e) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see KeyListener#keyReleased(KeyEvent)
-		 */
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 	}
@@ -265,10 +238,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		fPartitioning= partitioning;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.information.IInformationPresenterExtension#getDocumentPartitioning()
-	 * @since 3.0
-	 */
+	@Override
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
@@ -294,9 +264,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			fProviders.put(contentType, provider);
 	}
 
-	/*
-	 * @see IInformationPresenter#getInformationProvider(String)
-	 */
+	@Override
 	public IInformationProvider getInformationProvider(String contentType) {
 		if (fProviders == null)
 			return null;
@@ -314,9 +282,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		fOffset= offset;
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#computeInformation()
-	 */
+	@Override
 	protected void computeInformation() {
 
 		int offset= fOffset < 0 ? fTextViewer.getSelectedRange().x : fOffset;
@@ -409,24 +375,18 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		return new Region(start, end - start);
 	}
 
-	/*
-	 * @see IInformationPresenter#install(ITextViewer)
-	 */
+	@Override
 	public void install(ITextViewer textViewer) {
 		fTextViewer= textViewer;
 		install(fTextViewer.getTextWidget());
 	}
 
-	/*
-	 * @see IInformationPresenter#uninstall()
-	 */
+	@Override
 	public void uninstall() {
 		dispose();
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
-	 */
+	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer instanceof IWidgetTokenOwnerExtension && fTextViewer instanceof IWidgetTokenOwner) {
 			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
@@ -441,9 +401,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			super.showInformationControl(subjectArea);
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	protected void hideInformationControl() {
 		try {
 			super.hideInformationControl();
@@ -455,9 +413,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		}
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
-	 */
+	@Override
 	protected void handleInformationControlDisposed() {
 		try {
 			super.handleInformationControlDisposed();
@@ -469,25 +425,17 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		return false;
 	}

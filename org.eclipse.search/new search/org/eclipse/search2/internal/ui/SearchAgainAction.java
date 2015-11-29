@@ -34,6 +34,7 @@ class SearchAgainAction extends Action {
 		fView= view;
 	}
 
+	@Override
 	public void run() {
 		final ISearchResult search= fView.getCurrentSearchResult();
 		if (search != null) {

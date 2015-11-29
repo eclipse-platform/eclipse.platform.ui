@@ -38,6 +38,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_CURRENT_LINE= "currentLine"; //$NON-NLS-1$
 
 	/**
@@ -51,6 +52,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
 
 	/**
@@ -61,6 +63,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_PRINT_MARGIN= "printMargin"; //$NON-NLS-1$
 
 	/**
@@ -74,6 +77,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @deprecated As of 3.0,, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_PRINT_MARGIN_COLOR= "printMarginColor"; //$NON-NLS-1$
 
 	/**
@@ -84,6 +88,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0,, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_PRINT_MARGIN_COLUMN= "printMarginColumn"; //$NON-NLS-1$
 
 	/**
@@ -96,6 +101,7 @@ public class TextEditorPreferenceConstants {
 	 * @since 2.1
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION= "othersIndication"; //$NON-NLS-1$
 
 	/**
@@ -111,6 +117,7 @@ public class TextEditorPreferenceConstants {
 	 * @since 2.1
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
 
 	/**
@@ -122,6 +129,7 @@ public class TextEditorPreferenceConstants {
 	 * @since 2.1
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER= "othersIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
@@ -132,6 +140,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_OVERVIEW_RULER= "overviewRuler"; //$NON-NLS-1$
 
 	/**
@@ -142,6 +151,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
 
 	/**
@@ -156,96 +166,115 @@ public class TextEditorPreferenceConstants {
 	 * @see #EDITOR_LINE_NUMBER_RULER
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
+	@Deprecated
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_PROBLEM_INDICATION= "problemIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_PROBLEM_INDICATION_COLOR= "problemIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_WARNING_INDICATION= "warningIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_WARNING_INDICATION_COLOR= "warningIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_INFO_INDICATION= "infoIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_INFO_INDICATION_COLOR= "infoIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_TASK_INDICATION= "taskIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_TASK_INDICATION_COLOR= "taskIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_BOOKMARK_INDICATION= "bookmarkIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_BOOKMARK_INDICATION_COLOR= "bookmarkIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_SEARCH_RESULT_INDICATION= "searchResultIndication"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_SEARCH_RESULT_INDICATION_COLOR= "searchResultIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER= "errorIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER= "warningIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER= "infoIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER= "taskIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER= "bookmarkIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**
 	 * @deprecated As of 2.1, provided by <code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 */
+	@Deprecated
 	public final static String EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= "searchResultIndicationInOverviewRuler"; //$NON-NLS-1$
 
 	/**

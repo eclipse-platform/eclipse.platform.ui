@@ -22,9 +22,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  */
 public class SelectRulerAction extends AbstractRulerActionDelegate {
 
-	/*
-	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
-	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		return new SelectMarkerRulerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.SelectMarker.", editor, rulerInfo); //$NON-NLS-1$
 	}

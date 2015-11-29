@@ -63,10 +63,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		fActionButtons= new ArrayList();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 * @since 3.4
-	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -119,6 +116,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 *
 	 * @param parent the button bar composite
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		fCancelButton= createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -135,6 +133,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 * 	@param parent The parent composite
 	 * @return The created control
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite) super.createDialogArea(parent);
 
@@ -155,6 +154,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		return result;
 	}
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case IDialogConstants.CANCEL_ID:
@@ -183,9 +183,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	//---- Operation stuff ------------------------------------------------------
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
+	@Override
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		// The operation can only be canceled if it is executed in a separate thread.
 		// Otherwise the UI is blocked anyway.
@@ -318,6 +316,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		}
 	}
 
+	@Override
 	protected void handleShellCloseEvent() {
 		if (okToClose())
 			super.handleShellCloseEvent();

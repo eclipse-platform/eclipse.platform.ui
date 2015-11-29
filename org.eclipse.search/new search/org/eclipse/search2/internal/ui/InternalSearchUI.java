@@ -78,6 +78,7 @@ public class InternalSearchUI {
 			fSearchJobRecord= sjr;
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			fSearchJobRecord.job= this;
 			searchJobStarted(fSearchJobRecord);
@@ -99,6 +100,7 @@ public class InternalSearchUI {
 			fSearchJobRecord.job= null;
 			return status;
 		}
+		@Override
 		public boolean belongsTo(Object family) {
 			return family == InternalSearchUI.FAMILY_SEARCH;
 		}
@@ -214,6 +216,7 @@ public class InternalSearchUI {
 	private IStatus doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
 		try {
 			context.run(true, true, new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					searchJobStarted(rec);
 					try {

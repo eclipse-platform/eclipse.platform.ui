@@ -165,16 +165,12 @@ public class DocumentTemplateContext extends TemplateContext {
 		return fPosition.getOffset() + fPosition.getLength();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.templates.TemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
-	 */
+	@Override
 	public boolean canEvaluate(Template template) {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
-	 */
+	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
 			return null;

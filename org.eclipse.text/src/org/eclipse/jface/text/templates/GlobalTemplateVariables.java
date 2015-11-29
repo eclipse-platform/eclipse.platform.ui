@@ -59,6 +59,7 @@ public class GlobalTemplateVariables {
 		public WordSelection() {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
 		}
+		@Override
 		protected String resolve(TemplateContext context) {
 			String selection= context.getVariable(SELECTION);
 			if (selection == null)
@@ -82,6 +83,7 @@ public class GlobalTemplateVariables {
 		public LineSelection() {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
 		}
+		@Override
 		protected String resolve(TemplateContext context) {
 			String selection= context.getVariable(SELECTION);
 			if (selection == null)
@@ -113,6 +115,7 @@ public class GlobalTemplateVariables {
 		public Date() {
 			super("date", TextTemplateMessages.getString("GlobalVariables.variable.description.date")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		@Override
 		protected String resolve(TemplateContext context) {
 			return DateFormat.getDateInstance().format(new java.util.Date());
 		}
@@ -128,6 +131,7 @@ public class GlobalTemplateVariables {
 		public Year() {
 			super("year", TextTemplateMessages.getString("GlobalVariables.variable.description.year")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		@Override
 		protected String resolve(TemplateContext context) {
 			return Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 		}
@@ -144,9 +148,7 @@ public class GlobalTemplateVariables {
 			super("time", TextTemplateMessages.getString("GlobalVariables.variable.description.time")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			return DateFormat.getTimeInstance().format(new java.util.Date());
 		}
@@ -163,9 +165,7 @@ public class GlobalTemplateVariables {
 			super("user", TextTemplateMessages.getString("GlobalVariables.variable.description.user")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		protected String resolve(TemplateContext context) {
 			return System.getProperty("user.name"); //$NON-NLS-1$
 		}

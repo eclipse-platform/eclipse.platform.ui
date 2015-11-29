@@ -79,6 +79,8 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		 *
 		 * @deprecated use {@link #setInput(Object)}
 		 */
+		@Deprecated
+		@Override
 		public void setInformation(String content) {
 			content= addCSSToHTMLFragment(content);
 			super.setInformation(content);
@@ -113,9 +115,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		fIsFocusable= isFocusable;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractReusableInformationControlCreator#canReuse(org.eclipse.jface.text.IInformationControl)
-	 */
+	@Override
 	public boolean canReuse(IInformationControl control) {
 		if (!super.canReuse(control))
 			return false;
@@ -126,9 +126,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-	 */
+	@Override
 	protected IInformationControl doCreateInformationControl(Shell parent) {
 		if (BrowserInformationControl.isAvailable(parent)) {
 			if (fIsFocusable)

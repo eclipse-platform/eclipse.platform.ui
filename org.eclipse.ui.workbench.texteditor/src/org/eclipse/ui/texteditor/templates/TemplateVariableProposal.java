@@ -56,9 +56,7 @@ final class TemplateVariableProposal implements ICompletionProposal {
 		fViewer= viewer;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 
 		try {
@@ -72,37 +70,27 @@ final class TemplateVariableProposal implements ICompletionProposal {
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return fSelection;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		return fVariable.getType() + " - " + fVariable.getDescription(); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}

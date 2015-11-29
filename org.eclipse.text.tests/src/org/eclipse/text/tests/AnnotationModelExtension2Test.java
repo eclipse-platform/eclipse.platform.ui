@@ -40,31 +40,39 @@ public class AnnotationModelExtension2Test extends TestCase {
 
 		private final HashMap fAnnotations= new HashMap();
 
+		@Override
 		public void addAnnotation(Annotation annotation, Position position) {
 			fAnnotations.put(annotation, position);
 		}
 
+		@Override
 		public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		}
 
+		@Override
 		public void connect(IDocument document) {
 		}
 
+		@Override
 		public void disconnect(IDocument document) {
 		}
 
+		@Override
 		public Iterator getAnnotationIterator() {
 			return fAnnotations.keySet().iterator();
 		}
 
+		@Override
 		public Position getPosition(Annotation annotation) {
 			return (Position) fAnnotations.get(annotation);
 		}
 
+		@Override
 		public void removeAnnotation(Annotation annotation) {
 			fAnnotations.remove(annotation);
 		}
 
+		@Override
 		public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		}
 
@@ -94,9 +102,7 @@ public class AnnotationModelExtension2Test extends TestCase {
 		return new TestSuite(AnnotationModelExtension2Test.class);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fDocument= new Document("How much wood\nwould a woodchuck chuck\nif a woodchuck\ncould chuck wood?\n42");
 
@@ -123,9 +129,7 @@ public class AnnotationModelExtension2Test extends TestCase {
 		fAnnotationModel.connect(fDocument);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fAnnotationModel.disconnect(fDocument);
 	}

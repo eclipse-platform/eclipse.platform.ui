@@ -43,6 +43,7 @@ public class SortingTest extends TestCase {
 		return allTests();
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

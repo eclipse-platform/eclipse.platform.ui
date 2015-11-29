@@ -60,9 +60,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 
 	private static class PerspectiveDescriptorComparator implements Comparator {
-		/*
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public int compare(Object o1, Object o2) {
 			if (o1 instanceof IPerspectiveDescriptor && o2 instanceof IPerspectiveDescriptor) {
 				String id1= ((IPerspectiveDescriptor)o1).getLabel();
@@ -94,11 +92,13 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	}
 
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ISearchHelpContextIds.SEARCH_PREFERENCE_PAGE);
 	}
 
+	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(REUSE_EDITOR, SearchMessages.SearchPreferencePage_reuseEditor, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(BRING_VIEW_TO_FRONT, SearchMessages.SearchPreferencePage_bringToFront, getFieldEditorParent()));
@@ -147,18 +147,22 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         }
 	}
 
+	@Override
 	public void setVisible(boolean state) {
 		handleDeletedPerspectives();
 		super.setVisible(state);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		updateFieldEnablement();
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 		updateFieldEnablement();

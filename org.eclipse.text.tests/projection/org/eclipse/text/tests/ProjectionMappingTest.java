@@ -103,9 +103,7 @@ public class ProjectionMappingTest extends TestCase {
 		addProjection(70, 30, 10);
 	}
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fMasterDocument= new Document();
 		fSlaveDocument= new Document();
@@ -117,9 +115,7 @@ public class ProjectionMappingTest extends TestCase {
 	}
 
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fMasterDocument= null;
 		fSlaveDocument= null;

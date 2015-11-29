@@ -37,23 +37,17 @@ public class SpellingAnnotation extends Annotation implements IQuickFixableAnnot
 		fSpellingProblem= problem;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixable()
-	 */
+	@Override
 	public boolean isQuickFixable() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixableStateSet()
-	 */
+	@Override
 	public boolean isQuickFixableStateSet() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#setQuickFixable(boolean)
-	 */
+	@Override
 	public void setQuickFixable(boolean state) {
 		// always true
 	}

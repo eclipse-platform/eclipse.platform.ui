@@ -77,9 +77,7 @@ public class EncodingChangeTests extends TestCase {
 		return ORIGINAL_CONTENT;
 	}
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("EncodingChangeTestProject/EncodingChangeTests/");
 		fFile= ResourceHelper.createFile(folder, "file" + fCount + ".txt", getOriginalContent());
@@ -87,9 +85,7 @@ public class EncodingChangeTests extends TestCase {
 		fCount++;
 	}
 
-	/*
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		closeEditor(fEditor);
 		fEditor= null;

@@ -55,9 +55,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		fDocument= source;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.Annotation#getType()
-	 */
+	@Override
 	public String getType() {
 		// we return unknown for unchanged regions to avoid
 		// them getting displayed.
@@ -79,9 +77,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesBelow()
-	 */
+	@Override
 	public int getRemovedLinesBelow() {
 		if (fOffset == fDifference.rightLength() - 1) {
 
@@ -104,9 +100,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		return 0;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffInfo#getChangeType()
-	 */
+	@Override
 	public int getChangeType() {
 		if (fDifference.kind() == RangeDifference.NOCHANGE)
 			return UNCHANGED;
@@ -115,9 +109,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		return CHANGED;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
-	 */
+	@Override
 	public int getRemovedLinesAbove() {
 		if (getChangeType() == UNCHANGED && fOffset == 0) {
 			synchronized (fList) {
@@ -135,16 +127,12 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		return 0;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffInfo#hasChanges()
-	 */
+	@Override
 	public boolean hasChanges() {
 		return getChangeType() != UNCHANGED || getRemovedLinesAbove() > 0 || getRemovedLinesBelow() > 0;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffInfo#getOriginalText()
-	 */
+	@Override
 	public String[] getOriginalText() {
 		IDocument doc= fDocument;
 		if (doc != null) {
@@ -171,9 +159,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 		return new String[0];
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.Annotation#getText()
-	 */
+	@Override
 	public String getText() {
 		int r= fDifference.rightLength();
 		int l= fDifference.leftLength();

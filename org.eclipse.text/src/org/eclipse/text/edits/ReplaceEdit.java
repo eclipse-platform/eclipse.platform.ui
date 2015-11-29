@@ -61,6 +61,7 @@ public final class ReplaceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#doCopy
 	 */
+	@Override
 	protected TextEdit doCopy() {
 		return new ReplaceEdit(this);
 	}
@@ -68,6 +69,7 @@ public final class ReplaceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#accept0
 	 */
+	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
 		if (visitChildren) {
@@ -78,6 +80,7 @@ public final class ReplaceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
+	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), fText);
 		fDelta= fText.length() - getLength();
@@ -87,14 +90,12 @@ public final class ReplaceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#deleteChildren
 	 */
+	@Override
 	boolean deleteChildren() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.text.edits.TextEdit#internalToString(java.lang.StringBuffer, int)
-	 * @since 3.3
-	 */
+	@Override
 	void internalToString(StringBuffer buffer, int indent) {
 		super.internalToString(buffer, indent);
 		buffer.append(" <<").append(fText); //$NON-NLS-1$

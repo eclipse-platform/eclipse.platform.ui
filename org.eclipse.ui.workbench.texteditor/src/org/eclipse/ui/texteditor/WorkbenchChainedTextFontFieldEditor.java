@@ -39,6 +39,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  *             <code>org.eclipse.ui.editors</code> plug-in.
  * @since 2.0
  */
+@Deprecated
 public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEditor {
 
 	/**

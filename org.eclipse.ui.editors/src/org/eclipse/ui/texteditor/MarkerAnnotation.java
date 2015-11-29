@@ -53,6 +53,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 * @deprecated As of 3.0, replaced by {@link IAnnotationAccessExtension}
 
 	 */
+	@Deprecated
 	public final static int PROBLEM_LAYER= 5;
 
 	/** Internal image registry. */
@@ -69,6 +70,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected static Image getImage(Display display, ImageDescriptor descriptor) {
 		Map map= getImageRegistry(display);
 		Image image= (Image) map.get(descriptor);
@@ -89,10 +91,12 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected static Map getImageRegistry(Display display) {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new HashMap();
 			display.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					if (fgImageRegistry != null) {
 						Map map= fgImageRegistry;
@@ -159,6 +163,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected void setImage(Image image) {
 		fImage= image;
 	}
@@ -171,6 +176,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected void initialize() {
 		IMarker marker= getMarker();
 		String name= getUnknownImageName(marker);
@@ -206,6 +212,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension#getLayer(org.eclipse.jface.text.source.Annotation)}
 	 * @since 3.0
 	 */
+	@Deprecated
 	public int getLayer() {
 		if (fPresentationLayer != -1)
 			// Backward compatibility
@@ -228,6 +235,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *
 	 * @since 3.0
 	 */
+	@Deprecated
 	protected void setLayer(int layer) {
 		fPresentationLayer= layer;
 	}
@@ -245,6 +253,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 * @deprecated As of 3.0 replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension#paint(org.eclipse.jface.text.source.Annotation, GC, Canvas, Rectangle)}
 	 * @since 3.0
 	 */
+	@Deprecated
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null)
@@ -255,6 +264,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 * Informs this annotation about changes applied to its underlying marker
 	 * and adapts to those changes.
 	 */
+	@Override
 	public void update() {
 		super.update();
 		initialize();
@@ -271,6 +281,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected String getUnknownImageName(IMarker marker) {
 		return null;
 	}
@@ -286,6 +297,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected Image getImage(String name) {
 		if (name != null)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(name);
@@ -303,6 +315,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             annotation with a visible presentation should implement
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
+	@Deprecated
 	protected Image getImage(Display display) {
 		if (fImage == null) {
 
@@ -328,6 +341,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public void setQuickFixable(boolean state) {
 		fIsQuickFixable= state;
 		fIsQuickFixableStateSet= true;
@@ -338,6 +352,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public boolean isQuickFixableStateSet() {
 		return fIsQuickFixableStateSet;
 	}
@@ -347,6 +362,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public boolean isQuickFixable() {
 		Assert.isTrue(isQuickFixableStateSet());
 		return fIsQuickFixable;

@@ -64,25 +64,19 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			fEndOffset= fOffset + iteratorRange.getLength();
 		}
 
-		/*
-		 * @see CharacterIterator#first()
-		 */
+		@Override
 		public char first() {
 			fIndex= fOffset;
 			return current();
 		}
 
-		/*
-		 * @see CharacterIterator#last()
-		 */
+		@Override
 		public char last() {
 	        fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
         	return current();
 		}
 
-		/*
-		 * @see CharacterIterator#current()
-		 */
+		@Override
 		public char current() {
 			if (fOffset <= fIndex && fIndex < fEndOffset) {
 				try {
@@ -93,9 +87,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return DONE;
 		}
 
-		/*
-		 * @see CharacterIterator#next()
-		 */
+		@Override
 		public char next() {
 			++fIndex;
 			int end= getEndIndex();
@@ -106,9 +98,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 
-		/*
-		 * @see CharacterIterator#previous()
-		 */
+		@Override
 		public char previous() {
 			if (fIndex == fOffset)
 				return DONE;
@@ -119,38 +109,28 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 			return current();
 		}
 
-		/*
-		 * @see CharacterIterator#setIndex(int)
-		 */
+		@Override
 		public char setIndex(int index) {
 			fIndex= index;
 			return current();
 		}
 
-		/*
-		 * @see CharacterIterator#getBeginIndex()
-		 */
+		@Override
 		public int getBeginIndex() {
 			return fOffset;
 		}
 
-		/*
-		 * @see CharacterIterator#getEndIndex()
-		 */
+		@Override
 		public int getEndIndex() {
 			return fEndOffset;
 		}
 
-		/*
-		 * @see CharacterIterator#getIndex()
-		 */
+		@Override
 		public int getIndex() {
 			return fIndex;
 		}
 
-		/*
-		 * @see CharacterIterator#clone()
-		 */
+		@Override
 		public Object clone() {
 			DocumentCharacterIterator i= new DocumentCharacterIterator();
 			i.fDocument= fDocument;
@@ -192,9 +172,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	public DefaultTextDoubleClickStrategy() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void doubleClicked(ITextViewer text) {
 
 		int offset= text.getSelectedRange().x;

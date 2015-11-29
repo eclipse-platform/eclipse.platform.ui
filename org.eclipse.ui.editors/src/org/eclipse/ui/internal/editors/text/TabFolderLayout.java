@@ -29,6 +29,7 @@ class TabFolderLayout extends Layout {
 	/*
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
 	 */
+	@Override
 	protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 			return new Point(wHint, hHint);
@@ -55,6 +56,7 @@ class TabFolderLayout extends Layout {
 	/*
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
 	 */
+	@Override
 	protected void layout (Composite composite, boolean flushCache) {
 		Rectangle rect= composite.getClientArea();
 

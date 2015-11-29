@@ -69,9 +69,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			fName= name;
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			return fName;
 		}
@@ -349,9 +347,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		return JFaceTextUtil.getOffsetForCursorLocation(fTextViewer);
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-	 */
+	@Override
 	public void keyPressed(KeyEvent event) {
 
 		if (!isRegisteredStateMask((event.keyCode | event.stateMask) & SWT.MODIFIER_MASK)) {
@@ -364,22 +360,16 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		// do not show hyperlink, since that would often be confusing (e.g. when pressing Ctrl+C)
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-	 */
+	@Override
 	public void keyReleased(KeyEvent event) {
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseDown(MouseEvent event) {
 
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
@@ -417,9 +407,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		showHyperlinks(false);
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseUp(MouseEvent e) {
 
 		if (!fActive) {
@@ -436,9 +424,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			fActiveHyperlinks[0].open();
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseMove(MouseEvent event) {
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
 			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
@@ -492,31 +478,21 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusGained(FocusEvent e) {}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusLost(FocusEvent event) {
 		deactivate();
 	}
 
-	/*
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 * @since 3.2
-	 */
+	@Override
 	public void handleEvent(Event event) {
 		//key up
 		deactivate();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextListener#textChanged(TextEvent)
-	 * @since 3.2
-	 */
+	@Override
 	public void textChanged(TextEvent event) {
 		if (event.getDocumentEvent() != null)
 			deactivate();
@@ -527,6 +503,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public void mouseExit(MouseEvent e) {
 		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
 			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
@@ -540,6 +517,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public void mouseEnter(MouseEvent e) {
 	}
 
@@ -548,6 +526,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public void mouseHover(MouseEvent e) {
 	}
 

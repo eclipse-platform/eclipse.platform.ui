@@ -53,6 +53,7 @@ public class HTML2TextReaderTest extends TestCase {
 	 * @throws IOException
 	 * @deprecated pass actual style ranges
 	 */
+	@Deprecated
 	private void verify(String input, String expectedOutput, int styleRangeCount) throws IOException {
 		Reader reader= new StringReader(input);
 		TextPresentation textPresentation= new TextPresentation();
@@ -71,6 +72,7 @@ public class HTML2TextReaderTest extends TestCase {
 		assertEquals("Incorrect number of style ranges", styleRangeCount, ranges.size());
 
 		Collections.sort(ranges, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				StyleRange range1= (StyleRange)o1;
 				StyleRange range2= (StyleRange)o2;
@@ -105,6 +107,7 @@ public class HTML2TextReaderTest extends TestCase {
 		}
 		
 		Collections.sort(ranges, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				StyleRange range1= (StyleRange)o1;
 				StyleRange range2= (StyleRange)o2;

@@ -54,13 +54,12 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 			fLastDocument= null;
 		}
 
+		@Override
 		public boolean canRunInParallel() {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.core.text.FileSearchRequestor#acceptPatternMatch(org.eclipse.search.core.text.FileSearchMatchRequestor)
-		 */
+		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
 			IFile file= matchRequestor.getFile();
 			try {
@@ -94,9 +93,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 			return fLastDocument;
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.core.text.FileSearchRequestor#endReporting()
-		 */
+		@Override
 		public void endReporting() {
 			if (fLastFile != null) {
 				try {
@@ -116,6 +113,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 	}
 
 
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();

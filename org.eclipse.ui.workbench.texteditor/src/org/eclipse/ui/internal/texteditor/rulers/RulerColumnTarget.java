@@ -59,18 +59,22 @@ final class AllTarget extends RulerColumnTarget {
 	AllTarget() {
 	}
 
+	@Override
 	public boolean matchesContentType(IContentType contentType) {
 		return true;
 	}
 
+	@Override
 	public boolean matchesEditorId(String editorId) {
 		return true;
 	}
 
+	@Override
 	public boolean matchesClass(Class clazz) {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		return "All"; //$NON-NLS-1$
 	}
@@ -87,18 +91,22 @@ final class OrTarget extends RulerColumnTarget {
 		Assert.isLegal(or != null);
 	}
 
+	@Override
 	public boolean matchesContentType(IContentType contentType) {
 		return fEither.matchesContentType(contentType) || fOr.matchesContentType(contentType);
 	}
 
+	@Override
 	public boolean matchesEditorId(String editorId) {
 		return fEither.matchesEditorId(editorId) || fOr.matchesEditorId(editorId);
 	}
 
+	@Override
 	public boolean matchesClass(Class clazz) {
 		return fEither.matchesClass(clazz) || fOr.matchesClass(clazz);
 	}
 
+	@Override
 	public String toString() {
 		return fEither.toString() + " || " + fOr.toString(); //$NON-NLS-1$
 	}
@@ -112,18 +120,22 @@ final class EditorIdTarget extends RulerColumnTarget {
 		fEditorId= id;
 	}
 
+	@Override
 	public boolean matchesContentType(IContentType contentType) {
 		return false;
 	}
 
+	@Override
 	public boolean matchesEditorId(String editorId) {
 		return fEditorId.equals(editorId);
 	}
 
+	@Override
 	public boolean matchesClass(Class clazz) {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "editorID=" + fEditorId; //$NON-NLS-1$
 	}
@@ -137,14 +149,17 @@ final class ClassTarget extends RulerColumnTarget {
 		fClassName= className;
 	}
 
+	@Override
 	public boolean matchesContentType(IContentType contentType) {
 		return false;
 	}
 
+	@Override
 	public boolean matchesEditorId(String editorId) {
 		return false;
 	}
 
+	@Override
 	public boolean matchesClass(Class clazz) {
 		Assert.isLegal(clazz != null);
 
@@ -157,6 +172,7 @@ final class ClassTarget extends RulerColumnTarget {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "class=" + fClassName; //$NON-NLS-1$
 	}
@@ -170,18 +186,22 @@ final class ContentTypeTarget extends RulerColumnTarget {
 		fContentType= Platform.getContentTypeManager().getContentType(contentTypeId);
 	}
 
+	@Override
 	public boolean matchesContentType(IContentType contentType) {
 		return fContentType != null && contentType != null && contentType.isKindOf(fContentType);
 	}
 
+	@Override
 	public boolean matchesEditorId(String editorId) {
 		return false;
 	}
 
+	@Override
 	public boolean matchesClass(Class clazz) {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return "contentType=" + fContentType; //$NON-NLS-1$
 	}

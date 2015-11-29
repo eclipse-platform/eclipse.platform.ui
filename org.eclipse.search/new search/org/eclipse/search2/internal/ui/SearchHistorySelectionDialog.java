@@ -94,10 +94,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			setHelpAvailable(false);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-		 * @since 3.4
-		 */
+		@Override
 		protected boolean isResizable() {
 			return true;
 		}
@@ -105,6 +102,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		/*
 		 * Overrides method from Dialog
 		 */
+		@Override
 		protected Control createDialogArea(Composite container) {
 			Composite ancestor= (Composite) super.createDialogArea(container);
 			GridLayout layout= (GridLayout) ancestor.getLayout();
@@ -119,6 +117,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			fHistorySizeTextField.setTextLimit(2);
 			fHistorySizeTextField.setText(String.valueOf(fHistorySize));
 			fHistorySizeTextField.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validateDialogState();
 				}
@@ -133,17 +132,13 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			return ancestor;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.StatusDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-		 */
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			createButton(parent, DEFAULT_ID, SearchMessages.SearchHistorySelectionDialog_restore_default_button, false);
 			super.createButtonsForButtonBar(parent);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-		 */
+		@Override
 		protected void buttonPressed(int buttonId) {
 			if (buttonId == DEFAULT_ID) {
 				IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
@@ -174,9 +169,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			return !status.matches(IStatus.ERROR);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-		 */
+		@Override
 		protected void okPressed() {
 			IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 			store.setValue(SearchPreferencePage.LIMIT_HISTORY, fHistorySize);
@@ -195,10 +188,12 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 		private ArrayList fImages= new ArrayList();
 
+		@Override
 		public String getText(Object element) {
 			return ((ISearchResult)element).getLabel();
 		}
 
+		@Override
 		public Image getImage(Object element) {
 
 			ImageDescriptor imageDescriptor= ((ISearchResult)element).getImageDescriptor();
@@ -211,6 +206,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			return image;
 		}
 
+		@Override
 		public void dispose() {
 			Iterator iter= fImages.iterator();
 			while (iter.hasNext())
@@ -236,16 +232,12 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		return fIsOpenInNewView;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		return SearchPlugin.getDefault().getDialogSettingsSection("DialogBounds_SearchHistorySelectionDialog"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
-	 */
+	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTSIZE;
 	}
@@ -254,6 +246,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	/*
 	 * Overrides method from Dialog
 	 */
+	@Override
 	protected Label createMessageArea(Composite composite) {
 		Composite parent= new Composite(composite, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -276,9 +269,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
+	@Override
 	public void create() {
 		super.create();
 
@@ -292,6 +283,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	/*
 	 * Overrides method from Dialog
 	 */
+	@Override
 	protected Control createDialogArea(Composite container) {
 		Composite ancestor= (Composite) super.createDialogArea(container);
 
@@ -311,6 +303,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 		final Table table= fViewer.getTable();
 		table.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				okPressed();
 			}
@@ -325,7 +318,8 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
         fRemoveButton= new Button(parent, SWT.PUSH);
         fRemoveButton.setText(SearchMessages.SearchesDialog_remove_label);
         fRemoveButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 buttonPressed(REMOVE_ID);
             }
         });
@@ -333,6 +327,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				validateDialogState();
 			}
@@ -341,6 +336,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		fLink= new Link(parent, SWT.NONE);
 		configureHistoryLink();
 		fLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HistoryConfigurationDialog dialog= new HistoryConfigurationDialog(getShell(), fInput, fRemovedEntries);
 				if (dialog.open() == Window.OK) {
@@ -380,9 +376,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OPEN_LABEL, true);
 		createButton(parent, IDialogConstants.OPEN_ID, SearchMessages.SearchHistorySelectionDialog_open_in_new_button, 	false);
@@ -390,6 +384,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	}
 
 
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == REMOVE_ID) {
 			IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
@@ -415,6 +410,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	/*
 	 * Overrides method from Dialog
 	 */
+	@Override
 	protected void okPressed() {
 		// Build a list of selected children.
 		ISelection selection= fViewer.getSelection();

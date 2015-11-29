@@ -61,10 +61,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		fRegistry= new ResourceExtensionRegistry();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath, boolean)
-	 * @since 3.2
-	 */
+	@Override
 	public boolean isTextFileLocation(IPath location, boolean strict) {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
@@ -98,20 +95,17 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		return isTextFileLocation(FileBuffers.getFileStoreAtLocation(location), strict);
 	}
 
-	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedFileManager#getDefaultEncoding()
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		return ResourcesPlugin.getEncoding();
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.TextFileBufferManager#normalizeLocation(org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	protected IPath normalizeLocation(IPath location) {
 		return FileBuffers.normalizeLocation(location);
 	}
 
+	@Override
 	protected AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
 		if (locationKind == LocationKind.IFILE || locationKind == LocationKind.NORMALIZE  && FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
 			return new ResourceTextFileBuffer(this);
@@ -146,6 +140,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 			for (int i= 0; i < participants.length; i++) {
 				final IDocumentSetupParticipant participant= participants[i];
 				ISafeRunnable runnable= new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						if (participant instanceof IDocumentSetupParticipantExtension)
 							((IDocumentSetupParticipantExtension)participant).setup(document, file.getFullPath(), LocationKind.IFILE);
@@ -158,6 +153,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 							FileBuffersPlugin.getDefault().getLog().log(status);
 						}
 					}
+					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
@@ -178,14 +174,17 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	 * @since 3.5
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	private IDocument createEmptyDocumentFromFactory(final IFile file) {
 		final IDocument[] runnableResult= new IDocument[1];
 		final org.eclipse.core.filebuffers.IDocumentFactory factory= ((ResourceExtensionRegistry)fRegistry).getDocumentFactory(file);
 		if (factory != null) {
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					runnableResult[0]= factory.createDocument();
 				}
+				@Override
 				public void handleException(Throwable t) {
 					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
 					FileBuffersPlugin.getDefault().getLog().log(status);
@@ -210,6 +209,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
 	}
 
+	@Override
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
 		IFile file= null;
 		if (locationKind != LocationKind.LOCATION)
@@ -217,12 +217,10 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		return getLineDelimiterPreference(file);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#validateState(org.eclipse.core.filebuffers.IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor progressMonitor) throws CoreException {
 				IFileBuffer[] toValidate= findFileBuffersToValidate(fileBuffers);
 				validationStateAboutToBeChanged(toValidate);

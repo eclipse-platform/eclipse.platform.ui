@@ -67,15 +67,14 @@ public class SimpleMarkerAnnotation extends Annotation {
 	 *
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o != null && o.getClass() == getClass())
 			return fMarker.equals(((SimpleMarkerAnnotation) o).fMarker);
 		return false;
 	}
 
-	/*
-	 * @see Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fMarker.hashCode();
 	}
@@ -102,9 +101,7 @@ public class SimpleMarkerAnnotation extends Annotation {
 			setType(annotationType);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.Annotation#getText()
-	 */
+	@Override
 	public String getText() {
 		return MarkerUtilities.getMessage(fMarker);
 	}

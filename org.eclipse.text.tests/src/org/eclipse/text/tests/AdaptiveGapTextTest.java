@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 
 public class AdaptiveGapTextTest extends AbstractGapTextTest {
+	@Override
 	protected void setUp() {
 		fText= new GapText(2, 10, 0.5f);
 		fText.set("xxxxx");
@@ -24,6 +25,7 @@ public class AdaptiveGapTextTest extends AbstractGapTextTest {
 		return new TestSuite(AdaptiveGapTextTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fText= null;
 	}

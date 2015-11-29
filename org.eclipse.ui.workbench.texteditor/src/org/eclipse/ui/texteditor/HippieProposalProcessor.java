@@ -64,30 +64,37 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			fOffset= offset;
 		}
 
+		@Override
 		public void apply(IDocument document) {
 			apply(null, '\0', 0, fOffset);
 		}
 
+		@Override
 		public Point getSelection(IDocument document) {
 			return new Point(fOffset + fString.length(), 0);
 		}
 
+		@Override
 		public String getAdditionalProposalInfo() {
 			return null;
 		}
 
+		@Override
 		public String getDisplayString() {
 			return fPrefix + fString;
 		}
 
+		@Override
 		public Image getImage() {
 			return null;
 		}
 
+		@Override
 		public IContextInformation getContextInformation() {
 			return null;
 		}
 
+		@Override
 		public void apply(IDocument document, char trigger, int offset) {
 			try {
 				String replacement= fString.substring(offset - fOffset);
@@ -98,28 +105,35 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			}
 		}
 
+		@Override
 		public boolean isValidFor(IDocument document, int offset) {
 			return validate(document, offset, null);
 		}
 
+		@Override
 		public char[] getTriggerCharacters() {
 			return null;
 		}
 
+		@Override
 		public int getContextInformationPosition() {
 			return 0;
 		}
 
+		@Override
 		public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 			apply(viewer.getDocument(), trigger, offset);
 		}
 
+		@Override
 		public void selected(ITextViewer viewer, boolean smartToggle) {
 		}
 
+		@Override
 		public void unselected(ITextViewer viewer) {
 		}
 
+		@Override
 		public boolean validate(IDocument document, int offset, DocumentEvent event) {
 			try {
 				int prefixStart= fOffset - fPrefix.length();
@@ -129,18 +143,22 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			}
 		}
 
+		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return null;
 		}
 
+		@Override
 		public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 			return fPrefix + fString;
 		}
 
+		@Override
 		public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 			return fOffset - fPrefix.length();
 		}
 
+		@Override
 		public boolean isAutoInsertable() {
 			return true;
 		}
@@ -155,9 +173,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	public HippieProposalProcessor() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
 			String prefix= getPrefix(viewer, offset);
@@ -197,31 +213,23 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		return new Proposal(string, prefix, offset);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		// no context informations for hippie completions
 		return NO_CONTEXTS;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
@@ -281,9 +289,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		return uniqueSuggestions;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null; // no custom error message
 	}

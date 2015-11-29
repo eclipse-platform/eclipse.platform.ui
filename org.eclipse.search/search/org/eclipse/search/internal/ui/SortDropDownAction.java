@@ -30,6 +30,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  * Drop down action that holds the currently registered sort actions.
  * @deprecated old search
  */
+@Deprecated
 class SortDropDownAction extends Action implements IMenuCreator {
 
 	// Persistance tags.
@@ -55,12 +56,14 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		fLastCheckedForType= new HashMap(5);
 	}
 
+	@Override
 	public void dispose() {
 		if (fMenu != null && !fMenu.isDisposed())
 			fMenu.dispose();
 		fMenu= null;
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		return null;
 	}
@@ -81,6 +84,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		}
 	}
 
+	@Override
 	public Menu getMenu(final Menu parent) {
 		dispose(); // ensure old menu gets disposed
 
@@ -101,10 +105,12 @@ class SortDropDownAction extends Action implements IMenuCreator {
 			final ViewerSorter sorter= sorterDesc.createObject();
 			if (sorter != null) {
 				final Action action= new Action() {
+					@Override
 					public void run() {
 						if (!checkedId.equals(sorterDesc.getId())) {
 							SortDropDownAction.this.setChecked(sorterDesc);
 							BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
+								@Override
 								public void run() {
 									fViewer.setSorter(sorter);
 								}
@@ -127,7 +133,8 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
-    public void run() {
+    @Override
+	public void run() {
 		// nothing to do
 	    }
 

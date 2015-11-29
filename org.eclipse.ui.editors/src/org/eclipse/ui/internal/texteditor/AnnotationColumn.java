@@ -62,53 +62,39 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	private final MarkerAnnotationPreferences fAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 	private IPropertyChangeListener fPropertyListener;
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		initialize();
 		Control control= fDelegate.createControl(parentRuler, parentControl);
 		return control;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fDelegate.getControl();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getWidth()
-	 */
+	@Override
 	public int getWidth() {
 		return fDelegate.getWidth();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#redraw()
-	 */
+	@Override
 	public void redraw() {
 		fDelegate.redraw();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setFont(org.eclipse.swt.graphics.Font)
-	 */
+	@Override
 	public void setFont(Font font) {
 		fDelegate.setFont(font);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 		fDelegate.setModel(model);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn#columnRemoved()
-	 */
+	@Override
 	public void columnRemoved() {
 		if (fPropertyListener != null) {
 			IPreferenceStore store= getPreferenceStore();
@@ -141,6 +127,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 
 			// link to preference store
 			fPropertyListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					String property= event.getProperty();
 					AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
@@ -193,52 +180,40 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 		fDelegate= column;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		if (fDelegate instanceof IVerticalRulerInfoExtension)
 			((IVerticalRulerInfoExtension) fDelegate).addVerticalRulerListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
+	@Override
 	public IAnnotationHover getHover() {
 		if (fDelegate instanceof IVerticalRulerInfoExtension)
 			return ((IVerticalRulerInfoExtension) fDelegate).getHover();
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
-	 */
+	@Override
 	public IAnnotationModel getModel() {
 		if (fDelegate instanceof IVerticalRulerInfoExtension)
 			return ((IVerticalRulerInfoExtension) fDelegate).getModel();
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		if (fDelegate instanceof IVerticalRulerInfoExtension)
 			((IVerticalRulerInfoExtension) fDelegate).removeVerticalRulerListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		if (fDelegate instanceof IVerticalRulerInfo)
 			return ((IVerticalRulerInfo)fDelegate).getLineOfLastMouseButtonActivity();
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		if (fDelegate instanceof IVerticalRulerInfo)
 			return ((IVerticalRulerInfo)fDelegate).toDocumentLineNumber(y_coordinate);

@@ -70,6 +70,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		private static final String MENU_ID= "quickdiff.menu"; //$NON-NLS-1$
 		private static final String GROUP_RESTORE= "restore"; //$NON-NLS-1$
 
+		@Override
 		public void menuAboutToShow(IMenuManager manager) {
 			// update the toggle action itself
 			update();
@@ -123,9 +124,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 	};
 
-	/*
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		fProxy= action;
 		removePopupMenu();
@@ -171,9 +170,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		return ((ITextEditorExtension3)fEditor).isChangeInformationShowing();
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		fProxy= action;
 		if (fEditor == null)
@@ -185,16 +182,12 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fProxy= action;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		if (fProxy == null)
 			return;

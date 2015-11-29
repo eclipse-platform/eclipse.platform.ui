@@ -71,16 +71,12 @@ public class ExtensionsRegistry {
 			return fContentType.getId();
 		}
 
-		/*
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
+		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof ContentTypeAdapter && fContentType.getId().equals(((ContentTypeAdapter)obj).getId());
 		}
 
-		/*
-		 * @see java.lang.Object#hashCode()
-		 */
+		@Override
 		public int hashCode() {
 			return fContentType.getId().hashCode();
 		}
@@ -258,6 +254,7 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	protected org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(String nameOrExtension) {
 		Set set= (Set) fFactoryDescriptors.get(nameOrExtension);
 		if (set != null) {
@@ -274,6 +271,7 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	protected org.eclipse.core.filebuffers.IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
 		Set set= null;
 		int i= 0;
@@ -296,6 +294,7 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	protected org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
 		org.eclipse.core.filebuffers.IDocumentFactory factory= doGetDocumentFactory(contentTypes);
 		while (factory == null) {
@@ -477,6 +476,7 @@ public class ExtensionsRegistry {
 	 * @since 3.3
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	public org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
 		org.eclipse.core.filebuffers.IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
 		if (factory == null)

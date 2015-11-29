@@ -89,9 +89,7 @@ public final class DAG {
 				values.remove(val);
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			return fMap.toString();
 		}
@@ -205,10 +203,7 @@ public final class DAG {
 		return false;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 * @since 3.3
-	 */
+	@Override
 	public String toString() {
 		return "Out: " + fOut.toString() + " In: " + fIn.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}

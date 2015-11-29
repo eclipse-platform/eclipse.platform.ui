@@ -29,6 +29,7 @@ public class FindInWorkspaceActionDelegate extends FindInRecentScopeActionDelega
 		setActionDefinitionId("org.eclipse.search.ui.performTextSearchWorkspace"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
 		return provider.createQuery(searchForString);
 	}

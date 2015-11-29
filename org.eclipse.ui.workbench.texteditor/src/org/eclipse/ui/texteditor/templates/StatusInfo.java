@@ -50,6 +50,7 @@ class StatusInfo implements IStatus {
 	 *
 	 * @return <code>true</code> if the status' severity is OK
 	 */
+	@Override
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
@@ -87,6 +88,7 @@ class StatusInfo implements IStatus {
 	 * @return the message
 	 * @see IStatus#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return fStatusMessage;
 	}
@@ -129,9 +131,7 @@ class StatusInfo implements IStatus {
 		fSeverity= IStatus.OK;
 	}
 
-	/*
-	 * @see IStatus#matches(int)
-	 */
+	@Override
 	public boolean matches(int severityMask) {
 		return (fSeverity & severityMask) != 0;
 	}
@@ -140,20 +140,17 @@ class StatusInfo implements IStatus {
 	 * Returns always <code>false</code>.
 	 * @see IStatus#isMultiStatus()
 	 */
+	@Override
 	public boolean isMultiStatus() {
 		return false;
 	}
 
-	/*
-	 * @see IStatus#getSeverity()
-	 */
+	@Override
 	public int getSeverity() {
 		return fSeverity;
 	}
 
-	/*
-	 * @see IStatus#getPlugin()
-	 */
+	@Override
 	public String getPlugin() {
 		return TextEditorPlugin.PLUGIN_ID;
 	}
@@ -162,6 +159,7 @@ class StatusInfo implements IStatus {
 	 * Returns always <code>null</code>.
 	 * @see IStatus#getException()
 	 */
+	@Override
 	public Throwable getException() {
 		return null;
 	}
@@ -170,6 +168,7 @@ class StatusInfo implements IStatus {
 	 * Returns always the error severity.
 	 * @see IStatus#getCode()
 	 */
+	@Override
 	public int getCode() {
 		return fSeverity;
 	}
@@ -178,6 +177,7 @@ class StatusInfo implements IStatus {
 	 * Returns always <code>null</code>.
 	 * @see IStatus#getChildren()
 	 */
+	@Override
 	public IStatus[] getChildren() {
 		return new IStatus[0];
 	}

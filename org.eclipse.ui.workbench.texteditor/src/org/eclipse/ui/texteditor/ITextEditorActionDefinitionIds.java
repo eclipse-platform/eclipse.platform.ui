@@ -390,6 +390,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toWindows"</code>
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "org.eclipse.ui.edit.text.convert.lineDelimiters.toWindows"; //$NON-NLS-1$
 
 	/**
@@ -397,6 +398,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"</code>
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_UNIX= "org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"; //$NON-NLS-1$
 
 	/**
@@ -404,6 +406,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"</code>
 	 * @deprecated since 3.1. No longer supported as editor actions.
 	 */
+	@Deprecated
 	String CONVERT_LINE_DELIMITERS_TO_MAC= "org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"; //$NON-NLS-1$
 
 

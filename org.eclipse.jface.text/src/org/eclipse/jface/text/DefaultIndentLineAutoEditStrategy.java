@@ -82,9 +82,7 @@ public class DefaultIndentLineAutoEditStrategy implements IAutoEditStrategy {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
-	 */
+	@Override
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1)
 			autoIndentAfterNewLine(d, c);

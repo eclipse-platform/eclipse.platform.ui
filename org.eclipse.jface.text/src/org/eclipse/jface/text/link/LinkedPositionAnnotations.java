@@ -251,25 +251,19 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		fExitPosition = position;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModel#addPosition(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	protected void addPosition(IDocument document, Position position) {
 		// don't to anything as our positions are managed by custom
 		// position updaters
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModel#removePosition(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	protected void removePosition(IDocument document, Position pos) {
 		// don't to anything as our positions are managed by custom
 		// position updaters
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.AnnotationModel#fireModelChanged()
-	 */
+	@Override
 	public void fireModelChanged() {
 		super.fireModelChanged();
 	}

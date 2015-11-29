@@ -197,6 +197,7 @@ public final class RulerColumnRegistry {
 		 * 3. TopoSort DAG: pick the source with the lowest gravity and remove from DAG
 		 */
 		ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
+			@Override
 			public IConfigurationElement getConfigurationElement(Object object) {
 				return ((RulerColumnDescriptor) object).getConfigurationElement();
 			}
@@ -235,6 +236,7 @@ public final class RulerColumnRegistry {
 		}
 
 		Comparator gravityComp= new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				float diff= ((RulerColumnDescriptor) o1).getPlacement().getGravity() - ((RulerColumnDescriptor) o2).getPlacement().getGravity();
 				if (diff == 0)

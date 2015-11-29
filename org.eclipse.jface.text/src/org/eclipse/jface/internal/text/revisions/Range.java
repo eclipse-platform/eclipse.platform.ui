@@ -86,16 +86,12 @@ public final class Range implements ILineRange, Cloneable {
 		setLength(length);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getStartLine()
-	 */
+	@Override
 	public int getStartLine() {
 		return start();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getNumberOfLines()
-	 */
+	@Override
 	public int getNumberOfLines() {
 		return length();
 	}
@@ -258,9 +254,7 @@ public final class Range implements ILineRange, Cloneable {
 		return range.getStartLine() == start() && range.getNumberOfLines() == length();
 	}
 
-	/*
-	 * @see java.lang.Object#clone()
-	 */
+	@Override
 	public Object clone() {
 		return Range.copy(this);
 	}

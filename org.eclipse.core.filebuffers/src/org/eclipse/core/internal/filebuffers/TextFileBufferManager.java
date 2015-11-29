@@ -60,6 +60,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class TextFileBufferManager implements ITextFileBufferManager {
 
 	private static abstract class SafeNotifier implements ISafeRunnable {
+		@Override
 		public void handleException(Throwable ex) {
 			// NOTE: Logging is done by SafeRunner
 		}
@@ -83,14 +84,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
+	@Deprecated
+	@Override
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
 		connect(location, LocationKind.NORMALIZE, monitor);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind, org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.3
-	 */
+	@Override
 	public void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
@@ -127,10 +127,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fireBufferCreated(fileBuffer);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.3
-	 */
+	@Override
 	public void connectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(fileStore != null);
 
@@ -170,6 +167,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
+	@Deprecated
+	@Override
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		disconnect(location, LocationKind.NORMALIZE, monitor);
 	}
@@ -181,10 +180,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return location;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind, org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.3
-	 */
+	@Override
 	public void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
@@ -208,10 +204,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fileBuffer.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.3
-	 */
+	@Override
 	public void disconnectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(fileStore != null);
 
@@ -238,6 +231,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.2, replaced by {@link #isTextFileLocation(IPath, boolean)}
 	 */
+	@Deprecated
+	@Override
 	public boolean isTextFileLocation(IPath location) {
 		return isTextFileLocation(location, false);
 	}
@@ -307,10 +302,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return !strict;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath, boolean)
-	 * @since 3.2
-	 */
+	@Override
 	public boolean isTextFileLocation(IPath location, boolean strict) {
 		Assert.isNotNull(location);
 		location= normalizeLocation(location);
@@ -326,24 +318,20 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #getFileBuffer(IPath, LocationKind)}
 	 */
+	@Deprecated
+	@Override
 	public IFileBuffer getFileBuffer(IPath location) {
 		return getFileBuffer(location, LocationKind.NORMALIZE);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind)
-	 * @since 3.3
-	 */
+	@Override
 	public IFileBuffer getFileBuffer(IPath location, LocationKind locationKind) {
 		if (locationKind == LocationKind.NORMALIZE)
 			location= normalizeLocation(location);
 		return internalGetFileBuffer(location);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileStoreFileBuffer(org.eclipse.core.filesystem.IFileStore)
-	 * @since 3.3
-	 */
+	@Override
 	public IFileBuffer getFileStoreFileBuffer(IFileStore fileStore) {
 		Assert.isLegal(fileStore != null);
 		return internalGetFileBuffer(fileStore);
@@ -366,31 +354,24 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
+	@Deprecated
+	@Override
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
 		return getTextFileBuffer(location, LocationKind.NORMALIZE);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind)
-	 * @since 3.3
-	 */
+	@Override
 	public ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind) {
 		return (ITextFileBuffer)getFileBuffer(location, locationKind);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getFileStoreTextFileBuffer(org.eclipse.core.filesystem.IFileStore)
-	 * @since 3.3
-	 */
+	@Override
 	public ITextFileBuffer getFileStoreTextFileBuffer(IFileStore fileStore) {
 		Assert.isLegal(fileStore != null);
 		return (ITextFileBuffer)getFileStoreFileBuffer(fileStore);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.jface.text.IDocument)
-	 * @since 3.3
-	 */
+	@Override
 	public ITextFileBuffer getTextFileBuffer(IDocument document) {
 		Assert.isLegal(document != null);
 		Iterator iter;
@@ -425,10 +406,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffers()
-	 * @since 3.4
-	 */
+	@Override
 	public IFileBuffer[] getFileBuffers() {
 		synchronized (fFilesBuffers) {
 			Collection values= fFilesBuffers.values();
@@ -436,10 +414,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileStoreFileBuffers()
-	 * @since 3.4
-	 */
+	@Override
 	public IFileBuffer[] getFileStoreFileBuffers() {
 		synchronized (fFileStoreFileBuffers) {
 			Collection values= fFileStoreFileBuffers.values();
@@ -447,9 +422,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.buffer.text.IBufferedFileManager#getDefaultEncoding()
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		return System.getProperty("file.encoding"); //$NON-NLS-1$;
 	}
@@ -459,14 +432,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
+	@Deprecated
+	@Override
 	public IDocument createEmptyDocument(IPath location) {
 		return createEmptyDocument(location, LocationKind.NORMALIZE);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
-	 * @since 3.3
-	 */
+	@Override
 	public IDocument createEmptyDocument(final IPath location, final LocationKind locationKind) {
 		IDocument documentFromFactory= createDocumentFromFactory(location, locationKind);
 		final IDocument document;
@@ -490,6 +462,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			for (int i= 0; i < participants.length; i++) {
 				final IDocumentSetupParticipant participant= participants[i];
 				ISafeRunnable runnable= new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						if (participant instanceof IDocumentSetupParticipantExtension)
 							((IDocumentSetupParticipantExtension)participant).setup(document, location, locationKind);
@@ -502,6 +475,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 							FileBuffersPlugin.getDefault().getLog().log(status);
 						}
 					}
+					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
@@ -523,15 +497,18 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @since 3.5
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	private IDocument createDocumentFromFactory(final IPath location, final LocationKind locationKind) {
 		final IDocument[] runnableResult= new IDocument[1];
 		if (location != null) {
 			final org.eclipse.core.filebuffers.IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
 			if (factory != null) {
 				ISafeRunnable runnable= new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						runnableResult[0]= factory.createDocument();
 					}
+					@Override
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
@@ -548,14 +525,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
+	@Deprecated
+	@Override
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		return createAnnotationModel(location, LocationKind.NORMALIZE);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
-	 * @since 3.3
-	 */
+	@Override
 	public IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind) {
 		Assert.isNotNull(location);
 		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location, locationKind);
@@ -564,9 +540,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#addFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
-	 */
+	@Override
 	public void addFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
 		synchronized (fFileBufferListeners) {
@@ -575,9 +549,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#removeFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
-	 */
+	@Override
 	public void removeFileBufferListener(IFileBufferListener listener) {
 		Assert.isNotNull(listener);
 		synchronized (fFileBufferListeners) {
@@ -585,9 +557,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#setSynchronizationContext(org.eclipse.core.filebuffers.ISynchronizationContext)
-	 */
+	@Override
 	public void setSynchronizationContext(ISynchronizationContext context) {
 		fSynchronizationContext= context;
 	}
@@ -598,6 +568,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
+	@Deprecated
+	@Override
 	public void requestSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
 		location= normalizeLocation(location);
@@ -612,6 +584,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 *
 	 * @deprecated As of 3.1, replaced by {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
+	@Deprecated
+	@Override
 	public void releaseSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
 		location= normalizeLocation(location);
@@ -621,9 +595,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			fileBuffer.releaseSynchronizationContext();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void execute(Runnable runnable) {
 		if (fSynchronizationContext != null)
 			fSynchronizationContext.run(runnable);
@@ -702,6 +674,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.dirtyStateChanged(buffer, isDirty);
 				}
@@ -714,6 +687,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.bufferContentAboutToBeReplaced(buffer);
 				}
@@ -726,6 +700,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.bufferContentReplaced(buffer);
 				}
@@ -738,6 +713,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.underlyingFileMoved(buffer, target);
 				}
@@ -750,6 +726,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.underlyingFileDeleted(buffer);
 				}
@@ -762,6 +739,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.stateValidationChanged(buffer, isStateValidated);
 				}
@@ -774,6 +752,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.stateChanging(buffer);
 				}
@@ -786,6 +765,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.stateChangeFailed(buffer);
 				}
@@ -798,6 +778,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.bufferCreated(buffer);
 				}
@@ -810,6 +791,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		while (e.hasNext()) {
 			final IFileBufferListener l= (IFileBufferListener) e.next();
 			SafeRunner.run(new SafeNotifier() {
+				@Override
 				public void run() {
 					l.bufferDisposed(buffer);
 				}
@@ -817,10 +799,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#validateState(org.eclipse.core.filebuffers.IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
 	}
 

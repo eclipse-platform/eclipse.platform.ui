@@ -35,9 +35,7 @@ public final class DelayedInputChangeListener implements IInputChangedListener {
 		fInformationControlReplacer= informationControlReplacer;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDelayedInputChangeListener#inputChanged(java.lang.Object)
-	 */
+	@Override
 	public void inputChanged(Object newInput) {
 		fChangeProvider.setDelayedInputChangeListener(null);
 		fInformationControlReplacer.setDelayedInput(newInput);

@@ -102,9 +102,7 @@ public final class TemplatesView extends PageBookView {
 	public TemplatesView() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
-	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		MessagePage page= new MessagePage();
 		initPage(page);
@@ -113,19 +111,14 @@ public final class TemplatesView extends PageBookView {
 		return page;
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#createPartControl(org.eclipse.swt.widgets.Composite)
-	 * @since 3.4
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		Assert.isTrue(ID.equals(getViewSite().getId())); // prevent from contributing this view under a different ID
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook(), IAbstractTextEditorHelpContextIds.TEMPLATES_VIEW);
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
-	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		// Try to get template page.
 		ITemplatesPage page= (ITemplatesPage)part.getAdapter(ITemplatesPage.class);
@@ -139,19 +132,14 @@ public final class TemplatesView extends PageBookView {
 		return new PageRec(part, page);
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
-	 */
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
 		ITemplatesPage page= (ITemplatesPage)rec.page;
 		page.dispose();
 		rec.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
-	 * @since 3.4
-	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		IWorkbenchPage page= getSite().getPage();
 		if (page != null)
@@ -159,18 +147,13 @@ public final class TemplatesView extends PageBookView {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
-	 */
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		//We only care about editors
 		return (part instanceof IEditorPart);
 	}
 
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-	 * @since 3.4
-	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 		partActivated(part);
 	}

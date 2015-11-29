@@ -116,9 +116,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return getLineNumberOfOffset(target) - startLine + 1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineLength(int)
-	 */
+	@Override
 	public final int getLineLength(int line) throws BadLocationException {
 		int lines= fLines.size();
 
@@ -132,9 +130,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return l.length;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
-	 */
+	@Override
 	public final int getLineNumberOfOffset(int position) throws BadLocationException {
 		if (position < 0 || position > fTextLength)
 			throw new BadLocationException();
@@ -152,9 +148,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return findLine(position);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
-	 */
+	@Override
 	public final IRegion getLineInformationOfOffset(int position) throws BadLocationException {
 		if (position > fTextLength)
 			throw new BadLocationException();
@@ -170,9 +164,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return getLineInformation(findLine(position));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
-	 */
+	@Override
 	public final IRegion getLineInformation(int line) throws BadLocationException {
 		int lines= fLines.size();
 
@@ -191,9 +183,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return (l.delimiter != null ? new Line(l.offset, l.length - l.delimiter.length()) : l);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineOffset(int)
-	 */
+	@Override
 	public final int getLineOffset(int line) throws BadLocationException {
 		int lines= fLines.size();
 
@@ -214,9 +204,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return l.offset;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines()
-	 */
+	@Override
 	public final int getNumberOfLines() {
 		int lines= fLines.size();
 
@@ -227,9 +215,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return (l.delimiter != null ? lines + 1 : lines);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines(int, int)
-	 */
+	@Override
 	public final int getNumberOfLines(int position, int length) throws BadLocationException {
 
 		if (position < 0 || position + length > fTextLength)
@@ -241,9 +227,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return getNumberOfLines(getLineNumberOfOffset(position), position, length);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#computeNumberOfLines(java.lang.String)
-	 */
+	@Override
 	public final int computeNumberOfLines(String text) {
 		int count= 0;
 		int start= 0;
@@ -256,9 +240,7 @@ abstract class ListLineTracker implements ILineTracker {
 		return count;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
-	 */
+	@Override
 	public final String getLineDelimiter(int line) throws BadLocationException {
 		int lines= fLines.size();
 
@@ -331,16 +313,12 @@ abstract class ListLineTracker implements ILineTracker {
 		return count;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#replace(int, int, java.lang.String)
-	 */
+	@Override
 	public final void replace(int position, int length, String text) throws BadLocationException {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#set(java.lang.String)
-	 */
+	@Override
 	public final void set(String text) {
 		fLines.clear();
 		if (text != null) {

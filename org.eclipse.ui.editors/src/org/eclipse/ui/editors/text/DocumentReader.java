@@ -52,16 +52,12 @@ class DocumentReader extends Reader {
 			fDocument= document;
 		}
 
-		/*
-		 * @see java.lang.CharSequence#length()
-		 */
+		@Override
 		public int length() {
 			return fDocument.getLength();
 		}
 
-		/*
-		 * @see java.lang.CharSequence#charAt(int)
-		 */
+		@Override
 		public char charAt(int index) {
 			try {
 				return fDocument.getChar(index);
@@ -70,9 +66,7 @@ class DocumentReader extends Reader {
 			}
 		}
 
-		/*
-		 * @see java.lang.CharSequence#subSequence(int, int)
-		 */
+		@Override
 		public CharSequence subSequence(int start, int end) {
 			try {
 				return fDocument.get(start, end - start);
@@ -87,16 +81,12 @@ class DocumentReader extends Reader {
 	 */
 	private class InternalDocumentListener implements IDocumentListener {
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			handleDocumentAboutToBeChanged();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 		}
 	}
@@ -130,9 +120,7 @@ class DocumentReader extends Reader {
 		fLength= fCharSequence.length();
 	}
 
-	/*
-	 * @see java.io.InputStream#close()
-	 */
+	@Override
 	public void close() throws IOException {
 		synchronized (this) {
 			fCharSequence= null;
@@ -166,10 +154,7 @@ class DocumentReader extends Reader {
 		fDocumentListener= null;
 	}
 
-	/*
-	 * @see java.io.Reader#read(char[], int, int)
-	 * @since 3.1
-	 */
+	@Override
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int i= 0;
 		try {

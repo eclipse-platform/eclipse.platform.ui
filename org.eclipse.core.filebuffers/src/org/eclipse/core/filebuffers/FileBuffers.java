@@ -210,6 +210,7 @@ public final class FileBuffers {
 	 * @return the {@link File} in the local file system for the given location
 	 * @deprecated As of 3.2, replaced by {@link #getFileStoreAtLocation(IPath)}
 	 */
+	@Deprecated
 	public static File getSystemFileAtLocation(IPath location) {
 		IFileStore store= getFileStoreAtLocation(location);
 		if (store != null) {

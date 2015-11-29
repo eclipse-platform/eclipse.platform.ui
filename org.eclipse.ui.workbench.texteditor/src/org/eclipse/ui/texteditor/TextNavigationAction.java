@@ -53,9 +53,7 @@ public class TextNavigationAction extends Action {
 		return fTextWidget;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		Point selection= fTextWidget.getSelection();
 		fTextWidget.invokeAction(fAction);
@@ -92,9 +90,7 @@ public class TextNavigationAction extends Action {
 			doFireSelectionChanged(selection);
 	}
 
-	/*
-	 * @see IAction#runWithEvent(Event)
-	 */
+	@Override
 	public void runWithEvent(Event event) {
 		run();
 	}
@@ -103,165 +99,115 @@ public class TextNavigationAction extends Action {
 // ----------------------------------------------------------------------------------------------------------------------------------
 // All the subsequent methods are just empty method bodies.
 
-	/*
-	 * @see IAction#addPropertyChangeListener(IPropertyChangeListener)
-	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 	}
 
-	/*
-	 * @see IAction#getAccelerator()
-	 */
+	@Override
 	public int getAccelerator() {
 		return 0;
 	}
 
-	/*
-	 * @see IAction#getDescription()
-	 */
+	@Override
 	public String getDescription() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getDisabledImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getHelpListener()
-	 */
+	@Override
 	public HelpListener getHelpListener() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getHoverImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getHoverImageDescriptor() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getMenuCreator()
-	 */
+	@Override
 	public IMenuCreator getMenuCreator() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getStyle()
-	 */
+	@Override
 	public int getStyle() {
 		return 0;
 	}
 
-	/*
-	 * @see IAction#getText()
-	 */
+	@Override
 	public String getText() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#getToolTipText()
-	 */
+	@Override
 	public String getToolTipText() {
 		return null;
 	}
 
-	/*
-	 * @see IAction#isChecked()
-	 */
+	@Override
 	public boolean isChecked() {
 		return false;
 	}
 
-	/*
-	 * @see IAction#isEnabled()
-	 */
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
 
-	/*
-	 * @see IAction#removePropertyChangeListener(IPropertyChangeListener)
-	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#setAccelerator(int)
-	 */
+	@Override
 	public void setAccelerator(int keycode) {
 	}
 
-	/*
-	 * @see IAction#setChecked(boolean)
-	 */
+	@Override
 	public void setChecked(boolean checked) {
 	}
 
-	/*
-	 * @see IAction#setDescription(String)
-	 */
+	@Override
 	public void setDescription(String text) {
 	}
 
-	/*
-	 * @see IAction#setDisabledImageDescriptor(ImageDescriptor)
-	 */
+	@Override
 	public void setDisabledImageDescriptor(ImageDescriptor newImage) {
 	}
 
-	/*
-	 * @see IAction#setEnabled(boolean)
-	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 	}
 
-	/*
-	 * @see IAction#setHelpListener(HelpListener)
-	 */
+	@Override
 	public void setHelpListener(HelpListener listener) {
 	}
 
-	/*
-	 * @see IAction#setHoverImageDescriptor(ImageDescriptor)
-	 */
+	@Override
 	public void setHoverImageDescriptor(ImageDescriptor newImage) {
 	}
 
-	/*
-	 * @see IAction#setImageDescriptor(ImageDescriptor)
-	 */
+	@Override
 	public void setImageDescriptor(ImageDescriptor newImage) {
 	}
 
-	/*
-	 * @see IAction#setMenuCreator(IMenuCreator)
-	 */
+	@Override
 	public void setMenuCreator(IMenuCreator creator) {
 	}
 
-	/*
-	 * @see IAction#setText(String)
-	 */
+	@Override
 	public void setText(String text) {
 	}
 
-	/*
-	 * @see IAction#setToolTipText(String)
-	 */
+	@Override
 	public void setToolTipText(String text) {
 	}
 }

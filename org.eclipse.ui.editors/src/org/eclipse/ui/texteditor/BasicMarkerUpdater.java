@@ -36,23 +36,17 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 		super();
 	}
 
-	/*
-	 * @see IMarkerUpdater#getAttribute()
-	 */
+	@Override
 	public String[] getAttribute() {
 		return ATTRIBUTES;
 	}
 
-	/*
-	 * @see IMarkerUpdater#getMarkerType()
-	 */
+	@Override
 	public String getMarkerType() {
 		return null;
 	}
 
-	/*
-	 * @see IMarkerUpdater#updateMarker(IMarker, IDocument, Position)
-	 */
+	@Override
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 
 		if (position == null)

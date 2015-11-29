@@ -84,6 +84,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		super(creator);
 		fTextViewer= textViewer;
 		fStopper= new ITextListener() {
+			@Override
 			public void textChanged(TextEvent event) {
 				synchronized (fMutex) {
 					if (fThread != null) {
@@ -94,18 +95,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			}
 		};
 		fViewportListener= new IViewportListener() {
-			/*
-			 * @see org.eclipse.jface.text.IViewportListener#viewportChanged(int)
-			 */
+			@Override
 			public void viewportChanged(int verticalOffset) {
 				fProcessMouseHoverEvent= false;
 			}
 		};
 		fTextViewer.addViewportListener(fViewportListener);
 		fMouseMoveListener= new MouseMoveListener() {
-			/*
-			 * @see MouseMoveListener#mouseMove(MouseEvent)
-			 */
+			@Override
 			public void mouseMove(MouseEvent event) {
 				fProcessMouseHoverEvent= true;
 			}
@@ -117,6 +114,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * Determines all necessary details and delegates the computation into
 	 * a background thread.
 	 */
+	@Override
 	protected void computeInformation() {
 
 		if (!fProcessMouseHoverEvent) {
@@ -155,6 +153,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		}
 
 		fThread= new Thread("Text Viewer Hover Presenter") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693
 				boolean hasFinished= false;
@@ -218,6 +217,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * flow back into the UI thread, in order to allow displaying the
 	 * information in the information control.
 	 */
+	@Override
 	protected void presentInformation() {
 		if (fTextViewer == null)
 			return;
@@ -229,6 +229,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				return;
 
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					doPresentInformation();
 				}
@@ -275,9 +276,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#showInformationControl(org.eclipse.swt.graphics.Rectangle)
-	 */
+	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
 			super.showInformationControl(subjectArea);
@@ -286,9 +285,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				System.out.println("TextViewerHoverManager#showInformationControl(..) did not get widget token"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	protected void hideInformationControl() {
 		try {
 			fTextHover= null;
@@ -299,19 +296,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl(boolean)
-	 * @since 3.4
-	 */
+	@Override
 	void replaceInformationControl(boolean takeFocus) {
 		if (fTextViewer != null)
 			fTextViewer.releaseWidgetToken(this);
 		super.replaceInformationControl(takeFocus);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#handleInformationControlDisposed()
-	 */
+	@Override
 	protected void handleInformationControlDisposed() {
 		try {
 			super.handleInformationControlDisposed();
@@ -321,19 +313,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner)
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		fTextHover= null;
 		super.hideInformationControl();
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		if (priority > WIDGET_PRIORITY) {
 			fTextHover= null;
@@ -343,10 +330,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		if (! hasInformationControlReplacer())
 			return false;
@@ -375,10 +359,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		return fTextHover;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractHoverInformationControlManager#dispose()
-	 * @since 3.0
-	 */
+	@Override
 	public void dispose() {
 		if (fTextViewer != null) {
 			fTextViewer.removeViewportListener(fViewportListener);

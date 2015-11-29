@@ -65,9 +65,7 @@ public class LinkedPosition extends Position {
 		return fDocument;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.Position#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof LinkedPosition) {
 			LinkedPosition p= (LinkedPosition) other;
@@ -118,6 +116,7 @@ public class LinkedPosition extends Position {
 	 * @return <code>true</code> if <code>pOffset</code> is in
 	 *         <code>[offset, offset + length]</code>
 	 */
+	@Override
 	public boolean includes(int pOffset) {
 		return this.offset <= pOffset && pOffset <= this.offset + this.length;
 	}
@@ -169,9 +168,7 @@ public class LinkedPosition extends Position {
 		fSequenceNumber= sequence;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.Position#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fDocument.hashCode() | super.hashCode() | fSequenceNumber;
 	}

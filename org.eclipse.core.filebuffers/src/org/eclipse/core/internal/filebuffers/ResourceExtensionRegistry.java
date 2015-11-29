@@ -42,6 +42,7 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	 * @param locationKind the kind of the given location
 	 * @return the set of content types for the location
 	 */
+	@Override
 	protected IContentType[] findContentTypes(IPath location, LocationKind locationKind) {
 		if (locationKind != LocationKind.LOCATION) {
 			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
@@ -58,6 +59,7 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	 * @return the sharable document factory
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IFile file) {
 		org.eclipse.core.filebuffers.IDocumentFactory factory= getDocumentFactory(findContentTypes(file));
 		if (factory == null) {

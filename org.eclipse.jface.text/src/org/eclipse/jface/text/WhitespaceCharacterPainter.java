@@ -130,17 +130,13 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		fAlpha= alpha;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fTextViewer= null;
 		fTextWidget= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#paint(int)
-	 */
+	@Override
 	public void paint(int reason) {
 		IDocument document= fTextViewer.getDocument();
 		if (document == null) {
@@ -156,9 +152,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#deactivate(boolean)
-	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -169,16 +163,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
-	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 		// no need for a position manager
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-	 */
+	@Override
 	public void paintControl(PaintEvent event) {
 		if (fTextWidget != null) {
 			handleDrawRequest(event.gc, event.x, event.y, event.width, event.height);

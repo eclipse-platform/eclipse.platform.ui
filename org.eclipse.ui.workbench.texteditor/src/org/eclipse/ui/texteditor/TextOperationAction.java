@@ -105,6 +105,7 @@ public final class TextOperationAction extends TextEditorAction {
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
 	 */
+	@Override
 	public void run() {
 		if (fOperationCode == -1 || fOperationTarget == null)
 			return;
@@ -124,6 +125,7 @@ public final class TextOperationAction extends TextEditorAction {
 			display= shell.getDisplay();
 
 		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
 			public void run() {
 				fOperationTarget.doOperation(fOperationCode);
 			}
@@ -136,6 +138,7 @@ public final class TextOperationAction extends TextEditorAction {
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.
 	 */
+	@Override
 	public void update() {
 		if (!fAllowUpdate)
 			return;
@@ -155,9 +158,7 @@ public final class TextOperationAction extends TextEditorAction {
 		setEnabled(isEnabled);
 	}
 
-	/*
-	 * @see TextEditorAction#setEditor(ITextEditor)
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
 		fOperationTarget= null;

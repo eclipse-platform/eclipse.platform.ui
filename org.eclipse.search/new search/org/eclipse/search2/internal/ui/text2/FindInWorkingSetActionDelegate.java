@@ -34,6 +34,7 @@ public class FindInWorkingSetActionDelegate extends FindInRecentScopeActionDeleg
 		setActionDefinitionId("org.eclipse.search.ui.performTextSearchWorkingSet"); //$NON-NLS-1$
 	}
 
+	@Override
 	protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException {
 		IWorkbenchPage page= getWorkbenchPage();
 		if (page != null) {

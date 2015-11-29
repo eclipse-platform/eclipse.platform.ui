@@ -58,6 +58,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	protected abstract Class getAnnotationModelClass() throws Exception;
 
 
+	@Override
 	protected void setUp() throws Exception {
 		fManager= FileBuffers.getTextFileBufferManager();
 		fProject= ResourceHelper.createProject("project");
@@ -70,6 +71,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		return fProject;
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 		assertTrue(buffer == null);
@@ -331,11 +333,13 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void bufferCreated(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
 			}
 
+			@Override
 			public void bufferDisposed(IFileBuffer buf) {
 				--count;
 				this.buffer= buf;
@@ -376,6 +380,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isDirty;
 
+			@Override
 			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -426,6 +431,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isDirty;
 
+			@Override
 			public void dirtyStateChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -474,11 +480,13 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer preBuffer, postBuffer;
 			public int preCount, postCount;
 
+			@Override
 			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 				++preCount;
 				preBuffer= buffer;
 			}
 
+			@Override
 			public void bufferContentReplaced(IFileBuffer buffer) {
 				++postCount;
 				postBuffer= buffer;
@@ -523,11 +531,13 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer preBuffer, postBuffer;
 			public int preCount, postCount;
 
+			@Override
 			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 				++preCount;
 				preBuffer= buffer;
 			}
 
+			@Override
 			public void bufferContentReplaced(IFileBuffer buffer) {
 				++postCount;
 				postBuffer= buffer;
@@ -571,6 +581,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 
+			@Override
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -615,6 +626,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 
+			@Override
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -660,6 +672,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 
+			@Override
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -705,6 +718,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public boolean isStateValidated;
 
+			@Override
 			public void stateValidationChanged(IFileBuffer buf, boolean state) {
 				++count;
 				this.buffer= buf;
@@ -751,6 +765,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void underlyingFileDeleted(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -791,6 +806,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public int count;
 			public IPath newLocation;
 
+			@Override
 			public void underlyingFileMoved(IFileBuffer buf, IPath location) {
 				++count;
 				this.buffer= buf;
@@ -833,6 +849,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -872,6 +889,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -911,6 +929,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -950,6 +969,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -990,6 +1010,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -1031,6 +1052,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			public IFileBuffer buffer;
 			public int count;
 
+			@Override
 			public void stateChanging(IFileBuffer buf) {
 				++count;
 				this.buffer= buf;
@@ -1093,9 +1115,11 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 			int notifyCount= 0;
 
+			@Override
 			public void bufferCreated(IFileBuffer buffer) {
 				notifyCount++;
 			}
+			@Override
 			public void bufferDisposed(IFileBuffer buffer) {
 				notifyCount++;
 			}
@@ -1104,10 +1128,12 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		class ForcedException extends RuntimeException {
 			private static final long serialVersionUID= 1L;
 
+			@Override
 			public void printStackTrace(PrintStream s) {
 				s.println("!FORCED BY TEST: this entry is intentional");
 			}
 
+			@Override
 			public void printStackTrace(PrintWriter s) {
 				s.println("!FORCED BY TEST: this entry is intentional");
 			}
@@ -1117,9 +1143,11 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		NotifiedListener notifyCounter2= new NotifiedListener();
 
 		FileBufferListener failingListener= new FileBufferListener() {
+			@Override
 			public void bufferCreated(IFileBuffer buffer) {
 				throw new ForcedException();
 			}
+			@Override
 			public void bufferDisposed(IFileBuffer buffer) {
 				throw new ForcedException();
 			}

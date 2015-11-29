@@ -35,6 +35,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 		setChecked(isActiveMatchFilter());
 	}
 
+	@Override
 	public void run() {
 		AbstractTextSearchResult input= fPage.getInput();
 		if (input == null) {
@@ -75,9 +76,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setChecked(isActiveMatchFilter());
 	}

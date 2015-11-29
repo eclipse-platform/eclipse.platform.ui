@@ -47,6 +47,7 @@ public class EditorAccessHighlighter extends Highlighter {
 		fMatchesToAnnotations= new HashMap();
 	}
 
+	@Override
 	public void addHighlights(Match[] matches) {
 		Map mapsByAnnotationModel= new HashMap();
 		for (int i= 0; i < matches.length; i++) {
@@ -121,6 +122,7 @@ public class EditorAccessHighlighter extends Highlighter {
 		return set;
 	}
 
+	@Override
 	public void removeHighlights(Match[] matches) {
 		Map setsByAnnotationModel= new HashMap();
 		for (int i= 0; i < matches.length; i++) {
@@ -173,12 +175,14 @@ public class EditorAccessHighlighter extends Highlighter {
 		}
 	}
 
+	@Override
 	public  void removeAll() {
 		Set matchSet= fMatchesToAnnotations.keySet();
 		Match[] matches= new Match[matchSet.size()];
 		removeHighlights((Match[]) matchSet.toArray(matches));
 	}
 
+	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
 		if (!(buffer instanceof ITextFileBuffer))
 			return;

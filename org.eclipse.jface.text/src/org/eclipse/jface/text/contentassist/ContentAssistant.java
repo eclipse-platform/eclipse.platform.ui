@@ -166,55 +166,42 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				fViewer.removeViewportListener(this);
 		}
 
-		/*
-		 * @see ControlListener#controlResized(ControlEvent)
-		 */
+		@Override
 		public void controlResized(ControlEvent e) {
 			hide();
 		}
 
-		/*
-		 * @see ControlListener#controlMoved(ControlEvent)
-		 */
+		@Override
 		public void controlMoved(ControlEvent e) {
 			hide();
 		}
 
-		/*
-		 * @see MouseListener#mouseDown(MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent e) {
 			hide();
 		}
 
-		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			hide();
 		}
 
-		/*
-		 * @see FocusListener#focusGained(FocusEvent)
-		 */
+		@Override
 		public void focusGained(FocusEvent e) {
 		}
 
-		/*
-		 * @see FocusListener#focusLost(FocusEvent)
-		 */
+		@Override
 		public void focusLost(FocusEvent e) {
 			Control control= fControl;
 			if (Helper.okToUse(control)) {
 				Display d= control.getDisplay();
 				if (d != null) {
 					d.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!fProposalPopup.hasFocus() && (fContextInfoPopup == null || !fContextInfoPopup.hasFocus()))
 								hide();
@@ -227,6 +214,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		/*
 		 * @seeDisposeListener#widgetDisposed(DisposeEvent)
 		 */
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			/*
 			 * 1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots of Internal
@@ -235,9 +223,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			hide();
 		}
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int topIndex) {
 			hide();
 		}
@@ -271,6 +257,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fThread.start();
 		}
 
+		@Override
 		public void run() {
 			try {
 				while (true) {
@@ -314,6 +301,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return false;
 		}
 
+		@Override
 		public void keyPressed(KeyEvent e) {
 			// Only act on typed characters and ignore modifier-only events
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
@@ -353,9 +341,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				start(showStyle);
 		}
 
-		/*
-		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
-		 */
+		@Override
 		public void verifyKey(VerifyEvent event) {
 			keyPressed(event);
 		}
@@ -371,6 +357,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			try {
 				d.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (isProposalPopupActive())
 							return;
@@ -437,6 +424,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				type == LAYOUT_CONTEXT_SELECTOR || type == LAYOUT_CONTEXT_INFO_POPUP);
 		}
 
+		@Override
 		public void handleEvent(Event event) {
 			Widget source= event.widget;
 			source.removeListener(SWT.Dispose, this);
@@ -807,6 +795,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @param e the verify event
 		 * @see VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
 		 */
+		@Override
 		public void verifyKey(VerifyEvent e) {
 			IContentAssistListener[] listeners= (IContentAssistListener[]) fListeners.clone();
 			for (int i= 0; i < listeners.length; i++) {
@@ -822,6 +811,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		/*
 		 * @see IEventConsumer#processEvent
 		 */
+		@Override
 		public void processEvent(VerifyEvent event) {
 
 			installKeyListener();
@@ -853,6 +843,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fMessageKey= messageKey;
 		}
 
+		@Override
 		public void handleException(Throwable exception) {
 			String message= JFaceTextMessages.getString(fMessageKey);
 
@@ -1071,10 +1062,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fPartitioning= partitioning;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#getDocumentPartitioning()
-	 * @since 3.0
-	 */
+	@Override
 	public String getDocumentPartitioning() {
 		return fPartitioning;
 	}
@@ -1103,6 +1091,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/*
 	 * @see IContentAssistant#getContentAssistProcessor
 	 */
+	@Override
 	public IContentAssistProcessor getContentAssistProcessor(String contentType) {
 		if (fProcessors == null)
 			return null;
@@ -1420,6 +1409,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#install
 	 * @since 3.0
 	 */
+	@Override
 	public void install(ITextViewer textViewer) {
 		fViewer= textViewer;
 		fContentAssistSubjectControlAdapter= new ContentAssistSubjectControlAdapter(fViewer);
@@ -1445,6 +1435,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
 			fCASCSTraverseListener= new TraverseListener() {
+				@Override
 				public void keyTraversed(TraverseEvent e) {
 					if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
 						e.doit= false;
@@ -1459,6 +1450,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/*
 	 * @see IContentAssist#uninstall
 	 */
+	@Override
 	public void uninstall() {
 		hide();
 		manageAutoActivation(false);
@@ -1712,6 +1704,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/*
 	 * @see IContentAssist#showPossibleCompletions
 	 */
+	@Override
 	public String showPossibleCompletions() {
 		if (!prepareToShowCompletions(false))
 			return null;
@@ -1720,10 +1713,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fProposalPopup.showProposals(false);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#completePrefix()
-	 * @since 3.0
-	 */
+	@Override
 	public String completePrefix() {
 		if (!prepareToShowCompletions(false))
 			return null;
@@ -1766,6 +1756,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/*
 	 * @see IContentAssist#showContextInformation
 	 */
+	@Override
 	public String showContextInformation() {
 		promoteKeyListener();
 		if (fContextInfoPopup != null)
@@ -1871,6 +1862,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (p instanceof ISubjectControlContentAssistProcessor) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
+				@Override
 				public void run() throws Exception {
 					result[0]= ((ISubjectControlContentAssistProcessor) p)
 							.computeCompletionProposals(contentAssistSubjectControl, offset);
@@ -1900,6 +1892,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (p != null) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(COMPLETION_ERROR_MESSAGE_KEY) {
+				@Override
 				public void run() throws Exception {
 					result[0]= p.computeCompletionProposals(viewer, offset);
 					fLastErrorMessage= p.getErrorMessage();
@@ -1929,6 +1922,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (p != null) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
+				@Override
 				public void run() throws Exception {
 					result[0]= p.computeContextInformation(viewer, offset);
 					fLastErrorMessage= p.getErrorMessage();
@@ -1960,6 +1954,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (p instanceof ISubjectControlContentAssistProcessor) {
 			// Ensure that the assist session ends cleanly even if the processor throws an exception.
 			SafeRunner.run(new ExceptionLoggingSafeRunnable(CONTEXT_ERROR_MESSAGE_KEY) {
+				@Override
 				public void run() throws Exception {
 					result[0]= ((ISubjectControlContentAssistProcessor) p)
 							.computeContextInformation(contentAssistSubjectControl, offset);
@@ -2098,19 +2093,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return p != null ? p.getContextInformationAutoActivationCharacters() : null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
-	 * @since 2.0
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner,
-	 *      int)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		if (priority > WIDGET_PRIORITY) {
 			hide();
@@ -2119,10 +2107,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		if (fProposalPopup != null) {
 			fProposalPopup.setFocus();
@@ -2329,19 +2314,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fProposalPopup.hasFocus();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#addCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
-	 * @since 3.2
-	 */
+	@Override
 	public void addCompletionListener(ICompletionListener listener) {
 		Assert.isLegal(listener != null);
 		fCompletionListeners.add(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#removeCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
-	 * @since 3.2
-	 */
+	@Override
 	public void removeCompletionListener(ICompletionListener listener) {
 		fCompletionListeners.remove(listener);
 	}
@@ -2399,10 +2378,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setRepeatedInvocationMode(boolean)
-	 * @since 3.2
-	 */
+	@Override
 	public void setRepeatedInvocationMode(boolean cycling) {
 		fIsRepetitionMode= cycling;
 	}
@@ -2419,10 +2395,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fIsRepetitionMode;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setShowEmptyList(boolean)
-	 * @since 3.2
-	 */
+	@Override
 	public void setShowEmptyList(boolean showEmpty) {
 		fShowEmptyList= showEmpty;
 	}
@@ -2439,10 +2412,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fShowEmptyList;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setStatusLineVisible(boolean)
-	 * @since 3.2
-	 */
+	@Override
 	public void setStatusLineVisible(boolean show) {
 		fIsStatusLineVisible= show;
 		if (fProposalPopup != null)
@@ -2461,10 +2431,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fIsStatusLineVisible;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setStatusMessage(java.lang.String)
-	 * @since 3.2
-	 */
+	@Override
 	public void setStatusMessage(String message) {
 		Assert.isLegal(message != null);
 		fMessage= message;
@@ -2482,10 +2449,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fMessage;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension2#setEmptyMessage(java.lang.String)
-	 * @since 3.2
-	 */
+	@Override
 	public void setEmptyMessage(String message) {
 		Assert.isLegal(message != null);
 		if (fProposalPopup != null)
@@ -2526,6 +2490,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension3#setInvocationTrigger(org.eclipse.jface.bindings.keys.KeySequence)
 	 * @since 3.2
 	 */
+	@Override
 	public void setRepeatedInvocationTrigger(KeySequence sequence) {
 		fRepeatedInvocationKeySequence= sequence;
 	}
@@ -2565,6 +2530,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public final IHandler getHandler(String commandId) {
 		if (fHandlers == null)
 			throw new IllegalStateException();

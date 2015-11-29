@@ -59,10 +59,12 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			return buf.toString();
 		}
 
+		@Override
 		public void runWithEvent(Event event) {
 			runIfChecked(event.stateMask == SWT.CTRL);
 		}
 
+		@Override
 		public void run() {
 			runIfChecked(false);
 		}
@@ -91,6 +93,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		setEnabled(hasQueries);
 	}
 
+	@Override
 	public void dispose() {
 		disposeMenu();
 	}
@@ -100,10 +103,12 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 			fMenu.dispose();
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		ISearchResult currentSearch= fSearchView.getCurrentSearchResult();
 		disposeMenu();
@@ -130,6 +135,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 		item.fill(parent, -1);
 	}
 
+	@Override
 	public void run() {
 		new ShowSearchHistoryDialogAction(fSearchView).run();
 	}

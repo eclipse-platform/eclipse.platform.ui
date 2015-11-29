@@ -42,16 +42,12 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	 */
 	private class TableSelectionListener implements SelectionListener {
 
-		/*
-		 * @see SelectionListener#widgetSelected(SelectionEvent)
-		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			handleTableSelectionChanged();
 		}
 
-		/*
-		 * @see SelectionListener#widgetDefaultSelected(SelectionEvent)
-		 */
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
@@ -88,9 +84,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		setFallbackAnchors(new Anchor[] {ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#install(Control)
-	 */
+	@Override
 	public void install(Control control) {
 
 		if (fProposalTable == control) {
@@ -120,10 +114,8 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		}
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#disposeInformationControl()
-	 */
-	 public void disposeInformationControl() {
+	 @Override
+	public void disposeInformationControl() {
 
 	 	synchronized (fThreadAccess) {
 	 		if (fThread != null) {
@@ -140,9 +132,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		super.disposeInformationControl();
 	}
 
-	/*
-	 * @see java.lang.Runnable#run()
-	 */
+	@Override
 	public void run() {
 		try {
 			while (true) {
@@ -170,6 +160,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 
 				if (fProposalTable != null && !fProposalTable.isDisposed()) {
 					fProposalTable.getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!fIsReset)
 								showInformation();
@@ -201,9 +192,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		}
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#computeInformation()
-	 */
+	@Override
 	protected void computeInformation() {
 
 		if (fProposalTable == null || fProposalTable.isDisposed())
@@ -239,9 +228,7 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(Control, IInformationControl)
-	 */
+	@Override
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);

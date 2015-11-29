@@ -37,6 +37,7 @@ public class FileMatch extends Match {
 		fLineElement= lineEntry;
 	}
 
+	@Override
 	public void setOffset(int offset) {
 		if (fOriginalLocation == null) {
 			// remember the original location before changing it
@@ -45,6 +46,7 @@ public class FileMatch extends Match {
 		super.setOffset(offset);
 	}
 
+	@Override
 	public void setLength(int length) {
 		if (fOriginalLocation == null) {
 			// remember the original location before changing it

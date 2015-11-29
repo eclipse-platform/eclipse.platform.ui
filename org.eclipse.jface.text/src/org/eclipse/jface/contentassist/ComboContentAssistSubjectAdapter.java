@@ -49,6 +49,7 @@ import org.eclipse.jface.text.IDocument;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
+@Deprecated
 public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {
 
 	/**
@@ -63,9 +64,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		private InternalDocument() {
 			super(fCombo.getText());
 			fModifyListener= new ModifyListener() {
-				/*
-				 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-				 */
+				@Override
 				public void modifyText(ModifyEvent e) {
 					set(fCombo.getText());
 				}
@@ -73,9 +72,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 			fCombo.addModifyListener(fModifyListener);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.AbstractDocument#replace(int, int, java.lang.String)
-		 */
+		@Override
 		public void replace(int pos, int length, String text) throws BadLocationException {
 			super.replace(pos, length, text);
 			fCombo.removeModifyListener(fModifyListener);
@@ -101,30 +98,22 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		fModifyListeners= new HashMap();
 	 }
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fCombo;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getLineHeight()
-	 */
+	@Override
 	public int getLineHeight() {
 		return fCombo.getTextHeight();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getCaretOffset()
-	 */
+	@Override
 	public int getCaretOffset() {
 		return fCombo.getCaretPosition();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getLocationAtOffset(int)
-	 */
+	@Override
 	public Point getLocationAtOffset(int offset) {
 		String comboString= fCombo.getText();
 		GC gc = new GC(fCombo);
@@ -139,23 +128,17 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return new Point(x, fCombo.getClientArea().y);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getSelectionRange()
-	 */
+	@Override
 	public Point getWidgetSelectionRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getSelectedRange()
-	 */
+	@Override
 	public Point getSelectedRange() {
 		return new Point(fCombo.getSelection().x, Math.abs(fCombo.getSelection().y - fCombo.getSelection().x));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getDocument()
-	 */
+	@Override
 	public IDocument getDocument() {
 		IDocument document= (IDocument)fCombo.getData("document"); //$NON-NLS-1$
 		if (document == null) {
@@ -165,30 +148,25 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return document;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
-	 */
+	@Override
 	public void setSelectedRange(int i, int j) {
 		fCombo.setSelection(new Point(i, i+j));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#revealRange(int, int)
-	 */
+	@Override
 	public void revealRange(int i, int j) {
 		// XXX: this should be improved
 		fCombo.setSelection(new Point(i, i+j));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#addSelectionListener(org.eclipse.swt.events.SelectionListener)
-	 */
+	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fCombo.addSelectionListener(selectionListener);
 		Listener listener= new Listener() {
 			/*
 			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 			 */
+			@Override
 			public void handleEvent(Event e) {
 				selectionListener.widgetSelected(new SelectionEvent(e));
 
@@ -199,9 +177,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeSelectionListener(org.eclipse.swt.events.SelectionListener)
-	 */
+	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		fCombo.removeSelectionListener(selectionListener);
 		Object listener= fModifyListeners.get(selectionListener);

@@ -41,9 +41,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * @since 3.0
 	 */
 	private class Listener extends MouseAdapter {
-		/*
-		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			if (fActionHandler != null && fActionHandler.isEnabled())
 				fActionHandler.run();
@@ -131,58 +129,44 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fWidthInChars= widthInChars;
 	}
 
-	/*
-	 * @see IStatusField#setText(String)
-	 */
+	@Override
 	public void setText(String text) {
 		fText= text;
 		updateMessageLabel();
 	}
 
-	/*
-	 * @see IStatusField#setImage(Image)
-	 */
+	@Override
 	public void setImage(Image image) {
 		fImage= image;
 		updateMessageLabel();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IStatusFieldExtension#setErrorText(java.lang.String)
-	 * @since 3.0
-	 */
+	@Override
 	public void setErrorText(String text) {
 		fErrorText= text;
 		updateMessageLabel();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IStatusFieldExtension#setErrorImage(org.eclipse.swt.graphics.Image)
-	 * @since 3.0
-	 */
+	@Override
 	public void setErrorImage(Image image) {
 		fErrorImage= image;
 		updateMessageLabel();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IStatusFieldExtension#setToolTipText(java.lang.String)
-	 * @since 3.0
-	 */
+	@Override
 	public void setToolTipText(String string) {
 		fToolTipText= string;
 		updateMessageLabel();
 	}
 
-	/*
-	 * @see IContributionItem#fill(Composite)
-	 */
+	@Override
 	public void fill(Composite parent) {
 
 		Label sep= new Label(parent, SWT.SEPARATOR);
 		fLabel= new CLabel(parent, SWT.SHADOW_NONE);
 
 		fLabel.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				fMouseListener= null;
 			}

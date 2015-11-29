@@ -46,9 +46,7 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 		fContext= context;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fContext= null;
 	}

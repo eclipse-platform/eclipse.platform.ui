@@ -67,11 +67,13 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 		addFileBufferContentListeners();
 	}
 
+	@Override
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
 		create(EFS.getStore(URIUtil.toURI(getLocation())), monitor);
 	}
 
+	@Override
 	public void connect() {
 		++ fReferenceCount;
 		if (fReferenceCount == 1)
@@ -87,6 +89,7 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	protected void connected() {
 	}
 
+	@Override
 	public void disconnect() throws CoreException {
 		--fReferenceCount;
 		if (fReferenceCount <= 0)
@@ -102,24 +105,17 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	protected void disconnected() {
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.AbstractFileBuffer#isDisconnected()
-	 * @since 3.1
-	 */
+	@Override
 	protected boolean isDisconnected() {
 		return fReferenceCount <= 0;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getLocation()
-	 */
+	@Override
 	public IPath getLocation() {
 		return fLocation;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
-	 */
+	@Override
 	public void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		if (!isDisconnected() && fCanBeSaved) {
 
@@ -141,101 +137,73 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeCommitRule()
-	 */
+	@Override
 	public ISchedulingRule computeCommitRule() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isDirty()
-	 */
+	@Override
 	public boolean isDirty() {
 		return fCanBeSaved;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#setDirty(boolean)
-	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		fCanBeSaved= isDirty;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isShared()
-	 */
+	@Override
 	public boolean isShared() {
 		return fReferenceCount > 1;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeValidateStateRule()
-	 */
+	@Override
 	public ISchedulingRule computeValidateStateRule() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
-	 */
+	@Override
 	public void validateState(IProgressMonitor monitor, Object computationContext) throws CoreException {
 		// nop
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isStateValidated()
-	 */
+	@Override
 	public boolean isStateValidated() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#resetStateValidation()
-	 */
+	@Override
 	public void resetStateValidation() {
 		// nop
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronized()
-	 */
+	@Override
 	public boolean isSynchronized() {
 		return fSynchronizationStamp == getModificationStamp();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()
-	 */
+	@Override
 	public void requestSynchronizationContext() {
 		++ fSynchronizationContextCount;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#releaseSynchronizationContext()
-	 */
+	@Override
 	public void releaseSynchronizationContext() {
 		-- fSynchronizationContextCount;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronizationContextRequested()
-	 */
+	@Override
 	public boolean isSynchronizationContextRequested() {
 		return fSynchronizationContextCount > 0;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
-	 */
+	@Override
 	public boolean isCommitable() {
 		IFileInfo info= fFileStore.fetchInfo();
 		return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChanged(boolean, org.eclipse.core.runtime.IStatus)
-	 */
+	@Override
 	public void validationStateChanged(boolean validationState, IStatus status) {
 		//nop
 	}

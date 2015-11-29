@@ -46,6 +46,7 @@ public class Token implements IToken {
 	 * Standard token: Neither {@link #UNDEFINED}, {@link #WHITESPACE}, nor {@link #EOF}.
 	 * @deprecated will be removed
 	 */
+	@Deprecated
 	public static final IToken OTHER= new Token(T_OTHER);
 
 	/** The type of this token */
@@ -88,37 +89,27 @@ public class Token implements IToken {
 		fData= data;
 	}
 
-	/*
-	 * @see IToken#getData()
-	 */
+	@Override
 	public Object getData() {
 		return fData;
 	}
 
-	/*
-	 * @see IToken#isOther()
-	 */
+	@Override
 	public boolean isOther() {
 		return (fType == T_OTHER);
 	}
 
-	/*
-	 * @see IToken#isEOF()
-	 */
+	@Override
 	public boolean isEOF() {
 		return (fType == T_EOF);
 	}
 
-	/*
-	 * @see IToken#isWhitespace()
-	 */
+	@Override
 	public boolean isWhitespace() {
 		return (fType == T_WHITESPACE);
 	}
 
-	/*
-	 * @see IToken#isUndefined()
-	 */
+	@Override
 	public boolean isUndefined() {
 		return (fType == T_UNDEFINED);
 	}

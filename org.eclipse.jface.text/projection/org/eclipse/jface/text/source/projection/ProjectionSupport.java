@@ -60,9 +60,7 @@ public class ProjectionSupport {
 			super(sourceViewer, access);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter#findAnnotationModel(org.eclipse.jface.text.source.ISourceViewer)
-		 */
+		@Override
 		protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {
 			if (sourceViewer instanceof ProjectionViewer) {
 				ProjectionViewer projectionViewer= (ProjectionViewer) sourceViewer;
@@ -71,9 +69,7 @@ public class ProjectionSupport {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter#skip(org.eclipse.jface.text.source.Annotation)
-		 */
+		@Override
 		protected boolean skip(Annotation annotation) {
 			if (annotation instanceof ProjectionAnnotation)
 				return !((ProjectionAnnotation) annotation).isCollapsed();
@@ -83,9 +79,7 @@ public class ProjectionSupport {
 	}
 
 	private static class ProjectionDrawingStrategy implements AnnotationPainter.IDrawingStrategy {
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 */
+		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (annotation instanceof ProjectionAnnotation) {
 				ProjectionAnnotation projectionAnnotation= (ProjectionAnnotation) annotation;
@@ -136,16 +130,12 @@ public class ProjectionSupport {
 
 	private class ProjectionListener implements IProjectionListener {
 
-		/*
-		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
-		 */
+		@Override
 		public void projectionEnabled() {
 			doEnableProjection();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
-		 */
+		@Override
 		public void projectionDisabled() {
 			doDisableProjection();
 		}

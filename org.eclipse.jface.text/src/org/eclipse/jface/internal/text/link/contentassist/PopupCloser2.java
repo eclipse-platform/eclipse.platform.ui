@@ -79,33 +79,26 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 			fTable.removeFocusListener(this);
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusGained(FocusEvent e) {
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusLost(final FocusEvent e) {
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
 		d.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (Helper2.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
 					fContentAssistant.popupFocusLost(e);
@@ -113,20 +106,14 @@ class PopupCloser2 extends ShellAdapter implements FocusListener, SelectionListe
 		});
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
-	 * @since 3.1
-	 */
+	@Override
 	public void shellDeactivated(ShellEvent e) {
 		if (fContentAssistant != null)
 			fContentAssistant.hide();
 	}
 
 
-	/*
-	 * @see org.eclipse.swt.events.ShellAdapter#shellClosed(org.eclipse.swt.events.ShellEvent)
-	 * @since 3.1
-	 */
+	@Override
 	public void shellClosed(ShellEvent e) {
 		if (fContentAssistant != null)
 			fContentAssistant.hide();

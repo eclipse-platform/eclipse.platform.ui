@@ -125,9 +125,7 @@ public class WordRule implements IRule {
 		fColumn= column;
 	}
 
-	/*
-	 * @see IRule#evaluate(ICharacterScanner)
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
 		if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {

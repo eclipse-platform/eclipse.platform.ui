@@ -56,8 +56,10 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
@@ -212,6 +214,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @param parent the parent composite
 	 * @return the created child composite
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -223,12 +226,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		String label= TextEditorMessages.QuickDiffConfigurationBlock_showForNewEditors;
 		fEnablementCheckbox= addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
 		fEnablementCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= fEnablementCheckbox.getSelection();
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, enabled);
 				updateEnablement();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -245,12 +250,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalIndent= 10;
 		fQuickDiffOverviewRulerCheckBox.setLayoutData(gd);
 		fQuickDiffOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (int i= 0; i < fQuickDiffModel.length; i++) {
 					fStore.setValue(fQuickDiffModel[i][1], fQuickDiffOverviewRulerCheckBox.getSelection());
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -286,10 +293,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			changeColorButton.setLayoutData(gd);
 			final int index= i;
 			changeColorButton.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					// do nothing
 				}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					String key= fQuickDiffModel[index][0];
 					PreferenceConverter.setValue(fStore, key, editor.getColorValue());
@@ -322,10 +331,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffProviderCombo.setLayoutData(gd);
 
 		fQuickDiffProviderCombo.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int i= fQuickDiffProviderCombo.getSelectionIndex();
 				fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, fQuickDiffProviderListModel[i][0]);
@@ -342,10 +353,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		return composite;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
-	 * @since 3.4
-	 */
+	@Override
 	public void applyData(Object data) {
 	}
 
@@ -382,6 +390,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffProviderCombo.redraw();
 	}
 
+	@Override
 	public void initialize() {
 
 		for (int i= 0; i < fQuickDiffProviderListModel.length; i++) {
@@ -389,6 +398,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			fQuickDiffProviderCombo.add(label);
 		}
 		fQuickDiffProviderCombo.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				updateProviderList();
 			}
@@ -408,13 +418,16 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		updateQuickDiffControls();
 	}
 
+	@Override
 	public boolean canPerformOk() {
 		return true;
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeFields();
 		updateProviderList();
@@ -430,10 +443,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffOverviewRulerCheckBox.setSelection(quickdiffOverviewRuler);
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#dispose()
-	 * @since 3.0
-	 */
+	@Override
 	public void dispose() {
 	}
 }

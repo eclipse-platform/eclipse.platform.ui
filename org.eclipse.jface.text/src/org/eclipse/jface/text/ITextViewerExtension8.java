@@ -78,9 +78,7 @@ public interface ITextViewerExtension8 {
 			fName= name;
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			return fName;
 		}

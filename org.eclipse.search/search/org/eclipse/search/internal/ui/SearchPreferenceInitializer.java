@@ -18,6 +18,7 @@ public class SearchPreferenceInitializer extends AbstractPreferenceInitializer {
 	public SearchPreferenceInitializer() {
 	}
 
+	@Override
 	public void initializeDefaultPreferences() {
 		SearchPreferencePage.initDefaults(SearchPlugin.getDefault().getPreferenceStore());
 	}

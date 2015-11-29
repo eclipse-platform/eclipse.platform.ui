@@ -44,6 +44,8 @@ public class DefaultTextHover implements ITextHover {
 	 *
 	 * @deprecated As of 3.4, replaced by {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
+	@Deprecated
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IAnnotationModel model= getAnnotationModel(fSourceViewer);
 		if (model == null)
@@ -65,9 +67,7 @@ public class DefaultTextHover implements ITextHover {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
-	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return findWord(textViewer.getDocument(), offset);
 	}

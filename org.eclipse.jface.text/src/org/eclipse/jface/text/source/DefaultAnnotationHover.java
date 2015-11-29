@@ -56,9 +56,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 		fShowLineNumber= showLineNumber;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List javaAnnotations= getAnnotationsForLine(sourceViewer, lineNumber);
 		if (javaAnnotations != null) {

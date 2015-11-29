@@ -51,6 +51,7 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 			fPostProvider= postProvider;
         }
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 	    	ISelection selection= event.getSelection();
 	    	if (selection instanceof ITextSelection) {
@@ -97,33 +98,25 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
 		fPainter= painter;
     }
 
-	/*
-     * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-     */
-    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
     	fListeners.add(listener);
     }
 
-    /*
-     * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-     */
-    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
     	fListeners.remove(listener);
     }
 
-	/*
-     * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-     */
-    public ISelection getSelection() {
+    @Override
+	public ISelection getSelection() {
     	if (fSelection == null)
     		return StructuredSelection.EMPTY;
 	    return new StructuredSelection(fSelection);
     }
 
-	/*
-     * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-     */
-    public void setSelection(ISelection selection) {
+    @Override
+	public void setSelection(ISelection selection) {
     	if (fIgnoreEvents)
     		return;
     	if (selection instanceof IStructuredSelection) {

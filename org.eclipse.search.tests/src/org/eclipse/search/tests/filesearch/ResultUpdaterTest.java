@@ -49,6 +49,7 @@ public class ResultUpdaterTest extends TestCase {
 		return allTests();
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// create a own project to make modifications
@@ -60,9 +61,7 @@ public class ResultUpdaterTest extends TestCase {
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject(PROJECT_TO_MODIFY);
 	}

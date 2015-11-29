@@ -25,10 +25,12 @@ public class ScannerColumnTest extends TestCase {
 
 	private IDocument fDocument;
 
+	@Override
 	protected void setUp() throws Exception {
 		fDocument= new Document("scanner test");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		fDocument= null;
 	}

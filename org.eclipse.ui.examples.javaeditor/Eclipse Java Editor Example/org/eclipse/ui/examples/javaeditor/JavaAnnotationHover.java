@@ -24,9 +24,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 public class JavaAnnotationHover implements IAnnotationHover {
 
-	/* (non-Javadoc)
-	 * Method declared on IAnnotationHover
-	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IDocument document= sourceViewer.getDocument();
 

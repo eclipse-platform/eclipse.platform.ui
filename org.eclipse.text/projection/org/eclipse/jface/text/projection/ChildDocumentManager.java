@@ -27,9 +27,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class ChildDocumentManager extends ProjectionDocumentManager {
 
-	/*
-	 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	protected ProjectionDocument createProjectionDocument(IDocument master) {
 		return new ChildDocument(master);
 	}

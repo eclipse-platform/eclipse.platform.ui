@@ -67,16 +67,12 @@ public class DirtyRegion implements ITypedRegion {
 		return null;
 	}
 
-	/*
-	 * @see ITypedRegion#getOffset()
-	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/*
-	 * @see ITypedRegion#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
@@ -84,6 +80,7 @@ public class DirtyRegion implements ITypedRegion {
 	/*
 	 * @see ITypedRegion#getType
 	 */
+	@Override
 	public String getType() {
 		return fType;
 	}

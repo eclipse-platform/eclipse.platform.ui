@@ -44,7 +44,9 @@ public class TextUtilitiesTest extends TestCase {
 	private static class LazilyMirroredDocument extends Document {
 
 		private final class DocumentListener implements IDocumentListener {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				fEvents.add(event);
 			}
@@ -74,6 +76,7 @@ public class TextUtilitiesTest extends TestCase {
 		 *
 		 * @see org.eclipse.jface.text.IDocument#get()
 		 */
+		@Override
 		public String get() {
 			try {
 				flush();
@@ -91,7 +94,9 @@ public class TextUtilitiesTest extends TestCase {
 	private static class LazilyMirroredDocument2 extends Document {
 
 		private final class DocumentListener implements IDocumentListener {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				event= new DocumentEvent(event.getDocument(), event.getOffset(), event.getLength(), event.getText());
 				fEvents.add(event);
@@ -122,6 +127,7 @@ public class TextUtilitiesTest extends TestCase {
 		 *
 		 * @see org.eclipse.jface.text.IDocument#get()
 		 */
+		@Override
 		public String get() {
 			try {
 				flush();

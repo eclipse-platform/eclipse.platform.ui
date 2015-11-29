@@ -33,26 +33,32 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	public FileSearchResult(FileSearchQuery job) {
 		fQuery= job;
 	}
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return SearchPluginImages.DESC_OBJ_TSEARCH_DPDN;
 	}
+	@Override
 	public String getLabel() {
 		return fQuery.getResultLabel(getMatchCount());
 	}
+	@Override
 	public String getTooltip() {
 		return getLabel();
 	}
 
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
 		return getMatches(file);
 	}
 
+	@Override
 	public IFile getFile(Object element) {
 		if (element instanceof IFile)
 			return (IFile)element;
 		return null;
 	}
 
+	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
@@ -62,6 +68,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		return false;
 	}
 
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
@@ -71,14 +78,17 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 		return EMPTY_ARR;
 	}
 
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
 
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return this;
 	}
 
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}

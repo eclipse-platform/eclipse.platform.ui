@@ -17,6 +17,8 @@ public class GapTextTest extends AbstractGapTextTest {
 	/**
 	 * @deprecated tests the legacy constructor of GapTextStore
 	 */
+	@Deprecated
+	@Override
 	protected void setUp() {
 		fText= new GapText(5, 10);
 		fText.set("xxxxx");
@@ -26,6 +28,7 @@ public class GapTextTest extends AbstractGapTextTest {
 		return new TestSuite(GapTextTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fText= null;
 	}

@@ -38,6 +38,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  */
 public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 
+	@Override
 	protected IPath createPath(IProject project) throws Exception {
 		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
 		IFile file= ResourceHelper.createFile(folder, "WorkspaceFile", "content");
@@ -47,6 +48,7 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
+	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceAttributes attributes= new ResourceAttributes();
@@ -54,25 +56,19 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		file.setResourceAttributes(attributes);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
-	 */
+	@Override
 	protected boolean isStateValidationSupported() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
-	 */
+	@Override
 	protected boolean deleteUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		file.delete(true, false, null);
 		return file.exists();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
-	 */
+	@Override
 	protected IPath moveUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceHelper.createFolder("project/folderA/folderB/folderC");
@@ -86,9 +82,7 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
-	 */
+	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
 		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(getPath());
 		assertTrue(fileStore.fetchInfo().exists());
@@ -110,9 +104,7 @@ public class FileStoreFileBuffersForWorkspaceFiles extends FileBufferFunctions {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
-	 */
+	@Override
 	protected Class getAnnotationModelClass() throws Exception {
 		Bundle bundle= Platform.getBundle("org.eclipse.ui.editors");
 		return bundle != null ? IAnnotationModel.class : null;

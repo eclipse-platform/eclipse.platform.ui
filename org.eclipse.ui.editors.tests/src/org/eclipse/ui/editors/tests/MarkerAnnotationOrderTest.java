@@ -50,6 +50,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 		return new TestSuite(MarkerAnnotationOrderTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		//add the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
@@ -70,6 +71,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		// remove the marker updater extension point
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
@@ -86,6 +88,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 		ILog log= Platform.getLog(bundle);
 		log.addLogListener(new ILogListener() {
 
+			@Override
 			public void logging(IStatus status, String plugin) {
 				list.add(status);
 			}
@@ -115,16 +118,20 @@ public class MarkerAnnotationOrderTest extends TestCase {
 	}
 
 	public class TestMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
+		@Override
 		protected IMarker[] retrieveMarkers() throws CoreException {
 			return null;
 		}
 
+		@Override
 		protected void deleteMarkers(IMarker[] markers) throws CoreException {
 		}
 
+		@Override
 		protected void listenToMarkerChanges(boolean listen) {
 		}
 
+		@Override
 		protected boolean isAcceptable(IMarker marker) {
 			return false;
 		}

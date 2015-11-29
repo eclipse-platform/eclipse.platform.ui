@@ -40,6 +40,7 @@ import org.eclipse.ui.IViewPart;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
+@Deprecated
 public interface ISearchResultView extends IViewPart {
 
 	/**
@@ -110,6 +111,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	operation			the runnable used by the view to repeat the search
 	 * @deprecated	As of build  > 20011107, replaced by the new version with additional parameter
 	 */
+	@Deprecated
 	public void searchStarted(
 				String					pageId,
 				String					label,
@@ -147,6 +149,7 @@ public interface ISearchResultView extends IViewPart {
  	 * @since 2.0
 	 * @deprecated	As of build  > 20020514, replaced by the new version which provides an action group factory
 	 */
+	@Deprecated
 	public void searchStarted(
 				String					pageId,
 				String					singularLabel,

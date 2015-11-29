@@ -20,9 +20,7 @@ public class WorkingSetComparator implements Comparator {
 
 	private Collator fCollator= Collator.getInstance();
 
-	/*
-	 * @see Comparator#compare(Object, Object)
-	 */
+	@Override
 	public int compare(Object o1, Object o2) {
 		String name1= null;
 		String name2= null;

@@ -259,10 +259,7 @@ public final class RulerColumnDescriptor {
 		return column;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 * @since 3.3
-	 */
+	@Override
 	public String toString() {
 		return "RulerColumnDescriptor[name=" + getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -271,9 +268,7 @@ public final class RulerColumnDescriptor {
 		return fElement;
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		final int prime= 31;
 		int result= 1;
@@ -281,9 +276,7 @@ public final class RulerColumnDescriptor {
 		return result;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

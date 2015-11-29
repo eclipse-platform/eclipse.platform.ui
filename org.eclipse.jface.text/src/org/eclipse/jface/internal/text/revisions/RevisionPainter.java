@@ -290,9 +290,7 @@ public final class RevisionPainter {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
+		@Override
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.MouseVerticalWheel:
@@ -309,29 +307,21 @@ public final class RevisionPainter {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseEnter(MouseEvent e) {
 			updateFocusLine(toDocumentLineNumber(e.y));
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseExit(MouseEvent e) {
 			updateFocusLine(-1);
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseHover(MouseEvent e) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent e) {
 			updateFocusLine(toDocumentLineNumber(e.y));
 		}
@@ -341,9 +331,7 @@ public final class RevisionPainter {
 	 * Internal listener class that will update the ruler when the underlying model changes.
 	 */
 	private class AnnotationListener implements IAnnotationModelListener {
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
-		 */
+		@Override
 		public void modelChanged(IAnnotationModel model) {
 			clearRangeCache();
 			postRedraw();
@@ -361,9 +349,7 @@ public final class RevisionPainter {
 			fIsFocusable= isFocusable;
 		}
 
-		/*
-		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-		 */
+		@Override
 		protected IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
 	            return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
@@ -372,7 +358,9 @@ public final class RevisionPainter {
 					 *
 					 * @deprecated use {@link #setInput(Object)}
 					 */
-	            	public void setInformation(String content) {
+	            	@Deprecated
+					@Override
+					public void setInformation(String content) {
         				content= addCSSToHTMLFragment(content);
 	            		super.setInformation(content);
 	            	}
@@ -402,9 +390,7 @@ public final class RevisionPainter {
 			return new DefaultInformationControl(parent, fIsFocusable);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.AbstractReusableInformationControlCreator#canReplace(org.eclipse.jface.text.IInformationControlCreator)
-		 */
+		@Override
 		public boolean canReplace(IInformationControlCreator creator) {
 			return creator.getClass() == getClass()
 					&& ((HoverInformationControlCreator) creator).fIsFocusable == fIsFocusable;
@@ -448,18 +434,13 @@ public final class RevisionPainter {
 	 */
 	private final class RevisionHover implements IAnnotationHover, IAnnotationHoverExtension, IAnnotationHoverExtension2, IInformationProviderExtension2 {
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
-		 *      int)
-		 */
+		@Override
 		public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 			Object info= getHoverInfo(sourceViewer, getHoverLineRange(sourceViewer, lineNumber), 0);
 			return info == null ? null : info.toString();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
-		 */
+		@Override
 		public IInformationControlCreator getHoverControlCreator() {
 			RevisionInformation revisionInfo= fRevisionInfo;
 			if (revisionInfo != null) {
@@ -470,43 +451,31 @@ public final class RevisionPainter {
 			return new HoverInformationControlCreator(false);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
-		 */
+		@Override
 		public boolean canHandleMouseCursor() {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension2#canHandleMouseWheel()
-		 */
+		@Override
 		public boolean canHandleMouseWheel() {
 			return true;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
-		 *      org.eclipse.jface.text.source.ILineRange, int)
-		 */
+		@Override
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 			RevisionRange range= getRange(lineRange.getStartLine());
 			Object info= range == null ? null : range.getRevision().getHoverInfo();
 			return info;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer,
-		 *      int)
-		 */
+		@Override
 		public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 			RevisionRange range= getRange(lineNumber);
 			return range == null ? null : new LineRange(lineNumber, 1);
 		}
 
-		/*
-         * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-         */
-        public IInformationControlCreator getInformationPresenterControlCreator() {
+        @Override
+		public IInformationControlCreator getInformationPresenterControlCreator() {
 			RevisionInformation revisionInfo= fRevisionInfo;
 			if (revisionInfo != null) {
 				IInformationControlCreator creator= revisionInfo.getInformationPresenterControlCreator();
@@ -756,9 +725,7 @@ public final class RevisionPainter {
 		fControl.addListener(SWT.MouseUp, fMouseHandler);
 		fControl.addListener(SWT.MouseDown, fMouseHandler);
 		fControl.addDisposeListener(new DisposeListener() {
-			/*
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 			}
@@ -1376,6 +1343,7 @@ public final class RevisionPainter {
 			Display d= fControl.getDisplay();
 			if (d != null) {
 				d.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						redraw();
 					}

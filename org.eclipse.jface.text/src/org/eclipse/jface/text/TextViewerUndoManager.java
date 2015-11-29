@@ -65,6 +65,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		/*
 		 * @see MouseListener#mouseDoubleClick
 		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
 
@@ -72,6 +73,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		 * If the right mouse button is pressed, the current editing command is closed
 		 * @see MouseListener#mouseDown
 		 */
+		@Override
 		public void mouseDown(MouseEvent e) {
 			if (e.button == 1)
 				if (isConnected())
@@ -81,12 +83,14 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		/*
 		 * @see MouseListener#mouseUp
 		 */
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
 		/*
 		 * @see KeyListener#keyPressed
 		 */
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 
@@ -94,6 +98,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		 * On cursor keys, the current editing command is closed
 		 * @see KeyListener#keyPressed
 		 */
+		@Override
 		public void keyPressed(KeyEvent e) {
 			switch (e.keyCode) {
 				case SWT.ARROW_UP:
@@ -114,16 +119,12 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 */
 	private class TextInputListener implements ITextInputListener {
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			disconnectDocumentUndoManager();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			connectDocumentUndoManager(newInput);
 		}
@@ -135,9 +136,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	 */
 	private class DocumentUndoListener implements IDocumentUndoListener {
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentUndoListener#documentUndoNotification(DocumentUndoEvent)
-		 */
+		@Override
 		public void documentUndoNotification(DocumentUndoEvent event ){
 			if (!isConnected()) return;
 
@@ -152,6 +151,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 						extension.setRedraw(false);
 				}
 				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (fTextViewer instanceof TextViewer)
 							((TextViewer)fTextViewer).ignoreAutoEditStrategies(true);
@@ -160,6 +160,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 
 			} else if (((eventType & DocumentUndoEvent.UNDONE) != 0) || ((eventType & DocumentUndoEvent.REDONE) != 0))  {
 				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (fTextViewer instanceof TextViewer)
 							((TextViewer)fTextViewer).ignoreAutoEditStrategies(false);
@@ -227,6 +228,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	/*
 	 * @see IUndoManager#beginCompoundChange
 	 */
+	@Override
 	public void beginCompoundChange() {
 		if (isConnected()) {
 			fDocumentUndoManager.beginCompoundChange();
@@ -237,6 +239,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 	/*
 	 * @see IUndoManager#endCompoundChange
 	 */
+	@Override
 	public void endCompoundChange() {
 		if (isConnected()) {
 			fDocumentUndoManager.endCompoundChange();
@@ -298,6 +301,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 			else
 				display= Display.getDefault();
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					MessageDialog.openError(finalShell, title, ex.getLocalizedMessage());
 				}
@@ -305,9 +309,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#setMaximalUndoLevel(int)
-	 */
+	@Override
 	public void setMaximalUndoLevel(int undoLevel) {
 		fUndoLevel= Math.max(0, undoLevel);
 		if (isConnected()) {
@@ -315,9 +317,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#connect(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void connect(ITextViewer textViewer) {
 		if (fTextViewer == null && textViewer != null) {
 			fTextViewer= textViewer;
@@ -327,9 +327,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		connectDocumentUndoManager(doc);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#disconnect()
-	 */
+	@Override
 	public void disconnect() {
 		if (fTextViewer != null) {
 			removeListeners();
@@ -338,36 +336,28 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		disconnectDocumentUndoManager();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#reset()
-	 */
+	@Override
 	public void reset() {
 		if (isConnected())
 			fDocumentUndoManager.reset();
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#redoable()
-	 */
+	@Override
 	public boolean redoable() {
 		if (isConnected())
 			return fDocumentUndoManager.redoable();
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#undoable()
-	 */
+	@Override
 	public boolean undoable() {
 		if (isConnected())
 			return fDocumentUndoManager.undoable();
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#redo()
-	 */
+	@Override
 	public void redo() {
 		if (isConnected()) {
 			try {
@@ -378,9 +368,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManager#undo()
-	 */
+	@Override
 	public void undo() {
 		if (isConnected()) {
 			try {
@@ -408,9 +396,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 		fTextViewer.revealRange(offset, length);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IUndoManagerExtension#getUndoContext()
-	 */
+	@Override
 	public IUndoContext getUndoContext() {
 		if (isConnected()) {
 			return fDocumentUndoManager.getUndoContext();

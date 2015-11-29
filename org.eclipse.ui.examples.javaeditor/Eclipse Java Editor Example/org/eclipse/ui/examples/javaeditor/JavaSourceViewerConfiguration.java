@@ -58,38 +58,28 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	public JavaSourceViewerConfiguration() {
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new JavaAnnotationHover();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
+	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		IAutoEditStrategy strategy= (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? new JavaAutoIndentStrategy() : new DefaultIndentLineAutoEditStrategy());
 		return new IAutoEditStrategy[] { strategy };
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
-	 */
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return JavaEditorExamplePlugin.JAVA_PARTITIONING;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, JavaPartitionScanner.JAVA_DOC, JavaPartitionScanner.JAVA_MULTILINE_COMMENT };
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		ContentAssistant assistant= new ContentAssistant();
@@ -106,23 +96,17 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		return assistant;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		return new JavaDoubleClickSelector();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		return new String[] { "\t", "    " }; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
 		JavaColorProvider provider= JavaEditorExamplePlugin.getDefault().getJavaColorProvider();
@@ -144,16 +128,12 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		return reconciler;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return 4;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on SourceViewerConfiguration
-	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new JavaTextHover();
 	}

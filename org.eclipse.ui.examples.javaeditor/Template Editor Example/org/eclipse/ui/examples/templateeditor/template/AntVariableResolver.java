@@ -21,14 +21,13 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
  * their prefix-likeness with the variable type.
  */
 public class AntVariableResolver extends TemplateVariableResolver {
-	/*
-	 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolveAll(org.eclipse.jface.text.templates.TemplateContext)
-	 */
+	@Override
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals= new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 		Arrays.sort(proposals, new Comparator() {
 
+			@Override
 			public int compare(Object o1, Object o2) {
 				return getCommonPrefixLength(getType(), (String) o2) - getCommonPrefixLength(getType(), (String) o1);
 			}

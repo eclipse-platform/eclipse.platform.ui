@@ -32,6 +32,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  * elements.
  * @deprecated old search
  */
+@Deprecated
 class ResourceToItemsMapper {
 
 	private static final int NUMBER_LIST_REUSE= 10;

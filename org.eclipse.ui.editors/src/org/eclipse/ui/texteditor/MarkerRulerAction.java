@@ -132,6 +132,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param askForLabel <code>true</code> if the user should be asked for a label
 	 * @deprecated use <code>MarkerRulerAction(ResourceBundle, String,  ITextEditor, IVerticalRulerInfo, String, boolean)</code> instead
 	 */
+	@Deprecated
 	public MarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor, String markerType, boolean askForLabel) {
 		this(bundle, prefix, editor, ruler, markerType, askForLabel);
 	}
@@ -152,6 +153,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @return this action's vertical ruler
 	 * @deprecated use <code>getVerticalRulerInfo</code> instead
 	 */
+	@Deprecated
 	protected IVerticalRuler getVerticalRuler() {
 		if (fRuler instanceof IVerticalRuler)
 			return (IVerticalRuler) fRuler;
@@ -186,9 +188,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		return fPrefix;
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		//bug 38745
 		IDocument document= getDocument();
@@ -232,9 +232,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		return marker != null && marker.exists() && marker.getAttribute(IMarker.USER_EDITABLE, true);
 	}
 
-	/*
-	 * @see Action#run()
-	 */
+	@Override
 	public void run() {
 		if (fMarkers.isEmpty())
 			addMarker();
@@ -403,6 +401,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator= new IInputValidator() {
+			@Override
 			public String isValid(String newText) {
 				return (newText == null || newText.trim().length() == 0) ? " " : null; //$NON-NLS-1$
 			}
@@ -504,6 +503,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	private void execute(IUndoableOperation operation) {
 		final Shell shell= getTextEditor().getSite().getShell();
 		IAdaptable context= new IAdaptable() {
+			@Override
 			public Object getAdapter(Class adapter) {
 				if (adapter == Shell.class)
 					return shell;

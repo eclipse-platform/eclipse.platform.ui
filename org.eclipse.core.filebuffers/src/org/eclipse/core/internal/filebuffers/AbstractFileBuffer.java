@@ -69,32 +69,23 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 	protected void dispose() {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateAboutToBeChanged()
-	 */
+	@Override
 	public void validationStateAboutToBeChanged() {
 		fManager.fireStateChanging(this);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChangeFailed()
-	 */
+	@Override
 	public void validationStateChangeFailed() {
 		fManager.fireStateChangeFailed(this);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
-	 */
+	@Override
 	public long getModificationStamp() {
 		IFileInfo info= fFileStore.fetchInfo();
 		return info.exists() ? info.getLastModified() : IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getFileStore()
-	 * @since 3.3
-	 */
+	@Override
 	public IFileStore getFileStore() {
 		return fFileStore;
 	}

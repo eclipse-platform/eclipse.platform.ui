@@ -34,6 +34,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 		/*
 		 * @see org.eclipse.ui.editors.text.ILocationProvider#getLocation(java.lang.Object)
 		 */
+		@Override
 		public IPath getPath(Object element) {
 			URI uri= getURI(element);
 			if (uri != null)
@@ -41,9 +42,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.ui.editors.text.ILocationProviderExtension#getURI(java.lang.Object)
-		 */
+		@Override
 		public URI getURI(Object element) {
 			if (element instanceof IURIEditorInput) {
 				IURIEditorInput input= (IURIEditorInput)element;
@@ -60,9 +59,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 	/** The provided location provider */
 	private ILocationProvider fLocationProvider= new LocationProvider();
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (ILocationProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IURIEditorInput)
@@ -71,9 +68,7 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTER_LIST;
 	}

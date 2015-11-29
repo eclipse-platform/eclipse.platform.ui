@@ -65,10 +65,7 @@ public class Document extends AbstractDocument {
 		completeInitialization();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IRepairableDocumentExtension#isLineInformationRepairNeeded(int, int, java.lang.String)
-	 * @since 3.4
-	 */
+	@Override
 	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {
 		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
 			throw new BadLocationException();

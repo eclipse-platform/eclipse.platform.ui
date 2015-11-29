@@ -99,6 +99,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#doCopy
 	 */
+	@Override
 	protected TextEdit doCopy() {
 		return new CopyTargetEdit(this);
 	}
@@ -106,6 +107,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#postProcessCopy
 	 */
+	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
 			CopyTargetEdit target= (CopyTargetEdit)copier.getCopy(this);
@@ -118,6 +120,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#accept0
 	 */
+	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
 		if (visitChildren) {
@@ -128,6 +131,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#traverseConsistencyCheck
 	 */
+	@Override
 	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
@@ -135,6 +139,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */
+	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.no_source")); //$NON-NLS-1$
@@ -145,6 +150,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
+	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
@@ -156,6 +162,7 @@ public final class CopyTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#deleteChildren
 	 */
+	@Override
 	boolean deleteChildren() {
 		return false;
 	}

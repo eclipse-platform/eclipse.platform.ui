@@ -29,6 +29,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 
 	private class PropertyChangeListener implements IPropertyChangeListener {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			fEvents.add(event);
 		}

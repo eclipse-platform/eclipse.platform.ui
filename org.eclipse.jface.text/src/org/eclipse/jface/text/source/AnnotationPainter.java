@@ -105,12 +105,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 * @deprecated As of 3.4, replaced by {@link AnnotationPainter.UnderlineStrategy}
 	 */
+	@Deprecated
 	public static class SquigglesStrategy implements IDrawingStrategy {
 
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 * @since 3.0
-		 */
+		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 
@@ -191,10 +189,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public static final class NullStrategy implements IDrawingStrategy {
 
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 * @since 3.0
-		 */
+		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			// do nothing
 		}
@@ -224,6 +219,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.4
 	 */
 	public static final class HighlightingStrategy implements ITextStyleStrategy {
+		@Override
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.background= annotationColor;
 		}
@@ -244,6 +240,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fUnderlineStyle= style;
 		}
 
+		@Override
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.underline= true;
 			styleRange.underlineStyle= fUnderlineStyle;
@@ -266,6 +263,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fBorderStyle= style;
 		}
 
+		@Override
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.borderStyle= fBorderStyle;
 			styleRange.borderColor= annotationColor;
@@ -976,10 +974,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
-	 * @since 3.0
-	 */
+	@Override
 	public void applyTextPresentation(TextPresentation tp) {
 		Set decorations;
 
@@ -1033,9 +1028,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
-	 */
+	@Override
 	public synchronized void modelChanged(final IAnnotationModel model) {
 		if (DEBUG)
 			System.err.println("AP: OLD API of AnnotationModelListener called"); //$NON-NLS-1$
@@ -1043,9 +1036,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		modelChanged(new AnnotationModelEvent(model));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
-	 */
+	@Override
 	public void modelChanged(final AnnotationModelEvent event) {
 		Display textWidgetDisplay;
 		try {
@@ -1082,6 +1073,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			// now and running the posted runnable, the position information
 			// is not accurate any longer.
 			textWidgetDisplay.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (fTextWidget != null && !fTextWidget.isDisposed())
 						updatePainting(event);
@@ -1114,6 +1106,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 *             {@link #addTextStyleStrategy(Object, AnnotationPainter.ITextStyleStrategy)} and
 	 *             {@link UnderlineStrategy}
 	 */
+	@Deprecated
 	public void addAnnotationType(Object annotationType) {
 		addAnnotationType(annotationType, SQUIGGLES);
 	}
@@ -1135,16 +1128,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (fTextInputListener == null) {
 			fTextInputListener= new ITextInputListener() {
 
-				/*
-				 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-				 */
+				@Override
 				public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 					fInputDocumentAboutToBeChanged= true;
 				}
 
-				/*
-				 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-				 */
+				@Override
 				public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 					fInputDocumentAboutToBeChanged= false;
 				}
@@ -1266,9 +1255,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return !fAnnotationType2PaintingStrategyId.isEmpty();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		if (fAnnotationType2Color != null) {
@@ -1347,9 +1334,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-	 */
+	@Override
 	public void paintControl(PaintEvent event) {
 		if (fTextWidget != null)
 			handleDrawRequest(event);
@@ -1601,9 +1586,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return (offset1 <= offset2+length2) && (offset2 <= offset1+length1);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#deactivate(boolean)
-	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -1637,9 +1620,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#paint(int)
-	 */
+	@Override
 	public void paint(int reason) {
 		if (fSourceViewer.getDocument() == null) {
 			deactivate(false);
@@ -1656,9 +1637,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			updatePainting(null);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
-	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 	}
 }

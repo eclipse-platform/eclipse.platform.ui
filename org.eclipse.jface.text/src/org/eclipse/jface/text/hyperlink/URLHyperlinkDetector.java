@@ -44,12 +44,11 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 	 * @param textViewer the text viewer in which to detect the hyperlink
 	 * @deprecated As of 3.2, replaced by {@link URLHyperlinkDetector}
 	 */
+	@Deprecated
 	public URLHyperlinkDetector(ITextViewer textViewer) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
-	 */
+	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		if (region == null || textViewer == null)
 			return null;

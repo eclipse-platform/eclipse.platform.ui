@@ -32,16 +32,12 @@ public class TypedRegion extends Region implements ITypedRegion {
 		fType= type;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITypedRegion#getType()
-	 */
+	@Override
 	public String getType() {
 		return fType;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof TypedRegion) {
 			TypedRegion r= (TypedRegion) o;
@@ -50,18 +46,13 @@ public class TypedRegion extends Region implements ITypedRegion {
 		return false;
 	}
 
-	 /*
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
 	 }
 
-	/*
-	 * @see org.eclipse.jface.text.Region#toString()
-	 * @since 3.5
-	 */
+	@Override
 	public String toString() {
 		return fType + " - " + super.toString(); //$NON-NLS-1$
 	}

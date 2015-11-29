@@ -35,16 +35,12 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	public DefaultLineTracker() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
-	 */
+	@Override
 	public String[] getLegalLineDelimiters() {
 		return TextUtilities.copy(DELIMITERS);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractLineTracker#nextDelimiterInfo(java.lang.String, int)
-	 */
+	@Override
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
 
 		char ch;

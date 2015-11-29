@@ -40,12 +40,14 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
  *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public final class SearchUI {
 
 	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
 	 * @deprecated Use {@link NewSearchUI#PLUGIN_ID} instead.
 	 */
+	@Deprecated
 	public static final String PLUGIN_ID= NewSearchUI.PLUGIN_ID;
 
 	/**
@@ -54,6 +56,7 @@ public final class SearchUI {
 	 * @see org.eclipse.core.resources.IMarker
 	 * @deprecated Use {@link NewSearchUI#SEARCH_MARKER} instead.
 	 */
+	@Deprecated
 	public static final String SEARCH_MARKER=  NewSearchUI.SEARCH_MARKER;
 
 	/**
@@ -93,6 +96,7 @@ public final class SearchUI {
 	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
 	 * @deprecated Use {@link NewSearchUI#SEARCH_VIEW_ID} instead.
 	 */
+	@Deprecated
 	public static final String SEARCH_VIEW_ID= NewSearchUI.SEARCH_VIEW_ID;
 
 	/**
@@ -102,6 +106,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 * @deprecated Use {@link NewSearchUI#ACTION_SET_ID} instead.
 	 */
+	@Deprecated
 	public static final String ACTION_SET_ID= NewSearchUI.ACTION_SET_ID;
 
 	/**
@@ -112,6 +117,7 @@ public final class SearchUI {
 	 * @return <code>true</code> if the search result view could be activated
 	 * @deprecated Use {@link NewSearchUI#activateSearchResultView()} instead.
 	 */
+	@Deprecated
 	public static boolean activateSearchResultView() {
 		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
 		if (defaultPerspectiveId != null) {
@@ -148,6 +154,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 * @deprecated Use {@link NewSearchUI#openSearchDialog(IWorkbenchWindow, String)} instead.
 	 */
+	@Deprecated
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
 		NewSearchUI.openSearchDialog(window, pageId);
 	}
@@ -161,6 +168,7 @@ public final class SearchUI {
 	 * 		if there is no active search result view
 	 * @deprecated Use {@link NewSearchUI#getSearchResultView()} instead.
 	 */
+	@Deprecated
 	public static ISearchResultView getSearchResultView() {
 		IViewPart part= SearchPlugin.getActivePage().findView(SearchUI.SEARCH_RESULT_VIEW_ID);
 		if (part instanceof ISearchResultView)
@@ -190,6 +198,7 @@ public final class SearchUI {
 	 * @since 2.0
 	 * @deprecated Use {@link NewSearchUI#reuseEditor()} instead.
 	 */
+	@Deprecated
 	public static boolean reuseEditor() {
 		return NewSearchUI.reuseEditor();
 	}
@@ -206,6 +215,7 @@ public final class SearchUI {
 	 * @since 2.1
 	 * @deprecated Use {@link NewSearchUI#arePotentialMatchesIgnored()} instead.
 	 */
+	@Deprecated
 	public static boolean arePotentialMatchesIgnored() {
 		return NewSearchUI.arePotentialMatchesIgnored();
 	}
@@ -221,6 +231,7 @@ public final class SearchUI {
 	 * @since 2.1
 	 * @deprecated Use {@link NewSearchUI#getDefaultPerspectiveId()} instead.
 	 */
+	@Deprecated
 	public static String getDefaultPerspectiveId() {
 		return NewSearchUI.getDefaultPerspectiveId();
 	}

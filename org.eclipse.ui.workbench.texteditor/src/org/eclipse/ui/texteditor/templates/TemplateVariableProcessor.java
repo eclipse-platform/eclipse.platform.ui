@@ -38,6 +38,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
 final class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	private static Comparator fgTemplateVariableProposalComparator= new Comparator() {
+		@Override
 		public int compare(Object arg0, Object arg1) {
 			TemplateVariableProposal proposal0= (TemplateVariableProposal) arg0;
 			TemplateVariableProposal proposal1= (TemplateVariableProposal) arg1;
@@ -45,9 +46,7 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 			return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
 		}
 
-		/*
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
+		@Override
 		public boolean equals(Object arg0) {
 			return false;
 		}
@@ -56,6 +55,7 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		 * Returns Object#hashCode.
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return super.hashCode();
 		}
@@ -83,9 +83,7 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		return fContextType;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
-	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,	int documentOffset) {
 
 		if (fContextType == null)
@@ -132,37 +130,27 @@ final class TemplateVariableProcessor implements IContentAssistProcessor {
 		return end;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		return null;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] {'$'};
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getContextInformationValidator()
-	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

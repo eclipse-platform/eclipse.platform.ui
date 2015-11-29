@@ -100,9 +100,11 @@ public class SpellingService {
 					final ISpellingEngine engine= createEngine(fPreferences);
 					if (engine != null) {
 						ISafeRunnable runnable= new ISafeRunnable() {
+							@Override
 							public void run() throws Exception {
 								engine.check(document, regions, context, collector, monitor);
 							}
+							@Override
 							public void handleException(Throwable x) {
 							}
 						};

@@ -20,63 +20,43 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
  */
 public class FileBufferListener implements IFileBufferListener {
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferCreated(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferCreated(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferDisposed(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferDisposed(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferContentAboutToBeReplaced(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferContentReplaced(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferContentReplaced(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateChanging(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void stateChanging(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#dirtyStateChanged(org.eclipse.core.filebuffers.IFileBuffer, boolean)
-	 */
+	@Override
 	public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateValidationChanged(org.eclipse.core.filebuffers.IFileBuffer, boolean)
-	 */
+	@Override
 	public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#underlyingFileMoved(org.eclipse.core.filebuffers.IFileBuffer, org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	public void underlyingFileMoved(IFileBuffer buffer, IPath path) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#underlyingFileDeleted(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void underlyingFileDeleted(IFileBuffer buffer) {
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateChangeFailed(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void stateChangeFailed(IFileBuffer buffer) {
 	}
 }

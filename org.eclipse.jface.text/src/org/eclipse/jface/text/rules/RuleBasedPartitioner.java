@@ -48,12 +48,14 @@ import org.eclipse.jface.text.TypedRegion;
  *
  * @deprecated use <code>FastPartitioner</code> instead
  */
+@Deprecated
 public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2 {
 
 	/**
 	 * The position category this partitioner uses to store the document's partitioning information
 	 * @deprecated As of 3.0, use <code>getManagingPositionCategories()</code>.
 	 */
+	@Deprecated
 	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
 
 
@@ -94,10 +96,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getManagingPositionCategories()
-	 * @since 3.0
-	 */
+	@Override
 	public String[] getManagingPositionCategories() {
 		return new String[] { fPositionCategory };
 	}
@@ -105,6 +104,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#connect
 	 */
+	@Override
 	public void connect(IDocument document) {
 		Assert.isNotNull(document);
 		Assert.isTrue(!document.containsPositionCategory(fPositionCategory));
@@ -145,6 +145,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#disconnect
 	 */
+	@Override
 	public void disconnect() {
 
 		Assert.isTrue(fDocument.containsPositionCategory(fPositionCategory));
@@ -159,6 +160,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#documentAboutToBeChanged
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 
 		Assert.isTrue(e.getDocument() == fDocument);
@@ -172,6 +174,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#documentChanged
 	 */
+	@Override
 	public boolean documentChanged(DocumentEvent e) {
 		IRegion region= documentChanged2(e);
 		return (region != null);
@@ -229,10 +232,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		}
 	}
 
-	/*
-	 * @see IDocumentPartitionerExtension#documentChanged2(DocumentEvent)
-	 * @since 2.0
-	 */
+	@Override
 	public IRegion documentChanged2(DocumentEvent e) {
 
 		try {
@@ -398,6 +398,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getContentType
 	 */
+	@Override
 	public String getContentType(int offset) {
 
 		TypedPosition p= findClosestPosition(offset);
@@ -410,6 +411,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getPartition
 	 */
+	@Override
 	public ITypedRegion getPartition(int offset) {
 
 		try {
@@ -456,6 +458,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#computePartitioning
 	 */
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		return computePartitioning(offset, length, false);
 	}
@@ -463,6 +466,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	/*
 	 * @see IDocumentPartitioner#getLegalContentTypes
 	 */
+	@Override
 	public String[] getLegalContentTypes() {
 		return TextUtilities.copy(fLegalContentTypes);
 	}
@@ -501,18 +505,12 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
     /* zero-length partition support */
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getContentType(int)
-	 * @since 3.0
-	 */
+	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		return getPartition(offset, preferOpenPartitions).getType();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getPartition(int)
-	 * @since 3.0
-	 */
+	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		ITypedRegion region= getPartition(offset);
 		if (preferOpenPartitions) {
@@ -528,10 +526,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
         return region;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computePartitioning(int, int)
-	 * @since 3.0
-	 */
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		List list= new ArrayList();
 

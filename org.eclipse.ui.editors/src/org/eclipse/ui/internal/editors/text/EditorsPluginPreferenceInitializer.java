@@ -34,10 +34,7 @@ import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
  */
 public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 * @since 3.1
-	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
 		TextEditorPreferenceConstants.initializeDefaultValues(store);

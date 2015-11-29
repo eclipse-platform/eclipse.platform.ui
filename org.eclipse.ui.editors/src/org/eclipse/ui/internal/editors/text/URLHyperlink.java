@@ -39,10 +39,7 @@ final class URLHyperlink extends org.eclipse.jface.text.hyperlink.URLHyperlink {
 		super(region, urlString);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.URLHyperlink#open()
-	 * @since 3.1
-	 */
+	@Override
 	public void open() {
 		// Create the browser
 		IWorkbenchBrowserSupport support= PlatformUI.getWorkbench().getBrowserSupport();

@@ -62,9 +62,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		fInformationPresenterControlCreator= creator;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		// this is a no-op as semantics is defined by the implementation of the annotation hover extension
 		return null;
@@ -138,33 +136,26 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		return document.get(offset, endOffset - offset);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
-	 */
+	@Override
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
 		return getProjectionTextAtLine(sourceViewer, lineRange.getStartLine(), visibleLines);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 		return new LineRange(lineNumber, 1);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
-	 */
+	@Override
 	public boolean canHandleMouseCursor() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
-	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (fInformationControlCreator == null) {
 			fInformationControlCreator= new IInformationControlCreator() {
+				@Override
 				public IInformationControl createInformationControl(Shell parent) {
 					return new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, null);
 				}
@@ -173,13 +164,11 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		return fInformationControlCreator;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-	 * @since 3.3
-	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (fInformationPresenterControlCreator == null) {
 			fInformationPresenterControlCreator= new IInformationControlCreator() {
+				@Override
 				public IInformationControl createInformationControl(Shell parent) {
 					return new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
 				}

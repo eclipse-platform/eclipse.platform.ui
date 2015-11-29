@@ -54,9 +54,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 			super(bundle, prefix, editor, ruler, IMarker.TASK, false);
 		}
 
-		/*
-		 * @see MarkerRulerAction#addMarker()
-		 */
+		@Override
 		protected void addMarker() {
 			IResource resource= getResource();
 			if (resource == null)
@@ -69,9 +67,7 @@ public class TaskRulerAction extends AbstractRulerActionDelegate {
 		}
 	}
 
-	/*
-	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
-	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		return new TaskMarkerRulerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ManageTasks.", editor, rulerInfo); //$NON-NLS-1$
 	}

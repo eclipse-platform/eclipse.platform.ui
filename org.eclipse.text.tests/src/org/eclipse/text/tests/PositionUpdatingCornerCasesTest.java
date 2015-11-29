@@ -45,6 +45,7 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 		return new TestSuite(PositionUpdatingCornerCasesTest.class);
 	}
 
+	@Override
 	protected void tearDown() {
 		fDocument= null;
 	}

@@ -48,6 +48,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 	}
 
 
+	@Override
 	protected void setUp() {
 
 		fText= new COWTextStore();
@@ -58,6 +59,7 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		return new TestSuite(CopyOnWriteTextStoreTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fText= null;
 	}

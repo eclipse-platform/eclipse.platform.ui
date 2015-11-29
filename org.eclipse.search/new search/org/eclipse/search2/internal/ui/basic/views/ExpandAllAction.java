@@ -31,6 +31,7 @@ public class ExpandAllAction extends Action {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void run() {
 		if (fViewer != null) {
 			fViewer.expandAll();

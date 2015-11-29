@@ -34,10 +34,7 @@ public class DefaultUndoManagerTest extends AbstractUndoManagerTest {
 		super(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.tests.AbstractUndoManagerTest#createUndoManager(int)
-	 * @since 3.2
-	 */
+	@Override
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
 		return new DefaultUndoManager(maxUndoLevel);
 	}

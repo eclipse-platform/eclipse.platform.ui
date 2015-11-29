@@ -55,9 +55,7 @@ public final class ContextInformation implements IContextInformation {
 		fInformationDisplayString= informationDisplayString;
 	}
 
-	/*
-	 * @see IContextInformation#equals(Object)
-	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IContextInformation) {
 			IContextInformation contextInformation= (IContextInformation) object;
@@ -69,32 +67,23 @@ public final class ContextInformation implements IContextInformation {
 		return false;
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 * @since 3.1
-	 */
+	@Override
 	public int hashCode() {
 	 	int low= fContextDisplayString != null ? fContextDisplayString.hashCode() : 0;
 	 	return (fInformationDisplayString.hashCode() << 16) | low;
 	}
 
-	/*
-	 * @see IContextInformation#getInformationDisplayString()
-	 */
+	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
 
-	/*
-	 * @see IContextInformation#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see IContextInformation#getContextDisplayString()
-	 */
+	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
 			return fContextDisplayString;

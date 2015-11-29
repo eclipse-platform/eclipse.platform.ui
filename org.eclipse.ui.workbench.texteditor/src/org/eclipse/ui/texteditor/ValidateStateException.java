@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
  * @deprecated No longer used, create a {@link CoreException} instead
  * @since 2.1
  */
+@Deprecated
 public class ValidateStateException extends CoreException {
 
 	/**

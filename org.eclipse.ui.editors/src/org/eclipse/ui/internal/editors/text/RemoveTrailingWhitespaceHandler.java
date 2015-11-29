@@ -49,17 +49,13 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		super(new RemoveTrailingWhitespaceOperation());
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#isAcceptableLocation(org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		return location != null && manager.isTextFileLocation(location, fStrictCheckIfTextLocation);
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.FileBufferOperationHandler#collectFiles(org.eclipse.core.resources.IResource[])
-	 */
+	@Override
 	protected IFile[] collectFiles(IResource[] resources) {
 		IFile[] files= super.collectFiles(resources);
 		files= filterUnacceptableFiles(files);
@@ -67,6 +63,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 			return files;
 
     	final IFilter filter= new IFilter() {
+			@Override
 			public boolean accept(IResource resource) {
 				return resource != null && isAcceptableLocation(resource.getFullPath());
 			}
@@ -116,10 +113,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		return (IFile[]) filtered.toArray(new IFile[filtered.size()]);
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
-	 * @since 3.7
-	 */
+	@Override
 	public void setEnabled(Object evaluationContext) {
 		fStrictCheckIfTextLocation= true;
 		if (evaluationContext instanceof IEvaluationContext) {

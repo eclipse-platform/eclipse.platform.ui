@@ -19,6 +19,7 @@ public class TableViewerNavigator implements INavigate {
 	public TableViewerNavigator(TableViewer viewer) {
 		fViewer = viewer;
 	}
+	@Override
 	public void navigateNext(boolean forward) {
 		int itemCount = fViewer.getTable().getItemCount();
 		if (itemCount == 0)

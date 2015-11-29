@@ -58,9 +58,7 @@ class ProjectionSummary {
 			}
 		}
 
-		/*
-		 * @see java.lang.Thread#run()
-		 */
+		@Override
 		public void run() {
 			while (true) {
 				synchronized (fLock) {

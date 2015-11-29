@@ -158,6 +158,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * Calls {@link AbstractReconciler#initialProcess()} on entrance.
 		 * </p>
 		 */
+		@Override
 		public void run() {
 
 			synchronized (fDirtyRegionQueue) {
@@ -224,15 +225,11 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	class Listener implements IDocumentListener, ITextInputListener {
 
-		/*
-		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 
-		/*
-		 * @see IDocumentListener#documentChanged(DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent e) {
 
 			if (fThread.isActive() || !fThread.isDirty() && fThread.isAlive()) {
@@ -255,9 +252,7 @@ abstract public class AbstractReconciler implements IReconciler {
 
 		}
 
-		/*
-		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
-		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 
 			if (oldInput == fDocument) {
@@ -281,9 +276,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			}
 		}
 
-		/*
-		 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
-		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 
 			fDocument= newInput;
@@ -445,9 +438,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		return fProgressMonitor;
 	}
 
-	/*
-	 * @see IReconciler#install(ITextViewer)
-	 */
+	@Override
 	public void install(ITextViewer textViewer) {
 
 		Assert.isNotNull(textViewer);
@@ -477,9 +468,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 	}
 
-	/*
-	 * @see IReconciler#uninstall()
-	 */
+	@Override
 	public void uninstall() {
 		if (fListener != null) {
 

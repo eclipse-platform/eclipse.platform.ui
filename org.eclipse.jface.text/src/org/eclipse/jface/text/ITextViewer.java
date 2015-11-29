@@ -167,6 +167,7 @@ public interface ITextViewer {
 	 *             {@link ITextViewerExtension2#prependAutoEditStrategy(IAutoEditStrategy, String)} and
 	 *             {@link ITextViewerExtension2#removeAutoEditStrategy(IAutoEditStrategy, String)} instead
 	 */
+	@Deprecated
 	void setAutoIndentStrategy(IAutoIndentStrategy strategy, String contentType);
 
 	/**

@@ -47,6 +47,7 @@ import org.eclipse.search.ui.SearchUI;
  * Manage search results
  * 	@deprecated old search
  */
+@Deprecated
 public class SearchManager implements IResourceChangeListener {
 
 	static SearchManager fgDefault;
@@ -95,6 +96,7 @@ public class SearchManager implements IResourceChangeListener {
 	void removeAllSearches() {
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation(null) {
+			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(SearchMessages.SearchManager_updating, 100);
 				SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
@@ -137,6 +139,7 @@ public class SearchManager implements IResourceChangeListener {
 
 		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
 		WorkspaceModifyOperation op= new WorkspaceModifyOperation(null) {
+			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				internalSetCurrentSearch(search, monitor);
 			}
@@ -234,6 +237,7 @@ public class SearchManager implements IResourceChangeListener {
 				final String warningTitle= SearchMessages.SearchManager_resourceChangedWarning;
 				final String warningMsg= warningMessage;
 				display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						MessageDialog.openWarning(getShell(), warningTitle, warningMsg);
 					}
@@ -248,6 +252,7 @@ public class SearchManager implements IResourceChangeListener {
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (previousSearch != null && viewer == visibleViewer)
 							previousSearch.setSelection(viewer.getSelection());
@@ -298,6 +303,7 @@ public class SearchManager implements IResourceChangeListener {
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (fCurrentSearch != null && viewer == visibleViewer)
 							fCurrentSearch.setSelection(viewer.getSelection());
@@ -336,6 +342,7 @@ public class SearchManager implements IResourceChangeListener {
 			handleNewSearchResult();
 		else {
 			display.syncExec(new Runnable() {
+				@Override
 				public void run() {
 					handleNewSearchResult();
 				}
@@ -453,6 +460,7 @@ public class SearchManager implements IResourceChangeListener {
 	 * display thread.
 	 * @param event the event
 	 */
+	@Override
 	public final void resourceChanged(final IResourceChangeEvent event) {
 		if (event == null)
 			return;
@@ -466,6 +474,7 @@ public class SearchManager implements IResourceChangeListener {
 			return;
 
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				if (getCurrentSearch() != null) {
 					handleSearchMarkersChanged(markerDeltas);

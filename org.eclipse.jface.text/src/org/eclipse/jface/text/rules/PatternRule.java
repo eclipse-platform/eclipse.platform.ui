@@ -34,6 +34,7 @@ public class PatternRule implements IPredicateRule {
 	 * @since 3.1
 	 */
 	private static class DecreasingCharArrayLengthComparator implements Comparator {
+		@Override
 		public int compare(Object o1, Object o2) {
 			return ((char[]) o2).length - ((char[]) o1).length;
 		}
@@ -202,9 +203,7 @@ public class PatternRule implements IPredicateRule {
 		return Token.UNDEFINED;
 	}
 
-	/*
-	 * @see IRule#evaluate(ICharacterScanner)
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
 	}
@@ -299,10 +298,7 @@ public class PatternRule implements IPredicateRule {
 		return true;
 	}
 
-	/*
-	 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
-	 * @since 2.0
-	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		if (fColumn == UNDEFINED)
 			return doEvaluate(scanner, resume);
@@ -314,10 +310,7 @@ public class PatternRule implements IPredicateRule {
 		return Token.UNDEFINED;
 	}
 
-	/*
-	 * @see IPredicateRule#getSuccessToken()
-	 * @since 2.0
-	 */
+	@Override
 	public IToken getSuccessToken() {
 		return fToken;
 	}

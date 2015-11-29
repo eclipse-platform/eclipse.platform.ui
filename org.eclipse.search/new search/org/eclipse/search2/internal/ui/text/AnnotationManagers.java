@@ -23,18 +23,22 @@ public class AnnotationManagers {
 	static {
 		fgManagerMap = new HashMap();
 		IWindowListener listener = new IWindowListener() {
+			@Override
 			public void windowActivated(IWorkbenchWindow window) {
 				// ignore
 			}
 
+			@Override
 			public void windowDeactivated(IWorkbenchWindow window) {
 				// ignore
 			}
 
+			@Override
 			public void windowClosed(IWorkbenchWindow window) {
 				disposeAnnotationManager(window);
 			}
 
+			@Override
 			public void windowOpened(IWorkbenchWindow window) {
 				// ignore
 			}

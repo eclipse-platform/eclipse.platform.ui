@@ -37,16 +37,19 @@ abstract public class FindInRecentScopeActionDelegate extends RetrieverAction im
 	}
 
 	// IWorkbenchWindowActionDelegate
+	@Override
 	public void dispose() {
 		fWindow= null;
 	}
 
 	// IWorkbenchWindowActionDelegate
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
 	// IEditorActionDelegate
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		fWindow= null;
 		if (targetEditor != null) {
@@ -55,15 +58,18 @@ abstract public class FindInRecentScopeActionDelegate extends RetrieverAction im
 	}
 
 	// IActionDelegate
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	// IActionDelegate
+	@Override
 	final public void run(IAction action) {
 		run();
 	}
 
 	// RetrieverAction
+	@Override
 	protected IWorkbenchPage getWorkbenchPage() {
 		if (fWindow != null) {
 			return fWindow.getActivePage();
@@ -71,5 +77,6 @@ abstract public class FindInRecentScopeActionDelegate extends RetrieverAction im
 		return null;
 	}
 
+	@Override
 	abstract protected ISearchQuery createQuery(TextSearchQueryProvider provider, String searchForString) throws CoreException;
 }

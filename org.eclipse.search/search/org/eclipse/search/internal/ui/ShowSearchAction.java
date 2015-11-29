@@ -15,6 +15,7 @@ import org.eclipse.jface.action.Action;
 /**
  * @deprecated old search
  */
+@Deprecated
 class ShowSearchAction extends Action {
 	private Search fSearch;
 
@@ -33,6 +34,7 @@ class ShowSearchAction extends Action {
 	/**
 	 *	Invoke the resource wizard selection wizard
 	 */
+	@Override
 	public void run() {
 		if (fSearch != SearchManager.getDefault().getCurrentSearch())
 			SearchManager.getDefault().setCurrentSearch(fSearch);

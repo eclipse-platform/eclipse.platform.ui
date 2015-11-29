@@ -40,6 +40,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * @param offset the offset left of which the prefix is detected
 	 * @return the detected prefix
 	 */
+	@Override
 	protected String extractPrefix(ITextViewer viewer, int offset) {
 		IDocument document= viewer.getDocument();
 		int i= offset;
@@ -67,6 +68,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * @param prefix the prefix
 	 * @return the relevance of the <code>template</code> for the given <code>prefix</code>
 	 */
+	@Override
 	protected int getRelevance(Template template, String prefix) {
 		if (prefix.startsWith("<")) //$NON-NLS-1$
 			prefix= prefix.substring(1);
@@ -81,6 +83,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * @param contextTypeId the context type, ignored in this implementation
 	 * @return all templates
 	 */
+	@Override
 	protected Template[] getTemplates(String contextTypeId) {
 		return TemplateEditorUI.getDefault().getTemplateStore().getTemplates();
 	}
@@ -92,6 +95,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * @param region the region, ignored in this implementation
 	 * @return the supported XML context type
 	 */
+	@Override
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
 		return TemplateEditorUI.getDefault().getContextTypeRegistry().getContextType(XMLContextType.XML_CONTEXT_TYPE);
 	}
@@ -102,6 +106,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 	 * @param template the template, ignored in this implementation
 	 * @return the default template image
 	 */
+	@Override
 	protected Image getImage(Template template) {
 		ImageRegistry registry= TemplateEditorUI.getDefault().getImageRegistry();
 		Image image= registry.get(DEFAULT_IMAGE);

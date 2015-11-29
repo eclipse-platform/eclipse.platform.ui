@@ -48,16 +48,12 @@ public final class Hunk {
 		this.changed= changed;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "Hunk [" + line + ">" + changed + (delta < 0 ? "-" : "+") + Math.abs(delta) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		final int prime= 31;
 		int result= 1;
@@ -67,9 +63,7 @@ public final class Hunk {
 		return result;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;

@@ -31,6 +31,8 @@ public class JavaTextHover implements ITextHover {
 	 * @deprecated As of 3.4, replaced by
 	 *             {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
+	@Deprecated
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (hoverRegion != null) {
 			try {
@@ -42,9 +44,7 @@ public class JavaTextHover implements ITextHover {
 		return JavaEditorMessages.getString("JavaTextHover.emptySelection"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ITextHover
-	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		Point selection= textViewer.getSelectedRange();
 		if (selection.x <= offset && offset < selection.x + selection.y)

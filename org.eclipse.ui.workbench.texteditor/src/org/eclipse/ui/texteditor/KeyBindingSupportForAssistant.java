@@ -91,6 +91,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @param contentAssistFacade the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
+	@Deprecated
 	public KeyBindingSupportForAssistant(ContentAssistantFacade contentAssistFacade) {
 	}
 
@@ -113,6 +114,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @param contentAssistant the content assist facade
 	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
+	@Deprecated
 	public KeyBindingSupportForAssistant(ContentAssistant contentAssistant) {
 	}
 
@@ -127,10 +129,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		fQuickAssistAssistant.addCompletionListener(this);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionStarted(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-	 * @since 3.4
-	 */
+	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
 		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandler handler= getHandler(ContentAssistant.SELECT_NEXT_PROPOSAL_COMMAND_ID);
@@ -166,10 +165,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionEnded(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-	 * @since 3.4
-	 */
+	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
 		if (fReplacedCommands == null)
 			return;
@@ -180,10 +176,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		fReplacedCommands= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#selectionChanged(org.eclipse.jface.text.contentassist.ICompletionProposal, boolean)
-	 * @since 3.4
-	 */
+	@Override
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 

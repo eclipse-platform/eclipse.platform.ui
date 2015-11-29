@@ -93,25 +93,30 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private static final class ItemContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (ListItem[]) inputElement;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
 	private final class ItemLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText(Object element) {
 			return ((ListItem) element).label;
 		}
 	}
 
 	private static class ArrayLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
 		}
@@ -214,6 +219,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		OverlayPreferenceStore store= getPreferenceStore();
 		store.load();
@@ -289,16 +295,19 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		createDependency(fShowInTextCheckBox, new Control[] {label, foregroundColorButton});
 
 		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleAnnotationListSelection();
 			}
 		});
 
 		fShowInTextCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				final boolean value= fShowInTextCheckBox.getSelection();
@@ -320,10 +329,12 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		});
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ListItem item= getSelectedItem();
 				PreferenceConverter.setValue(getPreferenceStore(), item.colorKey, fAnnotationForegroundColorEditor.getColorValue());
@@ -332,9 +343,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		fDecorationViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-			/*
-			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-			 */
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
 				ListItem item= getSelectedItem();
@@ -357,10 +366,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
-	 * @since 3.4
-	 */
+	@Override
 	public void applyData(Object data) {
 	}
 
@@ -432,14 +438,13 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		updateDecorationViewer(item, true);
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
-	 */
+	@Override
 	public void initialize() {
 		initializeFields();
 
 		fAnnotationTypeViewer.setInput(fListModel);
 		fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (fAnnotationTypeViewer != null && !fAnnotationTypeViewer.getControl().isDisposed()) {
 					fAnnotationTypeViewer.setSelection(new StructuredSelection(fListModel[0]));
@@ -488,6 +493,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 
+	@Override
 	public void performOk() {
 		getPreferenceStore().propagate();
 
@@ -499,6 +505,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 
+	@Override
 	public void performDefaults() {
 		getPreferenceStore().loadDefaults();
 
@@ -511,6 +518,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		initializeFields();
 	}
 
+	@Override
 	public void dispose() {
 		OverlayPreferenceStore store= getPreferenceStore();
 		if (store != null) {
@@ -526,6 +534,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
 				for (int i= 0; i < slaves.length; i++) {
@@ -533,6 +542,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -553,9 +563,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
         }
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#canPerformOk()
-	 */
+	@Override
 	public boolean canPerformOk() {
 		return true;
 	}

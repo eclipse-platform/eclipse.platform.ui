@@ -88,6 +88,7 @@ public final class HyperlinkDetectorDescriptor {
 	 * @throws CoreException if a failure occurred during creation
 	 * @deprecated As of 3.9, replaced by {@link #createHyperlinkDetectorImplementation()}
 	 */
+	@Deprecated
 	public AbstractHyperlinkDetector createHyperlinkDetector() throws CoreException {
 		return (AbstractHyperlinkDetector)createHyperlinkDetectorImplementation();
 	}
@@ -104,18 +105,14 @@ public final class HyperlinkDetectorDescriptor {
 		final IHyperlinkDetector[] result= new IHyperlinkDetector[1];
 		String message= NLSUtility.format(EditorMessages.Editor_error_HyperlinkDetector_couldNotCreate_message, new String[] { getId(), fElement.getContributor().getName() });
 		ISafeRunnable code= new SafeRunnable(message) {
-			/*
-			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-			 */
+			@Override
 			public void run() throws Exception {
 		 		String pluginId = fElement.getContributor().getName();
 				boolean isPlugInActivated= Platform.getBundle(pluginId).getState() == Bundle.ACTIVE;
 				if (isPlugInActivated || canActivatePlugIn())
 					result[0]= (IHyperlinkDetector)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			}
-			/*
-			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
-			 */
+			@Override
 			public void handleException(Throwable ex) {
 				super.handleException(ex);
 				exception[0]= ex;
@@ -210,12 +207,14 @@ public final class HyperlinkDetectorDescriptor {
 		return Boolean.valueOf(value).booleanValue();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
 			return false;
 		return getId().equals(((HyperlinkDetectorDescriptor)obj).getId());
 	}
 
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

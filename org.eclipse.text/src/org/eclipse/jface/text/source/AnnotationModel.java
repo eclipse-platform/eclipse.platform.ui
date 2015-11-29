@@ -83,16 +83,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fNext= findNext();
 		}
 
-		/*
-		 * @see java.util.Iterator#hasNext()
-		 */
+		@Override
 		public boolean hasNext() {
 			return fNext != null;
 		}
 
-		/*
-		 * @see java.util.Iterator#next()
-		 */
+		@Override
 		public Object next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
@@ -102,9 +98,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			return result;
 		}
 
-		/*
-		 * @see java.util.Iterator#remove()
-		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -158,25 +152,19 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fNext= findNext();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
+		@Override
 		public boolean hasNext() {
 			return fNext != null;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
+		@Override
 		public Object next() {
 			Object result= fNext;
 			fNext= findNext();
 			return result;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -213,10 +201,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fCurrent= (Iterator) fSuperIterator.next(); // there is at least one.
 		}
 
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean hasNext() {
 			if (fCurrentElement != null)
 				return true;
@@ -231,6 +221,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				return false;
 		}
 
+		@Override
 		public Object next() {
 			if (!hasNext())
 				throw new NoSuchElementException();
@@ -249,16 +240,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	private class InternalModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
-		 */
+		@Override
 		public void modelChanged(IAnnotationModel model) {
 			AnnotationModel.this.fireModelChanged(new AnnotationModelEvent(model, true));
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
-		 */
+		@Override
 		public void modelChanged(AnnotationModelEvent event) {
 			AnnotationModel.this.fireModelChanged(event);
 		}
@@ -268,6 +255,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * The list of managed annotations
 	 * @deprecated since 3.0 use <code>getAnnotationMap</code> instead
 	 */
+	@Deprecated
 	protected Map fAnnotations;
 	/**
 	 * The map which maps {@link Position} to {@link Annotation}.
@@ -316,9 +304,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 		fDocumentListener= new IDocumentListener() {
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				fDocumentChanged= true;
 			}
@@ -335,19 +325,13 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return (IAnnotationMap) fAnnotations;
 	}
 
-    /*
-     * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
-     * @since 3.0
-     */
-    public Object getLockObject() {
+    @Override
+	public Object getLockObject() {
         return getAnnotationMap().getLockObject();
     }
 
-    /*
-     * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
-	 * @since 3.0
-     */
-    public void setLockObject(Object lockObject) {
+    @Override
+	public void setLockObject(Object lockObject) {
         getAnnotationMap().setLockObject(lockObject);
     }
 
@@ -369,9 +353,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     	}
     }
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotation(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	public void addAnnotation(Annotation annotation, Position position) {
 		try {
 			addAnnotation(annotation, position, true);
@@ -380,10 +362,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#replaceAnnotations(org.eclipse.jface.text.source.Annotation[], java.util.Map)
-	 * @since 3.0
-	 */
+	@Override
 	public void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) {
 		try {
 			replaceAnnotations(annotationsToRemove, annotationsToAdd, true);
@@ -450,9 +429,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
+	@Override
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		if (!fAnnotationModelListeners.contains(listener)) {
 			fAnnotationModelListeners.add(listener);
@@ -493,9 +470,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			document.removePosition(position);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#connect(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void connect(IDocument document) {
 		Assert.isTrue(fDocument == null || fDocument == document);
 
@@ -536,9 +511,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void disconnected() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#disconnect(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void disconnect(IDocument document) {
 
 		Assert.isTrue(fDocument == document);
@@ -675,6 +648,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				synchronized (getLockObject()) {
 					if (fModelEvent != null)
 						new Thread() {
+							@Override
 							public void run() {
 								fireModelChanged();
 							}
@@ -685,9 +659,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
-	 */
+	@Override
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true, true);
 	}
@@ -697,6 +669,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
 		Iterator regionIterator= getRegionAnnotationIterator(offset, length, canStartBefore, canEndAfter);
 
@@ -784,9 +757,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return getAnnotationMap().keySetIterator();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#getPosition(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public Position getPosition(Annotation annotation) {
 		Position position= (Position) fAnnotations.get(annotation);
 		if (position != null)
@@ -798,10 +769,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return position;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#removeAllAnnotations()
-	 * @since 3.0
-	 */
+	@Override
 	public void removeAllAnnotations() {
 		removeAllAnnotations(true);
 	}
@@ -834,9 +802,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fireModelChanged();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#removeAnnotation(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public void removeAnnotation(Annotation annotation) {
 		removeAnnotation(annotation, true);
 	}
@@ -869,10 +835,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#modifyAnnotationPosition(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
-	 * @since 3.0
-	 */
+	@Override
 	public void modifyAnnotationPosition(Annotation annotation, Position position) {
 		modifyAnnotationPosition(annotation, position, true);
 	}
@@ -947,9 +910,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/*
-	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
-	 */
+	@Override
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.remove(listener);
 	}
@@ -958,6 +919,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#attach(java.lang.Object, java.lang.Object)
 	 * @since 3.0
 	 */
+	@Override
 	public void addAnnotationModel(Object key, IAnnotationModel attachment) {
 		Assert.isNotNull(attachment);
 		if (!fAttachments.containsValue(attachment)) {
@@ -972,6 +934,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#get(java.lang.Object)
 	 * @since 3.0
 	 */
+	@Override
 	public IAnnotationModel getAnnotationModel(Object key) {
 		return (IAnnotationModel) fAttachments.get(key);
 	}
@@ -980,6 +943,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#detach(java.lang.Object)
 	 * @since 3.0
 	 */
+	@Override
 	public IAnnotationModel removeAnnotationModel(Object key) {
 		IAnnotationModel ret= (IAnnotationModel) fAttachments.remove(key);
 		if (ret != null) {
@@ -990,10 +954,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return ret;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#getModificationStamp()
-	 * @since 3.0
-	 */
+	@Override
 	public Object getModificationStamp() {
 		return fModificationStamp;
 	}

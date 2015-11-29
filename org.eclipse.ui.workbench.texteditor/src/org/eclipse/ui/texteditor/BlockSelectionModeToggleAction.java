@@ -33,9 +33,7 @@ final class BlockSelectionModeToggleAction extends TextEditorAction {
 		super(resourceBundle, prefix, editor, IAction.AS_CHECK_BOX);
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension5) {
@@ -45,9 +43,7 @@ final class BlockSelectionModeToggleAction extends TextEditorAction {
 		update(); // update in case anyone else has directly accessed the widget
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension5) {

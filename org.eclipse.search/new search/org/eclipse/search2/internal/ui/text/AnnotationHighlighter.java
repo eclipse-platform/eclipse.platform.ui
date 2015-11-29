@@ -49,6 +49,7 @@ public class AnnotationHighlighter extends Highlighter {
 		fMatchesToAnnotations= new HashMap();
 	}
 
+	@Override
 	public void addHighlights(Match[] matches) {
 		HashMap map= new HashMap(matches.length);
 		for (int i= 0; i < matches.length; i++) {
@@ -92,6 +93,7 @@ public class AnnotationHighlighter extends Highlighter {
 		return position;
 	}
 
+	@Override
 	public void removeHighlights(Match[] matches) {
 		HashSet annotations= new HashSet(matches.length);
 		for (int i= 0; i < matches.length; i++) {
@@ -103,6 +105,7 @@ public class AnnotationHighlighter extends Highlighter {
 		removeAnnotations(annotations);
 	}
 
+	@Override
 	public  void removeAll() {
 		Collection matchSet= fMatchesToAnnotations.values();
 		removeAnnotations(matchSet);
@@ -142,6 +145,7 @@ public class AnnotationHighlighter extends Highlighter {
 		}
 	}
 
+	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
 		if (!(buffer instanceof ITextFileBuffer))
 			return;

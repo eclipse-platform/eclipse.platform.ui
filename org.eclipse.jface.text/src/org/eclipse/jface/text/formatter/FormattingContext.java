@@ -26,73 +26,53 @@ public class FormattingContext implements IFormattingContext {
 	/** Map to store the properties */
 	private final Map fMap= new HashMap();
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fMap.clear();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#getPreferenceKeys()
-	 */
+	@Override
 	public String[] getPreferenceKeys() {
 		return new String[] {
 		};
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#getProperty(java.lang.Object)
-	 */
+	@Override
 	public Object getProperty(Object key) {
 		return fMap.get(key);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isBooleanPreference(java.lang.String)
-	 */
+	@Override
 	public boolean isBooleanPreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isDoublePreference(java.lang.String)
-	 */
+	@Override
 	public boolean isDoublePreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isFloatPreference(java.lang.String)
-	 */
+	@Override
 	public boolean isFloatPreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isIntegerPreference(java.lang.String)
-	 */
+	@Override
 	public boolean isIntegerPreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isLongPreference(java.lang.String)
-	 */
+	@Override
 	public boolean isLongPreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#isStringPreference(java.lang.String)
-	 */
+	@Override
 	public boolean isStringPreference(String key) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#mapToStore(java.util.Map, org.eclipse.jface.preference.IPreferenceStore)
-	 */
+	@Override
 	public void mapToStore(Map map, IPreferenceStore store) {
 
 		final String[] preferences= getPreferenceKeys();
@@ -128,16 +108,12 @@ public class FormattingContext implements IFormattingContext {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#setProperty(java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void setProperty(Object key, Object property) {
 		fMap.put(key, property);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.formatter.IFormattingContext#storeToMap(org.eclipse.jface.preference.IPreferenceStore, java.util.Map, boolean)
-	 */
+	@Override
 	public void storeToMap(IPreferenceStore store, Map map, boolean useDefault) {
 
 		final String[] preferences= getPreferenceKeys();

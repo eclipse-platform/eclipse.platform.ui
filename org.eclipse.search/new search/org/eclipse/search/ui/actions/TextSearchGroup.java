@@ -82,9 +82,7 @@ public class TextSearchGroup extends ActionGroup {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		MenuManager textSearchMM= new MenuManager(fMenuText, CTX_MENU_ID);
 		int i=0;

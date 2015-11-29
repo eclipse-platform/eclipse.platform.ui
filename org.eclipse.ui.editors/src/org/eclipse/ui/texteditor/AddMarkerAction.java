@@ -118,9 +118,7 @@ public class AddMarkerAction extends TextEditorAction {
 		return fPrefix;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		IResource resource= getResource();
 		if (resource == null)
@@ -136,6 +134,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 		final Shell shell= getTextEditor().getSite().getShell();
 		IAdaptable context= new IAdaptable() {
+			@Override
 			public Object getAdapter(Class adapter) {
 				if (adapter == Shell.class)
 					return shell;
@@ -155,9 +154,7 @@ public class AddMarkerAction extends TextEditorAction {
 		}
 	}
 
-	/*
-	 * @see TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(getResource() != null);
 	}
@@ -178,6 +175,7 @@ public class AddMarkerAction extends TextEditorAction {
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator= new IInputValidator() {
+			@Override
 			public String isValid(String newText) {
 				return  (newText == null || newText.trim().length() == 0) ? " " : null;  //$NON-NLS-1$
 			}

@@ -19,6 +19,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  * @deprecated use {@link org.eclipse.ui.texteditor.MarkerRulerAction} instead
  * @since 2.0
  */
+@Deprecated
 public class MarkerRulerInfoAction extends MarkerRulerAction {
 
 	/**
@@ -33,6 +34,7 @@ public class MarkerRulerInfoAction extends MarkerRulerAction {
 	 * @param askForLabel <code>true</code> if the user should be asked for a label when a new marker is created
 	 * @deprecated use super class constructor instead
 	 */
+	@Deprecated
 	public MarkerRulerInfoAction(ResourceBundle bundle, String prefix, IVerticalRulerInfo ruler, ITextEditor editor, String markerType, boolean askForLabel) {
 		super(bundle, prefix, editor, ruler, markerType, askForLabel);
 	}

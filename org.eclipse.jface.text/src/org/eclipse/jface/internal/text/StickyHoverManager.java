@@ -84,23 +84,17 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		/** The display. */
 		private Display fDisplay;
 
-		/*
-		 * @see IInformationControlCloser#setSubjectControl(Control)
-		 */
+		@Override
 		public void setSubjectControl(Control control) {
 			fSubjectControl= control;
 		}
 
-		/*
-		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
-		 */
+		@Override
 		public void setInformationControl(IInformationControl control) {
 			// NOTE: we use getCurrentInformationControl2() from the outer class
 		}
 
-		/*
-		 * @see IInformationControlCloser#start(Rectangle)
-		 */
+		@Override
 		public void start(Rectangle informationArea) {
 
 			if (fIsActive)
@@ -126,9 +120,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			}
 		}
 
-		/*
-		 * @see IInformationControlCloser#stop()
-		 */
+		@Override
 		public void stop() {
 
 			if (!fIsActive)
@@ -155,83 +147,62 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 			fDisplay= null;
 		}
 
-		/*
-		 * @see ControlListener#controlResized(ControlEvent)
-		 */
-		 public void controlResized(ControlEvent e) {
+		 @Override
+		public void controlResized(ControlEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see ControlListener#controlMoved(ControlEvent)
-		 */
-		 public void controlMoved(ControlEvent e) {
+		 @Override
+		public void controlMoved(ControlEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see MouseListener#mouseDown(MouseEvent)
-		 */
-		 public void mouseDown(MouseEvent e) {
+		 @Override
+		public void mouseDown(MouseEvent e) {
 			 hideInformationControl();
 		}
 
-		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent e) {
 		}
 
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see IViewportListenerListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int topIndex) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see KeyListener#keyPressed(KeyEvent)
-		 */
+		@Override
 		public void keyPressed(KeyEvent e) {
 			hideInformationControl();
 		}
 
-		/*
-		 * @see KeyListener#keyReleased(KeyEvent)
-		 */
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-		 */
+		@Override
 		public void focusGained(FocusEvent e) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-		 */
+		@Override
 		public void focusLost(FocusEvent e) {
 			if (DEBUG) System.out.println("StickyHoverManager.Closer.focusLost(): " + e); //$NON-NLS-1$
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
 				// Without the asyncExec, mouse clicks to the workbench window are swallowed.
+				@Override
 				public void run() {
 					hideInformationControl();
 				}
 			});
 		}
 
-		/*
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
+		@Override
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MouseMove) {
 				if (!(event.widget instanceof Control) || event.widget.isDisposed())
@@ -287,9 +258,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		install(fTextViewer.getTextWidget());
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
-	 */
+	@Override
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
 			super.showInformationControl(subjectArea);
@@ -298,9 +267,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 				System.out.println("cancelled StickyHoverManager.showInformationControl(..): did not get widget token (with prio)"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	public void hideInformationControl() {
 		try {
 			super.hideInformationControl();
@@ -310,9 +277,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
-	 */
+	@Override
 	protected void handleInformationControlDisposed() {
 		try {
 			super.handleInformationControlDisposed();
@@ -322,9 +287,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		hideInformationControl();
 		if (DEBUG)
@@ -332,9 +295,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
-	 */
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		if (getCurrentInformationControl2() != null) {
 			if (getCurrentInformationControl2().isFocusControl()) {
@@ -357,9 +318,7 @@ public class StickyHoverManager extends InformationControlReplacer implements IW
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
-	 */
+	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		IInformationControl iControl= getCurrentInformationControl2();
 		if (iControl instanceof IInformationControlExtension5) {

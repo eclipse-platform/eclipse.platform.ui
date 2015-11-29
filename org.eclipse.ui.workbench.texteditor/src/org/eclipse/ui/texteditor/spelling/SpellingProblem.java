@@ -61,6 +61,7 @@ public abstract class SpellingProblem {
 	 * @since 3.3
 	 * @deprecated As of 3.4, replaced by {@link #removeAll(ISourceViewer, String)}
 	 */
+	@Deprecated
 	public static void removeAllInActiveEditor(ITextEditor editor, String word) {
 		if (editor == null)
 			return;

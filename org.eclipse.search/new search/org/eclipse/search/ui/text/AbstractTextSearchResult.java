@@ -229,18 +229,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return existed;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void addListener(ISearchResultListener l) {
 		synchronized (fListeners) {
 			fListeners.add(l);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void removeListener(ISearchResultListener l) {
 		synchronized (fListeners) {
 			fListeners.remove(l);

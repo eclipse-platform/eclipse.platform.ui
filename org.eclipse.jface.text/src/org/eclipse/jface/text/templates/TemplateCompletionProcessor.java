@@ -39,6 +39,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 public abstract class TemplateCompletionProcessor implements IContentAssistProcessor {
 
 	private static final class ProposalComparator implements Comparator {
+		@Override
 		public int compare(Object o1, Object o2) {
 			return ((TemplateProposal) o2).getRelevance() - ((TemplateProposal) o1).getRelevance();
 		}
@@ -46,10 +47,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 
 	private static final Comparator fgProposalComparator= new ProposalComparator();
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer,
-	 *      int)
-	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
@@ -101,6 +99,7 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 * @deprecated use the version specifying <code>IRegion</code> as third parameter
 	 * @since 3.1
 	 */
+	@Deprecated
 	protected ICompletionProposal createProposal(Template template, TemplateContext context, Region region, int relevance) {
 		return createProposal(template, context, (IRegion) region, relevance);
 	}
@@ -214,37 +213,27 @@ public abstract class TemplateCompletionProcessor implements IContentAssistProce
 	 */
 	protected abstract Image getImage(Template template);
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

@@ -90,6 +90,7 @@ public class MoveLinesAction extends TextEditorAction {
 		String[] commandIds= copy ? new String[] {ITextEditorActionDefinitionIds.COPY_LINES_UP, ITextEditorActionDefinitionIds.COPY_LINES_DOWN } : new String[] {ITextEditorActionDefinitionIds.MOVE_LINES_UP, ITextEditorActionDefinitionIds.MOVE_LINES_DOWN };
 		fStrategy= new CompoundEditExitStrategy(commandIds);
 		fStrategy.addCompoundListener(new ICompoundEditListener() {
+			@Override
 			public void endCompoundEdit() {
 				MoveLinesAction.this.endCompoundEdit();
 			}
@@ -112,6 +113,7 @@ public class MoveLinesAction extends TextEditorAction {
 	 * @deprecated As of 3.5, replaced by
 	 *             {@link #MoveLinesAction(ResourceBundle, String, ITextEditor, ITextViewer, boolean, boolean)}
 	 */
+	@Deprecated
 	public MoveLinesAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean upwards, boolean copy) {
 		this(bundle, prefix, editor, editor != null ? editor.getSourceViewer() : null, upwards, copy);
 	}
@@ -273,6 +275,7 @@ public class MoveLinesAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		if (fTextViewer == null)
 			return;
@@ -405,10 +408,7 @@ public class MoveLinesAction extends TextEditorAction {
 		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 * @since 3.5
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		ITextEditor currentEditor= getTextEditor();
 		if (currentEditor != editor && currentEditor != null && editor != null) {
@@ -420,9 +420,7 @@ public class MoveLinesAction extends TextEditorAction {
 		super.setEditor(editor);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		super.update();
 

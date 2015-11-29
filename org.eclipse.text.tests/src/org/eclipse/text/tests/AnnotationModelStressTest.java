@@ -1214,9 +1214,7 @@ public class AnnotationModelStressTest extends TestCase {
 		return new TestSuite(AnnotationModelStressTest.class);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fDocument= new Document(RANDOM_CONTENT);
 
@@ -1231,9 +1229,7 @@ public class AnnotationModelStressTest extends TestCase {
 		fAnnotationModel.connect(fDocument);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fAnnotationModel.disconnect(fDocument);
 		

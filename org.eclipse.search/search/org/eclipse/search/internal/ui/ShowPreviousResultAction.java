@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 /**
  * @deprecated old search
  */
+@Deprecated
 class ShowPreviousResultAction extends Action {
 
 	private SearchResultViewer fViewer;
@@ -29,6 +30,7 @@ class ShowPreviousResultAction extends Action {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void run() {
 		fViewer.showPreviousResult();
 	}

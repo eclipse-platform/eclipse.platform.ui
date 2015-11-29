@@ -166,6 +166,7 @@ public class TestSearchResult extends TestCase {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
 		
 		result.addListener(new ISearchResultListener() {
+			@Override
 			public void searchResultChanged(SearchResultEvent e) {
 				if (e instanceof MatchEvent) {
 					MatchEvent evt= (MatchEvent) e;
@@ -208,6 +209,7 @@ public class TestSearchResult extends TestCase {
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
 		
 		result.addListener(new ISearchResultListener() {
+			@Override
 			public void searchResultChanged(SearchResultEvent e) {
 				if (e instanceof MatchEvent) {
 					MatchEvent evt= (MatchEvent) e;

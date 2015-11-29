@@ -114,6 +114,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		if (window == null) {
 			final WindowRef windowRef= new WindowRef();
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					setActiveWorkbenchWindow(windowRef);
 				}
@@ -200,16 +201,12 @@ public class SearchPlugin extends AbstractUIPlugin {
 		return isAutobuilding;
 	}
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		InternalSearchUI.shutdown();
 		disposeOldSearchManager();
@@ -220,6 +217,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * @deprecated old search
 	 */
+	@Deprecated
 	private void disposeOldSearchManager() {
 		if (SearchManager.fgDefault != null)
 			SearchManager.fgDefault.dispose();
@@ -258,6 +256,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @since 3.0
 	 * @deprecated old search
 	 */
+	@Deprecated
 	public String getSearchViewHelpContextId() {
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
 		if (currentSearch != null) {
@@ -367,6 +366,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @param menu the menu to create in
 	 * @deprecated old search
 	 */
+	@Deprecated
 	public static void createStandardGroups(IMenuManager menu) {
 		if (!menu.isEmpty())
 			return;

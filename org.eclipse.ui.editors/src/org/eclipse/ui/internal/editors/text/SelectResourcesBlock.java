@@ -160,10 +160,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @param event the check state event
 	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
+	@Override
 	public void checkStateChanged(final CheckStateChangedEvent event) {
 
 		//Potentially long operation - show a busy cursor
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				if (event.getCheckable().equals(treeViewer))
 					treeItemChecked(event.getElement(), event.getChecked());
@@ -288,6 +290,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 */
 	private void expandTreeElement(final Object element) {
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 
 				// First see if the children need to be given their checked
@@ -407,10 +410,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		IElementFilter passThroughFilter= new IElementFilter() {
 
+			@Override
 			public void filterElements(Collection elements) throws InterruptedException {
 				returnValue.addAll(elements);
 			}
 
+			@Override
 			public void filterElements(Object[] elements) throws InterruptedException {
 				for (int i= 0; i < elements.length; i++) {
 					returnValue.add(elements[i]);
@@ -561,6 +566,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		for (int i= 0; i < array.length; i++) {
 			final ICheckStateListener l= (ICheckStateListener) array[i];
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() {
 					l.checkStateChanged(event);
 				}
@@ -583,6 +589,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 			//Potentially long operation - show a busy cursor
 			BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					setListForWhiteSelection(treeElement);
 					listViewer.setAllChecked(true);
@@ -640,6 +647,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 *
 	 * @param event SelectionChangedEvent
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection= (IStructuredSelection) event.getSelection();
 		Object selectedElement= selection.getFirstElement();
@@ -672,6 +680,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		//Potentially long operation - show a busy cursor
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				setTreeChecked(root, selection);
 				listViewer.setAllChecked(selection);
@@ -682,6 +691,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	public void refresh() {
 		//Potentially long operation - show a busy cursor
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				treeViewer.refresh();
 				populateListViewer(currentTreeSelection);
@@ -778,6 +788,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 *
 	 * @param event the collapse event
 	 */
+	@Override
 	public void treeCollapsed(TreeExpansionEvent event) {
 		// We don't need to do anything with this
 	}
@@ -787,6 +798,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 *
 	 * @param event the expansion event
 	 */
+	@Override
 	public void treeExpanded(TreeExpansionEvent event) {
 		expandTreeElement(event.getElement());
 	}

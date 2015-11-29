@@ -39,6 +39,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	 *
 	 * @param rules the sequence of rules controlling this scanner
 	 */
+	@Override
 	public void setRules(IRule[] rules) {
 		throw new UnsupportedOperationException();
 	}
@@ -50,9 +51,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		super.setRules(rules);
 	}
 
-	/*
-	 * @see ITokenScanner#setRange(IDocument, int, int)
-	 */
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 		setPartialRange(document, offset, length, null, -1);
 	}
@@ -64,6 +63,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	 * that match the given content type.
 	 * </p>
 	 */
+	@Override
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 		fContentType= contentType;
 		fPartitionOffset= partitionOffset;
@@ -78,9 +78,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		super.setRange(document, offset, length);
 	}
 
-	/*
-	 * @see ITokenScanner#nextToken()
-	 */
+	@Override
 	public IToken nextToken() {
 
 

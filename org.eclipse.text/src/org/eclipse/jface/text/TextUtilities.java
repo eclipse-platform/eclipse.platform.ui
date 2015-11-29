@@ -41,6 +41,7 @@ public class TextUtilities {
 	 *
 	 * @deprecated use DELIMITERS instead
 	 */
+	@Deprecated
 	public final static String[] fgDelimiters= DELIMITERS;
 
 

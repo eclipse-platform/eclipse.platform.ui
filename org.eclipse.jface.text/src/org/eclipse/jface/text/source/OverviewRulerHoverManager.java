@@ -46,9 +46,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 		}
 	}
 
-	/*
-	 * @see AbstractHoverInformationControlManager#computeInformation()
-	 */
+	@Override
 	protected void computeInformation() {
 		Point location= getHoverEventLocation();
 		int line= getVerticalRulerInfo().toDocumentLineNumber(location.y);

@@ -38,6 +38,7 @@ public class FastPartitionerTest extends TestCase {
 	private IDocument fDoc;
 	private IDocumentPartitioner fPartitioner;
 
+	@Override
 	public void setUp() {
 		fDoc= new Document();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {

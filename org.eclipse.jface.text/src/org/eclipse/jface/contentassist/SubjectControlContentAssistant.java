@@ -20,11 +20,10 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support *
  */
+@Deprecated
 public class SubjectControlContentAssistant extends org.eclipse.jface.text.contentassist.ContentAssistant implements ISubjectControlContentAssistant {
 
-	/*
-	 * @see ISubjectControlContentAssistant#install(IContentAssistSubjectControl)
-	 */
+	@Override
 	public void install(IContentAssistSubjectControl contentAssistSubjectControl) {
 		Assert.isNotNull(contentAssistSubjectControl);
 		super.install(contentAssistSubjectControl);

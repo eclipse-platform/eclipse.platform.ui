@@ -38,16 +38,12 @@ public class BooleanPreferenceToggleAction extends ResourceAction implements IUp
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setChecked(fPreferences.getBoolean(fKey));
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		boolean state= fPreferences.getBoolean(fKey);
 		fPreferences.setValue(fKey, !state);

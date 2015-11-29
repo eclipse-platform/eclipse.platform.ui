@@ -59,9 +59,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	protected abstract IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo);
 
 
-	/*
-	 * @see IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
 			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
@@ -95,9 +93,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction callerAction) {
 		if (fAction != null)
 			fAction.run();
@@ -107,14 +103,13 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 * @since 3.2
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (fAction != null)
 			fAction.runWithEvent(event);
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		/*
 		 * This is a ruler action - don't update on selection.
@@ -137,29 +132,21 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 		}
 	}
 
-	/*
-	 * @see IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		update();
 	}
 
-	/*
-	 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
-	/*
-	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseDown(MouseEvent e) {
 		update();
 	}
 
-	/*
-	 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseUp(MouseEvent e) {
 	}
 }

@@ -39,6 +39,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	public final static String FILE_PATTERN_NEGATOR= "!"; //$NON-NLS-1$
 
 	private static final Comparator FILE_TYPES_COMPARATOR= new Comparator() {
+		@Override
 		public int compare(Object o1, Object o2) {
 			return compare((String) o1, (String) o2);
 		}
@@ -61,6 +62,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 		fBrowseButton.addSelectionListener(this);
 	}
 
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		Widget widget= event.widget;
 		if (widget == fTextField)
@@ -69,6 +71,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 			fBrowseButton= null;
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent event) {
 		if (event.widget == fBrowseButton)
 			handleBrowseButton();

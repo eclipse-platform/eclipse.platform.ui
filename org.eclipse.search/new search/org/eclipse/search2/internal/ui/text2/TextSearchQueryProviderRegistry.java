@@ -70,6 +70,7 @@ public class TextSearchQueryProviderRegistry {
 		final TextSearchQueryProvider[] res= new TextSearchQueryProvider[] { null };
 
 		SafeRunnable safe= new SafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 				for (int i= 0; i < extensions.length; i++) {
@@ -80,6 +81,7 @@ public class TextSearchQueryProviderRegistry {
 					}
 				}
 			}
+			@Override
 			public void handleException(Throwable e) {
 				SearchPlugin.log(e);
 			}

@@ -128,9 +128,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			fPreservedText= null;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#dispose()
-		 */
+		@Override
 		public void dispose() {
 			reinitialize();
 		}
@@ -150,9 +148,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
-		 */
+		@Override
 		public boolean canUndo() {
 			if (isValid()) {
 				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4) {
@@ -220,9 +216,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
-		 */
+		@Override
 		public boolean canRedo() {
 			if (isValid()) {
 				if (fDocumentUndoManager.fDocument instanceof IDocumentExtension4) {
@@ -238,16 +232,12 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
-		 */
+		@Override
 		public boolean canExecute() {
 			return fDocumentUndoManager.isConnected();
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.operations.IUndoableOperation.IUndoableOperation#execute(IProgressMonitor, IAdaptable)
-		 */
+		@Override
 		public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
 			// Text changes execute as they are typed, so executing one has no
 			// effect.
@@ -258,6 +248,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 * {@inheritDoc}
 		 * Notifies clients about the undo.
 		 */
+		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
 				fDocumentUndoManager.fireDocumentUndo(fStart, fPreservedText, fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, false);
@@ -290,6 +281,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 * @param uiInfo an adaptable that can provide UI info if needed
 		 * @return the status
 		 */
+		@Override
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
 				fDocumentUndoManager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, false);
@@ -377,9 +369,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return fStart > -1 && fEnd > -1 && fText != null;
 		}
 
-		/*
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			String delimiter= ", "; //$NON-NLS-1$
 			StringBuffer text= new StringBuffer(super.toString());
@@ -452,9 +442,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			fChanges.add(change);
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-		 */
+		@Override
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 
 			int size= fChanges.size();
@@ -475,9 +463,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
-		 */
+		@Override
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 
 			int size= fChanges.size();
@@ -498,9 +484,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return Status.OK_STATUS;
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#updateTextChange()
-		 */
+		@Override
 		protected void updateTextChange() {
 			// first gather the data from the buffers
 			super.updateTextChange();
@@ -519,9 +503,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			reinitialize();
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#createCurrent()
-		 */
+		@Override
 		protected UndoableTextChange createCurrent() {
 
 			if (!fDocumentUndoManager.fFoldingIntoCompoundChange)
@@ -531,9 +513,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return this;
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#commit()
-		 */
+		@Override
 		protected void commit() {
 			// if there is pending data, update the text change
 			if (fStart > -1)
@@ -542,16 +522,12 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			fDocumentUndoManager.resetProcessChangeState();
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#isValid()
-		 */
+		@Override
 		protected boolean isValid() {
 			return fStart > -1 || fChanges.size() > 0;
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#getUndoModificationStamp()
-		 */
+		@Override
 		protected long getUndoModificationStamp() {
 			if (fStart > -1)
 				return super.getUndoModificationStamp();
@@ -562,9 +538,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			return fUndoModificationStamp;
 		}
 
-		/*
-		 * @see org.eclipse.text.undo.UndoableTextChange#getRedoModificationStamp()
-		 */
+		@Override
 		protected long getRedoModificationStamp() {
 			if (fStart > -1)
 				return super.getRedoModificationStamp();
@@ -584,9 +558,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		private String fReplacedText;
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			try {
 				fReplacedText= event.getDocument().get(event.getOffset(),
@@ -597,9 +569,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 			fPreservedRedoModificationStamp= event.getModificationStamp();
 
@@ -646,6 +616,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 		private IUndoableOperation fOperation;
 
+		@Override
 		public void historyNotification(final OperationHistoryEvent event) {
 			final int type= event.getEventType();
 			switch (type) {
@@ -785,30 +756,22 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		fDocumentUndoListeners= new ListenerList(ListenerList.IDENTITY);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#addDocumentUndoListener(org.eclipse.jface.text.IDocumentUndoListener)
-	 */
+	@Override
 	public void addDocumentUndoListener(IDocumentUndoListener listener) {
 		fDocumentUndoListeners.add(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#removeDocumentUndoListener(org.eclipse.jface.text.IDocumentUndoListener)
-	 */
+	@Override
 	public void removeDocumentUndoListener(IDocumentUndoListener listener) {
 		fDocumentUndoListeners.remove(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#getUndoContext()
-	 */
+	@Override
 	public IUndoContext getUndoContext() {
 		return fUndoContext;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#commit()
-	 */
+	@Override
 	public void commit() {
 		// if fCurrent has never been placed on the history, do so now.
 		// this can happen when there are multiple programmatically commits in a
@@ -821,9 +784,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		fCurrent.commit();
 	}
 
-	/*
-	 * @see org.eclipse.text.undo.IDocumentUndoManager#reset()
-	 */
+	@Override
 	public void reset() {
 		if (isConnected()) {
 			shutdown();
@@ -831,16 +792,12 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.text.undo.IDocumentUndoManager#redoable()
-	 */
+	@Override
 	public boolean redoable() {
 		return OperationHistoryFactory.getOperationHistory().canRedo(fUndoContext);
 	}
 
-	/*
-	 * @see org.eclipse.text.undo.IDocumentUndoManager#undoable()
-	 */
+	@Override
 	public boolean undoable() {
 		return OperationHistoryFactory.getOperationHistory().canUndo(fUndoContext);
 	}
@@ -848,22 +805,19 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/*
 	 * @see org.eclipse.text.undo.IDocumentUndoManager#undo()
 	 */
+	@Override
 	public void redo() throws ExecutionException {
 		if (isConnected() && redoable())
 			OperationHistoryFactory.getOperationHistory().redo(getUndoContext(), null, null);
 	}
 
-	/*
-	 * @see org.eclipse.text.undo.IDocumentUndoManager#undo()
-	 */
+	@Override
 	public void undo() throws ExecutionException {
 		if (undoable())
 			OperationHistoryFactory.getOperationHistory().undo(fUndoContext, null, null);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#connect(java.lang.Object)
-	 */
+	@Override
 	public void connect(Object client) {
 		if (!isConnected()) {
 			initialize();
@@ -872,9 +826,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			fConnected.add(client);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#disconnect(java.lang.Object)
-	 */
+	@Override
 	public void disconnect(Object client) {
 		fConnected.remove(client);
 		if (!isConnected()) {
@@ -882,9 +834,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#beginCompoundChange()
-	 */
+	@Override
 	public void beginCompoundChange() {
 		if (isConnected()) {
 			fFoldingIntoCompoundChange= true;
@@ -892,9 +842,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#endCompoundChange()
-	 */
+	@Override
 	public void endCompoundChange() {
 		if (isConnected()) {
 			fFoldingIntoCompoundChange= false;
@@ -905,6 +853,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/*
 	 * @see org.eclipse.jface.text.IDocumentUndoManager#setUndoLimit(int)
 	 */
+	@Override
 	public void setMaximalUndoLevel(int undoLimit) {
 		fHistory.setLimit(fUndoContext, undoLimit);
 	}
@@ -1237,9 +1186,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		return !fConnected.isEmpty();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentUndoManager#transferUndoHistory(IDocumentUndoManager)
-	 */
+	@Override
 	public void transferUndoHistory(IDocumentUndoManager manager) {
 		IUndoContext oldUndoContext= manager.getUndoContext();
 		// Get the history for the old undo context.

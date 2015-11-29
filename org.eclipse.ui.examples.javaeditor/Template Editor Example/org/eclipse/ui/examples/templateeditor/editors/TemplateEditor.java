@@ -32,11 +32,13 @@ public class TemplateEditor extends AbstractDecoratedTextEditor {
 		setDocumentProvider(new XMLDocumentProvider());
 	}
 
+	@Override
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
 	}
 
+	@Override
 	protected void createActions() {
 		super.createActions();
 

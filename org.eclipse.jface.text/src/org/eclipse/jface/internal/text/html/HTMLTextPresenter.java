@@ -104,14 +104,13 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	 * @deprecated Use {@link #updatePresentation(Drawable, String, TextPresentation, int, int)}
 	 *             instead
 	 */
+	@Deprecated
+	@Override
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		return updatePresentation((Drawable)display, hoverInfo, presentation, maxWidth, maxHeight);
 	}
 
-	/*
-	 * @see IHoverInformationPresenterExtension#updatePresentation(Drawable drawable, String, TextPresentation, int, int)
-	 * @since 3.2
-	 */
+	@Override
 	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 
 		if (hoverInfo == null)

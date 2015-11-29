@@ -70,6 +70,7 @@ public class WordPatternRule extends SingleLineRule {
 	 * @param scanner the scanner to be used
 	 * @return <code>true</code> if the word ends on the given end sequence
 	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		fBuffer.setLength(0);
 		int c= scanner.read();

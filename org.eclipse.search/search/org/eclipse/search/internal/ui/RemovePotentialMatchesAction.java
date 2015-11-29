@@ -30,6 +30,7 @@ import org.eclipse.search.ui.SearchUI;
 /**
  * @deprecated old search
  */
+@Deprecated
 class RemovePotentialMatchesAction extends Action {
 
 	private IWorkbenchSite fSite;
@@ -47,6 +48,7 @@ class RemovePotentialMatchesAction extends Action {
 		}
 	}
 
+	@Override
 	public void run() {
 		IMarker[] markers= getMarkers();
 		if (markers != null)

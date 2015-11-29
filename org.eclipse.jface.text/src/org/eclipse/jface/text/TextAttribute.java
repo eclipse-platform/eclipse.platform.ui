@@ -99,9 +99,7 @@ public class TextAttribute {
 		this(foreground, null, SWT.NORMAL);
 	}
 
-	/*
-	 * @see Object#equals(Object)
-	 */
+	@Override
 	public boolean equals(Object object) {
 
 		if (object == this)
@@ -128,10 +126,8 @@ public class TextAttribute {
 		return (o2 == null);
 	}
 
-	/*
-	 * @see Object#hashCode()
-	 */
-	 public int hashCode() {
+	 @Override
+	public int hashCode() {
 		 if (fHashCode == 0) {
 			 int multiplier= 37; // some prime
 			 fHashCode= 13; // some random value

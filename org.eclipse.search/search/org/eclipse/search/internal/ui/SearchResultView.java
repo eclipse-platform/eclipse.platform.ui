@@ -53,6 +53,7 @@ import org.eclipse.search.ui.ISearchResultView;
 /**
  * @deprecated old search
  */
+@Deprecated
 public class SearchResultView extends ViewPart implements ISearchResultView {
 
 
@@ -68,6 +69,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from IViewPart.
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fMemento= memento;
@@ -76,6 +78,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from IViewPart.
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (fViewer == null) {
 			// part has not been created
@@ -90,6 +93,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 * Creates the search list inner viewer.
 	 * @param parent the parent
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		Assert.isTrue(fViewer == null);
 		fViewer= new SearchResultViewer(this, parent);
@@ -108,6 +112,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fillActionBars(getViewSite().getActionBars());
 
 		fPropertyChangeListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR.equals(event.getProperty()) || SearchPreferencePage.EMPHASIZE_POTENTIAL_MATCHES.equals(event.getProperty()))
 					if (fViewer != null)
@@ -131,10 +136,12 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	//---- IWorkbenchPart ------------------------------------------------------
 
 
+	@Override
 	public void setFocus() {
 		fViewer.getControl().setFocus();
 	}
 
+	@Override
 	public void dispose() {
 		if (fViewer != null) {
 			SearchManager.getDefault().removeSearchChangeListener(fViewer);
@@ -149,10 +156,12 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		super.dispose();
 	}
 
+	@Override
 	protected void setContentDescription(String title) {
 		super.setContentDescription(title);
 	}
 
+	@Override
 	protected void setTitleToolTip(String text) {
 		super.setTitleToolTip(text);
 	}
@@ -178,6 +187,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		return null;
 	}
 
+	@Override
 	public ILabelProvider getLabelProvider() {
 		if (fViewer == null)
 			return null;
@@ -191,6 +201,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	private void setGotoMarkerAction(final IAction gotoMarkerAction) {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				getViewer().setGotoMarkerAction(gotoMarkerAction);
 			}
@@ -209,6 +220,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from ISearchResultView
 	 */
+	@Override
 	public ISelection getSelection() {
 		return fViewer.getSelection();
 	}
@@ -216,6 +228,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from ISearchResultView
 	 */
+	@Override
 	public void searchStarted(
 				IActionGroupFactory		groupFactory,
 				String					singularLabel,
@@ -253,9 +266,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				operation));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResultView#searchStarted(java.lang.String, java.lang.String, org.eclipse.jface.resource.ImageDescriptor, org.eclipse.search.ui.IContextMenuContributor, org.eclipse.jface.viewers.ILabelProvider, org.eclipse.jface.action.IAction, org.eclipse.search.ui.IGroupByKeyComputer, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
+	@Override
 	public void searchStarted(
 				String					pageId,
 				String					label,
@@ -273,6 +284,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 * Implements method from ISearchResultView
 	 * @deprecated	As of build > 20020514
 	 */
+	@Override
 	public void searchStarted(
 				String					pageId,
 				String					singularLabel,
@@ -313,6 +325,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from ISearchResultView
 	 */
+	@Override
 	public void addMatch(String description, Object groupByKey, IResource resource, IMarker marker) {
 		SearchResultViewEntry entry= (SearchResultViewEntry)fResponse.get(groupByKey);
 		if (entry == null) {
@@ -326,6 +339,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	/*
 	 * Implements method from ISearchResultView
 	 */
+	@Override
 	public void searchFinished() {
 		SearchManager.getDefault().searchFinished(new ArrayList(fResponse.values()));
 		fResponse= null;

@@ -56,9 +56,7 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		for (int i= 0; i < fActions.length; i++) {
 			if (fActions[i] instanceof IUpdate)
@@ -72,17 +70,12 @@ public final class CompositeRevertAction extends Action implements IUpdate, ISel
 		setToolTipText(action.getToolTipText());
 	}
 
-	/*
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 * @since 3.3
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		IAction action= getEnabledAction();
 		if (action != null)

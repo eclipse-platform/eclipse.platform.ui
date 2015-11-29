@@ -102,6 +102,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	 *
 	 * @throws IOException {@inheritDoc}
 	 */
+	@Override
 	protected void loadContributedTemplates() throws IOException {
 		IConfigurationElement[] extensions= getTemplateExtensions();
 		Collection contributed= readContributedTemplates(extensions);
@@ -255,10 +256,7 @@ public class ContributionTemplateStore extends TemplateStore {
 		return id != null && id.trim().length() != 0; // TODO test validity?
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.templates.persistence.TemplateStore#handleException(java.io.IOException)
-	 * @since 3.2
-	 */
+	@Override
 	protected void handleException(IOException x) {
 		EditorsPlugin.log(x);
 	}

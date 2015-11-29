@@ -79,10 +79,7 @@ public abstract class ConfigurationElementSorter {
 			initialize(elements);
 		}
 
-		/*
-		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
-		 * @since 2.0
-		 */
+		@Override
 		public int compare(Object object0, Object object1) {
 
 			if (dependsOn(object0, object1))

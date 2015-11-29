@@ -31,6 +31,7 @@ public class AbstractGapTextTest extends TestCase {
 		 *            shrunken (&gt;=&nbsp;0)
 		 * @deprecated use {@link GapTextStore#GapTextStore(int, int, float)} instead
 		 */
+		@Deprecated
 		public GapText(int lowWatermark, int highWatermark) {
 			super(lowWatermark, highWatermark);
 		}

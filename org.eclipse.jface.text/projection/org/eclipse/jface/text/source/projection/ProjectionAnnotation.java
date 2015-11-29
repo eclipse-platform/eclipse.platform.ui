@@ -41,6 +41,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 
 	private static class DisplayDisposeRunnable implements Runnable {
 
+		@Override
 		public void run() {
 			if (fgCollapsedImage != null) {
 				fgCollapsedImage.dispose();
@@ -109,9 +110,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		gc.drawLine(r.x + 4, height, r.x + r.width - MARGIN, height);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-	 */
+	@Override
 	public void paint(GC gc, Canvas canvas, Rectangle rectangle) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null) {
@@ -126,9 +125,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
-	 */
+	@Override
 	public int getLayer() {
 		return IAnnotationPresentation.DEFAULT_LAYER;
 	}

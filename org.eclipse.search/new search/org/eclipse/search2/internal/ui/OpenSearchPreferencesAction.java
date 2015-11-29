@@ -30,9 +30,7 @@ public class OpenSearchPreferencesAction extends Action {
 		//PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Action.
-	 */
+	@Override
 	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
 		String[] displayedPages= { SearchPreferencePage.PAGE_ID,

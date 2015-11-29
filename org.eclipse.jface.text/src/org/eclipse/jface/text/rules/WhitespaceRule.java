@@ -64,6 +64,7 @@ public class WhitespaceRule implements IRule {
 	 * @return {@link #fWhitespaceToken} if whitespace got detected, {@link Token#UNDEFINED}
 	 *         otherwise
 	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
 		if (fDetector.isWhitespace((char) c)) {

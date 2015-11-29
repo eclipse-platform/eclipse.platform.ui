@@ -148,9 +148,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fColor= color;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fMatcher != null) {
 			if (fMatcher instanceof ICharacterPairMatcherExtension && fTextListener != null) {
@@ -165,9 +163,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fTextWidget= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#deactivate(boolean)
-	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -180,9 +176,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		fPreviousSelection= null;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-	 */
+	@Override
 	public void paintControl(PaintEvent event) {
 		if (fTextWidget != null)
 			handleDrawRequest(event.gc);
@@ -303,9 +297,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		return new Region(viewerSelection.x, viewerSelection.y);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#paint(int)
-	 */
+	@Override
 	public void paint(int reason) {
 
 		IDocument document= fSourceViewer.getDocument();
@@ -405,9 +397,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
-	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 		fPaintPositionManager= manager;
 	}
@@ -445,6 +435,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		/**
 		 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
 		 */
+		@Override
 		public void textChanged(TextEvent event) {
 			if (!fHighlightEnclosingPeerCharacters || !(fMatcher instanceof ICharacterPairMatcherExtension))
 				return;

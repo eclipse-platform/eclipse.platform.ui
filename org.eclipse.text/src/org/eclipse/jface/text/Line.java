@@ -50,16 +50,12 @@ final class Line implements IRegion {
 		this.delimiter= null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IRegion#getOffset()
-	 */
+	@Override
 	public int getOffset() {
 		return offset;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IRegion#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return length;
 	}

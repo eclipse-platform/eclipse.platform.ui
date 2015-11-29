@@ -24,6 +24,7 @@ import java.util.LinkedList;
  * @since 2.0
  * @deprecated since 3.3 as {@link GapTextStore} performs better even for sequential rewrite scenarios
  */
+@Deprecated
 public class SequentialRewriteTextStore implements ITextStore {
 
 	/**
@@ -71,9 +72,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		return fSource;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
-	 */
+	@Override
 	public void replace(int offset, int length, String text) {
 		if (text == null)
 			text= ""; //$NON-NLS-1$
@@ -112,17 +111,13 @@ public class SequentialRewriteTextStore implements ITextStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
-	 */
+	@Override
 	public void set(String text) {
 		fSource.set(text);
 		fReplaceList.clear();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
-	 */
+	@Override
 	public String get(int offset, int length) {
 
 		if (fReplaceList.isEmpty())
@@ -182,9 +177,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		return replace.newOffset - replace.offset + replace.text.length() - replace.length;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#get(int)
-	 */
+	@Override
 	public char get(int offset) {
 		if (fReplaceList.isEmpty())
 			return fSource.get(offset);
@@ -223,9 +216,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextStore#getLength()
-	 */
+	@Override
 	public int getLength() {
 		if (fReplaceList.isEmpty())
 			return fSource.getLength();

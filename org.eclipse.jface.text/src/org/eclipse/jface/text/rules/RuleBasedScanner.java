@@ -83,9 +83,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		fDefaultReturnToken= defaultReturnToken;
 	}
 
-	/*
-	 * @see ITokenScanner#setRange(IDocument, int, int)
-	 */
+	@Override
 	public void setRange(final IDocument document, int offset, int length) {
 		Assert.isLegal(document != null);
 		final int documentLength= document.getLength();
@@ -120,16 +118,12 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		Assert.isLegal(offset + length <= documentLength);
 	}
 
-	/*
-	 * @see ITokenScanner#getTokenOffset()
-	 */
+	@Override
 	public int getTokenOffset() {
 		return fTokenOffset;
 	}
 
-	/*
-	 * @see ITokenScanner#getTokenLength()
-	 */
+	@Override
 	public int getTokenLength() {
 		if (fOffset < fRangeEnd)
 			return fOffset - getTokenOffset();
@@ -137,9 +131,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	}
 
 
-	/*
-	 * @see ICharacterScanner#getColumn()
-	 */
+	@Override
 	public int getColumn() {
 		if (fColumn == UNDEFINED) {
 			try {
@@ -154,16 +146,12 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		return fColumn;
 	}
 
-	/*
-	 * @see ICharacterScanner#getLegalLineDelimiters()
-	 */
+	@Override
 	public char[][] getLegalLineDelimiters() {
 		return fDelimiters;
 	}
 
-	/*
-	 * @see ITokenScanner#nextToken()
-	 */
+	@Override
 	public IToken nextToken() {
 
 		fTokenOffset= fOffset;
@@ -182,9 +170,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		return fDefaultReturnToken;
 	}
 
-	/*
-	 * @see ICharacterScanner#read()
-	 */
+	@Override
 	public int read() {
 
 		try {
@@ -204,9 +190,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		}
 	}
 
-	/*
-	 * @see ICharacterScanner#unread()
-	 */
+	@Override
 	public void unread() {
     	--fOffset;
 		fColumn= UNDEFINED;

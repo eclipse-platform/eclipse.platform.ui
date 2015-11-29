@@ -34,18 +34,14 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 
 	private File fExternalFile;
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
-	 */
+	@Override
 	protected void tearDown() throws Exception {
 		FileTool.delete(fExternalFile);
 		FileTool.delete(fExternalFile.getParentFile());
 		super.tearDown();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
-	 */
+	@Override
 	protected IPath createPath(IProject project) throws Exception {
 		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/LinkedFileTarget"));
 		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/LinkedFileTarget"));
@@ -57,6 +53,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
+	@Override
 	protected void setReadOnly(boolean state) throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceAttributes attributes= new ResourceAttributes();
@@ -64,25 +61,19 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		file.setResourceAttributes(attributes);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
-	 */
+	@Override
 	protected boolean isStateValidationSupported() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
-	 */
+	@Override
 	protected boolean deleteUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		file.delete(true, false, null);
 		return file.exists();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
-	 */
+	@Override
 	protected IPath moveUnderlyingFile() throws Exception {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		ResourceHelper.createFolder("project/folderA");
@@ -96,9 +87,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
-	 */
+	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
 		FileTool.write(fExternalFile.getAbsolutePath(), new StringBuffer("Changed content of linked file"));
 		fExternalFile.setLastModified(1000);
@@ -107,9 +96,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
-	 */
+	@Override
 	protected Class getAnnotationModelClass() throws Exception {
 		Bundle bundle= Platform.getBundle("org.eclipse.ui.editors");
 		return bundle != null ? IAnnotationModel.class : null;

@@ -144,9 +144,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return false;
 	}
 
-	/*
-	 * @see Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "Selection<" + fPosition + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -184,6 +182,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 		uninstallFromDocument(fDocument, fPosition);
 		fDocument= null;
@@ -195,6 +194,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Releases the state of this location.
 	 */
+	@Override
 	public void releaseState() {
 		// deactivate
 		uninstallFromDocument(fDocument, fPosition);
@@ -210,6 +210,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 * @param location the location to merge into this one
 	 * @return <code>true<code> if merging was successful
 	 */
+	@Override
 	public boolean mergeInto(INavigationLocation location) {
 
 		if (location == null)
@@ -244,6 +245,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Restores this location.
 	 */
+	@Override
 	public void restoreLocation() {
 		if (fPosition == null || fPosition.isDeleted)
 			return;
@@ -260,6 +262,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 *
 	 * @param memento the memento
 	 */
+	@Override
 	public void restoreState(IMemento memento) {
 
 		IEditorPart part= getEditorPart();
@@ -292,6 +295,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 *
 	 * @param memento the memento
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (fSavedPosition != null) {
 			memento.putInteger(TAG_X, fSavedPosition.offset);
@@ -316,6 +320,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Updates the this location.
 	 */
+	@Override
 	public void update() {
 		IEditorPart part= getEditorPart();
 		if (part instanceof ITextEditor) {

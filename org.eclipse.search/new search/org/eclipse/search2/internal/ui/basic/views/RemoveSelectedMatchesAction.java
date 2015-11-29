@@ -28,6 +28,7 @@ public class RemoveSelectedMatchesAction extends Action {
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 
+	@Override
 	public void run() {
 		fPage.internalRemoveSelected();
 	}

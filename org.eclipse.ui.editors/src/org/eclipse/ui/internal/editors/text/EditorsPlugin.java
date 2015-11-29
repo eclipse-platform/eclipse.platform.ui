@@ -197,15 +197,13 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		return fMarkerAnnotationPreferences;
 	}
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 * @since 3.3
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 
 		if (PlatformUI.isWorkbenchRunning()) {
 			fThemeListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
 						EditorsPluginPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
@@ -215,10 +213,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 * @since 3.0
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fSharedTextColors != null) {
 			fSharedTextColors.dispose();

@@ -42,9 +42,7 @@ class SegmentUpdater extends DefaultPositionUpdater {
 		super(segmentCategory);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void update(DocumentEvent event) {
 
 		Assert.isTrue(event instanceof ProjectionDocumentEvent);
@@ -82,9 +80,7 @@ class SegmentUpdater extends DefaultPositionUpdater {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.DefaultPositionUpdater#adaptToInsert()
-	 */
+	@Override
 	protected void adaptToInsert() {
 
 		Segment segment= (Segment) fPosition;

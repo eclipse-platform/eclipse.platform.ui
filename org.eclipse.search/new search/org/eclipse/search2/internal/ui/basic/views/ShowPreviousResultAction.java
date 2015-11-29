@@ -28,6 +28,7 @@ public class ShowPreviousResultAction extends Action {
 		fPage= page;
 	}
 
+	@Override
 	public void run() {
 		fPage.gotoPreviousMatch();
 	}

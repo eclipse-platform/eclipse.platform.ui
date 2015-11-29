@@ -646,5 +646,6 @@ public interface IDocument {
 	 * @exception BadLocationException if startOffset is an invalid document offset
 	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
+	@Deprecated
 	int search(int startOffset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException;
 }

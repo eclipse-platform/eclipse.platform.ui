@@ -26,9 +26,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class UISynchronizationContext implements ISynchronizationContext {
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ISynchronizationContext#run(java.lang.Runnable)
-	 */
+	@Override
 	public void run(Runnable runnable) {
 		if (Display.getCurrent() != null) {
 			runnable.run();

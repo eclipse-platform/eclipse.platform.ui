@@ -23,6 +23,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * @deprecated old search
  */
+@Deprecated
 class SearchResultLabelProvider extends LabelProvider {
 
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.SearchResultView_matches + ")";  //$NON-NLS-1$ //$NON-NLS-2$
@@ -34,6 +35,7 @@ class SearchResultLabelProvider extends LabelProvider {
 		fLabelProvider= provider;
 	}
 
+	@Override
 	public String getText(Object element) {
 		StringBuffer buf= new StringBuffer(getLabelProvider().getText(element));
 		int count= ((ISearchResultViewEntry)element).getMatchCount();
@@ -45,11 +47,13 @@ class SearchResultLabelProvider extends LabelProvider {
 		return buf.toString();
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		return fLabelProvider.getImage(element);
 	}
 
 	// Don't dispose since label providers are reused.
+	@Override
 	public void dispose() {
 	}
 
@@ -57,16 +61,19 @@ class SearchResultLabelProvider extends LabelProvider {
 		return fLabelProvider;
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);
 		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator().addListener(listener);
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return fLabelProvider.isLabelProperty(element, property);
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		fLabelProvider.removeListener(listener);

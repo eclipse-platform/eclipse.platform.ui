@@ -95,17 +95,12 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		fLastLimit= limit != -1 ? limit : 1000;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 * @since 3.4
-	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		String name= "MatchFilterSelectionDialog_" + String.valueOf(fShowLimitConfigurationControls) + '.' + String.valueOf(fEnableMatchFilterConfiguration); //$NON-NLS-1$
 		return SearchPlugin.getDefault().getDialogSettingsSection(name);
@@ -130,9 +125,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		return fLimitElementCount;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite composite) {
 		Composite parent = (Composite) super.createDialogArea(composite);
 		initializeDialogUnits(composite);
@@ -161,14 +154,17 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		table.setLayoutData(data);
 
 		class ListenerAndLabelProvider extends LabelProvider implements ISelectionChangedListener, ICheckStateListener {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				performFilterListSelectionChanged();
 			}
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				performFilterListCheckStateChanged();
 			}
 
+			@Override
 			public String getText(Object element) {
 				return ((MatchFilter) element).getName();
 			}
@@ -216,12 +212,14 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		fLimitElementsField.setLayoutData(gd);
 
 		fLimitElementsCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performLimitCheckboxChanged();
 			}
 		});
 
 		fLimitElementsField.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				performLimitTextModified();
 			}

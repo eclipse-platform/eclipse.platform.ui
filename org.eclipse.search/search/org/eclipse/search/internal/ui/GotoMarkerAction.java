@@ -15,6 +15,7 @@ import org.eclipse.jface.action.Action;
 /**
  * @deprecated old search
  */
+@Deprecated
 class GotoMarkerAction extends Action {
 
 	private SearchResultViewer fViewer;
@@ -26,6 +27,7 @@ class GotoMarkerAction extends Action {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void run() {
 		fViewer.showResult();
 	}

@@ -42,9 +42,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 		fDefaultTextAttribute= defaultTextAttribute;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#setDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void setDocument(IDocument document) {
 		fDocument= document;
 	}
@@ -73,9 +71,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
-	 */
+	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event, boolean documentPartitioningChanged) {
 		if (!documentPartitioningChanged) {
 			try {
@@ -100,9 +96,7 @@ public class NonRuleBasedDamagerRepairer implements IPresentationDamager, IPrese
 		return partition;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#createPresentation(org.eclipse.jface.text.TextPresentation, org.eclipse.jface.text.ITypedRegion)
-	 */
+	@Override
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 		addRange(presentation, region.getOffset(), region.getLength(), fDefaultTextAttribute);
 	}

@@ -82,37 +82,27 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.TextSelection#getStartLine()
-	 */
+	@Override
 	public int getStartLine() {
 		return fStartLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IColumnTextSelection#getStartColumn()
-	 */
+	@Override
 	public int getStartColumn() {
 		return fStartColumn;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.TextSelection#getEndLine()
-	 */
+	@Override
 	public int getEndLine() {
 		return fEndLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IColumnTextSelection#getEndColumn()
-	 */
+	@Override
 	public int getEndColumn() {
 		return fEndColumn;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.TextSelection#getText()
-	 */
+	@Override
 	public String getText() {
 		IDocument document= getDocument();
 		if (document != null) {
@@ -125,9 +115,7 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 		return super.getText();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.TextSelection#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		final int prime= 31;
 		int result= super.hashCode();
@@ -138,9 +126,7 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 		return result;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.TextSelection#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -158,9 +144,7 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IColumnTextSelection#getRegions()
-	 */
+	@Override
 	public IRegion[] getRegions() {
 		IDocument document= getDocument();
 		if (document != null) {

@@ -24,6 +24,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
  * Implements handle to persistent support for Java elements.
  * @deprecated old search
  */
+@Deprecated
 public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 
 	private static Class[] PROPERTIES= new Class[] {
@@ -31,10 +32,12 @@ public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 	};
 
 
+	@Override
 	public Class[] getAdapterList() {
 		return PROPERTIES;
 	}
 
+	@Override
 	public Object getAdapter(Object element, Class key) {
 
 		ISearchResultViewEntry entry= (ISearchResultViewEntry) element;

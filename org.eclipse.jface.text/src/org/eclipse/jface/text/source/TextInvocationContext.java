@@ -33,23 +33,17 @@ public class TextInvocationContext implements IQuickAssistInvocationContext {
 		fLength= length;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getOffset()
-	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext#getSourceViewer()
-	 */
+	@Override
 	public ISourceViewer getSourceViewer() {
 		return fSourceViewer;
 	}

@@ -19,6 +19,7 @@ package org.eclipse.jface.text;
  * @since 2.1
  * @deprecated replaced by {@link org.eclipse.jface.text.ITextViewerExtension5}
  */
+@Deprecated
 public interface ITextViewerExtension3 {
 
 

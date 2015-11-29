@@ -30,6 +30,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * @deprecated old search
  */
+@Deprecated
 class RemoveResultAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;
@@ -47,10 +48,12 @@ class RemoveResultAction extends Action {
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 
+	@Override
 	public void run() {
 		final IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
 		if (markers != null) {
 			BusyIndicator.showWhile(SearchPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					try {
 						SearchPlugin.getWorkspace().deleteMarkers(markers);

@@ -69,9 +69,7 @@ public class ProposalPosition extends LinkedPosition {
 		return null;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ProposalPosition) {
 			if (super.equals(o)) {
@@ -92,9 +90,7 @@ public class ProposalPosition extends LinkedPosition {
 		return fProposals;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPosition#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode() | (fProposals == null ? 0 : fProposals.hashCode());
 	}

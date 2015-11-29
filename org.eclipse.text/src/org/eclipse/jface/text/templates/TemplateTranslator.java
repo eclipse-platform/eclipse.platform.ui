@@ -313,6 +313,7 @@ public class TemplateTranslator {
 	 * @return a new instance of <code>TemplateVariable</code>
 	 * @deprecated as of 3.3 use {@link #createVariable(TemplateVariableType, String, int[])} instead
 	 */
+	@Deprecated
 	protected TemplateVariable createVariable(String type, String name, int[] offsets) {
 		return createVariable(fCurrentType, name, offsets);
 	}

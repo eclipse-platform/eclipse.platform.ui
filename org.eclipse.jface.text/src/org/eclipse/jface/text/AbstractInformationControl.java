@@ -169,6 +169,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @deprecated clients should use one of the public constructors
 	 */
+	@Deprecated
 	AbstractInformationControl(Shell parentShell, int shellStyle, final String statusFieldText, final ToolBarManager toolBarManager) {
 		Assert.isTrue(statusFieldText == null || toolBarManager == null);
 		fResizeHandleSize= -1;
@@ -198,6 +199,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
 		
 		addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 			}
@@ -288,6 +290,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		data.heightHint= size;
 		resizer.setLayoutData(data);
 		resizer.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				Point s= resizer.getSize();
 				int x= s.x - 2;
@@ -325,6 +328,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		MouseAdapter resizeSupport= new MouseAdapter() {
 			private MouseMoveListener fResizeListener;
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				Rectangle shellBounds= fShell.getBounds();
 				final int shellX= shellBounds.x;
@@ -335,6 +339,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				final int mouseX= mouseLoc.x;
 				final int mouseY= mouseLoc.y;
 				fResizeListener= new MouseMoveListener() {
+					@Override
 					public void mouseMove(MouseEvent e2) {
 						Point mouseLoc2= resizer.toDisplay(e2.x, e2.y);
 						int dx= mouseLoc2.x - mouseX;
@@ -350,6 +355,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				resizer.addMouseMoveListener(fResizeListener);
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				resizer.removeMouseMoveListener(fResizeListener);
 				fResizeListener= null;
@@ -381,6 +387,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		MouseAdapter moveSupport= new MouseAdapter() {
 			private MouseMoveListener fMoveListener;
 
+			@Override
 			public void mouseDown(MouseEvent e) {
 				Point shellLoc= fShell.getLocation();
 				final int shellX= shellLoc.x;
@@ -389,6 +396,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				final int mouseX= mouseLoc.x;
 				final int mouseY= mouseLoc.y;
 				fMoveListener= new MouseMoveListener() {
+					@Override
 					public void mouseMove(MouseEvent e2) {
 						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
 						int dx= mouseLoc2.x - mouseX;
@@ -399,6 +407,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 				control.addMouseMoveListener(fMoveListener);
 			}
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				control.removeMouseMoveListener(fMoveListener);
 				fMoveListener= null;
@@ -481,6 +490,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 	 */
+	@Override
 	public void setInformation(String information) {
 
 	}
@@ -495,9 +505,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return fResizable;
 	}
 
-	/*
-	 * @see IInformationControl#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (fShell.isVisible() == visible)
 			return;
@@ -505,9 +513,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fShell.setVisible(visible);
 	}
 
-	/*
-	 * @see IInformationControl#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fShell != null && !fShell.isDisposed())
 			fShell.dispose();
@@ -530,23 +536,17 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 	}
 
-	/*
-	 * @see IInformationControl#setSize(int, int)
-	 */
+	@Override
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
 	}
 
-	/*
-	 * @see IInformationControl#setLocation(Point)
-	 */
+	@Override
 	public void setLocation(Point location) {
 		fShell.setLocation(location);
 	}
 
-	/*
-	 * @see IInformationControl#setSizeConstraints(int, int)
-	 */
+	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		fSizeConstraints= new Point(maxWidth, maxHeight);
 	}
@@ -561,9 +561,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return fSizeConstraints != null ? Geometry.copy(fSizeConstraints) : null;
 	}
 
-	/*
-	 * @see IInformationControl#computeSizeHint()
-	 */
+	@Override
 	public Point computeSizeHint() {
 		// XXX: Verify whether this is a good default implementation. If yes, document it.
 		Point constrains= getSizeConstraints();
@@ -580,6 +578,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
+	@Override
 	public Rectangle computeTrim() {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
 
@@ -589,9 +588,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return trim;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
-	 */
+	@Override
 	public Rectangle getBounds() {
 		return fShell.getBounds();
 	}
@@ -603,6 +600,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * </p>
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 */
+	@Override
 	public boolean restoresLocation() {
 		return false;
 	}
@@ -614,34 +612,27 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * </p>
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 */
+	@Override
 	public boolean restoresSize() {
 		return false;
 	}
 
-	/*
-	 * @see IInformationControl#addDisposeListener(DisposeListener)
-	 */
+	@Override
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 	}
 
-	/*
-	 * @see IInformationControl#removeDisposeListener(DisposeListener)
-	 */
+	@Override
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
 
-	/*
-	 * @see IInformationControl#setForegroundColor(Color)
-	 */
+	@Override
 	public void setForegroundColor(Color foreground) {
 		fContentComposite.setForeground(foreground);
 	}
 
-	/*
-	 * @see IInformationControl#setBackgroundColor(Color)
-	 */
+	@Override
 	public void setBackgroundColor(Color background) {
 		fContentComposite.setBackground(background);
 	}
@@ -650,6 +641,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * {@inheritDoc}
 	 * This method is not intended to be overridden by subclasses.
 	 */
+	@Override
 	public boolean isFocusControl() {
 		return fShell.getDisplay().getActiveShell() == fShell;
 	}
@@ -660,6 +652,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @see IInformationControl#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		boolean focusTaken= fShell.setFocus();
 		if (!focusTaken)
@@ -670,10 +663,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * {@inheritDoc}
 	 * This method is not intended to be overridden by subclasses.
 	 */
+	@Override
 	public void addFocusListener(final FocusListener listener) {
 		if (fFocusListeners.isEmpty()) {
 			fShellListener= new Listener() {
 
+				@Override
 				public void handleEvent(Event event) {
 					Object[] listeners= fFocusListeners.getListeners();
 					for (int i= 0; i < listeners.length; i++) {
@@ -696,6 +691,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * {@inheritDoc}
 	 * This method is not intended to be overridden by subclasses.
 	 */
+	@Override
 	public void removeFocusListener(FocusListener listener) {
 		fFocusListeners.remove(listener);
 		if (fFocusListeners.isEmpty()) {
@@ -719,6 +715,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
 	 */
+	@Override
 	public void setStatusText(String statusFieldText) {
 		if (fStatusLabel != null && ! getShell().isVisible()) {
 			if (statusFieldText == null	) {
@@ -730,9 +727,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean containsControl(Control control) {
 		do {
 			if (control == fShell)
@@ -744,9 +739,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
-	 */
+	@Override
 	public boolean isVisible() {
 		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
@@ -755,6 +748,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * {@inheritDoc}
 	 * This default implementation returns <code>null</code>. Subclasses may override.
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return null;
 	}
@@ -766,6 +760,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */
+	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		GC gc= new GC(fContentComposite);
 		gc.setFont(JFaceResources.getDialogFont());

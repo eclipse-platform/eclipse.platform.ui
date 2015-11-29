@@ -36,23 +36,17 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 
 		protected int fInstallOffset;
 
-		/*
-		 * @see IContextInformationValidator#isContextInformationValid(int)
-		 */
+		@Override
 		public boolean isContextInformationValid(int offset) {
 			return Math.abs(fInstallOffset - offset) < 5;
 		}
 
-		/*
-		 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
-		 */
+		@Override
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset= offset;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter#updatePresentation(int, TextPresentation)
-		 */
+		@Override
 		public boolean updatePresentation(int documentPosition, TextPresentation presentation) {
 			return false;
 		}
@@ -63,9 +57,7 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 
 	protected IContextInformationValidator fValidator= new Validator();
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		ICompletionProposal[] result= new ICompletionProposal[fgProposals.length];
 		for (int i= 0; i < fgProposals.length; i++) {
@@ -75,9 +67,7 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		IContextInformation[] result= new IContextInformation[5];
 		for (int i= 0; i < result.length; i++)
@@ -87,30 +77,22 @@ public class JavaCompletionProcessor implements IContentAssistProcessor {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] { '.', '(' };
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return new char[] { '#' };
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IContentAssistProcessor
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}

@@ -56,6 +56,7 @@ public class PositionTrackerTest extends TestCase {
 		return new JUnitSourceSetup(test);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		

@@ -18,6 +18,7 @@ import org.eclipse.jface.text.TextAttribute;
 /**
  * @deprecated use <code>DefaultDamagerRepairer</code>
  */
+@Deprecated
 public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 
 	/**
@@ -30,6 +31,7 @@ public class RuleBasedDamagerRepairer extends DefaultDamagerRepairer {
 	 *
 	 * @deprecated use RuleBasedDamagerRepairer(RuleBasedScanner) instead
 	 */
+	@Deprecated
 	public RuleBasedDamagerRepairer(RuleBasedScanner scanner, TextAttribute defaultTextAttribute) {
 		super(scanner, defaultTextAttribute);
 	}

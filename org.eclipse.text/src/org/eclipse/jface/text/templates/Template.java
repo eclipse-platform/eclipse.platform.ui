@@ -62,6 +62,7 @@ public class Template {
 	 * @param pattern the template pattern
 	 * @deprecated as of 3.1 replaced by {@link #Template(String, String, String, String, boolean)}
 	 */
+	@Deprecated
 	public Template(String name, String description, String contextTypeId, String pattern) {
 		this(name, description, contextTypeId, pattern, true); // templates are auto insertable per default
 	}
@@ -86,9 +87,7 @@ public class Template {
 		fIsAutoInsertable= isAutoInsertable;
 	}
 
-	/*
-	 * @see Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fName.hashCode() ^ fPattern.hashCode() ^ fContextTypeId.hashCode();
 	}
@@ -99,6 +98,7 @@ public class Template {
 	 * @param description the new description
 	 * @deprecated Templates should never be modified
 	 */
+	@Deprecated
 	public void setDescription(String description) {
 		Assert.isNotNull(description);
 		fDescription= description;
@@ -119,6 +119,7 @@ public class Template {
 	 * @param contextTypeId the new context type name
 	 * @deprecated Templates should never be modified
 	 */
+	@Deprecated
 	public void setContextTypeId(String contextTypeId) {
 		Assert.isNotNull(contextTypeId);
 		fContextTypeId= contextTypeId;
@@ -139,6 +140,7 @@ public class Template {
 	 * @param name the name of the template
 	 * @deprecated Templates should never be modified
 	 */
+	@Deprecated
 	public void setName(String name) {
 		fName= name;
 	}
@@ -158,6 +160,7 @@ public class Template {
 	 * @param pattern the new pattern of the template
 	 * @deprecated Templates should never be modified
 	 */
+	@Deprecated
 	public void setPattern(String pattern) {
 		fPattern= pattern;
 	}
@@ -184,9 +187,7 @@ public class Template {
 		return fContextTypeId.equals(contextTypeId);
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Template))
 			return false;

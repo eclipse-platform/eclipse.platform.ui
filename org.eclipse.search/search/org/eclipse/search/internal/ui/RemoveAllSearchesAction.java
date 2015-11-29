@@ -15,6 +15,7 @@ import org.eclipse.jface.action.Action;
 /**
  * @deprecated old search
  */
+@Deprecated
 class RemoveAllSearchesAction extends Action {
 
 	public RemoveAllSearchesAction() {
@@ -23,6 +24,7 @@ class RemoveAllSearchesAction extends Action {
 		setToolTipText(SearchMessages.SearchResultView_removeAllSearches_tooltip);
 	}
 
+	@Override
 	public void run() {
 		SearchManager.getDefault().removeAllSearches();
 	}

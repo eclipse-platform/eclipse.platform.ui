@@ -50,17 +50,17 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	public AbstractReconcileStep() {
 	}
 
+	@Override
 	public boolean isLastStep() {
 		return fNextStep == null;
 	}
 
+	@Override
 	public boolean isFirstStep() {
 		return fPreviousStep == null;
 	}
 
-	/*
-	 * @see org.eclipse.text.reconcilerpipe.IReconcilerResultCollector#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 
@@ -68,16 +68,12 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 			fNextStep.setProgressMonitor(monitor);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcileStep#getProgressMonitor()
-	 */
+	@Override
 	public IProgressMonitor getProgressMonitor() {
 		return fProgressMonitor;
 	}
 
-	/*
-	 * @see IReconcileStep#reconcile(IRegion)
-	 */
+	@Override
 	public final IReconcileResult[] reconcile(IRegion partition) {
 		IReconcileResult[] result= reconcileModel(null, partition);
 		if (!isLastStep()) {
@@ -88,9 +84,7 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 		return result;
 	}
 
-	/*
-	 * @see IReconcileStep#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public final IReconcileResult[] reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		IReconcileResult[] result= reconcileModel(dirtyRegion, subRegion);
 		if (!isLastStep()) {
@@ -150,18 +144,14 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 		return fProgressMonitor != null && fProgressMonitor.isCanceled();
 	}
 
-	/*
-	 * @see IReconcileStep#setPreviousStep(IReconcileStep)
-	 */
+	@Override
 	public void setPreviousStep(IReconcileStep step) {
 		Assert.isNotNull(step);
 		Assert.isTrue(fPreviousStep == null);
 		fPreviousStep= step;
 	}
 
-	/*
-	 * @see IReconcileStep#setInputModel(Object)
-	 */
+	@Override
 	public void setInputModel(IReconcilableModel inputModel) {
 		fInputModel= inputModel;
 

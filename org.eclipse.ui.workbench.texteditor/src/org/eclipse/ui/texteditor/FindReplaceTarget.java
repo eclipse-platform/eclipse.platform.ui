@@ -61,28 +61,21 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
-	 */
+	@Override
 	public boolean canPerformFind() {
 		if (getTarget() != null)
 			return getTarget().canPerformFind();
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
-	 */
+	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 		if (getTarget() != null)
 			return getTarget().findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
-	 * @since 3.0
-	 */
+	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (getTarget() instanceof IFindReplaceTargetExtension3)
 			return ((IFindReplaceTargetExtension3)getTarget()).findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord, regExSearch);
@@ -94,27 +87,21 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
-	 */
+	@Override
 	public Point getSelection() {
 		if (getTarget() != null)
 			return getTarget().getSelection();
 		return new Point(-1, -1);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
-	 */
+	@Override
 	public String getSelectionText() {
 		if (getTarget() != null)
 			return getTarget().getSelectionText();
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
-	 */
+	@Override
 	public boolean isEditable() {
 		if (getTarget() != null) {
 			if (getTarget().isEditable())
@@ -124,18 +111,13 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
-	 */
+	@Override
 	public void replaceSelection(String text) {
 		if (getTarget() != null)
 			getTarget().replaceSelection(text);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#replaceSelection(String, boolean)
-	 * @since 3.0
-	 */
+	@Override
 	public void replaceSelection(String text, boolean regExReplace) {
 		if (getTarget() instanceof IFindReplaceTargetExtension3) {
 			((IFindReplaceTargetExtension3)getTarget()).replaceSelection(text, regExReplace);
@@ -147,75 +129,57 @@ class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtensi
 			getTarget().replaceSelection(text);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#beginSession()
-	 */
+	@Override
 	public void beginSession() {
 		if (getExtension() != null)
 			getExtension().beginSession();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#endSession()
-	 */
+	@Override
 	public void endSession() {
 		if (getExtension() != null)
 			getExtension().endSession();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#getScope()
-	 */
+	@Override
 	public IRegion getScope() {
 		if (getExtension() != null)
 			return getExtension().getScope();
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setScope(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public void setScope(IRegion scope) {
 		if (getExtension() != null)
 			getExtension().setScope(scope);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#getLineSelection()
-	 */
+	@Override
 	public Point getLineSelection() {
 		if (getExtension() != null)
 			return getExtension().getLineSelection();
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setSelection(int, int)
-	 */
+	@Override
 	public void setSelection(int offset, int length) {
 		if (getExtension() != null)
 			getExtension().setSelection(offset, length);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setScopeHighlightColor(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setScopeHighlightColor(Color color) {
 		if (getExtension() != null)
 			getExtension().setScopeHighlightColor(color);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension#setReplaceAllMode(boolean)
-	 */
+	@Override
 	public void setReplaceAllMode(boolean replaceAll) {
 		if (getExtension() != null)
 			getExtension().setReplaceAllMode(replaceAll);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IFindReplaceTargetExtension2#validateTargetState()
-	 */
+	@Override
 	public boolean validateTargetState() {
 		return fEditor.validateEditorInputState();
 	}

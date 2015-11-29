@@ -35,43 +35,33 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 	private IWorkbenchWindow fWorkbenchWindow;
 	private OpenSearchDialogAction fOpenSearchDialogAction;
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu= new Menu(parent);
 		fillMenu(menu);
 		return menu;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		Menu menu= new Menu(parent);
 		fillMenu(menu);
 		return menu;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fOpenSearchDialogAction != null) {
 			fOpenSearchDialogAction.dispose();
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		if (fOpenSearchDialogAction == null) {
 			fOpenSearchDialogAction= new OpenSearchDialogAction();
@@ -79,9 +69,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		fOpenSearchDialogAction.run(action);
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
 		// Empty
 	}
@@ -97,8 +85,10 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 			}
 		}
 		localMenu.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuHidden(MenuEvent e) {
 				e.display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						localMenu.dispose();
 					}
@@ -140,6 +130,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 			}
 		}
 
+		@Override
 		public void run() {
 			fOpenSearchDialogAction.run(this);
 		}

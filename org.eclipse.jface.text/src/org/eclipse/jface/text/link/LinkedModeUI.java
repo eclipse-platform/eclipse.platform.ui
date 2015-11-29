@@ -129,10 +129,12 @@ public class LinkedModeUI {
 	 */
 	private static final class EmtpyFocusListener implements ILinkedModeUIFocusListener {
 
+		@Override
 		public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 			// ignore
 		}
 
+		@Override
 		public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 			// ignore
 		}
@@ -185,22 +187,16 @@ public class LinkedModeUI {
 			fTextViewer= viewer;
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeUI.ILinkedUITarget#getViewer()
-		 */
+		@Override
 		public ITextViewer getViewer() {
 			return fTextViewer;
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 		}
 
-		/**
-		 * {@inheritDoc}
-		 */
+		@Override
 		public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 		}
 
@@ -210,15 +206,18 @@ public class LinkedModeUI {
 	 * Listens for state changes in the model.
 	 */
 	private final class ExitListener implements ILinkedModeListener {
+		@Override
 		public void left(LinkedModeModel model, int flags) {
 			leave(ILinkedModeListener.EXIT_ALL | flags);
 		}
 
+		@Override
 		public void suspend(LinkedModeModel model) {
 			disconnect();
 			redraw();
 		}
 
+		@Override
 		public void resume(LinkedModeModel model, int flags) {
 			if ((flags & ILinkedModeListener.EXIT_ALL) != 0) {
 				leave(flags);
@@ -283,9 +282,7 @@ public class LinkedModeUI {
 	 * A NullObject implementation of <code>IExitPolicy</code>.
 	 */
 	private static class NullExitPolicy implements IExitPolicy {
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeUI.IExitPolicy#doExit(org.eclipse.swt.events.VerifyEvent, int, int)
-		 */
+		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
 			return null;
 		}
@@ -296,13 +293,16 @@ public class LinkedModeUI {
 	 */
 	private class Closer implements ShellListener, ITextInputListener {
 
+		@Override
 		public void shellActivated(ShellEvent e) {
 		}
 
+		@Override
 		public void shellClosed(ShellEvent e) {
 			leave(ILinkedModeListener.EXIT_ALL);
 		}
 
+		@Override
 		public void shellDeactivated(ShellEvent e) {
 // 			TODO re-enable after debugging
 //			if (true) return;
@@ -335,6 +335,7 @@ public class LinkedModeUI {
 			{
 				// Post in UI thread since the assistant popup will only get the focus after we lose it.
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (fIsActive && viewer instanceof IEditingSupportRegistry) {
 							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
@@ -352,23 +353,21 @@ public class LinkedModeUI {
 			}
 		}
 
+		@Override
 		public void shellDeiconified(ShellEvent e) {
 		}
 
+		@Override
 		public void shellIconified(ShellEvent e) {
 			leave(ILinkedModeListener.EXIT_ALL);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			leave(ILinkedModeListener.EXIT_ALL);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		}
 
@@ -378,9 +377,7 @@ public class LinkedModeUI {
 	 * @since 3.1
 	 */
 	private class DocumentListener implements IDocumentListener {
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 
 			// default behavior: any document change outside a linked position
@@ -407,9 +404,7 @@ public class LinkedModeUI {
 
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 		}
 	}
@@ -422,6 +417,7 @@ public class LinkedModeUI {
 
 		private boolean fIsEnabled= true;
 
+		@Override
 		public void verifyKey(VerifyEvent event) {
 
 			if (!event.doit || !fIsEnabled)
@@ -528,9 +524,7 @@ public class LinkedModeUI {
 	 */
 	private class MySelectionListener implements ISelectionChangedListener {
 
-		/*
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
 			if (selection instanceof ITextSelection) {
@@ -558,9 +552,7 @@ public class LinkedModeUI {
 
 	private class ProposalListener implements IProposalListener {
 
-		/*
-		 * @see org.eclipse.jface.internal.text.link.contentassist.IProposalListener#proposalChosen(org.eclipse.jface.text.contentassist.ICompletionProposal)
-		 */
+		@Override
 		public void proposalChosen(ICompletionProposal proposal) {
 			next();
 		}
@@ -617,9 +609,7 @@ public class LinkedModeUI {
 	private ILinkedModeUIFocusListener fPositionListener= new EmtpyFocusListener();
 	private IAutoEditStrategy fAutoEditVetoer= new IAutoEditStrategy() {
 
-		/*
-		 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
-		 */
+		@Override
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 			// invalidate the change to ensure that the change is performed on the document only.
 			if (fModel.anyPositionContains(command.offset)) {
@@ -982,6 +972,7 @@ public class LinkedModeUI {
 
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=132263
 		widget.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (!widget.isDisposed())
 					try {
@@ -1168,6 +1159,7 @@ public class LinkedModeUI {
 		fModel.stopForwarding(flags);
 
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				if (fExitPosition != null)
 					fExitPosition.getDocument().removePosition(fExitPosition);

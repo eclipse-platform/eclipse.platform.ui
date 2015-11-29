@@ -83,9 +83,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		protected RulerLayout() {
 		}
 
-		/*
-		 * @see Layout#computeSize(Composite, int, int, boolean)
-		 */
+		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
 			Control[] children= composite.getChildren();
 			Point size= new Point(0, 0);
@@ -98,9 +96,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			return size;
 		}
 
-		/*
-		 * @see Layout#layout(Composite, boolean)
-		 */
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
 			int rulerHeight= clArea.height;
@@ -147,6 +143,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		public CompositeRulerCanvas(Composite parent, int style) {
 			super(parent, style);
 			fMenuDetectListener= new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 				  	if (event.type == SWT.MenuDetect) {
 						Menu menu= getMenu();
@@ -158,6 +155,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 				}
 			};
 			super.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					if (fCachedListeners != null) {
 						fCachedListeners.clear();
@@ -354,89 +352,67 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			}
 		}
 
-		/*
-		 * @see Control#removeControlListener(ControlListener)
-		 */
+		@Override
 		public void removeControlListener(ControlListener listener) {
 			removeListener(ControlListener.class, listener);
 			super.removeControlListener(listener);
 		}
 
-		/*
-		 * @see Control#removeFocusListener(FocusListener)
-		 */
+		@Override
 		public void removeFocusListener(FocusListener listener) {
 			removeListener(FocusListener.class, listener);
 			super.removeFocusListener(listener);
 		}
 
-		/*
-		 * @see Control#removeHelpListener(HelpListener)
-		 */
+		@Override
 		public void removeHelpListener(HelpListener listener) {
 			removeListener(HelpListener.class, listener);
 			super.removeHelpListener(listener);
 		}
 
-		/*
-		 * @see Control#removeKeyListener(KeyListener)
-		 */
+		@Override
 		public void removeKeyListener(KeyListener listener) {
 			removeListener(KeyListener.class, listener);
 			super.removeKeyListener(listener);
 		}
 
-		/*
-		 * @see Control#removeMouseListener(MouseListener)
-		 */
+		@Override
 		public void removeMouseListener(MouseListener listener) {
 			removeListener(MouseListener.class, listener);
 			super.removeMouseListener(listener);
 		}
 
-		/*
-		 * @see Control#removeMouseMoveListener(MouseMoveListener)
-		 */
+		@Override
 		public void removeMouseMoveListener(MouseMoveListener listener) {
 			removeListener(MouseMoveListener.class, listener);
 			super.removeMouseMoveListener(listener);
 		}
 
-		/*
-		 * @see Control#removeMouseTrackListener(MouseTrackListener)
-		 */
+		@Override
 		public void removeMouseTrackListener(MouseTrackListener listener) {
 			removeListener(MouseTrackListener.class, listener);
 			super.removeMouseTrackListener(listener);
 		}
 
-		/*
-		 * @see Control#removePaintListener(PaintListener)
-		 */
+		@Override
 		public void removePaintListener(PaintListener listener) {
 			removeListener(PaintListener.class, listener);
 			super.removePaintListener(listener);
 		}
 
-		/*
-		 * @see Control#removeTraverseListener(TraverseListener)
-		 */
+		@Override
 		public void removeTraverseListener(TraverseListener listener) {
 			removeListener(TraverseListener.class, listener);
 			super.removeTraverseListener(listener);
 		}
 
-		/*
-		 * @see Widget#removeDisposeListener(DisposeListener)
-		 */
+		@Override
 		public void removeDisposeListener(DisposeListener listener) {
 			removeListener(DisposeListener.class, listener);
 			super.removeDisposeListener(listener);
 		}
 
-		/*
-		 * @see Control#removeGestureListener(GestureListener)
-		 */
+		@Override
 		public void removeGestureListener(GestureListener listener) {
 			removeListener(GestureListener.class, listener);
 			super.removeGestureListener(listener);
@@ -445,54 +421,43 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		/*
 		 * @seeControl#addControlListener(ControlListener)
 		 */
+		@Override
 		public void addControlListener(ControlListener listener) {
 			super.addControlListener(listener);
 			addListener(ControlListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addFocusListener(FocusListener)
-		 */
+		@Override
 		public void addFocusListener(FocusListener listener) {
 			super.addFocusListener(listener);
 			addListener(FocusListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addHelpListener(HelpListener)
-		 */
+		@Override
 		public void addHelpListener(HelpListener listener) {
 			super.addHelpListener(listener);
 			addListener(HelpListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addKeyListener(KeyListener)
-		 */
+		@Override
 		public void addKeyListener(KeyListener listener) {
 			super.addKeyListener(listener);
 			addListener(KeyListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addMouseListener(MouseListener)
-		 */
+		@Override
 		public void addMouseListener(MouseListener listener) {
 			super.addMouseListener(listener);
 			addListener(MouseListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addMouseMoveListener(MouseMoveListener)
-		 */
+		@Override
 		public void addMouseMoveListener(MouseMoveListener listener) {
 			super.addMouseMoveListener(listener);
 			addListener(MouseMoveListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addMouseTrackListener(MouseTrackListener)
-		 */
+		@Override
 		public void addMouseTrackListener(MouseTrackListener listener) {
 			super.addMouseTrackListener(listener);
 			addListener(MouseTrackListener.class, listener);
@@ -501,30 +466,25 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		/*
 		 * @seeControl#addPaintListener(PaintListener)
 		 */
+		@Override
 		public void addPaintListener(PaintListener listener) {
 			super.addPaintListener(listener);
 			addListener(PaintListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addTraverseListener(TraverseListener)
-		 */
+		@Override
 		public void addTraverseListener(TraverseListener listener) {
 			super.addTraverseListener(listener);
 			addListener(TraverseListener.class, listener);
 		}
 
-		/*
-		 * @see Widget#addDisposeListener(DisposeListener)
-		 */
+		@Override
 		public void addDisposeListener(DisposeListener listener) {
 			super.addDisposeListener(listener);
 			addListener(DisposeListener.class, listener);
 		}
 
-		/*
-		 * @see Control#addGestureListener(GestureListener)
-		 */
+		@Override
 		public void addGestureListener(GestureListener listener) {
 			super.addGestureListener(listener);
 			addListener(GestureListener.class, listener);
@@ -635,16 +595,12 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 			((Composite) parent).layout(true);
 	}
 
-	/*
-	 * @see IVerticalRuler#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fComposite;
 	}
 
-	/*
-	 * @see IVerticalRuler#createControl(Composite, ITextViewer)
-	 */
+	@Override
 	public Control createControl(Composite parent, ITextViewer textViewer) {
 
 		fTextViewer= textViewer;
@@ -662,9 +618,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		return fComposite;
 	}
 
-	/*
-	 * @see IVerticalRuler#setModel(IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 
 		fModel= model;
@@ -676,21 +630,18 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 	}
 
-	/*
-	 * @see IVerticalRuler#getModel()
-	 */
+	@Override
 	public IAnnotationModel getModel() {
 		return fModel;
 	}
 
-	/*
-	 * @see IVerticalRuler#update()
-	 */
+	@Override
 	public void update() {
 		if (fComposite != null && !fComposite.isDisposed()) {
 			Display d= fComposite.getDisplay();
 			if (d != null) {
 				d.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						immediateUpdate();
 					}
@@ -712,9 +663,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerExtension#setFont(Font)
-	 */
+	@Override
 	public void setFont(Font font) {
 		Iterator e= fDecorators.iterator();
 		while (e.hasNext()) {
@@ -723,9 +672,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#getWidth()
-	 */
+	@Override
 	public int getWidth() {
 		int width= 0;
 		Iterator e= fDecorators.iterator();
@@ -736,9 +683,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		return Math.max(0, width - fGap);
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		if (fLastMouseButtonActivityLine == -1)
 			fLastMouseButtonActivityLine= toDocumentLineNumber(fLocation.y);
@@ -747,9 +692,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		return fLastMouseButtonActivityLine;
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		if (fTextViewer == null || y_coordinate == -1)
 			return -1;
@@ -800,9 +743,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		return fTextViewer;
 	}
 
-	/*
-	 * @see IVerticalRulerExtension#setLocationOfLastMouseButtonActivity(int, int)
-	 */
+	@Override
 	public void setLocationOfLastMouseButtonActivity(int x, int y) {
 		fLocation.x= x;
 		fLocation.y= y;
@@ -821,26 +762,17 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		return fDecorators.iterator();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 * @since 3.0
-	 */
+	@Override
 	public IAnnotationHover getHover() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 * @since 3.0
-	 */
+	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		fAnnotationListeners.add(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 * @since 3.0
-	 */
+	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		fAnnotationListeners.remove(listener);
 	}

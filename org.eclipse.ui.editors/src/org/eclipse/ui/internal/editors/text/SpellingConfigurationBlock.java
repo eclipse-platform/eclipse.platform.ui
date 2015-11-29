@@ -85,9 +85,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			fMessage= message;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#createControl(org.eclipse.swt.widgets.Composite)
-		 */
+		@Override
 		public Control createControl(Composite composite) {
 			Composite inner= new Composite(composite, SWT.NONE);
 			inner.setLayout(new FillLayout(SWT.VERTICAL));
@@ -98,46 +96,32 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			return inner;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#initialize(org.eclipse.ui.texteditor.spelling.IStatusMonitor)
-		 */
+		@Override
 		public void initialize(IPreferenceStatusMonitor statusMonitor) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#canPerformOk()
-		 */
+		@Override
 		public boolean canPerformOk() {
 			return true;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performOk()
-		 */
+		@Override
 		public void performOk() {
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performDefaults()
-		 */
+		@Override
 		public void performDefaults() {
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performRevert()
-		 */
+		@Override
 		public void performRevert() {
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#setEnabled(boolean)
-		 */
+		@Override
 		public void setEnabled(boolean enabled) {
 			fLabel.setEnabled(enabled);
 		}
@@ -163,9 +147,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 			fForwardedMonitor= forwardedMonitor;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor#statusChanged(org.eclipse.core.runtime.IStatus)
-		 */
+		@Override
 		public void statusChanged(IStatus status) {
 			fStatus= status;
 			fForwardedMonitor.statusChanged(status);
@@ -239,6 +221,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		Composite composite= new Composite(parent, SWT.NULL);
@@ -266,12 +249,14 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fEnablementCheckbox.setLayoutData(gd);
 		fEnablementCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= fEnablementCheckbox.getSelection();
 				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, enabled);
 				updateCheckboxDependencies();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -324,10 +309,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		return composite;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
-	 * @since 3.4
-	 */
+	@Override
 	public void applyData(Object data) {
 	}
 
@@ -336,42 +318,33 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		final ComboViewer viewer= new ComboViewer(fProviderCombo);
 		viewer.setContentProvider(new IStructuredContentProvider() {
 
-			/*
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
+			@Override
 			public void dispose() {
 			}
 
-			/*
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
+			@Override
 			public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			}
 
-			/*
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return fProviderDescriptors.values().toArray();
 			}
 		});
 		viewer.setLabelProvider(new LabelProvider() {
-			/*
-			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-			 */
+			@Override
 			public Image getImage(Object element) {
 				return null;
 			}
 
-			/*
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
+			@Override
 			public String getText(Object element) {
 				return ((SpellingEngineDescriptor) element).getLabel();
 			}
 		});
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (sel.isEmpty())
@@ -379,9 +352,11 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 				if (fCurrentBlock != null && fStatusMonitor.getStatus() != null && fStatusMonitor.getStatus().matches(IStatus.ERROR))
 					if (isPerformRevert()) {
 						ISafeRunnable runnable= new ISafeRunnable() {
+							@Override
 							public void run() throws Exception {
 								fCurrentBlock.performRevert();
 							}
+							@Override
 							public void handleException(Throwable x) {
 							}
 						};
@@ -426,9 +401,11 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		final ISpellingPreferenceBlock preferenceBlock= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
 		if (preferenceBlock != null) {
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					preferenceBlock.setEnabled(enabled);
 				}
+				@Override
 				public void handleException(Throwable x) {
 				}
 			};
@@ -472,9 +449,11 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		if (control == null) {
 			final Control[] result= new Control[1];
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					result[0]= fCurrentBlock.createControl(fGroup);
 				}
+				@Override
 				public void handleException(Throwable x) {
 				}
 			};
@@ -496,19 +475,23 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		fStatusMonitor.statusChanged(new StatusInfo());
 		ISafeRunnable runnable= new ISafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				fCurrentBlock.initialize(fStatusMonitor);
 			}
+			@Override
 			public void handleException(Throwable x) {
 			}
 		};
 		SafeRunner.run(runnable);
 	}
 
+	@Override
 	public void initialize() {
 		restoreFromPreferences();
 	}
 
+	@Override
 	public boolean canPerformOk() {
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
 		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
@@ -518,9 +501,11 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		final Boolean[] result= new Boolean[] { Boolean.TRUE };
 		ISafeRunnable runnable= new ISafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				result[0]= Boolean.valueOf(block.canPerformOk());
 			}
+			@Override
 			public void handleException(Throwable x) {
 			}
 		};
@@ -528,13 +513,16 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		return result[0].booleanValue();
 	}
 
+	@Override
 	public void performOk() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					block.performOk();
 				}
+				@Override
 				public void handleException(Throwable x) {
 				}
 			};
@@ -542,14 +530,17 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					block.performDefaults();
 				}
+				@Override
 				public void handleException(Throwable x) {
 				}
 			};
@@ -557,13 +548,16 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		for (Iterator it= fProviderPreferences.values().iterator(); it.hasNext();) {
 			final ISpellingPreferenceBlock block= (ISpellingPreferenceBlock) it.next();
 			ISafeRunnable runnable= new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					block.dispose();
 				}
+				@Override
 				public void handleException(Throwable x) {
 				}
 			};

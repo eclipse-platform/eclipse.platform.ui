@@ -53,6 +53,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return the text file buffer managed for that location or <code>null</code>
 	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
+	@Deprecated
 	ITextFileBuffer getTextFileBuffer(IPath location);
 
 	/**
@@ -128,6 +129,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return a new empty document
 	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
+	@Deprecated
 	IDocument createEmptyDocument(IPath location);
 
 	/**
@@ -158,6 +160,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return the newly created annotation model
 	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
+	@Deprecated
 	IAnnotationModel createAnnotationModel(IPath location);
 
 	/**
@@ -194,6 +197,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @since 3.1
 	 * @deprecated As of 3.2, replaced by {@link #isTextFileLocation(IPath, boolean)}
 	 */
+	@Deprecated
 	boolean isTextFileLocation(IPath location);
 	/**
 	 * Returns whether a file at the given location is or can be considered a

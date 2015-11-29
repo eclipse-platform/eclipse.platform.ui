@@ -187,6 +187,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @return the projection mapping used by this document
 	 * @deprecated As of 3.4, replaced by {@link #getDocumentInformationMapping()}
 	 */
+	@Deprecated
 	public ProjectionMapping getProjectionMapping(){
 		return fMapping;
 	}
@@ -210,10 +211,7 @@ public class ProjectionDocument extends AbstractDocument {
 		return fMasterDocument;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension4#getDefaultLineDelimiter()
-	 * @since 3.1
-	 */
+	@Override
 	public String getDefaultLineDelimiter() {
 		return TextUtilities.getDefaultLineDelimiter(fMasterDocument);
 	}
@@ -618,9 +616,7 @@ public class ProjectionDocument extends AbstractDocument {
 		return fIsUpdating;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocument#replace(int, int, java.lang.String)
-	 */
+	@Override
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		try {
 			fIsUpdating= true;
@@ -634,9 +630,7 @@ public class ProjectionDocument extends AbstractDocument {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String)
-	 */
+	@Override
 	public void set(String text) {
 		try {
 			fIsUpdating= true;
@@ -752,9 +746,7 @@ public class ProjectionDocument extends AbstractDocument {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#fireDocumentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
 		fOriginalEvent= event;
 		// delay it until there is a notification from the master document
@@ -773,13 +765,12 @@ public class ProjectionDocument extends AbstractDocument {
 	 *
 	 * @param event the event to be ignored
 	 */
+	@Override
 	protected void fireDocumentChanged(DocumentEvent event) {
 		super.fireDocumentChanged(fSlaveEvent);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#updateDocumentStructures(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	protected void updateDocumentStructures(DocumentEvent event) {
 		super.updateDocumentStructures(event);
 		ensureWellFormedSegmentation(computeAnchor(event));
@@ -846,9 +837,7 @@ public class ProjectionDocument extends AbstractDocument {
 		return changed;
 	}
 
-	/*
-	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
-	 */
+	@Override
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 		if (!isUpdating())
 			throw new UnsupportedOperationException();

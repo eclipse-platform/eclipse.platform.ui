@@ -191,21 +191,31 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			return fLastActivation;
 		}
 
+		@Override
 		public void dispose() {
 			fSite= null;
 		}
 
+		@Override
 		public IWorkbenchPartSite getSite() {
 			return fSite;
 		}
 
+		@Override
 		public void addPropertyListener(IPropertyListener listener) {/*dummy*/}
+		@Override
 		public void createPartControl(Composite parent) {/*dummy*/}
+		@Override
 		public String getTitle() { return null; }
+		@Override
 		public Image getTitleImage() { return null; }
+		@Override
 		public String getTitleToolTip() { return null; }
+		@Override
 		public void removePropertyListener(IPropertyListener listener) {/*dummy*/}
+		@Override
 		public void setFocus() {/*dummy*/}
+		@Override
 		public Object getAdapter(Class adapter) { return null; }
 	}
 
@@ -213,6 +223,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		private Composite fControl;
 		private String fId;
 
+		@Override
 		public void createControl(Composite parent) {
 			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
@@ -226,6 +237,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			link.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 			link.setBackground(background);
 			link.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					new OpenSearchDialogAction().run();
 				}
@@ -234,35 +246,35 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			fControl= composite;
 		}
 
+		@Override
 		public Control getControl() {
 			return fControl;
 		}
 
+		@Override
 		public void setFocus() {
 			if (fControl != null)
 				fControl.setFocus();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search2.ui.ISearchResultsPage#setInput(org.eclipse.search2.ui.ISearchResult, java.lang.Object)
-		 */
+		@Override
 		public void setInput(ISearchResult search, Object viewState) {
 			// do nothing
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search2.ui.ISearchResultsPage#setViewPart(org.eclipse.search2.ui.ISearchResultView)
-		 */
+		@Override
 		public void setViewPart(ISearchResultViewPart part) {
 			// do nothing
 		}
 
+		@Override
 		public Object getUIState() {
 			// empty implementation
 			return null;
 		}
 
 
+		@Override
 		public void init(IPageSite pageSite) {
 			super.init(pageSite);
 			getSite().setSelectionProvider(null);
@@ -271,38 +283,28 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, new OpenSearchPreferencesAction());
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.ui.ISearchResultPage#saveState(org.eclipse.ui.IMemento)
-		 */
+		@Override
 		public void saveState(IMemento memento) {
 			// do nothing
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.ui.ISearchResultPage#restoreState(org.eclipse.ui.IMemento)
-		 */
+		@Override
 		public void restoreState(IMemento memento) {
 			// do nothing
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.ui.ISearchResultPage#setID(java.lang.String)
-		 */
+		@Override
 		public void setID(String id) {
 			fId= id;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.ui.ISearchResultPage#getID()
-		 */
+		@Override
 		public String getID() {
 			return fId;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.ui.ISearchResultPage#getLabel()
-		 */
+		@Override
 		public String getLabel() {
 			return ""; //$NON-NLS-1$
 		}
@@ -324,9 +326,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return fSearchViewPageService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
-	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		super.partActivated(part);
 		if (part == this) {
@@ -335,6 +335,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		IPageBookViewPage page= new EmptySearchView();
 		page.createControl(book);
@@ -346,6 +347,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return page;
 	}
 
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		IPageBookViewPage page = (IPageBookViewPage) fPartsToPages.get(part);
 		initPage(page);
@@ -354,6 +356,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return rec;
 	}
 
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IPage page = pageRecord.page;
 		page.dispose();
@@ -363,10 +366,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fPartsToPages.remove(part);
 	}
 
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return null;
 	}
 
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof DummyPart;
 	}
@@ -444,6 +449,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPageContent.getParent(), helpContextId);
 	}
 
+	@Override
 	public void updateLabel() {
 		ISearchResultPage page= getActivePage();
 		String label= ""; //$NON-NLS-1$
@@ -489,6 +495,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return fCurrentSearch;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		createActions();
 
@@ -518,21 +525,25 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	private void initializePageSwitcher() {
 		new PageSwitcher(this) {
+			@Override
 			public void activatePage(Object page) {
 				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
 				InternalSearchUI.getInstance().showSearchResult(SearchView.this, searchResult, false);
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor(Object page) {
 				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
 				return searchResult.getImageDescriptor();
 			}
 
+			@Override
 			public String getName(Object page) {
 				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
 				return searchResult.getLabel();
 			}
 
+			@Override
 			public Object[] getPages() {
 				return NewSearchUI.getQueries();
 			}
@@ -589,6 +600,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fUndoRedoActionGroup= new UndoRedoActionGroup(getViewSite(), workspaceContext, true);
 	}
 
+	@Override
 	public void dispose() {
 		if (fUndoRedoActionGroup != null) {
 			fUndoRedoActionGroup.dispose();
@@ -598,12 +610,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		super.dispose();
 	}
 
+	@Override
 	public void queryStarting(ISearchQuery query) {
 		if (fCurrentSearch != null && fCurrentSearch.equals(query.getSearchResult())) {
 			updateCancelAction();
 		}
 	}
 
+	@Override
 	public void queryFinished(ISearchQuery query) {
 		if (fCurrentSearch != null && fCurrentSearch.equals(query.getSearchResult())) {
 			updateCancelAction();
@@ -620,10 +634,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchAgainAction.setEnabled(!queryRunning && result != null && result.getQuery().canRerun());
 	}
 
+	@Override
 	public void queryAdded(ISearchQuery query) {
 		fSearchesDropDownAction.updateEnablement();
 	}
 
+	@Override
 	public void queryRemoved(ISearchQuery query) {
 		InternalSearchUI.getInstance().cancelSearch(query);
 		if (query.getSearchResult().equals(fCurrentSearch)) {
@@ -635,9 +651,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchesDropDownAction.updateEnablement();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search2.ui.ISearchView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public void fillContextMenu(IMenuManager menuManager) {
 		ISearchResult result= getCurrentSearchResult();
 		if (result != null) {
@@ -674,6 +688,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	// Methods related to saving page state. -------------------------------------------
 
+	@Override
 	public void saveState(IMemento memento) {
 		for (Iterator iter= fPagesToParts.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry entry= (Map.Entry) iter.next();
@@ -688,6 +703,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		IMenuManager menuManager= site.getActionBars().getMenuManager();
@@ -696,6 +712,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 
+	@Override
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
 		IActionBars actionBars= page.getSite().getActionBars();
@@ -728,6 +745,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	 *  TODO workaround for focus problem. Clarify focus behavior.
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		IPage currentPage= getCurrentPage();
 		if (currentPage != null)
@@ -736,6 +754,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			super.setFocus();
 	}
 
+	@Override
 	public ISearchResultPage getActivePage() {
 		IPage page= getCurrentPage();
 		if (page instanceof ISearchResultPage)
@@ -752,18 +771,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return service;
 	}
 
+	@Override
 	public void showBusy(boolean busy) {
 		super.showBusy(busy);
 		if (!busy)
 			getProgressService().warnOfContentChange();
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		Object superAdapter= super.getAdapter(adapter);
 		if (superAdapter != null)
 			return superAdapter;
 		if (adapter == IShowInSource.class) {
 			return new IShowInSource() {
+				@Override
 				public ShowInContext getShowInContext() {
 					return new ShowInContext(null, getSelectionProvider().getSelection());
 				}

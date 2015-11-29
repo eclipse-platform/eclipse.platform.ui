@@ -60,9 +60,7 @@ public final class HyperlinkDetectorRegistry {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
-		 */
+		@Override
 		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 			if (!isEnabled())
 				return null;
@@ -90,9 +88,7 @@ public final class HyperlinkDetectorRegistry {
 			fContext= context;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#dispose()
-		 */
+		@Override
 		public void dispose() {
 			if (fHyperlinkDetector instanceof AbstractHyperlinkDetector)
 				((AbstractHyperlinkDetector)fHyperlinkDetector).dispose();
@@ -102,10 +98,7 @@ public final class HyperlinkDetectorRegistry {
 			fContext= null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#getStateMask()
-		 * @since 3.3
-		 */
+		@Override
 		public int getStateMask() {
 			return fStateMask;
 		}

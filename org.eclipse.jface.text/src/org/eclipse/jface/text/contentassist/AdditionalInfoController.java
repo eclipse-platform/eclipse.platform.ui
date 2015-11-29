@@ -64,7 +64,8 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	        /**
 	         * Runs this task.
 	         */
-	        public abstract void run();
+	        @Override
+			public abstract void run();
 	        /**
 	         * @return the task to be scheduled after this task has been run
 	         */
@@ -76,19 +77,23 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * but specifies an infinite delay.
 		 */
 		private final Task IDLE= new Task() {
+			@Override
 			public void run() {
 				Assert.isTrue(false);
 			}
 
+			@Override
 			public Task nextTask() {
 				Assert.isTrue(false);
 			    return null;
 			}
 
+			@Override
 			public long delay() {
 				return Long.MAX_VALUE;
 			}
 
+			@Override
 			public String toString() {
 				return "IDLE"; //$NON-NLS-1$
 			}
@@ -97,9 +102,11 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * FIRST_WAIT: Schedules a platform {@link Job} to fetch additional info from an {@link ICompletionProposalExtension5}.
 		 */
 		private final Task FIRST_WAIT= new Task() {
+			@Override
 			public void run() {
 				final ICompletionProposalExtension5 proposal= getCurrentProposalEx();
 				Job job= new Job(JFaceTextMessages.getString("AdditionalInfoController.job_name")) { //$NON-NLS-1$
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						Object info;
                         try {
@@ -118,14 +125,17 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				job.schedule();
 			}
 
+			@Override
 			public Task nextTask() {
 				return SECOND_WAIT;
 			}
 
+			@Override
 			public long delay() {
 				return DELAY_UNTIL_JOB_IS_SCHEDULED;
 			}
 
+			@Override
 			public String toString() {
 				return "FIRST_WAIT"; //$NON-NLS-1$
 			}
@@ -135,19 +145,23 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * {@link ICompletionProposalExtension5}.
 		 */
 		private final Task SECOND_WAIT= new Task() {
+			@Override
 			public void run() {
 				// show the info
 				allowShowing();
 			}
 
+			@Override
 			public Task nextTask() {
 				return IDLE;
 			}
 
+			@Override
 			public long delay() {
 				return fDelay - DELAY_UNTIL_JOB_IS_SCHEDULED;
 			}
 
+			@Override
 			public String toString() {
 				return "SECOND_WAIT"; //$NON-NLS-1$
 			}
@@ -156,10 +170,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * LEGACY_WAIT: Posts a runnable into the display thread to fetch additional info from non-{@link ICompletionProposalExtension5}s.
 		 */
 		private final Task LEGACY_WAIT= new Task() {
+			@Override
 			public void run() {
 				final ICompletionProposal proposal= getCurrentProposal();
 				if (!fDisplay.isDisposed()) {
 					fDisplay.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							synchronized (Timer.this) {
 								if (proposal == getCurrentProposal()) {
@@ -172,14 +188,17 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 				}
 			}
 
+			@Override
 			public Task nextTask() {
 				return IDLE;
 			}
 
+			@Override
 			public long delay() {
 				return fDelay;
 			}
 
+			@Override
 			public String toString() {
 			    return "LEGACY_WAIT"; //$NON-NLS-1$
 			}
@@ -188,19 +207,23 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 * EXIT: The task that triggers termination of the timer thread.
 		 */
 		private final Task EXIT= new Task() {
+			@Override
 			public long delay() {
 		        return 1;
 	        }
 
+			@Override
 			public Task nextTask() {
 				Assert.isTrue(false);
 		        return EXIT;
 	        }
 
+			@Override
 			public void run() {
 				Assert.isTrue(false);
 	        }
 
+			@Override
 			public String toString() {
 				return "EXIT"; //$NON-NLS-1$
 			}
@@ -234,7 +257,8 @@ class AdditionalInfoController extends AbstractInformationControlManager {
     		schedule(IDLE, current);
 
     		fThread= new Thread(new Runnable() {
-    			public void run() {
+    			@Override
+				public void run() {
     				try {
 	                    loop();
                     } catch (InterruptedException x) {
@@ -336,6 +360,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			final Object info= fCurrentInfo;
 			if (!fDisplay.isDisposed()) {
 				fDisplay.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						synchronized (Timer.this) {
 							if (info == fCurrentInfo) {
@@ -365,16 +390,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	private class TableSelectionListener implements SelectionListener {
 
-		/*
-		 * @see SelectionListener#widgetSelected(SelectionEvent)
-		 */
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			handleTableSelectionChanged();
 		}
 
-		/*
-		 * @see SelectionListener#widgetDefaultSelected(SelectionEvent)
-		 */
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
@@ -384,6 +405,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	private static class DefaultPresenterControlCreator extends AbstractReusableInformationControlCreator {
+		@Override
 		public IInformationControl doCreateInformationControl(Shell shell) {
 			return new DefaultInformationControl(shell, true);
 		}
@@ -437,9 +459,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		getInternalAccessor().setInformationControlReplacer(replacer);
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#install(Control)
-	 */
+	@Override
 	public void install(Control control) {
 
 		if (fProposalTable == control) {
@@ -455,6 +475,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		getInternalAccessor().getInformationControlReplacer().install(fProposalTable);
 
 		fTimer= new Timer(fProposalTable.getDisplay(), fDelay) {
+			@Override
 			protected void showInformation(ICompletionProposal proposal, Object info) {
 				InformationControlReplacer replacer= getInternalAccessor().getInformationControlReplacer();
 				if (replacer != null)
@@ -464,9 +485,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		};
 	}
 
-	/*
-	 * @see AbstractInformationControlManager#disposeInformationControl()
-	 */
+	@Override
 	public void disposeInformationControl() {
 
 		if (fTimer !=null) {
@@ -517,9 +536,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
         showInformation();
     }
 
-	/*
-	 * @see AbstractInformationControlManager#computeInformation()
-	 */
+	@Override
 	protected void computeInformation() {
 		if (fProposal instanceof ICompletionProposalExtension3)
 			setCustomInformationControlCreator(((ICompletionProposalExtension3) fProposal).getInformationControlCreator());
@@ -533,9 +550,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		setInformation(fInformation, new Rectangle(0, 0, size.x, size.y));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
-	 */
+	@Override
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 	    Point location= super.computeLocation(subjectArea, controlSize, anchor);
 
@@ -551,9 +566,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		return location;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(Control, IInformationControl)
-	 */
+	@Override
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
@@ -575,19 +588,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		return sizeConstraint;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	protected void hideInformationControl() {
 		super.hideInformationControl();
 		if (fTimer != null)
 			fTimer.reset(null);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#canClearDataOnHide()
-	 * @since 3.6
-	 */
+	@Override
 	protected boolean canClearDataOnHide() {
 		return false; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=293176
 	}

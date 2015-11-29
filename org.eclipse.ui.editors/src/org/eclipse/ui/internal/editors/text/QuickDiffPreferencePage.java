@@ -27,38 +27,28 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  */
 public class QuickDiffPreferencePage extends AbstractConfigurationBlockPreferencePage {
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
-	 */
+	@Override
 	protected String getHelpId() {
 		return ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE;
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
-	 */
+	@Override
 	protected void setDescription() {
 		String description= TextEditorMessages.QuickDiffConfigurationBlock_description;
 		setDescription(description);
 	}
 
-	/*
-	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
-	 */
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
-	 */
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new QuickDiffConfigurationBlock(overlayPreferenceStore);
 	}

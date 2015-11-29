@@ -35,6 +35,7 @@ class MessageDialogPage extends DialogPage {
 		createControl(parent);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite1= new Composite(parent, SWT.NONE);
 		composite1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -50,11 +51,13 @@ class MessageDialogPage extends DialogPage {
 		Dialog.applyDialogFont(composite1);
 	}
 
+	@Override
 	public void setMessage(String newMessage,int newType) {
 		super.setMessage(newMessage, newType);
 		fMessageRegion.updateText(newMessage, newType);
 	}
 
+	@Override
 	public void setErrorMessage(String newMessage) {
 		super.setErrorMessage(newMessage);
 		fMessageRegion.updateText(newMessage, IMessageProvider.ERROR);

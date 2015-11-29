@@ -44,23 +44,17 @@ class TemplatesTransfer extends ByteArrayTransfer {
 		return INSTANCE;
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.Transfer#getTypeIds()
-	 */
+	@Override
 	protected int[] getTypeIds() {
 		return new int[] { TYPE_ID };
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.Transfer#getTypeNames()
-	 */
+	@Override
 	protected String[] getTypeNames() {
 		return new String[] { TYPE_NAME };
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.ByteArrayTransfer#javaToNative(java.lang.Object, org.eclipse.swt.dnd.TransferData)
-	 */
+	@Override
 	protected void javaToNative(Object object, TransferData transferData) {
 		if (object == null || !(object instanceof TemplatePersistenceData[]) || !isSupportedType(transferData)) {
 			fObject= null ;
@@ -70,9 +64,7 @@ class TemplatesTransfer extends ByteArrayTransfer {
 		super.javaToNative(TYPE_NAME.getBytes(), transferData);
 	}
 
-	/*
-	 * @see org.eclipse.swt.dnd.ByteArrayTransfer#nativeToJava(org.eclipse.swt.dnd.TransferData)
-	 */
+	@Override
 	protected Object nativeToJava(TransferData transferData) {
         Object result= super.nativeToJava(transferData);
         if (!(result instanceof byte[]) || !TYPE_NAME.equals(new String((byte[]) result)))

@@ -37,23 +37,17 @@ class LinkedModeManager {
 	 */
 	private class Listener implements ILinkedModeListener {
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#left(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel, int)
-		 */
+		@Override
 		public void left(LinkedModeModel model, int flags) {
 			LinkedModeManager.this.left(model, flags);
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#suspend(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel)
-		 */
+		@Override
 		public void suspend(LinkedModeModel model) {
 			// not interested
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#resume(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel, int)
-		 */
+		@Override
 		public void resume(LinkedModeModel model, int flags) {
 			// not interested
 		}

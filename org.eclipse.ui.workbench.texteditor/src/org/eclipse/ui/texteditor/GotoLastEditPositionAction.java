@@ -54,23 +54,17 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		setEnabled(false);
 	}
 
-	/*
-	 * @see IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		run();
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		EditPosition editPosition= TextEditorPlugin.getDefault().getLastEditPosition();
 		if (editPosition == null)
@@ -119,9 +113,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled= TextEditorPlugin.getDefault().getLastEditPosition() != null;
 		setEnabled(enabled);
@@ -147,9 +139,7 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		return fWindow;
 	}
 
-	/*
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fWindow= null;
 		TextEditorPlugin.getDefault().removeLastEditPositionDependentAction(fAction);

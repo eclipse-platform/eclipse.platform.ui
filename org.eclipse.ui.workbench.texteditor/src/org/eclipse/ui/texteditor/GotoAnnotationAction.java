@@ -64,29 +64,20 @@ public class GotoAnnotationAction extends TextEditorAction {
 		this(EditorMessages.getBundleForConstructedKeys(), forward ? "Editor.GotoNextAnnotation." : "Editor.GotoPreviousAnnotation.", editor, forward); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 * @since 3.2
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension4)
 			((ITextEditorExtension4)editor).gotoAnnotation(fForward);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 * @since 3.2
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 * @since 3.2
-	 */
+	@Override
 	public void update() {
 		ITextEditor editor= getTextEditor();
 		if (!(editor instanceof AbstractTextEditor)) {

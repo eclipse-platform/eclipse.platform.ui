@@ -39,17 +39,12 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 
 
 	private static final class QuickAssistAssistantImpl extends ContentAssistant {
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ContentAssistant#possibleCompletionsClosed()
-		 */
+		@Override
 		public void possibleCompletionsClosed() {
 			super.possibleCompletionsClosed();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ContentAssistant#hide()
-		 * @since 3.4
-		 */
+		@Override
 		protected void hide() {
 			super.hide();
 		}
@@ -64,9 +59,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 			fQuickAssistProcessor= processor;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-		 */
+		@Override
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 			// panic code - should not happen
 			if (!(viewer instanceof ISourceViewer))
@@ -75,37 +68,27 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 			return fQuickAssistProcessor.computeQuickAssistProposals(new TextInvocationContext((ISourceViewer)viewer, offset, -1));
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
-		 */
+		@Override
 		public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-		 */
+		@Override
 		public char[] getCompletionProposalAutoActivationCharacters() {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-		 */
+		@Override
 		public char[] getContextInformationAutoActivationCharacters() {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-		 */
+		@Override
 		public String getErrorMessage() {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-		 */
+		@Override
 		public IContextInformationValidator getContextInformationValidator() {
 			return null;
 		}
@@ -121,74 +104,54 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl.enableAutoInsert(false);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#showPossibleQuickAssists()
-	 */
+	@Override
 	public String showPossibleQuickAssists() {
 		return fQuickAssistAssistantImpl.showPossibleCompletions();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#getQuickAssistProcessor(java.lang.String)
-	 */
+	@Override
 	public IQuickAssistProcessor getQuickAssistProcessor() {
 		return fQuickAssistProcessor;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setQuickAssistProcessor(org.eclipse.jface.text.quickassist.IQuickAssistProcessor)
-	 */
+	@Override
 	public void setQuickAssistProcessor(IQuickAssistProcessor processor) {
 		fQuickAssistProcessor= processor;
 		fQuickAssistAssistantImpl.setDocumentPartitioning("__" + getClass().getName() + "_partitioning"); //$NON-NLS-1$ //$NON-NLS-2$
 		fQuickAssistAssistantImpl.setContentAssistProcessor(new ContentAssistProcessor(processor), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#canFix(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public boolean canFix(Annotation annotation) {
 		return fQuickAssistProcessor != null && fQuickAssistProcessor.canFix(annotation);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#canAssist(org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext)
-	 */
+	@Override
 	public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
 		return fQuickAssistProcessor != null && fQuickAssistProcessor.canAssist(invocationContext);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#install(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void install(ISourceViewer sourceViewer) {
 		fQuickAssistAssistantImpl.install(sourceViewer);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setInformationControlCreator(org.eclipse.jface.text.IInformationControlCreator)
-	 */
+	@Override
 	public void setInformationControlCreator(IInformationControlCreator creator) {
 		fQuickAssistAssistantImpl.setInformationControlCreator(creator);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#uninstall()
-	 */
+	@Override
 	public void uninstall() {
 		fQuickAssistAssistantImpl.uninstall();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setProposalSelectorBackground(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setProposalSelectorBackground(Color background) {
 		fQuickAssistAssistantImpl.setProposalSelectorBackground(background);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setProposalSelectorForeground(org.eclipse.swt.graphics.Color)
-	 */
+	@Override
 	public void setProposalSelectorForeground(Color foreground) {
 		fQuickAssistAssistantImpl.setProposalSelectorForeground(foreground);
 	}
@@ -225,31 +188,23 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl.possibleCompletionsClosed();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#addCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
-	 */
+	@Override
 	public void addCompletionListener(ICompletionListener listener) {
 		fQuickAssistAssistantImpl.addCompletionListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#removeCompletionListener(org.eclipse.jface.text.contentassist.ICompletionListener)
-	 */
+	@Override
 	public void removeCompletionListener(ICompletionListener listener) {
 		fQuickAssistAssistantImpl.removeCompletionListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setStatusLineVisible(boolean)
-	 */
+	@Override
 	public void setStatusLineVisible(boolean show) {
 		fQuickAssistAssistantImpl.setStatusLineVisible(show);
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setStatusMessage(java.lang.String)
-	 */
+	@Override
 	public void setStatusMessage(String message) {
 		fQuickAssistAssistantImpl.setStatusMessage(message);
 	}
@@ -259,6 +214,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public final IHandler getHandler(String commandId) {
 		return fQuickAssistAssistantImpl.getHandler(commandId);
 	}
@@ -277,6 +233,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public void enableColoredLabels(boolean isEnabled) {
 		fQuickAssistAssistantImpl.enableColoredLabels(isEnabled);
 	}

@@ -34,9 +34,7 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
  */
 public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtension, IInformationProviderExtension2 {
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		return null;
 	}
@@ -240,9 +238,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		return new Point(first, last);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
-	 */
+	@Override
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
 		int first= adaptFirstLine(sourceViewer, lineRange.getStartLine());
 		int last= adaptLastLine(sourceViewer, lineRange.getStartLine() + lineRange.getNumberOfLines() - 1);
@@ -289,9 +285,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		return lastLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverLineRange(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
+	@Override
 	public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
 		IDocument document= viewer.getDocument();
 		if (document != null) {
@@ -302,26 +296,20 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
-	 */
+	@Override
 	public boolean canHandleMouseCursor() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
-	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-	 * @since 3.2
-	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, (ToolBarManager)null, null);
 			}

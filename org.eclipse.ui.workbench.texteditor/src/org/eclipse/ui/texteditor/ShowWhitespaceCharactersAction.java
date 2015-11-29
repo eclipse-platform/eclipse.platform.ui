@@ -89,18 +89,14 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 		synchronizeWithPreference();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		togglePainterState(isChecked());
 		if (fStore != null)
 			fStore.setValue(AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS, isChecked());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(getTextViewer() instanceof ITextViewerExtension2);
 		synchronizeWithPreference();

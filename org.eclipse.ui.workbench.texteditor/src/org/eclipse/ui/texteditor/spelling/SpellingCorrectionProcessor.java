@@ -42,6 +42,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
+	@Override
 	public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext quickAssistContext) {
 		ISourceViewer viewer= quickAssistContext.getSourceViewer();
 		int documentOffset= quickAssistContext.getOffset();
@@ -95,23 +96,17 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		return proposals;
 	}
 
-	/*
-	 * @see IContentAssistProcessor#getErrorMessage()
-	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistProcessor#canFix(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public boolean canFix(Annotation annotation) {
 		return annotation instanceof SpellingAnnotation && !annotation.isMarkedDeleted();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistProcessor#canAssist(org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext)
-	 */
+	@Override
 	public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
 		return false;
 	}

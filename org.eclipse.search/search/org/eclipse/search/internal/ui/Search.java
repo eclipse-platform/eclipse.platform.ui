@@ -34,6 +34,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * @deprecated old search
  */
+@Deprecated
 public class Search extends Object {
 	private String fPageId;
 	private String fSingularLabel;

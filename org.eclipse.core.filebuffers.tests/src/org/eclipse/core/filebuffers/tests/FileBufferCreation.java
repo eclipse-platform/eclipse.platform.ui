@@ -53,10 +53,12 @@ public class FileBufferCreation extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("project");
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("project");
 	}

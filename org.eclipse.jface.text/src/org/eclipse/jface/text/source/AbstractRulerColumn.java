@@ -78,29 +78,21 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 */
 	private final class MouseHandler implements MouseListener, MouseMoveListener {
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 		}
@@ -111,18 +103,14 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 */
 	private final class InternalListener implements IViewportListener, ITextListener {
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int topPixel) {
 			int delta= topPixel - fLastTopPixel;
 			if (scrollVertical(delta))
 				fCanvas.update(); // force update the invalidated regions
 		}
 
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
+		@Override
 		public void textChanged(TextEvent event) {
 			/*
 			 * Redraw: - when the viewer is drawing, and any of the following - the widget was not
@@ -187,10 +175,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	protected AbstractRulerColumn() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler,
-	 *      org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 		Assert.isLegal(parentControl != null);
 		Assert.isLegal(parentRuler != null);
@@ -210,6 +195,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		fCanvas.setFont(getFont());
 
 		fCanvas.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				AbstractRulerColumn.this.paintControl(event);
 			}
@@ -235,9 +221,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		return SWT.NO_BACKGROUND;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getControl()
-	 */
+	@Override
 	public final Control getControl() {
 		return fCanvas;
 	}
@@ -258,9 +242,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#getWidth()
-	 */
+	@Override
 	public final int getWidth() {
 		return fWidth;
 	}
@@ -280,6 +262,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 *
 	 * @param font the font or <code>null</code> to use the default font
 	 */
+	@Override
 	public final void setFont(Font font) {
 		if (fFont != font) {
 			fFont= font;
@@ -323,9 +306,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		return fTextInset;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#setModel(org.eclipse.jface.text.source.IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 		if (fModel != model) {
 			fModel= model;
@@ -333,9 +314,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
-	 */
+	@Override
 	public final IAnnotationModel getModel() {
 		return fModel;
 	}
@@ -387,9 +366,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 			fHover= hover;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
-	 */
+	@Override
 	public IAnnotationHover getHover() {
 		return fHover;
 	}
@@ -418,9 +395,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerColumn#redraw()
-	 */
+	@Override
 	public final void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.redraw();
@@ -577,30 +552,22 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		return fStyledText.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public final int getLineOfLastMouseButtonActivity() {
 		return getParentRuler().getLineOfLastMouseButtonActivity();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public final int toDocumentLineNumber(int y_coordinate) {
 		return getParentRuler().toDocumentLineNumber(y_coordinate);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void addVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeVerticalRulerListener(org.eclipse.jface.text.source.IVerticalRulerListener)
-	 */
+	@Override
 	public void removeVerticalRulerListener(IVerticalRulerListener listener) {
 		throw new UnsupportedOperationException();
 	}

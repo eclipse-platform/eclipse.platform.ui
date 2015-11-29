@@ -58,43 +58,40 @@ public final class CompoundEditExitStrategy {
 	 */
 	private final class EventListener implements MouseListener, FocusListener, VerifyKeyListener, IExecutionListener {
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 			// mouse actions end the compound change
 			fireEndCompoundEdit();
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent e) {
 			// mouse actions end the compound change
 			fireEndCompoundEdit();
 		}
 
+		@Override
 		public void mouseUp(MouseEvent e) {}
 
+		@Override
 		public void focusGained(FocusEvent e) {}
 
-		/*
-		 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-		 */
+		@Override
 		public void focusLost(FocusEvent e) {
 			// losing focus ends the change
 			fireEndCompoundEdit();
 		}
 
+		@Override
 		public void notHandled(String commandId, NotHandledException exception) {}
 
+		@Override
 		public void postExecuteFailure(String commandId, ExecutionException exception) {}
 
+		@Override
 		public void postExecuteSuccess(String commandId, Object returnValue) {}
 
-		/*
-		 * @see org.eclipse.core.commands.IExecutionListener#preExecute(java.lang.String, org.eclipse.core.commands.ExecutionEvent)
-		 */
+		@Override
 		public void preExecute(String commandId, ExecutionEvent event) {
 			// any command other than the known ones end the compound change
 			for (int i= 0; i < fCommandIds.length; i++) {
@@ -104,9 +101,7 @@ public final class CompoundEditExitStrategy {
 			fireEndCompoundEdit();
 		}
 
-		/*
-		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
-		 */
+		@Override
 		public void verifyKey(VerifyEvent event) {
 			// any key press that is not a modifier combo ends the compound change
 			final int maskWithoutShift= SWT.MODIFIER_MASK & ~SWT.SHIFT;

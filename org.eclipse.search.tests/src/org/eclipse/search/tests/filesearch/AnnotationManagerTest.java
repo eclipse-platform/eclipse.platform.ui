@@ -65,6 +65,7 @@ public class AnnotationManagerTest extends TestCase {
 		return new JUnitSourceSetup(test);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		SearchTestPlugin.ensureWelcomePageClosed();
@@ -75,6 +76,7 @@ public class AnnotationManagerTest extends TestCase {
 		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fQuery1= null;

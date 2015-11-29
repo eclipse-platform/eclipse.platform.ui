@@ -111,13 +111,16 @@ public class GenericFileBufferOperationRunner {
 			synchronized (fCompletionLock) {
 
 				executeInContext(new Runnable() {
+					@Override
 					public void run() {
 						synchronized(fCompletionLock) {
 							try {
 								SafeRunner.run(new ISafeRunnable() {
+									@Override
 									public void handleException(Throwable throwable) {
 										fThrowable= throwable;
 									}
+									@Override
 									public void run() throws Exception {
 										performOperation(synchronizedFileBuffers, operation, progressMonitor);
 									}

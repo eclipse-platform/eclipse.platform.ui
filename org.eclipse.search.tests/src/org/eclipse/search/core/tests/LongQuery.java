@@ -20,10 +20,12 @@ public class LongQuery extends NullQuery {
 	
 	private boolean fIsRunning= false;
 	
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
 	
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		fIsRunning= true;
 		while (!monitor.isCanceled()) {

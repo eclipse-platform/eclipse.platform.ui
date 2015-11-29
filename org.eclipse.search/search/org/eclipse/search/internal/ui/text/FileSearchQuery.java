@@ -63,10 +63,12 @@ public class FileSearchQuery implements ISearchQuery {
 
 		}
 
+		@Override
 		public boolean canRunInParallel() {
 			return true;
 		}
 
+		@Override
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsLightweightAutoRefresh && !file.exists())
 				return false;
@@ -80,13 +82,12 @@ public class FileSearchQuery implements ISearchQuery {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.search.core.text.TextSearchRequestor#reportBinaryFile(org.eclipse.core.resources.IFile)
-		 */
+		@Override
 		public boolean reportBinaryFile(IFile file) {
 			return fSearchInBinaries;
 		}
 
+		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
 			ArrayList matches;
 			synchronized(fLock) {
@@ -185,10 +186,12 @@ public class FileSearchQuery implements ISearchQuery {
 			return buf.toString();
 		}
 
+		@Override
 		public void beginReporting() {
 			fCachedMatches= new HashMap();
 		}
 
+		@Override
 		public void endReporting() {
 			flushMatches();
 			synchronized (fLock) {
@@ -236,10 +239,12 @@ public class FileSearchQuery implements ISearchQuery {
 		return fScope;
 	}
 
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
 
+	@Override
 	public IStatus run(final IProgressMonitor monitor) {
 		AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
@@ -263,6 +268,7 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 
+	@Override
 	public String getLabel() {
 		return SearchMessages.FileSearchQuery_label;
 	}
@@ -336,10 +342,12 @@ public class FileSearchQuery implements ISearchQuery {
 		return fIsWholeWord;
 	}
 
+	@Override
 	public boolean canRerun() {
 		return true;
 	}
 
+	@Override
 	public ISearchResult getSearchResult() {
 		if (fResult == null) {
 			fResult= new FileSearchResult(this);

@@ -27,9 +27,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  */
 public class ResourceMarkerAnnotationModelFactory implements IAnnotationModelFactory {
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IAnnotationModelFactory#createAnnotationModel(org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file != null)

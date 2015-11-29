@@ -139,10 +139,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fOperationCode= operationCode;
 		}
 
-		/*
-		 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-		 * @since 3.4
-		 */
+		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			int itemCount= fProposalTable.getItemCount();
 			int selectionIndex= fProposalTable.getSelectionIndex();
@@ -176,76 +173,57 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		String fDisplayString;
 		int fOffset;
-		/*
-		 * @see ICompletionProposal#apply(IDocument)
-		 */
+		@Override
 		public void apply(IDocument document) {
 		}
 
-		/*
-		 * @see ICompletionProposal#getSelection(IDocument)
-		 */
+		@Override
 		public Point getSelection(IDocument document) {
 			return new Point(fOffset, 0);
 		}
 
-		/*
-		 * @see ICompletionProposal#getContextInformation()
-		 */
+		@Override
 		public IContextInformation getContextInformation() {
 			return null;
 		}
 
-		/*
-		 * @see ICompletionProposal#getImage()
-		 */
+		@Override
 		public Image getImage() {
 			return null;
 		}
 
-		/*
-		 * @see ICompletionProposal#getDisplayString()
-		 */
+		@Override
 		public String getDisplayString() {
 			return fDisplayString;
 		}
 
-		/*
-		 * @see ICompletionProposal#getAdditionalProposalInfo()
-		 */
+		@Override
 		public String getAdditionalProposalInfo() {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#apply(org.eclipse.jface.text.IDocument, char, int)
-		 */
+		@Override
 		public void apply(IDocument document, char trigger, int offset) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#isValidFor(org.eclipse.jface.text.IDocument, int)
-		 */
+		@Override
 		public boolean isValidFor(IDocument document, int offset) {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getTriggerCharacters()
-		 */
+		@Override
 		public char[] getTriggerCharacters() {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getContextInformationPosition()
-		 */
+		@Override
 		public int getContextInformationPosition() {
 			return -1;
 		}
 	}
 
 	private final class ProposalSelectionListener implements KeyListener {
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if (!Helper.okToUse(fProposalShell))
 				return;
@@ -258,6 +236,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		}
 
+		@Override
 		public void keyReleased(KeyEvent e) {
 			if (!Helper.okToUse(fProposalShell))
 				return;
@@ -278,6 +257,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fCommandSequence= keySequence;
 		}
 
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if (!Helper.okToUse(fProposalShell))
 				return;
@@ -365,6 +345,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.1.1
 	 */
 	private final Runnable fFilterRunnable= new Runnable() {
+		@Override
 		public void run() {
 			if (!fIsFilterPending)
 				return;
@@ -497,6 +478,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
 			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 
 					fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
@@ -596,6 +578,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
 			Listener listener= new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					handleSetData(event);
 				}
@@ -644,8 +627,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalShell.addControlListener(new ControlListener() {
 
+			@Override
 			public void controlMoved(ControlEvent e) {}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				if (fAdditionalInfoController != null) {
 					// reset the cached resize constraints
@@ -668,8 +653,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				insertSelectedProposalWithMask(e.stateMask);
 			}
@@ -678,6 +665,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fPopupCloser.install(fContentAssistant, fProposalTable, fAdditionalInfoController);
 
 		fProposalShell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				unregister(); // but don't dispose the shell, since we're being called from its disposal event!
 			}
@@ -718,7 +706,8 @@ class CompletionProposalPopup implements IContentAssistListener {
     	if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
     		control.addFocusListener(new FocusListener() {
     			private CommandKeyListener fCommandKeyListener;
-    			public void focusGained(FocusEvent e) {
+    			@Override
+				public void focusGained(FocusEvent e) {
     				if (Helper.okToUse(control)) {
     					if (fCommandKeyListener == null) {
     						fCommandKeyListener= new CommandKeyListener(commandSequence);
@@ -726,7 +715,8 @@ class CompletionProposalPopup implements IContentAssistListener {
     					}
     				}
     			}
-    			public void focusLost(FocusEvent e) {
+    			@Override
+				public void focusLost(FocusEvent e) {
     				if (fCommandKeyListener != null) {
     					control.removeKeyListener(fCommandKeyListener);
     					fCommandKeyListener= null;
@@ -737,11 +727,13 @@ class CompletionProposalPopup implements IContentAssistListener {
     	if (fAdditionalInfoController != null) {
 	    	control.addFocusListener(new FocusListener() {
 	    		private TraverseListener fTraverseListener;
-	    		public void focusGained(FocusEvent e) {
+	    		@Override
+				public void focusGained(FocusEvent e) {
 	    			if (Helper.okToUse(control)) {
 	    				if (fTraverseListener == null) {
 	    					fTraverseListener= new TraverseListener() {
-	    						public void keyTraversed(TraverseEvent event) {
+	    						@Override
+								public void keyTraversed(TraverseEvent event) {
 	    							if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
 	    								IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
 	    								if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
@@ -755,7 +747,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	    				}
 	    			}
 	    		}
-	    		public void focusLost(FocusEvent e) {
+	    		@Override
+				public void focusLost(FocusEvent e) {
 	    			if (fTraverseListener != null) {
 	    				control.removeTraverseListener(fTraverseListener);
 	    				fTraverseListener= null;
@@ -819,12 +812,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (fContentAssistant.isRepeatedInvocationMode()) {
 				fMessageText.setCursor(fProposalShell.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 				fMessageText.addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseUp(MouseEvent e) {
 						fLastCompletionOffset= fFilterOffset;
 						fProposalTable.setFocus();
 						handleRepeatedInvocation();
 					}
 
+					@Override
 					public void mouseDown(MouseEvent e) {
 					}
 				});
@@ -930,10 +925,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		IRewriteTarget target= null;
 		IEditingSupport helper= new IEditingSupport() {
 
+			@Override
 			public boolean isOriginator(DocumentEvent event, IRegion focus) {
 				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;
 			}
 
+			@Override
 			public boolean ownsFocusShell() {
 				return false;
 			}
@@ -1221,10 +1218,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (fFocusHelper == null) {
 				fFocusHelper= new IEditingSupport() {
 
+					@Override
 					public boolean isOriginator(DocumentEvent event, IRegion focus) {
 						return false; // this helper just covers the focus change to the proposal shell, no remote editions
 					}
 
+					@Override
 					public boolean ownsFocusShell() {
 						return true;
 					}
@@ -1265,11 +1264,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void ensureDocumentListenerInstalled() {
 		if (fDocumentListener == null) {
 			fDocumentListener=  new IDocumentListener()  {
+				@Override
 				public void documentAboutToBeChanged(DocumentEvent event) {
 					if (!fInserting)
 						fDocumentEvents.add(event);
 				}
 
+				@Override
 				public void documentChanged(DocumentEvent event) {
 					if (!fInserting)
 						filterProposals();
@@ -1281,9 +1282,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
-	/*
-	 * @see IContentAssistListener#verifyKey(VerifyEvent)
-	 */
+	@Override
 	public boolean verifyKey(VerifyEvent e) {
 		if (!Helper.okToUse(fProposalShell))
 			return true;
@@ -1454,9 +1453,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return false;
 	}
 
-	/*
-	 * @see IEventConsumer#processEvent(VerifyEvent)
-	 */
+	@Override
 	public void processEvent(VerifyEvent e) {
 	}
 
@@ -1602,6 +1599,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fContentAssistSubjectControlAdapter.addKeyListener(fKeyListener);
 
 			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 
 					fInvocationOffset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
@@ -1907,6 +1905,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private void sortProposals(final ICompletionProposal[] proposals) {
 		Arrays.sort(proposals, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return fSorter.compare((ICompletionProposal)o1,
 						(ICompletionProposal)o2);

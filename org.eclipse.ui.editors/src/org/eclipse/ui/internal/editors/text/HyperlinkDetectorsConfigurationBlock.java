@@ -89,13 +89,16 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 	private static final class ItemContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (ListItem[]) inputElement;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -103,16 +106,12 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 	private final class ItemLabelProvider implements ITableLabelProvider {
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
@@ -130,28 +129,20 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			return null; // cannot happen
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-		 */
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-		 */
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 	}
@@ -200,9 +191,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		return keys;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		PixelConverter pixelConverter= new PixelConverter(parent);
@@ -219,6 +208,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		String label= TextEditorMessages.HyperlinksEnabled_label;
 		fHyperlinksEnabledCheckBox= addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, 0);
 		fHyperlinksEnabledCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= fHyperlinksEnabledCheckBox.getSelection();
 				fHyperlinkDefaultKeyModifierText.setEnabled(state);
@@ -226,6 +216,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 				fHyperlinkDetectorsViewer.getTable().setEnabled(state);
 				handleHyperlinkKeyModifierModified();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -236,10 +227,12 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 		fHyperlinkDefaultKeyModifierText.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
+			@Override
 			public void keyPressed(KeyEvent e) {
 				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
 					String modifierString= fHyperlinkDefaultKeyModifierText.getText();
@@ -273,6 +266,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		});
 
 		fHyperlinkDefaultKeyModifierText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleHyperlinkDefaultKeyModifierModified();
 			}
@@ -297,9 +291,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		hyperlinkDetectorTable.setFont(parent.getFont());
 
 		hyperlinkDetectorTable.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleListSelection();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -322,9 +318,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		fHyperlinkDetectorsViewer.setUseHashlookup(true);
 
 		fHyperlinkDetectorsViewer.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				String id= ((ListItem)event.getElement()).id;
 				if (id == null)
@@ -347,10 +341,12 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 		fHyperlinkKeyModifierText.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
+			@Override
 			public void keyPressed(KeyEvent e) {
 				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
 					String modifierString= fHyperlinkKeyModifierText.getText();
@@ -384,6 +380,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		});
 
 		fHyperlinkKeyModifierText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleHyperlinkKeyModifierModified();
 			}
@@ -392,10 +389,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		return composite;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
-	 * @since 3.4
-	 */
+	@Override
 	public void applyData(Object data) {
 	}
 
@@ -417,6 +411,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean value= checkBox.getSelection();
 				fStore.setValue(key, value);
@@ -440,6 +435,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		textControl.setTextLimit(textLimit);
 
 		textControl.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String value= textControl.getText();
 				if (key != null)
@@ -458,23 +454,17 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		return result.toArray();
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#canPerformOk()
-	 */
+	@Override
 	public boolean canPerformOk() {
 		return true;
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public void performOk() {
 		fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, computeStateMask(fHyperlinkKeyModifierText.getText()));
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 		fStore.loadDefaults();
 		initialize();
@@ -494,6 +484,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 	}
 
+	@Override
 	public void initialize() {
 		String modifierString= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER);
 		if (computeStateMask(modifierString) == -1) {
@@ -534,9 +525,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		}
 
 		Comparator comparator= new Comparator() {
-			/*
-			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-			 */
+			@Override
 			public int compare(Object o1, Object o2) {
 				if (!(o2 instanceof ListItem))
 					return -1;
@@ -733,9 +722,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 

@@ -41,6 +41,7 @@ public class LineConversionTest extends TestCase {
 	private static final String LINE_ONE= "This is the first line\n";
 	private static final String LINE_THREE= "This is the third line";
 
+	@Override
 	protected void setUp() throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
 		project.create(null);
@@ -50,6 +51,7 @@ public class LineConversionTest extends TestCase {
 		super.setUp();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		SearchPlugin.getActivePage().closeAllEditors(false);
 		fFile.getProject().delete(true, true, null);

@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;
  */
 public final class DJBHashFunction implements IHashFunction {
 
+	@Override
 	public Hash computeHash(CharSequence string) {
 		return new IntHash(hash(string));
 	}

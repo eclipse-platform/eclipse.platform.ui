@@ -76,23 +76,17 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getAnnotationType()
-	 */
+	@Override
 	public Object getAnnotationType() {
 		return fType.getType();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#contributesToHeader()
-	 */
+	@Override
 	public boolean contributesToHeader() {
 		return getBooleanAttributeValue(HEADER_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getAnnotationImageProvider()
-	 */
+	@Override
 	public IAnnotationImageProvider getAnnotationImageProvider() {
 		if (!isCached(IMAGE_PROVIDER)) {
 			AnnotationPreference preference= getDefiningPreference(IMAGE_PROVIDER);
@@ -106,86 +100,62 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 		return super.getAnnotationImageProvider();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getColorPreferenceKey()
-	 */
+	@Override
 	public String getColorPreferenceKey() {
 		return (String) getAttributeValue(COLOR_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getColorPreferenceValue()
-	 */
+	@Override
 	public RGB getColorPreferenceValue() {
 		return (RGB) getAttributeValue(COLOR_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getHighlightPreferenceKey()
-	 */
+	@Override
 	public String getHighlightPreferenceKey() {
 		return (String) getAttributeValue(HIGHLIGHT_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getHighlightPreferenceValue()
-	 */
+	@Override
 	public boolean getHighlightPreferenceValue() {
 		return getBooleanAttributeValue(HIGHLIGHT_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return (ImageDescriptor) getAttributeValue(IMAGE_DESCRIPTOR);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getQuickFixImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getQuickFixImageDescriptor() {
 		return (ImageDescriptor) getAttributeValue(QUICK_FIX_IMAGE_DESCRIPTOR);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getIsGoToNextNavigationTargetKey()
-	 */
+	@Override
 	public String getIsGoToNextNavigationTargetKey() {
 		return (String) getAttributeValue(IS_GO_TO_NEXT_TARGET_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getIsGoToPreviousNavigationTargetKey()
-	 */
+	@Override
 	public String getIsGoToPreviousNavigationTargetKey() {
 		return (String) getAttributeValue(IS_GO_TO_PREVIOUS_TARGET_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getOverviewRulerPreferenceKey()
-	 */
+	@Override
 	public String getOverviewRulerPreferenceKey() {
 		return (String) getAttributeValue(OVERVIEW_RULER_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getOverviewRulerPreferenceValue()
-	 */
+	@Override
 	public boolean getOverviewRulerPreferenceValue() {
 		return getBooleanAttributeValue(OVERVIEW_RULER_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getPreferenceLabel()
-	 */
+	@Override
 	public String getPreferenceLabel() {
 		return (String) getAttributeValue(PREFERENCE_LABEL);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getPresentationLayer()
-	 */
+	@Override
 	public int getPresentationLayer() {
 		Object value= getAttributeValue(PRESENTATION_LAYER);
 		if (value instanceof Integer)
@@ -193,89 +163,62 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getShowInNextPrevDropdownToolbarActionKey()
-	 */
+	@Override
 	public String getShowInNextPrevDropdownToolbarActionKey() {
 		return (String) getAttributeValue(SHOW_IN_NAVIGATION_DROPDOWN_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getSymbolicImageName()
-	 */
+	@Override
 	public String getSymbolicImageName() {
 		return (String) getAttributeValue(SYMBOLIC_IMAGE_NAME);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextPreferenceKey()
-	 */
+	@Override
 	public String getTextPreferenceKey() {
 		return (String) getAttributeValue(TEXT_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextPreferenceValue()
-	 */
+	@Override
 	public boolean getTextPreferenceValue() {
 		return getBooleanAttributeValue(TEXT_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getVerticalRulerPreferenceKey()
-	 */
+	@Override
 	public String getVerticalRulerPreferenceKey() {
 		return (String) getAttributeValue(VERTICAL_RULER_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getVerticalRulerPreferenceValue()
-	 */
+	@Override
 	public boolean getVerticalRulerPreferenceValue() {
 		return getBooleanAttributeValue(VERTICAL_RULER_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#isGoToNextNavigationTarget()
-	 */
+	@Override
 	public boolean isGoToNextNavigationTarget() {
 		return getBooleanAttributeValue(IS_GO_TO_NEXT_TARGET_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#isGoToPreviousNavigationTarget()
-	 */
+	@Override
 	public boolean isGoToPreviousNavigationTarget() {
 		return getBooleanAttributeValue(IS_GO_TO_PREVIOUS_TARGET_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#isShowInNextPrevDropdownToolbarAction()
-	 */
+	@Override
 	public boolean isShowInNextPrevDropdownToolbarAction() {
 		return getBooleanAttributeValue(SHOW_IN_NAVIGATION_DROPDOWN_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextStylePreferenceKey()
-	 * @since 3.8
-	 */
+	@Override
 	public String getTextStylePreferenceKey() {
 		return (String)getAttributeValue(TEXT_STYLE_PREFERENCE_KEY);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getTextStyleValue()
-	 * @since 3.8
-	 */
+	@Override
 	public String getTextStyleValue() {
 		return (String)getAttributeValue(TEXT_STYLE_PREFERENCE_VALUE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AnnotationPreference#getValue(java.lang.Object)
-	 * @since 3.8
-	 */
+	@Override
 	public Object getValue(Object attribute) {
 		return getAttributeValue(attribute);
 	}

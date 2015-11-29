@@ -76,6 +76,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				super(preference);
 				fText= control;
 			}
+			@Override
 			public void initialize() {
 				String value= fOverlayStore.getString(fPreference.getKey());
 				fText.setText(value);
@@ -89,6 +90,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				super(preference);
 				fControl= control;
 			}
+			@Override
 			public void initialize() {
 				boolean value= fOverlayStore.getBoolean(fPreference.getKey());
 				fControl.setSelection(value);
@@ -104,6 +106,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				fControl= control;
 				fDomain= domain;
 			}
+			@Override
 			public void initialize() {
 				int value= fOverlayStore.getInt(fPreference.getKey());
 				EnumValue enumValue= fDomain.getValueByInteger(value);
@@ -151,6 +154,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			fMin= min;
 		}
 
+		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
@@ -191,9 +195,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			public int getIntValue() {
 				return fValue;
 			}
+			@Override
 			public final int hashCode() {
 				return getIntValue();
 			}
+			@Override
 			public boolean equals(Object obj) {
 				if (obj instanceof EnumValue) {
 					return ((EnumValue) obj).getIntValue() == fValue;
@@ -247,6 +253,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				addValue(from++);
 		}
 
+		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
@@ -274,6 +281,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	}
 
 	static class BooleanDomain extends Domain {
+		@Override
 		public IStatus validate(Object value) {
 			StatusInfo status= new StatusInfo();
 			if (value instanceof String && ((String)value).length() == 0) {
@@ -352,6 +360,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	}
 
 
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look
 	}
@@ -370,15 +379,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init()
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.ACCESSIBILITY_PREFERENCE_PAGE);
@@ -415,9 +420,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		return appearanceComposite;
 	}
 
-	/*
-	 * @see PreferencePage#createContents(Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 
 		fOverlayStore.load();
@@ -447,17 +450,13 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 	}
 
-	/*
-	 * @see PreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		fOverlayStore.propagate();
 		return true;
 	}
 
-	/*
-	 * @see PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 
 		fOverlayStore.loadDefaults();
@@ -472,9 +471,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		super.performDefaults();
 	}
 
-	/*
-	 * @see DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 		if (fOverlayStore != null) {
@@ -497,6 +494,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean value= checkBox.getSelection();
 				IStatus status= domain.validate(Boolean.valueOf(value));
@@ -520,6 +518,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		}
 
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
 				for (int i= 0; i < slaves.length; i++) {
@@ -527,6 +526,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);

@@ -72,9 +72,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 				fManager.fireStateChanging(ResourceFileBuffer.this);
 			}
 
-			/*
-			 * @see java.lang.Runnable#run()
-			 */
+			@Override
 			public void run() {
 
 				if (isDisconnected()) {
@@ -121,9 +119,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 				fIsInstalled= false;
 			}
 
-			/*
-			 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-			 */
+			@Override
 			public void resourceChanged(IResourceChangeEvent e) {
 				IResourceDelta delta= e.getDelta();
 				if (delta != null)
@@ -138,6 +134,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							if ((IResourceDelta.ENCODING & flags) != 0) {
 								if (!isDisconnected() && !fCanBeSaved && isSynchronized()) {
 									fileChange= new SafeFileChange() {
+										@Override
 										protected void execute() throws Exception {
 											handleFileContentChanged(false, false);
 										}
@@ -147,6 +144,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							if (fileChange == null && (IResourceDelta.CONTENT & flags) != 0) {
 								if (!isDisconnected() && !fCanBeSaved && (!isSynchronized() || (IResourceDelta.REPLACED & flags) != 0)) {
 									fileChange= new SafeFileChange() {
+										@Override
 										protected void execute() throws Exception {
 											handleFileContentChanged(false, true);
 										}
@@ -158,6 +156,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							if ((IResourceDelta.MOVED_TO & flags) != 0) {
 								final IPath path= delta.getMovedToPath();
 								fileChange= new SafeFileChange() {
+									@Override
 									protected void execute() throws Exception {
 										handleFileMoved(path);
 									}
@@ -165,6 +164,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							} else {
 								if (!isDisconnected() && !fCanBeSaved) {
 									fileChange= new SafeFileChange() {
+										@Override
 										protected void execute() throws Exception {
 											handleFileDeleted();
 										}
@@ -225,6 +225,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	abstract protected void handleFileContentChanged(boolean revert, boolean updateModificationStamp) throws CoreException;
 
 
+	@Override
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		monitor= Progress.getMonitor(monitor);
 		monitor.beginTask(FileBuffersMessages.ResourceFileBuffer_task_creatingFileBuffer, 2);
@@ -256,6 +257,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		}
 	}
 
+	@Override
 	public void connect() {
 		++fReferenceCount;
 		if (fReferenceCount == 1)
@@ -272,6 +274,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		fFileSynchronizer.install();
 	}
 
+	@Override
 	public void disconnect() throws CoreException {
 		--fReferenceCount;
 		if (fReferenceCount <= 0)
@@ -292,32 +295,23 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		removeFileBufferContentListeners();
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.AbstractFileBuffer#isDisconnected()
-	 * @since 3.1
-	 */
+	@Override
 	public boolean isDisconnected() {
 		return fFileSynchronizer == null;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getLocation()
-	 */
+	@Override
 	public IPath getLocation() {
 		return fLocation;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeCommitRule()
-	 */
+	@Override
 	public ISchedulingRule computeCommitRule() {
 		IResourceRuleFactory factory= ResourcesPlugin.getWorkspace().getRuleFactory();
 		return factory.modifyRule(fFile);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
-	 */
+	@Override
 	public void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		if (!isDisconnected() && fCanBeSaved) {
 
@@ -338,9 +332,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#revert(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void revert(IProgressMonitor monitor) throws CoreException {
 		if (isDisconnected())
 			return;
@@ -360,38 +352,28 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isDirty()
-	 */
+	@Override
 	public boolean isDirty() {
 		return fCanBeSaved;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#setDirty(boolean)
-	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		fCanBeSaved= isDirty;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isShared()
-	 */
+	@Override
 	public boolean isShared() {
 		return fReferenceCount > 1;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeValidateStateRule()
-	 */
+	@Override
 	public ISchedulingRule computeValidateStateRule() {
 		IResourceRuleFactory factory= ResourcesPlugin.getWorkspace().getRuleFactory();
 		return factory.validateEditRule(new IResource[] { fFile });
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object)
-	 */
+	@Override
 	public void validateState(IProgressMonitor monitor, Object computationContext) throws CoreException {
 		if (!isDisconnected() && !fIsStateValidated)  {
 
@@ -425,16 +407,12 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isStateValidated()
-	 */
+	@Override
 	public boolean isStateValidated() {
 		return fIsStateValidated;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#resetStateValidation()
-	 */
+	@Override
 	public void resetStateValidation() {
 		if (fIsStateValidated) {
 			fIsStateValidated= false;
@@ -483,9 +461,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		log.log(exception.getStatus());
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronized()
-	 */
+	@Override
 	public boolean isSynchronized() {
 		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO))
 			return true;
@@ -494,38 +470,28 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()
-	 */
+	@Override
 	public void requestSynchronizationContext() {
 		++ fSynchronizationContextCount;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#releaseSynchronizationContext()
-	 */
+	@Override
 	public void releaseSynchronizationContext() {
 		-- fSynchronizationContextCount;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isSynchronizationContextRequested()
-	 */
+	@Override
 	public boolean isSynchronizationContextRequested() {
 		return fSynchronizationContextCount > 0;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
-	 */
+	@Override
 	public boolean isCommitable() {
 		IFileInfo info= fFileStore.fetchInfo();
 		return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChanged(boolean, org.eclipse.core.runtime.IStatus)
-	 */
+	@Override
 	public void validationStateChanged(boolean validationState, IStatus status) {
 		fIsStateValidated= validationState;
 		fStatus= status;

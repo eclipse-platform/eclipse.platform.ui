@@ -38,6 +38,7 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 		/*
 		 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 		 */
+		@Override
 		public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 			// mark navigation history
 			IWorkbenchWindow win= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -53,6 +54,7 @@ public class EditorLinkedModeUI extends LinkedModeUI {
 		/*
 		 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 		 */
+		@Override
 		public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 			// does nothing
 		}

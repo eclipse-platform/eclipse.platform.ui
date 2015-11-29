@@ -34,26 +34,21 @@ public class TextChangeHover extends LineChangeHover {
 	/** The last created information control. */
 	private int fLastScrollIndex= 0;
 
-	/*
-	 * @see org.eclipse.jface.text.source.LineChangeHover#getTabReplacement()
-	 */
+	@Override
 	protected String getTabReplacement() {
 		return Character.toString('\t');
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.LineChangeHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, org.eclipse.jface.text.source.ILineRange, int)
-	 */
+	@Override
 	public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleLines) {
 		fLastScrollIndex= sourceViewer.getTextWidget().getHorizontalPixel();
 		return super.getHoverInfo(sourceViewer, lineRange, visibleLines);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
-	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				SourceViewerInformationControl control= new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, EditorsUI.getTooltipAffordanceString());
 				control.setHorizontalScrollPixel(fLastScrollIndex);
@@ -62,12 +57,10 @@ public class TextChangeHover extends LineChangeHover {
 		};
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-	 * @since 3.3
-	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
 			}

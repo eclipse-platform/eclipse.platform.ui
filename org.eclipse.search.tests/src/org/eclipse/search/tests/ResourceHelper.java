@@ -68,6 +68,7 @@ public class ResourceHelper {
 		
 	public static void delete(final IResource resource) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i= 0; i < MAX_RETRY; i++) {
 					try {

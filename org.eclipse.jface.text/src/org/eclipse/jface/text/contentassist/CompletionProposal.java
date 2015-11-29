@@ -82,9 +82,7 @@ public final class CompletionProposal implements ICompletionProposal {
 		fAdditionalProposalInfo= additionalProposalInfo;
 	}
 
-	/*
-	 * @see ICompletionProposal#apply(IDocument)
-	 */
+	@Override
 	public void apply(IDocument document) {
 		try {
 			document.replace(fReplacementOffset, fReplacementLength, fReplacementString);
@@ -93,39 +91,29 @@ public final class CompletionProposal implements ICompletionProposal {
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementOffset + fCursorPosition, 0);
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		if (fDisplayString != null)
 			return fDisplayString;
 		return fReplacementString;
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return fAdditionalProposalInfo;
 	}

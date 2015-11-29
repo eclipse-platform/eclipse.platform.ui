@@ -77,10 +77,12 @@ public class FileSearchTests extends TestCase {
 
 	private static class SerialTestResultCollector extends TestResultCollector {
 
+		@Override
 		public boolean canRunInParallel() {
 			return false;
 		}
 
+		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess match) throws CoreException {
 			fResult.add(new TestResult(match.getFile(), match.getMatchOffset(), match.getMatchLength()));
 			return true;
@@ -90,10 +92,12 @@ public class FileSearchTests extends TestCase {
 
 	private static class ParallelTestResultCollector extends TestResultCollector {
 
+		@Override
 		public boolean canRunInParallel() {
 			return true;
 		}
 
+		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess match) throws CoreException {
 			synchronized(fResult) {
 				fResult.add(new TestResult(match.getFile(), match.getMatchOffset(), match.getMatchLength()));
@@ -121,10 +125,12 @@ public class FileSearchTests extends TestCase {
 		return allTests();
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("my-project"); //$NON-NLS-1$
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}

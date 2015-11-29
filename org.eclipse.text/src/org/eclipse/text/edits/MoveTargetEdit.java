@@ -98,6 +98,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#doCopy
 	 */
+	@Override
 	protected TextEdit doCopy() {
 		return new MoveTargetEdit(this);
 	}
@@ -105,6 +106,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#postProcessCopy
 	 */
+	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
 			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(this);
@@ -117,6 +119,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#accept0
 	 */
+	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
 		if (visitChildren) {
@@ -129,6 +132,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#traverseConsistencyCheck
 	 */
+	@Override
 	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		return super.traverseConsistencyCheck(processor, document, sourceEdits) + 1;
 	}
@@ -136,6 +140,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */
+	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.no_source")); //$NON-NLS-1$
@@ -148,6 +153,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see TextEdit#performDocumentUpdating
 	 */
+	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		String source= fSource.getContent();
 		document.replace(getOffset(), getLength(), source);
@@ -174,6 +180,7 @@ public final class MoveTargetEdit extends TextEdit {
 	/*
 	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
 	 */
+	@Override
 	int traverseRegionUpdating(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
 		// the children got already updated / normalized while they got removed
 		// from the source edit. So we only have to adjust the offset computed to
@@ -186,6 +193,7 @@ public final class MoveTargetEdit extends TextEdit {
 		return accumulatedDelta + fDelta;
 	}
 
+	@Override
 	boolean deleteChildren() {
 		return false;
 	}

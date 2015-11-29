@@ -50,10 +50,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		super(name);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.tests.AbstractUndoManagerTest#createUndoManager(int)
-	 * @since 3.2
-	 */
+	@Override
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
 		return new TextViewerUndoManager(maxUndoLevel);
 	}
@@ -66,15 +63,19 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		tempUndoManager.connect(context);
 
 		IUndoableOperation operation= new AbstractOperation("") {
+			@Override
 			public boolean canUndo() {
 				return isUndoable;
 			}
+			@Override
 			public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
+			@Override
 			public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
+			@Override
 			public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
@@ -89,6 +90,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		undoManager.connect(newContext);
 
 		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
+			@Override
 			public void documentUndoNotification(DocumentUndoEvent event) {
 				fail();
 			}
@@ -120,6 +122,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 
 		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
 
+			@Override
 			public void documentUndoNotification(DocumentUndoEvent event) {
 				if (event.getEventType() == DocumentUndoEvent.ABOUT_TO_UNDO)
 					assertEquals(true, undoManager.undoable());

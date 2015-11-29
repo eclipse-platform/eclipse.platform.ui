@@ -43,6 +43,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 
 		fParent= new Composite(parent, SWT.NONE);
@@ -109,10 +110,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		return focusControl == fParent;
 	}
 	
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#setFocus()
-	 * @since 3.6
-	 */
+	@Override
 	public void setFocus() {
 		if (fStatusControl != null && !fStatusControl.isDisposed()) {
 			/* even if the control does not really take focus, we still have to set it
@@ -123,10 +121,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#validateEditorInputState()
-	 * @since 3.3
-	 */
+	@Override
 	public boolean validateEditorInputState() {
 		if (!super.validateEditorInputState())
 			return false;
@@ -172,6 +167,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * @since 3.5
 	 * @deprecated As of 3.5
 	 */
+	@Deprecated
 	private Control createInfoForm(Composite parent, IStatus status) {
 		InfoForm infoForm= new InfoForm(parent);
 		infoForm.setHeaderText(getStatusHeader(status));
@@ -210,9 +206,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		return status.getMessage();
 	}
 
-	/*
-	 * @see AbstractTextEditor#updateStatusField(String)
-	 */
+	@Override
 	protected void updateStatusField(String category) {
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider instanceof IDocumentProviderExtension) {
@@ -230,18 +224,14 @@ public class StatusTextEditor extends AbstractTextEditor {
 		super.updateStatusField(category);
 	}
 
-	/*
-	 * @see AbstractTextEditor#doSetInput(IEditorInput)
-	 */
+	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
 
-	/*
-	 * @see ITextEditor#doRevertToSaved()
-	 */
+	@Override
 	public void doRevertToSaved() {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
 		super.doRevertToSaved();
@@ -249,9 +239,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 			updatePartControl(getEditorInput());
 	}
 
-	/*
-	 * @see AbstractTextEditor#sanityCheckState(IEditorInput)
-	 */
+	@Override
 	protected void sanityCheckState(IEditorInput input) {
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=19014
 		super.sanityCheckState(input);
@@ -259,20 +247,14 @@ public class StatusTextEditor extends AbstractTextEditor {
 			updatePartControl(getEditorInput());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleEditorInputChanged()
-	 * @since 3.1
-	 */
+	@Override
 	protected void handleEditorInputChanged() {
 		super.handleEditorInputChanged();
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleElementContentReplaced()
-	 * @since 3.1
-	 */
+	@Override
 	protected void handleElementContentReplaced() {
 		super.handleElementContentReplaced();
 		if (fParent != null && !fParent.isDisposed())

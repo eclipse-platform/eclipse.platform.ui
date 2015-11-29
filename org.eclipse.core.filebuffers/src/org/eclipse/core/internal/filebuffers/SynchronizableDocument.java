@@ -35,16 +35,12 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 
 	private Object fLockObject;
 
-	/*
-	 * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
-	 */
+	@Override
 	public synchronized void setLockObject(Object lockObject) {
 		fLockObject= lockObject;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
-	 */
+	@Override
 	public synchronized Object getLockObject() {
 		return fLockObject;
 	}
@@ -55,6 +51,8 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
 	 */
+	@Deprecated
+	@Override
 	public void startSequentialRewrite(boolean normalized) {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -72,6 +70,8 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 	 * @deprecated As of 3.1, replaced by
 	 *             {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
+	@Deprecated
+	@Override
 	public void stopSequentialRewrite() {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -83,11 +83,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSessionType)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public DocumentRewriteSession startRewriteSession(DocumentRewriteSessionType sessionType) {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -98,11 +94,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -114,9 +106,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocument#get()
-	 */
+	@Override
 	public String get() {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -127,9 +117,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocument#get(int, int)
-	 */
+	@Override
 	public String get(int offset, int length) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -140,9 +128,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocument#getChar(int)
-	 */
+	@Override
 	public char getChar(int offset) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -153,10 +139,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension4#getModificationStamp()
-	 * @since 3.1
-	 */
+	@Override
 	public long getModificationStamp() {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -167,9 +150,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocument#replace(int, int, String)
-	 */
+	@Override
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -181,9 +162,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocumentExtension4#replace(int, int, String, long)
-	 */
+	@Override
 	public void replace(int offset, int length, String text, long modificationStamp) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -195,9 +174,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocument#set(String)
-	 */
+	@Override
 	public void set(String text) {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -209,9 +186,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocumentExtension4#set(String, long)
-	 */
+	@Override
 	public void set(String text, long modificationStamp) {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -223,9 +198,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	public void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -237,9 +210,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#removePosition(java.lang.String, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	public void removePosition(String category, Position position) throws BadPositionCategoryException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -251,9 +222,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getPositions(java.lang.String)
-	 */
+	@Override
 	public Position[] getPositions(String category) throws BadPositionCategoryException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -264,10 +233,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getPositions(java.lang.String, int, int, boolean, boolean)
-	 * @since 3.4
-	 */
+	@Override
 	public Position[] getPositions(String category, int offset, int length, boolean canStartBefore, boolean canEndAfter) throws BadPositionCategoryException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -278,11 +244,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#computePartitioning(java.lang.String, int, int, boolean)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -293,11 +255,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineDelimiter(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public String getLineDelimiter(int line) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -308,11 +266,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getDefaultLineDelimiter()
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public String getDefaultLineDelimiter() {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -323,11 +277,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineInformation(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -338,11 +288,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineInformationOfOffset(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public IRegion getLineInformationOfOffset(int offset) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -353,11 +299,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineLength(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public int getLineLength(int line) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -368,11 +310,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineOffset(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public int getLineOffset(int line) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {
@@ -383,11 +321,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#getLineOfOffset(int)
-	 *
-	 * @since 3.5
-	 */
+	@Override
 	public int getLineOfOffset(int pos) throws BadLocationException {
 		Object lockObject= getLockObject();
 		if (lockObject == null) {

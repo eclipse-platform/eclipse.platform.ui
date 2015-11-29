@@ -141,9 +141,7 @@ public abstract class Revision {
 	 */
 	public abstract Date getDate();
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "Revision " + getId(); //$NON-NLS-1$
 	}

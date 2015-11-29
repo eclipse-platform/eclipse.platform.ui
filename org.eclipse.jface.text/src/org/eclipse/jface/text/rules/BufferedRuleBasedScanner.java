@@ -90,9 +90,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		}
 	}
 
-	/*
-	 * @see RuleBasedScanner#setRange(IDocument, int, int)
-	 */
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 
 		super.setRange(document, offset, length);
@@ -101,9 +99,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		shiftBuffer(offset);
 	}
 
-	/*
-	 * @see RuleBasedScanner#read()
-	 */
+	@Override
 	public int read() {
 		fColumn= UNDEFINED;
 		if (fOffset >= fRangeEnd) {
@@ -119,9 +115,7 @@ public class BufferedRuleBasedScanner extends RuleBasedScanner {
 		return fBuffer[fOffset++ - fStart];
 	}
 
-	/*
-	 * @see RuleBasedScanner#unread()
-	 */
+	@Override
 	public void unread() {
 
 		if (fOffset == fStart)

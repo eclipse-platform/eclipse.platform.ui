@@ -309,6 +309,7 @@ public class ScopePart {
 		fUseWorkingSet.setText(SearchMessages.ScopePart_workingSetScope_text);
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fWorkingSetText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result= SearchMessages.ScopePart_workingSetText_accessible_label;
 			}
@@ -319,6 +320,7 @@ public class ScopePart {
 		chooseWorkingSet.setText(SearchMessages.ScopePart_workingSetChooseButton_text);
 		SWTUtil.setButtonDimensionHint(chooseWorkingSet);
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (handleChooseWorkingSet()) {
 					setSelectedScope(ISearchPageContainer.WORKING_SET_SCOPE);
@@ -333,6 +335,7 @@ public class ScopePart {
 
 		// Add scope change listeners
 		SelectionAdapter scopeChangedLister= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleScopeChanged(e);
 			}

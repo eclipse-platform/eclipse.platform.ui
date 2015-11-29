@@ -43,9 +43,7 @@ public class AddTaskAction extends AddMarkerAction {
 		super(bundle, prefix, editor, IMarker.TASK, false);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 
 		IResource resource= getResource();

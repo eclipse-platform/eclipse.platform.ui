@@ -82,6 +82,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 *
 	 * @param document the document to be adapted or <code>null</code> if there is no document
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 
 		if (fDocument != null)
@@ -105,18 +106,14 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 			fDocument.addPrenotifiedDocumentListener(this);
 	}
 
-	/*
-	 * @see StyledTextContent#addTextChangeListener(TextChangeListener)
-	 */
+	@Override
 	public void addTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
 		if (!fTextChangeListeners.contains(listener))
 			fTextChangeListeners.add(listener);
 	}
 
-	/*
-	 * @see StyledTextContent#removeTextChangeListener(TextChangeListener)
-	 */
+	@Override
 	public void removeTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
 		fTextChangeListeners.remove(listener);
@@ -163,9 +160,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		return fDocument;
 	}
 
-	/*
-	 * @see StyledTextContent#getLine(int)
-	 */
+	@Override
 	public String getLine(int line) {
 
 		IDocument document= getDocumentForRead();
@@ -183,9 +178,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		return null;
 	}
 
-	/*
-	 * @see StyledTextContent#getLineAtOffset(int)
-	 */
+	@Override
 	public int getLineAtOffset(int offset) {
 		IDocument document= getDocumentForRead();
 		try {
@@ -202,16 +195,12 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		return -1;
 	}
 
-	/*
-	 * @see StyledTextContent#getLineCount()
-	 */
+	@Override
 	public int getLineCount() {
 		return getDocumentForRead().getNumberOfLines();
 	}
 
-	/*
-	 * @see StyledTextContent#getOffsetAtLine(int)
-	 */
+	@Override
 	public int getOffsetAtLine(int line) {
 		IDocument document= getDocumentForRead();
 		try {
@@ -228,9 +217,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		return -1;
 	}
 
-	/*
-	 * @see StyledTextContent#getTextRange(int, int)
-	 */
+	@Override
 	public String getTextRange(int offset, int length) {
 		try {
 			return getDocumentForRead().get(offset, length);
@@ -240,9 +227,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		}
 	}
 
-	/*
-	 * @see StyledTextContent#replaceTextRange(int, int, String)
-	 */
+	@Override
 	public void replaceTextRange(int pos, int length, String text) {
 		try {
 			fDocument.replace(pos, length, text);
@@ -251,32 +236,24 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		}
 	}
 
-	/*
-	 * @see StyledTextContent#setText(String)
-	 */
+	@Override
 	public void setText(String text) {
 		fDocument.set(text);
 	}
 
-	/*
-	 * @see StyledTextContent#getCharCount()
-	 */
+	@Override
 	public int getCharCount() {
 		return getDocumentForRead().getLength();
 	}
 
-	/*
-	 * @see StyledTextContent#getLineDelimiter()
-	 */
+	@Override
 	public String getLineDelimiter() {
 		if (fLineDelimiter == null)
 			fLineDelimiter= TextUtilities.getDefaultLineDelimiter(fDocument);
 		return fLineDelimiter;
 	}
 
-	/*
-	 * @see IDocumentListener#documentChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		// check whether the given event is the one which was remembered
 		if (fEvent == null || event != fEvent)
@@ -292,9 +269,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		}
 	}
 
-	/*
-	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 
 		fRememberedLengthOfDocument= fDocument.getLength();
@@ -396,10 +371,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		}
 	}
 
-	/*
-	 * @see IDocumentAdapterExtension#resumeForwardingDocumentChanges()
-	 * @since 2.0
-	 */
+	@Override
 	public void resumeForwardingDocumentChanges() {
 		fIsForwarding= true;
 		fDocumentClone= null;
@@ -408,10 +380,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		fireTextSet();
 	}
 
-	/*
-	 * @see IDocumentAdapterExtension#stopForwardingDocumentChanges()
-	 * @since 2.0
-	 */
+	@Override
 	public void stopForwardingDocumentChanges() {
 		fDocumentClone= null;
 		fOriginalContent= fDocument.get();

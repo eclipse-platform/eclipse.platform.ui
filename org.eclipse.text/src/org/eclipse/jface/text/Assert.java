@@ -31,6 +31,7 @@ package org.eclipse.jface.text;
  * @deprecated As of 3.3, replaced by {@link org.eclipse.core.runtime.Assert}
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public final class Assert {
 
 		/**

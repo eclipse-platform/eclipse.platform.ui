@@ -26,11 +26,13 @@ public class TemplatesPreferencePage extends TemplatePreferencePage {
 		setContextTypeRegistry(TemplateEditorUI.getDefault().getContextTypeRegistry());
 	}
 
+	@Override
 	protected boolean isShowFormatterSetting() {
 		return false;
 	}
 
 
+	@Override
 	public boolean performOk() {
 		boolean ok= super.performOk();
 

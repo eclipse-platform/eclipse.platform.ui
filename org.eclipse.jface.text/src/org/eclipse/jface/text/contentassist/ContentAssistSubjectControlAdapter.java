@@ -69,9 +69,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		fViewer= viewer;
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#getLineHeight()
-	 */
+	@Override
 	public int getLineHeight() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLineHeight();
@@ -79,63 +77,49 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		return fViewer.getTextWidget().getLineHeight(getCaretOffset());
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getControl();
 		return fViewer.getTextWidget();
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#getLocationAtOffset(int)
-	 */
+	@Override
 	public Point getLocationAtOffset(int offset) {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLocationAtOffset(offset);
 		return fViewer.getTextWidget().getLocationAtOffset(offset);
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#getWidgetSelectionRange()
-	 */
+	@Override
 	public Point getWidgetSelectionRange() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getWidgetSelectionRange();
 		return fViewer.getTextWidget().getSelectionRange();
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#getSelectedRange()
-	 */
+	@Override
 	public Point getSelectedRange() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getSelectedRange();
 		return fViewer.getSelectedRange();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getCaretOffset()
-	 */
+	@Override
 	public int getCaretOffset() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getCaretOffset();
 		return fViewer.getTextWidget().getCaretOffset();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getLineDelimiter()
-	 */
+	@Override
 	public String getLineDelimiter() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getLineDelimiter();
 		return fViewer.getTextWidget().getLineDelimiter();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#addKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
+	@Override
 	public void addKeyListener(KeyListener keyListener) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.addKeyListener(keyListener);
@@ -143,9 +127,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			fViewer.getTextWidget().addKeyListener(keyListener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
+	@Override
 	public void removeKeyListener(KeyListener keyListener) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.removeKeyListener(keyListener);
@@ -153,18 +135,14 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			fViewer.getTextWidget().removeKeyListener(keyListener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getDocument()
-	 */
+	@Override
 	public IDocument getDocument() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.getDocument();
 		return fViewer.getDocument();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#prependVerifyKeyListener(VerifyKeyListener)
-	 */
+	@Override
 	public boolean prependVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			return fContentAssistSubjectControl.prependVerifyKeyListener(verifyKeyListener);
@@ -183,9 +161,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
+	@Override
 	public boolean appendVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.appendVerifyKeyListener(verifyKeyListener);
@@ -203,9 +179,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
+	@Override
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		if (fContentAssistSubjectControl != null) {
 			fContentAssistSubjectControl.removeVerifyKeyListener(verifyKeyListener);
@@ -219,9 +193,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setEventConsumer(org.eclipse.jface.text.contentassist.ContentAssistant.InternalListener)
-	 */
+	@Override
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.setEventConsumer(eventConsumer);
@@ -229,9 +201,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			fViewer.setEventConsumer(eventConsumer);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#setSelectedRange(int, int)
-	 */
+	@Override
 	public void setSelectedRange(int i, int j) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.setSelectedRange(i, j);
@@ -239,9 +209,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 			fViewer.setSelectedRange(i, j);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#revealRange(int, int)
-	 */
+	@Override
 	public void revealRange(int i, int j) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.revealRange(i, j);
@@ -252,6 +220,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#canAddVerifyKeyListener()
 	 */
+	@Override
 	public boolean supportsVerifyKeyListener() {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.supportsVerifyKeyListener();
@@ -390,9 +359,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		return contentAssistant.computeContextInformation(fViewer, offset);
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#addSelectionListener(SelectionListener)
-	 */
+	@Override
 	public boolean addSelectionListener(SelectionListener selectionListener) {
 		if (fContentAssistSubjectControl != null)
 			return fContentAssistSubjectControl.addSelectionListener(selectionListener);
@@ -400,9 +367,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 		return true;
 	}
 
-	/*
-	 * @see IContentAssistSubjectControl#removeSelectionListener(SelectionListener)
-	 */
+	@Override
 	public void removeSelectionListener(SelectionListener selectionListener) {
 		if (fContentAssistSubjectControl != null)
 			fContentAssistSubjectControl.removeSelectionListener(selectionListener);

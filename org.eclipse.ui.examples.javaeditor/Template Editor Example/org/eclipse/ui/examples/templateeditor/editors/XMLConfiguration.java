@@ -37,11 +37,13 @@ public class XMLConfiguration extends TextSourceViewerConfiguration {
 		this.colorManager= colorManager;
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[]{IDocument.DEFAULT_CONTENT_TYPE, XMLPartitionScanner.XML_COMMENT,
 				XMLPartitionScanner.XML_TAG};
 	}
 
+	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (doubleClickStrategy == null)
 			doubleClickStrategy= new XMLDoubleClickStrategy();
@@ -66,6 +68,7 @@ public class XMLConfiguration extends TextSourceViewerConfiguration {
 		return tagScanner;
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler= new PresentationReconciler();
 
@@ -85,6 +88,7 @@ public class XMLConfiguration extends TextSourceViewerConfiguration {
 		return reconciler;
 	}
 
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant= new ContentAssistant();
 		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));

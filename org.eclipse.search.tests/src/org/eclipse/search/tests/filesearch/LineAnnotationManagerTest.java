@@ -63,6 +63,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		return new JUnitSourceSetup(test);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
@@ -73,6 +74,7 @@ public class LineAnnotationManagerTest extends TestCase {
 		fLineQuery= new LineBasedFileSearch(scope, false, true, "Test");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fLineQuery= null;

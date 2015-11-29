@@ -79,6 +79,7 @@ public class TextSearchEngineRegistry {
 		final TextSearchEngine[] res= new TextSearchEngine[] { null };
 
 		SafeRunnable safe= new SafeRunnable() {
+			@Override
 			public void run() throws Exception {
 				IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
 				for (int i= 0; i < extensions.length; i++) {
@@ -89,6 +90,7 @@ public class TextSearchEngineRegistry {
 					}
 				}
 			}
+			@Override
 			public void handleException(Throwable e) {
 				SearchPlugin.log(e);
 			}

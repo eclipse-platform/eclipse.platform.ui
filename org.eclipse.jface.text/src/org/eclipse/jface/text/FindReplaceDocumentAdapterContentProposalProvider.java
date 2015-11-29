@@ -335,9 +335,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		fIsFind= isFind;
 	}
 
-	/*
-	 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String, int)
-	 */
+	@Override
 	public IContentProposal [] getProposals(String contents, int position) {
 		if (fIsFind)
 			return new ProposalComputer(contents, position).computeFindProposals();

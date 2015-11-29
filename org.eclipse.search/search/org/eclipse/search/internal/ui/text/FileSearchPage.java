@@ -75,9 +75,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			fLabelProvider= labelProvider;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
-		 */
+		@Override
 		public int category(Object element) {
 			if (element instanceof IContainer) {
 				return 1;
@@ -85,7 +83,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			return 2;
 		}
 
-	    public int compare(Viewer viewer, Object e1, Object e2) {
+	    @Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
 	        int cat1 = category(e1);
 	        int cat2 = category(e2);
 
@@ -123,6 +122,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	private static final String[] SHOW_IN_TARGETS= new String[] { IPageLayout.ID_RES_NAV };
 	private  static final IShowInTargetList SHOW_IN_TARGET_LIST= new IShowInTargetList() {
+		@Override
 		public String[] getShowInTargetIds() {
 			return SHOW_IN_TARGETS;
 		}
@@ -135,12 +135,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		setElementLimit(new Integer(DEFAULT_ELEMENT_LIMIT));
 	}
 
+	@Override
 	public void setElementLimit(Integer elementLimit) {
 		super.setElementLimit(elementLimit);
 		int limit= elementLimit.intValue();
 		getSettings().put(KEY_LIMIT, limit);
 	}
 
+	@Override
 	public StructuredViewer getViewer() {
 		return super.getViewer();
 	}
@@ -151,6 +153,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.addDragSupport(ops, transfers, new NavigatorDragAdapter(viewer));
 	}
 
+	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setUseHashlookup(true);
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, fCurrentSortOrder);
@@ -161,6 +164,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		addDragAdapters(viewer);
 	}
 
+	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
 		viewer.setUseHashlookup(true);
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL);
@@ -171,6 +175,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		addDragAdapters(viewer);
 	}
 
+	@Override
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
 		IWorkbenchPage page= getSite().getPage();
@@ -181,6 +186,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		}
 	}
 
+	@Override
 	protected void handleOpen(OpenEvent event) {
 		if (showLineMatches()) {
 			Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
@@ -198,6 +204,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		super.handleOpen(event);
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		addSortActions(mgr);
@@ -231,27 +238,32 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		mgr.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, sortMenu);
 	}
 
+	@Override
 	public void setViewPart(ISearchResultViewPart part) {
 		super.setViewPart(part);
 		fActionGroup= new NewTextSearchActionGroup(part);
 	}
 
+	@Override
 	public void init(IPageSite site) {
 		super.init(site);
 		IMenuManager menuManager = site.getActionBars().getMenuManager();
 		menuManager.appendToGroup(IContextMenuConstants.GROUP_PROPERTIES, new OpenSearchPreferencesAction());
 	}
 
+	@Override
 	public void dispose() {
 		fActionGroup.dispose();
 		super.dispose();
 	}
 
+	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (fContentProvider != null)
 			fContentProvider.elementsChanged(objects);
 	}
 
+	@Override
 	protected void clear() {
 		if (fContentProvider != null)
 			fContentProvider.clear();
@@ -265,6 +277,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		getSettings().put(KEY_SORTING, fCurrentSortOrder);
 	}
 
+	@Override
 	public void restoreState(IMemento memento) {
 		super.restoreState(memento);
 		try {
@@ -288,12 +301,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		}
 		setElementLimit(new Integer(elementLimit));
 	}
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putInteger(KEY_SORTING, fCurrentSortOrder);
 		memento.putInteger(KEY_LIMIT, getElementLimit().intValue());
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IShowInTargetList.class.equals(adapter)) {
 			return SHOW_IN_TARGET_LIST;
@@ -317,6 +332,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				}
 
 				return new IShowInSource() {
+					@Override
 					public ShowInContext getShowInContext() {
 						return new ShowInContext(null, new StructuredSelection(new ArrayList(newSelection)));
 					}
@@ -328,6 +344,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		String label= super.getLabel();
 		StructuredViewer viewer= getViewer();
@@ -353,6 +370,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		return label;
 	}
 
+	@Override
 	public int getDisplayedMatchCount(Object element) {
 		if (showLineMatches()) {
 			if (element instanceof LineElement) {
@@ -364,6 +382,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		return super.getDisplayedMatchCount(element);
 	}
 
+	@Override
 	public Match[] getDisplayedMatches(Object element) {
 		if (showLineMatches()) {
 			if (element instanceof LineElement) {
@@ -375,6 +394,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		return super.getDisplayedMatches(element);
 	}
 
+	@Override
 	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
 		if (showLineMatches()) {
 			for (int i = 0; i < matches.length; i++) {

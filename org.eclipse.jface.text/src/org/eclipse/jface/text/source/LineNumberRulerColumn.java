@@ -70,17 +70,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		private boolean fCachedRedrawState= true;
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int verticalPosition) {
 			if (fCachedRedrawState && verticalPosition != fScrollPos)
 				redraw();
 		}
 
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
+		@Override
 		public void textChanged(TextEvent event) {
 
 			fCachedRedrawState= event.getViewerRedrawState();
@@ -116,9 +112,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		/* @since 3.2 */
 		private boolean fIsListeningForMove= false;
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseUp(MouseEvent event) {
 			// see bug 45700
 			if (event.button == 1) {
@@ -127,9 +121,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			// see bug 45700
@@ -138,18 +130,14 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			stopSelecting();
 			stopAutoScroll();
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			if (fIsListeningForMove && !autoScroll(event)) {
 				int newLine= fParentRuler.toDocumentLineNumber(event.y);
@@ -322,6 +310,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			switch (direction) {
 				case SWT.UP:
 					timer= new Runnable() {
+						@Override
 						public void run() {
 							if (fAutoScrollDirection == SWT.UP) {
 								int top= getInclusiveTopIndex();
@@ -336,6 +325,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					break;
 				case  SWT.DOWN:
 					timer= new Runnable() {
+						@Override
 						public void run() {
 							if (fAutoScrollDirection == SWT.DOWN) {
 								int top= getInclusiveTopIndex();
@@ -366,6 +356,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			return -1;
 		}
 
+		@Override
 		public void mouseScrolled(MouseEvent e) {
 			handleMouseScrolled(e);
 		}
@@ -414,6 +405,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	private Runnable fRunnable= new Runnable() {
+		@Override
 		public void run() {
 			synchronized (fRunnableLock) {
 				fIsRunnablePosted= false;
@@ -473,9 +465,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		return fBackground;
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
@@ -483,6 +473,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/*
 	 * @see IVerticalRuleColumnr#getWidth
 	 */
+	@Override
 	public int getWidth() {
 		return fIndentation[0];
 	}
@@ -581,9 +572,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
-	 */
+	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
 		fParentRuler= parentRuler;
@@ -592,6 +581,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		// on word wrap toggle a "resized" ControlEvent is fired: suggest a redraw of the line ruler
 		fCachedTextWidget.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				if (fCachedTextWidget != null && fCachedTextWidget.getWordWrap()) {
 					postRedraw();
@@ -600,11 +590,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		});
 
 		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) {
- 			/*
- 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
- 			 * @since 3.4
- 			 */
- 			public void addMouseListener(MouseListener listener) {
+ 			@Override
+			public void addMouseListener(MouseListener listener) {
 				// see bug 40889, bug 230073 and AnnotationRulerColumn#isPropagatingMouseListener()
 				if (listener == fMouseHandler)
 					super.addMouseListener(listener);
@@ -620,6 +607,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCanvas.setForeground(fForeground);
 
 		fCanvas.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
 					doubleBufferPaint(event.gc);
@@ -627,6 +615,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		});
 
 		fCanvas.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 				fCachedTextViewer= null;
@@ -724,6 +713,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @deprecated as of 3.2 the number of lines in the viewport cannot be computed because
 	 *             StyledText supports variable line heights
 	 */
+	@Deprecated
 	protected int getVisibleLinesInViewport() {
 		return getVisibleLinesInViewport(fCachedTextWidget);
 	}
@@ -870,9 +860,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#redraw()
-	 */
+	@Override
 	public void redraw() {
 
 		if (fRelayoutRequired) {
@@ -892,15 +880,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setFont(Font)
-	 */
+	@Override
 	public void setFont(Font font) {
 		fFont= font;
 		if (fCanvas != null && !fCanvas.isDisposed()) {
@@ -950,6 +934,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @deprecated this method should not be used - it relies on the widget using a uniform line
 	 *             height
 	 */
+	@Deprecated
 	static int getVisibleLinesInViewport(StyledText textWidget) {
 		if (textWidget != null) {
 			Rectangle clArea= textWidget.getClientArea();

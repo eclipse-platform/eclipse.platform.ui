@@ -54,6 +54,7 @@ public class DocumentTest extends TestCase {
 
 	}
 
+	@Override
 	protected void setUp() {
 
 		fDocument= new Document();
@@ -93,6 +94,7 @@ public class DocumentTest extends TestCase {
 		return new TestSuite(DocumentTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		fDocument= null;
 	}

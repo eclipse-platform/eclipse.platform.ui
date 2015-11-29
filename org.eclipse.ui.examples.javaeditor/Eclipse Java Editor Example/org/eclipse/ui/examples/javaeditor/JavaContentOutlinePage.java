@@ -56,6 +56,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 			this.position= position;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -96,9 +97,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/*
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
 				IDocument document= fDocumentProvider.getDocument(oldInput);
@@ -127,6 +126,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		/*
 		 * @see IContentProvider#dispose
 		 */
+		@Override
 		public void dispose() {
 			if (fContent != null) {
 				fContent.clear();
@@ -134,32 +134,24 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 			}
 		}
 
-		/*
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
+		@Override
 		public Object[] getElements(Object element) {
 			return fContent.toArray();
 		}
 
-		/*
-		 * @see ITreeContentProvider#hasChildren(Object)
-		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return element == fInput;
 		}
 
-		/*
-		 * @see ITreeContentProvider#getParent(Object)
-		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof Segment)
 				return fInput;
 			return null;
 		}
 
-		/*
-		 * @see ITreeContentProvider#getChildren(Object)
-		 */
+		@Override
 		public Object[] getChildren(Object element) {
 			if (element == fInput)
 				return fContent.toArray();
@@ -183,9 +175,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		fTextEditor= editor;
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ContentOutlinePage
-	 */
+	@Override
 	public void createControl(Composite parent) {
 
 		super.createControl(parent);
@@ -199,9 +189,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 			viewer.setInput(fInput);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ContentOutlinePage
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		super.selectionChanged(event);

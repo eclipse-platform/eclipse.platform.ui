@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;
  */
 public abstract class Hash implements Cloneable {
 
+	@Override
 	public Object clone() {
 		try {
 			return super.clone();
@@ -33,12 +34,14 @@ public abstract class Hash implements Cloneable {
 	 * @param obj {@inheritDoc}
 	 * @return <code>true</code> if the receiver is equal to <code>obj</code>
 	 */
+	@Override
 	public abstract boolean equals(Object obj);
 	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 * @since 3.5
 	 */
+	@Override
 	public abstract int hashCode();
 
 }

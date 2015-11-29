@@ -46,9 +46,7 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		fStatusLine= manager;
 	}
 
-	/*
-	 * @see IMarkregion#setMarkAtCursor(boolean)
-	 */
+	@Override
 	public void setMarkAtCursor(boolean set) {
 
 		if (!(fViewer instanceof ITextViewerExtension))
@@ -71,9 +69,7 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		}
 	}
 
-	/*
-	 * @see IMarkregion#swapMarkAndCursor()
-	 */
+	@Override
 	public void swapMarkAndCursor() {
 
 		if (!(fViewer instanceof ITextViewerExtension))

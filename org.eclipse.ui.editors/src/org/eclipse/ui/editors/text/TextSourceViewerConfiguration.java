@@ -90,11 +90,10 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		fPreferenceStore= preferenceStore;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
-	 */
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new DefaultAnnotationHover() {
+			@Override
 			protected boolean isIncluded(Annotation annotation) {
 				return isShowInVerticalRuler(annotation);
 			}
@@ -117,12 +116,10 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getOverviewRulerAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.2
-	 */
+	@Override
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
 		return new DefaultAnnotationHover(true) {
+			@Override
 			protected boolean isIncluded(Annotation annotation) {
 				return isShowInOverviewRuler(annotation);
 			}
@@ -144,18 +141,12 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return true;
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getConfiguredTextHoverStateMasks(ISourceViewer, String)
-	 * @since 3.2
-	 */
+	@Override
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		return new int[] { ITextViewerExtension2.DEFAULT_HOVER_STATE_MASK };
 	}
 
-	/*
-	 * @see SourceViewerConfiguration#getTextHover(ISourceViewer, String)
-	 * @since 3.2
-	 */
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return new TextHover(sourceViewer);
 	}
@@ -193,19 +184,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return EditorsUI.getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
-	 */
+	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
 			return super.getTabWidth(sourceViewer);
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getIndentPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 * @since 3.3
-	 */
+	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		String[] indentPrefixes= getIndentPrefixesForTab(getTabWidth(sourceViewer));
 		if (indentPrefixes == null)
@@ -222,10 +208,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return indentPrefixes;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
+	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		if (sourceViewer == null || fPreferenceStore == null)
 			return super.getHyperlinkDetectors(sourceViewer);
@@ -279,10 +262,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return targets;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkStateMask(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
+	@Override
 	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
 			return super.getHyperlinkStateMask(sourceViewer);
@@ -296,10 +276,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return modifierMask;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkPresenter(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
+	@Override
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
 			return new MultipleHyperlinkPresenter(new RGB(0, 0, 255));
@@ -356,10 +333,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return stateMask;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getUndoManager(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.1
-	 */
+	@Override
 	public IUndoManager getUndoManager(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null || !fPreferenceStore.contains(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE))
 			return super.getUndoManager(sourceViewer);
@@ -378,6 +352,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.3
 	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
@@ -392,10 +367,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return reconciler;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getQuickAssistAssistant(org.eclipse.jface.text.source.ISourceViewer)
-	 * @since 3.3
-	 */
+	@Override
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
@@ -416,6 +388,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	private IInformationControlCreator getQuickAssistAssistantInformationControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString());
 			}
@@ -458,15 +431,15 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			super(sourceViewer);
 		}
 
+		@Override
 		protected boolean isIncluded(Annotation annotation) {
 			return isShownInText(annotation);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
-		 */
+		@Override
 		public IInformationControlCreator getHoverControlCreator() {
 			return new IInformationControlCreator() {
+				@Override
 				public IInformationControl createInformationControl(Shell parent) {
 					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 				}

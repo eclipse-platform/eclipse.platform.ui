@@ -355,9 +355,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return new Region(offset, exclusiveEndOffset - offset);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#getCoverage()
-	 */
+	@Override
 	public IRegion getCoverage() {
 		Position[] fragments= getFragments();
 		if (fragments != null && fragments.length > 0) {
@@ -368,18 +366,14 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return new Region(0, 0);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginOffset(int)
-	 */
+	@Override
 	public int toOriginOffset(int imageOffset) throws BadLocationException {
 		Segment segment= findSegment(imageOffset);
 		int relative= imageOffset - segment.offset;
 		return segment.fragment.offset + relative;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginRegion(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion toOriginRegion(IRegion imageRegion) throws BadLocationException {
 		int imageOffset= imageRegion.getOffset();
 		int imageLength= imageRegion.getLength();
@@ -400,9 +394,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return new Region(originOffset, (inclusiveOriginEndOffset + 1) - originOffset);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginLines(int)
-	 */
+	@Override
 	public IRegion toOriginLines(int imageLine) throws BadLocationException {
 		IRegion imageRegion= fSlaveDocument.getLineInformation(imageLine);
 		IRegion originRegion= toOriginRegion(imageRegion);
@@ -415,17 +407,13 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return new Region(originStartLine, (originEndLine + 1) - originStartLine);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginLine(int)
-	 */
+	@Override
 	public int toOriginLine(int imageLine) throws BadLocationException {
 		IRegion lines= toOriginLines(imageLine);
 		return (lines.getLength() > 1 ? -1 : lines.getOffset());
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageOffset(int)
-	 */
+	@Override
 	public int toImageOffset(int originOffset) throws BadLocationException {
 		Fragment fragment= findFragment(originOffset);
 		if (fragment != null) {
@@ -435,31 +423,22 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactImageRegion(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion toExactImageRegion(IRegion originRegion) throws BadLocationException {
 		return toImageRegion(originRegion, true, false);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageRegion(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion toImageRegion(IRegion originRegion) throws BadLocationException {
 		return toImageRegion(originRegion, false, false);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension2#toClosestImageRegion(org.eclipse.jface.text.IRegion)
-	 * @since 3.1
-	 */
+	@Override
 	public IRegion toClosestImageRegion(IRegion originRegion) throws BadLocationException {
 		return toImageRegion(originRegion, false, true);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageLine(int)
-	 */
+	@Override
 	public int toImageLine(int originLine) throws BadLocationException {
 		IRegion originRegion= fMasterDocument.getLineInformation(originLine);
 		IRegion imageRegion= toImageRegion(originRegion);
@@ -482,9 +461,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return startLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toClosestImageLine(int)
-	 */
+	@Override
 	public int toClosestImageLine(int originLine) throws BadLocationException {
 		try {
 
@@ -526,9 +503,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return -1;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactOriginRegions(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion[] toExactOriginRegions(IRegion imageRegion) throws BadLocationException {
 
 		if (imageRegion.getLength() == 0)
@@ -566,9 +541,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return result;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#getImageLength()
-	 */
+	@Override
 	public int getImageLength() {
 		Position[] segments= getSegments();
 		int length= 0;
@@ -577,9 +550,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return length;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#toExactImageRegions(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion[] toExactImageRegions(IRegion originRegion) throws BadLocationException {
 
 		int offset= originRegion.getOffset();
@@ -622,9 +593,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return result;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentInformationMappingExtension#getExactCoverage(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public IRegion[] getExactCoverage(IRegion originRegion) throws BadLocationException {
 
 		int originOffset= originRegion.getOffset();

@@ -63,18 +63,14 @@ public class InsertLineAction extends TextEditorAction {
 		fAbove= above;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		super.update();
 		if (isEnabled())
 			setEnabled(canModifyEditor());
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		/*
 		 * Implementation note: instead of computing any indentations needed

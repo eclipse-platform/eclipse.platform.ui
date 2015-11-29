@@ -34,6 +34,7 @@ public class MatchFilterSelectionAction extends Action {
 		fPage= page;
 	}
 
+	@Override
 	public void run() {
 		Shell shell= fPage.getSite().getShell();
 

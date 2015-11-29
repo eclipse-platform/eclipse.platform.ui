@@ -90,6 +90,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @since 3.5
 	 */
 	private static class RangeDifferenceFactory extends AbstractRangeDifferenceFactory {
+		@Override
 		protected org.eclipse.compare.rangedifferencer.RangeDifference createRangeDifference() {
 			return new QuickDiffRangeDifference();
 		}
@@ -103,37 +104,27 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		private static final String[] ORIGINAL_TEXT= new String[] { "\n" }; //$NON-NLS-1$
 
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesBelow()
-		 */
+		@Override
 		public int getRemovedLinesBelow() {
 			return 0;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
-		 */
+		@Override
 		public int getRemovedLinesAbove() {
 			return 0;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getChangeType()
-		 */
+		@Override
 		public int getChangeType() {
 			return CHANGED;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#hasChanges()
-		 */
+		@Override
 		public boolean hasChanges() {
 			return true;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.source.ILineDiffInfo#getOriginalText()
-		 */
+		@Override
 		public String[] getOriginalText() {
 			return ORIGINAL_TEXT;
 		}
@@ -222,6 +213,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @since 3.2
 	 */
 	private final IDocumentRewriteSessionListener fSessionListener= new IDocumentRewriteSessionListener() {
+		@Override
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
 				return;
@@ -246,9 +238,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	/* ILineDiffer implementation */
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffer#getLineInfo(int)
-	 */
+	@Override
 	public ILineDiffInfo getLineInfo(int line) {
 
 		if (isSuspended())
@@ -267,9 +257,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffer#revertLine(int)
-	 */
+	@Override
 	public synchronized void revertLine(int line) throws BadLocationException {
 		if (!isInitialized())
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
@@ -298,9 +286,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fRightDocument.replace(rOffset, rLength, replacement);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffer#revertBlock(int)
-	 */
+	@Override
 	public synchronized void revertBlock(int line) throws BadLocationException {
 		if (!isInitialized())
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
@@ -334,9 +320,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fRightDocument.replace(rOffset, rLength, fLeftDocument.get(lOffset, lLength));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffer#revertSelection(int, int)
-	 */
+	@Override
 	public synchronized void revertSelection(int line, int nLines) throws BadLocationException {
 		if (!isInitialized())
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
@@ -385,9 +369,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fRightDocument.replace(rOffset, rLength, fLeftDocument.get(lOffset, lLength));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineDiffer#restoreAfterLine(int)
-	 */
+	@Override
 	public synchronized int restoreAfterLine(int line) throws BadLocationException {
 		if (!isInitialized())
 			throw new BadLocationException(QuickDiffMessages.quickdiff_nonsynchronized);
@@ -448,6 +430,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 *
 	 * @return <code>true</code> if the differ is suspended
 	 */
+	@Override
 	public synchronized boolean isSuspended() {
 		return fState == SUSPENDED;
 	}
@@ -517,6 +500,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			 * access the documents in a synchronized section or expect deadlocks. See
 			 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
 			 */
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 
 				// 1:	wait for any previous job that was canceled to avoid job flooding
@@ -761,9 +745,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	/* IDocumentListener implementation */
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public synchronized void documentAboutToBeChanged(DocumentEvent event) {
 		if (fIgnoreDocumentEvents)
 			return;
@@ -828,9 +810,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		rightEquivalent.update(event);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public synchronized void documentChanged(DocumentEvent event) {
 		final Thread lastCurrentThread= fThread;
 		fThread= null;
@@ -1385,23 +1365,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
+	@Override
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.add(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#removeAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
-	 */
+	@Override
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.remove(listener);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#connect(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void connect(IDocument document) {
 		Assert.isTrue(fRightDocument == null || fRightDocument == document);
 
@@ -1417,9 +1391,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#disconnect(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void disconnect(IDocument document) {
 		Assert.isTrue(fRightDocument == document);
 
@@ -1466,23 +1438,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotation(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
-	 */
+	@Override
 	public void addAnnotation(Annotation annotation, Position position) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#removeAnnotation(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public void removeAnnotation(Annotation annotation) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
-	 */
+	@Override
 	public Iterator getAnnotationIterator() {
 		final List copy;
 		List differences= fDifferences; // atomic
@@ -1492,14 +1458,17 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		final Iterator iter= copy.iterator();
 		return new Iterator() {
 
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
+			@Override
 			public boolean hasNext() {
 				return iter.hasNext();
 			}
 
+			@Override
 			public Object next() {
 				QuickDiffRangeDifference diff= (QuickDiffRangeDifference) iter.next();
 				return diff.getDiffRegion(copy, fLeftDocument);
@@ -1508,9 +1477,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		};
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModel#getPosition(org.eclipse.jface.text.source.Annotation)
-	 */
+	@Override
 	public Position getPosition(Annotation annotation) {
 		if (fRightDocument != null && annotation instanceof DiffRegion) {
 			QuickDiffRangeDifference difference= ((DiffRegion)annotation).getDifference();
@@ -1551,9 +1518,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.ILineDifferExtension#suspend()
-	 */
+	@Override
 	public void suspend() {
 		Job job= fInitializationJob;
 		if (job != null)
@@ -1578,9 +1543,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.ILineDifferExtension#resume()
-	 */
+	@Override
 	public synchronized void resume() {
 		if (fRightDocument != null)
 			fRightDocument.addDocumentListener(this);

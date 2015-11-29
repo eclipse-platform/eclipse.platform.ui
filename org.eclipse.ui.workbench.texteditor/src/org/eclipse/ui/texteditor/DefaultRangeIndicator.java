@@ -52,9 +52,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 	public DefaultRangeIndicator() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#paint(org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
-	 */
+	@Override
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 
 		Point canvasSize= canvas.getSize();
@@ -84,9 +82,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationPresentation#getLayer()
-	 */
+	@Override
 	public int getLayer() {
 		return IAnnotationPresentation.DEFAULT_LAYER;
 	}
@@ -102,6 +98,7 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 				fImage= createImage(control.getDisplay(), control.getSize());
 
 				control.addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						if (fImage != null && !fImage.isDisposed()) {
 							fImage.dispose();

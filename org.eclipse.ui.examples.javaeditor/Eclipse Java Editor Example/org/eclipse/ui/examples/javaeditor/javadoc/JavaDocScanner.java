@@ -37,16 +37,12 @@ public class JavaDocScanner extends RuleBasedScanner {
 	 */
 	static class JavaDocWordDetector implements IWordDetector {
 
-	/* (non-Javadoc)
-	 * Method declared on IWordDetector
-	 */
+		@Override
 		public boolean isWordStart(char c) {
 			return (c == '@');
 		}
 
-		/* (non-Javadoc)
-	 	* Method declared on IWordDetector
-	 	*/
+		@Override
 		public boolean isWordPart(char c) {
 			return Character.isLetter(c);
 		}

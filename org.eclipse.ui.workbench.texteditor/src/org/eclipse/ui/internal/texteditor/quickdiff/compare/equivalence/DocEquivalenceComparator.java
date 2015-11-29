@@ -55,6 +55,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 	 *
 	 * @return number of lines
 	 */
+	@Override
 	public int getRangeCount() {
 		return fLines;
 	}
@@ -68,6 +69,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 	 * @param otherIndex the number of the line within the other comparator
 	 * @return <code>true</code> if the lines are equal
 	 */
+	@Override
 	public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
 		if (other instanceof DocEquivalenceComparator) {
 			DocEquivalenceComparator dec= (DocEquivalenceComparator) other;
@@ -96,6 +98,7 @@ public final class DocEquivalenceComparator implements IRangeComparator {
 	 * @param other the comparator with which to compare
 	 * @return <code>true</code> to abort a token comparison
 	 */
+	@Override
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
 		return fSkip;
 	}

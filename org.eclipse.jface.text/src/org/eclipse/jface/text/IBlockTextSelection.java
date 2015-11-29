@@ -66,6 +66,7 @@ public interface IBlockTextSelection extends ITextSelection {
 	 * 
 	 * @see org.eclipse.jface.text.ITextSelection#getText()
 	 */
+	@Override
 	String getText();
 	/**
 	 * Returns a non-empty array containing the selected text range for each line covered by the

@@ -32,9 +32,7 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 	 */
 	private class StatusMonitor implements IPreferenceStatusMonitor {
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.IStatusMonitor#statusChanged(org.eclipse.core.runtime.IStatus)
-		 */
+		@Override
 		public void statusChanged(IStatus status) {
 			handleStatusChanged(status);
 		}
@@ -50,29 +48,21 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
-	 */
+	@Override
 	protected String getHelpId() {
 		return ITextEditorHelpContextIds.SPELLING_PREFERENCE_PAGE;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
-	 */
+	@Override
 	protected void setDescription() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
-	 */
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
-	 */
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new SpellingConfigurationBlock(overlayPreferenceStore, new StatusMonitor());
 	}

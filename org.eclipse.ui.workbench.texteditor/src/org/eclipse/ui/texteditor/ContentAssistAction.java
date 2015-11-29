@@ -64,6 +64,7 @@ public final class ContentAssistAction extends TextEditorAction {
 	/**
 	 * Runs the content assist operation on the editor's text operation target.
 	 */
+	@Override
 	public void run() {
 		if (fOperationTarget != null) {
 
@@ -78,6 +79,7 @@ public final class ContentAssistAction extends TextEditorAction {
 					display= shell.getDisplay();
 
 				BusyIndicator.showWhile(display, new Runnable() {
+					@Override
 					public void run() {
 						fOperationTarget.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 					}
@@ -92,6 +94,7 @@ public final class ContentAssistAction extends TextEditorAction {
 	 * editor's <code>ITextOperationTarget</code> adapter, and sets the
 	 * enabled state accordingly.
 	 */
+	@Override
 	public void update() {
 
 		ITextEditor editor= getTextEditor();
@@ -115,6 +118,7 @@ public final class ContentAssistAction extends TextEditorAction {
 	/**
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		super.setEditor(editor);
 		fOperationTarget= null;

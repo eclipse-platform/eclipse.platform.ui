@@ -28,6 +28,7 @@ import org.eclipse.search.ui.SearchUI;
  * Represents an entry in the search result view
  * @deprecated old search
  */
+@Deprecated
 public class SearchResultViewEntry extends PlatformObject implements ISearchResultViewEntry {
 
 	private Object fGroupByKey= null;
@@ -47,6 +48,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 	}
 
 	//---- Accessors ------------------------------------------------
+	@Override
 	public Object getGroupByKey() {
 		return fGroupByKey;
 	}
@@ -55,10 +57,12 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 		fGroupByKey= groupByKey;
 	}
 
+	@Override
 	public IResource getResource() {
 		return fResource;
 	}
 
+	@Override
 	public int getMatchCount() {
 		if (fMarkers != null)
 			return fMarkers.size();
@@ -115,6 +119,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 		fSelectedMarkerIndex= index;
 	}
 
+	@Override
 	public IMarker getSelectedMarker() {
 		fSelectedMarkerIndex= Math.min(fSelectedMarkerIndex, getMatchCount() - 1);
 		if (fMarkers == null && fMarker == null)
@@ -196,9 +201,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 			fMarker= marker;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		return super.getAdapter(adapter);
 	}

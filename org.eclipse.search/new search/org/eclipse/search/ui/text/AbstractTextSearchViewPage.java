@@ -136,6 +136,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			setSystem(true);
 		}
 
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			Control control= getControl();
 			if (control == null || control.isDisposed()) {
@@ -165,6 +166,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		/*
 		 * Undocumented for testing only. Used to find UpdateUIJobs.
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			return family == AbstractTextSearchViewPage.this;
 		}
@@ -174,22 +176,27 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
 		private ArrayList fListeners= new ArrayList(5);
 
+		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
 			fListeners.add(listener);
 		}
 
+		@Override
 		public ISelection getSelection() {
 			return fViewer.getSelection();
 		}
 
+		@Override
 		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 			fListeners.remove(listener);
 		}
 
+		@Override
 		public void setSelection(ISelection selection) {
 			fViewer.setSelection(selection);
 		}
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			// forward to my listeners
 			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
@@ -293,6 +300,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fBatchedClearAll= false;
 
 		fListener = new ISearchResultListener() {
+			@Override
 			public void searchResultChanged(SearchResultEvent e) {
 				handleSearchResultChanged(e);
 			}
@@ -356,23 +364,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return settings;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setID(String id) {
 		fId = id;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getID() {
 		return fId;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getLabel() {
 		AbstractTextSearchResult result= getInput();
 		if (result == null)
@@ -394,6 +396,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @see IFileMatchAdapter
 	 * @deprecated Use {@link #showMatch(Match, int, int, boolean)} instead
 	 */
+	@Deprecated
 	protected void showMatch(Match match, int currentOffset, int currentLength) throws PartInitException {
 	}
 
@@ -536,15 +539,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return !selection.isEmpty();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		fQueryListener = createQueryListener();
 		fMenu = new MenuManager("#PopUp"); //$NON-NLS-1$
 		fMenu.setRemoveAllWhenShown(true);
 		fMenu.setParent(getSite().getActionBars().getMenuManager());
 		fMenu.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				SearchView.createContextMenuGroups(mgr);
 				fillContextMenu(mgr);
@@ -588,16 +590,20 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private IQueryListener createQueryListener() {
 		return new IQueryListener() {
+			@Override
 			public void queryAdded(ISearchQuery query) {
 				// ignore
 			}
 
+			@Override
 			public void queryRemoved(ISearchQuery query) {
 				// ignore
 			}
 
+			@Override
 			public void queryStarting(final ISearchQuery query) {
 				final Runnable runnable1 = new Runnable() {
+					@Override
 					public void run() {
 						updateBusyLabel();
 						AbstractTextSearchResult result = getInput();
@@ -614,6 +620,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				asyncExec(runnable1);
 			}
 
+			@Override
 			public void queryFinished(final ISearchQuery query) {
                 // handle the end of the query in the UIUpdateJob, as ui updates
                 // may not be finished here.
@@ -738,6 +745,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		new OpenAndLinkWithEditorHelper(fViewer) {
 
+			@Override
 			protected void activate(ISelection selection) {
 				final int currentMode= OpenStrategy.getOpenMethod();
 				try {
@@ -748,10 +756,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				}
 			}
 
+			@Override
 			protected void linkToEditor(ISelection selection) {
 				// not supported by this part
 			}
 
+			@Override
 			protected void open(ISelection selection, boolean activate) {
 				handleOpen(new OpenEvent(fViewer, selection));
 			}
@@ -759,6 +769,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		};
 
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				fCurrentMatchIndex = -1;
 				fRemoveSelectedMatches.setEnabled(canRemoveMatchesWith(event.getSelection()));
@@ -796,25 +807,19 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setFocus() {
 		Control control = fViewer.getControl();
 		if (control != null && !control.isDisposed())
 			control.setFocus();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Control getControl() {
 		return fPagebook;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void setInput(ISearchResult newSearch, Object viewState) {
 		if (newSearch != null && !(newSearch instanceof AbstractTextSearchResult))
 			return; // ignore
@@ -899,9 +904,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Object getUIState() {
 		return fViewer.getSelection();
 	}
@@ -926,6 +929,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void showMatch(final Match match, final boolean activateEditor) {
 		ISafeRunnable runnable = new ISafeRunnable() {
+			@Override
 			public void handleException(Throwable exception) {
 				if (exception instanceof PartInitException) {
 					PartInitException pie = (PartInitException) exception;
@@ -933,6 +937,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				}
 			}
 
+			@Override
 			public void run() throws Exception {
 				IRegion location= getCurrentMatchLocation(match);
 				showMatch(match, location.getOffset(), location.getLength(), activateEditor);
@@ -1128,9 +1133,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void dispose() {
 		AbstractTextSearchResult oldSearch = getInput();
 		if (oldSearch != null)
@@ -1139,9 +1142,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		NewSearchUI.removeQueryListener(fQueryListener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 		IMenuManager menuManager= pageSite.getActionBars().getMenuManager();
@@ -1195,6 +1196,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Sets the view part
 	 * @param part View part to set
 	 */
+	@Override
 	public void setViewPart(ISearchResultViewPart part) {
 		fViewPart = part;
 	}
@@ -1293,6 +1295,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				// meaning we're not executing on the display thread of the
 				// control
 				control.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (!control.isDisposed())
 							runnable.run();
@@ -1307,6 +1310,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * {@inheritDoc}
 	 * Subclasses may extend this method.
 	 */
+	@Override
 	public void restoreState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {
 			try {
@@ -1329,9 +1333,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResultPage#saveState(org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {
 			memento.putInteger(KEY_LAYOUT, fCurrentLayout);

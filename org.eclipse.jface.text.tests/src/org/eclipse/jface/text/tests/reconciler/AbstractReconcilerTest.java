@@ -135,27 +135,34 @@ public class AbstractReconcilerTest extends TestCase {
 	private IProgressMonitor fProgressMonitor;
 
 
+	@Override
 	protected void setUp() {
 		fBarrier= new Barrier();
 		fCallLog= Collections.synchronizedList(new ArrayList());
 		fReconciler= new AbstractReconciler() {
+					@Override
 					protected void initialProcess() {
 						fCallLog.add("initialProcess");
 						fBarrier.await();
 					}
+					@Override
 					protected void process(DirtyRegion dirtyRegion) {
 						fCallLog.add("process");
 						fBarrier.await();
 					}
+					@Override
 					protected void reconcilerDocumentChanged(IDocument newDocument) {
 						fCallLog.add("reconcilerDocumentChanged");
 					}
+					@Override
 					protected void aboutToBeReconciled() {
 						fCallLog.add("aboutToBeReconciled");
 					}
+					@Override
 					protected void reconcilerReset() {
 						fCallLog.add("reconcilerReset");
 					}
+					@Override
 					public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 						return null;
 					}
@@ -175,6 +182,7 @@ public class AbstractReconcilerTest extends TestCase {
 	}
 
 
+	@Override
 	protected void tearDown() throws Exception {
 		fBarrier.shutdown();
 		fReconciler.uninstall();

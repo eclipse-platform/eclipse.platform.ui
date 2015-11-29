@@ -25,6 +25,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
+@Deprecated
 public final class SubjectControlContextInformationValidator implements ISubjectControlContextInformationValidator {
 
 	/** The content assist processor. */
@@ -44,24 +45,18 @@ public final class SubjectControlContextInformationValidator implements ISubject
 		fProcessor= processor;
 	}
 
-	/*
-	 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
-	 */
+	@Override
 	public void install(IContextInformation contextInformation, ITextViewer viewer, int offset) {
 		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * @see ISubjectControlContextInformationValidator#install(IContextInformation, IContentAssistSubjectControl, int)
-	 */
+	@Override
 	public void install(IContextInformation contextInformation, IContentAssistSubjectControl contentAssistSubjectControl, int offset) {
 		fContextInformation= contextInformation;
 		fContentAssistSubjectControl= contentAssistSubjectControl;
 	}
 
-	/*
-	 * @see IContentAssistTipCloser#isContextInformationValid(int)
-	 */
+	@Override
 	public boolean isContextInformationValid(int offset) {
 		if (fContentAssistSubjectControl != null && fProcessor instanceof ISubjectControlContentAssistProcessor) {
 			IContextInformation[] infos= ((ISubjectControlContentAssistProcessor)fProcessor).computeContextInformation(fContentAssistSubjectControl, offset);

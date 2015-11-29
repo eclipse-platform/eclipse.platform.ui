@@ -23,34 +23,44 @@ public class Highlighter {
 
 	public Highlighter() {
 		fBufferListener= new IFileBufferListener() {
+			@Override
 			public void bufferCreated(IFileBuffer buffer) {
 			}
 
+			@Override
 			public void bufferDisposed(IFileBuffer buffer) {
 			}
 
+			@Override
 			public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 			}
 
+			@Override
 			public void bufferContentReplaced(IFileBuffer buffer) {
 				handleContentReplaced(buffer);
 			}
 
+			@Override
 			public void stateChanging(IFileBuffer buffer) {
 			}
 
+			@Override
 			public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
 			}
 
+			@Override
 			public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
 			}
 
+			@Override
 			public void underlyingFileMoved(IFileBuffer buffer, IPath path) {
 			}
 
+			@Override
 			public void underlyingFileDeleted(IFileBuffer buffer) {
 			}
 
+			@Override
 			public void stateChangeFailed(IFileBuffer buffer) {
 			}
 		};

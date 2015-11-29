@@ -44,12 +44,16 @@ public class SearchViewManager {
 	public SearchViewManager(QueryManager queryManager) {
 		fNewQueryListener= new IQueryListener() {
 
+			@Override
 			public void queryAdded(ISearchQuery query) {
 				showNewSearchQuery(query);
 			}
 
+			@Override
 			public void queryRemoved(ISearchQuery query) {}
+			@Override
 			public void queryStarting(ISearchQuery query) {}
+			@Override
 			public void queryFinished(ISearchQuery query) {}
 
 		};

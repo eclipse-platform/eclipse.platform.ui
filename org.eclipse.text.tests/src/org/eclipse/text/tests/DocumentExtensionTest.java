@@ -38,10 +38,12 @@ public class DocumentExtensionTest extends TestCase {
 		private int fInvocations= 0;
 		private boolean fIsPostNotificationSupported= true;
 
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			++ fInvocations;
 		}
 
+		@Override
 		public void documentChanged(DocumentEvent e) {
 
 			if (fInvocations > fRepetitions) {
@@ -87,9 +89,7 @@ public class DocumentExtensionTest extends TestCase {
 		public Replace() {
 		}
 
-		/*
-		 * @see IReplace#perform(IDocument, IDocumentListener)
-		 */
+		@Override
 		public void perform(IDocument document, IDocumentListener owner) {
 			try {
 				document.replace(fOffset, fLength, fText);
@@ -130,6 +130,7 @@ public class DocumentExtensionTest extends TestCase {
 			fTrace2= t2;
 		}
 
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent received) {
 			if (!fPopped) {
 				fPopped= true;
@@ -141,6 +142,7 @@ public class DocumentExtensionTest extends TestCase {
 			assertTrue(e.isSameAs(received));
 		}
 
+		@Override
 		public void documentChanged(DocumentEvent received) {
 			TestDocumentEvent e= (received.getDocument() == fDocument1 ? fExpected1 : fExpected2);
 			assertTrue(e.isSameAs(received));
@@ -161,6 +163,7 @@ public class DocumentExtensionTest extends TestCase {
 
 	public void testAppend() {
 		Listener listener= new Listener() {
+			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
 				if (t != null && t.length() > 0) {
@@ -190,6 +193,7 @@ public class DocumentExtensionTest extends TestCase {
 
 	public void testRemove() {
 		Listener listener= new Listener() {
+			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
 				if (t == null || t.length() == 0) {
@@ -219,6 +223,7 @@ public class DocumentExtensionTest extends TestCase {
 
 	public void testRepeatedAppend() {
 		Listener listener= new Listener() {
+			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
 				if (t != null && t.length() > 0) {
@@ -286,6 +291,7 @@ public class DocumentExtensionTest extends TestCase {
 		childDocument.addDocumentListener(l);
 
 		Listener modifier= new Listener() {
+			@Override
 			protected Replace getReplace(DocumentEvent e) {
 				String t= e.getText();
 				if (t != null && t.length() > 0) {

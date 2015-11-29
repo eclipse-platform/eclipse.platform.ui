@@ -32,10 +32,12 @@ public class WordRuleTest extends TestCase {
 
 
 	private static class SimpleWordDetector implements IWordDetector {
+		@Override
 		public boolean isWordStart(char c) {
 			return !Character.isWhitespace(c);
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return !Character.isWhitespace(c);
 		}
@@ -48,10 +50,12 @@ public class WordRuleTest extends TestCase {
 	public void testBug163116() throws Exception {
 		IWordDetector detector= new IWordDetector() {
 
+			@Override
 			public boolean isWordPart(char c) {
 				return true;
 			}
 
+			@Override
 			public boolean isWordStart(char c) {
 				return true;
 			}

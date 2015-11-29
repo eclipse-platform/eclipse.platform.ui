@@ -65,18 +65,14 @@ public class MultiTextEditWithProgress extends MultiTextEdit {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.text.edits.TextEdit#childDocumentUpdated()
-	 */
+	@Override
 	protected void childDocumentUpdated() {
 		if (fProgressMonitor.isCanceled())
 			throw new OperationCanceledException();
 		fProgressMonitor.worked(1);
 	}
 
-	/*
-	 * @see org.eclipse.text.edits.TextEdit#childRegionUpdated()
-	 */
+	@Override
 	protected void childRegionUpdated() {
 		if (fProgressMonitor.isCanceled())
 			throw new OperationCanceledException();

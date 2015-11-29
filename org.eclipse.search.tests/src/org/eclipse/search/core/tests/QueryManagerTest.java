@@ -45,21 +45,19 @@ public class QueryManagerTest extends TestCase {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };
 		IQueryListener l= new IQueryListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.search.ui.IQueryListener#queryAdded(org.eclipse.search.ui.ISearchQuery)
-			 */
+			@Override
 			public void queryAdded(ISearchQuery query) {
 				wasAdded[0]= true;
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.search.ui.IQueryListener#queryRemoved(org.eclipse.search.ui.ISearchQuery)
-			 */
+			@Override
 			public void queryRemoved(ISearchQuery query) {
 				wasRemoved[0]= true;
 			}
+			@Override
 			public void queryStarting(ISearchQuery query) {
 				// not interested
 			}
+			@Override
 			public void queryFinished(ISearchQuery query) {
 				// not interested
 			}

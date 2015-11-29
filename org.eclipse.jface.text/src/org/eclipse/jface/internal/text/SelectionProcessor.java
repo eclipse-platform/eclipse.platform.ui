@@ -161,26 +161,31 @@ public final class SelectionProcessor {
 	private final Implementation NULL_IMPLEMENTATION= new Implementation();
 
 	private final Implementation RANGE_IMPLEMENTATION= new Implementation() {
+		@Override
 		TextEdit replace(ISelection selection, String replacement) {
 			ITextSelection ts= (ITextSelection)selection;
 			return new ReplaceEdit(ts.getOffset(), ts.getLength(), replacement);
 		}
 
+		@Override
 		String getText(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getText();
 		}
 
+		@Override
 		boolean isEmpty(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getLength() <= 0;
 		}
 
+		@Override
 		boolean isMultiline(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			return fDocument.getLineOfOffset(ts.getOffset()) < fDocument.getLineOfOffset(ts.getOffset() + ts.getLength());
 		}
 
+		@Override
 		TextEdit delete(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
 			if (isEmpty(selection))
@@ -188,6 +193,7 @@ public final class SelectionProcessor {
 			return new DeleteEdit(ts.getOffset(), ts.getLength());
 		}
 
+		@Override
 		TextEdit backspace(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			if (isEmpty(selection))
@@ -195,6 +201,7 @@ public final class SelectionProcessor {
 			return new DeleteEdit(ts.getOffset(), ts.getLength());
 		}
 
+		@Override
 		ISelection makeEmpty(ISelection selection, boolean beginning) {
 			ITextSelection ts= (ITextSelection)selection;
 			return beginning ? 
@@ -202,16 +209,19 @@ public final class SelectionProcessor {
 					: new TextSelection(fDocument, ts.getOffset() + ts.getLength(), 0);
 		}
 
+		@Override
 		IRegion[] getRanges(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
 			return new IRegion[] { new Region(ts.getOffset(), ts.getLength()) };
 		}
 		
+		@Override
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getEndLine() - ts.getStartLine() + 1;
 		}
 		
+		@Override
 		ISelection makeReplaceSelection(ISelection selection, String replacement) {
 			ITextSelection ts= (ITextSelection)selection;
 			return new TextSelection(fDocument, ts.getOffset() + replacement.length(), 0);
@@ -284,10 +294,12 @@ public final class SelectionProcessor {
 			}
 		}
 
+		@Override
 		TextEdit replace(ISelection selection, String replacement) throws BadLocationException {
 			return replace(selection, replacement, false);
 		}
 
+		@Override
 		String getText(ISelection selection) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
 			StringBuffer buf= new StringBuffer(cts.getLength());
@@ -307,6 +319,7 @@ public final class SelectionProcessor {
 			return buf.toString();
 		}
 
+		@Override
 		boolean isEmpty(ISelection selection) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
 			int startLine= cts.getStartLine();
@@ -318,11 +331,13 @@ public final class SelectionProcessor {
 			return visualEndColumn == visualStartColumn;
 		}
 
+		@Override
 		boolean isMultiline(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getEndLine() > ts.getStartLine();
 		}
 
+		@Override
 		TextEdit delete(ISelection selection) throws BadLocationException {
 			if (isEmpty(selection)) {
 				IBlockTextSelection cts= (IBlockTextSelection)selection;
@@ -331,6 +346,7 @@ public final class SelectionProcessor {
 			return replace(selection, "", true); //$NON-NLS-1$
 		}
 
+		@Override
 		TextEdit backspace(ISelection selection) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
 			if (isEmpty(selection) && cts.getStartColumn() > 0) {
@@ -339,6 +355,7 @@ public final class SelectionProcessor {
 			return replace(selection, ""); //$NON-NLS-1$
 		}
 
+		@Override
 		ISelection makeEmpty(ISelection selection, boolean beginning) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
 			int startLine, startColumn, endLine, endColumn;
@@ -356,6 +373,7 @@ public final class SelectionProcessor {
 			return new BlockTextSelection(fDocument, startLine, startColumn, endLine, endColumn, fTabWidth);
 		}
 		
+		@Override
 		ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
 			IBlockTextSelection bts= (IBlockTextSelection)selection;
 			String[] delimiters= fDocument.getLegalLineDelimiters();
@@ -373,6 +391,7 @@ public final class SelectionProcessor {
 			return new BlockTextSelection(fDocument, startLine, column, endLine, endColumn, fTabWidth);
 		}
 
+		@Override
 		IRegion[] getRanges(ISelection selection) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
 			final int startLine= cts.getStartLine();
@@ -394,6 +413,7 @@ public final class SelectionProcessor {
 			return ranges;
 		}
 		
+		@Override
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getEndLine() - ts.getStartLine() + 1;

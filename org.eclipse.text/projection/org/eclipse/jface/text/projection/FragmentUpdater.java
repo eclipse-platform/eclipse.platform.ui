@@ -41,9 +41,7 @@ class FragmentUpdater extends DefaultPositionUpdater {
 		super(fragmentCategory);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void update(DocumentEvent event) {
 
 		try {
@@ -72,9 +70,7 @@ class FragmentUpdater extends DefaultPositionUpdater {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.DefaultPositionUpdater#adaptToInsert()
-	 */
+	@Override
 	protected void adaptToInsert() {
 		int myStart= fPosition.offset;
 		int myEnd= Math.max(myStart, fPosition.offset + fPosition.length - (fIsLast || isAffectingReplace() ? 0 : 1));

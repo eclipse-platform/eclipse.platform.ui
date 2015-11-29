@@ -29,6 +29,7 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 		/*
 		 * @see org.eclipse.ui.editors.text.ILocationProvider#getLocation(java.lang.Object)
 		 */
+		@Override
 		public IPath getPath(Object element) {
 			if (element instanceof IFileEditorInput) {
 				IFileEditorInput input= (IFileEditorInput) element;
@@ -44,9 +45,7 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 	/** The provided location provider */
 	private ILocationProvider fLocationProvider= new LocationProvider();
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (ILocationProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IFile)
@@ -55,9 +54,7 @@ public class FileEditorInputAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
+	@Override
 	public Class[] getAdapterList() {
 		return ADAPTER_LIST;
 	}

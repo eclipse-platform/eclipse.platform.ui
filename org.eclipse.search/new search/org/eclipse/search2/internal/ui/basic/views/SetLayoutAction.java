@@ -27,6 +27,7 @@ public class SetLayoutAction extends Action {
 		fLayout= layout;
 	}
 
+	@Override
 	public void run() {
 		fPage.setLayout(fLayout);
 	}

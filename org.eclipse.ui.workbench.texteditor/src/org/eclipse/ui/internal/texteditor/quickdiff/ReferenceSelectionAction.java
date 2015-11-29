@@ -74,9 +74,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		return fProvider;
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 
 		DocumentLineDiffer differ= getDiffer(true); // create if needed, so the user does not have to toggle display when he selects a reference
@@ -98,9 +96,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		/* two things happen here:
 		 * 1: checked state setting - if a provider is already installed, and its id matches

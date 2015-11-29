@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
  * @noextend This class is not intended to be subclassed by clients.
  * @deprecated As of 3.5, replaced by {@link org.eclipse.ui.actions.ActionFactory#SAVE}
  */
+@Deprecated
 public class SaveAction extends TextEditorAction {
 
 	/**
@@ -41,16 +42,12 @@ public class SaveAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		getTextEditor().getSite().getPage().saveEditor(getTextEditor(), false);
 	}
 
-	/*
-	 * @see TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(getTextEditor().isDirty());
 	}

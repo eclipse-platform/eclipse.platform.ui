@@ -41,16 +41,12 @@ public class RevertToSavedAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		getTextEditor().doRevertToSaved();
 	}
 
-	/*
-	 * @see TextEditorAction#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(getTextEditor().isDirty());
 	}

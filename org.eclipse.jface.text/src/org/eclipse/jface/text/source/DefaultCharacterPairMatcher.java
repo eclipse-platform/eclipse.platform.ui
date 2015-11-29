@@ -94,7 +94,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		this(chars, IDocumentExtension3.DEFAULT_PARTITIONING);
 	}
 
-	/* @see ICharacterPairMatcher#match(IDocument, int) */
+	@Override
 	public IRegion match(IDocument doc, int offset) {
 		if (doc == null || offset < 0 || offset > doc.getLength()) return null;
 		try {
@@ -109,6 +109,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 *      int, int)
 	 * @since 3.8
 	 */
+	@Override
 	public IRegion match(IDocument document, int offset, int length) {
 		if (document == null || offset < 0 || offset > document.getLength() || Math.abs(length) > 1)
 			return null;
@@ -133,6 +134,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 *      int, int)
 	 * @since 3.8
 	 */
+	@Override
 	public IRegion findEnclosingPeerCharacters(IDocument document, int offset, int length) {
 		if (document == null || offset < 0 || offset > document.getLength())
 			return null;
@@ -163,6 +165,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 * @see org.eclipse.jface.text.source.ICharacterPairMatcherExtension#isMatchedChar(char)
 	 * @since 3.8
 	 */
+	@Override
 	public boolean isMatchedChar(char ch) {
 		return fPairs.contains(ch);
 	}
@@ -172,6 +175,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 *      org.eclipse.jface.text.IDocument, int)
 	 * @since 3.8
 	 */
+	@Override
 	public boolean isMatchedChar(char ch, IDocument document, int offset) {
 		return isMatchedChar(ch);
 	}
@@ -181,6 +185,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 	 *      org.eclipse.jface.text.IRegion, org.eclipse.jface.text.IRegion)
 	 * @since 3.8
 	 */
+	@Override
 	public boolean isRecomputationOfEnclosingPairRequired(IDocument document, IRegion currentSelection, IRegion previousSelection) {
 		int previousStartOffset= previousSelection.getOffset();
 		int currentStartOffset= currentSelection.getOffset();
@@ -445,15 +450,15 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher, IChar
 		return -1;
 	}
 
-	/* @see ICharacterPairMatcher#getAnchor() */
+	@Override
 	public int getAnchor() {
 		return fAnchor;
 	}
 
-	/* @see ICharacterPairMatcher#dispose() */
+	@Override
 	public void dispose() { }
 
-	/* @see ICharacterPairMatcher#clear() */
+	@Override
 	public void clear() {
 		fAnchor= -1;
 	}

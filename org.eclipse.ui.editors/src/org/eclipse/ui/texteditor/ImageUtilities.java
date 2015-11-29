@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Canvas;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class ImageUtilities {
 
 	/**
@@ -35,6 +36,7 @@ public class ImageUtilities {
 	 * @param valign the vertical alignment of the image to be drawn
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities#drawImage(Image, GC, Canvas, Rectangle, int, int)}
 	 */
+	@Deprecated
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
 		org.eclipse.jface.text.source.ImageUtilities.drawImage(image, gc, canvas, r, halign, valign);
 	}
@@ -49,6 +51,7 @@ public class ImageUtilities {
 	 * @param align the alignment of the image to be drawn
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities#drawImage(Image, GC, Canvas, Rectangle, int)}
 	 */
+	@Deprecated
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
 		org.eclipse.jface.text.source.ImageUtilities.drawImage(image, gc, canvas, r, align);
 	}

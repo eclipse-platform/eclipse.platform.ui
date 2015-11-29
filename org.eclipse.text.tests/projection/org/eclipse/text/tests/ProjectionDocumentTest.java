@@ -60,18 +60,14 @@ public class ProjectionDocumentTest extends TestCase {
 			return super.adaptProjectionToMasterChange(masterEvent);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.projection.ProjectionDocument#isUpdating()
-		 */
+		@Override
 		protected boolean isUpdating() {
 			return super.isUpdating() || isUpdating;
 		}
 	}
 
 	static private class ProjectionDocumentManager extends org.eclipse.jface.text.projection.ProjectionDocumentManager {
-		/*
-		 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		protected org.eclipse.jface.text.projection.ProjectionDocument createProjectionDocument(IDocument master) {
 			return new ProjectionDocument(master);
 		}
@@ -112,6 +108,7 @@ public class ProjectionDocumentTest extends TestCase {
 			"99999999999999999999";
 	}
 
+	@Override
 	protected void setUp() {
 		fMasterDocument= new Document();
 		fMasterDocument.set(getOriginalMasterContents());
@@ -119,6 +116,7 @@ public class ProjectionDocumentTest extends TestCase {
 		fSlaveDocument= (ProjectionDocument) fSlaveDocumentManager.createSlaveDocument(fMasterDocument);
 	}
 
+	@Override
 	protected void tearDown () {
 		fSlaveDocumentManager.freeSlaveDocument(fSlaveDocument);
 		fSlaveDocument= null;
@@ -1581,7 +1579,9 @@ public class ProjectionDocumentTest extends TestCase {
 		final List receivedEvents= new ArrayList();
 
 		IDocumentListener listener= new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				receivedEvents.add(event);
 			}
@@ -1609,7 +1609,9 @@ public class ProjectionDocumentTest extends TestCase {
 		final List receivedEvents= new ArrayList();
 
 		IDocumentListener listener= new IDocumentListener() {
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {}
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				receivedEvents.add(event);
 			}

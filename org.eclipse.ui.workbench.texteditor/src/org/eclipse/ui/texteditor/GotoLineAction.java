@@ -62,9 +62,7 @@ public class GotoLineAction extends TextEditorAction {
 	 */
 	class NumberValidator implements IInputValidator {
 
-		/*
-		 * @see IInputValidator#isValid(String)
-		 */
+		@Override
 		public String isValid(String input) {
 
 			if (input == null || input.length() == 0)
@@ -97,10 +95,7 @@ public class GotoLineAction extends TextEditorAction {
 			super(parent, title, message, initialValue, validator);
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-		 * @since 3.2
-		 */
+		@Override
 		protected IDialogSettings getDialogBoundsSettings() {
 			String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 			IDialogSettings settings= TextEditorPlugin.getDefault().getDialogSettings();
@@ -110,10 +105,7 @@ public class GotoLineAction extends TextEditorAction {
 			return section;
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
-		 * @since 3.2
-		 */
+		@Override
 		protected int getDialogBoundsStrategy() {
 			return DIALOG_PERSISTLOCATION;
 		}
@@ -183,9 +175,7 @@ public class GotoLineAction extends TextEditorAction {
 		}
 	}
 
-	/*
-	 * @see Action#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 

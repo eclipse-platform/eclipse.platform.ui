@@ -61,9 +61,7 @@ public class JavaEditor extends TextEditor {
 			return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
 		}
 
-		/*
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
+		@Override
 		public void run() {
 			ITextEditor editor= getTextEditor();
 			ISelection selection= editor.getSelectionProvider().getSelection();
@@ -107,6 +105,7 @@ public class JavaEditor extends TextEditor {
 	 * <code>AbstractTextEditor</code> method extend the
 	 * actions to add those specific to the receiver
 	 */
+	@Override
 	protected void createActions() {
 		super.createActions();
 
@@ -118,6 +117,7 @@ public class JavaEditor extends TextEditor {
 	 * <code>AbstractTextEditor</code> method performs any extra
 	 * disposal actions required by the java editor.
 	 */
+	@Override
 	public void dispose() {
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
@@ -128,6 +128,7 @@ public class JavaEditor extends TextEditor {
 	 * <code>AbstractTextEditor</code> method performs any extra
 	 * revert behavior required by the java editor.
 	 */
+	@Override
 	public void doRevertToSaved() {
 		super.doRevertToSaved();
 		if (fOutlinePage != null)
@@ -140,6 +141,7 @@ public class JavaEditor extends TextEditor {
 	 *
 	 * @param monitor the progress monitor
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
 		if (fOutlinePage != null)
@@ -150,6 +152,7 @@ public class JavaEditor extends TextEditor {
 	 * <code>AbstractTextEditor</code> method performs any extra
 	 * save as behavior required by the java editor.
 	 */
+	@Override
 	public void doSaveAs() {
 		super.doSaveAs();
 		if (fOutlinePage != null)
@@ -163,15 +166,14 @@ public class JavaEditor extends TextEditor {
 	 * @param input the editor input
 	 * @throws CoreException in case the input can not be set
 	 */
+	@Override
 	public void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(input);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		addAction(menu, "ContentAssistProposal"); //$NON-NLS-1$
@@ -187,6 +189,7 @@ public class JavaEditor extends TextEditor {
 	 * @param required the required type
 	 * @return an adapter for the required type or <code>null</code>
 	 */
+	@Override
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
 			if (fOutlinePage == null) {
@@ -206,17 +209,13 @@ public class JavaEditor extends TextEditor {
 		return super.getAdapter(required);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on AbstractTextEditor
-	 */
+	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
 		setSourceViewerConfiguration(new JavaSourceViewerConfiguration());
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 
 		fAnnotationAccess= createAnnotationAccess();
@@ -229,9 +228,7 @@ public class JavaEditor extends TextEditor {
 		return viewer;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();
@@ -242,9 +239,7 @@ public class JavaEditor extends TextEditor {
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
-	 */
+	@Override
 	protected void adjustHighlightRange(int offset, int length) {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer instanceof ITextViewerExtension5) {

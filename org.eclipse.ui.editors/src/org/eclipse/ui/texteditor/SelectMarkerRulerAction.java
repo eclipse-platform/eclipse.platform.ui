@@ -101,20 +101,17 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param editor the editor
 	 * @deprecated As of 3.0, replaced by {@link #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)}
 	 */
+	@Deprecated
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {
 		this(bundle, prefix, editor, ruler);
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		setEnabled(hasMarkers());
 	}
 
-	/*
-	 * @see Action#run()
-	 */
+	@Override
 	public void run() {
 
 		IMarker marker= chooseMarker(getMarkers());

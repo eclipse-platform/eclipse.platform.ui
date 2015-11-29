@@ -25,36 +25,29 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  */
 public final class LinkedModePreferencePage extends AbstractConfigurationBlockPreferencePage {
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
-	 */
+	@Override
 	protected String getHelpId() {
 		return ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
-	 */
+	@Override
 	protected void setDescription() {
 		String description= TextEditorMessages.LinkedModeConfigurationBlock_linking_title;
 		setDescription(description);
 	}
 
-	/*
-	 * @see org.org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
-	 */
+	@Override
 	protected void setPreferenceStore() {
 		setPreferenceStore(EditorsUI.getPreferenceStore());
 	}
 
 
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		return null; // no description for new look.
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
-	 */
+	@Override
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new LinkedModeConfigurationBlock(overlayPreferenceStore);
 	}

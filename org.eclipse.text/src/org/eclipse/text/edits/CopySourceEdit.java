@@ -62,25 +62,31 @@ public final class CopySourceEdit extends TextEdit {
 			fParents.add(fCurrentParent);
 			fCurrentParent= copy;
 		}
+		@Override
 		public void postVisit(TextEdit edit) {
 			fCurrentParent= (TextEdit)fParents.remove(fParents.size() - 1);
 		}
+		@Override
 		public boolean visitNode(TextEdit edit) {
 			manageCopy(edit.doCopy());
 			return true;
 		}
+		@Override
 		public boolean visit(CopySourceEdit edit) {
 			manageCopy(new RangeMarker(edit.getOffset(), edit.getLength()));
 			return true;
 		}
+		@Override
 		public boolean visit(CopyTargetEdit edit) {
 			manageCopy(new InsertEdit(edit.getOffset(), edit.getSourceEdit().getContent()));
 			return true;
 		}
+		@Override
 		public boolean visit(MoveSourceEdit edit) {
 			manageCopy(new DeleteEdit(edit.getOffset(), edit.getLength()));
 			return true;
 		}
+		@Override
 		public boolean visit(MoveTargetEdit edit) {
 			manageCopy(new InsertEdit(edit.getOffset(), edit.getSourceEdit().getContent()));
 			return true;
@@ -167,6 +173,7 @@ public final class CopySourceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#doCopy
 	 */
+	@Override
 	protected TextEdit doCopy() {
 		return new CopySourceEdit(this);
 	}
@@ -174,6 +181,7 @@ public final class CopySourceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#accept0
 	 */
+	@Override
 	protected void accept0(TextEditVisitor visitor) {
 		boolean visitChildren= visitor.visit(this);
 		if (visitChildren) {
@@ -199,6 +207,7 @@ public final class CopySourceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#postProcessCopy
 	 */
+	@Override
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fTarget != null) {
 			CopySourceEdit source= (CopySourceEdit)copier.getCopy(this);
@@ -210,6 +219,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- consistency check ----------------------------------------------------
 
+	@Override
 	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
@@ -234,6 +244,7 @@ public final class CopySourceEdit extends TextEdit {
 		return result;
 	}
 
+	@Override
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
@@ -247,6 +258,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- source computation -------------------------------------------------------
 
+	@Override
 	void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 		// always perform source computation independent of processor.considerEdit
 		// The target might need the source and the source is computed in a
@@ -254,6 +266,7 @@ public final class CopySourceEdit extends TextEdit {
 		performSourceComputation(processor, document);
 	}
 
+	@Override
 	void performSourceComputation(TextEditProcessor processor, IDocument document) {
 		try {
 			MultiTextEdit root= new MultiTextEdit(getOffset(), getLength());
@@ -300,6 +313,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	//---- document updating ----------------------------------------------------------------
 
+	@Override
 	int performDocumentUpdating(IDocument document) throws BadLocationException {
 		fDelta= 0;
 		return fDelta;
@@ -310,6 +324,7 @@ public final class CopySourceEdit extends TextEdit {
 	/*
 	 * @see TextEdit#deleteChildren
 	 */
+	@Override
 	boolean deleteChildren() {
 		return false;
 	}

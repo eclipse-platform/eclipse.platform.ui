@@ -105,6 +105,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 
 			// sort by start line
 			Collections.sort(ranges, new Comparator() {
+				@Override
 				public int compare(Object o1, Object o2) {
 					RevisionRange r1= (RevisionRange) o1;
 					RevisionRange r2= (RevisionRange) o2;
@@ -133,10 +134,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 			((Revision) revisions.next()).applyDiff(hunks);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
-	 * @since 3.3
-	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return fHoverControlCreator;
 	}
@@ -146,6 +144,7 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	 * @return the information control creator or <code>null</code>
 	 * @since 3.3
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return fInformationPresenterControlCreator;
 	}

@@ -48,12 +48,14 @@ import org.eclipse.jface.text.TypedRegion;
  * @since 2.0
  * @deprecated As of 3.1, replaced by {@link org.eclipse.jface.text.rules.FastPartitioner} instead
  */
+@Deprecated
 public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IDocumentPartitionerExtension2, IDocumentPartitionerExtension3 {
 
 	/**
 	 * The position category this partitioner uses to store the document's partitioning information.
 	 * @deprecated As of 3.0, use <code>getManagingPositionCategories()</code> instead.
 	 */
+	@Deprecated
 	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
 
 
@@ -103,25 +105,17 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		fPositionUpdater= new DefaultPositionUpdater(fPositionCategory);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getManagingPositionCategories()
-	 * @since 3.0
-	 */
+	@Override
 	public String[] getManagingPositionCategories() {
 		return new String[] { fPositionCategory };
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void connect(IDocument document) {
 		connect(document, false);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#connect(org.eclipse.jface.text.IDocument, boolean)
-	 * @since 3.1
-	 */
+	@Override
 	public void connect(IDocument document, boolean delayInitialization) {
 		Assert.isNotNull(document);
 		Assert.isTrue(!document.containsPositionCategory(fPositionCategory));
@@ -169,9 +163,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
-	/*
-	 * @see IDocumentPartitioner#disconnect()
-	 */
+	@Override
 	public void disconnect() {
 
 		Assert.isTrue(fDocument.containsPositionCategory(fPositionCategory));
@@ -183,9 +175,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
-	/*
-	 * @see IDocumentPartitioner#documentAboutToBeChanged(DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent e) {
 		if (fIsInitialized) {
 
@@ -198,9 +188,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
-	/*
-	 * @see IDocumentPartitioner#documentChanged(DocumentEvent)
-	 */
+	@Override
 	public boolean documentChanged(DocumentEvent e) {
 		if (fIsInitialized) {
 			IRegion region= documentChanged2(e);
@@ -262,10 +250,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		}
 	}
 
-	/*
-	 * @see IDocumentPartitionerExtension#documentChanged2(DocumentEvent)
-	 * @since 2.0
-	 */
+	@Override
 	public IRegion documentChanged2(DocumentEvent e) {
 
 		if (!fIsInitialized)
@@ -428,9 +413,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 
 
-	/*
-	 * @see IDocumentPartitioner#getContentType(int)
-	 */
+	@Override
 	public String getContentType(int offset) {
 		checkInitialization();
 
@@ -441,9 +424,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return IDocument.DEFAULT_CONTENT_TYPE;
 	}
 
-	/*
-	 * @see IDocumentPartitioner#getPartition(int)
-	 */
+	@Override
 	public ITypedRegion getPartition(int offset) {
 		checkInitialization();
 
@@ -488,16 +469,12 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return new TypedRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
-	/*
-	 * @see IDocumentPartitioner#computePartitioning(int, int)
-	 */
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		return computePartitioning(offset, length, false);
 	}
 
-	/*
-	 * @see IDocumentPartitioner#getLegalContentTypes()
-	 */
+	@Override
 	public String[] getLegalContentTypes() {
 		return TextUtilities.copy(fLegalContentTypes);
 	}
@@ -536,18 +513,12 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
     /* zero-length partition support */
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getContentType(int)
-	 * @since 3.0
-	 */
+	@Override
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		return getPartition(offset, preferOpenPartitions).getType();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getPartition(int)
-	 * @since 3.0
-	 */
+	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		ITypedRegion region= getPartition(offset);
 		if (preferOpenPartitions) {
@@ -563,10 +534,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
         return region;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computePartitioning(int, int, boolean)
-	 * @since 3.0
-	 */
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		checkInitialization();
 		List list= new ArrayList();
@@ -686,29 +654,20 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 		return j;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
-	 * @since 3.1
-	 */
+	@Override
 	public void startRewriteSession(DocumentRewriteSession session) throws IllegalStateException {
 		if (fActiveRewriteSession != null)
 			throw new IllegalStateException();
 		fActiveRewriteSession= session;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
-	 * @since 3.1
-	 */
+	@Override
 	public void stopRewriteSession(DocumentRewriteSession session) {
 		if (fActiveRewriteSession == session)
 			flushRewriteSession();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension3#getActiveRewriteSession()
-	 * @since 3.1
-	 */
+	@Override
 	public DocumentRewriteSession getActiveRewriteSession() {
 		return fActiveRewriteSession;
 	}

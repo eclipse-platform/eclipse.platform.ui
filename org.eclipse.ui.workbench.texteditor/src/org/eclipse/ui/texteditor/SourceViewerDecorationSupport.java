@@ -94,9 +94,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private static final class IBeamStrategy implements IDrawingStrategy {
 
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 */
+		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
 			if (gc != null) {
 
@@ -193,9 +191,7 @@ public class SourceViewerDecorationSupport {
 	 * @see IPropertyChangeListener
 	 */
 	private class FontPropertyChangeListener implements IPropertyChangeListener {
-		/*
-		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (fMarginPainter != null && fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
 				fMarginPainter.initialize();
@@ -279,6 +275,7 @@ public class SourceViewerDecorationSupport {
 		fPreferenceStore= store;
 		if (fPreferenceStore != null) {
 			fPropertyChangeListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePreferenceStoreChanged(event);
 				}

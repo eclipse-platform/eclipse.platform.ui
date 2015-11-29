@@ -31,17 +31,20 @@ import org.eclipse.ui.dialogs.ListDialog;
  * This action will retarget to the active view.
  * @deprecated old search
  */
+@Deprecated
 class ShowSearchesAction extends Action {
 
 	private static final class SearchesLabelProvider extends LabelProvider {
 
 		private ArrayList fImages= new ArrayList();
 
+		@Override
 		public String getText(Object element) {
 			if (!(element instanceof ShowSearchAction))
 				return ""; //$NON-NLS-1$
 			return ((ShowSearchAction)element).getText();
 		}
+		@Override
 		public Image getImage(Object element) {
 			if (!(element instanceof ShowSearchAction))
 				return null;
@@ -56,6 +59,7 @@ class ShowSearchesAction extends Action {
 			return image;
 		}
 
+		@Override
 		public void dispose() {
 			Iterator iter= fImages.iterator();
 			while (iter.hasNext())
@@ -75,6 +79,7 @@ class ShowSearchesAction extends Action {
 	/*
 	 * Overrides method from Action
 	 */
+	@Override
 	public void run() {
 		run(false);
 	}

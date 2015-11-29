@@ -114,10 +114,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 	private final IEditingSupport fFocusEditingSupport= new IEditingSupport() {
 
+		@Override
 		public boolean isOriginator(DocumentEvent event, IRegion focus) {
 			return false;
 		}
 
+		@Override
 		public boolean ownsFocusShell() {
 			return Helper2.okToUse(fProposalShell) && fProposalShell.isFocusControl()
 					|| Helper2.okToUse(fProposalTable) && fProposalTable.isFocusControl();
@@ -126,6 +128,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	};
 	private final IEditingSupport fModificationEditingSupport= new IEditingSupport() {
 
+		@Override
 		public boolean isOriginator(DocumentEvent event, IRegion focus) {
 			if (fViewer != null) {
 				Point selection= fViewer.getSelectedRange();
@@ -134,6 +137,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			return false;
 		}
 
+		@Override
 		public boolean ownsFocusShell() {
 			return false;
 		}
@@ -166,6 +170,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		if (fKeyListener == null) {
 			fKeyListener= new KeyListener() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					if (!Helper2.okToUse(fProposalShell))
 						return;
@@ -178,6 +183,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 					}
 				}
 
+				@Override
 				public void keyReleased(KeyEvent e) {
 					if (!Helper2.okToUse(fProposalShell))
 						return;
@@ -294,8 +300,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		if (fAdditionalInfoController != null) {
 			fProposalShell.addControlListener(new ControlListener() {
 
+				@Override
 				public void controlMoved(ControlEvent e) {}
 
+				@Override
 				public void controlResized(ControlEvent e) {
 					// resets the cached resize constraints
 					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
@@ -313,8 +321,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				selectProposalWithMask(e.stateMask);
 			}
@@ -323,6 +333,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		fPopupCloser.install(fContentAssistant, fProposalTable);
 
 		fProposalShell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				unregister(); // but don't dispose the shell, since we're being called from its disposal event!
 			}
@@ -660,11 +671,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 			if (fDocumentListener == null)
 				fDocumentListener=  new IDocumentListener()  {
+					@Override
 					public void documentAboutToBeChanged(DocumentEvent event) {
 						if (!fInserting)
 							fDocumentEvents.add(event);
 					}
 
+					@Override
 					public void documentChanged(DocumentEvent event) {
 						if (!fInserting)
 							filterProposals();
@@ -695,9 +708,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		}
 	}
 
-		/*
-		 * @see IContentAssistListener#verifyKey(VerifyEvent)
-		 */
+		@Override
 		public boolean verifyKey(VerifyEvent e) {
 			if (!Helper2.okToUse(fProposalShell))
 				return true;
@@ -842,9 +853,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		return false;
 	}
 
-	/*
-	 * @see IEventConsumer#processEvent(VerifyEvent)
-	 */
+	@Override
 	public void processEvent(VerifyEvent e) {
 	}
 
@@ -856,6 +865,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 		Control control= fViewer.getTextWidget();
 		control.getDisplay().asyncExec(new Runnable() {
 			long fCounter= fInvocationCounter;
+			@Override
 			public void run() {
 
 				if (fCounter != fInvocationCounter)

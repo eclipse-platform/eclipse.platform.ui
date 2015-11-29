@@ -35,9 +35,7 @@ public class RefreshEditorAction extends RefreshAction implements IUpdate {
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
+	@Override
 	public void update() {
 		final IResource resource= fTextEditor == null ? null : (IResource)fTextEditor.getEditorInput().getAdapter(IResource.class);
 		if (resource != null)

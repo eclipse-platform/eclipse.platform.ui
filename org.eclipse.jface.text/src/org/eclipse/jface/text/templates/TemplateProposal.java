@@ -132,6 +132,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @deprecated This method is no longer called by the framework and clients should overwrite
 	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */
+	@Deprecated
+	@Override
 	public final void apply(IDocument document) {
 		// not called anymore
 	}
@@ -146,6 +148,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @param stateMask {@inheritDoc}
 	 * @param offset {@inheritDoc}
 	 */
+	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 
 		IDocument document= viewer.getDocument();
@@ -245,14 +248,14 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 			model.addLinkingListener(new ILinkedModeListener() {
 
-				/*
-				 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
-				 */
+				@Override
 				public void left(LinkedModeModel environment, int flags) {
 					ensurePositionCategoryRemoved(document);
 				}
 
+				@Override
 				public void suspend(LinkedModeModel environment) {}
+				@Override
 				public void resume(LinkedModeModel environment, int flags) {}
 			});
 		}
@@ -323,16 +326,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return end;
 	}
 
-	/*
-	 * @see ICompletionProposal#getSelection(IDocument)
-	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fSelectedRegion.getOffset(), fSelectedRegion.getLength());
 	}
 
-	/*
-	 * @see ICompletionProposal#getAdditionalProposalInfo()
-	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 	    try {
 		    fContext.setReadOnly(true);
@@ -350,9 +349,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		}
 	}
 
-	/*
-	 * @see ICompletionProposal#getDisplayString()
-	 */
+	@Override
 	public String getDisplayString() {
 		if (fDisplayString == null) {
 			String[] arguments= new String[] { fTemplate.getName(), fTemplate.getDescription() };
@@ -361,16 +358,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return fDisplayString;
 	}
 
-	/*
-	 * @see ICompletionProposal#getImage()
-	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * @see ICompletionProposal#getContextInformation()
-	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
@@ -388,28 +381,20 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return fRelevance;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
-	 */
+	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		return fInformationControlCreator;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
-	 */
+	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void unselected(ITextViewer viewer) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {
 			int replaceOffset= getReplaceOffset();
@@ -423,16 +408,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionText(org.eclipse.jface.text.IDocument, int)
-	 */
+	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return fTemplate.getName();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getPrefixCompletionStart(org.eclipse.jface.text.IDocument, int)
-	 */
+	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplaceOffset();
 	}
@@ -443,29 +424,25 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @deprecated This method is no longer called by the framework and clients should overwrite
 	 *             {@link #apply(ITextViewer, char, int, int)} instead
 	 */
+	@Deprecated
+	@Override
 	public void apply(IDocument document, char trigger, int offset) {
 		// not called any longer
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#isValidFor(org.eclipse.jface.text.IDocument, int)
-	 */
+	@Override
 	public boolean isValidFor(IDocument document, int offset) {
 		// not called any longer
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getTriggerCharacters()
-	 */
+	@Override
 	public char[] getTriggerCharacters() {
 		// no triggers
 		return new char[0];
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getContextInformationPosition()
-	 */
+	@Override
 	public int getContextInformationPosition() {
 		return fRegion.getOffset();
 	}

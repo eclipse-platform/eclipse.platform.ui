@@ -77,16 +77,12 @@ public abstract class TextFileBufferOperation implements IFileBufferOperation {
 		fOperationName= operationName;
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.IFileBufferOperation#getOperationName()
-	 */
+	@Override
 	public String getOperationName() {
 		return fOperationName;
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.IFileBufferOperation#run(org.eclipse.core.filebuffers.IFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void run(IFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
 
 		if (fileBuffer instanceof ITextFileBuffer) {

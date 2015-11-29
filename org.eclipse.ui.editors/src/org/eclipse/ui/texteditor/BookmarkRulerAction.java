@@ -24,9 +24,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  */
 public class BookmarkRulerAction extends AbstractRulerActionDelegate {
 
-	/*
-	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
-	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		return new MarkerRulerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ManageBookmarks.", editor, rulerInfo, IMarker.BOOKMARK, true); //$NON-NLS-1$
 	}

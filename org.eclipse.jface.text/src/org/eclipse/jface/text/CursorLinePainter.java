@@ -68,9 +68,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		fHighlightColor= highlightColor;
 	}
 
-	/*
-	 * @see LineBackgroundListener#lineGetBackground(LineBackgroundEvent)
-	 */
+	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		// don't use cached line information because of asynchronous painting
 
@@ -195,9 +193,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		textWidget.redraw(0, upperLeft.y, width, height, false);
 	}
 
-	/*
-	 * @see IPainter#deactivate(boolean)
-	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -219,15 +215,11 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		}
 	}
 
-	/*
-	 * @see IPainter#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/*
-	 * @see IPainter#paint(int)
-	 */
+	@Override
 	public void paint(int reason) {
 		if (fViewer.getDocument() == null) {
 			deactivate(false);
@@ -280,9 +272,7 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		}
 	}
 
-	/*
-	 * @see IPainter#setPositionManager(IPaintPositionManager)
-	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 		fPositionManager = manager;
 	}

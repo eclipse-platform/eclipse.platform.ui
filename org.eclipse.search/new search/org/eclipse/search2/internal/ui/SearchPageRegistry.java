@@ -87,9 +87,11 @@ public class SearchPageRegistry {
 			final Object[] result= new Object[1];
 
 			ISafeRunnable safeRunnable= new SafeRunnable(SearchMessages.SearchPageRegistry_error_creating_extensionpoint) {
+				@Override
 				public void run() throws Exception {
 					result[0]= configElement.createExecutableExtension("class"); //$NON-NLS-1$
 				}
+				@Override
 				public void handleException(Throwable e) {
 					// invalid contribution
 					SearchPlugin.log(e);

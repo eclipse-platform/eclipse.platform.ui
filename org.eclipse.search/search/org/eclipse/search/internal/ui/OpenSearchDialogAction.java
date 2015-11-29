@@ -37,14 +37,17 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 		fWindow= window;
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
+	@Override
 	public void run(IAction action) {
 		run();
 	}
 
+	@Override
 	public void run() {
 		if (getWorkbenchWindow().getActivePage() == null) {
 			SearchPlugin.beep();
@@ -54,6 +57,7 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 		dialog.open();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing since the action isn't selection dependent.
 	}
@@ -64,6 +68,7 @@ public class OpenSearchDialogAction extends Action implements IWorkbenchWindowAc
 		return fWindow;
 	}
 
+	@Override
 	public void dispose() {
 		fWindow= null;
 	}

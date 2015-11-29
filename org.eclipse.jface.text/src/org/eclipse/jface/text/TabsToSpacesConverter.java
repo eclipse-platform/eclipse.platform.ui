@@ -46,6 +46,7 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		return remainder;
 	}
 
+	@Override
 	public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 		String text= command.text;
 		if (text == null)

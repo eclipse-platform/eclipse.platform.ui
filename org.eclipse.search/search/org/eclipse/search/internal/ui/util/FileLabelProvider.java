@@ -31,6 +31,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * @deprecated Old search view
  */
+@Deprecated
 public class FileLabelProvider extends LabelProvider {
 
 	public static final int SHOW_LABEL= 1;
@@ -56,6 +57,7 @@ public class FileLabelProvider extends LabelProvider {
 		fOrder= orderFlag;
 	}
 
+	@Override
 	public String getText(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return ""; //$NON-NLS-1$
@@ -99,6 +101,7 @@ public class FileLabelProvider extends LabelProvider {
 		return text;
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return null;
@@ -113,20 +116,24 @@ public class FileLabelProvider extends LabelProvider {
 		return image;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		fLabelProvider.dispose();
 	}
 
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return fLabelProvider.isLabelProperty(element, property);
 	}
 
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		fLabelProvider.removeListener(listener);
 	}
 
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);

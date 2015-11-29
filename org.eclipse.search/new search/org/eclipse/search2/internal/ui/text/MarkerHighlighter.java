@@ -41,9 +41,11 @@ public class MarkerHighlighter extends Highlighter {
 		fMatchesToAnnotations= new HashMap();
 	}
 
+	@Override
 	public void addHighlights(final Match[] matches) {
 		try {
 			SearchPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					for (int i = 0; i < matches.length; i++) {
 						IMarker marker;
@@ -83,6 +85,7 @@ public class MarkerHighlighter extends Highlighter {
 		return marker;
 	}
 
+	@Override
 	public void removeHighlights(Match[] matches) {
 		for (int i= 0; i < matches.length; i++) {
 			IMarker marker= (IMarker) fMatchesToAnnotations.remove(matches[i]);
@@ -97,6 +100,7 @@ public class MarkerHighlighter extends Highlighter {
 		}
 	}
 
+	@Override
 	public  void removeAll() {
 		try {
 			fFile.deleteMarkers(NewSearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
@@ -108,6 +112,7 @@ public class MarkerHighlighter extends Highlighter {
 		}
 	}
 
+	@Override
 	protected void handleContentReplaced(IFileBuffer buffer) {
 		if (!buffer.getLocation().equals(fFile.getFullPath()))
 			return;

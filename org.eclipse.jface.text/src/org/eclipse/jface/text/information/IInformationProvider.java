@@ -63,5 +63,6 @@ public interface IInformationProvider {
 	 * @see IInformationPresenter
 	 * @deprecated As of 2.1, replaced by {@link IInformationProviderExtension#getInformation2(ITextViewer, IRegion)}
 	 */
+	@Deprecated
 	String getInformation(ITextViewer textViewer, IRegion subject);
 }

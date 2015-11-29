@@ -124,23 +124,17 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		fireDocumentEvent(false, event);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		fireDocumentEvent(true, event);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createMasterSlaveMapping(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public IDocumentInformationMapping createMasterSlaveMapping(IDocument slave) {
 		if (slave instanceof ProjectionDocument) {
 			ProjectionDocument projectionDocument= (ProjectionDocument) slave;
@@ -149,9 +143,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createSlaveDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public IDocument createSlaveDocument(IDocument master) {
 		if (!hasProjection(master))
 			master.addDocumentListener(this);
@@ -170,9 +162,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		return new ProjectionDocument(master);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#freeSlaveDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void freeSlaveDocument(IDocument slave) {
 		if (slave instanceof ProjectionDocument) {
 			ProjectionDocument projectionDocument= (ProjectionDocument) slave;
@@ -184,33 +174,25 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#getMasterDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public IDocument getMasterDocument(IDocument slave) {
 		if (slave instanceof ProjectionDocument)
 			return ((ProjectionDocument) slave).getMasterDocument();
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#isSlaveDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public boolean isSlaveDocument(IDocument document) {
 		return (document instanceof ProjectionDocument);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManager#setAutoExpandMode(org.eclipse.jface.text.IDocument, boolean)
-	 */
+	@Override
 	public void setAutoExpandMode(IDocument slave, boolean autoExpanding) {
 		if (slave instanceof ProjectionDocument)
 			((ProjectionDocument) slave).setAutoExpandMode(autoExpanding);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ISlaveDocumentManagerExtension#getSlaveDocuments(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public IDocument[] getSlaveDocuments(IDocument master) {
 		List list= (List) fProjectionRegistry.get(master);
 		if (list != null) {

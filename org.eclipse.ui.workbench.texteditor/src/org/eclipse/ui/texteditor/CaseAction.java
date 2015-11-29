@@ -53,9 +53,7 @@ public class CaseAction extends TextEditorAction {
 		update();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
+	@Override
 	public void run() {
 		ITextEditor editor= getTextEditor();
 		if (editor == null)

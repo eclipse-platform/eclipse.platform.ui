@@ -73,23 +73,17 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 				fLockObject= fAnnotationModel;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#accept(org.eclipse.ui.texteditor.spelling.SpellingProblem)
-		 */
+		@Override
 		public void accept(SpellingProblem problem) {
 			fAddAnnotations.put(new SpellingAnnotation(problem), new Position(problem.getOffset(), problem.getLength()));
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginCollecting()
-		 */
+		@Override
 		public void beginCollecting() {
 			fAddAnnotations= new HashMap();
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
-		 */
+		@Override
 		public void endCollecting() {
 
 			List toRemove= new ArrayList();
@@ -162,16 +156,12 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
-	 */
+	@Override
 	public void initialReconcile() {
 		reconcile(new Region(0, fDocument.getLength()));
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		try {
 			IRegion startLineInfo= fDocument.getLineInformationOfOffset(subRegion.getOffset());
@@ -187,9 +177,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		reconcile(subRegion);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
-	 */
+	@Override
 	public void reconcile(IRegion region) {
 		if (getAnnotationModel() == null || fSpellingProblemCollector == null)
 			return;
@@ -217,9 +205,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		return fDocument;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void setDocument(IDocument document) {
 		fDocument= document;
 		fSpellingProblemCollector= createSpellingProblemCollector();
@@ -237,9 +223,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		return new SpellingProblemCollector(model);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public final void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}

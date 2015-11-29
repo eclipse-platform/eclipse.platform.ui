@@ -120,6 +120,7 @@ public class TemplateStore {
 	public final void startListeningForPreferenceChanges() {
 		if (fPropertyListener == null) {
 			fPropertyListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					/*
 					 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the

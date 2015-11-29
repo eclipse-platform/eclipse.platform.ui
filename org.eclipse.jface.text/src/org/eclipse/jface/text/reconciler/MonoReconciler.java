@@ -56,17 +56,13 @@ public class MonoReconciler extends AbstractReconciler {
 		setIsIncrementalReconciler(isIncremental);
 	}
 
-	/*
-	 * @see IReconciler#getReconcilingStrategy(String)
-	 */
+	@Override
 	public IReconcilingStrategy getReconcilingStrategy(String contentType) {
 		Assert.isNotNull(contentType);
 		return fStrategy;
 	}
 
-	/*
-	 * @see AbstractReconciler#process(DirtyRegion)
-	 */
+	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 
 		if(dirtyRegion != null)
@@ -78,16 +74,12 @@ public class MonoReconciler extends AbstractReconciler {
 		}
 	}
 
-	/*
-	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
-	 */
+	@Override
 	protected void reconcilerDocumentChanged(IDocument document) {
 		fStrategy.setDocument(document);
 	}
 
-	/*
-	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		super.setProgressMonitor(monitor);
 		if (fStrategy instanceof IReconcilingStrategyExtension) {
@@ -96,9 +88,7 @@ public class MonoReconciler extends AbstractReconciler {
 		}
 	}
 
-	/*
-	 * @see AbstractReconciler#initialProcess()
-	 */
+	@Override
 	protected void initialProcess() {
 		if (fStrategy instanceof IReconcilingStrategyExtension) {
 			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;

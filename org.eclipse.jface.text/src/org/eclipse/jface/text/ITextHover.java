@@ -49,6 +49,7 @@ public interface ITextHover {
 	 * @return the hover popup display information, or <code>null</code> if none available
 	 * @deprecated As of 3.4, replaced by {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
+	@Deprecated
 	String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
 
 	/**

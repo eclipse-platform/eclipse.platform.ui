@@ -25,6 +25,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 /**
  * @deprecated old search
  */
+@Deprecated
 class RemoveMatchAction extends Action {
 
 	private ISelectionProvider fSelectionProvider;
@@ -35,6 +36,7 @@ class RemoveMatchAction extends Action {
 		fSelectionProvider= provider;
 	}
 
+	@Override
 	public void run() {
 		IMarker[] markers= getMarkers(fSelectionProvider.getSelection());
 		if (markers != null)

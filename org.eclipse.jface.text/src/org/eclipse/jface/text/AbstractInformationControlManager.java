@@ -58,38 +58,47 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	class MyInternalAccessor extends InternalAccessor {
+		@Override
 		public IInformationControl getCurrentInformationControl() {
 			return AbstractInformationControlManager.this.getCurrentInformationControl();
 		}
 
+		@Override
 		public void setInformationControlReplacer(InformationControlReplacer replacer) {
 			AbstractInformationControlManager.this.setInformationControlReplacer(replacer);
 		}
 
+		@Override
 		public InformationControlReplacer getInformationControlReplacer() {
 			return AbstractInformationControlManager.this.getInformationControlReplacer();
 		}
 
+		@Override
 		public boolean canReplace(IInformationControl control) {
 			return AbstractInformationControlManager.this.canReplace(control);
 		}
 
+		@Override
 		public boolean isReplaceInProgress() {
 			return AbstractInformationControlManager.this.isReplaceInProgress();
 		}
 
+		@Override
 		public void replaceInformationControl(boolean takeFocus) {
 			AbstractInformationControlManager.this.replaceInformationControl(takeFocus);
 		}
 
+		@Override
 		public void cropToClosestMonitor(Rectangle bounds) {
 			AbstractInformationControlManager.this.cropToClosestMonitor(bounds);
 		}
 
+		@Override
 		public void setHoverEnrichMode(EnrichMode mode) {
 			throw new UnsupportedOperationException("only implemented in AbstractHoverInformationControlManager"); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean getAllowMouseExit() {
 			throw new UnsupportedOperationException("only implemented in AnnotationBarHoverManager"); //$NON-NLS-1$
 		}
@@ -161,6 +170,7 @@ abstract public class AbstractInformationControlManager {
 			return fFlag;
 		}
 
+		@Override
 		public String toString() {
 			switch (fFlag) {
 				case SWT.BOTTOM: return "BOTTOM"; //$NON-NLS-1$
@@ -667,6 +677,7 @@ abstract public class AbstractInformationControlManager {
 	private DisposeListener getSubjectControlDisposeListener() {
 		if (fSubjectControlDisposeListener == null) {
 			fSubjectControlDisposeListener= new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					handleSubjectControlDisposed();
 				}
@@ -699,6 +710,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param enabled the enable state
 	 * @deprecated visibility will be changed to protected
 	 */
+	@Deprecated
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
 	}
@@ -818,6 +830,7 @@ abstract public class AbstractInformationControlManager {
 		if (fInformationControl == null) {
 			fInformationControl= creator.createInformationControl(fSubjectControl.getShell());
 			fInformationControl.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					handleInformationControlDisposed();
 				}

@@ -35,6 +35,7 @@ final class WordWrapToggleAction extends TextEditorAction {
 		update(checked);
 	}
 
+	@Override
 	public void run() {
 		boolean newState = false;
 		if (isWordWrapPossible()) {
@@ -50,6 +51,7 @@ final class WordWrapToggleAction extends TextEditorAction {
 		setChecked(checked);
 	}
 
+	@Override
 	public void update() {
 		setEnabled(isWordWrapPossible());
 		setChecked(isWordWrapEnabled());

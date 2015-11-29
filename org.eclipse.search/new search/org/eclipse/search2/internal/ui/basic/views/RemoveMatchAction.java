@@ -30,6 +30,7 @@ public class RemoveMatchAction extends Action {
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 
+	@Override
 	public void run() {
 		Match match= fPage.getCurrentMatch();
 		AbstractTextSearchResult result= fPage.getInput();

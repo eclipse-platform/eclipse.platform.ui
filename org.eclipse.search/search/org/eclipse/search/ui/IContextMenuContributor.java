@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the page
  * how to create actions in context menus.
  */
+@Deprecated
 public interface IContextMenuContributor {
 
 	/**

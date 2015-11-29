@@ -121,10 +121,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fRetargetShowInformationAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_INFORMATION));
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
-	 * @since 3.3
-	 */
+	@Override
 	public void contributeToMenu(IMenuManager menu) {
 		super.contributeToMenu(menu);
 
@@ -136,25 +133,19 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		}
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
-	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		super.setActiveEditor(part);
 		doSetActiveEditor(part);
 	}
 
-	/*
-	 * @see IEditorActionBarContributor#dispose()
-	 */
+	@Override
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();
 	}
 
-	/*
-	 * @see EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
-	 */
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 

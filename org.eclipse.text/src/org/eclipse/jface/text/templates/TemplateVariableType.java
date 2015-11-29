@@ -61,9 +61,7 @@ public final class TemplateVariableType {
 		return fParams;
 	}
 
-	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof TemplateVariableType) {
 			TemplateVariableType other= (TemplateVariableType) obj;
@@ -72,17 +70,12 @@ public final class TemplateVariableType {
 		return false;
 	}
 
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return fName.hashCode() + fParams.hashCode();
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 * @since 3.3
-	 */
+	@Override
 	public String toString() {
 		return fName + fParams.toString();
 	}

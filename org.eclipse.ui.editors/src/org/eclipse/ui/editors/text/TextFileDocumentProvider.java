@@ -124,9 +124,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		 */
 		protected abstract void execute(IProgressMonitor monitor) throws CoreException;
 
-		/*
-		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
+		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			try {
 				execute(monitor);
@@ -135,9 +133,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.ISchedulingRuleProvider#getSchedulingRule()
-		 */
+		@Override
 		public ISchedulingRule getSchedulingRule() {
 			return ResourcesPlugin.getWorkspace().getRoot();
 		}
@@ -146,40 +142,72 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	/**
 	 * @deprecated As of 3.3 - do not use
 	 */
+	@Deprecated
 	static protected class NullProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IDocumentProviderExtension4, IDocumentProviderExtension5, IStorageDocumentProvider  {
 
 		static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.NullProvider_error, null);
 
+		@Override
 		public void connect(Object element) throws CoreException {}
+		@Override
 		public void disconnect(Object element) {}
+		@Override
 		public IDocument getDocument(Object element) { return null; }
+		@Override
 		public void resetDocument(Object element) throws CoreException {}
+		@Override
 		public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {}
+		@Override
 		public long getModificationStamp(Object element) { return 0; }
+		@Override
 		public long getSynchronizationStamp(Object element) { return 0; }
+		@Override
 		public boolean isDeleted(Object element) { return true; }
+		@Override
 		public boolean mustSaveDocument(Object element) { return false; }
+		@Override
 		public boolean canSaveDocument(Object element) { return false; }
+		@Override
 		public IAnnotationModel getAnnotationModel(Object element) { return null; }
+		@Override
 		public void aboutToChange(Object element) {}
+		@Override
 		public void changed(Object element) {}
+		@Override
 		public void addElementStateListener(IElementStateListener listener) {}
+		@Override
 		public void removeElementStateListener(IElementStateListener listener) {}
+		@Override
 		public boolean isReadOnly(Object element) { return true; }
+		@Override
 		public boolean isModifiable(Object element) { return false; }
+		@Override
 		public void validateState(Object element, Object computationContext) throws CoreException {}
+		@Override
 		public boolean isStateValidated(Object element) { return true; }
+		@Override
 		public void updateStateCache(Object element) throws CoreException {}
+		@Override
 		public void setCanSaveDocument(Object element) {}
+		@Override
 		public IStatus getStatus(Object element) { return STATUS_ERROR; }
+		@Override
 		public void synchronize(Object element) throws CoreException {}
+		@Override
 		public void setProgressMonitor(IProgressMonitor progressMonitor) {}
+		@Override
 		public IProgressMonitor getProgressMonitor() { return new NullProgressMonitor(); }
+		@Override
 		public boolean isSynchronized(Object element) { return true; }
+		@Override
 		public boolean isNotSynchronizedException(Object element, CoreException ex) { return false; }
+		@Override
 		public String getDefaultEncoding() { return null; }
+		@Override
 		public String getEncoding(Object element) { return null; }
+		@Override
 		public void setEncoding(Object element, String encoding) {}
+		@Override
 		public IContentType getContentType(Object element) throws CoreException { return null; }
 	}
 
@@ -206,16 +234,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			fElement= element;
 		}
 
-		/*
-		 * @see java.util.Iterator#hasNext()
-		 */
+		@Override
 		public boolean hasNext() {
 			return fElement != null;
 		}
 
-		/*
-		 * @see java.util.Iterator#next()
-		 */
+		@Override
 		public Object next() {
 			if (fElement != null) {
 				Object result= fElement;
@@ -225,9 +249,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			throw new NoSuchElementException();
 		}
 
-		/*
-		 * @see java.util.Iterator#remove()
-		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
@@ -238,9 +260,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public FileBufferListener()  {
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#bufferContentAboutToBeReplaced(org.eclipse.core.buffer.text.IBufferedFile)
-		 */
+		@Override
 		public void bufferContentAboutToBeReplaced(IFileBuffer file) {
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
@@ -252,9 +272,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#bufferContentReplaced(org.eclipse.core.buffer.text.IBufferedFile)
-		 */
+		@Override
 		public void bufferContentReplaced(IFileBuffer file) {
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
@@ -266,18 +284,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#stateChanging(org.eclipse.core.buffer.text.IBufferedFile)
-		 */
+		@Override
 		public void stateChanging(IFileBuffer file) {
 			Iterator i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChanging(i.next());
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#dirtyStateChanged(org.eclipse.core.buffer.text.IBufferedFile, boolean)
-		 */
+		@Override
 		public void dirtyStateChanged(IFileBuffer file, boolean isDirty) {
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
@@ -289,9 +303,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#stateValidationChanged(org.eclipse.core.buffer.text.IBufferedFile, boolean)
-		 */
+		@Override
 		public void stateValidationChanged(IFileBuffer file, boolean isStateValidated) {
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
@@ -306,9 +318,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#underlyingFileMoved(org.eclipse.core.buffer.text.IBufferedFile, org.eclipse.core.runtime.IPath)
-		 */
+		@Override
 		public void underlyingFileMoved(IFileBuffer file, IPath newLocation) {
 			IWorkspace workspace=ResourcesPlugin.getWorkspace();
 			IFile newFile= workspace.getRoot().getFile(newLocation);
@@ -323,9 +333,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#underlyingFileDeleted(org.eclipse.core.buffer.text.IBufferedFile)
-		 */
+		@Override
 		public void underlyingFileDeleted(IFileBuffer file) {
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
@@ -337,25 +345,19 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		}
 
-		/*
-		 * @see org.eclipse.core.buffer.text.IBufferedFileListener#stateChangeFailed(org.eclipse.core.buffer.text.IBufferedFile)
-		 */
+		@Override
 		public void stateChangeFailed(IFileBuffer file) {
 			Iterator i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChangeFailed(i.next());
 		}
 
-		/*
-		 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferCreated(org.eclipse.core.filebuffers.IFileBuffer)
-		 */
+		@Override
 		public void bufferCreated(IFileBuffer buffer) {
 			// ignore
 		}
 
-		/*
-		 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferDisposed(org.eclipse.core.filebuffers.IFileBuffer)
-		 */
+		@Override
 		public void bufferDisposed(IFileBuffer buffer) {
 			// ignore
 		}
@@ -468,9 +470,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#connect(java.lang.Object)
-	 */
+	@Override
 	public void connect(Object element) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null) {
@@ -635,9 +635,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#disconnect(java.lang.Object)
-	 */
+	@Override
 	public void disconnect(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 
@@ -714,9 +712,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return new SingleElementIterator(value);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getDocument(java.lang.Object)
-	 */
+	@Override
 	public IDocument getDocument(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -724,16 +720,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().getDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#resetDocument(java.lang.Object)
-	 */
+	@Override
 	public void resetDocument(Object element) throws CoreException {
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
 
@@ -742,9 +734,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 						markerModel.resetMarkers();
 					}
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
@@ -759,9 +749,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/*
-	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
-	 */
+	@Override
 	public final void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 
 		if (element == null)
@@ -788,15 +776,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 
 			return new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					commitFileBuffer(monitor, info, overwrite);
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
@@ -810,15 +794,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 			final IFile file= ((IFileEditorInput) element).getFile();
 			return new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					createFileFromDocument(monitor, file, document);
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					return computeSchedulingRule(file);
 				}
@@ -826,15 +806,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		} else if (element instanceof IURIEditorInput) {
 			final URI uri= ((IURIEditorInput)element).getURI();
 			return new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				public void execute(IProgressMonitor monitor) throws CoreException {
 					createFileStoreFromDocument(monitor, uri, document);
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					return null;
 				}
@@ -920,9 +896,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getModificationStamp(java.lang.Object)
-	 */
+	@Override
 	public long getModificationStamp(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -930,9 +904,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().getModificationStamp(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getSynchronizationStamp(java.lang.Object)
-	 */
+	@Override
 	public long getSynchronizationStamp(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -940,9 +912,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().getSynchronizationStamp(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#isDeleted(java.lang.Object)
-	 */
+	@Override
 	public boolean isDeleted(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)  {
@@ -952,9 +922,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().isDeleted(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#mustSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public boolean mustSaveDocument(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -962,9 +930,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().mustSaveDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#canSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public boolean canSaveDocument(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -972,9 +938,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().canSaveDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#getAnnotationModel(java.lang.Object)
-	 */
+	@Override
 	public IAnnotationModel getAnnotationModel(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -982,27 +946,21 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return getParentProvider().getAnnotationModel(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#aboutToChange(java.lang.Object)
-	 */
+	@Override
 	public void aboutToChange(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
 			getParentProvider().aboutToChange(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#changed(java.lang.Object)
-	 */
+	@Override
 	public void changed(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
 			getParentProvider().changed(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#addElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
-	 */
+	@Override
 	public void addElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
 		if (!fElementStateListeners.contains(listener)) {
@@ -1015,9 +973,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		getParentProvider().addElementStateListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProvider#removeElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
-	 */
+	@Override
 	public void removeElementStateListener(IElementStateListener listener) {
 		Assert.isNotNull(listener);
 		fElementStateListeners.remove(listener);
@@ -1028,9 +984,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		getParentProvider().removeElementStateListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isReadOnly(java.lang.Object)
-	 */
+	@Override
 	public boolean isReadOnly(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1038,9 +992,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return ((IDocumentProviderExtension) getParentProvider()).isReadOnly(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isModifiable(java.lang.Object)
-	 */
+	@Override
 	public boolean isModifiable(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1048,22 +1000,16 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return ((IDocumentProviderExtension) getParentProvider()).isModifiable(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#validateState(java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public void validateState(Object element, final Object computationContext) throws CoreException {
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.validateState(monitor, computationContext);
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
@@ -1077,9 +1023,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			((IDocumentProviderExtension) getParentProvider()).validateState(element, computationContext);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#isStateValidated(java.lang.Object)
-	 */
+	@Override
 	public boolean isStateValidated(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1087,9 +1031,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return ((IDocumentProviderExtension) getParentProvider()).isStateValidated(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#updateStateCache(java.lang.Object)
-	 */
+	@Override
 	public void updateStateCache(Object element) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
@@ -1104,18 +1046,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#setCanSaveDocument(java.lang.Object)
-	 */
+	@Override
 	public void setCanSaveDocument(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
 			((IDocumentProviderExtension) getParentProvider()).setCanSaveDocument(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#getStatus(java.lang.Object)
-	 */
+	@Override
 	public IStatus getStatus(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info == null)
@@ -1146,22 +1084,16 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return status;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#synchronize(java.lang.Object)
-	 */
+	@Override
 	public void synchronize(Object element) throws CoreException {
 		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+				@Override
 				protected void execute(IProgressMonitor monitor) throws CoreException {
 					info.fTextFileBuffer.revert(monitor);
 				}
-				/*
-				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
-				 */
+				@Override
 				public ISchedulingRule getSchedulingRule() {
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
@@ -1176,24 +1108,18 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor progressMonitor) {
 		fProgressMonitor= progressMonitor;
 		((IDocumentProviderExtension2) getParentProvider()).setProgressMonitor(progressMonitor);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2#getProgressMonitor()
-	 */
+	@Override
 	public IProgressMonitor getProgressMonitor() {
 		return fProgressMonitor;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
-	 */
+	@Override
 	public boolean isSynchronized(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1201,10 +1127,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension5#isNotSynchronizedException(Object, CoreException)
-	 * @since 3.2
-	 */
+	@Override
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
 		IStatus status= ex.getStatus();
 		if (status == null || status instanceof MultiStatus)
@@ -1216,16 +1139,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL;
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#getDefaultEncoding()
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		return FileBuffers.getTextFileBufferManager().getDefaultEncoding();
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#getEncoding(java.lang.Object)
-	 */
+	@Override
 	public String getEncoding(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1233,9 +1152,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		return ((IStorageDocumentProvider) getParentProvider()).getEncoding(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.IStorageDocumentProvider#setEncoding(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public void setEncoding(Object element, String encoding) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1244,10 +1161,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			((IStorageDocumentProvider) getParentProvider()).setEncoding(element, encoding);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public IContentType getContentType(Object element) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
 		if (info != null)
@@ -1290,6 +1204,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @return the system file for the given file info
 	 * @deprecated As of 3.2, replaced by {@link #getFileStore(org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)}
 	 */
+	@Deprecated
 	protected File getSystemFile(FileInfo info)  {
 		IPath path= info.fTextFileBuffer.getLocation();
 		return FileBuffers.getSystemFileAtLocation(path);

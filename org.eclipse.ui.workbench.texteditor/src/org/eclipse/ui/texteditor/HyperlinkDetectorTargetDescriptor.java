@@ -110,12 +110,14 @@ public final class HyperlinkDetectorTargetDescriptor {
 	}
 
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == null || !obj.getClass().equals(this.getClass()) || getId() == null)
 			return false;
 		return getId().equals(((HyperlinkDetectorTargetDescriptor)obj).getId());
 	}
 
+	@Override
 	public int hashCode() {
 		return getId().hashCode();
 	}

@@ -22,6 +22,7 @@ public class TextHoverPopupTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() {
 	}
 
@@ -29,6 +30,7 @@ public class TextHoverPopupTest extends TestCase {
 		return new TestSuite(TextHoverPopupTest.class);
 	}
 
+	@Override
 	protected void tearDown() {
 	}
 

@@ -41,6 +41,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @return the minimal region of the viewer's document comprising the
 	 *         contents of the viewer's widget or <code>null</code>
 	 */
+	@Override
 	IRegion getModelCoverage();
 
 	/**
@@ -50,6 +51,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @param modelLine the line of the viewer's document
 	 * @return the corresponding widget line or <code>-1</code>
 	 */
+	@Override
 	int modelLine2WidgetLine(int modelLine);
 
 	/**
@@ -59,6 +61,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @param modelOffset the offset in the viewer's document
 	 * @return the corresponding widget offset or <code>-1</code>
 	 */
+	@Override
 	int modelOffset2WidgetOffset(int modelOffset);
 
 	/**
@@ -70,6 +73,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @return the minimal region of the widget comprising
 	 *         <code>modelRange</code> or <code>null</code>
 	 */
+	@Override
 	IRegion modelRange2WidgetRange(IRegion modelRange);
 
 	/**
@@ -80,6 +84,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @return the corresponding offset in the viewer's document or
 	 *         <code>-1</code>
 	 */
+	@Override
 	int widgetOffset2ModelOffset(int widgetOffset);
 
 	/**
@@ -91,6 +96,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @return the minimal region of the viewer's document comprising
 	 *         <code>widgetlRange</code> or <code>null</code>
 	 */
+	@Override
 	IRegion widgetRange2ModelRange(IRegion widgetRange);
 
 	/**
@@ -109,6 +115,7 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @param widgetOffset the widget offset
 	 * @return the widget line of the widget offset
 	 */
+	@Override
 	int widgetLineOfWidgetOffset(int widgetOffset);
 
 

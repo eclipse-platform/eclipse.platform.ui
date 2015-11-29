@@ -31,6 +31,7 @@ public class CollapseAllAction extends Action {
 		fViewer= viewer;
 	}
 
+	@Override
 	public void run() {
 		if (fViewer != null) {
 			fViewer.collapseAll();

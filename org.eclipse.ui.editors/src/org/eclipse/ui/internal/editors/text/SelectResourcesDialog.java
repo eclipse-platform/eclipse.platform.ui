@@ -77,10 +77,7 @@ class SelectResourcesDialog extends Dialog {
 		fAcceptableLocationsFilter= acceptableLocationsFilter;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 * @since 3.4
-	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -99,9 +96,7 @@ class SelectResourcesDialog extends Dialog {
 		return (IResource[]) items.toArray(new IResource[items.size()]);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
@@ -109,9 +104,7 @@ class SelectResourcesDialog extends Dialog {
 			newShell.setText(fTitle);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite= (Composite) super.createDialogArea(parent);
 		Label label= new Label(composite, SWT.LEFT);
@@ -120,6 +113,7 @@ class SelectResourcesDialog extends Dialog {
 
 		fResourceGroup= new SelectResourcesBlock(composite, ResourcesPlugin.getWorkspace().getRoot(), getResourceProvider(IResource.FOLDER | IResource.PROJECT), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), getResourceProvider(IResource.FILE), WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE, useHeightHint(parent));
 		fResourceGroup.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateSelectionCount();
 			}
@@ -142,7 +136,8 @@ class SelectResourcesDialog extends Dialog {
 
     private ITreeContentProvider getResourceProvider(final int resourceType) {
         return new WorkbenchContentProvider() {
-            public Object[] getChildren(Object o) {
+            @Override
+			public Object[] getChildren(Object o) {
             	if (o instanceof IWorkspaceRoot) {
             		HashSet projects= new HashSet();
             		for (int i= 0; i < fInput.length; i++) {
@@ -195,6 +190,7 @@ class SelectResourcesDialog extends Dialog {
 		Button selectButton= createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_selectAll, false);
 
 		SelectionListener listener= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fResourceGroup.setAllSelections(true);
 				updateSelectionCount();
@@ -207,6 +203,7 @@ class SelectResourcesDialog extends Dialog {
 		Button deselectButton= createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, TextEditorMessages.SelectResourcesDialog_deselectAll, false);
 
 		listener= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fResourceGroup.setAllSelections(false);
 				updateSelectionCount();
@@ -220,6 +217,7 @@ class SelectResourcesDialog extends Dialog {
 		Button selectTypesButton= createButton(buttonComposite, IDialogConstants.SELECT_TYPES_ID, TextEditorMessages.SelectResourcesDialog_filterSelection, false);
 
 		listener= new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSelectFileTypes();
 			}
@@ -248,6 +246,7 @@ class SelectResourcesDialog extends Dialog {
     private void filterSelection() {
 
     	final IFilter filter= new IFilter() {
+			@Override
 			public boolean accept(IResource resource) {
 				return hasAcceptedFileType(resource);
 			}
@@ -257,7 +256,8 @@ class SelectResourcesDialog extends Dialog {
 		final IResource[] resources= (IResource[]) list.toArray(new IResource[list.size()]);
 
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	setSelection(resources, filter);
 			}
         };

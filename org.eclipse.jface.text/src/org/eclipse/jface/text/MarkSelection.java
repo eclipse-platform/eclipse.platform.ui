@@ -39,30 +39,22 @@ public class MarkSelection implements IMarkSelection {
 		fLength= length;
 	}
 
-	/*
-	 * @see IMarkSelection#getDocument()
-	 */
+	@Override
 	public IDocument getDocument() {
 		return fDocument;
 	}
 
-	/*
-	 * @see IMarkSelection#getOffset()
-	 */
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/*
-	 * @see IMarkSelection#getLength()
-	 */
+	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/*
-	 * @see ISelection#isEmpty()
-	 */
+	@Override
 	public boolean isEmpty() {
 		return fLength == 0;
 	}

@@ -50,9 +50,7 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 		fLineDelimiter= lineDelimiter;
 	}
 
-	/*
-	 * @see org.eclipse.core.internal.filebuffers.textmanipulation.TextFileBufferOperation#computeTextEdit(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	protected MultiTextEditWithProgress computeTextEdit(ITextFileBuffer fileBuffer, IProgressMonitor progressMonitor) throws CoreException {
 		IDocument document= fileBuffer.getDocument();
 		int lineCount= document.getNumberOfLines();
@@ -84,9 +82,7 @@ public class ConvertLineDelimitersOperation extends TextFileBufferOperation {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.manipulation.TextFileBufferOperation#getDocumentRewriteSessionType()
-	 */
+	@Override
 	protected DocumentRewriteSessionType getDocumentRewriteSessionType() {
 		return DocumentRewriteSessionType.SEQUENTIAL;
 	}

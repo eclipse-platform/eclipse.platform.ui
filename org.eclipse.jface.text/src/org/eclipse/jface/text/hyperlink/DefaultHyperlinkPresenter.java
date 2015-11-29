@@ -130,9 +130,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		fDisposeColor= true;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#canShowMultipleHyperlinks()
-	 */
+	@Override
 	public boolean canShowMultipleHyperlinks() {
 		return false;
 	}
@@ -140,6 +138,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#activate(org.eclipse.jdt.internal.ui.javaeditor.IHyperlink[])
 	 */
+	@Override
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
@@ -150,6 +149,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 *
 	 * @since 3.4
 	 */
+	@Override
 	public boolean canHideHyperlinks() {
 		return true;
 	}
@@ -157,14 +157,13 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	/*
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#deactivate()
 	 */
+	@Override
 	public void hideHyperlinks() {
 		repairRepresentation();
 		fRememberedPosition= null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#install(org.eclipse.jface.text.ITextViewer)
-	 */
+	@Override
 	public void install(ITextViewer textViewer) {
 		Assert.isNotNull(textViewer);
 		fTextViewer= textViewer;
@@ -184,9 +183,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlinkControl#uninstall()
-	 */
+	@Override
 	public void uninstall() {
 		fTextViewer.removeTextInputListener(this);
 		IDocument document= fTextViewer.getDocument();
@@ -223,9 +220,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		fColor= color;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
-	 */
+	@Override
 	public void applyTextPresentation(TextPresentation textPresentation) {
 		if (fActiveRegion == null)
 			return;
@@ -277,9 +272,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		if (fActiveRegion != null) {
 			fRememberedPosition= new Position(fActiveRegion.getOffset(), fActiveRegion.getLength());
@@ -291,9 +284,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		if (fRememberedPosition != null) {
 			if (!fRememberedPosition.isDeleted()) {
@@ -307,6 +298,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			StyledText widget= fTextViewer.getTextWidget();
 			if (widget != null && !widget.isDisposed()) {
 				widget.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						hideHyperlinks();
 					}
@@ -315,9 +307,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput == null)
 			return;
@@ -325,9 +315,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		oldInput.removeDocumentListener(this);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		if (newInput == null)
 			return;
@@ -361,9 +349,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (HYPERLINK_COLOR.equals(event.getProperty())) {
 			if (fColor != null && fDisposeColor)

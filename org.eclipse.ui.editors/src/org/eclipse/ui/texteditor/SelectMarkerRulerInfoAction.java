@@ -19,6 +19,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  * @deprecated As of 2.1, replaced by {@link org.eclipse.ui.texteditor.SelectMarkerRulerAction}
  * @since 2.0
  */
+@Deprecated
 public class SelectMarkerRulerInfoAction extends SelectMarkerRulerAction {
 
 	/**
@@ -31,6 +32,7 @@ public class SelectMarkerRulerInfoAction extends SelectMarkerRulerAction {
 	 * @param editor the editor
 	 * @deprecated As of 2.1 replaced by {@link org.eclipse.ui.texteditor.SelectMarkerRulerAction#SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)}
 	 */
+	@Deprecated
 	public SelectMarkerRulerInfoAction(ResourceBundle bundle, String prefix, IVerticalRulerInfo ruler, ITextEditor editor) {
 		super(bundle, prefix, editor, ruler);
 	}

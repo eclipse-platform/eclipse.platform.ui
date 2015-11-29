@@ -47,10 +47,12 @@ public class FileCharSequenceTests extends TestCase {
 		return allTests();
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("my-project"); //$NON-NLS-1$
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}

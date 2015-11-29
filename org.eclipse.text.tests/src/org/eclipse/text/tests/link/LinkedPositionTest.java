@@ -23,6 +23,7 @@ import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 public class LinkedPositionTest extends TestCase {
 
+	@Override
 	public void setUp() {
 		fDoc= new Document(GARTEN1);
 		fPos= new LinkedPosition(fDoc, 3, 10);

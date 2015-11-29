@@ -53,9 +53,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 			fHoverInfo= hoverInfo;
 			fControlCreator= controlCreator;
 		}
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
-		 */
+		@Override
 		public IRegion getSubject(ITextViewer textViewer, int invocationOffset) {
 			return fHoverRegion;
 		}
@@ -64,19 +62,16 @@ public class FocusedInformationPresenter extends InformationPresenter {
 		 *
 		 * @deprecated As of 2.1, replaced by {@link IInformationProviderExtension#getInformation2(ITextViewer, IRegion)}
 		 */
+		@Deprecated
+		@Override
 		public String getInformation(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo == null ? null : fHoverInfo.toString();
 		}
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-		 * @since 3.2
-		 */
+		@Override
 		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 			return fHoverInfo;
 		}
-		/*
-		 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-		 */
+		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
 			return fControlCreator;
 		}
@@ -86,6 +81,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 	 * The default information control creator.
 	 */
 	private static class DefaultInformationControlCreator implements IInformationControlCreator {
+		@Override
 		public IInformationControl createInformationControl(Shell shell) {
 			return new DefaultInformationControl(shell, true);
 		}

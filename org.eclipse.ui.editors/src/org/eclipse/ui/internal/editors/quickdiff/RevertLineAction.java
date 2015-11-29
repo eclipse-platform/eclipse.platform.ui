@@ -38,9 +38,7 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 		super(QuickDiffMessages.getResourceBundle(), "RevertLineAction.", editor, isRulerAction); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
-	 */
+	@Override
 	public boolean computeEnablement() {
 		if (!super.computeEnablement())
 			return false;
@@ -62,9 +60,7 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction#runCompoundChange()
-	 */
+	@Override
 	public void runCompoundChange() {
 		if (!isEnabled())
 			return;

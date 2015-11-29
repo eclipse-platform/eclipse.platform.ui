@@ -129,25 +129,18 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 			partActivated(partRef.getPart(true));
 		}
 
-		/*
-		 * @see org.eclipse.jface.dialogs.IPageChangedListener#pageChanged(org.eclipse.jface.dialogs.PageChangedEvent)
-		 * @since 3.5
-		 */
+		@Override
 		public void pageChanged(PageChangedEvent event) {
 			if (event.getSource() instanceof IWorkbenchPart)
 				partActivated((IWorkbenchPart)event.getSource());
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 			IWorkbenchPart part= partRef.getPart(true);
 			if (part == fPreviousPart) {
@@ -159,9 +152,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				partActivated((IWorkbenchPart)null);
 		}
 
-		/*
-		 * @see DisposeListener#widgetDisposed(DisposeEvent)
-		 */
+		@Override
 		public void widgetDisposed(DisposeEvent event) {
 
 			if (fgFindReplaceDialogStub == this)
@@ -180,42 +171,27 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			fPreviousTarget= null;
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partOpened(IWorkbenchPartReference)
-		 */
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partDeactivated(IWorkbenchPartReference)
-		 */
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(IWorkbenchPartReference)
-		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-		 * @since 3.5
-		 */
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-		 * @since 3.5
-		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 
-		/*
-		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-		 * @since 3.5
-		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 		}
 
@@ -328,15 +304,14 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart) instead
 	 */
+	@Deprecated
 	public FindReplaceAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;
 		update();
 	}
 
-	/*
-	 *	@see IAction#run()
-	 */
+	@Override
 	public void run() {
 		if (fTarget == null)
 			return;
@@ -374,9 +349,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		dialog.open();
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 
 		if(fShell == null){

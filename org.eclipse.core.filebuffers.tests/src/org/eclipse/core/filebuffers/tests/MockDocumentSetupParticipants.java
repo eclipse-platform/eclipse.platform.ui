@@ -33,18 +33,14 @@ public class MockDocumentSetupParticipants {
 	 * into the document being setup for integration test purposes.
 	 */
 	static abstract class AbstractTestDSP implements IDocumentSetupParticipant {
-		/*
-		 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
-		 */
+		@Override
 		public void setup(IDocument document) {
 			append(document, getClass()+"\n");
 		}
 	}
 
 	static abstract class AbstractTestDSPExtension extends AbstractTestDSP implements IDocumentSetupParticipantExtension {
-		/*
-		 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension#setup(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
-		 */
+		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			append(document, getClass()+"%%EXTENSION\n");
 		}
@@ -59,6 +55,7 @@ public class MockDocumentSetupParticipants {
 	public static class TestDSP6 extends AbstractTestDSPExtension {}
 
 	public static class TestDSP7 extends AbstractTestDSPExtension {
+		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.IFILE)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
@@ -66,6 +63,7 @@ public class MockDocumentSetupParticipants {
 	}
 
 	public static class TestDSP8 extends AbstractTestDSPExtension {
+		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.LOCATION)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());
@@ -73,6 +71,7 @@ public class MockDocumentSetupParticipants {
 	}
 
 	public static class TestDSP9 extends AbstractTestDSPExtension {
+		@Override
 		public void setup(IDocument document, IPath location, LocationKind locationKind) {
 			if (locationKind == LocationKind.NORMALIZE)
 				append(document, new StringBuffer(location.toPortableString()).reverse().toString());

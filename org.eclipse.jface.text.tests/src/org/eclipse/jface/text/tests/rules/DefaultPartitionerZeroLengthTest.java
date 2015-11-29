@@ -36,6 +36,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 	private IDocument fDoc;
 	private FastPartitioner fPartitioner;
 
+	@Override
 	public void setUp() {
 		fDoc= new Document();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {

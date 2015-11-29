@@ -44,6 +44,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action. */
 	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			update(event);
 		}
@@ -201,6 +202,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 */
 	private void installHelpListener() {
 		super.setHelpListener(new HelpListener() {
+			@Override
 			public void helpRequested(HelpEvent e) {
 				HelpListener listener= null;
 				if (fAction != null) {
@@ -225,13 +227,12 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @param listener the help listener
 	 * @since 2.1
 	 */
+	@Override
 	public void setHelpListener(HelpListener listener) {
 		fLocalHelpListener= listener;
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
+	@Override
 	public void run() {
 		if (fAction != null)
 			fAction.run();

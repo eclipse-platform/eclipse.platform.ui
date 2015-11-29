@@ -18,6 +18,7 @@ package org.eclipse.jface.text.source;
  *             instead.
  * @since 2.0
  */
+@Deprecated
 public final class AnnotationColumn extends AnnotationRulerColumn {
 
 	/**
@@ -28,6 +29,7 @@ public final class AnnotationColumn extends AnnotationRulerColumn {
 	 *             {@link org.eclipse.jface.text.source.AnnotationRulerColumn#AnnotationRulerColumn(int)}
 	 *             instead
 	 */
+	@Deprecated
 	public AnnotationColumn(int width) {
 		super(width);
 	}

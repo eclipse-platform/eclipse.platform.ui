@@ -15,6 +15,7 @@ import org.eclipse.jface.action.Action;
 /**
  * @deprecated old search
  */
+@Deprecated
 class SearchAgainAction extends Action {
 
 	public SearchAgainAction() {
@@ -22,6 +23,7 @@ class SearchAgainAction extends Action {
 		setToolTipText(SearchMessages.SearchResultView_searchAgain_tooltip);
 	}
 
+	@Override
 	public void run() {
 		Search selected= SearchManager.getDefault().getCurrentSearch();
 		if (selected != null)

@@ -210,6 +210,7 @@ final class HippieCompleteAction extends TextEditorAction {
 	HippieCompleteAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
 		super(bundle, prefix, editor);
 		fExitStrategy.addCompoundListener(new ICompoundEditListener() {
+			@Override
 			public void endCompoundEdit() {
 				clearState();
 			}
@@ -323,9 +324,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		getTextEditor().getSite().getShell().getDisplay().beep();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		if (!validateEditorInputState())
 			return;
@@ -337,16 +336,12 @@ final class HippieCompleteAction extends TextEditorAction {
 			completeNext();
 	}
 
-	/*
-	 * @see org.eclipse.jface.action.IAction#isEnabled()
-	 */
+	@Override
 	public boolean isEnabled() {
 		return canModifyEditor();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 */
+	@Override
 	public void setEditor(ITextEditor editor) {
 		clearState(); // make sure to remove listers before the editor changes!
 		super.setEditor(editor);

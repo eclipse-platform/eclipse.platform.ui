@@ -36,18 +36,22 @@ public class ChangeRegionTest extends TestCase {
 	}
 
 	public static final class TestRevision extends Revision {
+		@Override
 		public Object getHoverInfo() {
 			return null;
 		}
 
+		@Override
 		public RGB getColor() {
 			return null;
 		}
 
+		@Override
 		public String getId() {
 			return null;
 		}
 
+		@Override
 		public Date getDate() {
 			return null;
 		}
@@ -55,9 +59,7 @@ public class ChangeRegionTest extends TestCase {
 
 	private Revision fRevision;
 
-	/*
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fRevision= new TestRevision();
 	}

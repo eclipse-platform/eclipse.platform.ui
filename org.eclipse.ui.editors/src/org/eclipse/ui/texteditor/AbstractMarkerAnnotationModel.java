@@ -241,6 +241,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * Connects to the source of markers as marker change listener.
 	 * @see AnnotationModel#connected()
 	 */
+	@Override
 	protected void connected() {
 
 		listenToMarkerChanges(true);
@@ -348,6 +349,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * Removes the marker change listener.
 	 * @see AnnotationModel#disconnected()
 	 */
+	@Override
 	protected void disconnected() {
 		listenToMarkerChanges(false);
 		uninstallMarkerUpdaters();
@@ -387,9 +389,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			addMarkerAnnotation(marker);
 	}
 
-	/*
-	 * @see AnnotationModel#removeAnnotations(List, boolean, boolean)
-	 */
+	@Override
 	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
 		if (annotations != null && annotations.size() > 0) {
 
@@ -549,6 +549,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @since 2.0
 	 * @deprecated use <code>updateMarker(IDocument, IMarker, Position)</code> instead. This method will be changed to protected.
 	 */
+	@Deprecated
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
 
 		if (fMarkerUpdaterSpecifications == null)
@@ -690,23 +691,17 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		fireModelChanged();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#commit(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void commit(IDocument document) throws CoreException {
 		updateMarkers(document);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#revert(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void revert(IDocument document) {
 		resetMarkers();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#reinitialize(org.eclipse.jface.text.IDocument)
-	 */
+	@Override
 	public void reinitialize(IDocument document) {
 		resetMarkers();
 	}

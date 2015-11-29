@@ -30,9 +30,7 @@ import org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock;
  */
 public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public Control createControl(Composite composite) {
 		Composite inner= new Composite(composite, SWT.NONE);
 		inner.setLayout(new GridLayout(3, false));
@@ -55,46 +53,32 @@ public class EmptySpellingPreferenceBlock implements ISpellingPreferenceBlock {
 		return inner;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#initialize(org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor)
-	 */
+	@Override
 	public void initialize(IPreferenceStatusMonitor statusMonitor) {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#canPerformOk()
-	 */
+	@Override
 	public boolean canPerformOk() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performOk()
-	 */
+	@Override
 	public void performOk() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#performRevert()
-	 */
+	@Override
 	public void performRevert() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock#setEnabled(boolean)
-	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 	}
 }

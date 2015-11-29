@@ -22,6 +22,7 @@ package org.eclipse.ui.editors.text;
  * @noextend This interface is not intended to be extended by clients.
  *
  */
+@Deprecated
 public interface IEncodingActionsConstants {
 
 	/**

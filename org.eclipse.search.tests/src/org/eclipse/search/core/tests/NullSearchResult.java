@@ -25,39 +25,27 @@ public class NullSearchResult extends FileSearchResult { // inherit from FileSea
 		super(null);
 		fNullQuery= query;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getText(org.eclipse.search.ui.ISearchResult)
-	 */
+	@Override
 	public String getLabel() {
 		return "Null Query"; //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getTooltip(org.eclipse.search.ui.ISearchResult)
-	 */
+	@Override
 	public String getTooltip() {
 		return "Null Query"; //$NON-NLS-1$
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor(org.eclipse.search.ui.ISearchResult)
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
-	 */
+	@Override
 	public ISearchQuery getQuery() {
 		return fNullQuery;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
-	 */
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
-	 */
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}

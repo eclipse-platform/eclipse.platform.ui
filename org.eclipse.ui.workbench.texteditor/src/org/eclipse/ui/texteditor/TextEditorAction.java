@@ -91,6 +91,7 @@ public abstract class TextEditorAction extends ResourceAction implements IUpdate
 	 * If the associated editor is <code>null</code>, the action is disabled.
 	 * Subclasses may override.
 	 */
+	@Override
 	public void update() {
 		setEnabled(getTextEditor() != null);
 	}

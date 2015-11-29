@@ -90,9 +90,7 @@ public class TextPresentation {
 				computeIndex();
 		}
 
-		/*
-		 * @see Iterator#next()
-		 */
+		@Override
 		public Object next() {
 			try {
 				StyleRange r= (StyleRange) fRanges.get(fIndex++);
@@ -105,16 +103,12 @@ public class TextPresentation {
 			}
 		}
 
-		/*
-		 * @see Iterator#hasNext()
-		 */
+		@Override
 		public boolean hasNext() {
 			return fIndex < fLength;
 		}
 
-		/*
-		 * @see Iterator#remove()
-		 */
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

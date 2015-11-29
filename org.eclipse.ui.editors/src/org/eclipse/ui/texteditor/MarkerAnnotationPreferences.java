@@ -191,6 +191,7 @@ public class MarkerAnnotationPreferences {
 	}
 
 	private static final class AccessChecker extends SecurityManager {
+		@Override
 		public Class[] getClassContext() {
 			return super.getClassContext();
 		}

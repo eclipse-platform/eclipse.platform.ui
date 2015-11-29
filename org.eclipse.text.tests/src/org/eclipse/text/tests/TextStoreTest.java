@@ -28,6 +28,7 @@ public abstract class TextStoreTest extends TestCase {
 	private ITextStore fTextStore;
 	private ILineTracker fTracker;
 
+	@Override
 	protected void setUp() {
 
 		fTextStore= createTextStore();
@@ -51,6 +52,7 @@ public abstract class TextStoreTest extends TestCase {
 
 	abstract protected ITextStore createTextStore();
 
+	@Override
 	protected void tearDown() {
 		fTextStore= null;
 		fTracker= null;

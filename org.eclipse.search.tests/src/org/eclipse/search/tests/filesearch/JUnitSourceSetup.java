@@ -38,6 +38,7 @@ public class JUnitSourceSetup extends TestSetup {
 		fProjectName= projectName;
 	}
 		
+	@Override
 	protected void setUp() throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(fProjectName);
 		if (!project.exists()) { // allow nesting of JUnitSetups
@@ -45,6 +46,7 @@ public class JUnitSourceSetup extends TestSetup {
 		}
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if (fProject != null) { // delete only by the setup who created the project
 			ResourceHelper.deleteProject(fProjectName);

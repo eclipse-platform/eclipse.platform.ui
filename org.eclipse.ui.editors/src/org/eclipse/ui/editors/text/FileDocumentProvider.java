@@ -149,9 +149,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		protected void execute(IFileEditorInput input) throws Exception {
 		}
 
-		/*
-		 * @see java.lang.Runnable#run()
-		 */
+		@Override
 		public void run() {
 
 			if (getElementInfo(fInput) == null) {
@@ -197,6 +195,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * @param fileEditorInput the editor input to be synchronized
 		 * @deprecated use <code>FileSynchronizer(IFileEditorInput)</code>
 		 */
+		@Deprecated
 		public FileSynchronizer(FileEditorInput fileEditorInput) {
 			fFileEditorInput= fileEditorInput;
 		}
@@ -226,9 +225,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			fIsInstalled= false;
 		}
 
-		/*
-		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-		 */
+		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
 			try {
@@ -239,9 +236,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		}
 
-		/*
-		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
-		 */
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if (delta == null)
 				return false;
@@ -262,6 +257,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					boolean isSynchronized= computeModificationStamp(getFile()) == info.fModificationStamp;
 					if ((IResourceDelta.ENCODING & delta.getFlags()) != 0 && isSynchronized) {
 						runnable= new SafeChange(fFileEditorInput) {
+							@Override
 							protected void execute(IFileEditorInput input) throws Exception {
 								handleElementContentChanged(input);
 							}
@@ -270,6 +266,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 					if (runnable == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0 && !isSynchronized) {
 						runnable= new SafeChange(fFileEditorInput) {
+							@Override
 							protected void execute(IFileEditorInput input) throws Exception {
 								handleElementContentChanged(input);
 							}
@@ -281,6 +278,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
 						final IPath path= delta.getMovedToPath();
 						runnable= new SafeChange(fFileEditorInput) {
+							@Override
 							protected void execute(IFileEditorInput input) throws Exception {
 								handleElementMoved(input, path);
 							}
@@ -289,6 +287,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						info= (FileInfo) getElementInfo(fFileEditorInput);
 						if (info != null && !info.fCanBeSaved) {
 							runnable= new SafeChange(fFileEditorInput) {
+								@Override
 								protected void execute(IFileEditorInput input) throws Exception {
 									handleElementDeleted(input);
 								}
@@ -372,6 +371,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @deprecated use file encoding based version
 	 * @since 2.0
 	 */
+	@Deprecated
+	@Override
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
@@ -389,10 +390,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.setDocumentContent(document, editorInput);
 	}
 
-	/*
-	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput, String)
-	 * @since 2.0
-	 */
+	@Override
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		if (editorInput instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) editorInput).getFile();
@@ -440,9 +438,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.setDocumentContent(document, editorInput, encoding);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
-	 */
+	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -486,9 +482,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return modificationStamp;
 	}
 
-	/*
-	 * @see IDocumentProvider#getModificationStamp(Object)
-	 */
+	@Override
 	public long getModificationStamp(Object element) {
 
 		if (element instanceof IFileEditorInput) {
@@ -499,9 +493,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.getModificationStamp(element);
 	}
 
-	/*
-	 * @see IDocumentProvider#getSynchronizationStamp(Object)
-	 */
+	@Override
 	public long getSynchronizationStamp(Object element) {
 
 		if (element instanceof IFileEditorInput) {
@@ -513,10 +505,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.getSynchronizationStamp(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doSynchronize(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	protected void doSynchronize(Object element, IProgressMonitor monitor)  throws CoreException {
 		if (element instanceof IFileEditorInput) {
 
@@ -541,9 +530,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		super.doSynchronize(element, monitor);
 	}
 
-	/*
-	 * @see IDocumentProvider#isDeleted(Object)
-	 */
+	@Override
 	public boolean isDeleted(Object element) {
 
 		if (element instanceof IFileEditorInput) {
@@ -559,9 +546,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.isDeleted(element);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
-	 */
+	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 
@@ -716,9 +701,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createElementInfo(Object)
-	 */
+	@Override
 	protected ElementInfo createElementInfo(Object element) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 
@@ -793,9 +776,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#disposeElementInfo(Object, ElementInfo)
-	 */
+	@Override
 	protected void disposeElementInfo(Object element, ElementInfo info) {
 		if (info instanceof FileInfo) {
 			FileInfo fileInfo= (FileInfo) info;
@@ -894,14 +875,12 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @see AbstractDocumentProvider#getElementInfo(Object)
 	 * It's only here to circumvent visibility issues with certain compilers.
 	 */
+	@Override
 	protected ElementInfo getElementInfo(Object element) {
 		return super.getElementInfo(element);
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#doValidateState(Object, Object)
-	 * @since 2.0
-	 */
+	@Override
 	protected void doValidateState(Object element, Object computationContext) throws CoreException {
 
 		if (element instanceof IFileEditorInput) {
@@ -940,10 +919,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return false;
 	}
 
-	/*
-	 * @see IDocumentProviderExtension#isModifiable(Object)
-	 * @since 2.0
-	 */
+	@Override
 	public boolean isModifiable(Object element) {
 		if (!isStateValidated(element)) {
 			if (element instanceof IFileEditorInput)
@@ -952,10 +928,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.isModifiable(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#doResetDocument(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.0
-	 */
+	@Override
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -1002,10 +975,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3#isSynchronized(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	public boolean isSynchronized(Object element) {
 		if (element instanceof IFileEditorInput) {
 			if (getElementInfo(element) != null) {
@@ -1018,10 +988,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return super.isSynchronized(element);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentType(java.lang.Object)
-	 * @since 3.1
-	 */
+	@Override
 	public IContentType getContentType(Object element) throws CoreException {
 		IContentType contentType= null;
 		if (!canSaveDocument(element) && element instanceof IFileEditorInput)
@@ -1062,6 +1029,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @return the persisted encoding
 	 * @since 2.1
 	 */
+	@Override
 	protected String getPersistedEncoding(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
@@ -1103,6 +1071,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @throws org.eclipse.core.runtime.CoreException if persisting the encoding fails
 	 * @since 2.1
 	 */
+	@Override
 	protected void persistEncoding(Object element, String encoding) throws CoreException {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
@@ -1120,10 +1089,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getOperationRunner(org.eclipse.core.runtime.IProgressMonitor)
-	 * @since 3.0
-	 */
+	@Override
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		if (fOperationRunner == null)
 			fOperationRunner = new WorkspaceOperationRunner();
@@ -1131,10 +1097,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return fOperationRunner;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getResetRule(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	protected ISchedulingRule getResetRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -1143,10 +1106,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSaveRule(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	protected ISchedulingRule getSaveRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -1155,10 +1115,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getSynchronizeRule(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	protected ISchedulingRule getSynchronizeRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -1167,10 +1124,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#getValidateStateRule(java.lang.Object)
-	 * @since 3.0
-	 */
+	@Override
 	protected ISchedulingRule getValidateStateRule(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
@@ -1215,6 +1169,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.0
 	 * @deprecated as of 3.0 this method is no longer in use and does nothing
 	 */
+	@Deprecated
 	protected void readUTF8BOM(IFile file, String encoding, Object element) throws CoreException {
 	}
 

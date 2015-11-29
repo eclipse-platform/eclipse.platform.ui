@@ -43,6 +43,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * </p>
  * @deprecated As of 2.1, fonts are managed by the workbench, no longer supported
  */
+@Deprecated
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	/**
@@ -62,24 +63,18 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE, "org.eclipse.ui.workbench")); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
 	}
 
-	/*
-	 * @see FieldEditorPreferencePage#createFieldEditors()
-	 */
+	@Override
 	public void createFieldEditors() {
 		addField(new FontFieldEditor(JFaceResources.TEXT_FONT, TextEditorMessages.PreferencePage_fontEditor, getFieldEditorParent()));
 	}
 
-	/*
-	 * @see IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

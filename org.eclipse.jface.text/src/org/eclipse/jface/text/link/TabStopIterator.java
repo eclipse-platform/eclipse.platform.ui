@@ -44,6 +44,7 @@ class TabStopIterator {
 		 * <p><code>o1</code> and <code>o2</code> are required to be instances
 		 * of <code>LinkedPosition</code>.</p>
 		 */
+		@Override
 		public int compare(Object o1, Object o2) {
 			LinkedPosition p1= (LinkedPosition)o1;
 			LinkedPosition p2= (LinkedPosition)o2;

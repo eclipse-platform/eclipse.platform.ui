@@ -26,9 +26,7 @@ public class ReplaceAction extends Action {
 			super(refactoring, RefactoringWizard.DIALOG_BASED_USER_INTERFACE);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
-		 */
+		@Override
 		protected void addUserInputPages() {
 			addPage(new ReplaceConfigurationPage((ReplaceRefactoring) getRefactoring()));
 		}
@@ -50,9 +48,7 @@ public class ReplaceAction extends Action {
 		fSelection= selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+	@Override
 	public void run() {
 		try {
 			ReplaceRefactoring refactoring= new ReplaceRefactoring(fResult, fSelection);

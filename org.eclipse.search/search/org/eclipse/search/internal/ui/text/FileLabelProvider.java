@@ -60,6 +60,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		fPage= page;
 		fLineMatchImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TEXT_SEARCH_LINE);
 		fMatchComparator= new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return ((FileMatch) o1).getOriginalOffset() - ((FileMatch) o2).getOriginalOffset();
 			}
@@ -74,13 +75,12 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		return fOrder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-	 */
+	@Override
 	public String getText(Object object) {
 		return getStyledText(object).getString();
 	}
 
+	@Override
 	public StyledString getStyledText(Object element) {
 		if (element instanceof LineElement)
 			return getLineElementLabel((LineElement) element);
@@ -225,9 +225,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		return coloredName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof LineElement) {
 			return fLineMatchImage;
@@ -240,32 +238,24 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		return image;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		fLabelProvider.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return fLabelProvider.isLabelProperty(element, property);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		fLabelProvider.removeListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);

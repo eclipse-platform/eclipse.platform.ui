@@ -118,9 +118,7 @@ public class MarginPainter implements IPainter, PaintListener {
 		fCachedWidgetX= pixels * fMarginWidth;
 	}
 
-	/*
-	 * @see IPainter#deactivate(boolean)
-	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -131,16 +129,12 @@ public class MarginPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/*
-	 * @see IPainter#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fTextWidget= null;
 	}
 
-	/*
-	 * @see IPainter#paint(int)
-	 */
+	@Override
 	public void paint(int reason) {
 		if (!fIsActive) {
 			fIsActive= true;
@@ -152,9 +146,7 @@ public class MarginPainter implements IPainter, PaintListener {
 			fTextWidget.redraw();
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-	 */
+	@Override
 	public void paintControl(PaintEvent e) {
 		if (fTextWidget != null) {
 			int x= fCachedWidgetX - fTextWidget.getHorizontalPixel();
@@ -168,9 +160,7 @@ public class MarginPainter implements IPainter, PaintListener {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
-	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 	}
 }

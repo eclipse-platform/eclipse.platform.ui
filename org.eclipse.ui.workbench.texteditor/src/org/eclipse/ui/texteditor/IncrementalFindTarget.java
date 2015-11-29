@@ -229,50 +229,36 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fTarget= viewer.getFindReplaceTarget();
 	}
 
-	/*
-	 * @see IFindReplaceTarget#canPerformFind()
-	 */
+	@Override
 	public boolean canPerformFind() {
 		return fTarget.canPerformFind();
 	}
 
-	/*
-	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
-	 */
+	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 		return fTarget.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
 	}
 
-	/*
-	 * @see IFindReplaceTarget#getSelection()
-	 */
+	@Override
 	public Point getSelection() {
 		return fTarget.getSelection();
 	}
 
-	/*
-	 * @see IFindReplaceTarget#getSelectionText()
-	 */
+	@Override
 	public String getSelectionText() {
 		return fTarget.getSelectionText();
 	}
 
-	/*
-	 * @see IFindReplaceTarget#isEditable()
-	 */
+	@Override
 	public boolean isEditable() {
 		return false;
 	}
 
-	/*
-	 * @see IFindReplaceTarget#replaceSelection(String)
-	 */
+	@Override
 	public void replaceSelection(String text) {
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#beginSession()
-	 */
+	@Override
 	public void beginSession() {
 		fSearching= true;
 
@@ -320,9 +306,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fSearching= false;
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#endSession()
-	 */
+	@Override
 	public void endSession() {
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).endSession();
@@ -330,22 +314,16 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		// will uninstall itself
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#getScope()
-	 */
+	@Override
 	public IRegion getScope() {
 		return null;
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#setScope(IRegion)
-	 */
+	@Override
 	public void setScope(IRegion scope) {
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
-	 */
+	@Override
 	public void setReplaceAllMode(boolean replaceAll) {
 	}
 
@@ -443,9 +421,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 	}
 
-	/*
-	 * @see VerifyKeyListener#verifyKey(VerifyEvent)
-	 */
+	@Override
 	public void verifyKey(VerifyEvent event) {
 
 		if (!event.doit)
@@ -629,9 +605,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fSessionStack = null;
 	}
 
-	/*
-	 * @see ITextListener#textChanged(TextEvent)
-	 */
+	@Override
 	public void textChanged(TextEvent event) {
 		if (event.getDocumentEvent() != null)
 			leave();
@@ -640,34 +614,27 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	/*
 	 * @see MouseListener##mouseDoubleClick(MouseEvent)
 	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		leave();
 	}
 
-	/*
-	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseDown(MouseEvent e) {
 		leave();
 	}
 
-	/*
-	 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
+	@Override
 	public void mouseUp(MouseEvent e) {
 		leave();
 	}
 
-	/*
-	 * @see FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusGained(FocusEvent e) {
 		leave();
 	}
 
-	/*
-	 * @see FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusLost(FocusEvent e) {
 		leave();
 	}
@@ -756,9 +723,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		return buffer.toString();
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#getLineSelection()
-	 */
+	@Override
 	public Point getLineSelection() {
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			return ((IFindReplaceTargetExtension) fTarget).getLineSelection();
@@ -766,24 +731,17 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		return null; // XXX: should not return null
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#setSelection(int, int)
-	 */
+	@Override
 	public void setSelection(int offset, int length) {
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).setSelection(offset, length);
 	}
 
-	/*
-	 * @see IFindReplaceTargetExtension#setScopeHighlightColor(Color)
-	 */
+	@Override
 	public void setScopeHighlightColor(Color color) {
 	}
 
-	/*
-	 * @see ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 * @since 2.1
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent e) {
 		boolean ignore= false;
 		ISelection selection= e.getSelection();
@@ -807,31 +765,19 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fIsStatusFieldExtension= fStatusField instanceof IStatusFieldExtension;
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IExecutionListener#notHandled(java.lang.String, org.eclipse.core.commands.NotHandledException)
-	 * @since 3.2
-	 */
+	@Override
 	public void notHandled(String commandId, NotHandledException exception) {
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IExecutionListener#postExecuteFailure(java.lang.String, org.eclipse.core.commands.ExecutionException)
-	 * @since 3.2
-	 */
+	@Override
 	public void postExecuteFailure(String commandId, ExecutionException exception) {
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IExecutionListener#postExecuteSuccess(java.lang.String, java.lang.Object)
-	 * @since 3.2
-	 */
+	@Override
 	public void postExecuteSuccess(String commandId, Object returnValue) {
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IExecutionListener#preExecute(java.lang.String, org.eclipse.core.commands.ExecutionEvent)
-	 * @since 3.2
-	 */
+	@Override
 	public void preExecute(String commandId, ExecutionEvent event) {
 		if (IWorkbenchActionDefinitionIds.FIND_INCREMENTAL.equals(commandId)
 				|| IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE.equals(commandId))

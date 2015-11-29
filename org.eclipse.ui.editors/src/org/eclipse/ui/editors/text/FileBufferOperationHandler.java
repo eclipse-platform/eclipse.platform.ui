@@ -188,6 +188,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 */
 	protected final void doRun(final IFile[] files, final IPath location, final IFileBufferOperation fileBufferOperation) {
 		Job job= new Job(fileBufferOperation.getOperationName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
 
@@ -269,10 +270,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 * @since 3.1
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		computeSelectedResources();
 		try {

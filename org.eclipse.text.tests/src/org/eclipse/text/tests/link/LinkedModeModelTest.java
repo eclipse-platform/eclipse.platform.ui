@@ -312,6 +312,7 @@ public class LinkedModeModelTest extends TestCase {
 
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -366,6 +367,7 @@ public class LinkedModeModelTest extends TestCase {
 
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -391,6 +393,7 @@ public class LinkedModeModelTest extends TestCase {
 		LinkedModeModel env= new LinkedModeModel();
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -418,6 +421,7 @@ public class LinkedModeModelTest extends TestCase {
 		LinkedModeModel env= new LinkedModeModel();
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -445,6 +449,7 @@ public class LinkedModeModelTest extends TestCase {
 		LinkedModeModel env= new LinkedModeModel();
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -476,6 +481,7 @@ public class LinkedModeModelTest extends TestCase {
 		LinkedModeModel env= new LinkedModeModel();
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -506,6 +512,7 @@ public class LinkedModeModelTest extends TestCase {
 		LinkedModeModel env= new LinkedModeModel();
 		final boolean[] isExit= { false } ;
 		env.addLinkingListener(new LinkedAdapter() {
+			@Override
 			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
@@ -582,9 +589,7 @@ public class LinkedModeModelTest extends TestCase {
 	}
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	protected void setUp() throws Exception {
 		fPositions.clear();
 		fDocumentMap.clear();
@@ -801,13 +806,17 @@ public class LinkedModeModelTest extends TestCase {
 		"	Das mir zu tun fast nichts mehr ubrigbleibt.";
 
 	private class LinkedAdapter implements ILinkedModeListener {
+		@Override
 		public void left(LinkedModeModel environment, int flags) {}
+		@Override
 		public void suspend(LinkedModeModel environment) {}
+		@Override
 		public void resume(LinkedModeModel environment, int flags) {}
 	}
 
 	public class PositionComparator implements Comparator {
 
+		@Override
 		public int compare(Object o1, Object o2) {
 			LinkedPosition p1= (LinkedPosition) o1;
 			LinkedPosition p2= (LinkedPosition) o2;

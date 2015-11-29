@@ -36,26 +36,31 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 	private static final class SizeVisitor extends TextEditVisitor {
 		int fSize= 0;
 
+		@Override
 		public boolean visit(CopyTargetEdit edit) {
 			fSize += edit.getLength();
 			return super.visit(edit);
 		}
 
+		@Override
 		public boolean visit(DeleteEdit edit) {
 			fSize += edit.getLength();
 			return super.visit(edit);
 		}
 
+		@Override
 		public boolean visit(InsertEdit edit) {
 			fSize += edit.getText().length();
 			return super.visit(edit);
 		}
 
+		@Override
 		public boolean visit(MoveTargetEdit edit) {
 			fSize += edit.getLength();
 			return super.visit(edit);
 		}
 
+		@Override
 		public boolean visit(ReplaceEdit edit) {
 			fSize += Math.max(edit.getLength(), edit.getText().length());
 			return super.visit(edit);
@@ -76,9 +81,7 @@ public final class RewriteSessionEditProcessor extends TextEditProcessor {
 		super(document, root, style);
 	}
 
-	/*
-	 * @see org.eclipse.text.edits.TextEditProcessor#performEdits()
-	 */
+	@Override
 	public UndoEdit performEdits() throws MalformedTreeException, BadLocationException {
 		IDocument document= getDocument();
 		if (!(document instanceof IDocumentExtension4))

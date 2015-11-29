@@ -65,25 +65,19 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 		fFileBufferOperation= fileBufferOperation;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fResources= null;
 		fWindow= null;
 		fFileBufferOperation= null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 
 		fResources= new HashSet();
@@ -142,9 +136,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 		return window == null ? null : window.getShell();
 	}
 
-	/*
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		if (fResources != null && !fResources.isEmpty()) {
 			IFile[] files= collectFiles((IResource[]) fResources.toArray(new IResource[fResources.size()]));
@@ -173,6 +165,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 
 	protected final void doRun(final IFile[] files, final IPath location, final IFileBufferOperation fileBufferOperation) {
 		Job job= new Job(fileBufferOperation.getOperationName()) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
 

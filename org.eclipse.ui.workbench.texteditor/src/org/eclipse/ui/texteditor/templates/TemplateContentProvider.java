@@ -26,23 +26,17 @@ class TemplateContentProvider implements IStructuredContentProvider {
 	/** The template store. */
 	private TemplateStore fStore;
 
-	/*
-	 * @see IStructuredContentProvider#getElements(Object)
-	 */
+	@Override
 	public Object[] getElements(Object input) {
 		return fStore.getTemplateData(false);
 	}
 
-	/*
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fStore= (TemplateStore) newInput;
 	}
 
-	/*
-	 * @see IContentProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fStore= null;
 	}

@@ -62,12 +62,14 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	// tracking search results --------------------------------------------------------------
+	@Override
 	public void queryAdded(ISearchQuery query) {
 		if (query.getSearchResult() instanceof AbstractTextSearchResult) {
 			query.getSearchResult().addListener(this);
 		}
 	}
 
+	@Override
 	public void queryRemoved(ISearchQuery query) {
 		ISearchResult result= query.getSearchResult();
 		if (result instanceof AbstractTextSearchResult) {
@@ -77,6 +79,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	// tracking matches ---------------------------------------------------------------------
+	@Override
 	public void searchResultChanged(SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
 			MatchEvent evt= (MatchEvent)e;
@@ -231,9 +234,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	// IFileBufferListener implementation ---------------------------------------------------------------------
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferCreated(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferCreated(IFileBuffer buffer) {
 		final int[] trackCount= new int[1];
 		if (!(buffer instanceof ITextFileBuffer))
@@ -278,15 +279,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferDisposed(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferDisposed(IFileBuffer buffer) {
 		final int[] trackCount= new int[1];
 		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.search.internal.model.PositionTracker.FileBufferMatchRunnable#run(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.search.ui.model.text.Match)
-			 */
+			@Override
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
 				untrackPosition(textBuffer, match);
@@ -294,16 +291,16 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#bufferContentAboutToBeReplaced(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void bufferContentAboutToBeReplaced(IFileBuffer buffer) {
 		// not interesting for us.
 	}
 
+	@Override
 	public void bufferContentReplaced(IFileBuffer buffer) {
 		final int[] trackCount= new int[1];
 		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
+			@Override
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
 				AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
@@ -313,24 +310,18 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateChanging(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void stateChanging(IFileBuffer buffer) {
 		// not interesting for us
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#dirtyStateChanged(org.eclipse.core.filebuffers.IFileBuffer, boolean)
-	 */
+	@Override
 	public void dirtyStateChanged(IFileBuffer buffer, boolean isDirty) {
 		if (isDirty)
 			return;
 		final int[] trackCount= new int[1];
 		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.search.internal.model.PositionTracker.FileBufferMatchRunnable#run(org.eclipse.core.filebuffers.ITextFileBuffer, org.eclipse.search.ui.model.text.Match)
-			 */
+			@Override
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
 				Position pos= (Position) fMatchesToPositions.get(match);
@@ -358,44 +349,32 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateValidationChanged(org.eclipse.core.filebuffers.IFileBuffer, boolean)
-	 */
+	@Override
 	public void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated) {
 		// not interesting for us.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#underlyingFileMoved(org.eclipse.core.filebuffers.IFileBuffer, org.eclipse.core.runtime.IPath)
-	 */
+	@Override
 	public void underlyingFileMoved(IFileBuffer buffer, IPath path) {
 		// not interesting for us.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#underlyingFileDeleted(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void underlyingFileDeleted(IFileBuffer buffer) {
 		// not interesting for us.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.filebuffers.IFileBufferListener#stateChangeFailed(org.eclipse.core.filebuffers.IFileBuffer)
-	 */
+	@Override
 	public void stateChangeFailed(IFileBuffer buffer) {
 		// not interesting for us.
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.IQueryListener#queryStarting(org.eclipse.search.ui.ISearchQuery)
-	 */
+	@Override
 	public void queryStarting(ISearchQuery query) {
 		// not interested here
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.IQueryListener#queryFinished(org.eclipse.search.ui.ISearchQuery)
-	 */
+	@Override
 	public void queryFinished(ISearchQuery query) {
 		// not interested
 	}

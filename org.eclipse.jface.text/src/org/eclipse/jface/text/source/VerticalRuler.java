@@ -63,24 +63,18 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 */
 	class InternalListener implements IViewportListener, IAnnotationModelListener, ITextListener {
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
+		@Override
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
 				redraw();
 		}
 
-		/*
-		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
-		 */
+		@Override
 		public void modelChanged(IAnnotationModel model) {
 			update();
 		}
 
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
+		@Override
 		public void textChanged(TextEvent e) {
 			if (fTextViewer != null && e.getViewerRedrawState())
 				redraw();
@@ -138,16 +132,12 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		fAnnotationAccess= annotationAcccess;
 	}
 
-	/*
-	 * @see IVerticalRuler#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
 
-	/*
-	 * @see IVerticalRuler#createControl(Composite, ITextViewer)
-	 */
+	@Override
 	public Control createControl(Composite parent, ITextViewer textViewer) {
 
 		fTextViewer= textViewer;
@@ -155,6 +145,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
 
 		fCanvas.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				if (fTextViewer != null)
 					doubleBufferPaint(event.gc);
@@ -162,6 +153,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		});
 
 		fCanvas.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 				fTextViewer= null;
@@ -169,13 +161,16 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		});
 
 		fCanvas.addMouseListener(new MouseListener() {
+			@Override
 			public void mouseUp(MouseEvent event) {
 			}
 
+			@Override
 			public void mouseDown(MouseEvent event) {
 				fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 			}
 
+			@Override
 			public void mouseDoubleClick(MouseEvent event) {
 				fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 			}
@@ -451,14 +446,13 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * Thread-safe implementation.
 	 * Can be called from any thread.
 	 */
-	/*
-	 * @see IVerticalRuler#update()
-	 */
+	@Override
 	public void update() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
 				d.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						redraw();
 					}
@@ -483,9 +477,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 	}
 
-	/*
-	 * @see IVerticalRuler#setModel(IAnnotationModel)
-	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 		if (model != fModel) {
 
@@ -501,23 +493,17 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 	}
 
-	/*
-	 * @see IVerticalRuler#getModel()
-	 */
+	@Override
 	public IAnnotationModel getModel() {
 		return fModel;
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#getWidth()
-	 */
+	@Override
 	public int getWidth() {
 		return fWidth;
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
-	 */
+	@Override
 	public int getLineOfLastMouseButtonActivity() {
 		IDocument doc= fTextViewer.getDocument();
 		if (doc == null || fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
@@ -525,9 +511,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		return fLastMouseButtonActivityLine;
 	}
 
-	/*
-	 * @see IVerticalRulerInfo#toDocumentLineNumber(int)
-	 */
+	@Override
 	public int toDocumentLineNumber(int y_coordinate) {
 		if (fTextViewer == null  || y_coordinate == -1)
 			return -1;
@@ -568,17 +552,11 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		return widgetLine;
 	}
 
-	/*
-	 * @see IVerticalRulerExtension#setFont(Font)
-	 * @since 2.0
-	 */
+	@Override
 	public void setFont(Font font) {
 	}
 
-	/*
-	 * @see IVerticalRulerExtension#setLocationOfLastMouseButtonActivity(int, int)
-	 * @since 2.0
-	 */
+	@Override
 	public void setLocationOfLastMouseButtonActivity(int x, int y) {
 		fLastMouseButtonActivityLine= toDocumentLineNumber(y);
 	}
@@ -590,6 +568,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */
+	@Deprecated
 	public void addMouseListener(MouseListener listener) {
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.addMouseListener(listener);
@@ -602,6 +581,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @deprecated will be removed
 	 * @since 2.0
 	 */
+	@Deprecated
 	public void removeMouseListener(MouseListener listener) {
 		if (fCanvas != null && !fCanvas.isDisposed())
 			fCanvas.removeMouseListener(listener);

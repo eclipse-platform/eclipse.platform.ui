@@ -34,9 +34,7 @@ class SharedTextColors implements ISharedTextColors {
 		super();
 	}
 
-	/*
-	 * @see ISharedTextColors#getColor(RGB)
-	 */
+	@Override
 	public Color getColor(RGB rgb) {
 		if (rgb == null)
 			return null;
@@ -51,6 +49,7 @@ class SharedTextColors implements ISharedTextColors {
 			colorTable= new HashMap(10);
 			fDisplayTable.put(display, colorTable);
 			display.disposeExec(new Runnable() {
+				@Override
 				public void run() {
 					dispose(display);
 				}
@@ -66,9 +65,7 @@ class SharedTextColors implements ISharedTextColors {
 		return color;
 	}
 
-	/*
-	 * @see ISharedTextColors#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (fDisplayTable == null)
 			return;

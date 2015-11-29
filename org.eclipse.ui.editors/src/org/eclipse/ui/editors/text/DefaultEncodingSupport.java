@@ -76,9 +76,11 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		IEclipsePreferences prefs= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 
 		fPreferenceChangeListener= new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if (ResourcesPlugin.PREF_ENCODING.equals(event.getKey())) {
 					Runnable runnable= new Runnable() {
+						@Override
 						public void run() {
 							setEncoding(null, false); // null means: use default
 						}
@@ -142,7 +144,8 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 					provider.setEncoding(input, encoding);
 					Runnable encodingSetter=
 						new Runnable() {
-							   public void run() {
+							   @Override
+							public void run() {
 								   fTextEditor.doRevertToSaved();
 							   }
 						};
@@ -156,16 +159,12 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		}
 	}
 
-	/*
-	 * @see IEncodingSupport#setEncoding(String)
-	 */
+	@Override
 	public void setEncoding(String encoding) {
 		setEncoding(encoding, true);
 	}
 
-	/*
-	 * @see IEncodingSupport#getEncoding()
-	 */
+	@Override
 	public String getEncoding() {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
 		if (p instanceof IStorageDocumentProvider) {
@@ -175,9 +174,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 		return null;
 	}
 
-	/*
-	 * @see IEncodingSupport#getDefaultEncoding()
-	 */
+	@Override
 	public String getDefaultEncoding() {
 		IDocumentProvider p= fTextEditor.getDocumentProvider();
 		if (p instanceof IStorageDocumentProvider) {
@@ -297,6 +294,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 			/*
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				action.run();
 			}

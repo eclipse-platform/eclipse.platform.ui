@@ -99,6 +99,7 @@ public abstract class TextEdit {
 	public static final int UPDATE_REGIONS= 1 << 1;
 
 	private static class InsertionComparator implements Comparator {
+		@Override
 		public int compare(Object o1, Object o2) throws MalformedTreeException {
 			TextEdit edit1= (TextEdit)o1;
 			TextEdit edit2= (TextEdit)o2;
@@ -496,6 +497,7 @@ public abstract class TextEdit {
 	 *
 	 * @see Object#equals(java.lang.Object)
 	 */
+	@Override
 	public final boolean equals(Object obj) {
 		return this == obj; // equivalent to Object.equals
 	}
@@ -509,13 +511,12 @@ public abstract class TextEdit {
 	 *
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public final int hashCode() {
 		return super.hashCode();
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer= new StringBuffer();
 		toStringWithChildren(buffer, 0);

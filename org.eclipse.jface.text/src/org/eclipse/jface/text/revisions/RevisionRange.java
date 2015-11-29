@@ -42,23 +42,17 @@ public final class RevisionRange implements ILineRange {
 		return fRevision;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getStartLine()
-	 */
+	@Override
 	public int getStartLine() {
 		return fStartLine;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ILineRange#getNumberOfLines()
-	 */
+	@Override
 	public int getNumberOfLines() {
 		return fNumberOfLines;
 	}
 
-	/*
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
 	public String toString() {
 		return "RevisionRange [" + fRevision.toString() + ", [" + getStartLine() + "+" + getNumberOfLines() + ")]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}

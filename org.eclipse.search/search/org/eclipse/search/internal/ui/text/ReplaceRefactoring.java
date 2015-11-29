@@ -103,17 +103,21 @@ public class ReplaceRefactoring extends Refactoring {
 			fIsRemove= isRemove;
 		}
 
+		@Override
 		public Object getModifiedElement() {
 			return null;
 		}
 
+		@Override
 		public String getName() {
 			return SearchMessages.ReplaceRefactoring_result_update_name;
 		}
 
+		@Override
 		public void initializeValidationData(IProgressMonitor pm) {
 		}
 
+		@Override
 		public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return new RefactoringStatus();
 		}
@@ -146,6 +150,7 @@ public class ReplaceRefactoring extends Refactoring {
 			return fMatches;
 		}
 
+		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			Match[] matches= getMatches();
 			if (fIsRemove) {
@@ -187,9 +192,7 @@ public class ReplaceRefactoring extends Refactoring {
 		fReplaceString= null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
-	 */
+	@Override
 	public String getName() {
 		return SearchMessages.ReplaceRefactoring_refactoring_name;
 	}
@@ -198,9 +201,7 @@ public class ReplaceRefactoring extends Refactoring {
 		fReplaceString= string;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		String searchString= getQuery().getSearchString();
 		if (searchString.length() == 0) {
@@ -320,9 +321,7 @@ public class ReplaceRefactoring extends Refactoring {
 		return col;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fReplaceString == null) {
 			return RefactoringStatus.createFatalErrorStatus(SearchMessages.ReplaceRefactoring_error_no_replace_string);
@@ -340,6 +339,7 @@ public class ReplaceRefactoring extends Refactoring {
 		IFile[] allFiles= (IFile[]) allFilesSet.toArray(new IFile[allFilesSet.size()]);
 		Arrays.sort(allFiles, new Comparator() {
 			private Collator fCollator= Collator.getInstance();
+			@Override
 			public int compare(Object o1, Object o2) {
 				String p1= ((IFile) o1).getFullPath().toString();
 				String p2= ((IFile) o2).getFullPath().toString();
@@ -500,9 +500,7 @@ public class ReplaceRefactoring extends Refactoring {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return fChange;
 	}

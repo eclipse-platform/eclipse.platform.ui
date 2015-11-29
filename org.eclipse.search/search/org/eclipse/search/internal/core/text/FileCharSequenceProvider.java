@@ -89,16 +89,12 @@ public class FileCharSequenceProvider {
 			fSequenceLength= length;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#length()
-		 */
+		@Override
 		public int length() {
 			return fSequenceLength;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#charAt(int)
-		 */
+		@Override
 		public char charAt(int index) {
 			if (index < 0) {
 				throw new IndexOutOfBoundsException("index must be larger than 0"); //$NON-NLS-1$
@@ -109,9 +105,7 @@ public class FileCharSequenceProvider {
 			return fParent.charAt(fSequenceOffset + index);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#subSequence(int, int)
-		 */
+		@Override
 		public CharSequence subSequence(int start, int end) {
 			if (end < start) {
 				throw new IndexOutOfBoundsException("end cannot be smaller than start"); //$NON-NLS-1$
@@ -125,9 +119,7 @@ public class FileCharSequenceProvider {
 			return fParent.subSequence(fSequenceOffset + start, fSequenceOffset + end);
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			try {
 				return fParent.getSubstring(fSequenceOffset,  fSequenceLength);
@@ -327,9 +319,7 @@ public class FileCharSequenceProvider {
 			fReaderPos= Integer.MAX_VALUE;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#length()
-		 */
+		@Override
 		public int length() {
 			if (fLength == null) {
 				try {
@@ -394,9 +384,7 @@ public class FileCharSequenceProvider {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#charAt(int)
-		 */
+		@Override
 		public char charAt(final int index) {
 			final Buffer current= fMostCurrentBuffer;
 			if (current != null && current.contains(index)) {
@@ -455,9 +443,7 @@ public class FileCharSequenceProvider {
 		}
 
 
-		/* (non-Javadoc)
-		 * @see java.lang.CharSequence#subSequence(int, int)
-		 */
+		@Override
 		public CharSequence subSequence(int start, int end) {
 			if (end < start) {
 				throw new IndexOutOfBoundsException("end cannot be smaller than start"); //$NON-NLS-1$
@@ -475,9 +461,7 @@ public class FileCharSequenceProvider {
 			clearReader();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
+		@Override
 		public String toString() {
 			int len= fLength != null ? fLength.intValue() : 4000;
 			StringBuffer res= new StringBuffer(len);

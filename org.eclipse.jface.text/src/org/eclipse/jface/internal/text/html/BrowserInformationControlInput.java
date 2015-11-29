@@ -51,6 +51,7 @@ public abstract class BrowserInformationControlInput extends BrowserInput {
 	 *
 	 * @return {@link #getHtml()}
 	 */
+	@Override
 	public String toString() {
 		return getHtml();
 	}

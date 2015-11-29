@@ -42,9 +42,7 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 	public UntitledTextFileWizard() {
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
 	public void dispose() {
 		fWindow= null;
 	}
@@ -68,9 +66,7 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 		return new NonExistingFileEditorInput(fileStore, TextEditorMessages.NewTextEditorAction_namePrefix);
 	}
 
-	/*
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		IFileStore fileStore= queryFileStore();
 		IEditorInput input= createEditorInput(fileStore);
@@ -85,9 +81,7 @@ public class UntitledTextFileWizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fWindow= workbench.getActiveWorkbenchWindow();
 	}

@@ -38,6 +38,7 @@ public class TextPresentationTest extends TestCase {
 		return new TestSuite(TextPresentationTest.class);
 	}
 
+	@Override
 	protected void setUp() {
 		setUpStyleRanges();
 		setUpTextPresentation();

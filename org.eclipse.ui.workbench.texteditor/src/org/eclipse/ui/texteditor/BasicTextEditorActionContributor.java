@@ -244,13 +244,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 *
 	 * @param part {@inheritDoc}
 	 */
+	@Override
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
 	}
 
-	/*
-	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
-	 */
+	@Override
 	public void contributeToMenu(IMenuManager menu) {
 
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
@@ -293,20 +292,14 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	    	menu.insertAfter(id, item);
     }
 
-	/*
-	 * @see EditorActionBarContributor#contributeToStatusLine(org.eclipse.jface.action.IStatusLineManager)
-	 * @since 2.0
-	 */
+	@Override
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
 			statusLineManager.add((IContributionItem)fStatusFields.get(STATUS_FIELD_DEFS[i]));
 	}
 
-	/*
-	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
-	 * @since 2.0
-	 */
+	@Override
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();

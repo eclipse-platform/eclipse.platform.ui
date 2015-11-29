@@ -40,9 +40,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 		super(QuickDiffMessages.getResourceBundle(), "RevertSelectionAction.", editor, isRulerAction); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
-	 */
+	@Override
 	public boolean computeEnablement() {
 		if (!super.computeEnablement())
 			return false;
@@ -72,9 +70,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction#runCompoundChange()
-	 */
+	@Override
 	public void runCompoundChange() {
 		// recheck if run without being enabled
 		if (!isEnabled())

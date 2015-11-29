@@ -50,6 +50,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 	 * Default control creator.
 	 */
 	protected static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
+		@Override
 		public IInformationControl doCreateInformationControl(Shell shell) {
 			return new DefaultInformationControl(shell, true);
 		}
@@ -106,9 +107,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformation()
-	 */
+	@Override
 	protected void computeInformation() {
 		if (fIsReplacing && fReplacableInformation != null) {
 			setInformation(fReplacableInformation, fReplaceableArea);
@@ -162,9 +161,7 @@ public class InformationControlReplacer extends AbstractInformationControlManage
 		showInformationControl(subjectArea);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
-	 */
+	@Override
 	public void hideInformationControl() {
 		super.hideInformationControl();
 	}

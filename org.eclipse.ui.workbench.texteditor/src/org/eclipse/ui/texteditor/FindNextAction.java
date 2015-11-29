@@ -114,6 +114,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 *
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
+	@Deprecated
 	public FindNextAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);
 		fWorkbenchWindow= workbenchWindow;
@@ -175,9 +176,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		manager.setMessage(""); //$NON-NLS-1$
 	}
 
-	/*
-	 *	@see IAction#run()
-	 */
+	@Override
 	public void run() {
 		if (fTarget != null) {
 			readConfiguration();
@@ -216,9 +215,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		return true;
 	}
 
-	/*
-	 * @see IUpdate#update()
-	 */
+	@Override
 	public void update() {
 
 		if (fWorkbenchPart == null && fWorkbenchWindow != null)

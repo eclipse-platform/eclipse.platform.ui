@@ -59,6 +59,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		 * right behind the end of the position, the position is extended rather
 		 * than kept stable.
 		 */
+		@Override
 		protected void adaptToInsert() {
 
 			int myStart= fPosition.offset;
@@ -145,6 +146,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		/*
 		 * @see IPositionManager#addManagedPosition(Position)
 		 */
+		@Override
 		public void managePosition(Position position) {
 			try {
 				fDocument.addPosition(fCategory, position);
@@ -158,6 +160,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		/*
 		 * @see IPositionManager#removeManagedPosition(Position)
 		 */
+		@Override
 		public void unmanagePosition(Position position) {
 			try {
 				fDocument.removePosition(fCategory, position);
@@ -299,48 +302,34 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			((IPainter) e.next()).paint(reason);
 	}
 
-	/*
-	 * @see KeyListener#keyPressed(KeyEvent)
-	 */
+	@Override
 	public void keyPressed(KeyEvent e) {
 		paint(IPainter.KEY_STROKE);
 	}
 
-	/*
-	 * @see KeyListener#keyReleased(KeyEvent)
-	 */
+	@Override
 	public void keyReleased(KeyEvent e) {
 	}
 
-	/*
-	 * @see MouseListener#mouseDoubleClick(MouseEvent)
-	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
-	/*
-	 * @see MouseListener#mouseDown(MouseEvent)
-	 */
+	@Override
 	public void mouseDown(MouseEvent e) {
 		paint(IPainter.MOUSE_BUTTON);
 	}
 
-	/*
-	 * @see MouseListener#mouseUp(MouseEvent)
-	 */
+	@Override
 	public void mouseUp(MouseEvent e) {
 	}
 
-	/*
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		paint(IPainter.SELECTION);
 	}
 
-	/*
-	 * @see ITextListener#textChanged(TextEvent)
-	 */
+	@Override
 	public void textChanged(TextEvent event) {
 
 		if (!event.getViewerRedrawState())
@@ -349,6 +338,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		Control control= fTextViewer.getTextWidget();
 		if (control != null) {
 			control.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (fTextViewer != null)
 						paint(IPainter.TEXT_CHANGE);
@@ -357,9 +347,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		}
 	}
 
-	/*
-	 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
-	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput != null) {
 			for (Iterator e= fPainters.iterator(); e.hasNext();)
@@ -369,9 +357,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 		}
 	}
 
-	/*
-	 * @see ITextInputListener#inputDocumentChanged(IDocument, IDocument)
-	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		if (newInput != null && newInput != fManager.fDocument) {
 			fManager.install(newInput);

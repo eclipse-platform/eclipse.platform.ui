@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;
  */
 public class SystemHashFunction implements IHashFunction {
 
+	@Override
 	public Hash computeHash(CharSequence seq) {
 		return new IntHash(seq.toString().hashCode());
 	}

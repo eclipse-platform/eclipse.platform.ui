@@ -22,6 +22,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
+@Deprecated
 public interface ISubjectControlContextInformationPresenter extends IContextInformationPresenter {
 
 	/**

@@ -231,26 +231,32 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			fScope= scope;
 		}
 
+		@Override
 		public String getSearchText() {
 			return fSearchText;
 		}
 
+		@Override
 		public boolean isCaseSensitiveSearch() {
 			return fIsCaseSensitive;
 		}
 
+		@Override
 		public boolean isRegExSearch() {
 			return fIsRegEx;
 		}
 
+		@Override
 		public boolean isWholeWordSearch() {
 			return fIsWholeWord;
 		}
 
+		@Override
 		public boolean searchInBinaries() {
 			return fSearchInBinaries;
 		}
 
+		@Override
 		public FileTextSearchScope getScope() {
 			return fScope;
 		}
@@ -265,6 +271,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
+	@Override
 	public boolean performAction() {
 		try {
 			NewSearchUI.runQueryInBackground(newQuery());
@@ -275,9 +282,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
  		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
-	 */
+	@Override
 	public boolean performReplace() {
 		try {
 			IStatus status= NewSearchUI.runQueryInForeground(getContainer().getRunnableContext(), newQuery());
@@ -289,6 +294,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			}
 
 			Display.getCurrent().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 					if (view != null) {
@@ -446,6 +452,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	/*
 	 * Implements method from IDialogPage
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible && fPattern != null) {
 			if (fFirstTime) {
@@ -479,6 +486,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	//---- Widget creation ------------------------------------------------
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		readConfiguration();
@@ -537,6 +545,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
 		fPattern.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleWidgetSelected();
 				updateOKStatus();
@@ -544,6 +553,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		});
 		// add some listeners for regex syntax checking
 		fPattern.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateOKStatus();
 			}
@@ -568,6 +578,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive);
 		fIsCaseSensitiveCheckbox.setSelection(fIsCaseSensitive);
 		fIsCaseSensitiveCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fIsCaseSensitive= fIsCaseSensitiveCheckbox.getSelection();
 			}
@@ -581,6 +592,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fIsRegExSearch= fIsRegExCheckbox.getSelection();
 				updateOKStatus();
@@ -606,6 +618,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsWholeWordCheckbox.setSelection(fIsWholeWord);
 		fIsWholeWordCheckbox.setEnabled(!fIsRegExSearch);
 		fIsWholeWordCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fIsWholeWord= fIsWholeWordCheckbox.getSelection();
 			}
@@ -717,6 +730,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		fExtensions.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateOKStatus();
 			}
@@ -752,6 +766,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 		fSearchDerivedCheckbox.setSelection(fSearchDerived);
 		fSearchDerivedCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fSearchDerived= fSearchDerivedCheckbox.getSelection();
 				writeConfiguration();
@@ -765,6 +780,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		
 		fSearchBinaryCheckbox.setSelection(fSearchBinaries);
 		fSearchBinaryCheckbox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fSearchBinaries= fSearchBinaryCheckbox.getSelection();
 				writeConfiguration();
@@ -778,6 +794,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * Sets the search page's container.
 	 * @param container the container to set
 	 */
+	@Override
 	public void setContainer(ISearchPageContainer container) {
 		fContainer= container;
 	}
@@ -793,9 +810,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	//--------------- Configuration handling --------------
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
+	@Override
 	public void dispose() {
 		writeConfiguration();
 		super.dispose();

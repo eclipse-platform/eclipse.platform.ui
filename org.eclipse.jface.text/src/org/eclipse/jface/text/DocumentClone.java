@@ -34,36 +34,26 @@ class DocumentClone extends AbstractDocument {
 			fContent= content;
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextStore#get(int)
-		 */
+		@Override
 		public char get(int offset) {
 			return fContent.charAt(offset);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextStore#get(int, int)
-		 */
+		@Override
 		public String get(int offset, int length) {
 			return fContent.substring(offset, offset + length);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextStore#getLength()
-		 */
+		@Override
 		public int getLength() {
 			return fContent.length();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
-		 */
+		@Override
 		public void replace(int offset, int length, String text) {
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
-		 */
+		@Override
 		public void set(String text) {
 		}
 

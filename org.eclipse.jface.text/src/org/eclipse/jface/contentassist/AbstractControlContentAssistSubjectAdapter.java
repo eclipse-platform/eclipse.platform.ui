@@ -50,6 +50,7 @@ import org.eclipse.jface.text.IEventConsumer;
  * @since 3.0
  * @deprecated As of 3.2, replaced by Platform UI's field assist support
  */
+@Deprecated
 public abstract class AbstractControlContentAssistSubjectAdapter implements IContentAssistSubjectControl {
 
 	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/ContentAssistSubjectAdapters"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -91,14 +92,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		fKeyListeners= new HashSet(1);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#getControl()
-	 */
+	@Override
 	public abstract Control getControl();
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistSubjectControl#addKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
+	@Override
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);
 
@@ -108,9 +105,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		installControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#removeKeyListener(org.eclipse.swt.events.KeyListener)
-	 */
+	@Override
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
 
@@ -123,16 +118,12 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#supportsVerifyKeyListener()
-	 */
+	@Override
 	public boolean supportsVerifyKeyListener() {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#appendVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
+	@Override
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
 
@@ -143,9 +134,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#prependVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
+	@Override
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
 
@@ -156,9 +145,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#removeVerifyKeyListener(org.eclipse.swt.custom.VerifyKeyListener)
-	 */
+	@Override
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
 
@@ -168,18 +155,14 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		uninstallControlListener();
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#setEventConsumer(org.eclipse.jface.text.IEventConsumer)
-	 */
+	@Override
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
 		if (DEBUG)
 			System.out.println("AbstractControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl#getLineDelimiter()
-	 */
+	@Override
 	public String getLineDelimiter() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
@@ -196,6 +179,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			return;
 
 		fControlListener= new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				if (! getControl().isFocusControl())
 					return; //SWT.TRAVERSE_MNEMONIC events can also come in to inactive widgets
@@ -345,6 +329,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			if (fControlDecoration == null) {
 				fControlDecoration= new ControlDecoration(getControl(), (SWT.TOP | SWT.LEFT));
 				getControl().addDisposeListener(new DisposeListener() {
+					@Override
 					public void widgetDisposed(DisposeEvent e) {
 						if (fCueLabelProvider != null) {
 							fCueLabelProvider.dispose();
@@ -365,6 +350,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 			}
 
 			ILabelProviderListener listener= new ILabelProviderListener() {
+				@Override
 				public void labelProviderChanged(LabelProviderChangedEvent event) {
 					fControlDecoration.setDescriptionText(labelProvider.getText(getControl()));
 					Image image= labelProvider.getImage(getControl());

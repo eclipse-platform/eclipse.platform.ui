@@ -58,9 +58,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		super(name);
 	}
 
-	/*
-	 *  @see TestCase#setUp()
-	 */
+	@Override
 	protected void setUp() {
 		fShell= new Shell();
 		fUndoManager= createUndoManager(MAX_UNDO_LEVEL);
@@ -71,9 +69,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 
 	abstract protected IUndoManager createUndoManager(int maxUndoLevel);
 
-	/*
-	 *  @see TestCase#tearDown()
-	 */
+	@Override
 	protected void tearDown() {
 		fUndoManager.disconnect();
 		fUndoManager= null;

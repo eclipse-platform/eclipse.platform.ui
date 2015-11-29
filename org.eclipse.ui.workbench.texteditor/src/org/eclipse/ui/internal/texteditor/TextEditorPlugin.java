@@ -145,10 +145,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	}
 
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 * @since 3.0
-	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fQuickDiffExtensionRegistry= new QuickDiffExtensionsRegistry();
@@ -156,10 +153,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, PLUGIN_ID);
 	}
 
-	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 * @since 3.0
-	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		fQuickDiffExtensionRegistry= null;
@@ -167,10 +161,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		super.stop(context);
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-	 * @since 3.0
-	 */
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		if (fQuickDiffExtensionRegistry != null && event.getExtensionDeltas(PLUGIN_ID, REFERENCE_PROVIDER_EXTENSION_POINT).length > 0)
 			fQuickDiffExtensionRegistry.reloadExtensions();

@@ -128,33 +128,26 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		}
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		fScrollbarClicked= true;
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusGained(FocusEvent e) {
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-	 */
+	@Override
 	public void focusLost(final FocusEvent e) {
 		fScrollbarClicked= false;
 		Display d= fTable.getDisplay();
 		d.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (Helper.okToUse(fTable) && !fTable.isFocusControl() && !fScrollbarClicked && fContentAssistant != null)
 					fContentAssistant.popupFocusLost(e);
@@ -162,13 +155,11 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 		});
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
-	 * @since 3.1
-	 */
+	@Override
 	public void shellDeactivated(ShellEvent e) {
 		if (fContentAssistant != null && fDisplay != null) {
 			fDisplay.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					/*
 					 * The asyncExec is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=235556 :
@@ -182,19 +173,13 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	}
 
 
-	/*
-	 * @see org.eclipse.swt.events.ShellAdapter#shellClosed(org.eclipse.swt.events.ShellEvent)
-	 * @since 3.1
-	 */
+	@Override
 	public void shellClosed(ShellEvent e) {
 		if (fContentAssistant != null)
 			fContentAssistant.hide();
 	}
 
-	/*
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 * @since 3.4
-	 */
+	@Override
 	public void handleEvent(Event event) {
 		switch (event.type) {
 			case SWT.Activate:
@@ -237,6 +222,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 								delayedICP.setDelayedInputChangeListener(inputChangeListener);
 								// cancel automatic input updating after a small timeout:
 								control.getShell().getDisplay().timerExec(1000, new Runnable() {
+									@Override
 									public void run() {
 										delayedICP.setDelayedInputChangeListener(null);
 									}
@@ -245,6 +231,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 
 							// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
 							control.getShell().getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
 								}
@@ -265,6 +252,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 						IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
 						if (iControl5.containsControl(control)) {
 							control.getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
 										fContentAssistant.hide();

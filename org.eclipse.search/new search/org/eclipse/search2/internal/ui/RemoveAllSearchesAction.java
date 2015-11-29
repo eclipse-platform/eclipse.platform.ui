@@ -23,6 +23,7 @@ class RemoveAllSearchesAction extends Action {
 		setToolTipText(SearchMessages.RemoveAllSearchesAction_tooltip);
 	}
 
+	@Override
 	public void run() {
 		ISearchQuery[] queries= NewSearchUI.getQueries();
 		for (int i = 0; i < queries.length; i++) {
