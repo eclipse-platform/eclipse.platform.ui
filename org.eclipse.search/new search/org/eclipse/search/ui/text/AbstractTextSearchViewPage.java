@@ -174,7 +174,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private class SelectionProviderAdapter implements ISelectionProvider, ISelectionChangedListener {
-		private ArrayList fListeners= new ArrayList(5);
+		private ArrayList<ISelectionChangedListener> fListeners= new ArrayList<>(5);
 
 		@Override
 		public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -200,8 +200,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		public void selectionChanged(SelectionChangedEvent event) {
 			// forward to my listeners
 			SelectionChangedEvent wrappedEvent= new SelectionChangedEvent(this, event.getSelection());
-			for (Iterator listeners= fListeners.iterator(); listeners.hasNext();) {
-				ISelectionChangedListener listener= (ISelectionChangedListener) listeners.next();
+			for (Iterator<ISelectionChangedListener> listeners= fListeners.iterator(); listeners.hasNext();) {
+				ISelectionChangedListener listener= listeners.next();
 				listener.selectionChanged(wrappedEvent);
 			}
 		}
@@ -223,7 +223,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private PageBook fPagebook;
 	private boolean fIsBusyShown;
 	private ISearchResultViewPart fViewPart;
-	private Set fBatchedUpdates;
+	private Set<Object> fBatchedUpdates;
 	private boolean fBatchedClearAll;
 
 	private ISearchResultListener fListener;
@@ -296,7 +296,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 		fSelectAllAction= new SelectAllAction();
 		createLayoutActions();
-		fBatchedUpdates = new HashSet();
+		fBatchedUpdates = new HashSet<>();
 		fBatchedClearAll= false;
 
 		fListener = new ISearchResultListener() {
@@ -1240,7 +1240,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @param changedElements the set that collects the elements to change. Clients should only add elements to the set.
 	 * @since 3.4
 	 */
-	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
+	protected void evaluateChangedElements(Match[] matches, Set<Object> changedElements) {
 		for (int i = 0; i < matches.length; i++) {
 			changedElements.add(matches[i].getElement());
 		}
@@ -1357,7 +1357,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		StructuredViewer viewer = getViewer();
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 
-		HashSet set = new HashSet();
+		HashSet<Match> set = new HashSet<>();
 		if (viewer instanceof TreeViewer) {
 			ITreeContentProvider cp = (ITreeContentProvider) viewer.getContentProvider();
 			collectAllMatchesBelow(result, set, cp, selection.toArray());
@@ -1371,7 +1371,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		result.removeMatches(matches);
 	}
 
-	private void collectAllMatches(HashSet set, Object[] elements) {
+	private void collectAllMatches(HashSet<Match> set, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
 			Match[] matches = getDisplayedMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {
@@ -1380,7 +1380,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set set, ITreeContentProvider cp, Object[] elements) {
+	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set<Match> set, ITreeContentProvider cp, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
 			Match[] matches = getDisplayedMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {

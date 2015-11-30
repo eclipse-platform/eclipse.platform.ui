@@ -51,8 +51,8 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 
 
 	protected IDocument fDocument;
-	protected List fInputListeners= new ArrayList();
-	protected List fTextListeners= new ArrayList();
+	protected List<ITextInputListener> fInputListeners= new ArrayList<>();
+	protected List<ITextListener> fTextListeners= new ArrayList<>();
 	protected TextPresentation fTextPresentation;
 	protected Point fSelection= new Point(-1, -1);
 	protected String fDeletion;
@@ -112,9 +112,9 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	}
 
 	protected void fireTextInputChanged(IDocument oldDoc, IDocument newDoc, boolean about) {
-		Iterator e= new ArrayList(fInputListeners).iterator();
+		Iterator<ITextInputListener> e= new ArrayList<>(fInputListeners).iterator();
 		while (e.hasNext()) {
-			ITextInputListener l= (ITextInputListener) e.next();
+			ITextInputListener l= e.next();
 			if (about)
 				l.inputDocumentAboutToBeChanged(oldDoc, newDoc);
 			else
@@ -377,9 +377,9 @@ public class TestTextViewer implements ISourceViewer, IDocumentListener {
 	}
 
 	protected void fireTextChanged(TextEvent event) {
-		Iterator e= new ArrayList(fTextListeners).iterator();
+		Iterator<ITextListener> e= new ArrayList<>(fTextListeners).iterator();
 		while (e.hasNext()) {
-			ITextListener l= (ITextListener) e.next();
+			ITextListener l= e.next();
 			l.textChanged(event);
 		}
 	}

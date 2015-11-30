@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.Hunk;
+import org.eclipse.jface.internal.text.revisions.Range;
 
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.source.ILineRange;
@@ -33,15 +34,15 @@ import org.eclipse.jface.text.source.ILineRange;
  * @since 3.2
  */
 public abstract class Revision {
-	/** The original list of change regions, element type: {@link ChangeRegion}. */
-	private final List fChangeRegions= new ArrayList();
+	/** The original list of change regions. */
+	private final List<ChangeRegion> fChangeRegions= new ArrayList<>();
 	/**
-	 * The cached list of adjusted ranges, element type: {@link RevisionRange}. <code>null</code>
+	 * The cached list of adjusted ranges. <code>null</code>
 	 * if the list must be re-computed. Unmodifiable.
 	 *
 	 * @since 3.3
 	 */
-	private List fRanges= null;
+	private List<RevisionRange> fRanges= null;
 
 	/**
 	 * Creates a new revision.
@@ -65,15 +66,15 @@ public abstract class Revision {
 	 * information is only valid at the moment it is returned, and may change as the annotated
 	 * document is modified.
 	 *
-	 * @return an unmodifiable view of the contained ranges (element type: {@link RevisionRange})
+	 * @return an unmodifiable view of the contained ranges
 	 */
-	public final List getRegions() {
+	public final List<RevisionRange> getRegions() {
 		if (fRanges == null) {
-			List ranges= new ArrayList(fChangeRegions.size());
-			for (Iterator it= fChangeRegions.iterator(); it.hasNext();) {
-				ChangeRegion region= (ChangeRegion) it.next();
-				for (Iterator inner= region.getAdjustedRanges().iterator(); inner.hasNext();) {
-					ILineRange range= (ILineRange) inner.next();
+			List<RevisionRange> ranges= new ArrayList<>(fChangeRegions.size());
+			for (Iterator<ChangeRegion> it= fChangeRegions.iterator(); it.hasNext();) {
+				ChangeRegion region= it.next();
+				for (Iterator<Range> inner= region.getAdjustedRanges().iterator(); inner.hasNext();) {
+					ILineRange range= inner.next();
 					ranges.add(new RevisionRange(this, range));
 				}
 			}
@@ -91,8 +92,8 @@ public abstract class Revision {
 	 */
 	final void applyDiff(Hunk[] hunks) {
 		fRanges= null; // mark for recomputation
-		for (Iterator regions= fChangeRegions.iterator(); regions.hasNext();) {
-			ChangeRegion region= (ChangeRegion) regions.next();
+		for (Iterator<ChangeRegion> regions= fChangeRegions.iterator(); regions.hasNext();) {
+			ChangeRegion region= regions.next();
 			region.clearDiff();
 			for (int i= 0; i < hunks.length; i++) {
 				Hunk hunk= hunks[i];

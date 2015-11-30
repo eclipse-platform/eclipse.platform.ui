@@ -21,7 +21,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class AnnotationManagers {
 	static {
-		fgManagerMap = new HashMap();
+		fgManagerMap = new HashMap<>();
 		IWindowListener listener = new IWindowListener() {
 			@Override
 			public void windowActivated(IWorkbenchWindow window) {
@@ -46,11 +46,11 @@ public class AnnotationManagers {
 		PlatformUI.getWorkbench().addWindowListener(listener);
 	}
 
-	private static HashMap fgManagerMap;
+	private static HashMap<IWorkbenchWindow, WindowAnnotationManager> fgManagerMap;
 
 
 	private static void disposeAnnotationManager(IWorkbenchWindow window) {
-		WindowAnnotationManager mgr = (WindowAnnotationManager) fgManagerMap.remove(window);
+		WindowAnnotationManager mgr = fgManagerMap.remove(window);
 		if (mgr != null)
 			mgr.dispose();
 	}
@@ -64,7 +64,7 @@ public class AnnotationManagers {
 	}
 
 	private static WindowAnnotationManager getWindowAnnotationManager(IWorkbenchWindow window) {
-		WindowAnnotationManager mgr= (WindowAnnotationManager) fgManagerMap.get(window);
+		WindowAnnotationManager mgr= fgManagerMap.get(window);
 		if (mgr == null) {
 			mgr= new WindowAnnotationManager(window);
 			fgManagerMap.put(window, mgr);

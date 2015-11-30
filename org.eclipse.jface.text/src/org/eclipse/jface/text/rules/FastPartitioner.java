@@ -613,7 +613,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		checkInitialization();
-		List list= new ArrayList();
+		List<TypedRegion> list= new ArrayList<>();
 
 		try {
 

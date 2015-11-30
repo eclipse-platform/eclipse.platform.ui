@@ -42,7 +42,7 @@ import org.eclipse.search.ui.text.RemoveAllEvent;
 
 public class EditorAnnotationManager implements ISearchResultListener {
 
-	private ArrayList fResults;
+	private ArrayList<AbstractTextSearchResult> fResults;
 	private IEditorPart fEditor;
 	private Highlighter fHighlighter; // initialized lazy
 
@@ -57,7 +57,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		Assert.isNotNull(editorPart);
 		fEditor= editorPart;
 		fHighlighter= null; // lazy initialization
-		fResults= new ArrayList(3);
+		fResults= new ArrayList<>(3);
 	}
 
 
@@ -72,7 +72,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			fHighlighter.dispose();
 
 		for (int i= 0; i < fResults.size(); i++) {
-			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
+			fResults.get(i).removeListener(this);
 		}
 		fResults.clear();
 	}
@@ -86,20 +86,20 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		}
 
 		for (int i= 0; i < fResults.size(); i++) {
-			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
+			AbstractTextSearchResult curr= fResults.get(i);
 			addAnnotations(curr);
 		}
 	}
 
-	public synchronized void setSearchResults(List results) {
+	public synchronized void setSearchResults(List<AbstractTextSearchResult> results) {
 		removeAllAnnotations();
 		for (int i= 0; i < fResults.size(); i++) {
-			((AbstractTextSearchResult) fResults.get(i)).removeListener(this);
+			fResults.get(i).removeListener(this);
 		}
 		fResults.clear();
 
 		for (int i= 0; i < results.size(); i++) {
-			addSearchResult((AbstractTextSearchResult) results.get(i));
+			addSearchResult(results.get(i));
 		}
 	}
 
@@ -154,18 +154,18 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			return adapter.isShownInEditor(matches[0], fEditor) ? matches : null;
 		}
 
-		ArrayList matchesInEditor= null; // lazy initialization
+		ArrayList<Match> matchesInEditor= null; // lazy initialization
 		for (int i= 0; i < matches.length; i++) {
 			Match curr= matches[i];
 			if (adapter.isShownInEditor(curr, fEditor)) {
 				if (matchesInEditor == null) {
-					matchesInEditor= new ArrayList();
+					matchesInEditor= new ArrayList<>();
 				}
 				matchesInEditor.add(curr);
 			}
 		}
 		if (matchesInEditor != null) {
-			return (Match[]) matchesInEditor.toArray(new Match[matchesInEditor.size()]);
+			return matchesInEditor.toArray(new Match[matchesInEditor.size()]);
 		}
 		return null;
 	}
@@ -230,7 +230,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		removeAllAnnotations();
 
 		for (int i= 0; i < fResults.size(); i++) {
-			AbstractTextSearchResult curr= (AbstractTextSearchResult) fResults.get(i);
+			AbstractTextSearchResult curr= fResults.get(i);
 			if (curr != result) {
 				addAnnotations(curr);
 			}

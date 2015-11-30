@@ -196,7 +196,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 
 	private void storeSettings() {
 		String[] items= fTextField.getItems();
-		ArrayList history= new ArrayList();
+		ArrayList<String> history= new ArrayList<>();
 		history.add(fTextField.getText());
 		int historySize= Math.min(items.length, 6);
 		for (int i= 0; i < historySize; i++) {
@@ -206,7 +206,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 			}
 		}
 		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_GROUP);
-		settings.put(SETTINGS_REPLACE_WITH, (String[]) history.toArray(new String[history.size()]));
+		settings.put(SETTINGS_REPLACE_WITH, history.toArray(new String[history.size()]));
 
     }
 

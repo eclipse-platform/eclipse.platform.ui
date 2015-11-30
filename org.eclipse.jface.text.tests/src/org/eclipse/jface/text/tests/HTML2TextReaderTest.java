@@ -16,13 +16,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -30,6 +25,10 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.jface.internal.text.html.HTML2TextReader;
 
 import org.eclipse.jface.text.TextPresentation;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 public class HTML2TextReaderTest extends TestCase {
@@ -47,10 +46,10 @@ public class HTML2TextReaderTest extends TestCase {
 	}
 
 	/**
-	 * @param input
-	 * @param expectedOutput
-	 * @param styleRangeCount
-	 * @throws IOException
+	 * @param input input
+	 * @param expectedOutput expected output
+	 * @param styleRangeCount count
+	 * @throws IOException test failure
 	 * @deprecated pass actual style ranges
 	 */
 	@Deprecated
@@ -63,26 +62,19 @@ public class HTML2TextReaderTest extends TestCase {
 			System.out.println("<" + result + "/>");
 		assertEquals(expectedOutput, result);
 
-		Iterator styleRangeIterator= textPresentation.getAllStyleRangeIterator();
-		List ranges= new ArrayList();
+		Iterator<StyleRange> styleRangeIterator= textPresentation.getAllStyleRangeIterator();
+		List<StyleRange> ranges= new ArrayList<>();
 		while (styleRangeIterator.hasNext()) {
 			ranges.add(styleRangeIterator.next());
 		}
 
 		assertEquals("Incorrect number of style ranges", styleRangeCount, ranges.size());
 
-		Collections.sort(ranges, new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				StyleRange range1= (StyleRange)o1;
-				StyleRange range2= (StyleRange)o2;
-				return range1.start - range2.start;
-			}
-		});
+		Collections.sort(ranges, (r1, r2) -> r1.start - r2.start);
 
 		for (int i= 0; i < ranges.size() - 1; i++) {
-			StyleRange range1= (StyleRange)ranges.get(i);
-			StyleRange range2= (StyleRange)ranges.get(i + 1);
+			StyleRange range1= ranges.get(i);
+			StyleRange range2= ranges.get(i + 1);
 
 			if (range1.start + range1.length > range2.start) {
 				assertTrue("StyleRanges overlap", false);
@@ -100,26 +92,19 @@ public class HTML2TextReaderTest extends TestCase {
 			System.out.println("<" + result + "/>");
 		assertEquals(expectedOutput, result);
 		
-		Iterator styleRangeIterator= textPresentation.getAllStyleRangeIterator();
-		List ranges= new ArrayList();
+		Iterator<StyleRange> styleRangeIterator= textPresentation.getAllStyleRangeIterator();
+		List<StyleRange> ranges= new ArrayList<>();
 		while (styleRangeIterator.hasNext()) {
 			ranges.add(styleRangeIterator.next());
 		}
 		
-		Collections.sort(ranges, new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				StyleRange range1= (StyleRange)o1;
-				StyleRange range2= (StyleRange)o2;
-				return range1.start - range2.start;
-			}
-		});
+		Collections.sort(ranges, (r1, r2) -> r1.start - r2.start);
 		
 		assertEquals(Arrays.asList(styleRanges), ranges);
 		
 		for (int i= 0; i < ranges.size() - 1; i++) {
-			StyleRange range1= (StyleRange)ranges.get(i);
-			StyleRange range2= (StyleRange)ranges.get(i + 1);
+			StyleRange range1= ranges.get(i);
+			StyleRange range2= ranges.get(i + 1);
 			
 			if (range1.start + range1.length > range2.start) {
 				assertTrue("StyleRanges overlap", false);

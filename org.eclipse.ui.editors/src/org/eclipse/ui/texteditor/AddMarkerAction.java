@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class AddMarkerAction extends TextEditorAction {
 		IResource resource= getResource();
 		if (resource == null)
 			return;
-		Map attributes= getInitialAttributes();
+		Map<String, Object> attributes= getInitialAttributes();
 		if (fAskForLabel) {
 			if (!askForLabel(attributes))
 				return;
@@ -134,10 +134,11 @@ public class AddMarkerAction extends TextEditorAction {
 
 		final Shell shell= getTextEditor().getSite().getShell();
 		IAdaptable context= new IAdaptable() {
+			@SuppressWarnings("unchecked")
 			@Override
-			public Object getAdapter(Class adapter) {
+			public <T> T getAdapter(Class<T> adapter) {
 				if (adapter == Shell.class)
-					return shell;
+					return (T) shell;
 				return null;
 			}
 		};
@@ -168,7 +169,7 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @param attributes the attributes map
 	 * @return <code>true</code> if a label has been entered
 	 */
-	protected boolean askForLabel(Map attributes) {
+	protected boolean askForLabel(Map<String, Object> attributes) {
 
 		Object o= attributes.get("message"); //$NON-NLS-1$
 		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
@@ -204,9 +205,9 @@ public class AddMarkerAction extends TextEditorAction {
 	 *
 	 * @return the attributes the new marker will be initialized with
 	 */
-	protected Map getInitialAttributes() {
+	protected Map<String, Object> getInitialAttributes() {
 
-		Map attributes= new HashMap(11);
+		Map<String, Object> attributes= new HashMap<>(11);
 
 		ITextSelection selection= (ITextSelection) getTextEditor().getSelectionProvider().getSelection();
 		if (!selection.isEmpty()) {

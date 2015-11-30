@@ -57,7 +57,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	public final static int PROBLEM_LAYER= 5;
 
 	/** Internal image registry. */
-	private static Map fgImageRegistry;
+	private static Map<ImageDescriptor, Image> fgImageRegistry;
 
 	/**
 	 * Returns an image for the given display as specified by the given image
@@ -72,8 +72,8 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 */
 	@Deprecated
 	protected static Image getImage(Display display, ImageDescriptor descriptor) {
-		Map map= getImageRegistry(display);
-		Image image= (Image) map.get(descriptor);
+		Map<ImageDescriptor, Image> map= getImageRegistry(display);
+		Image image= map.get(descriptor);
 		if (image == null) {
 			image= descriptor.createImage();
 			map.put(descriptor, image);
@@ -92,18 +92,18 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 	 *             {@link org.eclipse.jface.text.source.IAnnotationPresentation}
 	 */
 	@Deprecated
-	protected static Map getImageRegistry(Display display) {
+	protected static Map<ImageDescriptor, Image> getImageRegistry(Display display) {
 		if (fgImageRegistry == null) {
-			fgImageRegistry= new HashMap();
+			fgImageRegistry= new HashMap<>();
 			display.disposeExec(new Runnable() {
 				@Override
 				public void run() {
 					if (fgImageRegistry != null) {
-						Map map= fgImageRegistry;
+						Map<ImageDescriptor, Image> map= fgImageRegistry;
 						fgImageRegistry= null;
-						Iterator e= map.values().iterator();
+						Iterator<Image> e= map.values().iterator();
 						while (e.hasNext()) {
-							Image image= (Image) e.next();
+							Image image= e.next();
 							if (!image.isDisposed())
 								image.dispose();
 						}

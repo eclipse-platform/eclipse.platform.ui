@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -540,7 +540,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		if (fVerticalRulerInfo instanceof CompositeRuler) {
 			CompositeRuler comp= (CompositeRuler) fVerticalRulerInfo;
-			for (Iterator it= comp.getDecoratorIterator(); it.hasNext();) {
+			for (Iterator<IVerticalRulerColumn> it= comp.getDecoratorIterator(); it.hasNext();) {
 				Object o= it.next();
 				if (o instanceof IVerticalRulerInfoExtension && o instanceof IVerticalRulerInfo) {
 					if (((IVerticalRulerInfo) o).getControl() == event.getSource()) {

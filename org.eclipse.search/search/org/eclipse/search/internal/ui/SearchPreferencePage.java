@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,15 +59,12 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
 
 
-	private static class PerspectiveDescriptorComparator implements Comparator {
+	private static class PerspectiveDescriptorComparator implements Comparator<IPerspectiveDescriptor> {
 		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof IPerspectiveDescriptor && o2 instanceof IPerspectiveDescriptor) {
-				String id1= ((IPerspectiveDescriptor)o1).getLabel();
-				String id2= ((IPerspectiveDescriptor)o2).getLabel();
-				return Collator.getInstance().compare(id1, id2);
-			}
-			return 0;
+		public int compare(IPerspectiveDescriptor o1, IPerspectiveDescriptor o2) {
+			String id1= o1.getLabel();
+			String id2= o2.getLabel();
+			return Collator.getInstance().compare(id1, id2);
 		}
 	}
 

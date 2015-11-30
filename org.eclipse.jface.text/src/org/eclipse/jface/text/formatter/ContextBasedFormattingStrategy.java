@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,14 +25,14 @@ import java.util.Map;
 public abstract class ContextBasedFormattingStrategy implements IFormattingStrategy, IFormattingStrategyExtension {
 
 	/** The current preferences for formatting */
-	private Map fCurrentPreferences= null;
+	private Map<String, String> fCurrentPreferences= null;
 
 	/** The list of preferences for initiated the formatting steps */
-	private final LinkedList fPreferences= new LinkedList();
+	private final LinkedList<Map<String, String>> fPreferences= new LinkedList<>();
 
 	@Override
 	public void format() {
-		fCurrentPreferences= (Map)fPreferences.removeFirst();
+		fCurrentPreferences= fPreferences.removeFirst();
 	}
 
 	@Override
@@ -42,7 +42,9 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 
 	@Override
 	public void formatterStarts(final IFormattingContext context) {
-		fPreferences.addLast(context.getProperty(FormattingContextProperties.CONTEXT_PREFERENCES));
+		@SuppressWarnings("unchecked")
+		Map<String, String> prefs= (Map<String, String>) context.getProperty(FormattingContextProperties.CONTEXT_PREFERENCES);
+		fPreferences.addLast(prefs);
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public abstract class ContextBasedFormattingStrategy implements IFormattingStrat
 	 *
 	 * @return The preferences for the current formatting step
 	 */
-	public final Map getPreferences() {
+	public final Map<String, String> getPreferences() {
 		return fCurrentPreferences;
 	}
 }

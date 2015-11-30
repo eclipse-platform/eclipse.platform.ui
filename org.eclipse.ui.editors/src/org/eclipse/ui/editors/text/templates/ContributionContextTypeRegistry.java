@@ -182,7 +182,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	 * @return the instantiated resolvers
 	 */
 	private static TemplateVariableResolver[] createResolvers(IConfigurationElement[] extensions, String contextTypeId) {
-		List resolvers= new ArrayList();
+		List<TemplateVariableResolver> resolvers= new ArrayList<>();
 		for (int i= 0; i < extensions.length; i++) {
 			if (extensions[i].getName().equals(RESOLVER)) {
 				String declaredId= extensions[i].getAttribute(CONTEXT_TYPE_ID);
@@ -198,7 +198,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 			}
 		}
 
-		return (TemplateVariableResolver[]) resolvers.toArray(new TemplateVariableResolver[resolvers.size()]);
+		return resolvers.toArray(new TemplateVariableResolver[resolvers.size()]);
 
 	}
 

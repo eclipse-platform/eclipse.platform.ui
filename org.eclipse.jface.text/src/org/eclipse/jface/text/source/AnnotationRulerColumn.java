@@ -115,11 +115,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * Comparator for <code>Tuple</code>s.
 	 * @since 3.0
 	 */
-	private static class TupleComparator implements Comparator {
+	private static class TupleComparator implements Comparator<Tuple> {
 		@Override
-		public int compare(Object o1, Object o2) {
-			Position p1= ((Tuple) o1).position;
-			Position p2= ((Tuple) o2).position;
+		public int compare(Tuple o1, Tuple o2) {
+			Position p1= o1.position;
+			Position p2= o2.position;
 			return p1.getOffset() - p2.getOffset();
 		}
 	}
@@ -148,14 +148,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * The list of annotation types to be shown in this ruler.
 	 * @since 3.0
 	 */
-	private Set fConfiguredAnnotationTypes= new HashSet();
+	private Set<Object> fConfiguredAnnotationTypes= new HashSet<>();
 	/**
 	 * The list of allowed annotation types to be shown in this ruler.
 	 * An allowed annotation type maps to <code>true</code>, a disallowed
 	 * to <code>false</code>.
 	 * @since 3.0
 	 */
-	private Map fAllowedAnnotationTypes= new HashMap();
+	private Map<Object, Boolean> fAllowedAnnotationTypes= new HashMap<>();
 	/**
 	 * The annotation access extension.
 	 * @since 3.0
@@ -170,12 +170,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * The cached annotations.
 	 * @since 3.0
 	 */
-	private List fCachedAnnotations= new ArrayList();
+	private List<Tuple> fCachedAnnotations= new ArrayList<>();
 	/**
 	 * The comparator for sorting annotations according to the offset of their position.
 	 * @since 3.0
 	 */
-	private Comparator fTupleComparator= new TupleComparator();
+	private Comparator<Tuple> fTupleComparator= new TupleComparator();
 	/**
 	 * The hit detection cursor. Do not dispose.
 	 * @since 3.0
@@ -474,14 +474,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int lineStart= line.getOffset();
 		int lineLength= line.getLength();
 
-		Iterator e;
+		Iterator<Annotation> e;
 		if (fModel instanceof IAnnotationModelExtension2)
 			e= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(lineStart, lineLength + 1, true, true);
 		else
 			e= model.getAnnotationIterator();
 
 		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
+			Annotation a= e.next();
 
 			if (a.isMarkedDeleted())
 				continue;
@@ -646,14 +646,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int maxLayer= 1;	// loop at least once through layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
-			Iterator iter;
+			Iterator<Annotation> iter;
 			if (fModel instanceof IAnnotationModelExtension2)
 				iter= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(topLeft, viewPort + 1, true, true);
 			else
 				iter= fModel.getAnnotationIterator();
 
 			while (iter.hasNext()) {
-				Annotation annotation= (Annotation) iter.next();
+				Annotation annotation= iter.next();
 
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (fAnnotationAccessExtension != null)
@@ -736,14 +736,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		int minLayer= Integer.MAX_VALUE, maxLayer= Integer.MIN_VALUE;
 		fCachedAnnotations.clear();
-		Iterator iter;
+		Iterator<Annotation> iter;
 		if (fModel instanceof IAnnotationModelExtension2)
 			iter= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(vOffset, vLength + 1, true, true);
 		else
 			iter= fModel.getAnnotationIterator();
 
 		while (iter.hasNext()) {
-			Annotation annotation= (Annotation) iter.next();
+			Annotation annotation= iter.next();
 
 			if (skip(annotation))
 				continue;
@@ -769,7 +769,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		for (int layer= minLayer; layer <= maxLayer; layer++) {
 			for (int i= 0, n= fCachedAnnotations.size(); i < n; i++) {
-				Tuple tuple= (Tuple) fCachedAnnotations.get(i);
+				Tuple tuple= fCachedAnnotations.get(i);
 				Annotation annotation= tuple.annotation;
 				Position position= tuple.position;
 
@@ -924,7 +924,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private boolean skip(Annotation annotation) {
 		Object annotationType= annotation.getType();
-		Boolean allowed= (Boolean) fAllowedAnnotationTypes.get(annotationType);
+		Boolean allowed= fAllowedAnnotationTypes.get(annotationType);
 		if (allowed != null)
 			return !allowed.booleanValue();
 
@@ -944,7 +944,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private boolean skip(Object annotationType) {
 		if (fAnnotationAccessExtension != null) {
-			Iterator e= fConfiguredAnnotationTypes.iterator();
+			Iterator<Object> e= fConfiguredAnnotationTypes.iterator();
 			while (e.hasNext()) {
 				if (fAnnotationAccessExtension.isSubtype(annotationType, e.next()))
 					return false;

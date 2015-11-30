@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -32,6 +30,8 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
+import junit.framework.TestCase;
 
 /**
  * FileBufferFunctions
@@ -55,7 +55,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 	protected abstract boolean isStateValidationSupported();
 
-	protected abstract Class getAnnotationModelClass() throws Exception;
+	protected abstract Class<IAnnotationModel> getAnnotationModelClass() throws Exception;
 
 
 	@Override
@@ -1095,7 +1095,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertNotNull(buffer);
 
-			Class clazz= getAnnotationModelClass();
+			Class<IAnnotationModel> clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));
@@ -1162,7 +1162,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 			assertNotNull(buffer);
 
-			Class clazz= getAnnotationModelClass();
+			Class<IAnnotationModel> clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class InternalSearchUI {
 	private static InternalSearchUI fgInstance;
 
 	// contains all running jobs
-	private HashMap fSearchJobs;
+	private HashMap<ISearchQuery, SearchJobRecord> fSearchJobs;
 
 	private QueryManager fSearchResultsManager;
 	private PositionTracker fPositionTracker;
@@ -123,7 +123,7 @@ public class InternalSearchUI {
 	 */
 	public InternalSearchUI() {
 		fgInstance= this;
-		fSearchJobs= new HashMap();
+		fSearchJobs= new HashMap<>();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
 
@@ -186,7 +186,7 @@ public class InternalSearchUI {
 	}
 
 	public boolean isQueryRunning(ISearchQuery query) {
-		SearchJobRecord sjr= (SearchJobRecord) fSearchJobs.get(query);
+		SearchJobRecord sjr= fSearchJobs.get(query);
 		return sjr != null && sjr.isRunning;
 	}
 
@@ -253,9 +253,9 @@ public class InternalSearchUI {
 	}
 
 	private void doShutdown() {
-		Iterator jobRecs= fSearchJobs.values().iterator();
+		Iterator<SearchJobRecord> jobRecs= fSearchJobs.values().iterator();
 		while (jobRecs.hasNext()) {
-			SearchJobRecord element= (SearchJobRecord) jobRecs.next();
+			SearchJobRecord element= jobRecs.next();
 			if (element.job != null)
 				element.job.cancel();
 		}
@@ -266,7 +266,7 @@ public class InternalSearchUI {
 	}
 
 	public void cancelSearch(ISearchQuery job) {
-		SearchJobRecord rec= (SearchJobRecord) fSearchJobs.get(job);
+		SearchJobRecord rec= fSearchJobs.get(job);
 		if (rec != null && rec.job != null)
 			rec.job.cancel();
 	}
@@ -332,8 +332,8 @@ public class InternalSearchUI {
 	}
 
 	public void removeAllQueries() {
-		for (Iterator queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
-			ISearchQuery query= (ISearchQuery) queries.next();
+		for (Iterator<ISearchQuery> queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
+			ISearchQuery query= queries.next();
 			cancelSearch(query);
 		}
 		fSearchJobs.clear();

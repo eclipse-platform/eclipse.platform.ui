@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public final class HyperlinkDetectorRegistry {
 		Assert.isLegal(targetId != null);
 		initHyperlinkDetectorDescriptors();
 
-		List result= new ArrayList();
+		List<HyperlinkDetectorDelegate> result= new ArrayList<>();
 		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
 			if (targetId.equals(fHyperlinkDetectorDescriptors[i].getTargetId())) {
 				HyperlinkDetectorDelegate detector= new HyperlinkDetectorDelegate(fHyperlinkDetectorDescriptors[i]);
@@ -166,7 +166,7 @@ public final class HyperlinkDetectorRegistry {
 				detector.setContext(context);
 			}
 		}
-		return (IHyperlinkDetector[])result.toArray(new IHyperlinkDetector[result.size()]);
+		return result.toArray(new IHyperlinkDetector[result.size()]);
 	}
 
 }

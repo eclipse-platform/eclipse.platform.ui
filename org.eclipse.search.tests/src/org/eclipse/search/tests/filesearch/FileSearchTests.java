@@ -55,14 +55,14 @@ public class FileSearchTests extends TestCase {
 
 	private static class TestResultCollector extends TextSearchRequestor {
 
-		protected List fResult;
+		protected List<TestResult> fResult;
 
 		public TestResultCollector() {
 			reset();
 		}
 
 		public TestResult[] getResults() {
-			return (TestResult[]) fResult.toArray(new TestResult[fResult.size()]);
+			return fResult.toArray(new TestResult[fResult.size()]);
 		}
 
 		public int getNumberOfResults() {
@@ -70,7 +70,7 @@ public class FileSearchTests extends TestCase {
 		}
 
 		public void reset() {
-			fResult= new ArrayList();
+			fResult= new ArrayList<>();
 		}
 
 	}

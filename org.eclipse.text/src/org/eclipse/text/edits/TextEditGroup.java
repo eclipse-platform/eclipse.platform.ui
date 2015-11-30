@@ -34,7 +34,7 @@ import org.eclipse.jface.text.IRegion;
 public class TextEditGroup {
 
 	private String fDescription;
-	private List fEdits;
+	private List<TextEdit> fEdits;
 
 	/**
 	 * Creates a new text edit group with the given name.
@@ -46,7 +46,7 @@ public class TextEditGroup {
 		super();
 		Assert.isNotNull(name);
 		fDescription= name;
-		fEdits= new ArrayList(3);
+		fEdits= new ArrayList<>(3);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class TextEditGroup {
 		Assert.isNotNull(name);
 		Assert.isNotNull(edit);
 		fDescription= name;
-		fEdits= new ArrayList(1);
+		fEdits= new ArrayList<>(1);
 		fEdits.add(edit);
 	}
 
@@ -78,7 +78,7 @@ public class TextEditGroup {
 		Assert.isNotNull(name);
 		Assert.isNotNull(edits);
 		fDescription= name;
-		fEdits= new ArrayList(Arrays.asList(edits));
+		fEdits= new ArrayList<>(Arrays.asList(edits));
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class TextEditGroup {
 	 * @return the managed text edits
 	 */
 	public TextEdit[] getTextEdits() {
-		return (TextEdit[]) fEdits.toArray(new TextEdit[fEdits.size()]);
+		return fEdits.toArray(new TextEdit[fEdits.size()]);
 	}
 
 	/**
@@ -156,9 +156,9 @@ public class TextEditGroup {
 		if (size == 0) {
 			return null;
 		} else if (size == 1) {
-			return ((TextEdit)fEdits.get(0)).getRegion();
+			return fEdits.get(0).getRegion();
 		} else {
-			return TextEdit.getCoverage((TextEdit[])fEdits.toArray(new TextEdit[fEdits.size()]));
+			return TextEdit.getCoverage(fEdits.toArray(new TextEdit[fEdits.size()]));
 		}
 	}
 }

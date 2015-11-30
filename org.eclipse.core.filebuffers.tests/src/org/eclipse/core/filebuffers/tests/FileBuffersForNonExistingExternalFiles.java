@@ -20,6 +20,8 @@ import org.eclipse.core.resources.IProject;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
+import org.eclipse.jface.text.source.IAnnotationModel;
+
 /**
  * FileBuffersForNonExistingExternalFiles
  */
@@ -69,7 +71,7 @@ public class FileBuffersForNonExistingExternalFiles extends FileBufferFunctions 
 	}
 
 	@Override
-	protected Class getAnnotationModelClass() throws Exception {
+	protected Class<IAnnotationModel> getAnnotationModelClass() throws Exception {
 		return null;
 	}
 }

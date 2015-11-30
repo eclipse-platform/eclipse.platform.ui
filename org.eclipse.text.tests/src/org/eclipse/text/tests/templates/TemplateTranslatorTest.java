@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 import org.eclipse.jface.text.templates.TemplateVariable;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.3
@@ -287,7 +287,7 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
 		assertEquals("type", vars[0].getType());
-		List params= new ArrayList(2);
+		List<String> params= new ArrayList<>(2);
 		params.add("param1");
 		params.add("param2");
 		params.add("param3");
@@ -309,7 +309,7 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
 		assertEquals("qual.type", vars[0].getType());
-		List params= new ArrayList(2);
+		List<String> params= new ArrayList<>(2);
 		params.add("qual.param1");
 		params.add("qual.param2");
 		assertEquals(params, vars[0].getVariableType().getParams());
@@ -330,7 +330,7 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals(1, vars[0].getValues().length);
 		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
 		assertEquals("qual.type", vars[0].getType());
-		List params= new ArrayList(3);
+		List<String> params= new ArrayList<>(3);
 		params.add("a parameter 1");
 		params.add("qual.param2");
 		params.add("a parameter '3");

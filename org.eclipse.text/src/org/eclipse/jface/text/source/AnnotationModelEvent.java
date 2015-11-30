@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,17 +39,17 @@ public class AnnotationModelEvent {
 	 * The added annotations.
 	 * @since 3.0
 	 */
-	private Set fAddedAnnotations= new HashSet();
+	private Set<Annotation> fAddedAnnotations= new HashSet<>();
 	/**
 	 * The removed annotations.
 	 * @since 3.0
 	 */
-	private Map fRemovedAnnotations= new HashMap();
+	private Map<Annotation, Position> fRemovedAnnotations= new HashMap<>();
 	/**
 	 * The changed annotations.
 	 * @since 3.0
 	 */
-	private Set fChangedAnnotations= new HashSet();
+	private Set<Annotation> fChangedAnnotations= new HashSet<>();
 	/**
 	 * Indicates that this event does not contain detailed information.
 	 * @since 3.0
@@ -165,7 +165,7 @@ public class AnnotationModelEvent {
 	 * @since 3.0
 	 */
 	public Position getPositionOfRemovedAnnotation(Annotation annotation) {
-		return (Position) fRemovedAnnotations.get(annotation);
+		return fRemovedAnnotations.get(annotation);
 	}
 
 	/**

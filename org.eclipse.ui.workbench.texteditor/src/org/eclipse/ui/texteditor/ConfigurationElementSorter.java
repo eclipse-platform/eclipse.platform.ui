@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.osgi.framework.Bundle;
@@ -69,10 +70,10 @@ public abstract class ConfigurationElementSorter {
 	 * Compare configuration elements according to the prerequisite relation
 	 * of their defining plug-ins.
 	 */
-	private class ConfigurationElementComparator implements Comparator {
+	private class ConfigurationElementComparator implements Comparator<Object> {
 
-		private Map fDescriptorMapping;
-		private Map fPrereqsMapping;
+		private Map<Object, String> fDescriptorMapping;
+		private Map<String, Set<String>> fPrereqsMapping;
 
 		public ConfigurationElementComparator(Object[] elements) {
 			Assert.isNotNull(elements);
@@ -104,14 +105,14 @@ public abstract class ConfigurationElementSorter {
 			if (element0 == null || element1 == null)
 				return false;
 
-			String pluginDesc0= (String)fDescriptorMapping.get(element0);
-			String pluginDesc1= (String)fDescriptorMapping.get(element1);
+			String pluginDesc0= fDescriptorMapping.get(element0);
+			String pluginDesc1= fDescriptorMapping.get(element1);
 
 			// performance tuning - code below would give same result
 			if (pluginDesc0.equals(pluginDesc1))
 				return false;
 
-			Set prereqUIds0= (Set)fPrereqsMapping.get(pluginDesc0);
+			Set<String> prereqUIds0= fPrereqsMapping.get(pluginDesc0);
 
 			return prereqUIds0.contains(pluginDesc1);
 		}
@@ -123,9 +124,9 @@ public abstract class ConfigurationElementSorter {
 		 */
 		private void initialize(Object[] elements) {
 			int length= elements.length;
-			fDescriptorMapping= new HashMap(length);
-			fPrereqsMapping= new HashMap(length);
-			Set fBundleSet= new HashSet(length);
+			fDescriptorMapping= new HashMap<>(length);
+			fPrereqsMapping= new HashMap<>(length);
+			Set<Bundle> fBundleSet= new HashSet<>(length);
 
 			for (int i= 0; i < length; i++) {
 			    IConfigurationElement configElement= getConfigurationElement(elements[i]);
@@ -134,12 +135,12 @@ public abstract class ConfigurationElementSorter {
 				fBundleSet.add(bundle);
 			}
 
-			Iterator iter= fBundleSet.iterator();
+			Iterator<Bundle> iter= fBundleSet.iterator();
 			while (iter.hasNext()) {
-				Bundle bundle= (Bundle)iter.next();
-				List toTest= new ArrayList(fBundleSet);
+				Bundle bundle= iter.next();
+				List<Bundle> toTest= new ArrayList<>(fBundleSet);
 				toTest.remove(bundle);
-				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
+				Set<String> prereqUIds= new HashSet<>(Math.max(0, toTest.size() - 1));
 				fPrereqsMapping.put(bundle.getSymbolicName(), prereqUIds);
 
 				String requires = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
@@ -161,7 +162,7 @@ public abstract class ConfigurationElementSorter {
 				while (i < manifestElements.length && !toTest.isEmpty()) {
 					String prereqUId= manifestElements[i].getValue();
 					for (int j= 0; j < toTest.size();) {
-						Bundle toTest_j= (Bundle)toTest.get(j);
+						Bundle toTest_j= toTest.get(j);
 						if (toTest_j.getSymbolicName().equals(prereqUId)) {
 							toTest.remove(toTest_j);
 							prereqUIds.add(toTest_j.getSymbolicName());
@@ -185,10 +186,10 @@ public abstract class ConfigurationElementSorter {
 			if (bundle != null) {
 				String bundleName= bundle.getSymbolicName();
 				if (bundleName != null) {
-					Set entries= fDescriptorMapping.entrySet();
-					Iterator iter= entries.iterator();
+					Set<Entry<Object, String>> entries= fDescriptorMapping.entrySet();
+					Iterator<Entry<Object, String>> iter= entries.iterator();
 					while (iter.hasNext()) {
-						Map.Entry entry= (Map.Entry)iter.next();
+						Entry<Object, String> entry= iter.next();
 						if (bundleName.equals(entry.getValue())) {
 						    IExtension extension = getConfigurationElement(entry.getKey()).getDeclaringExtension();
 							return extension.getExtensionPointUniqueIdentifier();

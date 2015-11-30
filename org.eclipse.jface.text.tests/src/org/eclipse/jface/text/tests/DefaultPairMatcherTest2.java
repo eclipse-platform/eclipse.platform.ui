@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**
@@ -42,7 +42,7 @@ public class DefaultPairMatcherTest2 extends AbstractPairMatcherTest {
 	/**
 	 * Very simple checks.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testSimpleMatchSameMatcher1() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");

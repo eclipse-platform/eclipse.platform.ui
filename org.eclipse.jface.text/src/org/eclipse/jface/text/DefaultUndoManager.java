@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -424,7 +424,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	class CompoundTextCommand extends TextCommand {
 
 		/** The list of individual commands */
-		private List fCommands= new ArrayList();
+		private List<TextCommand> fCommands= new ArrayList<>();
 
 		/**
 		 * Creates a new compound text command.
@@ -455,11 +455,11 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				TextCommand c;
 
 				for (int i= size -1; i > 0;  --i) {
-					c= (TextCommand) fCommands.get(i);
+					c= fCommands.get(i);
 					c.undoTextChange();
 				}
 
-				c= (TextCommand) fCommands.get(0);
+				c= fCommands.get(0);
 				c.undo(monitor, uiInfo);
 			}
 
@@ -476,11 +476,11 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				TextCommand c;
 
 				for (int i= 0; i < size -1;  ++i) {
-					c= (TextCommand) fCommands.get(i);
+					c= fCommands.get(i);
 					c.redoTextChange();
 				}
 
-				c= (TextCommand) fCommands.get(size -1);
+				c= fCommands.get(size -1);
 				c.redo(monitor, uiInfo);
 			}
 			return Status.OK_STATUS;
@@ -556,7 +556,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			if (fStart > -1)
 				return super.getUndoModificationStamp();
 			else if (fCommands.size() > 0)
-				return ((TextCommand)fCommands.get(0)).getUndoModificationStamp();
+				return fCommands.get(0).getUndoModificationStamp();
 
 			return fUndoModificationStamp;
 		}
@@ -572,7 +572,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 			if (fStart > -1)
 				return super.getRedoModificationStamp();
 			else if (fCommands.size() > 0)
-				return ((TextCommand)fCommands.get(fCommands.size()-1)).getRedoModificationStamp();
+				return fCommands.get(fCommands.size()-1).getRedoModificationStamp();
 
 			return fRedoModificationStamp;
 		}

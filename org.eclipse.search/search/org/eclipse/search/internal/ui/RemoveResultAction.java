@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,15 +73,15 @@ class RemoveResultAction extends Action {
 		int size= selection.size();
 		if (size <= 0)
 			return null;
-		ArrayList markers= new ArrayList(size * 3);
+		ArrayList<IMarker> markers= new ArrayList<>(size * 3);
 		int markerCount= 0;
-		Iterator iter= selection.iterator();
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
 			markerCount += entry.getMatchCount();
 			markers.addAll(entry.getMarkers());
 		}
-		return (IMarker[])markers.toArray(new IMarker[markerCount]);
+		return markers.toArray(new IMarker[markerCount]);
 	}
 
 	private boolean usePluralLabel() {

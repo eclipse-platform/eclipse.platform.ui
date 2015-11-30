@@ -28,6 +28,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.TextUtilities;
@@ -147,7 +148,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				fRewriteTarget.setRedraw(false);
 			fRewriteTarget.beginCompoundChange();
 
-			Map partitioners= TextUtilities.removeDocumentPartitioners(document);
+			Map<String, IDocumentPartitioner> partitioners= TextUtilities.removeDocumentPartitioners(document);
 
 			try {
 				for (int i= 0; i < lineCount; i++) {

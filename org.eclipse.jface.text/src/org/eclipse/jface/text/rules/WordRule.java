@@ -37,7 +37,7 @@ public class WordRule implements IRule {
 	/** The column constraint. */
 	protected int fColumn= UNDEFINED;
 	/** The table of predefined words and token for this rule. */
-	protected Map fWords= new HashMap();
+	protected Map<String, IToken> fWords= new HashMap<>();
 	/** Buffer used for pattern detection. */
 	private StringBuffer fBuffer= new StringBuffer();
 	/**
@@ -143,7 +143,7 @@ public class WordRule implements IRule {
 				if (fIgnoreCase)
 					buffer= buffer.toLowerCase();
 				
-				IToken token= (IToken)fWords.get(buffer);
+				IToken token= fWords.get(buffer);
 
 				if (token != null)
 					return token;

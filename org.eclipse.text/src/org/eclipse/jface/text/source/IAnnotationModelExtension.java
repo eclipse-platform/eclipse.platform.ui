@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public interface IAnnotationModelExtension {
 	 * @throws ClassCastException if one of the map key or values has a wrong
 	 *             type
 	 */
-	void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) throws ClassCastException;
+	void replaceAnnotations(Annotation[] annotationsToRemove, Map<? extends Annotation, ? extends Position> annotationsToAdd) throws ClassCastException;
 
 	/**
 	 * Modifies the position associated with the given annotation to equal the

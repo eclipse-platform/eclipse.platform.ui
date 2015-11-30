@@ -40,7 +40,7 @@ public class SpellingEngineRegistry {
 	public static final String SPELLING_ENGINE_EXTENSION_POINT= "spellingEngine"; //$NON-NLS-1$
 
 	/** Ids mapped to descriptors */
-	private Map fDescriptorsMap;
+	private Map<String, SpellingEngineDescriptor> fDescriptorsMap;
 
 	/** Default descriptor or <code>null</code> */
 	private SpellingEngineDescriptor fDefaultDescriptor;
@@ -60,7 +60,7 @@ public class SpellingEngineRegistry {
 	 */
 	public SpellingEngineDescriptor getDescriptor(String id) {
 		ensureExtensionsLoaded();
-		return (SpellingEngineDescriptor) fDescriptorsMap.get(id);
+		return fDescriptorsMap.get(id);
 	}
 
 	/**
@@ -91,8 +91,8 @@ public class SpellingEngineRegistry {
 	 * </p>
 	 */
 	public synchronized void reloadExtensions() {
-		List descriptors= new ArrayList();
-		fDescriptorsMap= new HashMap();
+		List<SpellingEngineDescriptor> descriptors= new ArrayList<>();
+		fDescriptorsMap= new HashMap<>();
 		fDefaultDescriptor= null;
 		IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, SPELLING_ENGINE_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
@@ -102,7 +102,7 @@ public class SpellingEngineRegistry {
 			if (fDefaultDescriptor == null && descriptor.isDefault())
 				fDefaultDescriptor= descriptor;
 		}
-		fDescriptors= (SpellingEngineDescriptor[]) descriptors.toArray(new SpellingEngineDescriptor[descriptors.size()]);
+		fDescriptors= descriptors.toArray(new SpellingEngineDescriptor[descriptors.size()]);
 		fLoaded= true;
 		if (fDefaultDescriptor == null && fDescriptors.length > 0)
 			fDefaultDescriptor= fDescriptors[0];

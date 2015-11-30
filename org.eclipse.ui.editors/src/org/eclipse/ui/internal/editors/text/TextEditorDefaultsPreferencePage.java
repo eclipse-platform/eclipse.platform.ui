@@ -58,6 +58,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.ui.internal.editors.text.TextEditorDefaultsPreferencePage.EnumeratedDomain.EnumValue;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
@@ -256,8 +257,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 		}
 
-		private final java.util.List fItems= new ArrayList();
-		private final Set fValueSet= new HashSet();
+		private final java.util.List<EnumValue> fItems= new ArrayList<>();
+		private final Set<EnumValue> fValueSet= new HashSet<>();
 
 		public void addValue(EnumValue val) {
 			if (fValueSet.contains(val))
@@ -268,8 +269,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		public int getIndex(EnumValue enumValue) {
 			int i= 0;
-			for (Iterator it= fItems.iterator(); it.hasNext();) {
-				EnumValue ev= (EnumValue) it.next();
+			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
+				EnumValue ev= it.next();
 				if (ev.equals(enumValue))
 					return i;
 				i++;
@@ -279,13 +280,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		public EnumValue getValueByIndex (int index) {
 			if (index >= 0 && fItems.size() > index)
-				return (EnumValue) fItems.get(index);
+				return fItems.get(index);
 			return null;
 		}
 
 		public EnumValue getValueByInteger(int intValue) {
-			for (Iterator it= fItems.iterator(); it.hasNext();) {
-				EnumValue e= (EnumValue) it.next();
+			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
+				EnumValue e= it.next();
 				if (e.getIntValue() == intValue)
 					return e;
 			}
@@ -392,7 +393,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private static class WhitespaceCharacterPainterOptionsDialog extends Dialog {
 
-		private java.util.List fDialogInitializers= new ArrayList();
+		private java.util.List<Initializer> fDialogInitializers= new ArrayList<>();
 
 		private OverlayPreferenceStore fDialogOverlayStore;
 
@@ -410,7 +411,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		private OverlayPreferenceStore createDialogOverlayStore() {
-			ArrayList overlayKeys= new ArrayList();
+			ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
@@ -447,8 +448,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		private void initializeShowWhitespaceCharactersPreferences() {
-			for (Iterator it= fDialogInitializers.iterator(); it.hasNext();) {
-				Initializer initializer= (Initializer)it.next();
+			for (Iterator<Initializer> it= fDialogInitializers.iterator(); it.hasNext();) {
+				Initializer initializer= it.next();
 				initializer.initialize();
 			}
 		}
@@ -670,13 +671,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	 */
 	private boolean fFieldsInitialized= false;
 
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
 
-	private java.util.List fInitializers= new ArrayList();
+	private java.util.List<Initializer> fInitializers= new ArrayList<>();
 
 	private InitializerFactory fInitializerFactory;
 
-	private Map fDomains= new HashMap();
+	private Map<Domain, Text> fDomains= new HashMap<>();
 
 
 	public TextEditorDefaultsPreferencePage() {
@@ -688,7 +689,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private OverlayPreferenceStore createOverlayStore() {
 
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE));
 
@@ -1043,8 +1044,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initializeFields() {
-		for (Iterator it= fInitializers.iterator(); it.hasNext();) {
-			Initializer initializer= (Initializer) it.next();
+		for (Iterator<Initializer> it= fInitializers.iterator(); it.hasNext();) {
+			Initializer initializer= it.next();
 			initializer.initialize();
 		}
 
@@ -1052,9 +1053,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		updateStatus(new StatusInfo());
 
         // Update slaves
-        Iterator iter= fMasterSlaveListeners.iterator();
+        Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
+            SelectionListener listener= iter.next();
             listener.widgetSelected(null);
         }
 
@@ -1205,8 +1206,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		combo.setLayoutData(gd);
 		combo.setToolTipText(preference.getDescription());
-		for (Iterator it= domain.fItems.iterator(); it.hasNext();) {
-			EnumValue value= (EnumValue) it.next();
+		for (Iterator<EnumValue> it= domain.fItems.iterator(); it.hasNext();) {
+			EnumValue value= it.next();
 			combo.add(value.getLabel());
 		}
 
@@ -1351,9 +1352,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		if (updateStatusOnError(checkedDomain))
 			return;
 
-		Iterator iter= fDomains.keySet().iterator();
+		Iterator<Domain> iter= fDomains.keySet().iterator();
 		while (iter.hasNext()) {
-			Domain domain= (Domain)iter.next();
+			Domain domain= iter.next();
 			if (domain.equals(checkedDomain))
 				continue;
 			if (updateStatusOnError(domain))
@@ -1363,7 +1364,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private boolean updateStatusOnError(Domain domain) {
-		Text textWidget= (Text)fDomains.get(domain);
+		Text textWidget= fDomains.get(domain);
 		if (textWidget.isEnabled()) {
 			IStatus status= domain.validate(textWidget.getText());
 			if (status.matches(IStatus.ERROR)) {

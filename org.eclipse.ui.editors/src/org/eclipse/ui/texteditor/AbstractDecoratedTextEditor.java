@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -402,9 +402,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected IOverviewRuler createOverviewRuler(ISharedTextColors sharedColors) {
 		IOverviewRuler ruler= new OverviewRuler(getAnnotationAccess(), VERTICAL_RULER_WIDTH, sharedColors);
 
-		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference preference= (AnnotationPreference) e.next();
+			AnnotationPreference preference= e.next();
 			if (preference.contributesToHeader())
 				ruler.addHeaderAnnotationType(preference.getAnnotationType());
 		}
@@ -428,9 +428,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 
-		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext())
-			support.setAnnotationPreference((AnnotationPreference) e.next());
+			support.setAnnotationPreference(e.next());
 
 		support.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
 		support.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
@@ -446,7 +446,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (fSourceViewerDecorationSupport != null)
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
 
-		IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+		IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 
 		if (isLineNumberRulerVisible()) {
 			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
@@ -564,7 +564,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (show == isChangeInformationShowing())
 			return;
 
-		IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+		IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 
 		// only handle visibility of the combined column, but not the number/change only state
 		if (show && fLineColumn == null) {
@@ -820,7 +820,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (LINE_NUMBER_RULER.equals(property)) {
 				// only handle visibility of the combined column, but not the number/change only state
-				IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+				IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 				if (isLineNumberRulerVisible() && fLineColumn == null) {
 					RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
 					if (lineNumberColumnDescriptor != null)
@@ -1385,16 +1385,17 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		setAction(ITextEditorActionConstants.PRINT, action);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IGotoMarker.class.equals(adapter))
-			return fGotoMarkerAdapter;
+			return (T) fGotoMarkerAdapter;
 
 		if (IAnnotationAccess.class.equals(adapter))
-			return getAnnotationAccess();
+			return (T) getAnnotationAccess();
 
 		if (adapter == IShowInSource.class) {
-			return new IShowInSource() {
+			return (T) new IShowInSource() {
 				@Override
 				public ShowInContext getShowInContext() {
 					ISelection selection= null;
@@ -1408,11 +1409,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (IRevisionRulerColumn.class.equals(adapter)) {
 			if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
-				return fLineNumberRulerColumn;
+				return (T) fLineNumberRulerColumn;
 		}
 
 		if (MarkerAnnotationPreferences.class.equals(adapter))
-			return EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
+			return (T) EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 
 		return super.getAdapter(adapter);
 
@@ -1466,7 +1467,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
 		if (lineNumberColumnDescriptor != null) {
-			IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+			IColumnSupport columnSupport= getAdapter(IColumnSupport.class);
 			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible() || isPrefQuickDiffAlwaysOn());
 		}
 	}
@@ -1702,7 +1703,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.6
 	 */
 	private Charset getCharset() {
-		IEncodingSupport encodingSupport= (IEncodingSupport)getAdapter(IEncodingSupport.class);
+		IEncodingSupport encodingSupport= getAdapter(IEncodingSupport.class);
 		if (encodingSupport == null)
 			return null;
 		try {
@@ -1785,9 +1786,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		Point selection= getSourceViewer().getSelectedRange();
 		IAnnotationModel model= getSourceViewer().getAnnotationModel();
 		Annotation annotation= null;
-		Iterator iter= model.getAnnotationIterator();
+		Iterator<Annotation> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {
-			annotation= (Annotation)iter.next();
+			annotation= iter.next();
 			Position p= model.getPosition(annotation);
 			if (p.getOffset() == selection.x && p.getLength() == selection.y)
 				break;
@@ -1905,12 +1906,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private void addRulerContributionActions(IMenuManager menu) {
 		// store directly in generic editor preferences
-		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+		final IColumnSupport support= getAdapter(IColumnSupport.class);
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS);
-		List descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
-		for (Iterator t= descriptors.iterator(); t.hasNext();) {
-			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) t.next();
+		List<RulerColumnDescriptor> descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
+		for (Iterator<RulerColumnDescriptor> t= descriptors.iterator(); t.hasNext();) {
+			final RulerColumnDescriptor descriptor= t.next();
 			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor))
 				continue;
 			final boolean isVisible= support.isColumnVisible(descriptor);
@@ -2013,7 +2014,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (editor instanceof IGotoMarker)
 			gotoMarkerTarget= (IGotoMarker)editor;
 		else
-			gotoMarkerTarget= editor != null ? (IGotoMarker)editor.getAdapter(IGotoMarker.class) : null;
+			gotoMarkerTarget= editor != null ? editor.getAdapter(IGotoMarker.class) : null;
 		if (gotoMarkerTarget != null) {
 			final IEditorInput input= editor.getEditorInput();
 			if (input instanceof IFileEditorInput) {

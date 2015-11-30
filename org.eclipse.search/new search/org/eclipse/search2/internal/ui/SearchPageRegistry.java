@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,13 +35,13 @@ public class SearchPageRegistry {
 
 	public static final String ATTRIB_HELP_CONTEXT= "helpContextId"; //$NON-NLS-1$
 
-	private final Map fResultClassNameToExtension;
-	private final Map fExtensionToInstance;
+	private final Map<String, IConfigurationElement> fResultClassNameToExtension;
+	private final Map<IConfigurationElement, ISearchResultPage> fExtensionToInstance;
 	private final IConfigurationElement[] fExtensions;
 
 	public SearchPageRegistry() {
-		fExtensionToInstance= new HashMap();
-		fResultClassNameToExtension= new HashMap();
+		fExtensionToInstance= new HashMap<>();
+		fResultClassNameToExtension= new HashMap<>();
 		fExtensions= Platform.getExtensionRegistry().getConfigurationElementsFor(ID_EXTENSION_POINT);
 		for (int i= 0; i < fExtensions.length; i++) {
 			fResultClassNameToExtension.put(fExtensions[i].getAttribute(ATTRIB_SEARCH_RESULT_CLASS), fExtensions[i]);
@@ -49,7 +49,7 @@ public class SearchPageRegistry {
 	}
 
 	public ISearchResultPage findPageForSearchResult(ISearchResult result, boolean create) {
-		Class resultClass= result.getClass();
+		Class<? extends ISearchResult> resultClass= result.getClass();
 		IConfigurationElement configElement= findConfigurationElement(resultClass);
 		if (configElement != null) {
 			return getSearchResultPage(configElement, create);
@@ -82,7 +82,7 @@ public class SearchPageRegistry {
 	}
 
 	private ISearchResultPage getSearchResultPage(final IConfigurationElement configElement, boolean create) {
-		ISearchResultPage instance= (ISearchResultPage) fExtensionToInstance.get(configElement);
+		ISearchResultPage instance= fExtensionToInstance.get(configElement);
 		if (instance == null && create) {
 			final Object[] result= new Object[1];
 
@@ -117,13 +117,13 @@ public class SearchPageRegistry {
 		return null;
 	}
 
-	private IConfigurationElement findConfigurationElement(Class resultClass) {
+	private IConfigurationElement findConfigurationElement(Class<?> resultClass) {
 		String className= resultClass.getName();
-		IConfigurationElement configElement= (IConfigurationElement) fResultClassNameToExtension.get(className);
+		IConfigurationElement configElement= fResultClassNameToExtension.get(className);
 		if (configElement != null) {
 			return configElement;
 		}
-		Class superclass= resultClass.getSuperclass();
+		Class<?> superclass= resultClass.getSuperclass();
 		if (superclass != null) {
 			IConfigurationElement foundExtension= findConfigurationElement(superclass);
 			if (foundExtension != null) {
@@ -132,7 +132,7 @@ public class SearchPageRegistry {
 			}
 		}
 
-		Class[] interfaces= resultClass.getInterfaces();
+		Class<?>[] interfaces= resultClass.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
 			IConfigurationElement foundExtension= findConfigurationElement(interfaces[i]);
 			if (foundExtension != null) {

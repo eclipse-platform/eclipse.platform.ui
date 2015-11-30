@@ -667,7 +667,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;
-	private Map fProcessors;
+	private Map<String, IContentAssistProcessor> fProcessors;
 	private String fPartitioning;
 
 	private Color fContextInfoPopupBackground;
@@ -690,7 +690,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private int fCompletionPosition;
 	private String[] fProposalStrings;
 	private ICompletionProposal[] fProposals;
-	private final List fProposalListeners= new ArrayList();
+	private final List<IProposalListener> fProposalListeners= new ArrayList<>();
 
 	/**
 	 * Tells whether colored label support is enabled.
@@ -764,7 +764,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		Assert.isNotNull(contentType);
 
 		if (fProcessors == null)
-			fProcessors= new HashMap();
+			fProcessors= new HashMap<>();
 
 		if (processor == null)
 			fProcessors.remove(contentType);
@@ -780,7 +780,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		if (fProcessors == null)
 			return null;
 
-		return (IContentAssistProcessor) fProcessors.get(contentType);
+		return fProcessors.get(contentType);
 	}
 
 	/**
@@ -1522,9 +1522,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @param proposal the proposal
 	 */
 	public void fireProposalChosen(ICompletionProposal proposal) {
-		List list= new ArrayList(fProposalListeners);
-		for (Iterator it= list.iterator(); it.hasNext();) {
-			IProposalListener listener= (IProposalListener) it.next();
+		List<IProposalListener> list= new ArrayList<>(fProposalListeners);
+		for (Iterator<IProposalListener> it= list.iterator(); it.hasNext();) {
+			IProposalListener listener= it.next();
 			listener.proposalChosen(proposal);
 		}
 

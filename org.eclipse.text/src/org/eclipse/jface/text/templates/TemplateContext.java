@@ -29,7 +29,7 @@ public abstract class TemplateContext {
 	/** The context type of this context */
 	private final TemplateContextType fContextType;
 	/** Additional variables. */
-	private final Map fVariables= new HashMap();
+	private final Map<String, String> fVariables= new HashMap<>();
 	/** A flag to indicate that the context should not be modified. */
 	private boolean fReadOnly;
 
@@ -87,7 +87,7 @@ public abstract class TemplateContext {
 	 * @return returns the value of the variable, <code>null</code> if the variable was not defined
 	 */
 	public String getVariable(String name) {
-		return (String) fVariables.get(name);
+		return fVariables.get(name);
 	}
 
 	/**

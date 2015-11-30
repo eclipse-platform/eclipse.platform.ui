@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
@@ -29,6 +27,8 @@ import org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants.TestDSP5
 import org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants.TestDSP6;
 
 import org.eclipse.jface.text.IDocument;
+
+import junit.framework.TestCase;
 
 
 /**
@@ -106,13 +106,13 @@ public abstract class AbstractFileBufferDocCreationTests extends TestCase {
 
 	/* Utilities */
 
-	private void assertParticipantsInvoked(String path, Class[] expectedDSPsArray) {
+	private void assertParticipantsInvoked(String path, Class<?>[] expectedDSPsArray) {
 		LocationKind[] lks= getSupportLocationKinds();
 		for(int i=0; i<lks.length; i++) {
 			IDocument document= fManager.createEmptyDocument(new Path(path), lks[i]);
 			String content= document.get();
-			Set expectedDSPs= new HashSet(Arrays.asList(toString(expectedDSPsArray)));
-			Set actualDSPs= new HashSet(Arrays.asList(content.split("\n")));
+			Set<String> expectedDSPs= new HashSet<>(Arrays.asList(toString(expectedDSPsArray)));
+			Set<String> actualDSPs= new HashSet<>(Arrays.asList(content.split("\n")));
 			assertEquals(expectedDSPs, actualDSPs);
 		}
 	}
@@ -123,7 +123,7 @@ public abstract class AbstractFileBufferDocCreationTests extends TestCase {
 		assertEquals(expectedContent, fManager.createEmptyDocument(new Path(path), locKind).get());
 	}
 
-	private static String[] toString(Class[] clss) {
+	private static String[] toString(Class<?>[] clss) {
 		String[] result= new String[clss.length];
 		for(int i=0; i<result.length; i++) {
 			String s= null;

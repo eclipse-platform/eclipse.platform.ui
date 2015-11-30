@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,14 +67,14 @@ final class HippieCompleteAction extends TextEditorAction {
 		 * 
 		 * @since 3.6
 		 */
-		private final Iterator suggestions;
+		private final Iterator<String> suggestions;
 
 		/**
 		 * List of Strings with the suggestions that are already consumed from the iterator
 		 * 
 		 * @since 3.6
 		 */
-		private final List consumedSuggestions;
+		private final List<String> consumedSuggestions;
 
 		/**
 		 * Do we have only 1 (empty) completion available?
@@ -88,7 +88,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		 * 
 		 * @since 3.6
 		 */
-		private final HashSet alreadyFound;
+		private final HashSet<String> alreadyFound;
 
 		/**
 		 * Create a new completion state object
@@ -97,10 +97,10 @@ final class HippieCompleteAction extends TextEditorAction {
 		 * @param startOffset the position in the parent document at which the completions will be
 		 *            inserted.
 		 */
-		CompletionState(Iterator suggestions, int startOffset) {
+		CompletionState(Iterator<String> suggestions, int startOffset) {
 			this.suggestions= suggestions;
-			this.consumedSuggestions= new ArrayList();
-			this.alreadyFound= new HashSet();
+			this.consumedSuggestions= new ArrayList<>();
+			this.alreadyFound= new HashSet<>();
 			this.startOffset= startOffset;
 			this.length= 0;
 			this.nextSuggestion= 0;
@@ -108,7 +108,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 			//Let's see if only 1 is available.
 			if (this.suggestions.hasNext()) {
-				addNewToken((String)this.suggestions.next());
+				addNewToken(this.suggestions.next());
 
 				boolean hasOnly1Temp= true;
 				while (this.suggestions.hasNext()) {
@@ -137,7 +137,7 @@ final class HippieCompleteAction extends TextEditorAction {
 			String ret= null;
 			if (this.consumedSuggestions.size() > nextSuggestion) {
 				//We already consumed one that we didn't return
-				ret= (String)this.consumedSuggestions.get(nextSuggestion);
+				ret= this.consumedSuggestions.get(nextSuggestion);
 				nextSuggestion++;
 
 			}
@@ -146,7 +146,7 @@ final class HippieCompleteAction extends TextEditorAction {
 					this.consumedSuggestions.size() == nextSuggestion &&
 					this.suggestions.hasNext()) {
 				//we're just in the place to get a new one from the iterator
-				String temp= (String)this.suggestions.next();
+				String temp= this.suggestions.next();
 				if (this.alreadyFound.contains(temp)) {
 					continue;//go to next iteration
 				}
@@ -158,7 +158,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 			if (ret == null) {
 				//we consumed all in the iterator, so, just start cycling.
-				ret= (String)this.consumedSuggestions.get(0);
+				ret= this.consumedSuggestions.get(0);
 				nextSuggestion= 1; //we just got the 0, so, we can already skip to 1.
 			}
 
@@ -359,12 +359,12 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		clearState();
 
-		List documents= HippieCompletionEngine.computeDocuments(getTextEditor());
+		List<IDocument> documents= HippieCompletionEngine.computeDocuments(getTextEditor());
 
 		if (documents.size() > 0) {
-			fDocument= (IDocument)documents.remove(0);
+			fDocument= documents.remove(0);
 
-			Iterator suggestions;
+			Iterator<String> suggestions;
 			try {
 				String prefix= getCurrentPrefix();
 				if (prefix == null) {

@@ -100,7 +100,7 @@ public class TextSearchEngineRegistry {
 	}
 
 	public String[][] getAvailableEngines() {
-		ArrayList res= new ArrayList();
+		ArrayList<String[]> res= new ArrayList<>();
 		res.add(new String[] { SearchMessages.TextSearchEngineRegistry_defaulttextsearch_label, "" }); //$NON-NLS-1$
 
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
@@ -110,6 +110,6 @@ public class TextSearchEngineRegistry {
 				res.add(new String[] { engine.getAttribute(ATTRIB_LABEL), engine.getAttribute(ATTRIB_ID) });
 			}
 		}
-		return (String[][]) res.toArray(new String[res.size()][]);
+		return res.toArray(new String[res.size()][]);
 	}
 }

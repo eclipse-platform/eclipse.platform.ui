@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ package org.eclipse.text.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -26,6 +22,10 @@ import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 
@@ -116,15 +116,15 @@ public class DocumentExtensionTest extends TestCase {
 	static class TestDocumentListener implements IDocumentListener {
 
 		private IDocument fDocument1;
-		private List fTrace1;
+		private List<TestDocumentEvent> fTrace1;
 		private TestDocumentEvent fExpected1;
 
-		private List fTrace2;
+		private List<TestDocumentEvent> fTrace2;
 		private TestDocumentEvent fExpected2;
 
 		private boolean fPopped= false;
 
-		public TestDocumentListener(IDocument d1, List t1, List t2) {
+		public TestDocumentListener(IDocument d1, List<TestDocumentEvent> t1, List<TestDocumentEvent> t2) {
 			fDocument1= d1;
 			fTrace1= t1;
 			fTrace2= t2;
@@ -134,8 +134,8 @@ public class DocumentExtensionTest extends TestCase {
 		public void documentAboutToBeChanged(DocumentEvent received) {
 			if (!fPopped) {
 				fPopped= true;
-				fExpected1= (TestDocumentEvent) fTrace1.remove(0);
-				fExpected2= (TestDocumentEvent) fTrace2.remove(0);
+				fExpected1= fTrace1.remove(0);
+				fExpected2= fTrace2.remove(0);
 			}
 
 			TestDocumentEvent e= (received.getDocument() == fDocument1 ? fExpected1 : fExpected2);
@@ -252,9 +252,9 @@ public class DocumentExtensionTest extends TestCase {
 		assertTrue("axxxxxbxxxxxcxxxxx".equals(document.get()));
 	}
 
-	private List createTrace(IDocument document, int repetitions) {
+	private List<TestDocumentEvent> createTrace(IDocument document, int repetitions) {
 		int i;
-		List trace= new ArrayList();
+		List<TestDocumentEvent> trace= new ArrayList<>();
 
 		trace.add(new TestDocumentEvent(document, 0, 0, "c"));
 		for (i= 0; i < repetitions; i++)

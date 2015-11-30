@@ -172,7 +172,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 
 
 	/** The painters managed by this paint manager. */
-	private List fPainters= new ArrayList(2);
+	private List<IPainter> fPainters= new ArrayList<>(2);
 	/** The position manager used by this paint manager */
 	private PositionManager fManager;
 	/** The associated text viewer */
@@ -264,8 +264,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 			fManager= null;
 		}
 
-		for (Iterator e = fPainters.iterator(); e.hasNext();)
-			((IPainter) e.next()).dispose();
+		for (Iterator<IPainter> e = fPainters.iterator(); e.hasNext();)
+			e.next().dispose();
 		fPainters.clear();
 
 		fTextViewer.removeTextInputListener(this);
@@ -298,8 +298,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @see IPainter
 	 */
 	private void paint(int reason) {
-		for (Iterator e = fPainters.iterator(); e.hasNext();)
-			((IPainter) e.next()).paint(reason);
+		for (Iterator<IPainter> e = fPainters.iterator(); e.hasNext();)
+			e.next().paint(reason);
 	}
 
 	@Override
@@ -350,8 +350,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (oldInput != null) {
-			for (Iterator e= fPainters.iterator(); e.hasNext();)
-				((IPainter)e.next()).deactivate(false);
+			for (Iterator<IPainter> e= fPainters.iterator(); e.hasNext();)
+				e.next().deactivate(false);
 			fManager.uninstall(oldInput);
 			removeListeners();
 		}

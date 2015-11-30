@@ -59,11 +59,11 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 
 		fMenu= new Menu(parent);
 		boolean checkedOne= false;
-		Iterator iter= SearchManager.getDefault().getPreviousSearches().iterator();
+		Iterator<Search> iter= SearchManager.getDefault().getPreviousSearches().iterator();
 		Search selected= SearchManager.getDefault().getCurrentSearch();
 		int i= 0;
 		while (iter.hasNext() && i++ < RESULTS_IN_DROP_DOWN) {
-			Search search= (Search)iter.next();
+			Search search= iter.next();
 			ShowSearchAction action= new ShowSearchAction(search);
 			action.setChecked(search.equals(selected));
 			if (search.equals(selected))

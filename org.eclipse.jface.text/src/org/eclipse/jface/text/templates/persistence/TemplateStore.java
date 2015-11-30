@@ -38,7 +38,7 @@ import org.eclipse.jface.text.templates.TemplateException;
  */
 public class TemplateStore {
 	/** The stored templates. */
-	private final List fTemplates= new ArrayList();
+	private final List<TemplatePersistenceData> fTemplates= new ArrayList<>();
 	/** The preference store. */
 	private IPreferenceStore fPreferenceStore;
 	/**
@@ -185,8 +185,8 @@ public class TemplateStore {
 		if (!data.isCustom()) {
 			// check if the added template is not a duplicate id
 			String id= data.getId();
-			for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-				TemplatePersistenceData d2= (TemplatePersistenceData) it.next();
+			for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+				TemplatePersistenceData d2= it.next();
 				if (d2.getId() != null && d2.getId().equals(id))
 					return;
 			}
@@ -200,16 +200,16 @@ public class TemplateStore {
 	 * @throws IOException if the templates cannot be written
 	 */
 	public void save() throws IOException {
-		ArrayList custom= new ArrayList();
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		ArrayList<TemplatePersistenceData> custom= new ArrayList<>();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			if (data.isCustom() && !(data.isUserAdded() && data.isDeleted())) // don't save deleted user-added templates
 				custom.add(data);
 		}
 
 		StringWriter output= new StringWriter();
 		TemplateReaderWriter writer= new TemplateReaderWriter();
-		writer.save((TemplatePersistenceData[]) custom.toArray(new TemplatePersistenceData[custom.size()]), output);
+		writer.save(custom.toArray(new TemplatePersistenceData[custom.size()]), output);
 
 		fIgnorePreferenceStoreChanges= true;
 		try {
@@ -234,8 +234,8 @@ public class TemplateStore {
 		if (data.isUserAdded()) {
 			fTemplates.add(data);
 		} else {
-			for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-				TemplatePersistenceData d2= (TemplatePersistenceData) it.next();
+			for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+				TemplatePersistenceData d2= it.next();
 				if (d2.getId() != null && d2.getId().equals(data.getId())) {
 					d2.setTemplate(data.getTemplate());
 					d2.setDeleted(data.isDeleted());
@@ -268,8 +268,8 @@ public class TemplateStore {
 	 * Restores all contributed templates that have been deleted.
 	 */
 	public void restoreDeleted() {
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			if (data.isDeleted())
 				data.setDeleted(false);
 		}
@@ -336,14 +336,14 @@ public class TemplateStore {
 	 * @return all enabled templates for the given context type
 	 */
 	public Template[] getTemplates(String contextTypeId) {
-		List templates= new ArrayList();
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		List<Template> templates= new ArrayList<>();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			if (data.isEnabled() && !data.isDeleted() && (contextTypeId == null || contextTypeId.equals(data.getTemplate().getContextTypeId())))
 				templates.add(data.getTemplate());
 		}
 
-		return (Template[]) templates.toArray(new Template[templates.size()]);
+		return templates.toArray(new Template[templates.size()]);
 	}
 
 	/**
@@ -366,8 +366,8 @@ public class TemplateStore {
 	public Template findTemplate(String name, String contextTypeId) {
 		Assert.isNotNull(name);
 
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			Template template= data.getTemplate();
 			if (data.isEnabled() && !data.isDeleted()
 					&& (contextTypeId == null || contextTypeId.equals(template.getContextTypeId()))
@@ -400,14 +400,14 @@ public class TemplateStore {
 	 * @return all template data, whether enabled or not
 	 */
 	public TemplatePersistenceData[] getTemplateData(boolean includeDeleted) {
-		List datas= new ArrayList();
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		List<TemplatePersistenceData> datas= new ArrayList<>();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			if (includeDeleted || !data.isDeleted())
 				datas.add(data);
 		}
 
-		return (TemplatePersistenceData[]) datas.toArray(new TemplatePersistenceData[datas.size()]);
+		return datas.toArray(new TemplatePersistenceData[datas.size()]);
 	}
 
 	/**
@@ -420,8 +420,8 @@ public class TemplateStore {
 	 */
 	public TemplatePersistenceData getTemplateData(String id) {
 		Assert.isNotNull(id);
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		for (Iterator<TemplatePersistenceData> it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			if (id.equals(data.getId()))
 				return data;
 		}

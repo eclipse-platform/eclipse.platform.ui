@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,8 +67,8 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	private static final int REMOVE_ID= IDialogConstants.CLIENT_ID+1;
 	private static final int WIDTH_IN_CHARACTERS= 55;
 
-	private List fInput;
-	private final List fRemovedEntries;
+	private List<ISearchResult> fInput;
+	private final List<ISearchResult> fRemovedEntries;
 
 	private TableViewer fViewer;
 	private Button fRemoveButton;
@@ -82,10 +82,10 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 		private int fHistorySize;
 		private Text fHistorySizeTextField;
-		private final List fCurrentList;
-		private final List fCurrentRemoves;
+		private final List<ISearchResult> fCurrentList;
+		private final List<ISearchResult> fCurrentRemoves;
 
-		public HistoryConfigurationDialog(Shell parent, List currentList, List removedEntries) {
+		public HistoryConfigurationDialog(Shell parent, List<ISearchResult> currentList, List<ISearchResult> removedEntries) {
 			super(parent);
 			fCurrentList= currentList;
 			fCurrentRemoves= removedEntries;
@@ -186,7 +186,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 	private static final class SearchesLabelProvider extends LabelProvider {
 
-		private ArrayList fImages= new ArrayList();
+		private ArrayList<Image> fImages= new ArrayList<>();
 
 		@Override
 		public String getText(Object element) {
@@ -208,20 +208,20 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 		@Override
 		public void dispose() {
-			Iterator iter= fImages.iterator();
+			Iterator<Image> iter= fImages.iterator();
 			while (iter.hasNext())
-				((Image)iter.next()).dispose();
+				iter.next().dispose();
 
 			fImages= null;
 		}
 	}
 
-	public SearchHistorySelectionDialog(Shell parent, List input) {
+	public SearchHistorySelectionDialog(Shell parent, List<ISearchResult> input) {
 		super(parent);
 		setTitle(SearchMessages.SearchesDialog_title);
 		setMessage(SearchMessages.SearchesDialog_message);
 		fInput= input;
-		fRemovedEntries= new ArrayList();
+		fRemovedEntries= new ArrayList<>();
 		setHelpAvailable(false);
 	}
 
@@ -273,7 +273,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	public void create() {
 		super.create();
 
-		List initialSelection= getInitialElementSelections();
+		List<?> initialSelection= getInitialElementSelections();
 		if (initialSelection != null)
 			fViewer.setSelection(new StructuredSelection(initialSelection));
 
@@ -388,9 +388,9 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == REMOVE_ID) {
 			IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
-			Iterator searchResults= selection.iterator();
+			Iterator<?> searchResults= selection.iterator();
 			while (searchResults.hasNext()) {
-				Object curr= searchResults.next();
+				ISearchResult curr= (ISearchResult) searchResults.next();
 				fRemovedEntries.add(curr);
 				fInput.remove(curr);
 				fViewer.remove(curr);
@@ -418,8 +418,8 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			setResult(((IStructuredSelection) fViewer.getSelection()).toList());
 
 		// remove queries
-		for (Iterator iter= fRemovedEntries.iterator(); iter.hasNext();) {
-			ISearchResult result= (ISearchResult) iter.next();
+		for (Iterator<ISearchResult> iter= fRemovedEntries.iterator(); iter.hasNext();) {
+			ISearchResult result= iter.next();
 			ISearchQuery query= result.getQuery();
 			if (query != null) { // must not be null: invalid implementation of a search query
 				InternalSearchUI.getInstance().removeQuery(query);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,9 @@ public class TextPresentation {
 		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
 
 		int i= 0;
-		Iterator e= presentation.getAllStyleRangeIterator();
+		Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext())
-			ranges[i++]= (StyleRange) e.next();
+			ranges[i++]= e.next();
 
 		text.setStyleRanges(ranges);
 	}
@@ -61,7 +61,7 @@ public class TextPresentation {
 	/**
 	 * Enumerates all the <code>StyleRange</code>s included in the presentation.
 	 */
-	class FilterIterator implements Iterator {
+	class FilterIterator implements Iterator<StyleRange> {
 
 		/** The index of the next style range to be enumerated */
 		protected int fIndex;
@@ -91,9 +91,9 @@ public class TextPresentation {
 		}
 
 		@Override
-		public Object next() {
+		public StyleRange next() {
 			try {
-				StyleRange r= (StyleRange) fRanges.get(fIndex++);
+				StyleRange r= fRanges.get(fIndex++);
 				return createWindowRelativeRange(fWindow, r);
 			} catch (ArrayIndexOutOfBoundsException x) {
 				throw new NoSuchElementException();
@@ -136,7 +136,7 @@ public class TextPresentation {
 	/** The style information for the range covered by the whole presentation */
 	private StyleRange fDefaultRange;
 	/** The member ranges of the presentation */
-	private ArrayList fRanges;
+	private ArrayList<StyleRange> fRanges;
 	/** A clipping region against which the presentation can be clipped when asked for results */
 	private IRegion fResultWindow;
 	/**
@@ -150,7 +150,7 @@ public class TextPresentation {
 	 * Creates a new empty text presentation.
 	 */
 	public TextPresentation() {
-		fRanges= new ArrayList(50);
+		fRanges= new ArrayList<>(50);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class TextPresentation {
 	 */
 	public TextPresentation(int sizeHint) {
 		Assert.isTrue(sizeHint > 0);
-		fRanges= new ArrayList(sizeHint);
+		fRanges= new ArrayList<>(sizeHint);
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class TextPresentation {
 			int last= getFirstIndexAfterWindow(rangeRegion);
 			for (int i= first; i < last && length > 0; i++) {
 
-				StyleRange current= (StyleRange)fRanges.get(i);
+				StyleRange current= fRanges.get(i);
 				int currentStart= current.start;
 				int currentEnd= currentStart + current.length;
 
@@ -405,8 +405,8 @@ public class TextPresentation {
 	 */
 	private void applyStyleRanges(StyleRange[] ranges, boolean merge) {
 		int j= 0;
-		ArrayList oldRanges= fRanges;
-		ArrayList newRanges= new ArrayList(2*ranges.length + oldRanges.size());
+		ArrayList<StyleRange> oldRanges= fRanges;
+		ArrayList<StyleRange> newRanges= new ArrayList<>(2*ranges.length + oldRanges.size());
 		for (int i= 0, n= ranges.length; i < n; i++) {
 			StyleRange range= ranges[i];
 			fRanges= oldRanges; // for getFirstIndexAfterWindow(...)
@@ -511,7 +511,7 @@ public class TextPresentation {
 			int i= -1, j= fRanges.size();
 			while (j - i > 1) {
 				int k= (i + j) >> 1;
-				StyleRange r= (StyleRange) fRanges.get(k);
+				StyleRange r= fRanges.get(k);
 				if (r.start + r.length > start)
 					j= k;
 				else
@@ -535,7 +535,7 @@ public class TextPresentation {
 			int i= -1, j= fRanges.size();
 			while (j - i > 1) {
 				int k= (i + j) >> 1;
-				StyleRange r= (StyleRange) fRanges.get(k);
+				StyleRange r= fRanges.get(k);
 				if (r.start < end)
 					i= k;
 				else
@@ -605,7 +605,7 @@ public class TextPresentation {
 	 *
 	 * @return a style range iterator
 	 */
-	public Iterator getNonDefaultStyleRangeIterator() {
+	public Iterator<StyleRange> getNonDefaultStyleRangeIterator() {
 		return new FilterIterator(fDefaultRange != null);
 	}
 
@@ -616,7 +616,7 @@ public class TextPresentation {
 	 *
 	 * @return a style range iterator
 	 */
-	public Iterator getAllStyleRangeIterator() {
+	public Iterator<StyleRange> getAllStyleRangeIterator() {
 		return new FilterIterator(false);
 	}
 
@@ -650,7 +650,7 @@ public class TextPresentation {
 	public StyleRange getFirstStyleRange() {
 		try {
 
-			StyleRange range= (StyleRange) fRanges.get(getFirstIndexInWindow(fResultWindow));
+			StyleRange range= fRanges.get(getFirstIndexInWindow(fResultWindow));
 			return createWindowRelativeRange(fResultWindow, range);
 
 		} catch (NoSuchElementException x) {
@@ -668,7 +668,7 @@ public class TextPresentation {
 	public StyleRange getLastStyleRange() {
 		try {
 
-			StyleRange range=  (StyleRange) fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
+			StyleRange range= fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
 			return createWindowRelativeRange(fResultWindow, range);
 
 		} catch (NoSuchElementException x) {

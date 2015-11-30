@@ -27,15 +27,15 @@ public class DAGTest extends TestCase {
 	private static final Object B= "B";
 	private static final Object C= "C";
 	private static final Object D= "D";
-	private static final Set AS= Collections.singleton(A);
-	private static final Set BS= Collections.singleton(B);
-	private static final Set CS= Collections.singleton(C);
-	private static final Set AD= new LinkedHashSet(Arrays.asList(new Object[] { A, D }));
-	private static final Set CD= new LinkedHashSet(Arrays.asList(new Object[] { C, D }));
-	private static final Set ACD= new LinkedHashSet(Arrays.asList(new Object[] { A, C, D }));
-	private static final Set BD= new LinkedHashSet(Arrays.asList(new Object[] { B, D }));
+	private static final Set<Object> AS= Collections.singleton(A);
+	private static final Set<Object> BS= Collections.singleton(B);
+	private static final Set<Object> CS= Collections.singleton(C);
+	private static final Set<Object> AD= new LinkedHashSet<>(Arrays.asList(new Object[] { A, D }));
+	private static final Set<Object> CD= new LinkedHashSet<>(Arrays.asList(new Object[] { C, D }));
+	private static final Set<Object> ACD= new LinkedHashSet<>(Arrays.asList(new Object[] { A, C, D }));
+	private static final Set<Object> BD= new LinkedHashSet<>(Arrays.asList(new Object[] { B, D }));
 
-	private DAG fDag= new DAG();
+	private DAG<Object> fDag= new DAG<>();
 
 	public void testEmpty() throws Exception {
 		assertTrue(fDag.getChildren(new Object()).isEmpty());

@@ -55,7 +55,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	/** The dialog settings to retrieve the last search */
 	private IDialogSettings fDialogSettings;
 	/** The find history as initially given in the dialog settings. */
-	private List fFindHistory= new ArrayList();
+	private List<String> fFindHistory= new ArrayList<>();
 	/** The find string as initially given in the dialog settings. */
 	private String fFindString;
 	/** The search direction as initially given in the dialog settings. */
@@ -130,7 +130,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		String fullSelection= fTarget.getSelectionText();
 		String firstLine= getFirstLine(fullSelection);
 		if ((firstLine.length() == 0 || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
-			return (String) fFindHistory.get(0);
+			return fFindHistory.get(0);
 		else if (fRegExSearch && fullSelection.length() > 0)
 			return FindReplaceDocumentAdapter.escapeForRegExPattern(fullSelection);
 		else

@@ -125,7 +125,7 @@ public class ScopePart {
 
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		if (lruWorkingSetNames != null) {
-			Set existingWorkingSets= new HashSet(lruWorkingSetNames.length);
+			Set<IWorkingSet> existingWorkingSets= new HashSet<>(lruWorkingSetNames.length);
 			for (int i= 0; i < lruWorkingSetNames.length; i++) {
 				IWorkingSet workingSet= getWorkingSet(workingSetManager, lruWorkingSetNames[i]);
 				if (workingSet != null) {
@@ -133,7 +133,7 @@ public class ScopePart {
 				}
 			}
 			if (!existingWorkingSets.isEmpty()) {
-				return (IWorkingSet[]) existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+				return existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
 			}
 		} else {
 			// Backward compatibility
@@ -230,7 +230,7 @@ public class ScopePart {
 		Assert.isNotNull(workingSets);
 		setSelectedScope(ISearchPageContainer.WORKING_SET_SCOPE);
 		fWorkingSets= null;
-		Set existingWorkingSets= new HashSet(workingSets.length);
+		Set<IWorkingSet> existingWorkingSets= new HashSet<>(workingSets.length);
 		for (int i= 0; i < workingSets.length; i++) {
 			String name= workingSets[i].getName();
 			IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
@@ -238,7 +238,7 @@ public class ScopePart {
 				existingWorkingSets.add(workingSet);
 		}
 		if (!existingWorkingSets.isEmpty())
-			fWorkingSets= (IWorkingSet[]) existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+			fWorkingSets= existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
 
 		saveState();
 

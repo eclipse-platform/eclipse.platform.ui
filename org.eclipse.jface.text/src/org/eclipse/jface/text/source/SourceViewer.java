@@ -295,7 +295,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * Stack of saved selections in the underlying document
 	 * @since 3.0
 	 */
-	protected final Stack fSelections= new Stack();
+	protected final Stack<Position> fSelections= new Stack<>();
 	/**
 	 * Position updater for saved selections
 	 * @since 3.0
@@ -877,7 +877,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		if (!fSelections.isEmpty()) {
 
 			final IDocument document= getDocument();
-			final Position position= (Position) fSelections.pop();
+			final Position position= fSelections.pop();
 
 			try {
 				document.removePosition(fSelectionCategory, position);
@@ -1148,7 +1148,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			return true;
 
 		if (fVerticalRuler instanceof CompositeRuler) {
-			Iterator iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
+			Iterator<IVerticalRulerColumn> iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
 			return iter.hasNext() && iter.next() instanceof AnnotationRulerColumn && !iter.hasNext();
 		}
 		return false;

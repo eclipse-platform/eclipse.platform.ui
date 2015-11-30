@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,11 @@ public final class AnnotationTypeLookup {
 		}
 	}
 
-	/** The lookup table for marker to annotation type mappings. */
-	private Map fMapping;
+	/**
+	 * The lookup table for marker to annotation type mappings. The value type is a {@link String}
+	 * or a {@code Map<Integer, String>}.
+	 */
+	private Map<String, Object> fMapping;
 
 	/**
 	 * Creates a new annotation lookup object.
@@ -113,8 +116,9 @@ public final class AnnotationTypeLookup {
 			return (String) value;
 
 		if (value instanceof Map) {
-			Map severityMap= (Map) value;
-			return (String) severityMap.get(new Integer(severity));
+			@SuppressWarnings("unchecked")
+			Map<Integer, String> severityMap= (Map<Integer, String>) value;
+			return severityMap.get(Integer.valueOf(severity));
 		}
 
 		return null;
@@ -125,18 +129,19 @@ public final class AnnotationTypeLookup {
 	 * annotation types.
 	 */
 	private void initializeMapping() {
-		fMapping= new HashMap();
-		List mappings= getAnnotationTypeMappings();
+		fMapping= new HashMap<>();
+		List<AnnotationTypeMapping> mappings= getAnnotationTypeMappings();
 		for (int i= 0, l= mappings.size(); i < l; i++) {
-			AnnotationTypeMapping atm= (AnnotationTypeMapping) mappings.get(i);
+			AnnotationTypeMapping atm= mappings.get(i);
 			if (atm.isMarkerSeverityDefined()) {
 				Object severityMap= fMapping.get(atm.fMarkerType);
 				if (!(severityMap instanceof Map)) {
-					severityMap= new HashMap();
+					severityMap= new HashMap<>();
 					fMapping.put(atm.fMarkerType, severityMap);
 				}
-				Map map= (Map) severityMap;
-				map.put(new Integer(atm.fMarkerSeverity), atm.fAnnotationType);
+				@SuppressWarnings("unchecked")
+				Map<Integer, String> map= (Map<Integer, String>) severityMap;
+				map.put(Integer.valueOf(atm.fMarkerSeverity), atm.fAnnotationType);
 			} else {
 				fMapping.put(atm.fMarkerType, atm.fAnnotationType);
 			}
@@ -149,8 +154,8 @@ public final class AnnotationTypeLookup {
 	 *
 	 * @return a list of annotation type mappings
 	 */
-	private List getAnnotationTypeMappings() {
-		List annotationTypeMappings= new ArrayList();
+	private List<AnnotationTypeMapping> getAnnotationTypeMappings() {
+		List<AnnotationTypeMapping> annotationTypeMappings= new ArrayList<>();
 		// read compatibility mode
 		readExtensionPoint(annotationTypeMappings, "markerAnnotationSpecification", "annotationType"); //$NON-NLS-1$ //$NON-NLS-2$
 		// read new extension point
@@ -168,7 +173,7 @@ public final class AnnotationTypeLookup {
 	 * @param typeAttributeName the name of attribute specifying the annotation
 	 *            type
 	 */
-	private void readExtensionPoint(List annotationTypeMappings, String extensionPointName, String typeAttributeName) {
+	private void readExtensionPoint(List<AnnotationTypeMapping> annotationTypeMappings, String extensionPointName, String typeAttributeName) {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, extensionPointName);
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();

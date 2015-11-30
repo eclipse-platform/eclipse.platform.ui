@@ -34,11 +34,11 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 public class MarkerHighlighter extends Highlighter {
 	private IFile fFile;
-	private Map fMatchesToAnnotations;
+	private Map<Match, IMarker> fMatchesToAnnotations;
 
 	public MarkerHighlighter(IFile file) {
 		fFile= file;
-		fMatchesToAnnotations= new HashMap();
+		fMatchesToAnnotations= new HashMap<>();
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class MarkerHighlighter extends Highlighter {
 		IMarker marker= match.isFiltered()
 			? fFile.createMarker(SearchPlugin.FILTERED_SEARCH_MARKER)
 			: fFile.createMarker(NewSearchUI.SEARCH_MARKER);
-		HashMap attributes= new HashMap(4);
+		HashMap<String, Integer> attributes= new HashMap<>(4);
 		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
 			attributes.put(IMarker.CHAR_START, new Integer(position.getOffset()));
 			attributes.put(IMarker.CHAR_END, new Integer(position.getOffset()+position.getLength()));
@@ -88,7 +88,7 @@ public class MarkerHighlighter extends Highlighter {
 	@Override
 	public void removeHighlights(Match[] matches) {
 		for (int i= 0; i < matches.length; i++) {
-			IMarker marker= (IMarker) fMatchesToAnnotations.remove(matches[i]);
+			IMarker marker= fMatchesToAnnotations.remove(matches[i]);
 			if (marker != null) {
 				try {
 					marker.delete();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,9 +57,9 @@ public class MarkerAnnotationPreferences {
 		boolean ignoreQuickDiffPrefPage= store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE);
 
 		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 
 			if (ignoreAnnotationsPrefPage && info.isIncludeOnPreferencePage() && isComplete(info))
 				continue;
@@ -111,9 +111,9 @@ public class MarkerAnnotationPreferences {
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, Boolean.toString(true));
 
 		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 
 			// Only reset annotations shown on Annotations preference page
 			if (!info.isIncludeOnPreferencePage() || !isComplete(info))
@@ -160,9 +160,9 @@ public class MarkerAnnotationPreferences {
 		store.putValue(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, Boolean.toString(true));
 
 		MarkerAnnotationPreferences preferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 
 			// Only reset annotations shown on Quick Diff preference page
 
@@ -192,7 +192,7 @@ public class MarkerAnnotationPreferences {
 
 	private static final class AccessChecker extends SecurityManager {
 		@Override
-		public Class[] getClassContext() {
+		public Class<?>[] getClassContext() {
 			return super.getClassContext();
 		}
 	}
@@ -203,7 +203,7 @@ public class MarkerAnnotationPreferences {
 	 * @since 3.0
 	 */
 	private static void checkAccess() throws IllegalStateException {
-		Class[] elements = new AccessChecker().getClassContext();
+		Class<?>[] elements = new AccessChecker().getClassContext();
 		if (!(elements[3].equals(EditorsUI.class)
 				|| elements[4].equals(EditorsUI.class)))
 			throw new IllegalStateException();
@@ -211,9 +211,9 @@ public class MarkerAnnotationPreferences {
 
 
 	/** The list of extension fragments. */
-	private List/*<AnnotationPreference>*/ fFragments;
+	private List<AnnotationPreference> fFragments;
 	/** The list of extensions. */
-	private List/*<AnnotationPreference>*/ fPreferences;
+	private List<AnnotationPreference> fPreferences;
 
 	/**
 	 * Creates a new marker annotation preferences to access
@@ -239,9 +239,8 @@ public class MarkerAnnotationPreferences {
 	 * Returns all extensions provided for the <code>markerAnnotationSpecification</code> extension point.
 	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code> extension point
-	 *         (element type: {@link AnnotationPreference})
 	 */
-	public List getAnnotationPreferences() {
+	public List<AnnotationPreference> getAnnotationPreferences() {
 		if (fPreferences == null)
 			initialize();
 		return fPreferences;
@@ -254,9 +253,9 @@ public class MarkerAnnotationPreferences {
 	 * change the presentation part.
 	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code>
-	 *         extension point including fragments (element type: {@link AnnotationPreference})
+	 *         extension point including fragments
 	 */
-	public List getAnnotationPreferenceFragments() {
+	public List<AnnotationPreference> getAnnotationPreferenceFragments() {
 		if (fFragments == null)
 			initialize();
 		return fFragments;
@@ -281,8 +280,8 @@ public class MarkerAnnotationPreferences {
 	private void initializeSharedMakerAnnotationPreferences() {
 
 		// initialize lists - indicates that the initialization happened
-		fFragments= new ArrayList(2);
-		fPreferences= new ArrayList(2);
+		fFragments= new ArrayList<>(2);
+		fPreferences= new ArrayList<>(2);
 
 		// populate list
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerAnnotationSpecification"); //$NON-NLS-1$
@@ -305,13 +304,13 @@ public class MarkerAnnotationPreferences {
 	 * @return the cloned list of cloned annotation preferences
 	 * @since 3.1
 	 */
-	private List cloneAnnotationPreferences(List annotationPreferences) {
+	private List<AnnotationPreference> cloneAnnotationPreferences(List<AnnotationPreference> annotationPreferences) {
 		if (annotationPreferences == null)
 			return null;
-		List clone= new ArrayList(annotationPreferences.size());
-		Iterator iter= annotationPreferences.iterator();
+		List<AnnotationPreference> clone= new ArrayList<>(annotationPreferences.size());
+		Iterator<AnnotationPreference> iter= annotationPreferences.iterator();
 		while (iter.hasNext())
-			clone.add(clone(((AnnotationPreference)iter.next())));
+			clone.add(clone(iter.next()));
 		return clone;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.EnumeratedDomain.EnumValue;
+import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
@@ -208,8 +209,8 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 			}
 		}
 
-		private final java.util.List fItems= new ArrayList();
-		private final Set fValueSet= new HashSet();
+		private final java.util.List<EnumValue> fItems= new ArrayList<>();
+		private final Set<EnumValue> fValueSet= new HashSet<>();
 
 		public void addValue(EnumValue val) {
 			if (fValueSet.contains(val))
@@ -220,8 +221,8 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 		public int getIndex(EnumValue enumValue) {
 			int i= 0;
-			for (Iterator it= fItems.iterator(); it.hasNext();) {
-				EnumValue ev= (EnumValue) it.next();
+			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
+				EnumValue ev= it.next();
 				if (ev.equals(enumValue))
 					return i;
 				i++;
@@ -231,13 +232,13 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 		public EnumValue getValueByIndex (int index) {
 			if (index >= 0 && fItems.size() > index)
-				return (EnumValue) fItems.get(index);
+				return fItems.get(index);
 			return null;
 		}
 
 		public EnumValue getValueByInteger(int intValue) {
-			for (Iterator it= fItems.iterator(); it.hasNext();) {
-				EnumValue e= (EnumValue) it.next();
+			for (Iterator<EnumValue> it= fItems.iterator(); it.hasNext();) {
+				EnumValue e= it.next();
 				if (e.getIntValue() == intValue)
 					return e;
 			}
@@ -344,12 +345,12 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	 */
 	private boolean fFieldsInitialized= false;
 
-	private java.util.List fInitializers= new ArrayList();
+	private java.util.List<Initializer> fInitializers= new ArrayList<>();
 
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
 
 	private Control fContents;
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
 
 
 	public AccessibilityPreferencePage() {
@@ -367,7 +368,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 	private OverlayPreferenceStore createOverlayStore() {
 
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET));
@@ -439,8 +440,8 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 	private void initializeFields() {
 
-		for (Iterator it= fInitializers.iterator(); it.hasNext();) {
-			Initializer initializer= (Initializer) it.next();
+		for (Iterator<Initializer> it= fInitializers.iterator(); it.hasNext();) {
+			Initializer initializer= it.next();
 			initializer.initialize();
 		}
 
@@ -463,8 +464,8 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 		initializeFields();
 
-		for (Iterator iterator= fMasterSlaveListeners.iterator(); iterator.hasNext();) {
-			SelectionListener listener= (SelectionListener)iterator.next();
+		for (Iterator<SelectionListener> iterator= fMasterSlaveListeners.iterator(); iterator.hasNext();) {
+			SelectionListener listener= iterator.next();
 			listener.widgetSelected(null);
 		}
 

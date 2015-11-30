@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.editors.text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -37,6 +38,8 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 
+import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -54,7 +57,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private OverlayPreferenceStore fStore;
 
-	private Map fCheckBoxes= new HashMap();
+	private Map<Button, String> fCheckBoxes= new HashMap<>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -62,7 +65,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 
@@ -114,14 +117,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys(MarkerAnnotationPreferences preferences) {
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER));
 
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 
 			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange") //$NON-NLS-1$
 				|| (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
@@ -140,9 +143,9 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	private String[][] createQuickDiffModel(MarkerAnnotationPreferences preferences) {
 		String[][] items= new String[3][];
 
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 			if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffChange")) //$NON-NLS-1$
 				items[0]= new String[] { info.getColorPreferenceKey(), info.getOverviewRulerPreferenceKey(), TextEditorMessages.QuickDiffConfigurationBlock_changeColor };
 			else if (info.getAnnotationType().equals("org.eclipse.ui.workbench.texteditor.quickdiffAddition")) //$NON-NLS-1$
@@ -154,10 +157,10 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private String[][] createQuickDiffReferenceListModel() {
-		java.util.List descriptors= new QuickDiff().getReferenceProviderDescriptors();
-		ArrayList listModelItems= new ArrayList();
-		for (Iterator it= descriptors.iterator(); it.hasNext();) {
-			ReferenceProviderDescriptor descriptor= (ReferenceProviderDescriptor) it.next();
+		List<ReferenceProviderDescriptor> descriptors= new QuickDiff().getReferenceProviderDescriptors();
+		ArrayList<String[]> listModelItems= new ArrayList<>();
+		for (Iterator<ReferenceProviderDescriptor> it= descriptors.iterator(); it.hasNext();) {
+			ReferenceProviderDescriptor descriptor= it.next();
 			String label= LegacyActionTools.removeMnemonics(descriptor.getLabel());
 			listModelItems.add(new String[] { descriptor.getId(), label });
 		}
@@ -408,10 +411,10 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void initializeFields() {
-		Iterator e= fCheckBoxes.keySet().iterator();
+		Iterator<Button> e= fCheckBoxes.keySet().iterator();
 		while (e.hasNext()) {
-			Button b= (Button) e.next();
-			String key= (String) fCheckBoxes.get(b);
+			Button b= e.next();
+			String key= fCheckBoxes.get(b);
 			b.setSelection(fStore.getBoolean(key));
 		}
 

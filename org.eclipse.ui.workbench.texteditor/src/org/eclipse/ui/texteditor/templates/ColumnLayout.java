@@ -63,7 +63,7 @@ final class ColumnLayout extends Layout {
 			COLUMN_TRIM= 3;
 	}
 
-	private List columns= new ArrayList();
+	private List<ColumnLayoutData> columns= new ArrayList<>();
 
 	/**
 	 * Adds a new column of data to this table layout.
@@ -80,7 +80,7 @@ final class ColumnLayout extends Layout {
 		int width= 0;
 		int size= columns.size();
 		for (int i= 0; i < size; ++i) {
-			ColumnLayoutData layoutData= (ColumnLayoutData) columns.get(i);
+			ColumnLayoutData layoutData= columns.get(i);
 			if (layoutData instanceof ColumnPixelData) {
 				ColumnPixelData col= (ColumnPixelData) layoutData;
 				width += col.width;
@@ -113,7 +113,7 @@ final class ColumnLayout extends Layout {
 
 		// First calc space occupied by fixed columns
 		for (int i= 0; i < size; i++) {
-			ColumnLayoutData col= (ColumnLayoutData) columns.get(i);
+			ColumnLayoutData col= columns.get(i);
 			if (col instanceof ColumnPixelData) {
 				ColumnPixelData cpd= (ColumnPixelData) col;
 				int pixels= cpd.width;

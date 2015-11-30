@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ import org.eclipse.search.ui.ISearchPageScoreComputer;
 /**
  * Proxy that represents a search page.
  */
-class SearchPageDescriptor implements IPluginContribution, Comparable {
+class SearchPageDescriptor implements IPluginContribution, Comparable<SearchPageDescriptor> {
 
 	public final static String PAGE_TAG= "page"; //$NON-NLS-1$
 	private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
@@ -69,7 +69,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	private final static String STORE_ENABLED_PAGE_IDS= SECTION_ID + ".enabledPageIds"; //$NON-NLS-1$
 	private final static String STORE_PROCESSED_PAGE_IDS= SECTION_ID + ".processedPageIds"; //$NON-NLS-1$
 
-	private static List fgEnabledPageIds;
+	private static List<String> fgEnabledPageIds;
 
 	private static class ExtensionScorePair {
 		public String extension;
@@ -81,7 +81,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	}
 
 	private IConfigurationElement fElement;
-	private List fExtensionScorePairs;
+	private List<ExtensionScorePair> fExtensionScorePairs;
 	private int fWildcardScore= ISearchPageScoreComputer.UNKNOWN;
 	private ISearchPage fCreatedPage;
 
@@ -232,7 +232,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	}
 
 	static void setEnabled(Object[] enabledDescriptors) {
-		fgEnabledPageIds= new ArrayList(5);
+		fgEnabledPageIds= new ArrayList<>(5);
 		for (int i= 0; i < enabledDescriptors.length; i++) {
 			if (enabledDescriptors[i] instanceof SearchPageDescriptor)
 				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptors[i]).getId());
@@ -240,28 +240,28 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		storeEnabledPageIds();
 	}
 
-	private static List getEnabledPageIds() {
+	private static List<String> getEnabledPageIds() {
 		if (fgEnabledPageIds == null) {
-			List descriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
+			List<SearchPageDescriptor> descriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
 
 			String[] enabledPageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
 			if (enabledPageIds == null)
-				fgEnabledPageIds= new ArrayList(descriptors.size());
+				fgEnabledPageIds= new ArrayList<>(descriptors.size());
 			else
-				fgEnabledPageIds= new ArrayList(Arrays.asList(enabledPageIds));
+				fgEnabledPageIds= new ArrayList<>(Arrays.asList(enabledPageIds));
 
 
-			List processedPageIds;
+			List<String> processedPageIds;
 			String[] processedPageIdsArr= getDialogSettings().getArray(STORE_PROCESSED_PAGE_IDS);
 			if (processedPageIdsArr == null)
-				processedPageIds= new ArrayList(descriptors.size());
+				processedPageIds= new ArrayList<>(descriptors.size());
 			else
-				processedPageIds= new ArrayList(Arrays.asList(processedPageIdsArr));
+				processedPageIds= new ArrayList<>(Arrays.asList(processedPageIdsArr));
 
 			// Enable pages based on contribution
-			Iterator iter= descriptors.iterator();
+			Iterator<SearchPageDescriptor> iter= descriptors.iterator();
 			while (iter.hasNext()) {
-				SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+				SearchPageDescriptor desc= iter.next();
 				if (processedPageIds.contains(desc.getId()))
 					continue;
 
@@ -270,14 +270,14 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 					fgEnabledPageIds.add(desc.getId());
 			}
 
-			getDialogSettings().put(STORE_PROCESSED_PAGE_IDS, (String[])processedPageIds.toArray(new String[processedPageIds.size()]));
+			getDialogSettings().put(STORE_PROCESSED_PAGE_IDS, processedPageIds.toArray(new String[processedPageIds.size()]));
 			storeEnabledPageIds();
 		}
 		return fgEnabledPageIds;
 	}
 
 	private static void storeEnabledPageIds() {
-		getDialogSettings().put(STORE_ENABLED_PAGE_IDS, (String[])fgEnabledPageIds.toArray(new String[fgEnabledPageIds.size()]));
+		getDialogSettings().put(STORE_ENABLED_PAGE_IDS, fgEnabledPageIds.toArray(new String[fgEnabledPageIds.size()]));
 	}
 
 	private static IDialogSettings getDialogSettings() {
@@ -289,15 +289,12 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		return section;
 	}
 
-	/*
-	 * Implements a method from IComparable
-	 */
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(SearchPageDescriptor o) {
 		int myPos= getTabPosition();
-		int objsPos= ((SearchPageDescriptor)o).getTabPosition();
+		int objsPos= o.getTabPosition();
 		if (myPos == Integer.MAX_VALUE && objsPos == Integer.MAX_VALUE || myPos == objsPos)
-			return getLabel().compareTo(((SearchPageDescriptor)o).getLabel());
+			return getLabel().compareTo(o.getLabel());
 
 		return myPos - objsPos;
 	}
@@ -338,7 +335,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 
 		int size= fExtensionScorePairs.size();
 		for (int i= 0; i < size; i++) {
-			ExtensionScorePair p= (ExtensionScorePair)fExtensionScorePairs.get(i);
+			ExtensionScorePair p= fExtensionScorePairs.get(i);
 			if (extension.equals(p.extension))
 				return p.score;
 		}
@@ -347,7 +344,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	}
 
 	private void readExtensionScorePairs() {
-		fExtensionScorePairs= new ArrayList(3);
+		fExtensionScorePairs= new ArrayList<>(3);
 		String content= fElement.getAttribute(EXTENSIONS_ATTRIBUTE);
 		if (content == null)
 			return;

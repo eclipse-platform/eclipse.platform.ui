@@ -22,20 +22,20 @@ public final class StringSetSerializer {
 	private StringSetSerializer() {
 	}
 
-	public static String serialize(Set strings) {
+	public static String serialize(Set<String> strings) {
 		Assert.isLegal(strings != null);
 		StringBuffer buf= new StringBuffer(strings.size() * 20);
-		for (Iterator it= strings.iterator(); it.hasNext();) {
-			buf.append((String) it.next());
+		for (Iterator<String> it= strings.iterator(); it.hasNext();) {
+			buf.append(it.next());
 			if (it.hasNext())
 				buf.append(DELIM);
 		}
 		return buf.toString();
 	}
 
-	public static Set deserialize(String serialized) {
+	public static Set<String> deserialize(String serialized) {
 		Assert.isLegal(serialized != null);
-		Set marked= new HashSet();
+		Set<String> marked= new HashSet<>();
 		StringTokenizer tok= new StringTokenizer(serialized, DELIM);
 		while (tok.hasMoreTokens())
 			marked.add(tok.nextToken());
@@ -43,13 +43,13 @@ public final class StringSetSerializer {
 	}
 
 	public static String[] getDifference(String oldValue, String newValue) {
-		Set oldSet= deserialize(oldValue);
-		Set newSet= deserialize(newValue);
-		Set intersection= new HashSet(oldSet);
+		Set<String> oldSet= deserialize(oldValue);
+		Set<String> newSet= deserialize(newValue);
+		Set<String> intersection= new HashSet<>(oldSet);
 		intersection.retainAll(newSet);
 		oldSet.removeAll(intersection);
 		newSet.removeAll(intersection);
 		oldSet.addAll(newSet);
-		return (String[]) oldSet.toArray(new String[oldSet.size()]);
+		return oldSet.toArray(new String[oldSet.size()]);
 	}
 }

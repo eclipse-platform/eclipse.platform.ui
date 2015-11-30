@@ -123,7 +123,7 @@ public final class HyperlinkDetectorTargetDescriptor {
 	}
 
 	private static HyperlinkDetectorTargetDescriptor[] createDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(elements.length);
+		List<HyperlinkDetectorTargetDescriptor> result= new ArrayList<>(elements.length);
 		for (int i= 0; i < elements.length; i++) {
 			IConfigurationElement element= elements[i];
 			if (TARGET_ELEMENT.equals(element.getName())) {
@@ -140,7 +140,7 @@ public final class HyperlinkDetectorTargetDescriptor {
 			}
 
 		}
-		return (HyperlinkDetectorTargetDescriptor[])result.toArray(new HyperlinkDetectorTargetDescriptor[result.size()]);
+		return result.toArray(new HyperlinkDetectorTargetDescriptor[result.size()]);
 	}
 
 	private boolean isValid() {

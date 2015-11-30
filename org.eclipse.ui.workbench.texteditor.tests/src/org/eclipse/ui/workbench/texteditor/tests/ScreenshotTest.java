@@ -96,7 +96,7 @@ public class ScreenshotTest extends TestCase {
 	 * @param out print stream to use for diagnostics.
 	 * @return file system path to the screenshot file
 	 */
-	public static String takeScreenshot(Class testClass, String name, PrintStream out) {
+	public static String takeScreenshot(Class<?> testClass, String name, PrintStream out) {
 		File resultsHtmlDir= getJunitReportOutput(); // ends up in testresults/linux.gtk.x86_6.0/<class>.<test>.png
 		
 		if (resultsHtmlDir == null) { // Fallback. Warning: uses same file location on all test platforms:

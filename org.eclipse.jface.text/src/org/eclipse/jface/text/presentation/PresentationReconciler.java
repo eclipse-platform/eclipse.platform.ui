@@ -240,9 +240,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	}
 
 	/** The map of presentation damagers. */
-	private Map fDamagers;
+	private Map<String, IPresentationDamager> fDamagers;
 	/** The map of presentation repairers. */
-	private Map fRepairers;
+	private Map<String, IPresentationRepairer> fRepairers;
 	/** The target viewer. */
 	private ITextViewer fViewer;
 	/** The internal listener. */
@@ -308,7 +308,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		Assert.isNotNull(contentType);
 
 		if (fDamagers == null)
-			fDamagers= new HashMap();
+			fDamagers= new HashMap<>();
 
 		if (damager == null)
 			fDamagers.remove(contentType);
@@ -329,7 +329,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		Assert.isNotNull(contentType);
 
 		if (fRepairers == null)
-			fRepairers= new HashMap();
+			fRepairers= new HashMap<>();
 
 		if (repairer == null)
 			fRepairers.remove(contentType);
@@ -363,7 +363,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		if (fDamagers == null)
 			return null;
 
-		return (IPresentationDamager) fDamagers.get(contentType);
+		return fDamagers.get(contentType);
 	}
 
 	@Override
@@ -372,7 +372,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		if (fRepairers == null)
 			return null;
 
-		return (IPresentationRepairer) fRepairers.get(contentType);
+		return fRepairers.get(contentType);
 	}
 
 	/**
@@ -382,9 +382,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 */
 	protected void setDocumentToDamagers(IDocument document) {
 		if (fDamagers != null) {
-			Iterator e= fDamagers.values().iterator();
+			Iterator<IPresentationDamager> e= fDamagers.values().iterator();
 			while (e.hasNext()) {
-				IPresentationDamager damager= (IPresentationDamager) e.next();
+				IPresentationDamager damager= e.next();
 				damager.setDocument(document);
 			}
 		}
@@ -397,9 +397,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 */
 	protected void setDocumentToRepairers(IDocument document) {
 		if (fRepairers != null) {
-			Iterator e= fRepairers.values().iterator();
+			Iterator<IPresentationRepairer> e= fRepairers.values().iterator();
 			while (e.hasNext()) {
-				IPresentationRepairer repairer= (IPresentationRepairer) e.next();
+				IPresentationRepairer repairer= e.next();
 				repairer.setDocument(document);
 			}
 		}

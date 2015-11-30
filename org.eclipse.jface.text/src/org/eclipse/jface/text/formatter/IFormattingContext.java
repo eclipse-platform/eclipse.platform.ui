@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public interface IFormattingContext {
 	/**
 	 * Retrieves the property <code>key</code> from the formatting context
 	 *
-	 * @param key the key of the property to store in the context
+	 * @param key the key of the property to store in the context. Must be a {@link String}.
 	 * @return the property <code>key</code> if available, <code>null</code> otherwise
 	 */
 	Object getProperty(Object key);
@@ -110,12 +110,12 @@ public interface IFormattingContext {
 	 * @param map Map to retrieve the preferences from
 	 * @param store Preference store to store the preferences in
 	 */
-	void mapToStore(Map map, IPreferenceStore store);
+	void mapToStore(Map<Object, Object> map, IPreferenceStore store);
 
 	/**
 	 * Stores the property <code>key</code> in the formatting context.
 	 *
-	 * @param key Key of the property to store in the context
+	 * @param key Key of the property to store in the context. Must be a {@link String}.
 	 * @param property Property to store in the context. If already present, the new property
 	 *            overwrites the present one.
 	 */
@@ -133,5 +133,5 @@ public interface IFormattingContext {
 	 * @param useDefault <code>true</code> if the default preferences should be used,
 	 *            <code>false</code> otherwise
 	 */
-	void storeToMap(IPreferenceStore store, Map map, boolean useDefault);
+	void storeToMap(IPreferenceStore store, Map<Object, Object> map, boolean useDefault);
 }

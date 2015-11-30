@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,8 +145,8 @@ public class TemplateReaderWriter {
 	 */
 	private TemplatePersistenceData[] read(InputSource source, ResourceBundle bundle, String singleId) throws IOException {
 		try {
-			Collection templates= new ArrayList();
-			Set ids= new HashSet();
+			Collection<TemplatePersistenceData> templates= new ArrayList<>();
+			Set<String> ids= new HashSet<>();
 
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser= factory.newDocumentBuilder();
@@ -206,7 +206,7 @@ public class TemplateReaderWriter {
 					break;
 			}
 
-			return (TemplatePersistenceData[]) templates.toArray(new TemplatePersistenceData[templates.size()]);
+			return templates.toArray(new TemplatePersistenceData[templates.size()]);
 
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);

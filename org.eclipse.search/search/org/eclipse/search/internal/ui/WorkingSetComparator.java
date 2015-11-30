@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,21 +16,14 @@ import com.ibm.icu.text.Collator;
 
 import org.eclipse.ui.IWorkingSet;
 
-public class WorkingSetComparator implements Comparator {
+public class WorkingSetComparator implements Comparator<IWorkingSet> {
 
 	private Collator fCollator= Collator.getInstance();
 
 	@Override
-	public int compare(Object o1, Object o2) {
-		String name1= null;
-		String name2= null;
-
-		if (o1 instanceof IWorkingSet)
-			name1= ((IWorkingSet)o1).getLabel();
-
-		if (o2 instanceof IWorkingSet)
-			name2= ((IWorkingSet)o2).getLabel();
-
+	public int compare(IWorkingSet o1, IWorkingSet o2) {
+		String name1= o1.getLabel();
+		String name2= o2.getLabel();
 		return fCollator.compare(name1, name2);
 	}
 }

@@ -104,13 +104,13 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	 * @since 3.2
 	 */
 	private IFile[] filterUnacceptableFiles(IFile[] files) {
-		Set filtered= new HashSet();
+		Set<IFile> filtered= new HashSet<>();
 		for (int i= 0; i < files.length; i++) {
 			IFile file= files[i];
 			if (isAcceptableLocation(file.getFullPath()))
 				filtered.add(file);
 		}
-		return (IFile[]) filtered.toArray(new IFile[filtered.size()]);
+		return filtered.toArray(new IFile[filtered.size()]);
 	}
 
 	@Override

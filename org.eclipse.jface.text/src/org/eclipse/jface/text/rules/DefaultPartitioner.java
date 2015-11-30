@@ -537,7 +537,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		checkInitialization();
-		List list= new ArrayList();
+		List<TypedRegion> list= new ArrayList<>();
 
 		try {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,10 +28,10 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
+import org.eclipse.jface.text.IDocumentExtension.IReplace;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.IDocumentExtension.IReplace;
 
 
 /**
@@ -182,8 +182,8 @@ public class LinkedModeModel {
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
 
-			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+			for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+				LinkedPositionGroup group= it.next();
 				if (!group.isLegalEvent(event)) {
 					fExit= true;
 					return;
@@ -209,11 +209,11 @@ public class LinkedModeModel {
 				return;
 
 			// collect all results
-			Map result= null;
-			for (Iterator it= fGroups.iterator(); it.hasNext();) {
-				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+			Map<IDocument, TextEdit> result= null;
+			for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext();) {
+				LinkedPositionGroup group= it.next();
 
-				Map map= group.handleEvent(event);
+				Map<IDocument, TextEdit> map= group.handleEvent(event);
 				if (result != null && map != null) {
 					// exit if more than one position was changed
 					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
@@ -225,9 +225,9 @@ public class LinkedModeModel {
 
 			if (result != null) {
 				// edit all documents
-				for (Iterator it2= result.keySet().iterator(); it2.hasNext(); ) {
-					IDocument doc= (IDocument) it2.next();
-					TextEdit edit= (TextEdit) result.get(doc);
+				for (Iterator<IDocument> it2= result.keySet().iterator(); it2.hasNext(); ) {
+					IDocument doc= it2.next();
+					TextEdit edit= result.get(doc);
 					Replace replace= new Replace(edit);
 
 					// apply the edition, either as post notification replace
@@ -249,9 +249,9 @@ public class LinkedModeModel {
 	}
 
 	/** The set of linked position groups. */
-	private final List fGroups= new ArrayList();
+	private final List<LinkedPositionGroup> fGroups= new ArrayList<>();
 	/** The set of documents spanned by this group. */
-	private final Set fDocuments= new HashSet();
+	private final Set<IDocument> fDocuments= new HashSet<>();
 	/** The position updater for linked positions. */
 	private final IPositionUpdater fUpdater= new InclusivePositionUpdater(getCategory());
 	/** The document listener on the documents affected by this model. */
@@ -272,14 +272,14 @@ public class LinkedModeModel {
 	/** <code>true</code> when this model is changing documents. */
 	private boolean fIsChanging= false;
 	/** The linked listeners. */
-	private final List fListeners= new ArrayList();
+	private final List<ILinkedModeListener> fListeners= new ArrayList<>();
 	/** Flag telling whether we have exited: */
 	private boolean fIsActive= true;
 	/**
 	 * The sequence of document positions as we are going to iterate through
 	 * them.
 	 */
-	private List fPositionSequence= new ArrayList();
+	private List<LinkedPosition> fPositionSequence= new ArrayList<>();
 
 	/**
 	 * Whether we are in the process of editing documents (set by <code>Replace</code>,
@@ -301,8 +301,8 @@ public class LinkedModeModel {
 	 *         model's groups
 	 */
 	private void enforceDisjoint(LinkedPositionGroup group) throws BadLocationException {
-		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-			LinkedPositionGroup g= (LinkedPositionGroup) it.next();
+		for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+			LinkedPositionGroup g= it.next();
 			g.enforceDisjoint(group);
 		}
 	}
@@ -319,8 +319,8 @@ public class LinkedModeModel {
 
 		fIsActive= false;
 
-		for (Iterator it= fDocuments.iterator(); it.hasNext(); ) {
-			IDocument doc= (IDocument) it.next();
+		for (Iterator<IDocument> it= fDocuments.iterator(); it.hasNext(); ) {
+			IDocument doc= it.next();
 			try {
 				doc.removePositionCategory(getCategory());
 			} catch (BadPositionCategoryException e) {
@@ -334,10 +334,10 @@ public class LinkedModeModel {
 		fDocuments.clear();
 		fGroups.clear();
 
-		List listeners= new ArrayList(fListeners);
+		List<ILinkedModeListener> listeners= new ArrayList<>(fListeners);
 		fListeners.clear();
-		for (Iterator it= listeners.iterator(); it.hasNext(); ) {
-			ILinkedModeListener listener= (ILinkedModeListener) it.next();
+		for (Iterator<ILinkedModeListener> it= listeners.iterator(); it.hasNext(); ) {
+			ILinkedModeListener listener= it.next();
 			listener.left(this, flags);
 		}
 
@@ -507,8 +507,8 @@ public class LinkedModeModel {
 
 		// register positions
 		try {
-			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-	            LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+			for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+	            LinkedPositionGroup group= it.next();
 	            group.register(this);
 	        }
 			return true;
@@ -525,8 +525,8 @@ public class LinkedModeModel {
 	 */
 	private void enforceNotEmpty() {
         boolean hasPosition= false;
-		for (Iterator it= fGroups.iterator(); it.hasNext(); )
-			if (!((LinkedPositionGroup) it.next()).isEmpty()) {
+		for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); )
+			if (!it.next().isEmpty()) {
 				hasPosition= true;
 				break;
 			}
@@ -540,12 +540,12 @@ public class LinkedModeModel {
      * @return the set of documents affected by this model
      */
     private IDocument[] getDocuments() {
-    	Set docs= new HashSet();
-        for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-            LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+    	Set<IDocument> docs= new HashSet<>();
+        for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+            LinkedPositionGroup group= it.next();
             docs.addAll(Arrays.asList(group.getDocuments()));
         }
-        return (IDocument[]) docs.toArray(new IDocument[docs.size()]);
+        return docs.toArray(new IDocument[docs.size()]);
     }
 
     /**
@@ -557,8 +557,8 @@ public class LinkedModeModel {
      * @return <code>true</code> if the receiver can be nested into <code>parent</code>, <code>false</code> otherwise
      */
     boolean canNestInto(LinkedModeModel parent) {
-    	for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-			LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+    	for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+			LinkedPositionGroup group= it.next();
 			if (!enforceNestability(group, parent)) {
 				fParentPosition= null;
 				return false;
@@ -584,8 +584,8 @@ public class LinkedModeModel {
 		Assert.isNotNull(group);
 
 		try {
-			for (Iterator it= model.fGroups.iterator(); it.hasNext(); ) {
-				LinkedPositionGroup pg= (LinkedPositionGroup) it.next();
+			for (Iterator<LinkedPositionGroup> it= model.fGroups.iterator(); it.hasNext(); ) {
+				LinkedPositionGroup pg= it.next();
 				LinkedPosition pos;
 				pos= pg.adopt(group);
 				if (pos != null && fParentPosition != null && fParentPosition != pos)
@@ -628,7 +628,7 @@ public class LinkedModeModel {
 	 * @return the positions in this model that have a tab stop, in the
 	 *         order they were added
 	 */
-	public List getTabStopSequence() {
+	public List<LinkedPosition> getTabStopSequence() {
 		return fPositionSequence;
 	}
 
@@ -670,8 +670,8 @@ public class LinkedModeModel {
 	 */
 	public LinkedPosition findPosition(LinkedPosition toFind) {
 		LinkedPosition position= null;
-		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-			LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+		for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+			LinkedPositionGroup group= it.next();
 			position= group.getPosition(toFind);
 			if (position != null)
 				break;
@@ -708,9 +708,9 @@ public class LinkedModeModel {
 	 * Suspends this model.
 	 */
 	private void suspend() {
-		List l= new ArrayList(fListeners);
-		for (Iterator it= l.iterator(); it.hasNext(); ) {
-			ILinkedModeListener listener= (ILinkedModeListener) it.next();
+		List<ILinkedModeListener> l= new ArrayList<>(fListeners);
+		for (Iterator<ILinkedModeListener> it= l.iterator(); it.hasNext(); ) {
+			ILinkedModeListener listener= it.next();
 			listener.suspend(this);
 		}
 	}
@@ -722,9 +722,9 @@ public class LinkedModeModel {
 	 * @param flags <code>NONE</code> or <code>SELECT</code>
 	 */
 	private void resume(int flags) {
-		List l= new ArrayList(fListeners);
-		for (Iterator it= l.iterator(); it.hasNext(); ) {
-			ILinkedModeListener listener= (ILinkedModeListener) it.next();
+		List<ILinkedModeListener> l= new ArrayList<>(fListeners);
+		for (Iterator<ILinkedModeListener> it= l.iterator(); it.hasNext(); ) {
+			ILinkedModeListener listener= it.next();
 			listener.resume(this, flags);
 		}
 	}
@@ -739,8 +739,8 @@ public class LinkedModeModel {
 	 *         model, <code>false</code> otherwise
 	 */
 	public boolean anyPositionContains(int offset) {
-		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-			LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+		for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+			LinkedPositionGroup group= it.next();
 			if (group.contains(offset))
 				// take the first hit - exclusion is guaranteed by enforcing
 				// disjointness when adding positions
@@ -767,8 +767,8 @@ public class LinkedModeModel {
 	 *         or <code>null</code> if no group contains <code>position</code>
 	 */
 	public LinkedPositionGroup getGroupForPosition(Position position) {
-		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
-			LinkedPositionGroup group= (LinkedPositionGroup) it.next();
+		for (Iterator<LinkedPositionGroup> it= fGroups.iterator(); it.hasNext(); ) {
+			LinkedPositionGroup group= it.next();
 			if (group.contains(position))
 				return group;
 		}

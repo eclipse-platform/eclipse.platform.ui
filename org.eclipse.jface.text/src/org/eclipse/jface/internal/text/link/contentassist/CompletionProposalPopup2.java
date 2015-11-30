@@ -85,7 +85,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	/** The key listener to control navigation */
 	private KeyListener fKeyListener;
 	/** List of document events used for filtering proposals */
-	private List fDocumentEvents= new ArrayList();
+	private List<DocumentEvent> fDocumentEvents= new ArrayList<>();
 	/** Listener filling the document event queue */
 	private IDocumentListener fDocumentListener;
 	/** Reentrance count for <code>filterProposals</code> */
@@ -936,7 +936,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		IDocument document= fViewer.getDocument();
 		int length= proposals.length;
-		List filtered= new ArrayList(length);
+		List<Object> filtered= new ArrayList<>(length);
 		for (int i= 0; i < length; i++) {
 
 			if (proposals[i] instanceof ICompletionProposalExtension2) {

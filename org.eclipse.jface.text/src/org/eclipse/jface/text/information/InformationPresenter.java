@@ -200,7 +200,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	/** The text viewer this information presenter works on */
 	private ITextViewer fTextViewer;
 	/** The map of <code>IInformationProvider</code> objects */
-	private Map fProviders;
+	private Map<String, IInformationProvider> fProviders;
 	/** The offset to override selection. */
 	private int fOffset= -1;
 	/**
@@ -256,7 +256,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		Assert.isNotNull(contentType);
 
 		if (fProviders == null)
-			fProviders= new HashMap();
+			fProviders= new HashMap<>();
 
 		if (provider == null)
 			fProviders.remove(contentType);
@@ -269,7 +269,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (fProviders == null)
 			return null;
 
-		return (IInformationProvider) fProviders.get(contentType);
+		return fProviders.get(contentType);
 	}
 
 	/**

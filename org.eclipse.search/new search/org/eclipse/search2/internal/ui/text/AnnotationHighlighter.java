@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,17 +41,17 @@ import org.eclipse.search2.internal.ui.SearchMessages;
 public class AnnotationHighlighter extends Highlighter {
 	private IAnnotationModel fModel;
 	private IDocument fDocument;
-	private Map fMatchesToAnnotations;
+	private Map<Match, Annotation> fMatchesToAnnotations;
 
 	public AnnotationHighlighter(IAnnotationModel model, IDocument document) {
 		fModel= model;
 		fDocument= document;
-		fMatchesToAnnotations= new HashMap();
+		fMatchesToAnnotations= new HashMap<>();
 	}
 
 	@Override
 	public void addHighlights(Match[] matches) {
-		HashMap map= new HashMap(matches.length);
+		HashMap<Annotation, Position> map= new HashMap<>(matches.length);
 		for (int i= 0; i < matches.length; i++) {
 			int offset= matches[i].getOffset();
 			int length= matches[i].getLength();
@@ -95,9 +95,9 @@ public class AnnotationHighlighter extends Highlighter {
 
 	@Override
 	public void removeHighlights(Match[] matches) {
-		HashSet annotations= new HashSet(matches.length);
+		HashSet<Annotation> annotations= new HashSet<>(matches.length);
 		for (int i= 0; i < matches.length; i++) {
-			Annotation annotation= (Annotation) fMatchesToAnnotations.remove(matches[i]);
+			Annotation annotation= fMatchesToAnnotations.remove(matches[i]);
 			if (annotation != null) {
 				annotations.add(annotation);
 			}
@@ -107,19 +107,19 @@ public class AnnotationHighlighter extends Highlighter {
 
 	@Override
 	public  void removeAll() {
-		Collection matchSet= fMatchesToAnnotations.values();
+		Collection<Annotation> matchSet= fMatchesToAnnotations.values();
 		removeAnnotations(matchSet);
 		fMatchesToAnnotations.clear();
 	}
 
-	private void addAnnotations(Map annotationToPositionMap) {
+	private void addAnnotations(Map<Annotation, Position> annotationToPositionMap) {
 		if (fModel instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) fModel;
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
-			for (Iterator elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
-				Annotation element= (Annotation) elements.next();
-				Position p= (Position) annotationToPositionMap.get(element);
+			for (Iterator<Annotation> elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
+				Annotation element= elements.next();
+				Position p= annotationToPositionMap.get(element);
 				fModel.addAnnotation(element, p);
 			}
 		}
@@ -132,14 +132,14 @@ public class AnnotationHighlighter extends Highlighter {
 	 * @param annotations A set containing the annotations to be removed.
 	 * 			 @see Annotation
 	 */
-	private void removeAnnotations(Collection annotations) {
+	private void removeAnnotations(Collection<Annotation> annotations) {
 		if (fModel instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) fModel;
 			Annotation[] annotationArray= new Annotation[annotations.size()];
-			ame.replaceAnnotations((Annotation[]) annotations.toArray(annotationArray), Collections.EMPTY_MAP);
+			ame.replaceAnnotations(annotations.toArray(annotationArray), Collections.emptyMap());
 		} else {
-			for (Iterator iter= annotations.iterator(); iter.hasNext();) {
-				Annotation element= (Annotation) iter.next();
+			for (Iterator<Annotation> iter= annotations.iterator(); iter.hasNext();) {
+				Annotation element= iter.next();
 				fModel.removeAnnotation(element);
 			}
 		}
@@ -152,8 +152,8 @@ public class AnnotationHighlighter extends Highlighter {
 
 		ITextFileBuffer textBuffer= (ITextFileBuffer) buffer;
 		if (fDocument != null && fDocument.equals(textBuffer.getDocument())) {
-			Set allMatches= fMatchesToAnnotations.keySet();
-			Match[] matchesCopy= (Match[]) allMatches.toArray(new Match[allMatches.size()]);
+			Set<Match> allMatches= fMatchesToAnnotations.keySet();
+			Match[] matchesCopy= allMatches.toArray(new Match[allMatches.size()]);
 			removeAll();
 			addHighlights(matchesCopy);
 		}

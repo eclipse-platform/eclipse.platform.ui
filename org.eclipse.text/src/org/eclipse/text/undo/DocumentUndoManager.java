@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -422,7 +422,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private static class UndoableCompoundTextChange extends UndoableTextChange {
 
 		/** The list of individual changes */
-		private List fChanges= new ArrayList();
+		private List<UndoableTextChange> fChanges= new ArrayList<>();
 
 		/**
 		 * Creates a new compound text change.
@@ -449,11 +449,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (size > 0) {
 				UndoableTextChange c;
 
-				c= (UndoableTextChange) fChanges.get(0);
+				c= fChanges.get(0);
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, true);
 
 				for (int i= size - 1; i >= 0; --i) {
-					c= (UndoableTextChange) fChanges.get(i);
+					c= fChanges.get(i);
 					c.undoTextChange();
 				}
 				fDocumentUndoManager.resetProcessChangeState();
@@ -470,11 +470,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (size > 0) {
 
 				UndoableTextChange c;
-				c= (UndoableTextChange) fChanges.get(size - 1);
+				c= fChanges.get(size - 1);
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, true);
 
 				for (int i= 0; i <= size - 1; ++i) {
-					c= (UndoableTextChange) fChanges.get(i);
+					c= fChanges.get(i);
 					c.redoTextChange();
 				}
 				fDocumentUndoManager.resetProcessChangeState();
@@ -532,7 +532,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (fStart > -1)
 				return super.getUndoModificationStamp();
 			else if (fChanges.size() > 0)
-				return ((UndoableTextChange) fChanges.get(0))
+				return fChanges.get(0)
 						.getUndoModificationStamp();
 
 			return fUndoModificationStamp;
@@ -543,7 +543,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			if (fStart > -1)
 				return super.getRedoModificationStamp();
 			else if (fChanges.size() > 0)
-				return ((UndoableTextChange) fChanges.get(fChanges.size() - 1))
+				return fChanges.get(fChanges.size() - 1)
 						.getRedoModificationStamp();
 
 			return fRedoModificationStamp;
@@ -738,7 +738,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private ListenerList fDocumentUndoListeners;
 
 	/** The list of clients connected. */
-	private List fConnected;
+	private List<Object> fConnected;
 
 	/**
 	 *
@@ -752,7 +752,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		fDocument= document;
 		fHistory= OperationHistoryFactory.getOperationHistory();
 		fUndoContext= new ObjectUndoContext(fDocument);
-		fConnected= new ArrayList();
+		fConnected= new ArrayList<>();
 		fDocumentUndoListeners= new ListenerList(ListenerList.IDENTITY);
 	}
 

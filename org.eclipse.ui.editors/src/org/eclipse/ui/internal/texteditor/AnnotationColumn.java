@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,8 +114,8 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 		if (store != null && fDelegate instanceof AnnotationRulerColumn) {
 			final AnnotationRulerColumn column= (AnnotationRulerColumn) fDelegate;
 			// initial set up
-			for (Iterator iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
-				AnnotationPreference preference= (AnnotationPreference)iter2.next();
+			for (Iterator<AnnotationPreference> iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
+				AnnotationPreference preference= iter2.next();
 				String key= preference.getVerticalRulerPreferenceKey();
 				boolean showAnnotation= true;
 				if (key != null && store.contains(key))
@@ -156,9 +156,9 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 		if (preferenceKey == null)
 			return null;
 
-		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 			if (info != null && preferenceKey.equals(info.getVerticalRulerPreferenceKey()))
 				return info;
 		}

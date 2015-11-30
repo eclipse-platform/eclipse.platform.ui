@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,31 +58,31 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 
 	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-		List javaAnnotations= getAnnotationsForLine(sourceViewer, lineNumber);
+		List<Annotation> javaAnnotations= getAnnotationsForLine(sourceViewer, lineNumber);
 		if (javaAnnotations != null) {
 
 			if (javaAnnotations.size() == 1) {
 
 				// optimization
-				Annotation annotation= (Annotation) javaAnnotations.get(0);
+				Annotation annotation= javaAnnotations.get(0);
 				String message= annotation.getText();
 				if (message != null && message.trim().length() > 0)
 					return formatSingleMessage(message);
 
 			} else {
 
-				List messages= new ArrayList();
+				List<String> messages= new ArrayList<>();
 
-				Iterator e= javaAnnotations.iterator();
+				Iterator<Annotation> e= javaAnnotations.iterator();
 				while (e.hasNext()) {
-					Annotation annotation= (Annotation) e.next();
+					Annotation annotation= e.next();
 					String message= annotation.getText();
 					if (message != null && message.trim().length() > 0)
 						messages.add(message.trim());
 				}
 
 				if (messages.size() == 1)
-					return formatSingleMessage((String)messages.get(0));
+					return formatSingleMessage(messages.get(0));
 
 				if (messages.size() > 1)
 					return formatMultipleMessages(messages);
@@ -127,17 +127,17 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	 * format like HTML.
 	 * </p>
 	 *
-	 * @param messages the messages to format (element type: {@link String})
+	 * @param messages the messages to format
 	 * @return the formatted message
 	 */
-	protected String formatMultipleMessages(List messages) {
+	protected String formatMultipleMessages(List<String> messages) {
 		StringBuffer buffer= new StringBuffer();
 		buffer.append(JFaceTextMessages.getString("DefaultAnnotationHover.multipleMarkers")); //$NON-NLS-1$
 
-		Iterator e= messages.iterator();
+		Iterator<String> e= messages.iterator();
 		while (e.hasNext()) {
 			buffer.append('\n');
-			String listItemText= (String) e.next();
+			String listItemText= e.next();
 			buffer.append(JFaceTextMessages.getFormattedString("DefaultAnnotationHover.listItem", new String[] { listItemText })); //$NON-NLS-1$
 		}
 		return buffer.toString();
@@ -161,20 +161,21 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 		return viewer.getAnnotationModel();
 	}
 
-	private boolean isDuplicateAnnotation(Map messagesAtPosition, Position position, String message) {
+	private boolean isDuplicateAnnotation(Map<Position, Object> messagesAtPosition, Position position, String message) {
 		if (messagesAtPosition.containsKey(position)) {
 			Object value= messagesAtPosition.get(position);
 			if (message.equals(value))
 				return true;
 
 			if (value instanceof List) {
-				List messages= (List)value;
+				@SuppressWarnings("unchecked")
+				List<Object> messages= (List<Object>) value;
 				if  (messages.contains(message))
 					return true;
 
 				messages.add(message);
 			} else {
-				ArrayList messages= new ArrayList();
+				ArrayList<Object> messages= new ArrayList<>();
 				messages.add(value);
 				messages.add(message);
 				messagesAtPosition.put(position, messages);
@@ -184,7 +185,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 		return false;
 	}
 
-	private boolean includeAnnotation(Annotation annotation, Position position, HashMap messagesAtPosition) {
+	private boolean includeAnnotation(Annotation annotation, Position position, HashMap<Position, Object> messagesAtPosition) {
 		if (!isIncluded(annotation))
 			return false;
 
@@ -192,18 +193,18 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 		return (text != null && !isDuplicateAnnotation(messagesAtPosition, position, text));
 	}
 
-	private List getAnnotationsForLine(ISourceViewer viewer, int line) {
+	private List<Annotation> getAnnotationsForLine(ISourceViewer viewer, int line) {
 		IAnnotationModel model= getAnnotationModel(viewer);
 		if (model == null)
 			return null;
 
 		IDocument document= viewer.getDocument();
-		List javaAnnotations= new ArrayList();
-		HashMap messagesAtPosition= new HashMap();
-		Iterator iterator= model.getAnnotationIterator();
+		List<Annotation> javaAnnotations= new ArrayList<>();
+		HashMap<Position, Object> messagesAtPosition= new HashMap<>();
+		Iterator<Annotation> iterator= model.getAnnotationIterator();
 
 		while (iterator.hasNext()) {
-			Annotation annotation= (Annotation) iterator.next();
+			Annotation annotation= iterator.next();
 
 			Position position= model.getPosition(annotation);
 			if (position == null)
@@ -214,9 +215,9 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 
 			if (annotation instanceof AnnotationBag) {
 				AnnotationBag bag= (AnnotationBag) annotation;
-				Iterator e= bag.iterator();
+				Iterator<Annotation> e= bag.iterator();
 				while (e.hasNext()) {
-					annotation= (Annotation) e.next();
+					annotation= e.next();
 					position= model.getPosition(annotation);
 					if (position != null && includeAnnotation(annotation, position, messagesAtPosition))
 						javaAnnotations.add(annotation);

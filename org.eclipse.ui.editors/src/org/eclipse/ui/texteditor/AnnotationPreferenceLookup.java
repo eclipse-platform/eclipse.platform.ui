@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.texteditor.DelegatingAnnotationPreference;
 public class AnnotationPreferenceLookup {
 
 	/** The map between annotation types and annotation preference fragments. */
-	private Map fFragments;
+	private Map<Object, AnnotationPreference> fFragments;
 
 	/**
 	 * Creates a new annotation preference lookup object.
@@ -79,8 +79,8 @@ public class AnnotationPreferenceLookup {
 	 * @return the defined annotation preference fragment
 	 */
 	public AnnotationPreference getAnnotationPreferenceFragment(String annotationType) {
-		Map fragments= getPreferenceFragments();
-		return (AnnotationPreference) fragments.get(annotationType);
+		Map<Object, AnnotationPreference> fragments= getPreferenceFragments();
+		return fragments.get(annotationType);
 	}
 
 	/**
@@ -98,15 +98,15 @@ public class AnnotationPreferenceLookup {
 	 *
 	 * @return the map between annotation type names and annotation preference fragments
 	 */
-	private synchronized Map getPreferenceFragments() {
+	private synchronized Map<Object, AnnotationPreference> getPreferenceFragments() {
 		if (fFragments == null) {
-			fFragments= new HashMap();
+			fFragments= new HashMap<>();
 			MarkerAnnotationPreferences p= new MarkerAnnotationPreferences();
-			Iterator e= p.getAnnotationPreferenceFragments().iterator();
+			Iterator<AnnotationPreference> e= p.getAnnotationPreferenceFragments().iterator();
 			while (e.hasNext()) {
-				AnnotationPreference fragment= (AnnotationPreference) e.next();
+				AnnotationPreference fragment= e.next();
 				Object annotationType = fragment.getAnnotationType();
-				AnnotationPreference preference= (AnnotationPreference) fFragments.get(annotationType);
+				AnnotationPreference preference= fFragments.get(annotationType);
 				if (preference == null)
 					fFragments.put(annotationType, fragment);
 				else

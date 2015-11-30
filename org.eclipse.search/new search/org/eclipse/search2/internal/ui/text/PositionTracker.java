@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,9 @@ import org.eclipse.search.ui.text.RemoveAllEvent;
 
 public class PositionTracker implements IQueryListener, ISearchResultListener, IFileBufferListener {
 
-	private Map fMatchesToPositions= new HashMap();
-	private Map fMatchesToSearchResults= new HashMap();
-	private Map fFileBuffersToMatches= new HashMap();
+	private Map<Match, Position> fMatchesToPositions= new HashMap<>();
+	private Map<Match, AbstractTextSearchResult> fMatchesToSearchResults= new HashMap<>();
+	private Map<ITextFileBuffer, Set<Match>> fFileBuffersToMatches= new HashMap<>();
 
 	private interface IFileBufferMatchOperation {
 		void run(ITextFileBuffer buffer, Match match);
@@ -108,10 +108,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	private void untrackAll(AbstractTextSearchResult result) {
-		Set matchSet= new HashSet(fMatchesToPositions.keySet());
-		for (Iterator matches= matchSet.iterator(); matches.hasNext();) {
-			Match match= (Match) matches.next();
-			AbstractTextSearchResult matchContainer= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+		Set<Match> matchSet= new HashSet<>(fMatchesToPositions.keySet());
+		for (Iterator<Match> matches= matchSet.iterator(); matches.hasNext();) {
+			Match match= matches.next();
+			AbstractTextSearchResult matchContainer= fMatchesToSearchResults.get(match);
 			if (result.equals(matchContainer)) {
 				ITextFileBuffer fb= getTrackedFileBuffer(result, match.getElement());
 				if (fb != null) {
@@ -122,7 +122,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	private void untrackPosition(ITextFileBuffer fb, Match match) {
-		Position position= (Position) fMatchesToPositions.get(match);
+		Position position= fMatchesToPositions.get(match);
 		if (position != null) {
 			removeFileBufferMapping(fb, match);
 			fMatchesToSearchResults.remove(match);
@@ -168,16 +168,16 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	private void addFileBufferMapping(ITextFileBuffer fb, Match match) {
-		Set matches= (Set) fFileBuffersToMatches.get(fb);
+		Set<Match> matches= fFileBuffersToMatches.get(fb);
 		if (matches == null) {
-			matches= new HashSet();
+			matches= new HashSet<>();
 			fFileBuffersToMatches.put(fb, matches);
 		}
 		matches.add(match);
 	}
 
 	private void removeFileBufferMapping(ITextFileBuffer fb, Match match) {
-		Set matches= (Set) fFileBuffersToMatches.get(fb);
+		Set<Match> matches= fFileBuffersToMatches.get(fb);
 		if (matches != null) {
 			matches.remove(match);
 			if (matches.size() == 0)
@@ -198,10 +198,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	public Position getCurrentPosition(Match match) {
-		Position pos= (Position)fMatchesToPositions.get(match);
+		Position pos= fMatchesToPositions.get(match);
 		if (pos == null)
 			return pos;
-		AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+		AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
 		if (match.getBaseUnit() == Match.UNIT_LINE && result != null) {
 			ITextFileBuffer fb= getTrackedFileBuffer(result, match.getElement());
 			if (fb != null) {
@@ -268,11 +268,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	private void doForExistingMatchesIn(IFileBuffer buffer, IFileBufferMatchOperation operation) {
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
-		Set matches= (Set) fFileBuffersToMatches.get(buffer);
+		Set<Match> matches= fFileBuffersToMatches.get(buffer);
 		if (matches != null) {
-			Set matchSet= new HashSet(matches);
-			for (Iterator matchIterator= matchSet.iterator(); matchIterator.hasNext();) {
-				Match element= (Match) matchIterator.next();
+			Set<Match> matchSet= new HashSet<>(matches);
+			for (Iterator<Match> matchIterator= matchSet.iterator(); matchIterator.hasNext();) {
+				Match element= matchIterator.next();
 				operation.run((ITextFileBuffer) buffer, element);
 			}
 		}
@@ -303,7 +303,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			@Override
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
-				AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+				AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
 				untrackPosition(textBuffer, match);
 				trackPosition(result, textBuffer, match);
 			}
@@ -324,10 +324,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			@Override
 			public void run(ITextFileBuffer textBuffer, Match match) {
 				trackCount[0]++;
-				Position pos= (Position) fMatchesToPositions.get(match);
+				Position pos= fMatchesToPositions.get(match);
 				if (pos != null) {
 					if (pos.isDeleted()) {
-						AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+						AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
 						// might be that the containing element has been removed.
 						if (result != null) {
 							result.removeMatch(match);

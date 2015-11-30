@@ -240,7 +240,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 		if (fileNamePatterns == null || fileNamePatterns.length == 0) {
 			return null;
 		}
-		ArrayList patterns= new ArrayList();
+		ArrayList<String> patterns= new ArrayList<>();
 		for (int i= 0; i < fileNamePatterns.length; i++) {
 			String pattern= fFileNamePatterns[i];
 			if (negativeMatcher == pattern.startsWith(FileTypeEditor.FILE_PATTERN_NEGATOR)) {
@@ -253,7 +253,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			}
 		}
 		if (!patterns.isEmpty()) {
-			String[] patternArray= (String[]) patterns.toArray(new String[patterns.size()]);
+			String[] patternArray= patterns.toArray(new String[patterns.size()]);
 			Pattern pattern= PatternConstructor.createPattern(patternArray, IS_CASE_SENSITIVE_FILESYSTEM);
 			return pattern.matcher(""); //$NON-NLS-1$
 		}
@@ -261,16 +261,16 @@ public final class FileTextSearchScope extends TextSearchScope {
 	}
 
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
-		ArrayList res= new ArrayList();
+		ArrayList<IResource> res= new ArrayList<>();
 		for (int i= 0; i < elements.length; i++) {
 			IResource curr= elements[i];
 			addToList(res, curr, includeDerived);
 		}
-		return (IResource[])res.toArray(new IResource[res.size()]);
+		return res.toArray(new IResource[res.size()]);
 	}
 
 	private static IResource[] convertToResources(IWorkingSet[] workingSets, boolean includeDerived) {
-		ArrayList res= new ArrayList();
+		ArrayList<IResource> res= new ArrayList<>();
 		for (int i= 0; i < workingSets.length; i++) {
 			IWorkingSet workingSet= workingSets[i];
 			if (workingSet.isAggregateWorkingSet() && workingSet.isEmpty()) {
@@ -284,16 +284,16 @@ public final class FileTextSearchScope extends TextSearchScope {
 				}
 			}
 		}
-		return (IResource[]) res.toArray(new IResource[res.size()]);
+		return res.toArray(new IResource[res.size()]);
 	}
 
-	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {
+	private static void addToList(ArrayList<IResource> res, IResource curr, boolean includeDerived) {
 		if (!includeDerived && curr.isDerived(IResource.CHECK_ANCESTORS)) {
 			return;
 		}
 		IPath currPath= curr.getFullPath();
 		for (int k= res.size() - 1; k >= 0 ; k--) {
-			IResource other= (IResource) res.get(k);
+			IResource other= res.get(k);
 			IPath otherPath= other.getFullPath();
 			if (otherPath.isPrefixOf(currPath)) {
 				return;

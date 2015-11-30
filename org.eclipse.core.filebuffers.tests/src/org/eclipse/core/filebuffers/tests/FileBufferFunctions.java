@@ -14,8 +14,6 @@ package org.eclipse.core.filebuffers.tests;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -34,6 +32,8 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
+import junit.framework.TestCase;
 
 /**
  * FileBufferFunctions
@@ -57,7 +57,7 @@ public abstract class FileBufferFunctions extends TestCase {
 
 	protected abstract boolean isStateValidationSupported();
 
-	protected abstract Class getAnnotationModelClass() throws Exception;
+	protected abstract Class<IAnnotationModel> getAnnotationModelClass() throws Exception;
 
 
 	@Override
@@ -1109,7 +1109,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertNotNull(buffer);
 
-			Class clazz= getAnnotationModelClass();
+			Class<IAnnotationModel> clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));
@@ -1176,7 +1176,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertNotNull(buffer);
 
-			Class clazz= getAnnotationModelClass();
+			Class<IAnnotationModel> clazz= getAnnotationModelClass();
 			if (clazz != null) {
 				IAnnotationModel model= buffer.getAnnotationModel();
 				assertTrue(clazz.isInstance(model));
@@ -1216,7 +1216,7 @@ public abstract class FileBufferFunctions extends TestCase {
 		try {
 			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fileStore);
 			IAnnotationModel model= fileBuffer.getAnnotationModel();
-			Class clazz= getAnnotationModelClass();
+			Class<IAnnotationModel> clazz= getAnnotationModelClass();
 			if (clazz != null)
 				assertTrue(clazz.isInstance(model));
 			else

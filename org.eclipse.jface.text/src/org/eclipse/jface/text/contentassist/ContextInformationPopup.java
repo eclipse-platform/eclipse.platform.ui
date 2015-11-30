@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	private StyledText fContextInfoText;
 	private TextPresentation fTextPresentation;
 
-	private Stack fContextFrameStack= new Stack();
+	private Stack<ContextFrame> fContextFrameStack= new Stack<>();
 	/**
 	 * The content assist subject control.
 	 *
@@ -218,8 +218,8 @@ class ContextInformationPopup implements IContentAssistListener {
 						}
 
 						// also check all other contexts
-						for (Iterator it= fContextFrameStack.iterator(); it.hasNext(); ) {
-							ContextFrame stackFrame= (ContextFrame) it.next();
+						for (Iterator<ContextFrame> it= fContextFrameStack.iterator(); it.hasNext(); ) {
+							ContextFrame stackFrame= it.next();
 							if (stackFrame.equals(frame)) {
 								validateContextInformation();
 								return;
@@ -321,7 +321,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (fContextFrameStack.isEmpty())
 			return false;
 		// stack not empty
-		ContextFrame top= (ContextFrame) fContextFrameStack.peek();
+		ContextFrame top= fContextFrameStack.peek();
 		return frame.equals(top);
 	}
 
@@ -460,12 +460,12 @@ class ContextInformationPopup implements IContentAssistListener {
 
 			int size= fContextFrameStack.size();
 			if (size > 0) {
-				fLastContext= (ContextFrame) fContextFrameStack.pop();
+				fLastContext= fContextFrameStack.pop();
 				-- size;
 			}
 
 			if (size > 0) {
-				ContextFrame current= (ContextFrame) fContextFrameStack.peek();
+				ContextFrame current= fContextFrameStack.peek();
 				internalShowContextFrame(current, false);
 			} else {
 
@@ -872,7 +872,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		fContextInfoPopup.getDisplay().asyncExec(new Runnable() {
 
-			private ContextFrame fFrame= (ContextFrame) fContextFrameStack.peek();
+			private ContextFrame fFrame= fContextFrameStack.peek();
 
 			@Override
 			public void run() {
@@ -882,7 +882,7 @@ class ContextInformationPopup implements IContentAssistListener {
 
 					// iterate all contexts on the stack
 					while (Helper.okToUse(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
-						ContextFrame top= (ContextFrame) fContextFrameStack.peek();
+						ContextFrame top= fContextFrameStack.peek();
 						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
 							hideContextInfoPopup(); // loop variant: reduces the number of contexts on the stack
 						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {

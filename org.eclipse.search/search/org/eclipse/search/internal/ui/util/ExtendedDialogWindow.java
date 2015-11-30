@@ -47,7 +47,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	private Control fContents;
 	private Button fCancelButton;
-	private List fActionButtons;
+	private List<Button> fActionButtons;
 	// The number of long running operation executed from the dialog.
 	private long fActiveRunningOperations;
 
@@ -60,7 +60,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	public ExtendedDialogWindow(Shell shell) {
 		super(shell);
-		fActionButtons= new ArrayList();
+		fActionButtons= new ArrayList<>();
 	}
 
 	@Override
@@ -174,8 +174,8 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 * @param state The new state
 	 */
 	public void setPerformActionEnabled(boolean state) {
-		for (Iterator buttons = fActionButtons.iterator(); buttons.hasNext(); ) {
-			Button element = (Button) buttons.next();
+		for (Iterator<Button> buttons = fActionButtons.iterator(); buttons.hasNext(); ) {
+			Button element = buttons.next();
 			element.setEnabled(state);
 		}
 	}
@@ -211,7 +211,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	 * @return The saved UI state.
 	 */
 	protected synchronized Object aboutToStart(boolean enableCancelButton) {
-		HashMap savedState= null;
+		HashMap<Object, Object> savedState= null;
 		Shell shell= getShell();
 		if (shell != null) {
 			Display d= shell.getDisplay();
@@ -257,7 +257,8 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 				fProgressMonitorPart.removeFromCancelComponent(fCancelButton);
 			}
 
-			HashMap state= (HashMap)savedState;
+			@SuppressWarnings("unchecked")
+			HashMap<Object, Object> state= (HashMap<Object, Object>)savedState;
 			restoreUIState(state);
 
 			setDisplayCursor(shell.getDisplay(), null);
@@ -276,10 +277,10 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 
 	//---- UI state save and restoring ---------------------------------------------
 
-	private void restoreUIState(HashMap state) {
+	private void restoreUIState(HashMap<Object, Object> state) {
 		restoreEnableState(fCancelButton, state);
-		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
-			Button button = (Button) actionButtons.next();
+		for (Iterator<Button> actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
+			Button button = actionButtons.next();
 			restoreEnableState(button, state);
 		}
 		ControlEnableState pageState= (ControlEnableState)state.get("tabForm"); //$NON-NLS-1$
@@ -289,7 +290,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	/*
 	 * Restores the enable state of the given control.
 	 */
-	protected void restoreEnableState(Control w, HashMap h) {
+	protected void restoreEnableState(Control w, HashMap<Object, Object> h) {
 		if (!w.isDisposed()) {
 			Boolean b= (Boolean)h.get(w);
 			if (b != null)
@@ -297,11 +298,11 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		}
 	}
 
-	private HashMap saveUIState(boolean keepCancelEnabled) {
-		HashMap savedState= new HashMap(10);
+	private HashMap<Object, Object> saveUIState(boolean keepCancelEnabled) {
+		HashMap<Object, Object> savedState= new HashMap<>(10);
 		saveEnableStateAndSet(fCancelButton, savedState, keepCancelEnabled);
-		for (Iterator actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
-			Button button = (Button) actionButtons.next();
+		for (Iterator<Button> actionButtons = fActionButtons.iterator(); actionButtons.hasNext(); ) {
+			Button button = actionButtons.next();
 			saveEnableStateAndSet(button, savedState, false);
 		}
 		savedState.put("tabForm", ControlEnableState.disable(fContents)); //$NON-NLS-1$
@@ -309,7 +310,7 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 		return savedState;
 	}
 
-	private void saveEnableStateAndSet(Control w, HashMap h, boolean enabled) {
+	private void saveEnableStateAndSet(Control w, HashMap<Object, Object> h, boolean enabled) {
 		if (!w.isDisposed()) {
 			h.put(w, Boolean.valueOf(w.isEnabled()));
 			w.setEnabled(enabled);

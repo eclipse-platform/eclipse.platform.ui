@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -87,16 +88,16 @@ public class ReplaceRefactoring extends Refactoring {
 		private MatchGroup[] fMatchGroups;
 		private Match[] fMatches;
 
-		private Map/*<URI,ArrayList<Match>*/ fIgnoredMatches;
+		private Map<URI, ArrayList<FileMatch>> fIgnoredMatches;
 		private final FileSearchResult fResult;
 		private final boolean fIsRemove;
 
-		public SearchResultUpdateChange(FileSearchResult result, MatchGroup[] matchGroups, Map ignoredMatches) {
+		public SearchResultUpdateChange(FileSearchResult result, MatchGroup[] matchGroups, Map<URI, ArrayList<FileMatch>> ignoredMatches) {
 			this(result, null, ignoredMatches, true);
 			fMatchGroups= matchGroups;
 		}
 
-		private SearchResultUpdateChange(FileSearchResult result, Match[] matches, Map ignoredMatches, boolean isRemove) {
+		private SearchResultUpdateChange(FileSearchResult result, Match[] matches, Map<URI, ArrayList<FileMatch>> ignoredMatches, boolean isRemove) {
 			fResult= result;
 			fMatches= matches;
 			fIgnoredMatches= ignoredMatches;
@@ -124,7 +125,7 @@ public class ReplaceRefactoring extends Refactoring {
 
 		private Match[] getMatches() {
 			if (fMatches == null) {
-				ArrayList matches= new ArrayList();
+				ArrayList<FileMatch> matches= new ArrayList<>();
 				for (int i= 0; i < fMatchGroups.length; i++) {
 					MatchGroup curr= fMatchGroups[i];
 					if (curr.group.isEnabled()) {
@@ -138,13 +139,13 @@ public class ReplaceRefactoring extends Refactoring {
 						IFile file= match.getFile();
 						URI uri= file.getLocationURI();
 						if (uri != null) {
-							ArrayList ignoredMatches= (ArrayList)fIgnoredMatches.get(uri);
+							ArrayList<FileMatch> ignoredMatches= fIgnoredMatches.get(uri);
 							if (ignoredMatches != null)
 								matches.addAll(ignoredMatches);
 						}
 					}
 				}
-				fMatches= (Match[]) matches.toArray(new Match[matches.size()]);
+				fMatches= matches.toArray(new Match[matches.size()]);
 				fMatchGroups= null;
 			}
 			return fMatches;
@@ -168,13 +169,13 @@ public class ReplaceRefactoring extends Refactoring {
 	private final FileSearchResult fResult;
 	private final Object[] fSelection;
 
-	private final HashMap/*<IFile,Set<Match>*/ fMatches;
+	private final HashMap<IFile, Set<FileMatch>> fMatches;
 
 	/** Map that keeps already collected locations. */
-	private final Map/*<URI,IFile>*/fAlreadyCollected;
+	private final Map<URI, IFile> fAlreadyCollected;
 
 	/** Map that keeps ignored matches (can be null). */
-	private Map/*<URI,ArrayList<Match>*/ fIgnoredMatches;
+	private Map<URI, ArrayList<FileMatch>> fIgnoredMatches;
 
 	private String fReplaceString;
 
@@ -186,8 +187,8 @@ public class ReplaceRefactoring extends Refactoring {
 		fResult= result;
 		fSelection= selection;
 
-		fMatches= new HashMap();
-		fAlreadyCollected= new HashMap(selection != null ? selection.length : result.getElements().length);
+		fMatches= new HashMap<>();
+		fAlreadyCollected= new HashMap<>(selection != null ? selection.length : result.getElements().length);
 
 		fReplaceString= null;
 	}
@@ -244,7 +245,7 @@ public class ReplaceRefactoring extends Refactoring {
 		} else if (object instanceof IFile) {
 			Match[] matches= fResult.getMatches(object);
 			if (matches.length > 0) {
-				Collection bucket= null;
+				Collection<FileMatch> bucket= null;
 				for (int i= 0; i < matches.length; i++) {
 					FileMatch fileMatch= (FileMatch) matches[i];
 					if (isMatchToBeIncluded(fileMatch)) {
@@ -264,8 +265,8 @@ public class ReplaceRefactoring extends Refactoring {
 
 	public int getNumberOfMatches() {
 		int count= 0;
-		for (Iterator iterator= fMatches.values().iterator(); iterator.hasNext();) {
-			Collection bucket= (Collection) iterator.next();
+		for (Iterator<Set<FileMatch>> iterator= fMatches.values().iterator(); iterator.hasNext();) {
+			Set<FileMatch> bucket= iterator.next();
 			count += bucket.size();
 		}
 		return count;
@@ -289,17 +290,17 @@ public class ReplaceRefactoring extends Refactoring {
 		if (uri == null)
 			return true;
 
-		for (Iterator iter= fAlreadyCollected.keySet().iterator(); iter.hasNext();) {
-			if (URIUtil.equals((URI)iter.next(), uri)) {
+		for (Iterator<URI> iter= fAlreadyCollected.keySet().iterator(); iter.hasNext();) {
+			if (URIUtil.equals(iter.next(), uri)) {
 				if (file.equals(fAlreadyCollected.get(uri)))
 					return true; // another FileMatch for an IFile which already had matches
 
 				if (fIgnoredMatches == null)
-					fIgnoredMatches= new HashMap();
+					fIgnoredMatches= new HashMap<>();
 
-				ArrayList matches= (ArrayList)fIgnoredMatches.get(uri);
+				ArrayList<FileMatch> matches= fIgnoredMatches.get(uri);
 				if (matches == null) {
-					matches= new ArrayList();
+					matches= new ArrayList<>();
 					fIgnoredMatches.put(uri, matches);
 				}
 				matches.add(match);
@@ -312,13 +313,13 @@ public class ReplaceRefactoring extends Refactoring {
 		return true;
 	}
 
-	private Collection getBucket(IFile file) {
-		Collection col= (Collection) fMatches.get(file);
-		if (col == null) {
-			col= new HashSet();
-			fMatches.put(file, col);
+	private Set<FileMatch> getBucket(IFile file) {
+		Set<FileMatch> set= fMatches.get(file);
+		if (set == null) {
+			set= new HashSet<>();
+			fMatches.put(file, set);
 		}
-		return col;
+		return set;
 	}
 
 	@Override
@@ -335,14 +336,14 @@ public class ReplaceRefactoring extends Refactoring {
 
 		RefactoringStatus resultingStatus= new RefactoringStatus();
 
-		Collection allFilesSet= fMatches.keySet();
-		IFile[] allFiles= (IFile[]) allFilesSet.toArray(new IFile[allFilesSet.size()]);
-		Arrays.sort(allFiles, new Comparator() {
+		Collection<IFile> allFilesSet= fMatches.keySet();
+		IFile[] allFiles= allFilesSet.toArray(new IFile[allFilesSet.size()]);
+		Arrays.sort(allFiles, new Comparator<IFile>() {
 			private Collator fCollator= Collator.getInstance();
 			@Override
-			public int compare(Object o1, Object o2) {
-				String p1= ((IFile) o1).getFullPath().toString();
-				String p2= ((IFile) o2).getFullPath().toString();
+			public int compare(IFile o1, IFile o2) {
+				String p1= o1.getFullPath().toString();
+				String p2= o2.getFullPath().toString();
 				return fCollator.compare(p1, p2);
 			}
 		});
@@ -354,12 +355,12 @@ public class ReplaceRefactoring extends Refactoring {
 		CompositeChange compositeChange= new CompositeChange(SearchMessages.ReplaceRefactoring_composite_change_name);
 		compositeChange.markAsSynthetic();
 
-		ArrayList matchGroups= new ArrayList();
+		ArrayList<MatchGroup> matchGroups= new ArrayList<>();
 		boolean hasChanges= false;
 		try {
 			for (int i= 0; i < allFiles.length; i++) {
 				IFile file= allFiles[i];
-				Collection bucket= (Collection) fMatches.get(file);
+				Set<FileMatch> bucket= fMatches.get(file);
 				if (!bucket.isEmpty()) {
 					try {
 						TextChange change= createFileChange(file, pattern, bucket, resultingStatus, matchGroups);
@@ -381,20 +382,20 @@ public class ReplaceRefactoring extends Refactoring {
 			return RefactoringStatus.createFatalErrorStatus(SearchMessages.ReplaceRefactoring_error_no_changes);
 		}
 
-		compositeChange.add(new SearchResultUpdateChange(fResult, (MatchGroup[])matchGroups.toArray(new MatchGroup[matchGroups.size()]), fIgnoredMatches));
+		compositeChange.add(new SearchResultUpdateChange(fResult, matchGroups.toArray(new MatchGroup[matchGroups.size()]), fIgnoredMatches));
 
 		fChange= compositeChange;
 		return resultingStatus;
 	}
 
 	private void checkFilesToBeChanged(IFile[] filesToBeChanged, RefactoringStatus resultingStatus) throws CoreException {
-		ArrayList readOnly= new ArrayList();
+		ArrayList<IFile> readOnly= new ArrayList<>();
 		for (int i= 0; i < filesToBeChanged.length; i++) {
 			IFile file= filesToBeChanged[i];
 			if (file.isReadOnly())
 				readOnly.add(file);
 		}
-		IFile[] readOnlyFiles= (IFile[]) readOnly.toArray(new IFile[readOnly.size()]);
+		IFile[] readOnlyFiles= readOnly.toArray(new IFile[readOnly.size()]);
 
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(readOnlyFiles, getValidationContext());
 		if (status.getSeverity() == IStatus.CANCEL) {
@@ -407,7 +408,7 @@ public class ReplaceRefactoring extends Refactoring {
 		resultingStatus.merge(ResourceChangeChecker.checkFilesToBeChanged(filesToBeChanged, null));
 	}
 
-	private TextChange createFileChange(IFile file, Pattern pattern, Collection/*FileMatch*/ matches, RefactoringStatus resultingStatus, Collection matchGroups) throws PatternSyntaxException, CoreException {
+	private TextChange createFileChange(IFile file, Pattern pattern, Set<FileMatch> matches, RefactoringStatus resultingStatus, Collection<MatchGroup> matchGroups) throws PatternSyntaxException, CoreException {
 		PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
 
 		TextFileChange change= new TextFileChange(Messages.format(SearchMessages.ReplaceRefactoring_group_label_change_for_file, file.getName()), file);
@@ -424,8 +425,8 @@ public class ReplaceRefactoring extends Refactoring {
 			IDocument document= textFileBuffer.getDocument();
 			String lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
 
-			for (Iterator iterator= matches.iterator(); iterator.hasNext();) {
-				FileMatch match= (FileMatch) iterator.next();
+			for (Iterator<FileMatch> iterator= matches.iterator(); iterator.hasNext();) {
+				FileMatch match= iterator.next();
 				int offset= match.getOffset();
 				int length= match.getLength();
 				Position currentPosition= tracker.getCurrentPosition(match);

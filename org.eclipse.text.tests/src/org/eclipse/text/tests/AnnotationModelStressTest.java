@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
@@ -1253,8 +1253,8 @@ public class AnnotationModelStressTest extends TestCase {
 		return null;
 	}
 
-	private void assertRemove(ArrayList added) {
-		AnnotationData first= (AnnotationData) added.remove(0);
+	private void assertRemove(ArrayList<AnnotationData> added) {
+		AnnotationData first= added.remove(0);
 		IAnnotationModel model= getModel(first.annotationNumber);
 		assertTrue(model.getPosition(first.annotation) == first.position);
 
@@ -1262,7 +1262,7 @@ public class AnnotationModelStressTest extends TestCase {
 		assertTrue(model.getPosition(first.annotation) == null);
 	}
 
-	private void assertAdd(AnnotationData data, ArrayList added) {
+	private void assertAdd(AnnotationData data, ArrayList<AnnotationData> added) {
 		Annotation annotation= new Annotation(false);
 		Position position= new Position(data.offset, data.length);
 		IAnnotationModel model= getModel(data.annotationNumber);
@@ -1276,18 +1276,18 @@ public class AnnotationModelStressTest extends TestCase {
 		added.add(data);
 	}
 
-	private void assertExist(ArrayList added) {
+	private void assertExist(ArrayList<AnnotationData> added) {
 		for (int i= 0, size= added.size(); i < size; i++) {
-			AnnotationData data= (AnnotationData) added.get(i);
+			AnnotationData data= added.get(i);
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
 
-		ArrayList annotations= getAllAnnotations();
+		ArrayList<Annotation> annotations= getAllAnnotations();
 		assertEquals(added.size(), annotations.size());
 
 		for (int i= 0, size= annotations.size(); i < size; i++) {
-			Annotation annotation= (Annotation) annotations.get(i);
+			Annotation annotation= annotations.get(i);
 
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
@@ -1296,18 +1296,18 @@ public class AnnotationModelStressTest extends TestCase {
 		}
 	}
 
-	private void assertExistNew(ArrayList added) {
+	private void assertExistNew(ArrayList<AnnotationData> added) {
 		for (int i= 0, size= added.size(); i < size; i++) {
-			AnnotationData data= (AnnotationData) added.get(i);
+			AnnotationData data= added.get(i);
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
 
-		ArrayList annotations= getAllAnnotationsNew();
+		ArrayList<Annotation> annotations= getAllAnnotationsNew();
 		assertEquals(added.size(), annotations.size());
 
 		for (int i= 0, size= annotations.size(); i < size; i++) {
-			Annotation annotation= (Annotation) annotations.get(i);
+			Annotation annotation= annotations.get(i);
 
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
@@ -1316,19 +1316,19 @@ public class AnnotationModelStressTest extends TestCase {
 		}
 	}
 
-	private AnnotationData getAnnotationData(ArrayList datas, Annotation annotation) {
+	private AnnotationData getAnnotationData(ArrayList<AnnotationData> datas, Annotation annotation) {
 		for (int i= 0, size= datas.size(); i < size; i++) {
-			AnnotationData data= (AnnotationData) datas.get(i);
+			AnnotationData data= datas.get(i);
 			if (data.annotation == annotation)
 				return data;
 		}
 		return null;
 	}
 
-	private ArrayList getAllAnnotations() {
-		ArrayList result= new ArrayList();
+	private ArrayList<Annotation> getAllAnnotations() {
+		ArrayList<Annotation> result= new ArrayList<>();
 
-		Iterator iterator= fAnnotationModel.getAnnotationIterator();
+		Iterator<Annotation> iterator= fAnnotationModel.getAnnotationIterator();
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
@@ -1336,10 +1336,10 @@ public class AnnotationModelStressTest extends TestCase {
 		return result;
 	}
 
-	private ArrayList getAllAnnotationsNew() {
-		ArrayList result= new ArrayList();
+	private ArrayList<Annotation> getAllAnnotationsNew() {
+		ArrayList<Annotation> result= new ArrayList<>();
 
-		Iterator iterator= fAnnotationModel.getAnnotationIterator(0, fDocument.getLength(), true, true);
+		Iterator<Annotation> iterator= fAnnotationModel.getAnnotationIterator(0, fDocument.getLength(), true, true);
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
@@ -1348,7 +1348,7 @@ public class AnnotationModelStressTest extends TestCase {
 	}
 
 	public void testStressTestPlainOld() throws Exception {
-		ArrayList added= new ArrayList();
+		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
@@ -1378,7 +1378,7 @@ public class AnnotationModelStressTest extends TestCase {
 	}
 
 	public void testStressTestPlainNew() throws Exception {
-		ArrayList added= new ArrayList();
+		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
@@ -1408,7 +1408,7 @@ public class AnnotationModelStressTest extends TestCase {
 	}
 
 	public void testStressTestMoveOld() throws Exception {
-		ArrayList added= new ArrayList();
+		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];
@@ -1442,7 +1442,7 @@ public class AnnotationModelStressTest extends TestCase {
 	}
 
 	public void testStressTestMoveNew() throws Exception {
-		ArrayList added= new ArrayList();
+		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
 		while (i < 20) {
 			AnnotationData data= RANDOM_ANNOTATIONS[i];

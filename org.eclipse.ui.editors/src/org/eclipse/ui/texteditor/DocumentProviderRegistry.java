@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,11 +69,11 @@ public class DocumentProviderRegistry {
 
 
 	/** The mapping between name extensions and configuration elements. */
-	private Map fExtensionMapping= new HashMap();
+	private Map<String, Set<IConfigurationElement>> fExtensionMapping= new HashMap<>();
 	/** The mapping between editor input type names and configuration elements. */
-	private Map fInputTypeMapping= new HashMap();
+	private Map<String, Set<IConfigurationElement>> fInputTypeMapping= new HashMap<>();
 	/** The mapping between configuration elements and instantiated document providers. */
-	private Map fInstances= new HashMap();
+	private Map<IConfigurationElement, IDocumentProvider> fInstances= new HashMap<>();
 
 
 	/**
@@ -93,16 +93,16 @@ public class DocumentProviderRegistry {
 	 * @param element the configuration element
 	 * @param attributeName the attribute name
 	 */
-	private void read(Map map, IConfigurationElement element, String attributeName) {
+	private void read(Map<String, Set<IConfigurationElement>> map, IConfigurationElement element, String attributeName) {
 		String value= element.getAttribute(attributeName);
 		if (value != null) {
 			StringTokenizer tokenizer= new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token= tokenizer.nextToken().trim();
 
-				Set s= (Set) map.get(token);
+				Set<IConfigurationElement> s= map.get(token);
 				if (s == null) {
-					s= new HashSet();
+					s= new HashSet<>();
 					map.put(token, s);
 				}
 				s.add(element);
@@ -144,7 +144,7 @@ public class DocumentProviderRegistry {
 	 * @return the document provider for the given entry
 	 */
 	private IDocumentProvider getDocumentProvider(IConfigurationElement entry) {
-		IDocumentProvider provider= (IDocumentProvider) fInstances.get(entry);
+		IDocumentProvider provider= fInstances.get(entry);
 		if (provider == null) {
 			try {
 				provider= (IDocumentProvider) entry.createExecutableExtension("class"); //$NON-NLS-1$
@@ -161,10 +161,10 @@ public class DocumentProviderRegistry {
 	 * @param set the set
 	 * @return the first configuration element in the set or <code>null</code> if none
 	 */
-	private IConfigurationElement selectConfigurationElement(Set set) {
+	private IConfigurationElement selectConfigurationElement(Set<IConfigurationElement> set) {
 		if (set != null && !set.isEmpty()) {
-			Iterator e= set.iterator();
-			return (IConfigurationElement) e.next();
+			Iterator<IConfigurationElement> e= set.iterator();
+			return e.next();
 		}
 		return null;
 	}
@@ -177,7 +177,7 @@ public class DocumentProviderRegistry {
 	 */
 	public IDocumentProvider getDocumentProvider(String extension) {
 
-		Set set= (Set) fExtensionMapping.get(extension);
+		Set<IConfigurationElement> set= fExtensionMapping.get(extension);
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
 			return getDocumentProvider(entry);
@@ -192,11 +192,11 @@ public class DocumentProviderRegistry {
 	 * @param type the type
 	 * @return a list containing the super class hierarchy
 	 */
-	private List computeClassList(Class type) {
+	private List<Class<?>> computeClassList(Class<?> type) {
 
-		List result= new ArrayList();
+		List<Class<?>> result= new ArrayList<>();
 
-		Class c= type;
+		Class<?> c= type;
 		while (c != null) {
 			result.add(c);
 			c= c.getSuperclass();
@@ -213,14 +213,14 @@ public class DocumentProviderRegistry {
 	 * @param classes a list of {@link java.lang.Class} objects
 	 * @return a list with elements of type <code>Class</code>
 	 */
-	private List computeInterfaceList(List classes) {
+	private List<Class<?>> computeInterfaceList(List<Class<?>> classes) {
 
-		List result= new ArrayList(4);
-		Hashtable visited= new Hashtable(4);
+		List<Class<?>> result= new ArrayList<>(4);
+		Hashtable<Class<?>, Class<?>> visited= new Hashtable<>(4);
 
-		Iterator e= classes.iterator();
+		Iterator<Class<?>> e= classes.iterator();
 		while (e.hasNext()) {
-			Class c= (Class) e.next();
+			Class<?> c= e.next();
 			computeInterfaceList(c.getInterfaces(), result, visited);
 		}
 
@@ -235,12 +235,12 @@ public class DocumentProviderRegistry {
 	 * @param result the result list
 	 * @param visited map of visited interfaces
 	 */
-	private void computeInterfaceList(Class[] interfaces, List result, Hashtable visited) {
+	private void computeInterfaceList(Class<?>[] interfaces, List<Class<?>> result, Hashtable<Class<?>, Class<?>> visited) {
 
-		List toBeVisited= new ArrayList(interfaces.length);
+		List<Class<?>> toBeVisited= new ArrayList<>(interfaces.length);
 
 		for (int i= 0; i < interfaces.length; i++) {
-			Class iface= interfaces[i];
+			Class<?> iface= interfaces[i];
 			if (visited.get(iface) == null) {
 				visited.put(iface, iface);
 				result.add(iface);
@@ -248,9 +248,9 @@ public class DocumentProviderRegistry {
 			}
 		}
 
-		Iterator e= toBeVisited.iterator();
+		Iterator<Class<?>> e= toBeVisited.iterator();
 		while(e.hasNext()) {
-			Class iface= (Class) e.next();
+			Class<?> iface= e.next();
 			computeInterfaceList(iface.getInterfaces(), result, visited);
 		}
 	}
@@ -262,11 +262,11 @@ public class DocumentProviderRegistry {
 	 * @param classes a list of {@link java.lang.Class} objects
 	 * @return an input type mapping or <code>null</code>
 	 */
-	private Object getFirstInputTypeMapping(List classes) {
-		Iterator e= classes.iterator();
+	private Set<IConfigurationElement> getFirstInputTypeMapping(List<Class<?>> classes) {
+		Iterator<Class<?>> e= classes.iterator();
 		while (e.hasNext()) {
-			Class c= (Class) e.next();
-			Object mapping= fInputTypeMapping.get(c.getName());
+			Class<?> c= e.next();
+			Set<IConfigurationElement> mapping= fInputTypeMapping.get(c.getName());
 			if (mapping != null)
 				return mapping;
 		}
@@ -281,16 +281,16 @@ public class DocumentProviderRegistry {
 	 * @param type a {@link java.lang.Class} object
 	 * @return an input type mapping or <code>null</code>
 	 */
-	private Object findInputTypeMapping(Class type) {
+	private Set<IConfigurationElement> findInputTypeMapping(Class<?> type) {
 
 		if (type == null)
 			return null;
 
-		Object mapping= fInputTypeMapping.get(type.getName());
+		Set<IConfigurationElement> mapping= fInputTypeMapping.get(type.getName());
 		if (mapping != null)
 			return mapping;
 
-		List classList= computeClassList(type);
+		List<Class<?>> classList= computeClassList(type);
 		mapping= getFirstInputTypeMapping(classList);
 		if (mapping != null)
 			return mapping;
@@ -313,7 +313,7 @@ public class DocumentProviderRegistry {
 			provider= getDocumentProvider(file.getFileExtension());
 
 		if (provider == null) {
-			Set set= (Set) findInputTypeMapping(editorInput.getClass());
+			Set<IConfigurationElement> set= findInputTypeMapping(editorInput.getClass());
 			if (set != null) {
 				IConfigurationElement entry= selectConfigurationElement(set);
 				provider= getDocumentProvider(entry);

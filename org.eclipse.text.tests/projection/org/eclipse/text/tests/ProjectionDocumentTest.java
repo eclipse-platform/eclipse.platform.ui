@@ -1576,7 +1576,7 @@ public class ProjectionDocumentTest extends TestCase {
 	public void test22() {
 		// test document events sent out by the slave document when adding segments
 
-		final List receivedEvents= new ArrayList();
+		final List<DocumentEvent> receivedEvents= new ArrayList<>();
 
 		IDocumentListener listener= new IDocumentListener() {
 			@Override
@@ -1606,7 +1606,7 @@ public class ProjectionDocumentTest extends TestCase {
 	public void test23() {
 		// test document events sent out by the slave document when removing segments
 
-		final List receivedEvents= new ArrayList();
+		final List<DocumentEvent> receivedEvents= new ArrayList<>();
 
 		IDocumentListener listener= new IDocumentListener() {
 			@Override

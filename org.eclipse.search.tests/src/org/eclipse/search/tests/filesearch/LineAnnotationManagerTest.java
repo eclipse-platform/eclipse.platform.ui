@@ -94,9 +94,9 @@ public class LineAnnotationManagerTest extends TestCase {
 				IAnnotationModel annotationModel= editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 				IDocument document= editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				annotationModel.getAnnotationIterator();
-				ArrayList positions= new ArrayList();
-				for (Iterator iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
-					Annotation annotation= (Annotation) iter.next();
+				ArrayList<Position> positions= new ArrayList<>();
+				for (Iterator<Annotation> iter= annotationModel.getAnnotationIterator(); iter.hasNext();) {
+					Annotation annotation= iter.next();
 					if (annotation.getType().equals(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO))) {
 						positions.add(annotationModel.getPosition(annotation));
 					}

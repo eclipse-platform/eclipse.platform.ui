@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -347,7 +347,7 @@ public class SearchResultViewer extends TableViewer {
 		if (getSelectedEntriesCount() == 0)
 			return false;
 
-		Iterator iter= Collections.EMPTY_LIST.iterator();
+		Iterator<?> iter= Collections.emptyList().iterator();
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection)
 			iter= ((IStructuredSelection)selection).iterator();
@@ -677,7 +677,7 @@ public class SearchResultViewer extends TableViewer {
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] changed= event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList others= new ArrayList(changed.length);
+			ArrayList<Object> others= new ArrayList<>(changed.length);
 			for (int i= 0; i < changed.length; i++) {
 				Object curr= changed[i];
 				if (curr instanceof IResource)

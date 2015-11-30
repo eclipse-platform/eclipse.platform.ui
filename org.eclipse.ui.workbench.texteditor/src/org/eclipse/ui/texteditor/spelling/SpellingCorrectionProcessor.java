@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,23 +55,23 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		if (model == null)
 			return fgNoSuggestionsProposal;
 
-		List proposals= computeProposals(context, model);
+		List<ICompletionProposal> proposals= computeProposals(context, model);
 		if (proposals.isEmpty())
 			return fgNoSuggestionsProposal;
 
-		return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+		return proposals.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
 	private boolean isAtPosition(int offset, Position pos) {
 		return (pos != null) && (offset >= pos.getOffset() && offset <= (pos.getOffset() +  pos.getLength()));
 	}
 
-	private List computeProposals(IQuickAssistInvocationContext context, IAnnotationModel model) {
+	private List<ICompletionProposal> computeProposals(IQuickAssistInvocationContext context, IAnnotationModel model) {
 		int offset= context.getOffset();
-		ArrayList annotationList= new ArrayList();
-		Iterator iter= model.getAnnotationIterator();
+		ArrayList<SpellingProblem> annotationList= new ArrayList<>();
+		Iterator<Annotation> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Annotation annotation= (Annotation)iter.next();
+			Annotation annotation= iter.next();
 			if (canFix(annotation)) {
 				Position pos= model.getPosition(annotation);
 				if (isAtPosition(offset, pos)) {
@@ -79,17 +79,17 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 				}
 			}
 		}
-		SpellingProblem[] spellingProblems= (SpellingProblem[]) annotationList.toArray(new SpellingProblem[annotationList.size()]);
+		SpellingProblem[] spellingProblems= annotationList.toArray(new SpellingProblem[annotationList.size()]);
 		return computeProposals(context, spellingProblems);
 	}
 
-	private void collectSpellingProblems(Annotation annotation, List problems) {
+	private void collectSpellingProblems(Annotation annotation, List<SpellingProblem> problems) {
 		if (annotation instanceof SpellingAnnotation)
 			problems.add(((SpellingAnnotation)annotation).getSpellingProblem());
 	}
 
-	private List computeProposals(IQuickAssistInvocationContext context, SpellingProblem[] spellingProblems) {
-		List proposals= new ArrayList();
+	private List<ICompletionProposal> computeProposals(IQuickAssistInvocationContext context, SpellingProblem[] spellingProblems) {
+		List<ICompletionProposal> proposals= new ArrayList<>();
 		for (int i= 0; i < spellingProblems.length; i++)
 			proposals.addAll(Arrays.asList(spellingProblems[i].getProposals(context)));
 

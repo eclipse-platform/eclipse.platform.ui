@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.HyperlinkDetectorDescriptor;
@@ -176,7 +178,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
 		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, fHyperlinkDetectorDescriptors[i].getId()));
@@ -447,7 +449,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	}
 
 	private Object[] getCheckedItems() {
-		List result= new ArrayList();
+		List<ListItem> result= new ArrayList<>();
 		for (int i= 0; i < fListModel.length; i++)
 			if (!fStore.getBoolean(fListModel[i].id))
 				result.add(fListModel[i]);
@@ -513,7 +515,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	}
 
 	private ListItem[] createListModel() {
-		ArrayList listModelItems= new ArrayList();
+		ArrayList<ListItem> listModelItems= new ArrayList<>();
 		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
 			HyperlinkDetectorDescriptor desc= fHyperlinkDetectorDescriptors[i];
 			HyperlinkDetectorTargetDescriptor target= desc.getTarget();
@@ -524,17 +526,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			listModelItems.add(new ListItem(desc.getId(), desc.getName(), target.getName(), modifierKeys));
 		}
 
-		Comparator comparator= new Comparator() {
+		Comparator<ListItem> comparator= new Comparator<ListItem>() {
 			@Override
-			public int compare(Object o1, Object o2) {
-				if (!(o2 instanceof ListItem))
-					return -1;
-				if (!(o1 instanceof ListItem))
-					return 1;
-
-				String label1= ((ListItem)o1).name;
-				String label2= ((ListItem)o2).name;
-
+			public int compare(ListItem o1, ListItem o2) {
+				String label1= o1.name;
+				String label2= o2.name;
 				return Collator.getInstance().compare(label1, label2);
 
 			}

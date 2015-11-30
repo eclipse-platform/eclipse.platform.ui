@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/** The list of buffered replacements. */
-	private LinkedList fReplaceList;
+	private LinkedList<Replace> fReplaceList;
 	/** The source text store */
 	private ITextStore fSource;
 	/** A flag to enforce sequential access. */
@@ -58,7 +58,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 * @param source the source text store
 	 */
 	public SequentialRewriteTextStore(ITextStore source) {
-		fReplaceList= new LinkedList();
+		fReplaceList= new LinkedList<>();
 		fSource= source;
 	}
 
@@ -81,15 +81,15 @@ public class SequentialRewriteTextStore implements ITextStore {
 			fReplaceList.add(new Replace(offset, offset, length, text));
 
 		} else {
-			Replace firstReplace= (Replace) fReplaceList.getFirst();
-			Replace lastReplace= (Replace) fReplaceList.getLast();
+			Replace firstReplace= fReplaceList.getFirst();
+			Replace lastReplace= fReplaceList.getLast();
 
 			// backward
 			if (offset + length <= firstReplace.newOffset) {
 				int delta= text.length() - length;
 				if (delta != 0) {
-					for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-						Replace replace= (Replace) i.next();
+					for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
+						Replace replace= i.next();
 						replace.newOffset += delta;
 					}
 				}
@@ -124,8 +124,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 			return fSource.get(offset, length);
 
 
-		Replace firstReplace= (Replace) fReplaceList.getFirst();
-		Replace lastReplace= (Replace) fReplaceList.getLast();
+		Replace firstReplace= fReplaceList.getFirst();
+		Replace lastReplace= fReplaceList.getLast();
 
 		// before
 		if (offset + length <= firstReplace.newOffset) {
@@ -142,8 +142,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		} else {
 
 			int delta= 0;
-			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-				Replace replace= (Replace) i.next();
+			for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
+				Replace replace= i.next();
 
 				if (offset + length < replace.newOffset) {
 					return fSource.get(offset - delta, length);
@@ -182,8 +182,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		if (fReplaceList.isEmpty())
 			return fSource.get(offset);
 
-		Replace firstReplace= (Replace) fReplaceList.getFirst();
-		Replace lastReplace= (Replace) fReplaceList.getLast();
+		Replace firstReplace= fReplaceList.getFirst();
+		Replace lastReplace= fReplaceList.getLast();
 
 		// before
 		if (offset < firstReplace.newOffset) {
@@ -200,8 +200,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		} else {
 
 			int delta= 0;
-			for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-				Replace replace= (Replace) i.next();
+			for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
+				Replace replace= i.next();
 
 				if (offset < replace.newOffset)
 					return fSource.get(offset - delta);
@@ -221,7 +221,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 		if (fReplaceList.isEmpty())
 			return fSource.getLength();
 
-		Replace lastReplace= (Replace) fReplaceList.getLast();
+		Replace lastReplace= fReplaceList.getLast();
 		return fSource.getLength() + getDelta(lastReplace);
 	}
 
@@ -244,8 +244,8 @@ public class SequentialRewriteTextStore implements ITextStore {
 		StringBuffer buffer= new StringBuffer();
 
 		int delta= 0;
-		for (Iterator i= fReplaceList.iterator(); i.hasNext(); ) {
-			Replace replace= (Replace) i.next();
+		for (Iterator<Replace> i= fReplaceList.iterator(); i.hasNext(); ) {
+			Replace replace= i.next();
 
 			int offset= buffer.length() - delta;
 			buffer.append(fSource.get(offset, replace.offset - offset));

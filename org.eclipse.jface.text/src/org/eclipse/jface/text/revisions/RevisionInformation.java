@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,17 +33,17 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
  * @see Revision
  */
 public final class RevisionInformation implements ITextHoverExtension, IInformationProviderExtension2 {
-	/** The revisions, element type: {@link Revision}. */
-	private final List fRevisions= new ArrayList();
+	/** The revisions. */
+	private final List<Revision> fRevisions= new ArrayList<>();
 	/** A unmodifiable view of <code>fRevisions</code>. */
-	private final List fRORevisions= Collections.unmodifiableList(fRevisions);
+	private final List<Revision> fRORevisions= Collections.unmodifiableList(fRevisions);
 	/**
 	 * The flattened list of {@link RevisionRange}s, unmodifiable. <code>null</code> if the list
 	 * must be re-computed.
 	 *
 	 * @since 3.3
 	 */
-	private List fRanges= null;
+	private List<RevisionRange> fRanges= null;
 
 	/**
 	 * The hover control creator. Can be <code>null</code>.
@@ -79,9 +78,9 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	/**
 	 * Returns the contained revisions.
 	 *
-	 * @return an unmodifiable view of the contained revisions (element type: {@link Revision})
+	 * @return an unmodifiable view of the contained revisions
 	 */
-	public List getRevisions() {
+	public List<Revision> getRevisions() {
 		return fRORevisions;
 	}
 
@@ -91,28 +90,20 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	 * {@link IRevisionListener} for a way to be informed when the revision information changes. The
 	 * returned list is sorted by document offset.
 	 *
-	 * @return an unmodifiable view of the line ranges (element type: {@link RevisionRange})
+	 * @return an unmodifiable view of the line ranges
 	 * @see IRevisionListener
 	 * @since 3.3
 	 */
-	public List getRanges() {
+	public List<RevisionRange> getRanges() {
 		if (fRanges == null) {
-			List ranges= new ArrayList(fRevisions.size() * 2); // wild size guess
-			for (Iterator it= fRevisions.iterator(); it.hasNext();) {
-				Revision revision= (Revision) it.next();
+			List<RevisionRange> ranges= new ArrayList<>(fRevisions.size() * 2); // wild size guess
+			for (Iterator<Revision> it= fRevisions.iterator(); it.hasNext();) {
+				Revision revision= it.next();
 				ranges.addAll(revision.getRegions());
 			}
 
 			// sort by start line
-			Collections.sort(ranges, new Comparator() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					RevisionRange r1= (RevisionRange) o1;
-					RevisionRange r2= (RevisionRange) o2;
-
-					return r1.getStartLine() - r2.getStartLine();
-				}
-			});
+			Collections.sort(ranges, (r1, r2) -> r1.getStartLine() - r2.getStartLine());
 
 			fRanges= Collections.unmodifiableList(ranges);
 		}
@@ -130,8 +121,8 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	 */
 	public void applyDiff(Hunk[] hunks) {
 		fRanges= null; // mark for recomputation
-		for (Iterator revisions= getRevisions().iterator(); revisions.hasNext();)
-			((Revision) revisions.next()).applyDiff(hunks);
+		for (Iterator<Revision> revisions= getRevisions().iterator(); revisions.hasNext();)
+			revisions.next().applyDiff(hunks);
 	}
 
 	@Override

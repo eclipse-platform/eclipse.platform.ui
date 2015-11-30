@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public final class PropertyEventDispatcher {
-	private final Map fHandlerMap= new HashMap();
-	private final Map fReverseMap= new HashMap();
+	private final Map<Object, Object> fHandlerMap= new HashMap<>();
+	private final Map<Object, Object> fReverseMap= new HashMap<>();
 	private final IPreferenceStore fStore;
 	private final IPropertyChangeListener fListener= new IPropertyChangeListener() {
 		@Override
@@ -47,8 +47,8 @@ public final class PropertyEventDispatcher {
 		if (value instanceof IPropertyChangeListener)
 			((IPropertyChangeListener) value).propertyChange(event);
 		else if (value instanceof Set)
-			for (Iterator it= ((Set) value).iterator(); it.hasNext(); )
-				((IPropertyChangeListener) it.next()).propertyChange(event);
+			for (@SuppressWarnings("unchecked") Iterator<IPropertyChangeListener> it= ((Set<IPropertyChangeListener>) value).iterator(); it.hasNext(); )
+				it.next().propertyChange(event);
 	}
 	public void addPropertyChangeListener(String property, IPropertyChangeListener listener) {
 		Assert.isLegal(property != null);
@@ -60,23 +60,27 @@ public final class PropertyEventDispatcher {
 		multiMapPut(fHandlerMap, property, listener);
 		multiMapPut(fReverseMap, listener, property);
 	}
-	private void multiMapPut(Map map, Object key, Object value) {
+	private void multiMapPut(Map<Object, Object> map, Object key, Object value) {
 		Object mapping= map.get(key);
 		if (mapping == null) {
 			map.put(key, value);
 		} else if (mapping instanceof Set) {
-			((Set) mapping).add(value);
+			@SuppressWarnings("unchecked")
+			Set<Object> set= (Set<Object>) mapping;
+			set.add(value);
 		} else {
-			Set set= new LinkedHashSet();
+			Set<Object> set= new LinkedHashSet<>();
 			set.add(mapping);
 			set.add(value);
 			map.put(key, set);
 		}
 	}
-	private void multiMapRemove(Map map, Object key, Object value) {
+	private void multiMapRemove(Map<Object, Object> map, Object key, Object value) {
 		Object mapping= map.get(key);
 		if (mapping instanceof Set) {
-			((Set) mapping).remove(value);
+			@SuppressWarnings("unchecked")
+			Set<Object> set= (Set<Object>) mapping;
+			set.remove(value);
 		} else if (mapping != null) {
 			map.remove(key);
 		}
@@ -90,7 +94,7 @@ public final class PropertyEventDispatcher {
 			multiMapRemove(fHandlerMap, value, listener);
 		} else if (value instanceof Set) {
 			fReverseMap.remove(listener);
-			for (Iterator it= ((Set) value).iterator(); it.hasNext();)
+			for (@SuppressWarnings("unchecked") Iterator<Object> it= ((Set<Object>) value).iterator(); it.hasNext();)
 				multiMapRemove(fHandlerMap, it.next(), listener);
 		}
 

@@ -83,7 +83,7 @@ public class MarkerAnnotationOrderTest extends TestCase {
 	}
 	
 	public void testDirectDependency() {
-		final ArrayList list= new ArrayList(2);
+		final ArrayList<IStatus> list= new ArrayList<>(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
 		ILog log= Platform.getLog(bundle);
 		log.addLogListener(new ILogListener() {

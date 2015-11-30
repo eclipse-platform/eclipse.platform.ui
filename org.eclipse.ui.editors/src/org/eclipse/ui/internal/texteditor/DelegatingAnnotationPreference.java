@@ -28,7 +28,7 @@ public class DelegatingAnnotationPreference extends AnnotationPreference {
 
 	private AnnotationType fType;
 	private AnnotationPreferenceLookup fLookup;
-	private Set fCache= new HashSet();
+	private Set<Object> fCache= new HashSet<>();
 
 	public DelegatingAnnotationPreference(AnnotationType type, AnnotationPreferenceLookup lookup) {
 		fType= type;

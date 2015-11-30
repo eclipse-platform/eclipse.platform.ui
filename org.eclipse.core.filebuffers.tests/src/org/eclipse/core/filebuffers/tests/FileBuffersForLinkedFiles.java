@@ -97,7 +97,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	}
 
 	@Override
-	protected Class getAnnotationModelClass() throws Exception {
+	protected Class<IAnnotationModel> getAnnotationModelClass() throws Exception {
 		Bundle bundle= Platform.getBundle("org.eclipse.ui.editors");
 		return bundle != null ? IAnnotationModel.class : null;
 	}

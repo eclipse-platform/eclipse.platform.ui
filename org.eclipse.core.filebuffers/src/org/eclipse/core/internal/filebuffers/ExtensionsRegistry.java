@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,17 +85,17 @@ public class ExtensionsRegistry {
 	protected static final String WILDCARD= "*"; //$NON-NLS-1$
 
 	/** The mapping between file attributes and configuration elements describing document factories. */
-	private Map fFactoryDescriptors= new HashMap();
+	private Map<Object, Set<IConfigurationElement>> fFactoryDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for document factories and instantiated document factories. */
-	private Map fFactories= new HashMap();
+	private Map<IConfigurationElement, Object> fFactories= new HashMap<>();
 	/** The mapping between file attributes and configuration elements describing document setup participants. */
-	private Map fSetupParticipantDescriptors= new HashMap();
+	private Map<Object, Set<IConfigurationElement>> fSetupParticipantDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for setup participants and instantiated setup participants. */
-	private Map fSetupParticipants= new HashMap();
+	private Map<IConfigurationElement, Object> fSetupParticipants= new HashMap<>();
 	/** The mapping between file attributes and configuration elements describing annotation model factories. */
-	private Map fAnnotationModelFactoryDescriptors= new HashMap();
+	private Map<Object, Set<IConfigurationElement>> fAnnotationModelFactoryDescriptors= new HashMap<>();
 	/** The mapping between configuration elements for annotation model factories */
-	private Map fAnnotationModelFactories= new HashMap();
+	private Map<IConfigurationElement, Object> fAnnotationModelFactories= new HashMap<>();
 	/** The content type manager. */
 	protected IContentTypeManager fContentTypeManager= Platform.getContentTypeManager();
 
@@ -125,16 +125,16 @@ public class ExtensionsRegistry {
 	 * @param element the configuration element
 	 * @param map the map which remembers the configuration element
 	 */
-	private void read(String attributeName, IConfigurationElement element, Map map) {
+	private void read(String attributeName, IConfigurationElement element, Map<Object, Set<IConfigurationElement>> map) {
 		String value= element.getAttribute(attributeName);
 		if (value != null) {
 			StringTokenizer tokenizer= new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token= tokenizer.nextToken().trim();
 
-				Set s= (Set) map.get(token);
+				Set<IConfigurationElement> s= map.get(token);
 				if (s == null) {
-					s= new HashSet();
+					s= new HashSet<>();
 					map.put(token, s);
 				}
 				s.add(element);
@@ -150,7 +150,7 @@ public class ExtensionsRegistry {
 	 * @param element the configuration element
 	 * @param map the map which remembers the configuration element
 	 */
-	private void readContentType(String attributeName, IConfigurationElement element, Map map) {
+	private void readContentType(String attributeName, IConfigurationElement element, Map<Object, Set<IConfigurationElement>> map) {
 		String value= element.getAttribute(attributeName);
 		if (value != null) {
 			IContentType contentType= fContentTypeManager.getContentType(value);
@@ -159,9 +159,9 @@ public class ExtensionsRegistry {
 				return;
 			}
 			ContentTypeAdapter adapter= new ContentTypeAdapter(contentType);
-			Set s= (Set) map.get(adapter);
+			Set<IConfigurationElement> s= map.get(adapter);
 			if (s == null) {
-				s= new HashSet();
+				s= new HashSet<>();
 				map.put(adapter, s);
 			}
 			s.add(element);
@@ -187,7 +187,7 @@ public class ExtensionsRegistry {
 	 * @param isContentTypeId the child element is a content type id
 	 * @param descriptors the map to be filled
 	 */
-	private void initialize(String extensionPointName, String childElementName, boolean isContentTypeId, Map descriptors) {
+	private void initialize(String extensionPointName, String childElementName, boolean isContentTypeId, Map<Object, Set<IConfigurationElement>> descriptors) {
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(FileBuffersPlugin.PLUGIN_ID, extensionPointName);
 		if (extensionPoint == null) {
@@ -214,13 +214,14 @@ public class ExtensionsRegistry {
 	 * @param extensionType the requested result type
 	 * @return the executable extension for the given configuration element.
 	 */
-	private Object getExtension(IConfigurationElement entry, Map extensions, Class extensionType) {
-		Object extension= extensions.get(entry);
+	@SuppressWarnings("unchecked")
+	private <T> T getExtension(IConfigurationElement entry, Map<IConfigurationElement, Object> extensions, Class<T> extensionType) {
+		T extension= (T) extensions.get(entry);
 		if (extension != null)
 			return extension;
 
 		try {
-			extension= entry.createExecutableExtension("class"); //$NON-NLS-1$
+			extension= (T) entry.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException x) {
 			log(x.getStatus());
 		}
@@ -239,10 +240,10 @@ public class ExtensionsRegistry {
 	 * @param set the set from which to choose
 	 * @return the selected configuration element
 	 */
-	private IConfigurationElement selectConfigurationElement(Set set) {
+	private IConfigurationElement selectConfigurationElement(Set<IConfigurationElement> set) {
 		if (set != null && !set.isEmpty()) {
-			Iterator e= set.iterator();
-			return (IConfigurationElement) e.next();
+			Iterator<IConfigurationElement> e= set.iterator();
+			return e.next();
 		}
 		return null;
 	}
@@ -256,10 +257,10 @@ public class ExtensionsRegistry {
 	 */
 	@Deprecated
 	protected org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(String nameOrExtension) {
-		Set set= (Set) fFactoryDescriptors.get(nameOrExtension);
+		Set<IConfigurationElement> set= fFactoryDescriptors.get(nameOrExtension);
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (org.eclipse.core.filebuffers.IDocumentFactory)getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
+			return getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
 		}
 		return null;
 	}
@@ -273,15 +274,15 @@ public class ExtensionsRegistry {
 	 */
 	@Deprecated
 	protected org.eclipse.core.filebuffers.IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
-		Set set= null;
+		Set<IConfigurationElement> set= null;
 		int i= 0;
 		while (i < contentTypes.length && set == null) {
-			set= (Set) fFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+			set= fFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
 		}
 
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (org.eclipse.core.filebuffers.IDocumentFactory)getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
+			return getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
 		}
 		return null;
 	}
@@ -312,16 +313,16 @@ public class ExtensionsRegistry {
 	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
-	protected List getDocumentSetupParticipants(String nameOrExtension) {
-		Set set= (Set) fSetupParticipantDescriptors.get(nameOrExtension);
+	protected List<IDocumentSetupParticipant> getDocumentSetupParticipants(String nameOrExtension) {
+		Set<IConfigurationElement> set= fSetupParticipantDescriptors.get(nameOrExtension);
 		if (set == null)
 			return null;
 
-		List participants= new ArrayList();
-		Iterator e= set.iterator();
+		List<IDocumentSetupParticipant> participants= new ArrayList<>();
+		Iterator<IConfigurationElement> e= set.iterator();
 		while (e.hasNext()) {
-			IConfigurationElement entry= (IConfigurationElement) e.next();
-			Object participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
+			IConfigurationElement entry= e.next();
+			IDocumentSetupParticipant participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
 			if (participant != null)
 				participants.add(participant);
 		}
@@ -335,20 +336,20 @@ public class ExtensionsRegistry {
 	 * @param contentTypes the contentTypes to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
-	private List doGetDocumentSetupParticipants(IContentType[] contentTypes) {
-		Set resultSet= new HashSet();
+	private List<IDocumentSetupParticipant> doGetDocumentSetupParticipants(IContentType[] contentTypes) {
+		Set<IConfigurationElement> resultSet= new HashSet<>();
 		int i= 0;
 		while (i < contentTypes.length) {
-			Set set= (Set) fSetupParticipantDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+			Set<IConfigurationElement> set= fSetupParticipantDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
 			if (set != null)
 				resultSet.addAll(set);
 		}
 
-		List participants= new ArrayList();
-		Iterator e= resultSet.iterator();
+		List<IDocumentSetupParticipant> participants= new ArrayList<>();
+		Iterator<IConfigurationElement> e= resultSet.iterator();
 		while (e.hasNext()) {
-			IConfigurationElement entry= (IConfigurationElement) e.next();
-			Object participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
+			IConfigurationElement entry= e.next();
+			IDocumentSetupParticipant participant= getExtension(entry, fSetupParticipants, IDocumentSetupParticipant.class);
 			if (participant != null)
 				participants.add(participant);
 		}
@@ -364,8 +365,8 @@ public class ExtensionsRegistry {
 	 * @param contentTypes the contentTypes to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
-	protected List getDocumentSetupParticipants(IContentType[] contentTypes) {
-		List participants= doGetDocumentSetupParticipants(contentTypes);
+	protected List<IDocumentSetupParticipant> getDocumentSetupParticipants(IContentType[] contentTypes) {
+		List<IDocumentSetupParticipant> participants= doGetDocumentSetupParticipants(contentTypes);
 		while (participants == null) {
 			contentTypes= computeBaseContentTypes(contentTypes);
 			if (contentTypes == null)
@@ -382,15 +383,15 @@ public class ExtensionsRegistry {
 	 * @return the sharable annotation model factory or <code>null</code>
 	 */
 	private IAnnotationModelFactory doGetAnnotationModelFactory(IContentType[] contentTypes) {
-		Set set= null;
+		Set<IConfigurationElement> set= null;
 		int i= 0;
 		while (i < contentTypes.length && set == null) {
-			set= (Set) fAnnotationModelFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+			set= fAnnotationModelFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
 		}
 
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (IAnnotationModelFactory) getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
+			return getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
 		}
 		return null;
 	}
@@ -421,10 +422,10 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 */
 	protected IAnnotationModelFactory getAnnotationModelFactory(String extension) {
-		Set set= (Set) fAnnotationModelFactoryDescriptors.get(extension);
+		Set<IConfigurationElement> set= fAnnotationModelFactoryDescriptors.get(extension);
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (IAnnotationModelFactory) getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
+			return getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
 		}
 		return null;
 	}
@@ -451,7 +452,7 @@ public class ExtensionsRegistry {
 	 * @return the set of direct base content types
 	 */
 	private IContentType[] computeBaseContentTypes(IContentType[] contentTypes) {
-		List baseTypes= new ArrayList();
+		List<IContentType> baseTypes= new ArrayList<>();
 		for (int i= 0; i < contentTypes.length; i++) {
 			IContentType baseType= contentTypes[i].getBaseType();
 			if (baseType != null)
@@ -497,9 +498,9 @@ public class ExtensionsRegistry {
 	 * @since 3.3
 	 */
 	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location, LocationKind locationKind) {
-		Set participants= new HashSet();
+		Set<IDocumentSetupParticipant> participants= new HashSet<>();
 
-		List p= getDocumentSetupParticipants(findContentTypes(location, locationKind));
+		List<IDocumentSetupParticipant> p= getDocumentSetupParticipants(findContentTypes(location, locationKind));
 		if (p != null)
 			participants.addAll(p);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,12 @@ public final class RulerColumnPlacement {
 
 	/** The placement gravity. */
 	private final float fGravity;
-	/** The placement constraints (element type: {@link RulerColumnPlacementConstraint}). */
-	private final Set fConstraints;
+	/** The placement constraints. */
+	private final Set<RulerColumnPlacementConstraint> fConstraints;
 
 	public RulerColumnPlacement() {
 		fGravity= 1f;
-		fConstraints= Collections.EMPTY_SET;
+		fConstraints= Collections.emptySet();
 	}
 
 	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException, CoreException {
@@ -55,8 +55,8 @@ public final class RulerColumnPlacement {
 		fConstraints= readIds(element.getChildren());
 	}
 
-	private Set readIds(IConfigurationElement[] children) throws CoreException {
-		Set constraints= new LinkedHashSet((int) (children.length / 0.75) + 1, 0.75f);
+	private Set<RulerColumnPlacementConstraint> readIds(IConfigurationElement[] children) throws CoreException {
+		Set<RulerColumnPlacementConstraint> constraints= new LinkedHashSet<>((int) (children.length / 0.75) + 1, 0.75f);
 		for (int i= 0; i < children.length; i++) {
 			IConfigurationElement child= children[i];
 			String name= child.getName();
@@ -90,7 +90,7 @@ public final class RulerColumnPlacement {
 	 * @return the unmodifiable set of placement constraints in the order that they appear in the
 	 *         extension declaration
 	 */
-	public Set getConstraints() {
+	public Set<RulerColumnPlacementConstraint> getConstraints() {
 		return fConstraints;
 	}
 }

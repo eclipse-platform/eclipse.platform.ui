@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
 public final class TextEditCopier {
 
 	private TextEdit fEdit;
-	private Map fCopies;
+	private Map<TextEdit, TextEdit> fCopies;
 
 	/**
 	 * Constructs a new <code>TextEditCopier</code> for the
@@ -44,7 +44,7 @@ public final class TextEditCopier {
 		super();
 		Assert.isNotNull(edit);
 		fEdit= edit;
-		fCopies= new HashMap();
+		fCopies= new HashMap<>();
 	}
 
 	/**
@@ -55,8 +55,8 @@ public final class TextEditCopier {
 	public TextEdit perform() {
 		TextEdit result= doCopy(fEdit);
 		if (result != null) {
-			for (Iterator iter= fCopies.keySet().iterator(); iter.hasNext();) {
-				TextEdit edit= (TextEdit)iter.next();
+			for (Iterator<TextEdit> iter= fCopies.keySet().iterator(); iter.hasNext();) {
+				TextEdit edit= iter.next();
 				edit.postProcessCopy(this);
 			}
 		}
@@ -73,18 +73,18 @@ public final class TextEditCopier {
 	 */
 	public TextEdit getCopy(TextEdit original) {
 		Assert.isNotNull(original);
-		return (TextEdit)fCopies.get(original);
+		return fCopies.get(original);
 	}
 
 	//---- helper methods --------------------------------------------
 
 	private TextEdit doCopy(TextEdit edit) {
 		TextEdit result= edit.doCopy();
-		List children= edit.internalGetChildren();
+		List<TextEdit> children= edit.internalGetChildren();
 		if (children != null) {
-			List newChildren= new ArrayList(children.size());
-			for (Iterator iter= children.iterator(); iter.hasNext();) {
-				TextEdit childCopy= doCopy((TextEdit)iter.next());
+			List<TextEdit> newChildren= new ArrayList<>(children.size());
+			for (Iterator<TextEdit> iter= children.iterator(); iter.hasNext();) {
+				TextEdit childCopy= doCopy(iter.next());
 				childCopy.internalSetParent(result);
 				newChildren.add(childCopy);
 			}

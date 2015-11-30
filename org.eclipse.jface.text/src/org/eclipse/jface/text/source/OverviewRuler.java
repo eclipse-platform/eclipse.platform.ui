@@ -137,13 +137,13 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * Enumerates the annotations of a specified type and characteristics
 	 * of the associated annotation model.
 	 */
-	class FilterIterator implements Iterator {
+	class FilterIterator implements Iterator<Annotation> {
 
 		final static int TEMPORARY= 1 << 1;
 		final static int PERSISTENT= 1 << 2;
 		final static int IGNORE_BAGS= 1 << 3;
 
-		private Iterator fIterator;
+		private Iterator<Annotation> fIterator;
 		private Object fType;
 		private Annotation fNext;
 		private int fStyle;
@@ -170,7 +170,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		 * @param style the style
 		 * @param iterator the iterator
 		 */
-		public FilterIterator(Object annotationType, int style, Iterator iterator) {
+		public FilterIterator(Object annotationType, int style, Iterator<Annotation> iterator) {
 			fType= annotationType;
 			fStyle= style;
 			fIterator= iterator;
@@ -184,7 +184,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			boolean ignr= (fStyle & IGNORE_BAGS) != 0;
 
 			while (fIterator.hasNext()) {
-				Annotation next= (Annotation) fIterator.next();
+				Annotation next= fIterator.next();
 
 				if (next.isMarkedDeleted())
 					continue;
@@ -216,7 +216,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			return fNext != null;
 		}
 		@Override
-		public Object next() {
+		public Annotation next() {
 			try {
 				return fNext;
 			} finally {
@@ -403,14 +403,14 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * The list of annotation types to be shown in this ruler.
 	 * @since 3.0
 	 */
-	private Set fConfiguredAnnotationTypes= new HashSet();
+	private Set<Object> fConfiguredAnnotationTypes= new HashSet<>();
 	/**
 	 * The list of annotation types to be shown in the header of this ruler.
 	 * @since 3.0
 	 */
-	private Set fConfiguredHeaderAnnotationTypes= new HashSet();
+	private Set<Object> fConfiguredHeaderAnnotationTypes= new HashSet<>();
 	/** The mapping between annotation types and colors */
-	private Map fAnnotationTypes2Colors= new HashMap();
+	private Map<Object, Color> fAnnotationTypes2Colors= new HashMap<>();
 	/** The color manager */
 	private ISharedTextColors fSharedTextColors;
 	/**
@@ -418,32 +418,32 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 *
 	 * @since 3.0
 	 */
-	private List fAnnotationsSortedByLayer= new ArrayList();
+	private List<Object> fAnnotationsSortedByLayer= new ArrayList<>();
 	/**
 	 * All available layers sorted by layer.
 	 * This list may contain duplicates.
 	 * @since 3.0
 	 */
-	private List fLayersSortedByLayer= new ArrayList();
+	private List<Integer> fLayersSortedByLayer= new ArrayList<>();
 	/**
 	 * Map of allowed annotation types.
 	 * An allowed annotation type maps to <code>true</code>, a disallowed
 	 * to <code>false</code>.
 	 * @since 3.0
 	 */
-	private Map fAllowedAnnotationTypes= new HashMap();
+	private Map<Object, Boolean> fAllowedAnnotationTypes= new HashMap<>();
 	/**
 	 * Map of allowed header annotation types.
 	 * An allowed annotation type maps to <code>true</code>, a disallowed
 	 * to <code>false</code>.
 	 * @since 3.0
 	 */
-	private Map fAllowedHeaderAnnotationTypes= new HashMap();
+	private Map<Object, Boolean> fAllowedHeaderAnnotationTypes= new HashMap<>();
 	/**
 	 * The cached annotations.
 	 * @since 3.0
 	 */
-	private List fCachedAnnotations= new ArrayList();
+	private List<Annotation> fCachedAnnotations= new ArrayList<>();
 
 	/**
 	 * Redraw runnable lock
@@ -695,9 +695,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	private void cacheAnnotations() {
 		fCachedAnnotations.clear();
 		if (fModel != null) {
-			Iterator iter= fModel.getAnnotationIterator();
+			Iterator<Annotation> iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
-				Annotation annotation= (Annotation) iter.next();
+				Annotation annotation= iter.next();
 
 				if (annotation.isMarkedDeleted())
 					continue;
@@ -731,7 +731,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 
 		WidgetInfos infos= null;
 		
-		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
+		for (Iterator<Object> iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
 
 			if (skip(annotationType))
@@ -743,9 +743,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 				Color fill= null;
 				Color stroke= null;
 
-				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
+				Iterator<Annotation> e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
 				while (e.hasNext()) {
-					Annotation a= (Annotation) e.next();
+					Annotation a= e.next();
 					Position p= fModel.getPosition(a);
 
 					if (p == null)
@@ -1036,9 +1036,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 
 				Object annotationType= fAnnotationsSortedByLayer.get(i);
 
-				Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY);
+				Iterator<Annotation> e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY);
 				while (e.hasNext() && found == null) {
-					Annotation a= (Annotation) e.next();
+					Annotation a= e.next();
 					if (a.isMarkedDeleted())
 						continue;
 
@@ -1179,7 +1179,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (layer >= 0) {
 			int i= 0;
 			int size= fLayersSortedByLayer.size();
-			while (i < size && layer >= ((Integer)fLayersSortedByLayer.get(i)).intValue())
+			while (i < size && layer >= fLayersSortedByLayer.get(i).intValue())
 				i++;
 			Integer layerObj= new Integer(layer);
 			fLayersSortedByLayer.add(i, layerObj);
@@ -1228,10 +1228,10 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 *         otherwise
 	 * @since 3.0
 	 */
-	private boolean contains(Object annotationType, Map allowed, Set configured) {
+	private boolean contains(Object annotationType, Map<Object, Boolean> allowed, Set<Object> configured) {
 		boolean covered;
 		synchronized (fRunnableLock){
-			Boolean cached= (Boolean) allowed.get(annotationType);
+			Boolean cached= allowed.get(annotationType);
 			if (cached != null)
 				return cached.booleanValue();
 	
@@ -1252,10 +1252,10 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 *         otherwise
 	 * @since 3.0
 	 */
-	private boolean isCovered(Object annotationType, Set configured) {
+	private boolean isCovered(Object annotationType, Set<Object> configured) {
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
-			Iterator e= configured.iterator();
+			Iterator<Object> e= configured.iterator();
 			while (e.hasNext()) {
 				if (extension.isSubtype(annotationType,e.next()))
 					return true;
@@ -1337,7 +1337,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 	 * @since 3.0
 	 */
 	private Color findColor(Object annotationType) {
-		Color color= (Color) fAnnotationTypes2Colors.get(annotationType);
+		Color color= fAnnotationTypes2Colors.get(annotationType);
 		if (color != null)
 			return color;
 
@@ -1346,7 +1346,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			if (superTypes != null) {
 				for (int i= 0; i < superTypes.length; i++) {
-					color= (Color) fAnnotationTypes2Colors.get(superTypes[i]);
+					color= fAnnotationTypes2Colors.get(superTypes[i]);
 					if (color != null)
 						return color;
 				}
@@ -1451,7 +1451,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			if (skipInHeader(annotationType) || skip(annotationType))
 				continue;
 
-			Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS, fCachedAnnotations.iterator());
+			Iterator<Annotation> e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS, fCachedAnnotations.iterator());
 			while (e.hasNext()) {
 				if (e.next() != null) {
 					colorType= annotationType;
@@ -1501,9 +1501,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			int count= 0;
 			String annotationTypeLabel= null;
 
-			Iterator e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS, fCachedAnnotations.iterator());
+			Iterator<Annotation> e= new FilterIterator(annotationType, FilterIterator.PERSISTENT | FilterIterator.TEMPORARY | FilterIterator.IGNORE_BAGS, fCachedAnnotations.iterator());
 			while (e.hasNext()) {
-				Annotation annotation= (Annotation)e.next();
+				Annotation annotation= e.next();
 				if (annotation != null) {
 					if (annotationTypeLabel == null)
 						annotationTypeLabel= ((IAnnotationAccessExtension)fAnnotationAccess).getTypeLabel(annotation);

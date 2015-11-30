@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
-import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -225,10 +225,10 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		updateRevisionAuthorVisibility(store, fDelegate);
 		updateRevisionIdVisibility(store, fDelegate);
 
-		Map annotationPrefs= getAnnotationPreferenceMap();
-		final AnnotationPreference changedPref= (AnnotationPreference) annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
-		final AnnotationPreference addedPref= (AnnotationPreference) annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffAddition"); //$NON-NLS-1$
-		final AnnotationPreference deletedPref= (AnnotationPreference) annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
+		Map<Object, AnnotationPreference> annotationPrefs= getAnnotationPreferenceMap();
+		final AnnotationPreference changedPref= annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffChange"); //$NON-NLS-1$
+		final AnnotationPreference addedPref= annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffAddition"); //$NON-NLS-1$
+		final AnnotationPreference deletedPref= annotationPrefs.get("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
 		updateChangedColor(changedPref, store, fDelegate);
 		updateAddedColor(addedPref, store, fDelegate);
 		updateDeletedColor(deletedPref, store, fDelegate);
@@ -327,11 +327,11 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		}
 	}
 
-	private Map getAnnotationPreferenceMap() {
-		Map annotationPrefs= new HashMap();
-		Iterator iter= fAnnotationPreferences.getAnnotationPreferences().iterator();
+	private Map<Object, AnnotationPreference> getAnnotationPreferenceMap() {
+		Map<Object, AnnotationPreference> annotationPrefs= new HashMap<>();
+		Iterator<AnnotationPreference> iter= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (iter.hasNext()) {
-			AnnotationPreference pref= (AnnotationPreference) iter.next();
+			AnnotationPreference pref= iter.next();
 			Object type= pref.getAnnotationType();
 			annotationPrefs.put(type, pref);
 		}

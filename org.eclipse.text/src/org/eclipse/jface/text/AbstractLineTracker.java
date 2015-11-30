@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 *
 	 * @since 3.1
 	 */
-	private List fPendingRequests;
+	private List<Request> fPendingRequests;
 	/**
 	 * The implementation that this tracker delegates to.
 	 *
@@ -233,7 +233,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		if (fActiveRewriteSession != null)
 			throw new IllegalStateException();
 		fActiveRewriteSession= session;
-		fPendingRequests= new ArrayList(20);
+		fPendingRequests= new ArrayList<>(20);
 	}
 
 	@Override
@@ -266,13 +266,13 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 		if (DEBUG)
 			System.out.println("AbstractLineTracker: Flushing rewrite session: " + fActiveRewriteSession); //$NON-NLS-1$
 
-		Iterator e= fPendingRequests.iterator();
+		Iterator<Request> e= fPendingRequests.iterator();
 
 		fPendingRequests= null;
 		fActiveRewriteSession= null;
 
 		while (e.hasNext()) {
-			Request request= (Request) e.next();
+			Request request= e.next();
 			if (request.isReplaceRequest())
 				replace(request.offset, request.length, request.text);
 			else

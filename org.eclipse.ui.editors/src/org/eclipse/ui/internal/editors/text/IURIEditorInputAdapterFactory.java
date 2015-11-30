@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,22 +54,23 @@ public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 
 
 	/** The list of provided adapters. */
-	private static final Class[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
+	private static final Class<?>[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
 
 	/** The provided location provider */
 	private ILocationProvider fLocationProvider= new LocationProvider();
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (ILocationProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof IURIEditorInput)
-				return fLocationProvider;
+				return (T) fLocationProvider;
 		}
 		return null;
 	}
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return ADAPTER_LIST;
 	}
 }

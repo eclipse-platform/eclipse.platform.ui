@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private String fInitialPageId;
 	private int fCurrentIndex;
 
-	private List fDescriptors;
+	private List<SearchPageDescriptor> fDescriptors;
 	private Point fMinSize;
 	private ScopePart[] fScopeParts;
 	private boolean fLastEnableState;
@@ -197,8 +197,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				return new String[] { name };
 			}
 		} else if (selection instanceof IStructuredSelection) {
-			HashSet res= new HashSet();
-			for (Iterator iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
+			HashSet<String> res= new HashSet<>();
+			for (Iterator<?> iter= ((IStructuredSelection) selection).iterator(); iter.hasNext();) {
 				Object curr= iter.next();
 				if (curr instanceof IWorkingSet) {
 					IWorkingSet workingSet= (IWorkingSet) curr;
@@ -227,7 +227,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 				}
 			}
 			if (!res.isEmpty()) {
-				return (String[]) res.toArray(new String[res.size()]);
+				return res.toArray(new String[res.size()]);
 			}
 		}
 		return new String[0];
@@ -307,10 +307,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 
 	private void handleCustomizePressed() {
-		List input= SearchPlugin.getDefault().getSearchPageDescriptors();
+		List<SearchPageDescriptor> input= SearchPlugin.getDefault().getSearchPageDescriptors();
 		input= filterByActivities(input);
 
-		final ArrayList createdImages= new ArrayList(input.size());
+		final ArrayList<Image> createdImages= new ArrayList<>(input.size());
 		ILabelProvider labelProvider= new LabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -393,10 +393,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		destroyImages(createdImages);
 	}
 
-	private List filterByActivities(List input) {
-		ArrayList filteredList= new ArrayList(input.size());
-		for (Iterator descriptors= input.iterator(); descriptors.hasNext();) {
-			SearchPageDescriptor descriptor= (SearchPageDescriptor) descriptors.next();
+	private List<SearchPageDescriptor> filterByActivities(List<SearchPageDescriptor> input) {
+		ArrayList<SearchPageDescriptor> filteredList= new ArrayList<>(input.size());
+		for (Iterator<SearchPageDescriptor> descriptors= input.iterator(); descriptors.hasNext();) {
+			SearchPageDescriptor descriptor= descriptors.next();
 			if (!WorkbenchActivityHelper.filterItem(descriptor))
 			    filteredList.add(descriptor);
 
@@ -404,10 +404,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		return filteredList;
 	}
 
-	private void destroyImages(List images) {
-		Iterator iter= images.iterator();
+	private void destroyImages(List<Image> images) {
+		Iterator<Image> iter= images.iterator();
 		while (iter.hasNext()) {
-			Image image= (Image)iter.next();
+			Image image= iter.next();
 			if (image != null && !image.isDisposed())
 				image.dispose();
 		}
@@ -544,7 +544,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 
 	private SearchPageDescriptor getDescriptorAt(int index) {
-		return (SearchPageDescriptor) fDescriptors.get(index);
+		return fDescriptors.get(index);
 	}
 
 	private Point getMinSize() {
@@ -616,7 +616,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		int level= ISearchPageScoreComputer.LOWEST;
 		int size= fDescriptors.size();
 		for (int i= 0; i < size; i++) {
-			SearchPageDescriptor descriptor= (SearchPageDescriptor) fDescriptors.get(i);
+			SearchPageDescriptor descriptor= fDescriptors.get(i);
 			if (fInitialPageId != null && fInitialPageId.equals(descriptor.getId()))
 				return i;
 
@@ -834,7 +834,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	@Override
 	public boolean close() {
 		for (int i= 0; i < fDescriptors.size(); i++) {
-			SearchPageDescriptor desc= (SearchPageDescriptor) fDescriptors.get(i);
+			SearchPageDescriptor desc= fDescriptors.get(i);
 			desc.dispose();
 		}
 		return super.close();

@@ -41,7 +41,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	private ListenerList fClientListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/** Listeners on the child preference stores. */
-	private List fChildListeners= new ArrayList();
+	private List<PropertyChangeListener> fChildListeners= new ArrayList<>();
 
 	/**
 	 * Listener on the chained preference stores. Forwards only the events
@@ -470,9 +470,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * Register the child listeners on the child preference stores.
 	 */
 	private void registerChildListeners() {
-		Iterator iter= fChildListeners.iterator();
+		Iterator<PropertyChangeListener> iter= fChildListeners.iterator();
 		while (iter.hasNext()) {
-			PropertyChangeListener listener= (PropertyChangeListener) iter.next();
+			PropertyChangeListener listener= iter.next();
 			listener.register();
 		}
 	}
@@ -481,9 +481,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * Unregister the child listeners from the child preference stores.
 	 */
 	private void unregisterChildListeners() {
-		Iterator iter= fChildListeners.iterator();
+		Iterator<PropertyChangeListener> iter= fChildListeners.iterator();
 		while (iter.hasNext()) {
-			PropertyChangeListener listener= (PropertyChangeListener) iter.next();
+			PropertyChangeListener listener= iter.next();
 			listener.unregister();
 		}
 	}

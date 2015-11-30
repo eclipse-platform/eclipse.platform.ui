@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,33 +29,33 @@ class RangeUtil extends Assert {
 		assertEquals(expected.getNumberOfLines(), actual.getNumberOfLines());
 	}
 
-	static List deepClone(List ranges) {
-		List list= new ArrayList(ranges.size());
-		for (Iterator it= ranges.iterator(); it.hasNext();) {
-			ILineRange range= (ILineRange) it.next();
+	static List<Range> deepClone(List<Range> ranges) {
+		List<Range> list= new ArrayList<>(ranges.size());
+		for (Iterator<Range> it= ranges.iterator(); it.hasNext();) {
+			ILineRange range= it.next();
 			list.add(Range.copy(range));
 		}
 		return list;
 	}
 
-	static void assertEqualRanges(ILineRange expected1, ILineRange expected2, List actual) {
+	static void assertEqualRanges(ILineRange expected1, ILineRange expected2, List<Range> actual) {
 		assertEquals(2, actual.size());
-		RangeUtil.assertEqualRange(expected1, (ILineRange) actual.get(0));
-		RangeUtil.assertEqualRange(expected2, (ILineRange) actual.get(1));
+		RangeUtil.assertEqualRange(expected1, actual.get(0));
+		RangeUtil.assertEqualRange(expected2, actual.get(1));
 	}
 
-	static void assertEqualSingleRange(ILineRange expected, List actual) {
+	static void assertEqualSingleRange(ILineRange expected, List<Range> actual) {
 		assertEquals(1, actual.size());
-		RangeUtil.assertEqualRange(expected, (ILineRange) actual.get(0));
+		RangeUtil.assertEqualRange(expected, actual.get(0));
 	}
 
-	static void assertEqualRanges(List expected, List actual) {
+	static void assertEqualRanges(List<Range> expected, List<Range> actual) {
 		assertEquals(expected.size(), actual.size());
-		Iterator it1= expected.iterator();
-		Iterator it2= actual.iterator();
+		Iterator<Range> it1= expected.iterator();
+		Iterator<Range> it2= actual.iterator();
 		while (it1.hasNext()) {
-			ILineRange r1= (ILineRange) it1.next();
-			ILineRange r2= (ILineRange) it2.next();
+			ILineRange r1= it1.next();
+			ILineRange r2= it2.next();
 			assertEqualRange(r1, r2);
 		}
 	}

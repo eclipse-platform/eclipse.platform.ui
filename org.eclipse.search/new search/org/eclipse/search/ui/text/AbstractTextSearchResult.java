@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private static final Match[] EMPTY_ARRAY= new Match[0];
 
-	private final Map fElementsToMatches;
-	private final List fListeners;
+	private final Map<Object, List<Match>> fElementsToMatches;
+	private final List<ISearchResultListener> fListeners;
 	private final MatchEvent fMatchEvent;
 
 	private MatchFilter[] fMatchFilters;
@@ -43,8 +43,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Constructs a new <code>AbstractTextSearchResult</code>
 	 */
 	protected AbstractTextSearchResult() {
-		fElementsToMatches= new HashMap();
-		fListeners= new ArrayList();
+		fElementsToMatches= new HashMap<>();
+		fListeners= new ArrayList<>();
 		fMatchEvent= new MatchEvent(this);
 
 		fMatchFilters= null; // filtering disabled by default
@@ -60,9 +60,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 */
 	public Match[] getMatches(Object element) {
 		synchronized (fElementsToMatches) {
-			List matches= (List) fElementsToMatches.get(element);
+			List<Match> matches= fElementsToMatches.get(element);
 			if (matches != null)
-				return (Match[]) matches.toArray(new Match[matches.size()]);
+				return matches.toArray(new Match[matches.size()]);
 			return EMPTY_ARRAY;
 		}
 	}
@@ -94,7 +94,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param matches the matches to add
 	 */
 	public void addMatches(Match[] matches) {
-		Collection reallyAdded= new ArrayList();
+		Collection<Match> reallyAdded= new ArrayList<>();
 		synchronized (fElementsToMatches) {
 			for (int i = 0; i < matches.length; i++) {
 				if (doAddMatch(matches[i]))
@@ -111,9 +111,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return fMatchEvent;
 	}
 
-	private MatchEvent getSearchResultEvent(Collection matches, int eventKind) {
+	private MatchEvent getSearchResultEvent(Collection<Match> matches, int eventKind) {
 		fMatchEvent.setKind(eventKind);
-		Match[] matchArray= (Match[]) matches.toArray(new Match[matches.size()]);
+		Match[] matchArray= matches.toArray(new Match[matches.size()]);
 		fMatchEvent.setMatches(matchArray);
 		return fMatchEvent;
 	}
@@ -121,9 +121,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private boolean doAddMatch(Match match) {
 		updateFilterState(match);
 
-		List matches= (List) fElementsToMatches.get(match.getElement());
+		List<Match> matches= fElementsToMatches.get(match.getElement());
 		if (matches == null) {
-			matches= new ArrayList();
+			matches= new ArrayList<>();
 			fElementsToMatches.put(match.getElement(), matches);
 			matches.add(match);
 			return true;
@@ -135,17 +135,17 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return false;
 	}
 
-	private static void insertSorted(List matches, Match match) {
+	private static void insertSorted(List<Match> matches, Match match) {
 		int insertIndex= getInsertIndex(matches, match);
 		matches.add(insertIndex, match);
 	}
 
-	private static int getInsertIndex(List matches, Match match) {
+	private static int getInsertIndex(List<Match> matches, Match match) {
 		int count= matches.size();
 		int min = 0, max = count - 1;
 		while (min <= max) {
 			int mid = (min + max) / 2;
-			Match data = (Match) matches.get(mid);
+			Match data = matches.get(mid);
 			int compare = compare(match, data);
 			if (compare > 0)
 				max = mid - 1;
@@ -206,7 +206,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param matches the matches to remove
 	 */
 	public void removeMatches(Match[] matches) {
-		Collection existing= new ArrayList();
+		Collection<Match> existing= new ArrayList<>();
 		synchronized (fElementsToMatches) {
 			for (int i = 0; i < matches.length; i++) {
 				if (doRemoveMatch(matches[i]))
@@ -220,7 +220,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	private boolean doRemoveMatch(Match match) {
 		boolean existed= false;
-		List matches= (List) fElementsToMatches.get(match.getElement());
+		List<Match> matches= fElementsToMatches.get(match.getElement());
 		if (matches != null) {
 			existed= matches.remove(match);
 			if (matches.isEmpty())
@@ -252,19 +252,19 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @see ISearchResultListener
 	 */
 	protected void fireChange(SearchResultEvent e) {
-		HashSet copiedListeners= new HashSet();
+		HashSet<ISearchResultListener> copiedListeners= new HashSet<>();
 		synchronized (fListeners) {
 			copiedListeners.addAll(fListeners);
 		}
-		Iterator listeners= copiedListeners.iterator();
+		Iterator<ISearchResultListener> listeners= copiedListeners.iterator();
 		while (listeners.hasNext()) {
-			((ISearchResultListener) listeners.next()).searchResultChanged(e);
+			listeners.next().searchResultChanged(e);
 		}
 	}
 
 	private void updateFilterStateForAllMatches() {
 		boolean disableFiltering= getActiveMatchFilters() == null;
-		ArrayList changed= new ArrayList();
+		ArrayList<Match> changed= new ArrayList<>();
 		Object[] elements= getElements();
 		for (int i= 0; i < elements.length; i++) {
 			Match[] matches= getMatches(elements[i]);
@@ -274,7 +274,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 				}
 			}
 		}
-		Match[] allChanges= (Match[]) changed.toArray(new Match[changed.size()]);
+		Match[] allChanges= changed.toArray(new Match[changed.size()]);
 		fireChange(new FilterUpdateEvent(this, allChanges, getActiveMatchFilters()));
 	}
 
@@ -307,8 +307,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	public int getMatchCount() {
 		int count= 0;
 		synchronized (fElementsToMatches) {
-			for (Iterator elements= fElementsToMatches.values().iterator(); elements.hasNext();) {
-				List element= (List) elements.next();
+			for (Iterator<List<Match>> elements= fElementsToMatches.values().iterator(); elements.hasNext();) {
+				List<Match> element= elements.next();
 				if (element != null)
 					count+= element.size();
 			}
@@ -325,7 +325,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @return the number of matches reported against the element
 	 */
 	public int getMatchCount(Object element) {
-		List matches= (List) fElementsToMatches.get(element);
+		List<Match> matches= fElementsToMatches.get(element);
 		if (matches != null)
 			return matches.size();
 		return 0;

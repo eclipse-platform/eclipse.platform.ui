@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class TemplateContextType {
 	private /* final */ String fId= null;
 
 	/** Variable resolvers used by this content type. */
-	private final Map/*<String, TemplateVariableResolver>*/ fResolvers= new HashMap();
+	private final Map<String, TemplateVariableResolver> fResolvers= new HashMap<>();
 
 	/** The name of the context type. */
 	private String fName= null;
@@ -172,9 +172,9 @@ public class TemplateContextType {
 	/**
 	 * Returns an iterator for the variables known to the context type.
 	 *
-	 * @return an iterator over the variables in this context type (element type: {@link TemplateVariableResolver})
+	 * @return an iterator over the variables in this context type
 	 */
-	public Iterator resolvers() {
+	public Iterator<TemplateVariableResolver> resolvers() {
 	 	return Collections.unmodifiableMap(fResolvers).values().iterator();
 	}
 
@@ -185,7 +185,7 @@ public class TemplateContextType {
 	 * @return a resolver for the given type, or <code>null</code> if none is registered
 	 */
 	protected TemplateVariableResolver getResolver(String type) {
-		return (TemplateVariableResolver) fResolvers.get(type);
+		return fResolvers.get(type);
 	}
 
 	/**
@@ -229,8 +229,8 @@ public class TemplateContextType {
 		Assert.isNotNull(context);
 		TemplateVariable[] variables= buffer.getVariables();
 
-		List positions= variablesToPositions(variables);
-		List edits= new ArrayList(5);
+		List<RangeMarker> positions= variablesToPositions(variables);
+		List<ReplaceEdit> edits= new ArrayList<>(5);
 
         // iterate over all variables and try to resolve them
         for (int i= 0; i != variables.length; i++) {
@@ -249,8 +249,8 @@ public class TemplateContextType {
 
     	IDocument document= new Document(buffer.getString());
         MultiTextEdit edit= new MultiTextEdit(0, document.getLength());
-        edit.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
-        edit.addChildren((TextEdit[]) edits.toArray(new TextEdit[edits.size()]));
+        edit.addChildren(positions.toArray(new TextEdit[positions.size()]));
+        edit.addChildren(edits.toArray(new TextEdit[edits.size()]));
         edit.apply(document, TextEdit.UPDATE_REGIONS);
 
 		positionsToVariables(positions, variables);
@@ -267,14 +267,14 @@ public class TemplateContextType {
 	 */
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String type= variable.getType();
-		TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
+		TemplateVariableResolver resolver= fResolvers.get(type);
 		if (resolver == null)
 			resolver= new TemplateVariableResolver(type, ""); //$NON-NLS-1$
 		resolver.resolve(variable, context);
 	}
 
-	private static List variablesToPositions(TemplateVariable[] variables) {
-   		List positions= new ArrayList(5);
+	private static List<RangeMarker> variablesToPositions(TemplateVariable[] variables) {
+   		List<RangeMarker> positions= new ArrayList<>(5);
 		for (int i= 0; i != variables.length; i++) {
 		    int[] offsets= variables[i].getOffsets();
 		    for (int j= 0; j != offsets.length; j++)
@@ -284,15 +284,15 @@ public class TemplateContextType {
 		return positions;
 	}
 
-	private static void positionsToVariables(List positions, TemplateVariable[] variables) {
-		Iterator iterator= positions.iterator();
+	private static void positionsToVariables(List<RangeMarker> positions, TemplateVariable[] variables) {
+		Iterator<RangeMarker> iterator= positions.iterator();
 
 		for (int i= 0; i != variables.length; i++) {
 		    TemplateVariable variable= variables[i];
 
 			int[] offsets= new int[variable.getOffsets().length];
 			for (int j= 0; j != offsets.length; j++)
-				offsets[j]= ((TextEdit) iterator.next()).getOffset();
+				offsets[j]= iterator.next().getOffset();
 
 		 	variable.setOffsets(offsets);
 		}

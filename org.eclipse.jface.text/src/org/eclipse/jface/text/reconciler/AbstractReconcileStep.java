@@ -132,9 +132,9 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 			return results1;
 
 		// XXX: not yet performance optimized
-		Collection collection= new ArrayList(Arrays.asList(results1));
+		Collection<IReconcileResult> collection= new ArrayList<>(Arrays.asList(results1));
 		collection.addAll(Arrays.asList(results2));
-		return (IReconcileResult[])collection.toArray(new IReconcileResult[collection.size()]);
+		return collection.toArray(new IReconcileResult[collection.size()]);
 	}
 
 	/*

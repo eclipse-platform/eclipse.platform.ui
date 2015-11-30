@@ -127,7 +127,7 @@ public class AbstractReconcilerTest extends TestCase {
 
 	private Accessor fAccessor;
 	private Barrier fBarrier;
-	private List fCallLog;
+	private List<String> fCallLog;
 	private ITextViewer fViewer;
 	protected AbstractReconciler fReconciler;
 	private Document fDocument;
@@ -138,7 +138,7 @@ public class AbstractReconcilerTest extends TestCase {
 	@Override
 	protected void setUp() {
 		fBarrier= new Barrier();
-		fCallLog= Collections.synchronizedList(new ArrayList());
+		fCallLog= Collections.synchronizedList(new ArrayList<String>());
 		fReconciler= new AbstractReconciler() {
 					@Override
 					protected void initialProcess() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class TextEditProcessor {
 	private boolean fChecked;
 	private MalformedTreeException fException;
 
-	private List fSourceEdits;
+	private List<List<TextEdit>> fSourceEdits;
 
 	/**
 	 * Constructs a new edit processor for the given
@@ -69,7 +69,7 @@ public class TextEditProcessor {
 		fStyle= style;
 		if (secondary) {
 			fChecked= true;
-			fSourceEdits= new ArrayList();
+			fSourceEdits= new ArrayList<>();
 		}
 	}
 
@@ -172,7 +172,7 @@ public class TextEditProcessor {
 	//---- checking --------------------------------------------------------------------
 
 	void checkIntegrityDo() throws MalformedTreeException {
-		fSourceEdits= new ArrayList();
+		fSourceEdits= new ArrayList<>();
 		fRoot.traverseConsistencyCheck(this, fDocument, fSourceEdits);
 		if (fRoot.getExclusiveEnd() > fDocument.getLength())
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
@@ -202,11 +202,11 @@ public class TextEditProcessor {
 	}
 
 	private void computeSources() {
-		for (Iterator iter= fSourceEdits.iterator(); iter.hasNext();) {
-			List list= (List)iter.next();
+		for (Iterator<List<TextEdit>> iter= fSourceEdits.iterator(); iter.hasNext();) {
+			List<TextEdit> list= iter.next();
 			if (list != null) {
-				for (Iterator edits= list.iterator(); edits.hasNext();) {
-					TextEdit edit= (TextEdit)edits.next();
+				for (Iterator<TextEdit> edits= list.iterator(); edits.hasNext();) {
+					TextEdit edit= edits.next();
 					edit.traverseSourceComputation(this, fDocument);
 				}
 			}

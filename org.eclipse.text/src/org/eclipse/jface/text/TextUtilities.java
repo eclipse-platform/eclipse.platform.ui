@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,13 +182,13 @@ public class TextUtilities {
 	 * @return returns the merged document event
 	 * @throws BadLocationException might be thrown if document is not in the correct state with respect to document events
 	 */
-	public static DocumentEvent mergeUnprocessedDocumentEvents(IDocument unprocessedDocument, List documentEvents) throws BadLocationException {
+	public static DocumentEvent mergeUnprocessedDocumentEvents(IDocument unprocessedDocument, List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
 		if (documentEvents.size() == 0)
 			return null;
 
-		final Iterator iterator= documentEvents.iterator();
-		final DocumentEvent firstEvent= (DocumentEvent) iterator.next();
+		final Iterator<? extends DocumentEvent> iterator= documentEvents.iterator();
+		final DocumentEvent firstEvent= iterator.next();
 
 		// current merged event
 		final IDocument document= unprocessedDocument;
@@ -200,7 +200,7 @@ public class TextUtilities {
 
 			final int delta= text.length() - length;
 
-			final DocumentEvent event= (DocumentEvent) iterator.next();
+			final DocumentEvent event= iterator.next();
 			final int eventOffset= event.getOffset();
 			final int eventLength= event.getLength();
 			final String eventText= event.getText() == null ? "" : event.getText(); //$NON-NLS-1$
@@ -247,13 +247,13 @@ public class TextUtilities {
 	 * @return returns the merged document event
 	 * @throws BadLocationException might be thrown if document is not in the correct state with respect to document events
 	 */
-	public static DocumentEvent mergeProcessedDocumentEvents(List documentEvents) throws BadLocationException {
+	public static DocumentEvent mergeProcessedDocumentEvents(List<? extends DocumentEvent> documentEvents) throws BadLocationException {
 
 		if (documentEvents.size() == 0)
 			return null;
 
-		final ListIterator iterator= documentEvents.listIterator(documentEvents.size());
-		final DocumentEvent firstEvent= (DocumentEvent) iterator.previous();
+		final ListIterator<? extends DocumentEvent> iterator= documentEvents.listIterator(documentEvents.size());
+		final DocumentEvent firstEvent= iterator.previous();
 
 		// current merged event
 		final IDocument document= firstEvent.getDocument();
@@ -265,7 +265,7 @@ public class TextUtilities {
 
 			final int delta= length - textLength;
 
-			final DocumentEvent event= (DocumentEvent) iterator.previous();
+			final DocumentEvent event= iterator.previous();
 			final int eventOffset= event.getOffset();
 			final int eventLength= event.getLength();
 			final int eventTextLength= event.getText() == null ? 0 : event.getText().length();
@@ -303,11 +303,10 @@ public class TextUtilities {
 	 * the given document is no longer connected to any document partitioner.
 	 *
 	 * @param document the document
-	 * @return the map containing the removed partitioners (key type: {@link String}, value type:
-	 *         {@link IDocumentPartitioner})
+	 * @return the map containing the removed partitioners
 	 */
-	public static Map removeDocumentPartitioners(IDocument document) {
-		Map partitioners= new HashMap();
+	public static Map<String, IDocumentPartitioner> removeDocumentPartitioners(IDocument document) {
+		Map<String, IDocumentPartitioner> partitioners= new HashMap<>();
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			String[] partitionings= extension3.getPartitionings();
@@ -335,23 +334,22 @@ public class TextUtilities {
 	 * their partitioning name. This method cleans the given map.
 	 *
 	 * @param document the document
-	 * @param partitioners the map containing the partitioners to be connected (key type: {@link String}, value type:
-	 *         {@link IDocumentPartitioner})
+	 * @param partitioners the map containing the partitioners to be connected
 	 * @since 3.0
 	 */
-	public static void addDocumentPartitioners(IDocument document, Map partitioners) {
+	public static void addDocumentPartitioners(IDocument document, Map<String, ? extends IDocumentPartitioner> partitioners) {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
-			Iterator e= partitioners.keySet().iterator();
+			Iterator<String> e= partitioners.keySet().iterator();
 			while (e.hasNext()) {
-				String partitioning= (String) e.next();
-				IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(partitioning);
+				String partitioning= e.next();
+				IDocumentPartitioner partitioner= partitioners.get(partitioning);
 				partitioner.connect(document);
 				extension3.setDocumentPartitioner(partitioning, partitioner);
 			}
 			partitioners.clear();
 		} else {
-			IDocumentPartitioner partitioner= (IDocumentPartitioner) partitioners.get(IDocumentExtension3.DEFAULT_PARTITIONING);
+			IDocumentPartitioner partitioner= partitioners.get(IDocumentExtension3.DEFAULT_PARTITIONING);
 			partitioner.connect(document);
 			document.setDocumentPartitioner(partitioner);
 		}
@@ -451,7 +449,7 @@ public class TextUtilities {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			String[] partitionings= extension3.getPartitionings();
 			if (partitionings != null) {
-				Set categories= new HashSet();
+				Set<String> categories= new HashSet<>();
 				for (int i= 0; i < partitionings.length; i++) {
 					IDocumentPartitioner p= extension3.getDocumentPartitioner(partitionings[i]);
 					if (p instanceof IDocumentPartitionerExtension2) {

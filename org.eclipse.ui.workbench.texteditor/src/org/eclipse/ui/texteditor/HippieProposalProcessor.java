@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,16 +180,16 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			if (prefix == null || prefix.length() == 0)
 				return NO_PROPOSALS;
 
-			List suggestions= getSuggestions(viewer, offset, prefix);
+			List<String> suggestions= getSuggestions(viewer, offset, prefix);
 
-			List result= new ArrayList();
-			for (Iterator it= suggestions.iterator(); it.hasNext();) {
-				String string= (String) it.next();
+			List<ICompletionProposal> result= new ArrayList<>();
+			for (Iterator<String> it= suggestions.iterator(); it.hasNext();) {
+				String string= it.next();
 				if (string.length() > 0)
 					result.add(createProposal(string, prefix, offset));
 			}
 
-			return (ICompletionProposal[]) result.toArray(new ICompletionProposal[result.size()]);
+			return result.toArray(new ICompletionProposal[result.size()]);
 
 		} catch (BadLocationException x) {
 			// ignore and return no proposals
@@ -244,9 +244,9 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	 * @return all possible completions that were found in the current document
 	 * @throws BadLocationException if accessing the document fails
 	 */
-	private ArrayList createSuggestionsFromOpenDocument(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
+	private ArrayList<String> createSuggestionsFromOpenDocument(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
 		IDocument document= viewer.getDocument();
-		ArrayList completions= new ArrayList();
+		ArrayList<String> completions= new ArrayList<>();
 		completions.addAll(fEngine.getCompletionsBackwards(document, prefix, offset));
 		completions.addAll(fEngine.getCompletionsForward(document, prefix, offset - prefix.length(), true));
 
@@ -263,9 +263,9 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	 * @return the list of all possible suggestions in the currently open editors
 	 * @throws BadLocationException if accessing the current document fails
 	 */
-	private List getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
+	private List<String> getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
 
-		ArrayList suggestions= createSuggestionsFromOpenDocument(viewer, offset, prefix);
+		ArrayList<String> suggestions= createSuggestionsFromOpenDocument(viewer, offset, prefix);
 		IDocument currentDocument= viewer.getDocument();
 
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -284,7 +284,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		// add the empty suggestion
 		suggestions.add(""); //$NON-NLS-1$
 
-		List uniqueSuggestions= fEngine.makeUnique(suggestions);
+		List<String> uniqueSuggestions= fEngine.makeUnique(suggestions);
 
 		return uniqueSuggestions;
 	}

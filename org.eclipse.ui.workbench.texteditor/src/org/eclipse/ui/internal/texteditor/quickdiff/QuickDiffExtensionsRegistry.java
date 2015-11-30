@@ -32,7 +32,7 @@ public class QuickDiffExtensionsRegistry {
 	/** The default reference provider's descriptor. */
 	private ReferenceProviderDescriptor fDefaultDescriptor;
 	/** The list returned to callers of <code>getExtensions</code>. */
-	private List fDescriptors;
+	private List<ReferenceProviderDescriptor> fDescriptors;
 
 	/**
 	 * Creates a new instance.
@@ -56,7 +56,7 @@ public class QuickDiffExtensionsRegistry {
 	 *
 	 * @return the list of extensions to the <code>quickDiffReferenceProvider</code> extension point.
 	 */
-	public synchronized List getReferenceProviderDescriptors() {
+	public synchronized List<ReferenceProviderDescriptor> getReferenceProviderDescriptors() {
 		ensureRegistered();
 		return fDescriptors;
 	}
@@ -79,7 +79,7 @@ public class QuickDiffExtensionsRegistry {
 	public synchronized void reloadExtensions() {
 		fDefaultDescriptor= null;
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		List list= new ArrayList();
+		List<ReferenceProviderDescriptor> list= new ArrayList<>();
 
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, TextEditorPlugin.REFERENCE_PROVIDER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {

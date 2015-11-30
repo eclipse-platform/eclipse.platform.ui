@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,11 +53,11 @@ public final class MarkerUtilities {
 	 */
 	private static class MarkerTypeHierarchy {
 
-		private Map fTypeMap;
-		private Map fSuperTypesCache= new HashMap();
+		private Map<String, String[]> fTypeMap;
+		private Map<String, String[]> fSuperTypesCache= new HashMap<>();
 
 		public String[] getSuperTypes(String typeName) {
-			String[] cachedTypes= (String[]) fSuperTypesCache.get(typeName);
+			String[] cachedTypes= fSuperTypesCache.get(typeName);
 			if (cachedTypes == null) {
 				cachedTypes= computeSuperTypes(typeName);
 				fSuperTypesCache.put(typeName, cachedTypes);
@@ -66,11 +66,11 @@ public final class MarkerUtilities {
 		}
 
 		private String[] computeSuperTypes(String typeName) {
-			ArrayList types= new ArrayList();
+			ArrayList<String> types= new ArrayList<>();
 			appendAll(types, getDirectSuperTypes(typeName));
 			int index= 0;
 			while (index < types.size()) {
-				String type= (String) types.get(index++);
+				String type= types.get(index++);
 				appendAll(types, getDirectSuperTypes(type));
 			}
 
@@ -80,33 +80,33 @@ public final class MarkerUtilities {
 		}
 
 		private String[] getDirectSuperTypes(String typeName) {
-			return (String[]) getTypeMap().get(typeName);
+			return getTypeMap().get(typeName);
 		}
 
-		private void appendAll(List list, Object[] objects) {
+		private <T> void appendAll(List<T> list, T[] objects) {
 			if (objects == null)
 				return;
 			for (int i= 0; i < objects.length; i++) {
-				Object o= objects[i];
+				T o= objects[i];
 				if (!list.contains(o))
 					list.add(o);
 			}
 		}
 
-		private Map getTypeMap() {
+		private Map<String, String[]> getTypeMap() {
 			if (fTypeMap == null)
 				fTypeMap= readTypes();
 			return fTypeMap;
 		}
 
-		private Map readTypes() {
-			HashMap allTypes= new HashMap();
+		private Map<String, String[]> readTypes() {
+			HashMap<String, String[]> allTypes= new HashMap<>();
 			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				for (int i= 0; i < extensions.length; i++) {
 					IExtension extension= extensions[i];
-					ArrayList types= new ArrayList();
+					ArrayList<String> types= new ArrayList<>();
 					IConfigurationElement[] configElements= extension.getConfigurationElements();
 					for (int j= 0; j < configElements.length; ++j) {
 						IConfigurationElement element= configElements[j];
@@ -287,12 +287,11 @@ public final class MarkerUtilities {
 	 * Sets the ending character offset in the given map using the standard
 	 * marker attribute name as the key.
 	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
+	 * @param map the map
 	 * @param charEnd the ending character offset
 	 * @see IMarker#CHAR_END
 	 */
-	public static void setCharEnd(Map map, int charEnd) {
+	public static void setCharEnd(Map<String, Object> map, int charEnd) {
 		map.put(IMarker.CHAR_END, new Integer(charEnd));
 	}
 
@@ -312,12 +311,11 @@ public final class MarkerUtilities {
 	 * Sets the starting character offset in the given map using the standard
 	 * marker attribute name as the key.
 	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
+	 * @param map the map
 	 * @param charStart the starting character offset
 	 * @see IMarker#CHAR_START
 	 */
-	public static void setCharStart(Map map, int charStart) {
+	public static void setCharStart(Map<String, Object> map, int charStart) {
 		map.put(IMarker.CHAR_START, new Integer(charStart));
 	}
 
@@ -353,12 +351,11 @@ public final class MarkerUtilities {
 	 * Sets the line number in the given map using the standard marker attribute
 	 * name as the key.
 	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
+	 * @param map the map
 	 * @param lineNum the line number
 	 * @see IMarker#LINE_NUMBER
 	 */
-	public static void setLineNumber(Map map, int lineNum) {
+	public static void setLineNumber(Map<String, Object> map, int lineNum) {
 		map.put(IMarker.LINE_NUMBER, new Integer(lineNum));
 	}
 
@@ -366,12 +363,11 @@ public final class MarkerUtilities {
 	 * Sets the message in the given map using the standard marker attribute name
 	 * as the key.
 	 *
-	 * @param map the map (key type: <code>String</code>, value type:
-	 *   <code>Object</code>)
+	 * @param map the map
 	 * @param message the message
 	 * @see IMarker#MESSAGE
 	 */
-	public static void setMessage(Map map, String message) {
+	public static void setMessage(Map<String, Object> map, String message) {
 		map.put(IMarker.MESSAGE, message);
 	}
 
@@ -381,13 +377,12 @@ public final class MarkerUtilities {
 	 * This method modifies the workspace (progress is not reported to the user).</p>
 	 *
 	 * @param resource the resource
-	 * @param attributes the attribute map (key type: <code>String</code>,
-	 *   value type: <code>Object</code>)
+	 * @param attributes the attribute map
 	 * @param markerType the type of marker
 	 * @throws CoreException if this method fails
 	 * @see IResource#createMarker(java.lang.String)
 	 */
-	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {
+	public static void createMarker(final IResource resource, final Map<String, Object> attributes, final String markerType) throws CoreException {
 
 		IWorkspaceRunnable r= new IWorkspaceRunnable() {
 			@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -27,6 +23,10 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 
 /**
@@ -38,7 +38,7 @@ public class AnnotationModelExtension2Test extends TestCase {
 
 	public class OldAnnotationModel implements IAnnotationModel {
 
-		private final HashMap fAnnotations= new HashMap();
+		private final HashMap<Annotation, Position> fAnnotations= new HashMap<>();
 
 		@Override
 		public void addAnnotation(Annotation annotation, Position position) {
@@ -58,13 +58,13 @@ public class AnnotationModelExtension2Test extends TestCase {
 		}
 
 		@Override
-		public Iterator getAnnotationIterator() {
+		public Iterator<Annotation> getAnnotationIterator() {
 			return fAnnotations.keySet().iterator();
 		}
 
 		@Override
 		public Position getPosition(Annotation annotation) {
-			return (Position) fAnnotations.get(annotation);
+			return fAnnotations.get(annotation);
 		}
 
 		@Override
@@ -135,7 +135,7 @@ public class AnnotationModelExtension2Test extends TestCase {
 	}
 
 	private void assertEquals(Annotation[] expected, Annotation[] actual, IAnnotationModel insideModel, IAnnotationModel beforeModel, IAnnotationModel afterModel) {
-		HashSet expectedSet= new HashSet(Arrays.asList(expected));
+		HashSet<Annotation> expectedSet= new HashSet<>(Arrays.asList(expected));
 		for (int i= 0; i < actual.length; i++) {
 			if (!expectedSet.contains(actual[i])) {
 				String message= "Unexpected annotation " + getName(actual[i]) + " in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
@@ -146,8 +146,8 @@ public class AnnotationModelExtension2Test extends TestCase {
 
 		if (!expectedSet.isEmpty()) {
 			String message= "Missing annotations in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
-			for (Iterator iterator= expectedSet.iterator(); iterator.hasNext();) {
-				Annotation missing= (Annotation) iterator.next();
+			for (Iterator<Annotation> iterator= expectedSet.iterator(); iterator.hasNext();) {
+				Annotation missing= iterator.next();
 				message= message + "\n" + getName(missing);
 			}
 			assertTrue(message, false);
@@ -210,14 +210,14 @@ public class AnnotationModelExtension2Test extends TestCase {
 	}
 
 	private Annotation[] getAnnotations(boolean lookAhead, boolean lookBehind) {
-		Iterator iterator= fAnnotationModel.getAnnotationIterator(10, 11, lookAhead, lookBehind);
+		Iterator<Annotation> iterator= fAnnotationModel.getAnnotationIterator(10, 11, lookAhead, lookBehind);
 
-		ArrayList result= new ArrayList();
+		ArrayList<Annotation> result= new ArrayList<>();
 		while (iterator.hasNext()) {
 			result.add(iterator.next());
 		}
 
-		return (Annotation[]) result.toArray(new Annotation[result.size()]);
+		return result.toArray(new Annotation[result.size()]);
 	}
 
 	private void assertPermutations(boolean lookAhead, boolean lookBehind, Annotation[] expected) {

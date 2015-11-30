@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.content.IContentType;
 public abstract class RulerColumnTarget {
 	public abstract boolean matchesEditorId(String editorId);
 	public abstract boolean matchesContentType(IContentType contentType);
-	public abstract boolean matchesClass(Class clazz);
+	public abstract boolean matchesClass(Class<?> clazz);
 
 	/* package visible */
 	RulerColumnTarget() {
@@ -70,7 +70,7 @@ final class AllTarget extends RulerColumnTarget {
 	}
 
 	@Override
-	public boolean matchesClass(Class clazz) {
+	public boolean matchesClass(Class<?> clazz) {
 		return true;
 	}
 
@@ -102,7 +102,7 @@ final class OrTarget extends RulerColumnTarget {
 	}
 
 	@Override
-	public boolean matchesClass(Class clazz) {
+	public boolean matchesClass(Class<?> clazz) {
 		return fEither.matchesClass(clazz) || fOr.matchesClass(clazz);
 	}
 
@@ -131,7 +131,7 @@ final class EditorIdTarget extends RulerColumnTarget {
 	}
 
 	@Override
-	public boolean matchesClass(Class clazz) {
+	public boolean matchesClass(Class<?> clazz) {
 		return false;
 	}
 
@@ -160,7 +160,7 @@ final class ClassTarget extends RulerColumnTarget {
 	}
 
 	@Override
-	public boolean matchesClass(Class clazz) {
+	public boolean matchesClass(Class<?> clazz) {
 		Assert.isLegal(clazz != null);
 
 		do {
@@ -197,7 +197,7 @@ final class ContentTypeTarget extends RulerColumnTarget {
 	}
 
 	@Override
-	public boolean matchesClass(Class clazz) {
+	public boolean matchesClass(Class<?> clazz) {
 		return false;
 	}
 

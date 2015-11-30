@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,15 +37,15 @@ class ResourceToItemsMapper {
 
 	private static final int NUMBER_LIST_REUSE= 10;
 
-	// map from resource to item
-	private HashMap fResourceToItem;
-	private Stack fReuseLists;
+	// map from IResource to Item | List<Item>
+	private HashMap<IResource, Object> fResourceToItem;
+	private Stack<List<Item>> fReuseLists;
 
 	private ContentViewer fContentViewer;
 
 	public ResourceToItemsMapper(ContentViewer viewer) {
-		fResourceToItem= new HashMap();
-		fReuseLists= new Stack();
+		fResourceToItem= new HashMap<>();
+		fReuseLists= new Stack<>();
 
 		fContentViewer= viewer;
 	}
@@ -61,9 +61,10 @@ class ResourceToItemsMapper {
 		} else if (obj instanceof Item) {
 			updateItem((Item) obj);
 		} else { // List of Items
-			List list= (List) obj;
+			@SuppressWarnings("unchecked")
+			List<Item> list= (List<Item>) obj;
 			for (int k= 0; k < list.size(); k++) {
-				updateItem((Item) list.get(k));
+				updateItem(list.get(k));
 			}
 		}
 	}
@@ -101,13 +102,14 @@ class ResourceToItemsMapper {
 				fResourceToItem.put(resource, item);
 			} else if (existingMapping instanceof Item) {
 				if (existingMapping != item) {
-					List list= getNewList();
-					list.add(existingMapping);
+					List<Item> list= getNewList();
+					list.add((Item) existingMapping);
 					list.add(item);
 					fResourceToItem.put(resource, list);
 				}
 			} else { // List
-				List list= (List) existingMapping;
+				@SuppressWarnings("unchecked")
+				List<Item> list= (List<Item>) existingMapping;
 				if (!list.contains(item)) {
 					list.add(item);
 				}
@@ -129,7 +131,8 @@ class ResourceToItemsMapper {
 			} else if (existingMapping instanceof Item) {
 				fResourceToItem.remove(resource);
 			} else { // List
-				List list= (List) existingMapping;
+				@SuppressWarnings("unchecked")
+				List<Item> list= (List<Item>) existingMapping;
 				list.remove(item);
 				if (list.isEmpty()) {
 					fResourceToItem.remove(list);
@@ -139,14 +142,14 @@ class ResourceToItemsMapper {
 		}
 	}
 
-	private List getNewList() {
+	private List<Item> getNewList() {
 		if (!fReuseLists.isEmpty()) {
-			return (List) fReuseLists.pop();
+			return fReuseLists.pop();
 		}
-		return new ArrayList(2);
+		return new ArrayList<>(2);
 	}
 
-	private void releaseList(List list) {
+	private void releaseList(List<Item> list) {
 		if (fReuseLists.size() < NUMBER_LIST_REUSE) {
 			fReuseLists.push(list);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.search.internal.ui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
@@ -40,12 +41,12 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	private static final String TAG_PAGE_ID= "pageId"; //$NON-NLS-1$
 	private static final String TAG_SORTER_ID= "sorterId"; //$NON-NLS-1$
 
-	private static Map fgLastCheckedForType= new HashMap(5);
+	private static Map<String, SorterDescriptor> fgLastCheckedForType= new HashMap<>(5);
 
 	private SearchResultViewer fViewer;
 	private String fPageId;
 	private Menu fMenu;
-	private Map fLastCheckedForType;
+	private Map<String, SorterDescriptor> fLastCheckedForType;
 
 	public SortDropDownAction(SearchResultViewer viewer) {
 		super(SearchMessages.SortDropDownAction_label);
@@ -53,7 +54,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		fViewer= viewer;
 		setToolTipText(SearchMessages.SortDropDownAction_tooltip);
 		setMenuCreator(this);
-		fLastCheckedForType= new HashMap(5);
+		fLastCheckedForType= new HashMap<>(5);
 	}
 
 	@Override
@@ -70,9 +71,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 	void setPageId(String pageId) {
 		fPageId= pageId;
-		SorterDescriptor sorterDesc= (SorterDescriptor)fLastCheckedForType.get(pageId);
+		SorterDescriptor sorterDesc= fLastCheckedForType.get(pageId);
 		if (sorterDesc == null)
-			sorterDesc= (SorterDescriptor)fgLastCheckedForType.get(pageId);
+			sorterDesc= fgLastCheckedForType.get(pageId);
 		if (sorterDesc == null)
 			sorterDesc= findSorter(fPageId);
 		if (sorterDesc != null) {
@@ -90,7 +91,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 
 		fMenu= new Menu(parent);
 
-		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		Iterator<SorterDescriptor> iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
 			Object value= fLastCheckedForType.get(fPageId);
 			final String checkedId;
@@ -99,7 +100,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 			else
 				checkedId= ""; //$NON-NLS-1$
 
-			final SorterDescriptor sorterDesc= (SorterDescriptor) iter.next();
+			final SorterDescriptor sorterDesc= iter.next();
 			if (!sorterDesc.getPageId().equals(fPageId) && !sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				continue;
 			final ViewerSorter sorter= sorterDesc.createObject();
@@ -139,9 +140,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	    }
 
 	private SorterDescriptor findSorter(String pageId) {
-		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		Iterator<SorterDescriptor> iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
-			SorterDescriptor sorterDesc= (SorterDescriptor)iter.next();
+			SorterDescriptor sorterDesc= iter.next();
 			if (sorterDesc.getPageId().equals(pageId) || sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				return sorterDesc;
 		}
@@ -149,9 +150,9 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	private SorterDescriptor getSorter(String sorterId) {
-		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		Iterator<SorterDescriptor> iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
-			SorterDescriptor sorterDesc= (SorterDescriptor)iter.next();
+			SorterDescriptor sorterDesc= iter.next();
 			if (sorterDesc.getId().equals(sorterId))
 				return sorterDesc;
 		}
@@ -184,7 +185,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 			restoreState(memento, fgLastCheckedForType, TAG_DEFAULT_SORTERS);
 	}
 
-	private void restoreState(IMemento memento, Map map, String mapName) {
+	private void restoreState(IMemento memento, Map<String, SorterDescriptor> map, String mapName) {
 		memento= memento.getChild(mapName);
 		if (memento == null)
 			return;
@@ -203,22 +204,22 @@ class SortDropDownAction extends Action implements IMenuCreator {
 		saveState(memento, fLastCheckedForType, TAG_SORTERS);
 	}
 
-	private void saveState(IMemento memento, Map map, String mapName) {
-		Iterator iter= map.entrySet().iterator();
+	private void saveState(IMemento memento, Map<String, SorterDescriptor> map, String mapName) {
+		Iterator<Entry<String, SorterDescriptor>> iter= map.entrySet().iterator();
 		memento= memento.createChild(mapName);
 		while (iter.hasNext()) {
 			IMemento mementoElement= memento.createChild(TAG_ELEMENT);
-			Map.Entry entry= (Map.Entry)iter.next();
-			mementoElement.putString(TAG_PAGE_ID, (String)entry.getKey());
-			mementoElement.putString(TAG_SORTER_ID, ((SorterDescriptor)entry.getValue()).getId());
+			Entry<String, SorterDescriptor> entry= iter.next();
+			mementoElement.putString(TAG_PAGE_ID, entry.getKey());
+			mementoElement.putString(TAG_SORTER_ID, entry.getValue().getId());
 		}
 	}
 
 	int getSorterCount() {
 		int count= 0;
-		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
+		Iterator<SorterDescriptor> iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
-			SorterDescriptor sorterDesc= (SorterDescriptor)iter.next();
+			SorterDescriptor sorterDesc= iter.next();
 			if (sorterDesc.getPageId().equals(fPageId) || sorterDesc.getPageId().equals("*")) //$NON-NLS-1$
 				count++;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -27,12 +25,14 @@ import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 
+import junit.framework.TestCase;
+
 
 public class LinkedModeModelTest extends TestCase {
 
-	private List fPositions= new LinkedList();
+	private List<LinkedPosition> fPositions= new LinkedList<>();
 
-	private List fDocumentMap= new ArrayList();
+	private List<IDocument[]> fDocumentMap= new ArrayList<>();
 
 	public void testUpdate() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
@@ -541,7 +541,7 @@ public class LinkedModeModelTest extends TestCase {
 	}
 
 	private void assertUnchanged(LinkedPositionGroup actual1, LinkedPositionGroup actual2) throws BadLocationException {
-		LinkedPosition[] exp= (LinkedPosition[]) fPositions.toArray(new LinkedPosition[0]);
+		LinkedPosition[] exp= fPositions.toArray(new LinkedPosition[0]);
 		LinkedPosition[] act1= actual1.getPositions();
 		LinkedPosition[] act2= actual2.getPositions();
 		LinkedPosition[] act= new LinkedPosition[act1.length + act2.length];
@@ -620,8 +620,8 @@ public class LinkedModeModelTest extends TestCase {
 	}
 
 	private IDocument getOriginal(IDocument doc) {
-		for (Iterator it = fDocumentMap.iterator(); it.hasNext(); ) {
-			IDocument[] docs = (IDocument[]) it.next();
+		for (Iterator<IDocument[]> it = fDocumentMap.iterator(); it.hasNext(); ) {
+			IDocument[] docs = it.next();
 			if (docs[0] == doc)
 				return docs[1];
 		}
@@ -814,13 +814,10 @@ public class LinkedModeModelTest extends TestCase {
 		public void resume(LinkedModeModel environment, int flags) {}
 	}
 
-	public class PositionComparator implements Comparator {
+	public class PositionComparator implements Comparator<LinkedPosition> {
 
 		@Override
-		public int compare(Object o1, Object o2) {
-			LinkedPosition p1= (LinkedPosition) o1;
-			LinkedPosition p2= (LinkedPosition) o2;
-
+		public int compare(LinkedPosition p1, LinkedPosition p2) {
 			IDocument d1= p1.getDocument();
 			IDocument d2= p2.getDocument();
 
@@ -832,8 +829,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		private int getIndex(IDocument doc) {
 			int i= 0;
-			for (Iterator it= fDocumentMap.iterator(); it.hasNext(); i++) {
-				IDocument[] docs= (IDocument[]) it.next();
+			for (Iterator<IDocument[]> it= fDocumentMap.iterator(); it.hasNext(); i++) {
+				IDocument[] docs= it.next();
 				if (docs[0] == doc || docs[1] == doc)
 					return i;
 			}

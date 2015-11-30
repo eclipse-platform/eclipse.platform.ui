@@ -48,7 +48,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	/** The last edit position */
 	private EditPosition fLastEditPosition;
 	/** The action which goes to the last edit position */
-	private Set fLastEditPositionDependentActions;
+	private Set<IAction> fLastEditPositionDependentActions;
 
 	/**
 	 * The quick diff extension registry.
@@ -112,9 +112,9 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	public void setLastEditPosition(EditPosition lastEditPosition) {
 		fLastEditPosition= lastEditPosition;
 		if (fLastEditPosition != null && fLastEditPositionDependentActions != null) {
-			Iterator iter= fLastEditPositionDependentActions.iterator();
+			Iterator<IAction> iter= fLastEditPositionDependentActions.iterator();
 			while (iter.hasNext())
-				((IAction)iter.next()).setEnabled(true);
+				iter.next().setEnabled(true);
 			fLastEditPositionDependentActions= null;
 		}
 	}
@@ -128,7 +128,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		if (fLastEditPosition != null)
 			return;
 		if (fLastEditPositionDependentActions == null)
-			fLastEditPositionDependentActions= new HashSet();
+			fLastEditPositionDependentActions= new HashSet<>();
 		fLastEditPositionDependentActions.add(action);
 	}
 

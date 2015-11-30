@@ -236,7 +236,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	}
 
 	private IStatus validateEdit(IFileBuffer[] fileBuffers, Object computationContext) {
-		ArrayList list= new ArrayList();
+		ArrayList<IFile> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			IFile file= getWorkspaceFile(fileBuffers[i]);
 			if (file != null)
@@ -248,12 +248,12 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	}
 
 	private IFileBuffer[] findFileBuffersToValidate(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (!fileBuffers[i].isStateValidated())
 				list.add(fileBuffers[i]);
 		}
-		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
+		return list.toArray(new IFileBuffer[list.size()]);
 	}
 
 	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
@@ -288,7 +288,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	}
 
 	private ISchedulingRule computeValidateStateRule(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<IResource> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			IResource resource= getWorkspaceFile(fileBuffers[i]);
 			if (resource != null)

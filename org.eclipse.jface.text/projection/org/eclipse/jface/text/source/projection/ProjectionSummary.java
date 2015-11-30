@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ class ProjectionSummary {
 
 	private ProjectionViewer fProjectionViewer;
 	private IAnnotationAccess fAnnotationAccess;
-	private List fConfiguredAnnotationTypes;
+	private List<String> fConfiguredAnnotationTypes;
 
 	private Object fLock= new Object();
 	private IProgressMonitor fProgressMonitor;
@@ -106,7 +106,7 @@ class ProjectionSummary {
 	public void addAnnotationType(String annotationType) {
 		synchronized(fLock) {
 			if (fConfiguredAnnotationTypes == null) {
-				fConfiguredAnnotationTypes= new ArrayList();
+				fConfiguredAnnotationTypes= new ArrayList<>();
 				fConfiguredAnnotationTypes.add(annotationType);
 			} else if (!fConfiguredAnnotationTypes.contains(annotationType))
 				fConfiguredAnnotationTypes.add(annotationType);
@@ -161,16 +161,16 @@ class ProjectionSummary {
 
 	private void removeSummaries(IProgressMonitor monitor, IAnnotationModel visualAnnotationModel) {
 		IAnnotationModelExtension extension= null;
-		List bags= null;
+		List<Annotation> bags= null;
 
 		if (visualAnnotationModel instanceof IAnnotationModelExtension) {
 			extension= (IAnnotationModelExtension)visualAnnotationModel;
-			bags= new ArrayList();
+			bags= new ArrayList<>();
 		}
 
-		Iterator e= visualAnnotationModel.getAnnotationIterator();
+		Iterator<Annotation> e= visualAnnotationModel.getAnnotationIterator();
 		while (e.hasNext()) {
-			Annotation annotation= (Annotation) e.next();
+			Annotation annotation= e.next();
 			if (annotation instanceof AnnotationBag) {
 				if (bags == null)
 					visualAnnotationModel.removeAnnotation(annotation);
@@ -195,9 +195,9 @@ class ProjectionSummary {
 		if (model == null)
 			return;
 
-		Map additions= new HashMap();
+		Map<Annotation, Position> additions= new HashMap<>();
 
-		Iterator e= model.getAnnotationIterator();
+		Iterator<Annotation> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			ProjectionAnnotation projection= (ProjectionAnnotation) e.next();
 			if (projection.isCollapsed()) {
@@ -222,10 +222,10 @@ class ProjectionSummary {
 				if (!isCanceled(monitor))
 					extension.replaceAnnotations(null, additions);
 			} else {
-				Iterator e1= additions.keySet().iterator();
+				Iterator<Annotation> e1= additions.keySet().iterator();
 				while (e1.hasNext()) {
 					AnnotationBag bag= (AnnotationBag) e1.next();
-					Position position= (Position) additions.get(bag);
+					Position position= additions.get(bag);
 					if (isCanceled(monitor))
 						return;
 					visualAnnotationModel.addAnnotation(bag, position);
@@ -234,17 +234,17 @@ class ProjectionSummary {
 		}
 	}
 
-	private void createSummary(Map additions, IRegion[] summaryRegions, Position summaryAnchor) {
+	private void createSummary(Map<Annotation, Position> additions, IRegion[] summaryRegions, Position summaryAnchor) {
 
 		int size= 0;
-		Map map= null;
+		Map<String, AnnotationBag> map= null;
 
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
 				size= fConfiguredAnnotationTypes.size();
-				map= new HashMap();
+				map= new HashMap<>();
 				for (int i= 0; i < size; i++) {
-					String type= (String) fConfiguredAnnotationTypes.get(i);
+					String type= fConfiguredAnnotationTypes.get(i);
 					map.put(type, new AnnotationBag(type));
 				}
 			}
@@ -256,9 +256,9 @@ class ProjectionSummary {
 		IAnnotationModel model= fProjectionViewer.getAnnotationModel();
 		if (model == null)
 			return;
-		Iterator e= model.getAnnotationIterator();
+		Iterator<Annotation> e= model.getAnnotationIterator();
 		while (e.hasNext()) {
-			Annotation annotation= (Annotation) e.next();
+			Annotation annotation= e.next();
 			AnnotationBag bag= findBagForType(map, annotation.getType());
 			if (bag != null) {
 				Position position= model.getPosition(annotation);
@@ -268,19 +268,19 @@ class ProjectionSummary {
 		}
 
 		for (int i= 0; i < size; i++) {
-			AnnotationBag bag= (AnnotationBag) map.get(fConfiguredAnnotationTypes.get(i));
+			AnnotationBag bag= map.get(fConfiguredAnnotationTypes.get(i));
 			if (!bag.isEmpty())
 				additions.put(bag, new Position(summaryAnchor.getOffset(), summaryAnchor.getLength()));
 		}
 	}
 
-	private AnnotationBag findBagForType(Map bagMap, String annotationType) {
-		AnnotationBag bag= (AnnotationBag) bagMap.get(annotationType);
+	private AnnotationBag findBagForType(Map<String, AnnotationBag> bagMap, String annotationType) {
+		AnnotationBag bag= bagMap.get(annotationType);
 		if (bag == null && fAnnotationAccess instanceof IAnnotationAccessExtension) {
 			IAnnotationAccessExtension extension= (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] superTypes= extension.getSupertypes(annotationType);
 			for (int i= 0; i < superTypes.length && bag == null; i++) {
-				bag= (AnnotationBag) bagMap.get(superTypes[i]);
+				bag= bagMap.get(superTypes[i]);
 			}
 		}
 		return bag;

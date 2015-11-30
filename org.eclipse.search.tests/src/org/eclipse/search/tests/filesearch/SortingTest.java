@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,15 @@ package org.eclipse.search.tests.filesearch;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class SortingTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -58,7 +57,7 @@ public class SortingTest extends TestCase {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
 		int originalMatchCount= result.getMatchCount();
-		List allMatches= new ArrayList(originalMatchCount);
+		List<Match> allMatches= new ArrayList<>(originalMatchCount);
 		
 		// first, collect all matches
 		Object[] elements= result.getElements();
@@ -73,7 +72,7 @@ public class SortingTest extends TestCase {
 		assertTrue("removed all matches", result.getMatchCount() == 0);
 		
 		for (int i= allMatches.size()-1; i >= 0; i--) {
-			result.addMatch((Match) allMatches.get(i));
+			result.addMatch(allMatches.get(i));
 		}
 		
 		assertEquals("Test that all matches have been added again", result.getMatchCount(), originalMatchCount);

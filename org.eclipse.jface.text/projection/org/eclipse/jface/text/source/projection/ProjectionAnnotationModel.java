@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 
 		boolean collapsing= false;
 
-		Iterator iterator= getAnnotationIterator();
+		Iterator<Annotation> iterator= getAnnotationIterator();
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
 			if (!annotation.isCollapsed()) {
@@ -146,7 +146,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 
 		boolean expanding= false;
 
-		Iterator iterator= getAnnotationIterator();
+		Iterator<Annotation> iterator= getAnnotationIterator();
 		while (iterator.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
 			if (annotation.isCollapsed()) {
@@ -172,7 +172,7 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 	 * @param additions the set of annotations to add together with their associated position
 	 * @param modifications the list of modified annotations
 	 */
-	public void modifyAnnotations(Annotation[] deletions, Map additions, Annotation[] modifications) {
+	public void modifyAnnotations(Annotation[] deletions, Map<? extends Annotation, ? extends Position> additions, Annotation[] modifications) {
 		try {
 			replaceAnnotations(deletions, additions, false);
 			if (modifications != null) {

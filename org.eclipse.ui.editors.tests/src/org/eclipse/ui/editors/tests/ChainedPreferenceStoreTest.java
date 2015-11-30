@@ -35,7 +35,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		}
 	}
 
-	private List fEvents= new ArrayList();
+	private List<PropertyChangeEvent> fEvents= new ArrayList<>();
 	private PropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 
 	private static final String PROPERTY= "some.property";
@@ -62,7 +62,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
 
 		assertEquals(1, fEvents.size());
-		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
+		PropertyChangeEvent event= fEvents.get(0);
 		assertEquals(chainedStore, event.getSource());
 		assertEquals(PROPERTY, event.getProperty());
 		assertEquals(VALUE, event.getOldValue());
@@ -83,7 +83,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
 
 		assertEquals(1, fEvents.size());
-		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
+		PropertyChangeEvent event= fEvents.get(0);
 		assertEquals(store1, event.getSource());
 		assertEquals(PROPERTY, event.getProperty());
 		assertEquals(VALUE, event.getOldValue());
@@ -104,7 +104,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
 
 		assertEquals(1, fEvents.size());
-		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
+		PropertyChangeEvent event= fEvents.get(0);
 		assertEquals(store1, event.getSource());
 		assertEquals(PROPERTY, event.getProperty());
 		assertEquals(DEFAULT_VALUE, event.getOldValue());
@@ -125,7 +125,7 @@ public class ChainedPreferenceStoreTest extends TestCase {
 		chainedStore.removePropertyChangeListener(fPropertyChangeListener);
 
 		assertEquals(1, fEvents.size());
-		PropertyChangeEvent event= (PropertyChangeEvent) fEvents.get(0);
+		PropertyChangeEvent event= fEvents.get(0);
 		assertEquals(chainedStore, event.getSource());
 		assertEquals(PROPERTY, event.getProperty());
 		assertEquals(null, event.getOldValue());

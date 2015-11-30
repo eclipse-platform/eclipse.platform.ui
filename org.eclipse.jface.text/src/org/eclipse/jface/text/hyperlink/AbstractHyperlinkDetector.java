@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public abstract class AbstractHyperlinkDetector implements IHyperlinkDetector, I
 	 *			or <code>null</code> if this object does not
 	 *			have an adapter for the given class
 	 */
-	protected final Object getAdapter(Class adapterClass) {
+	protected final <T> T getAdapter(Class<T> adapterClass) {
 		Assert.isLegal(adapterClass != null);
 		if (fContext != null)
 			return fContext.getAdapter(adapterClass);

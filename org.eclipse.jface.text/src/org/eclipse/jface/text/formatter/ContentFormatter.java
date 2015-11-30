@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * Defines a reference to either the offset or the end offset of
 	 * a particular position.
 	 */
-	static class PositionReference implements Comparable {
+	static class PositionReference implements Comparable<PositionReference> {
 
 		/** The referenced position */
 		protected Position fPosition;
@@ -167,14 +167,8 @@ public class ContentFormatter implements IContentFormatter {
 		}
 
 		@Override
-		public int compareTo(Object obj) {
-
-			if (obj instanceof PositionReference) {
-				PositionReference r= (PositionReference) obj;
-				return getCharacterPosition() - r.getCharacterPosition();
-			}
-
-			throw new ClassCastException();
+		public int compareTo(PositionReference r) {
+			return getCharacterPosition() - r.getCharacterPosition();
 		}
 	}
 
@@ -251,14 +245,14 @@ public class ContentFormatter implements IContentFormatter {
 	private final static String PARTITIONING= "__formatter_partitioning"; //$NON-NLS-1$
 
 	/** The map of <code>IFormattingStrategy</code> objects */
-	private Map fStrategies;
+	private Map<String, IFormattingStrategy> fStrategies;
 	/** The indicator of whether the formatter operates in partition aware mode or not */
 	private boolean fIsPartitionAware= true;
 
 	/** The partition information managing document position categories */
 	private String[] fPartitionManagingCategories;
 	/** The list of references to offset and end offset of all overlapping positions */
-	private List fOverlappingPositionReferences;
+	private List<PositionReference> fOverlappingPositionReferences;
 	/** Position updater used for partitioning positions */
 	private IPositionUpdater fPartitioningUpdater;
 	/**
@@ -306,7 +300,7 @@ public class ContentFormatter implements IContentFormatter {
 		Assert.isNotNull(contentType);
 
 		if (fStrategies == null)
-			fStrategies= new HashMap();
+			fStrategies= new HashMap<>();
 
 		if (strategy == null)
 			fStrategies.remove(contentType);
@@ -355,7 +349,7 @@ public class ContentFormatter implements IContentFormatter {
 		if (fStrategies == null)
 			return null;
 
-		return (IFormattingStrategy) fStrategies.get(contentType);
+		return fStrategies.get(contentType);
 	}
 
 	@Override
@@ -657,7 +651,7 @@ public class ContentFormatter implements IContentFormatter {
 	 */
 	private int[] getAffectedPositions(int offset, int length) {
 
-		fOverlappingPositionReferences= new ArrayList();
+		fOverlappingPositionReferences= new ArrayList<>();
 
 		determinePositionsToUpdate(offset, length);
 
@@ -665,7 +659,7 @@ public class ContentFormatter implements IContentFormatter {
 
 		int[] positions= new int[fOverlappingPositionReferences.size()];
 		for (int i= 0; i < positions.length; i++) {
-			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r= fOverlappingPositionReferences.get(i);
 			positions[i]= r.getCharacterPosition() - offset;
 		}
 
@@ -681,7 +675,7 @@ public class ContentFormatter implements IContentFormatter {
 	private void removeAffectedPositions(IDocument document) {
 		int size= fOverlappingPositionReferences.size();
 		for (int i= 0; i < size; i++) {
-			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r= fOverlappingPositionReferences.get(i);
 			try {
 				document.removePosition(r.getCategory(), r.getPosition());
 			} catch (BadPositionCategoryException x) {
@@ -708,7 +702,7 @@ public class ContentFormatter implements IContentFormatter {
 
 		for (int i= 0; i < positions.length; i++) {
 
-			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
+			PositionReference r= fOverlappingPositionReferences.get(i);
 
 			if (r.refersToOffset())
 				r.setOffset(offset + positions[i]);

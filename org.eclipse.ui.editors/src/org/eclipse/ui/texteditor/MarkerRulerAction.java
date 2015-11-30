@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/** The of the marker to be created/removed. */
 	private String fMarkerType;
 	/** The cached list of markers covering a particular vertical ruler position. */
-	private List fMarkers;
+	private List<IMarker> fMarkers;
 	/** The flag indicating whether user interaction is required. */
 	private boolean fAskForLabel;
 	/** The action's resource bundle. */
@@ -212,10 +212,10 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @return boolean <code>true</code> if they are all editable
 	 * @since 3.2
 	 */
-	private boolean markersUserEditable(List markers) {
-		Iterator iter= markers.iterator();
+	private boolean markersUserEditable(List<IMarker> markers) {
+		Iterator<IMarker> iter= markers.iterator();
 		while (iter.hasNext()) {
-			if (!isUserEditable((IMarker)iter.next()))
+			if (!isUserEditable(iter.next()))
 				return false;
 		}
 		return true;
@@ -333,9 +333,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @return all a list of markers which include the ruler's line of activity
 	 */
-	protected List getMarkers() {
+	protected List<IMarker> getMarkers() {
 
-		List markers= new ArrayList();
+		List<IMarker> markers= new ArrayList<>();
 
 		IResource resource= getResource();
 		IDocument document= getDocument();
@@ -367,7 +367,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		IResource resource= getResource();
 		if (resource == null)
 			return;
-		Map attributes= getInitialAttributes();
+		Map<String, Object> attributes= getInitialAttributes();
 		if (fAskForLabel) {
 			if (!askForLabel(attributes))
 				return;
@@ -380,8 +380,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @param markers the markers to be deleted
 	 */
-	protected void removeMarkers(final List markers) {
-		IMarker[] markersArray= (IMarker[])markers.toArray(new IMarker[markers.size()]);
+	protected void removeMarkers(final List<? extends IMarker> markers) {
+		IMarker[] markersArray= markers.toArray(new IMarker[markers.size()]);
 		execute(new DeleteMarkersOperation(markersArray, getOperationName()));
 	}
 
@@ -394,7 +394,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param attributes the map of attributes
 	 * @return <code>true</code> if the map of attributes has successfully been initialized
 	 */
-	protected boolean askForLabel(Map attributes) {
+	protected boolean askForLabel(Map<String, Object> attributes) {
 
 		Object o= attributes.get("message"); //$NON-NLS-1$
 		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
@@ -427,12 +427,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * Returns the attributes with which a newly created marker will be
 	 * initialized.
 	 *
-	 * @return the initial marker attributes (key type: <code>String</code>, value type:
-	 *         <code>Object</code>)
+	 * @return the initial marker attributes
 	 */
-	protected Map getInitialAttributes() {
+	protected Map<String, Object> getInitialAttributes() {
 
-		Map attributes= new HashMap(11);
+		Map<String, Object> attributes= new HashMap<>(11);
 
 		IDocumentProvider provider= fTextEditor.getDocumentProvider();
 		IDocument document= provider.getDocument(fTextEditor.getEditorInput());
@@ -503,10 +502,11 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	private void execute(IUndoableOperation operation) {
 		final Shell shell= getTextEditor().getSite().getShell();
 		IAdaptable context= new IAdaptable() {
+			@SuppressWarnings("unchecked")
 			@Override
-			public Object getAdapter(Class adapter) {
+			public <T> T getAdapter(Class<T> adapter) {
 				if (adapter == Shell.class)
-					return shell;
+					return (T) shell;
 				return null;
 			}
 		};

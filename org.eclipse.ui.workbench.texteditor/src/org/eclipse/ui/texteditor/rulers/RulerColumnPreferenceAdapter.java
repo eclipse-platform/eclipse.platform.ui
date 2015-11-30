@@ -64,7 +64,7 @@ public final class RulerColumnPreferenceAdapter {
 		Assert.isLegal(descriptor != null);
 		String id= descriptor.getId();
 		String preference= fStore.getString(fKey);
-		Set marked= StringSetSerializer.deserialize(preference);
+		Set<String> marked= StringSetSerializer.deserialize(preference);
 		boolean shouldMark= enabled ^ descriptor.getDefaultEnablement();
 		boolean isMarked= marked.contains(id);
 		if (isMarked != shouldMark) {

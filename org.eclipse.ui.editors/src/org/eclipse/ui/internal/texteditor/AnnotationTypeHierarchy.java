@@ -30,14 +30,14 @@ import org.eclipse.ui.editors.text.EditorsUI;
  */
 public final class AnnotationTypeHierarchy {
 
-	private Map fTypeMap;
-	private Map fTypesCache= new HashMap();
+	private Map<String, String> fTypeMap;
+	private Map<String, AnnotationType> fTypesCache= new HashMap<>();
 
 	public AnnotationTypeHierarchy() {
 	}
 
 	public AnnotationType getAnnotationType(String typeName) {
-		AnnotationType type= (AnnotationType) fTypesCache.get(typeName);
+		AnnotationType type= fTypesCache.get(typeName);
 		if (type == null) {
 			String[] superTypes= computeSuperTypes(typeName);
 			type= new AnnotationType(typeName, superTypes);
@@ -52,11 +52,11 @@ public final class AnnotationTypeHierarchy {
 	}
 
 	private String[] computeSuperTypes(String typeName) {
-		ArrayList types= new ArrayList();
+		ArrayList<String> types= new ArrayList<>();
 		append(types, getDirectSuperType(typeName));
 		int index= 0;
 		while (index < types.size()) {
-			String type= (String) types.get(index++);
+			String type= types.get(index++);
 			append(types, getDirectSuperType(type));
 		}
 
@@ -66,10 +66,10 @@ public final class AnnotationTypeHierarchy {
 	}
 
 	private String getDirectSuperType(String typeName) {
-		return (String) getTypeMap().get(typeName);
+		return getTypeMap().get(typeName);
 	}
 
-	private void append(List list, String string) {
+	private void append(List<String> list, String string) {
 		if (string == null || string.trim().length() == 0)
 			return;
 
@@ -77,14 +77,14 @@ public final class AnnotationTypeHierarchy {
 			list.add(string);
 	}
 
-	private Map getTypeMap() {
+	private Map<String, String> getTypeMap() {
 		if (fTypeMap == null)
 			fTypeMap= readTypes();
 		return fTypeMap;
 	}
 
-	private Map readTypes() {
-		HashMap allTypes= new HashMap();
+	private Map<String, String> readTypes() {
+		HashMap<String, String> allTypes= new HashMap<>();
 
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "annotationTypes"); //$NON-NLS-1$
 		if (extensionPoint != null) {

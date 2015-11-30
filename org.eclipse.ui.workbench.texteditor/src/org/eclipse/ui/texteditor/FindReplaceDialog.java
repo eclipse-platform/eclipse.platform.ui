@@ -166,8 +166,8 @@ class FindReplaceDialog extends Dialog {
 	 */
 	boolean fIsRegExInit;
 
-	private List fFindHistory;
-	private List fReplaceHistory;
+	private List<String> fFindHistory;
+	private List<String> fReplaceHistory;
 	private IRegion fOldScope;
 
 	private boolean fIsTargetEditable;
@@ -222,7 +222,7 @@ class FindReplaceDialog extends Dialog {
 	 * Holds the mnemonic/button pairs for all buttons.
 	 * @since 3.7
 	 */
-	private HashMap fMnemonicButtonMap= new HashMap();
+	private HashMap<Character, Button> fMnemonicButtonMap= new HashMap<>();
 
 
 	/**
@@ -236,8 +236,8 @@ class FindReplaceDialog extends Dialog {
 		fTarget= null;
 
 		fDialogPositionInit= null;
-		fFindHistory= new ArrayList(HISTORY_SIZE - 1);
-		fReplaceHistory= new ArrayList(HISTORY_SIZE - 1);
+		fFindHistory= new ArrayList<>(HISTORY_SIZE - 1);
+		fReplaceHistory= new ArrayList<>(HISTORY_SIZE - 1);
 
 		fWrapInit= false;
 		fCaseInit= false;
@@ -438,7 +438,7 @@ class FindReplaceDialog extends Dialog {
 				else if (e.detail == SWT.TRAVERSE_MNEMONIC) {
 					Character mnemonic= new Character(Character.toLowerCase(e.character));
 					if (fMnemonicButtonMap.containsKey(mnemonic)) {
-						Button button= (Button)fMnemonicButtonMap.get(mnemonic);
+						Button button= fMnemonicButtonMap.get(mnemonic);
 						if ((fFindField.isFocusControl() || fReplaceField.isFocusControl() || (button.getStyle() & SWT.PUSH) != 0)
 								&& button.isEnabled()) {
 							Event event= new Event();
@@ -985,7 +985,7 @@ class FindReplaceDialog extends Dialog {
 	 * Returns the dialog's history.
 	 * @return the dialog's history
 	 */
-	private List getFindHistory() {
+	private List<String> getFindHistory() {
 		return fFindHistory;
 	}
 
@@ -1006,7 +1006,7 @@ class FindReplaceDialog extends Dialog {
 	 * Returns the dialog's replace history.
 	 * @return the dialog's replace history
 	 */
-	private List getReplaceHistory() {
+	private List<String> getReplaceHistory() {
 		return fReplaceHistory;
 	}
 
@@ -1130,7 +1130,7 @@ class FindReplaceDialog extends Dialog {
 			} else {
 				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
 					if (fFindHistory.size() > 0)
-						fFindField.setText((String) fFindHistory.get(0));
+						fFindField.setText(fFindHistory.get(0));
 					else
 						fFindField.setText(""); //$NON-NLS-1$
 				}
@@ -1628,7 +1628,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param combo combo to be updated
 	 * @param content to be put into the combo
 	 */
-	private void updateCombo(Combo combo, List content) {
+	private void updateCombo(Combo combo, List<String> content) {
 		combo.removeAll();
 		for (int i= 0; i < content.size(); i++) {
 			combo.add(content.get(i).toString());
@@ -1669,7 +1669,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param combo to be updated
 	 * @param history to be put into the combo
 	 */
-	private void updateHistory(Combo combo, List history) {
+	private void updateHistory(Combo combo, List<String> history) {
 		String findString= combo.getText();
 		int index= history.indexOf(findString);
 		if (index != 0) {
@@ -1812,7 +1812,7 @@ class FindReplaceDialog extends Dialog {
 
 		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
-			List history= getFindHistory();
+			List<String> history= getFindHistory();
 			history.clear();
 			for (int i= 0; i < findHistory.length; i++)
 				history.add(findHistory[i]);
@@ -1820,7 +1820,7 @@ class FindReplaceDialog extends Dialog {
 
 		String[] replaceHistory= s.getArray("replacehistory"); //$NON-NLS-1$
 		if (replaceHistory != null) {
-			List history= getReplaceHistory();
+			List<String> history= getReplaceHistory();
 			history.clear();
 			for (int i= 0; i < replaceHistory.length; i++)
 				history.add(replaceHistory[i]);
@@ -1839,7 +1839,7 @@ class FindReplaceDialog extends Dialog {
 		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		s.put("isRegEx", fIsRegExInit); //$NON-NLS-1$
 
-		List history= getFindHistory();
+		List<String> history= getFindHistory();
 		String findString= getFindString();
 		if (findString.length() > 0)
 			history.add(0, findString);
@@ -1860,11 +1860,11 @@ class FindReplaceDialog extends Dialog {
 	 * @param sectionName the section name
 	 * @since 3.2
 	 */
-	private void writeHistory(List history, IDialogSettings settings, String sectionName) {
+	private void writeHistory(List<String> history, IDialogSettings settings, String sectionName) {
 		int itemCount= history.size();
-		Set distinctItems= new HashSet(itemCount);
+		Set<String> distinctItems= new HashSet<>(itemCount);
 		for (int i= 0; i < itemCount; i++) {
-			String item= (String)history.get(i);
+			String item= history.get(i);
 			if (distinctItems.contains(item)) {
 				history.remove(i--);
 				itemCount--;

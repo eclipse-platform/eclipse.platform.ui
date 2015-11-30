@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,14 +73,13 @@ public final class RulerColumnRegistry {
 	}
 
 	/**
-	 * All descriptors (element type:
-	 * {@link RulerColumnDescriptor}).
+	 * All descriptors.
 	 */
-	private List fDescriptors= null;
+	private List<RulerColumnDescriptor> fDescriptors= null;
 	/**
-	 * All descriptors by id (element type: {@link RulerColumnDescriptor}).
+	 * All descriptors by id.
 	 */
-	private Map fDescriptorMap= null;
+	private Map<String, RulerColumnDescriptor> fDescriptorMap= null;
 
 	/**
 	 * <code>true</code> if this registry has been loaded.
@@ -103,9 +102,8 @@ public final class RulerColumnRegistry {
 	 * </p>
 	 *
 	 * @return the sorted list of extensions to the <code>rulerColumns</code> extension point
-	 *         (element type: {@link RulerColumnDescriptor})
 	 */
-	public List getColumnDescriptors() {
+	public List<RulerColumnDescriptor> getColumnDescriptors() {
 		ensureExtensionPointRead();
 		return fDescriptors;
 	}
@@ -121,7 +119,7 @@ public final class RulerColumnRegistry {
 	public RulerColumnDescriptor getColumnDescriptor(String id) {
 		Assert.isLegal(id != null);
 		ensureExtensionPointRead();
-		return (RulerColumnDescriptor) fDescriptorMap.get(id);
+		return fDescriptorMap.get(id);
 	}
 
 	/**
@@ -147,13 +145,13 @@ public final class RulerColumnRegistry {
 	 */
 	public void reload() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		List elements= new ArrayList(Arrays.asList(registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, EXTENSION_POINT)));
+		List<IConfigurationElement> elements= new ArrayList<>(Arrays.asList(registry.getConfigurationElementsFor(TextEditorPlugin.PLUGIN_ID, EXTENSION_POINT)));
 
-		List descriptors= new ArrayList();
-		Map descriptorMap= new HashMap();
+		List<RulerColumnDescriptor> descriptors= new ArrayList<>();
+		Map<String, RulerColumnDescriptor> descriptorMap= new HashMap<>();
 
-		for (Iterator iter= elements.iterator(); iter.hasNext();) {
-			IConfigurationElement element= (IConfigurationElement) iter.next();
+		for (Iterator<IConfigurationElement> iter= elements.iterator(); iter.hasNext();) {
+			IConfigurationElement element= iter.next();
 			try {
 				RulerColumnDescriptor desc= new RulerColumnDescriptor(element, this);
 				String id= desc.getId();
@@ -189,7 +187,7 @@ public final class RulerColumnRegistry {
 	 *
 	 * @param descriptors the descriptors to sort
 	 */
-	private void sort(List descriptors) {
+	private void sort(List<RulerColumnDescriptor> descriptors) {
 		/*
 		 * Topological sort of the DAG defined by the plug-in dependencies
 		 * 1. TopoSort descriptors by plug-in dependency
@@ -202,25 +200,25 @@ public final class RulerColumnRegistry {
 				return ((RulerColumnDescriptor) object).getConfigurationElement();
 			}
 		};
-		Object[] array= descriptors.toArray();
+		RulerColumnDescriptor[] array= descriptors.toArray(new RulerColumnDescriptor[descriptors.size()]);
 		sorter.sort(array);
 
-		Map descriptorsById= new HashMap();
+		Map<String, RulerColumnDescriptor> descriptorsById= new HashMap<>();
 		for (int i= 0; i < array.length; i++) {
-			RulerColumnDescriptor desc= (RulerColumnDescriptor) array[i];
+			RulerColumnDescriptor desc= array[i];
 			descriptorsById.put(desc.getId(), desc);
 		}
 
-		DAG dag= new DAG();
+		DAG<RulerColumnDescriptor> dag= new DAG<>();
 		for (int i= 0; i < array.length; i++) {
-			RulerColumnDescriptor desc= (RulerColumnDescriptor) array[i];
+			RulerColumnDescriptor desc= array[i];
 			dag.addVertex(desc);
 
-			Set before= desc.getPlacement().getConstraints();
-			for (Iterator it= before.iterator(); it.hasNext();) {
-				RulerColumnPlacementConstraint constraint= (RulerColumnPlacementConstraint) it.next();
+			Set<RulerColumnPlacementConstraint> before= desc.getPlacement().getConstraints();
+			for (Iterator<RulerColumnPlacementConstraint> it= before.iterator(); it.hasNext();) {
+				RulerColumnPlacementConstraint constraint= it.next();
 				String id= constraint.getId();
-				RulerColumnDescriptor target= (RulerColumnDescriptor) descriptorsById.get(id);
+				RulerColumnDescriptor target= descriptorsById.get(id);
 				if (target == null) {
 					noteUnknownTarget(desc, id);
 				} else {
@@ -235,10 +233,10 @@ public final class RulerColumnRegistry {
 			}
 		}
 
-		Comparator gravityComp= new Comparator() {
+		Comparator<RulerColumnDescriptor> gravityComp= new Comparator<RulerColumnDescriptor>() {
 			@Override
-			public int compare(Object o1, Object o2) {
-				float diff= ((RulerColumnDescriptor) o1).getPlacement().getGravity() - ((RulerColumnDescriptor) o2).getPlacement().getGravity();
+			public int compare(RulerColumnDescriptor o1, RulerColumnDescriptor o2) {
+				float diff= o1.getPlacement().getGravity() - o2.getPlacement().getGravity();
 				if (diff == 0)
 					return 0;
 				if (diff < 0)
@@ -248,10 +246,10 @@ public final class RulerColumnRegistry {
 		};
 
 		/* Topological sort - always select the source with the least gravity */
-		Set toProcess= dag.getSources();
+		Set<RulerColumnDescriptor> toProcess= dag.getSources();
 		int index= 0;
 		while (!toProcess.isEmpty()) {
-			Object next= Collections.min(toProcess, gravityComp);
+			RulerColumnDescriptor next= Collections.min(toProcess, gravityComp);
 			array[index]= next;
 			index++;
 			dag.removeVertex(next);
@@ -259,7 +257,7 @@ public final class RulerColumnRegistry {
 		}
 		Assert.isTrue(index == array.length);
 
-		ListIterator it= descriptors.listIterator();
+		ListIterator<RulerColumnDescriptor> it= descriptors.listIterator();
 		for (int i= 0; i < index; i++) {
 			it.next();
 			it.set(array[i]);

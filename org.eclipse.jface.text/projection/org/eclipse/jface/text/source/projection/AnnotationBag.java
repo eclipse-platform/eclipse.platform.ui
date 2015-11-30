@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import org.eclipse.jface.text.source.Annotation;
  */
 public class AnnotationBag extends Annotation {
 
-	private Set fAnnotations;
+	private Set<Annotation> fAnnotations;
 
 	/**
 	 * Creates a new annotation bag.
@@ -45,7 +45,7 @@ public class AnnotationBag extends Annotation {
 	 */
 	public void add(Annotation annotation) {
 		if (fAnnotations == null)
-			fAnnotations= new HashSet(2);
+			fAnnotations= new HashSet<>(2);
 		fAnnotations.add(annotation);
 	}
 
@@ -78,7 +78,7 @@ public class AnnotationBag extends Annotation {
 	 * @return an iterator for all annotations in the bag or <code>null</code>
 	 * @since 3.1
 	 */
-	public Iterator iterator() {
+	public Iterator<Annotation> iterator() {
 		if (!isEmpty())
 			return fAnnotations.iterator();
 		return null;

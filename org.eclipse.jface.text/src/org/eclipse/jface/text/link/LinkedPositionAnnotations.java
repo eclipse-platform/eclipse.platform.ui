@@ -46,8 +46,8 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 
 	private Annotation fFocusAnnotation= null;
 	private Annotation fExitAnnotation= null;
-	private final Map fGroupAnnotations= new HashMap();
-	private final Map fTargetAnnotations= new HashMap();
+	private final Map<Position, Annotation> fGroupAnnotations= new HashMap<>();
+	private final Map<Position, Annotation> fTargetAnnotations= new HashMap<>();
 	private Position[] fTargets= new Position[0];
 	private LinkedPosition fExitPosition= null;
 
@@ -96,7 +96,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param positions the new slave positions, or <code>null</code> if no slave positions are to be set
 	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
-	private void setGroupPositions(List positions) throws BadLocationException {
+	private void setGroupPositions(List<Position> positions) throws BadLocationException {
 		if (!fMarkSlaves)
 			return;
 
@@ -104,11 +104,11 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		// Algorithm: toRemove contains all mappings at first, but all that are in
 		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
-		List toRemove= new ArrayList(fGroupAnnotations.values());
-		Map toAdd= new HashMap();
+		List<Annotation> toRemove= new ArrayList<>(fGroupAnnotations.values());
+		Map<Annotation, Position> toAdd= new HashMap<>();
 		if (positions != null) {
-			for (Iterator iter= positions.iterator(); iter.hasNext();) {
-				Position p= (Position) iter.next();
+			for (Iterator<Position> iter= positions.iterator(); iter.hasNext();) {
+				Position p= iter.next();
 				if (fGroupAnnotations.containsKey(p)) {
 					toRemove.remove(fGroupAnnotations.get(p));
 				} else {
@@ -120,7 +120,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		}
 		fGroupAnnotations.values().removeAll(toRemove);
 
-		replaceAnnotations((Annotation[]) toRemove.toArray(new Annotation[0]), toAdd, false);
+		replaceAnnotations(toRemove.toArray(new Annotation[0]), toAdd, false);
 	}
 
 	/**
@@ -130,7 +130,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 * @param positions the new target positions, or <code>null</code> if no target positions are to be set
 	 * @throws BadLocationException in case any of the given positions is invalid
 	 */
-	private void setTargetPositions(List positions) throws BadLocationException {
+	private void setTargetPositions(List<Position> positions) throws BadLocationException {
 		if (!fMarkTargets)
 			return;
 
@@ -138,11 +138,11 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		// Algorithm: toRemove contains all mappings at first, but all that are in
 		// positions get removed -> toRemove contains the difference set of previous - new
 		// toAdd are the new positions, which don't exist in previous = new - previous
-		List toRemove= new ArrayList(fTargetAnnotations.values());
-		Map toAdd= new HashMap();
+		List<Annotation> toRemove= new ArrayList<>(fTargetAnnotations.values());
+		Map<Annotation, Position> toAdd= new HashMap<>();
 		if (positions != null) {
-			for (Iterator iter= positions.iterator(); iter.hasNext();) {
-				Position p= (Position) iter.next();
+			for (Iterator<Position> iter= positions.iterator(); iter.hasNext();) {
+				Position p= iter.next();
 				if (fTargetAnnotations.containsKey(p)) {
 					toRemove.remove(fTargetAnnotations.get(p));
 				} else {
@@ -154,7 +154,7 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		}
 		fTargetAnnotations.values().removeAll(toRemove);
 
-		replaceAnnotations((Annotation[]) toRemove.toArray(new Annotation[0]), toAdd, false);
+		replaceAnnotations(toRemove.toArray(new Annotation[0]), toAdd, false);
 	}
 
 	/**
@@ -175,14 +175,14 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 		if (position != null)
 			linkedGroup= env.getGroupForPosition(position);
 
-		List targets= new ArrayList();
+		List<Position> targets= new ArrayList<>();
 		targets.addAll(Arrays.asList(fTargets));
 
-		List group;
+		List<Position> group;
 		if (linkedGroup != null)
-			group= new ArrayList(Arrays.asList(linkedGroup.getPositions()));
+			group= new ArrayList<>(Arrays.asList(linkedGroup.getPositions()));
 		else
-			group= new ArrayList();
+			group= new ArrayList<>();
 
 		if (position == null || !fDocument.equals(position.getDocument()))
 			// position is not valid if not in this document
@@ -225,8 +225,8 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	 *
 	 * @param list the list of positions to prune
 	 */
-	private void prune(List list) {
-		for (Iterator iter= list.iterator(); iter.hasNext();) {
+	private void prune(List<Position> list) {
+		for (Iterator<Position> iter= list.iterator(); iter.hasNext();) {
 			LinkedPosition pos= (LinkedPosition) iter.next();
 			if (!pos.getDocument().equals(fDocument))
 				iter.remove();

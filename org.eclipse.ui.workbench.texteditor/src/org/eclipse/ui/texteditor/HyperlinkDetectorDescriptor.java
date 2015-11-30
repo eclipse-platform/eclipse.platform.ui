@@ -221,7 +221,7 @@ public final class HyperlinkDetectorDescriptor {
 
 	private static HyperlinkDetectorDescriptor[] createDescriptors(IConfigurationElement[] elements) {
 		HyperlinkDetectorTargetDescriptor[] targets= HyperlinkDetectorTargetDescriptor.getContributedHyperlinkDetectorTargets();
-		List result= new ArrayList(elements.length);
+		List<HyperlinkDetectorDescriptor> result= new ArrayList<>(elements.length);
 		for (int i= 0; i < elements.length; i++) {
 			IConfigurationElement element= elements[i];
 			if (HYPERLINK_DETECTOR_ELEMENT.equals(element.getName())) {
@@ -237,7 +237,7 @@ public final class HyperlinkDetectorDescriptor {
 				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, null));
 			}
 		}
-		return (HyperlinkDetectorDescriptor[])result.toArray(new HyperlinkDetectorDescriptor[result.size()]);
+		return result.toArray(new HyperlinkDetectorDescriptor[result.size()]);
 	}
 
 }

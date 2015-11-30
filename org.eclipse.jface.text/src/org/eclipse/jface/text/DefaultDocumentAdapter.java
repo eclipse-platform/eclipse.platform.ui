@@ -40,7 +40,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	/** The original line delimiters */
 	private String[] fOriginalLineDelimiters;
 	/** The registered text change listeners */
-	private List fTextChangeListeners= new ArrayList(1);
+	private List<TextChangeListener> fTextChangeListeners= new ArrayList<>(1);
 	/**
 	 * The remembered document event
 	 * @since 2.0
@@ -317,9 +317,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		TextChangedEvent event= new TextChangedEvent(this);
 
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 			while (e.hasNext())
-				((TextChangeListener) e.next()).textChanged(event);
+				e.next().textChanged(event);
 		}
 	}
 
@@ -334,9 +334,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		TextChangedEvent event = new TextChangedEvent(this);
 
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 			while (e.hasNext())
-				((TextChangeListener) e.next()).textSet(event);
+				e.next().textSet(event);
 		}
 	}
 
@@ -362,9 +362,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 			event.newLineCount= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
 
 			if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-				Iterator e= new ArrayList(fTextChangeListeners).iterator();
+				Iterator<TextChangeListener> e= new ArrayList<>(fTextChangeListeners).iterator();
 				while (e.hasNext())
-					 ((TextChangeListener) e.next()).textChanging(event);
+					 e.next().textChanging(event);
 			}
 
 		} catch (BadLocationException e) {

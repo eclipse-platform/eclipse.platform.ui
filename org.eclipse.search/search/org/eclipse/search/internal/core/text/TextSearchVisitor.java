@@ -142,7 +142,7 @@ public class TextSearchVisitor {
 		private final IFile[] fFiles;
 		private final int fBegin;
 		private final int fEnd;
-		private final Map fDocumentsInEditors;
+		private final Map<IFile, IDocument> fDocumentsInEditors;
 		private ReusableMatchAccess fReusableMatchAccess;
 		private IProgressMonitor fMonitor;
 
@@ -154,7 +154,7 @@ public class TextSearchVisitor {
 		 * @param end one past the last element in the array to process
 		 * @param documentsInEditors a map from IFile to IDocument for all open, dirty editors
 		 */
-		public TextSearchJob(IFile[] files, int begin, int end, Map documentsInEditors) {
+		public TextSearchJob(IFile[] files, int begin, int end, Map<IFile, IDocument> documentsInEditors) {
 			super(files[begin].getName());
 			setSystem(true);
 			fFiles = files;
@@ -185,7 +185,7 @@ public class TextSearchVisitor {
 			return fMonitor;
 		}
 
-		public Map getDocumentsInEditors() {
+		public Map<IFile, IDocument> getDocumentsInEditors() {
 			return fDocumentsInEditors;
 		}
 
@@ -281,7 +281,7 @@ public class TextSearchVisitor {
 			monitorUpdateJob.schedule();
 			try {
 				fCollector.beginReporting();
-				Map documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.EMPTY_MAP;
+				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
 				int filesPerJob = (files.length + jobCount - 1) / jobCount;
 				for (int first= 0; first < files.length; first += filesPerJob) {
 					int end= Math.min(files.length, first + filesPerJob);
@@ -324,8 +324,8 @@ public class TextSearchVisitor {
 	 *
 	 * @return a map from IFile to IDocument for all open, dirty editors
 	 */
-	private Map evalNonFileBufferDocuments() {
-		Map result= new HashMap();
+	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
+		Map<IFile, IDocument> result= new HashMap<>();
 		IWorkbench workbench= SearchPlugin.getDefault().getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i= 0; i < windows.length; i++) {
@@ -343,7 +343,7 @@ public class TextSearchVisitor {
 		return result;
 	}
 
-	private void evaluateTextEditor(Map result, IEditorPart ep) {
+	private void evaluateTextEditor(Map<IFile, IDocument> result, IEditorPart ep) {
 		IEditorInput input= ep.getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput) input).getFile();
@@ -497,8 +497,8 @@ public class TextSearchVisitor {
 		return message;
 	}
 
-	private IDocument getOpenDocument(IFile file, Map documentsInEditors) {
-		IDocument document= (IDocument)documentsInEditors.get(file);
+	private IDocument getOpenDocument(IFile file, Map<IFile, IDocument> documentsInEditors) {
+		IDocument document= documentsInEditors.get(file);
 		if (document == null) {
 			ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
 			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);

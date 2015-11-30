@@ -54,7 +54,7 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		private IAnnotationModel fAnnotationModel;
 
 		/** Annotations to add. */
-		private Map fAddAnnotations;
+		private Map<Annotation, Position> fAddAnnotations;
 
 		/** Lock object for modifying the annotations. */
 		private Object fLockObject;
@@ -80,22 +80,22 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 		@Override
 		public void beginCollecting() {
-			fAddAnnotations= new HashMap();
+			fAddAnnotations= new HashMap<>();
 		}
 
 		@Override
 		public void endCollecting() {
 
-			List toRemove= new ArrayList();
+			List<Annotation> toRemove= new ArrayList<>();
 
 			synchronized (fLockObject) {
-				Iterator iter= fAnnotationModel.getAnnotationIterator();
+				Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
-					Annotation annotation= (Annotation)iter.next();
+					Annotation annotation= iter.next();
 					if (SpellingAnnotation.TYPE.equals(annotation.getType()))
 						toRemove.add(annotation);
 				}
-				Annotation[] annotationsToRemove= (Annotation[])toRemove.toArray(new Annotation[toRemove.size()]);
+				Annotation[] annotationsToRemove= toRemove.toArray(new Annotation[toRemove.size()]);
 
 				if (fAnnotationModel instanceof IAnnotationModelExtension)
 					((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(annotationsToRemove, fAddAnnotations);
@@ -103,8 +103,8 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 					for (int i= 0; i < annotationsToRemove.length; i++)
 						fAnnotationModel.removeAnnotation(annotationsToRemove[i]);
 					for (iter= fAddAnnotations.keySet().iterator(); iter.hasNext();) {
-						Annotation annotation= (Annotation)iter.next();
-						fAnnotationModel.addAnnotation(annotation, (Position)fAddAnnotations.get(annotation));
+						Annotation annotation= iter.next();
+						fAnnotationModel.addAnnotation(annotation, fAddAnnotations.get(annotation));
 					}
 				}
 			}

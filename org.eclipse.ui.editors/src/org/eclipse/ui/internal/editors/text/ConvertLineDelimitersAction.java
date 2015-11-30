@@ -154,7 +154,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	 */
 	private IFile[] filterUnacceptableFiles(IFile[] files) {
 		boolean askForBinary= true;
-		Set filtered= new HashSet();
+		Set<IFile> filtered= new HashSet<>();
 		for (int i= 0; i < files.length; i++) {
 			IFile file= files[i];
 			if (isAcceptableLocation(file.getFullPath())) {
@@ -174,7 +174,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 				}
 			}
 		}
-		return (IFile[]) filtered.toArray(new IFile[filtered.size()]);
+		return filtered.toArray(new IFile[filtered.size()]);
 	}
 
 }

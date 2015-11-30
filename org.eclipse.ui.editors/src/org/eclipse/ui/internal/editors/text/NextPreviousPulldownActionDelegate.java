@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	private IPreferenceStore fStore;
 
 	/** Action for handling menu item selection. */
-	private static class NavigationEnablementAction extends Action implements Comparable {
+	private static class NavigationEnablementAction extends Action implements Comparable<NavigationEnablementAction> {
 
 		/** The preference store. */
 		private IPreferenceStore fStore;
@@ -82,13 +82,8 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		}
 
 		@Override
-		public int compareTo(Object o) {
-			if (!(o instanceof NavigationEnablementAction))
-				return -1;
-
-			String otherName= ((NavigationEnablementAction)o).fName;
-
-			return Collator.getInstance().compare(fName, otherName);
+		public int compareTo(NavigationEnablementAction o) {
+			return Collator.getInstance().compare(fName, o.fName);
 		}
 	}
 
@@ -160,11 +155,11 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 */
 	private IAction[] getActionsFromDescriptors() {
 		MarkerAnnotationPreferences fMarkerAnnotationPreferences= EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
-		SortedSet containers= new TreeSet();
+		SortedSet<NavigationEnablementAction> containers= new TreeSet<>();
 
-		Iterator iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> iter= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (iter.hasNext()) {
-			AnnotationPreference preference= (AnnotationPreference)iter.next();
+			AnnotationPreference preference= iter.next();
 			String key= preference.getShowInNextPrevDropdownToolbarActionKey();
 			if (key != null && fStore.getBoolean(key)) {
 				String preferenceKey= getPreferenceKey(preference);
@@ -182,7 +177,7 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 			}
 		}
 
-		return (IAction[]) containers.toArray(new Action[containers.size()]);
+		return containers.toArray(new Action[containers.size()]);
 	}
 
 	@Override

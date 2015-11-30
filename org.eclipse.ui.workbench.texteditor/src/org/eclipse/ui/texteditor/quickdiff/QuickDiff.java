@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,12 +66,12 @@ public class QuickDiff {
 	 *
 	 * @return the non-modifiable list of extensions to the <code>quickDiffReferenceProvider</code> extension point.
 	 */
-	public List getReferenceProviderDescriptors() {
+	public List<ReferenceProviderDescriptor> getReferenceProviderDescriptors() {
 		QuickDiffExtensionsRegistry registry= TextEditorPlugin.getDefault().getQuickDiffExtensionRegistry();
 		if (registry != null)
 			return registry.getReferenceProviderDescriptors();
 
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	/**
@@ -91,10 +91,10 @@ public class QuickDiff {
 		Assert.isNotNull(editor);
 		Assert.isNotNull(id);
 
-		List descs= getReferenceProviderDescriptors();
+		List<ReferenceProviderDescriptor> descs= getReferenceProviderDescriptors();
 		// try to fetch preferred provider; load if needed
-		for (Iterator iter= descs.iterator(); iter.hasNext();) {
-			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.next();
+		for (Iterator<ReferenceProviderDescriptor> iter= descs.iterator(); iter.hasNext();) {
+			ReferenceProviderDescriptor desc= iter.next();
 			if (desc.getId().equals(id)) {
 				IQuickDiffReferenceProvider provider= desc.createProvider();
 				if (provider != null) {
@@ -107,8 +107,8 @@ public class QuickDiff {
 			}
 		}
 
-		for (ListIterator iter= descs.listIterator(descs.size()); iter.hasPrevious();) {
-			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.previous();
+		for (ListIterator<ReferenceProviderDescriptor> iter= descs.listIterator(descs.size()); iter.hasPrevious();) {
+			ReferenceProviderDescriptor desc= iter.previous();
 			IQuickDiffReferenceProvider provider= desc.createProvider();
 			if (provider != null) {
 				provider.setActiveEditor(editor);

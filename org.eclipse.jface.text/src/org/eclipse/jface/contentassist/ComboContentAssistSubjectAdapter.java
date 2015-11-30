@@ -85,7 +85,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	 * The combo widget.
 	 */
 	private Combo fCombo;
-	private HashMap fModifyListeners;
+	private HashMap<SelectionListener, Listener> fModifyListeners;
 
 	/**
 	 * Creates a content assist subject control adapter for the given combo.
@@ -95,7 +95,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	public ComboContentAssistSubjectAdapter(Combo combo) {
 		Assert.isNotNull(combo);
 		fCombo= combo;
-		fModifyListeners= new HashMap();
+		fModifyListeners= new HashMap<>();
 	 }
 
 	@Override

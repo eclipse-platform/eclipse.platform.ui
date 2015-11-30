@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,22 +183,22 @@ public final class MoveSourceEdit extends TextEdit {
 	//---- consistency check ----------------------------------------------------------------
 
 	@Override
-	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List<List<TextEdit>> sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
 		// performSourceComputation) we only do something if we don't have a
 		// computed source already.
 		if (fSourceContent == null) {
 			if (sourceEdits.size() <= result) {
-				List list= new ArrayList();
+				List<TextEdit> list= new ArrayList<>();
 				list.add(this);
 				for (int i= sourceEdits.size(); i < result; i++)
 					sourceEdits.add(null);
 				sourceEdits.add(list);
 			} else {
-				List list= (List)sourceEdits.get(result);
+				List<TextEdit> list= sourceEdits.get(result);
 				if (list == null) {
-					list= new ArrayList();
+					list= new ArrayList<>();
 					sourceEdits.add(result, list);
 				}
 				list.add(this);
@@ -292,9 +292,9 @@ public final class MoveSourceEdit extends TextEdit {
 
 	private void applyTransformation(IDocument document, int style) throws MalformedTreeException {
 		if ((style & TextEdit.UPDATE_REGIONS) != 0 && fSourceRoot != null) {
-			Map editMap= new HashMap();
+			Map<TextEdit, TextEdit> editMap= new HashMap<>();
 			TextEdit newEdit= createEdit(editMap);
-			List replaces= new ArrayList(Arrays.asList(fModifier.getModifications(document.get())));
+			List<ReplaceEdit> replaces= new ArrayList<>(Arrays.asList(fModifier.getModifications(document.get())));
 			insertEdits(newEdit, replaces);
 			try {
 				newEdit.apply(document, style);
@@ -316,14 +316,14 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 	}
 
-	private TextEdit createEdit(Map editMap) {
+	private TextEdit createEdit(Map<TextEdit, TextEdit> editMap) {
 		MultiTextEdit result= new MultiTextEdit(0, fSourceRoot.getLength());
 		editMap.put(result, fSourceRoot);
 		createEdit(fSourceRoot, result, editMap);
 		return result;
 	}
 
-	private static void createEdit(TextEdit source, TextEdit target, Map editMap) {
+	private static void createEdit(TextEdit source, TextEdit target, Map<TextEdit, TextEdit> editMap) {
 		TextEdit[] children= source.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			TextEdit child= children[i];
@@ -338,13 +338,13 @@ public final class MoveSourceEdit extends TextEdit {
 		}
 	}
 
-	private void insertEdits(TextEdit root, List edits) {
+	private void insertEdits(TextEdit root, List<ReplaceEdit> edits) {
 		while(edits.size() > 0) {
-			ReplaceEdit edit= (ReplaceEdit)edits.remove(0);
+			ReplaceEdit edit= edits.remove(0);
 			insert(root, edit, edits);
 		}
 	}
-	private static void insert(TextEdit parent, ReplaceEdit edit, List edits) {
+	private static void insert(TextEdit parent, ReplaceEdit edit, List<ReplaceEdit> edits) {
 		if (!parent.hasChildren()) {
 			parent.addChild(edit);
 			return;
@@ -419,10 +419,10 @@ public final class MoveSourceEdit extends TextEdit {
 		return result;
 	}
 
-	private static void restorePositions(Map editMap) {
-		for (Iterator iter= editMap.keySet().iterator(); iter.hasNext();) {
-			TextEdit marker= (TextEdit)iter.next();
-			TextEdit edit= (TextEdit)editMap.get(marker);
+	private static void restorePositions(Map<TextEdit, TextEdit> editMap) {
+		for (Iterator<TextEdit> iter= editMap.keySet().iterator(); iter.hasNext();) {
+			TextEdit marker= iter.next();
+			TextEdit edit= editMap.get(marker);
 			if (marker.isDeleted()) {
 				edit.markAsDeleted();
 			} else {

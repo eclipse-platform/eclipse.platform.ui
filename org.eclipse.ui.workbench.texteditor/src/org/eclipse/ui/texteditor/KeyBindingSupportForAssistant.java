@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	}
 
 
-	private List fReplacedCommands;
+	private List<ReplacedCommand> fReplacedCommands;
 	private ContentAssistantFacade fContentAssistantFacade;
 	private IQuickAssistAssistant fQuickAssistAssistant;
 
@@ -133,7 +133,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	public void assistSessionStarted(ContentAssistEvent event) {
 		ICommandService commandService= PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandler handler= getHandler(ContentAssistant.SELECT_NEXT_PROPOSAL_COMMAND_ID);
-		fReplacedCommands= new ArrayList(10);
+		fReplacedCommands= new ArrayList<>(10);
 		fReplacedCommands.add(new ReplacedCommand(ITextEditorActionDefinitionIds.LINE_DOWN, handler, commandService));
 		handler= getHandler(ContentAssistant.SELECT_PREVIOUS_PROPOSAL_COMMAND_ID);
 		fReplacedCommands.add(new ReplacedCommand(ITextEditorActionDefinitionIds.LINE_UP, handler, commandService));
@@ -170,9 +170,9 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		if (fReplacedCommands == null)
 			return;
 
-		Iterator iter= fReplacedCommands.iterator();
+		Iterator<ReplacedCommand> iter= fReplacedCommands.iterator();
 		while (iter.hasNext())
-			((ReplacedCommand)iter.next()).activate();
+			iter.next().activate();
 		fReplacedCommands= null;
 	}
 

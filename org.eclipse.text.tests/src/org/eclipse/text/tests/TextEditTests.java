@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.text.edits.CopySourceEdit;
 import org.eclipse.text.edits.CopyTargetEdit;
@@ -38,9 +34,13 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class TextEditTests extends TestCase {
 
-	private static final Class THIS= TextEditTests.class;
+	private static final Class<TextEditTests> THIS= TextEditTests.class;
 
 	private IDocument fDocument;
 	private MultiTextEdit fRoot;
@@ -274,9 +274,9 @@ public class TextEditTests extends TestCase {
 		TextEdit e2= new ReplaceEdit(2, 3, "3456");
 		root.addChild(e1);
 		root.addChild(e2);
-		List org= flatten(root);
+		List<TextEdit> org= flatten(root);
 		TextEditCopier copier= new TextEditCopier(root);
-		List copy= flatten(copier.perform());
+		List<TextEdit> copy= flatten(copier.perform());
 		compare(org, copy);
 	}
 
@@ -290,19 +290,19 @@ public class TextEditTests extends TestCase {
 		root.addChild(s1);
 		root.addChild(t1);
 		root.addChild(t2);
-		List org= flatten(root);
+		List<TextEdit> org= flatten(root);
 		TextEditCopier copier= new TextEditCopier(root);
-		List copy= flatten(copier.perform());
+		List<TextEdit> copy= flatten(copier.perform());
 		compare(org, copy);
 	}
 
-	private List flatten(TextEdit edit) {
-		List result= new ArrayList();
+	private List<TextEdit> flatten(TextEdit edit) {
+		List<TextEdit> result= new ArrayList<>();
 		flatten(result, edit);
 		return result;
 	}
 
-	private static void flatten(List result, TextEdit edit) {
+	private static void flatten(List<TextEdit> result, TextEdit edit) {
 		result.add(edit);
 		TextEdit[] children= edit.getChildren();
 		for (int i= 0; i < children.length; i++) {
@@ -310,10 +310,10 @@ public class TextEditTests extends TestCase {
 		}
 	}
 
-	private static void compare(List org, List copy) {
+	private static void compare(List<TextEdit> org, List<TextEdit> copy) {
 		assertTrue("Same length", org.size() == copy.size());
-		for (Iterator iter= copy.iterator(); iter.hasNext();) {
-			TextEdit edit= (TextEdit)iter.next();
+		for (Iterator<TextEdit> iter= copy.iterator(); iter.hasNext();) {
+			TextEdit edit= iter.next();
 			assertTrue("Original is part of copy list", !org.contains(edit));
 			if (edit instanceof MoveSourceEdit) {
 				MoveSourceEdit source= (MoveSourceEdit)edit;
@@ -1206,7 +1206,8 @@ public class TextEditTests extends TestCase {
 	public void testComparator() throws Exception {
 		DeleteEdit d1= new DeleteEdit(1,3);
 		Accessor accessor= new Accessor(d1, TextEdit.class);
-		Comparator comparator= (Comparator)accessor.get("INSERTION_COMPARATOR");
+		@SuppressWarnings("unchecked")
+		Comparator<TextEdit> comparator= (Comparator<TextEdit>)accessor.get("INSERTION_COMPARATOR");
 
 		TextEdit edit1= new InsertEdit(1, "test");
 		TextEdit edit2= new InsertEdit(1, "test");

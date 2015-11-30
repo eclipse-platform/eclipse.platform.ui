@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,10 +57,10 @@ import org.eclipse.search.ui.ISearchResultView;
 public class SearchResultView extends ViewPart implements ISearchResultView {
 
 
-	private static Map fgLabelProviders= new HashMap(5);
+	private static Map<String, ILabelProvider> fgLabelProviders= new HashMap<>(5);
 
 	private SearchResultViewer fViewer;
-	private Map fResponse;
+	private Map<Object, SearchResultViewEntry> fResponse;
 	private IMemento fMemento;
 	private IPropertyChangeListener fPropertyChangeListener;
 	private CellEditorActionHandler fCellEditorActionHandler;
@@ -183,7 +183,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 	ILabelProvider getLabelProvider(String pageId) {
 		if (pageId != null)
-			return (ILabelProvider)fgLabelProviders.get(pageId);
+			return fgLabelProviders.get(pageId);
 		return null;
 	}
 
@@ -245,10 +245,10 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		Assert.isNotNull(pluralLabelPattern);
 		Assert.isNotNull(gotoAction);
 
-		fResponse= new HashMap(500);
+		fResponse= new HashMap<>(500);
 		setGotoMarkerAction(gotoAction);
 
-		ILabelProvider oldLabelProvider= (ILabelProvider)fgLabelProviders.get(pageId);
+		ILabelProvider oldLabelProvider= fgLabelProviders.get(pageId);
 		if (oldLabelProvider != null)
 			oldLabelProvider.dispose();
 		fgLabelProviders.put(pageId, labelProvider);
@@ -301,10 +301,10 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		Assert.isNotNull(pluralLabelPattern);
 		Assert.isNotNull(gotoAction);
 
-		fResponse= new HashMap(500);
+		fResponse= new HashMap<>(500);
 		setGotoMarkerAction(gotoAction);
 
-		ILabelProvider oldLabelProvider= (ILabelProvider)fgLabelProviders.get(pageId);
+		ILabelProvider oldLabelProvider= fgLabelProviders.get(pageId);
 		if (oldLabelProvider != null)
 			oldLabelProvider.dispose();
 		fgLabelProviders.put(pageId, labelProvider);
@@ -327,7 +327,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 */
 	@Override
 	public void addMatch(String description, Object groupByKey, IResource resource, IMarker marker) {
-		SearchResultViewEntry entry= (SearchResultViewEntry)fResponse.get(groupByKey);
+		SearchResultViewEntry entry= fResponse.get(groupByKey);
 		if (entry == null) {
 			entry= new SearchResultViewEntry(groupByKey, resource);
 			fResponse.put(groupByKey, entry);
@@ -341,7 +341,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 */
 	@Override
 	public void searchFinished() {
-		SearchManager.getDefault().searchFinished(new ArrayList(fResponse.values()));
+		SearchManager.getDefault().searchFinished(new ArrayList<>(fResponse.values()));
 		fResponse= null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class TemplateTranslator {
 	 * @since 3.3
 	 */
 	private final class VariableDescription {
-		final List fOffsets= new ArrayList(5);
+		final List<Integer> fOffsets= new ArrayList<>(5);
 		final String fName;
 		TemplateVariableType fType;
 
@@ -186,7 +186,7 @@ public class TemplateTranslator {
 		fErrorMessage= null;
 		final StringBuffer buffer= new StringBuffer(string.length());
 		final Matcher matcher= ESCAPE_PATTERN.matcher(string);
-		final Map variables= new LinkedHashMap();
+		final Map<String, VariableDescription> variables= new LinkedHashMap<>();
 
 		int complete= 0;
 		while (matcher.find()) {
@@ -227,7 +227,7 @@ public class TemplateTranslator {
 			return new TemplateVariableType(typeName);
 
 		final Matcher matcher= PARAM_PATTERN.matcher(paramString);
-		List params= new ArrayList(5);
+		List<String> params= new ArrayList<>(5);
 		while (matcher.find()) {
 			String argument= matcher.group();
 			if (argument.charAt(0) == '\'') {
@@ -238,7 +238,7 @@ public class TemplateTranslator {
 			params.add(argument);
 		}
 
-		return new TemplateVariableType(typeName, (String[]) params.toArray(new String[params.size()]));
+		return new TemplateVariableType(typeName, params.toArray(new String[params.size()]));
 	}
 
 	private void fail(String message) throws TemplateException {
@@ -258,8 +258,8 @@ public class TemplateTranslator {
 	 * @throws TemplateException if merging the type fails
 	 * @since 3.3
 	 */
-	private void updateOrCreateVariable(Map variables, String name, TemplateVariableType type, int offset) throws TemplateException {
-		VariableDescription varDesc= (VariableDescription) variables.get(name);
+	private void updateOrCreateVariable(Map<String, VariableDescription> variables, String name, TemplateVariableType type, int offset) throws TemplateException {
+		VariableDescription varDesc= variables.get(name);
 		if (varDesc == null) {
 			varDesc= new VariableDescription(name, type);
 			variables.put(name, varDesc);
@@ -276,16 +276,16 @@ public class TemplateTranslator {
 	 * @return the corresponding variables
 	 * @since 3.3
 	 */
-	private TemplateVariable[] createVariables(Map variables) {
+	private TemplateVariable[] createVariables(Map<String, VariableDescription> variables) {
 		TemplateVariable[] result= new TemplateVariable[variables.size()];
 		int idx= 0;
-		for (Iterator it= variables.values().iterator(); it.hasNext(); idx++) {
-			VariableDescription desc= (VariableDescription) it.next();
+		for (Iterator<VariableDescription> it= variables.values().iterator(); it.hasNext(); idx++) {
+			VariableDescription desc= it.next();
 			TemplateVariableType type= desc.fType == null ? new TemplateVariableType(desc.fName) : desc.fType;
 			int[] offsets= new int[desc.fOffsets.size()];
 			int i= 0;
-			for (Iterator intIt= desc.fOffsets.iterator(); intIt.hasNext(); i++) {
-				Integer offset= (Integer) intIt.next();
+			for (Iterator<Integer> intIt= desc.fOffsets.iterator(); intIt.hasNext(); i++) {
+				Integer offset= intIt.next();
 				offsets[i]= offset.intValue();
 			}
 			fCurrentType= type;

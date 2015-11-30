@@ -1043,12 +1043,12 @@ public class LinkedModeUI {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 ext= (IDocumentExtension3) document;
 			String[] partitionings= ext.getPartitionings();
-			Set contentTypes= new HashSet(20);
+			Set<String> contentTypes= new HashSet<>(20);
 			for (int i= 0; i < partitionings.length; i++) {
 				contentTypes.addAll(Arrays.asList(ext.getLegalContentTypes(partitionings[i])));
 			}
 			contentTypes.add(IDocument.DEFAULT_CONTENT_TYPE);
-			return (String[]) contentTypes.toArray(new String[contentTypes.size()]);
+			return contentTypes.toArray(new String[contentTypes.size()]);
 		}
 		return document.getLegalContentTypes();
 	}
@@ -1149,7 +1149,7 @@ public class LinkedModeUI {
 		if ((flags & ILinkedModeListener.UPDATE_CARET) != 0 && fExitPosition != null && fFramePosition != fExitPosition && !fExitPosition.isDeleted())
 			switchPosition(fExitPosition, true, false);
 
-		final List docs= new ArrayList();
+		final List<IDocument> docs= new ArrayList<>();
 		for (int i= 0; i < fTargets.length; i++) {
 			IDocument doc= fTargets[i].getViewer().getDocument();
 			if (doc != null)
@@ -1164,8 +1164,8 @@ public class LinkedModeUI {
 				if (fExitPosition != null)
 					fExitPosition.getDocument().removePosition(fExitPosition);
 
-				for (Iterator iter = docs.iterator(); iter.hasNext(); ) {
-					IDocument doc= (IDocument) iter.next();
+				for (Iterator<IDocument> iter = docs.iterator(); iter.hasNext(); ) {
+					IDocument doc= iter.next();
 					doc.removePositionUpdater(fPositionUpdater);
 					boolean uninstallCat= false;
 					String[] cats= doc.getPositionCategories();

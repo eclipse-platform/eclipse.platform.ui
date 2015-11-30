@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,10 +83,10 @@ public abstract class SpellingProblem {
 			return;
 
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
-		List toBeRemovedAnnotations= new ArrayList();
-		Iterator iter= model.getAnnotationIterator();
+		List<Annotation> toBeRemovedAnnotations= new ArrayList<>();
+		Iterator<Annotation> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Annotation annotation= (Annotation) iter.next();
+			Annotation annotation= iter.next();
 			if (SpellingAnnotation.TYPE.equals(annotation.getType())) {
 				boolean doRemove= word == null;
 				if (word == null)
@@ -111,7 +111,7 @@ public abstract class SpellingProblem {
 		}
 
 		if (supportsBatchReplace && !toBeRemovedAnnotations.isEmpty()) {
-			Annotation[] annotationArray= (Annotation[])toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
+			Annotation[] annotationArray= toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
 			((IAnnotationModelExtension)model).replaceAnnotations(annotationArray, null);
 		}
 	}
@@ -136,10 +136,10 @@ public abstract class SpellingProblem {
 			return;
 
 		boolean supportsBatchReplace= (model instanceof IAnnotationModelExtension);
-		List toBeRemovedAnnotations= new ArrayList();
-		Iterator iter= model.getAnnotationIterator();
+		List<Annotation> toBeRemovedAnnotations= new ArrayList<>();
+		Iterator<Annotation> iter= model.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Annotation annotation= (Annotation) iter.next();
+			Annotation annotation= iter.next();
 			if (SpellingAnnotation.TYPE.equals(annotation.getType())) {
 				boolean doRemove= word == null;
 				if (word == null)
@@ -164,7 +164,7 @@ public abstract class SpellingProblem {
 		}
 
 		if (supportsBatchReplace && !toBeRemovedAnnotations.isEmpty()) {
-			Annotation[] annotationArray= (Annotation[])toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
+			Annotation[] annotationArray= toBeRemovedAnnotations.toArray(new Annotation[toBeRemovedAnnotations.size()]);
 			((IAnnotationModelExtension)model).replaceAnnotations(annotationArray, null);
 		}
 	}

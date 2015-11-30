@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,18 +78,18 @@ class RemovePotentialMatchesAction extends Action {
 		if (size <= 0)
 			return null;
 
-		ArrayList markers= new ArrayList(size * 3);
-		Iterator iter= selection.iterator();
+		ArrayList<IMarker> markers= new ArrayList<>(size * 3);
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
-			Iterator entryIter= entry.getMarkers().iterator();
+			Iterator<IMarker> entryIter= entry.getMarkers().iterator();
 			while (entryIter.hasNext()) {
-				IMarker marker= (IMarker)entryIter.next();
+				IMarker marker= entryIter.next();
 				if (marker.getAttribute(SearchUI.POTENTIAL_MATCH, false))
 					markers.add(marker);
 			}
 		}
-		return (IMarker[])markers.toArray(new IMarker[markers.size()]);
+		return markers.toArray(new IMarker[markers.size()]);
 	}
 
 	private boolean usePluralLabel() {
@@ -104,12 +104,12 @@ class RemovePotentialMatchesAction extends Action {
 			return false;
 
 		int markerCount= 0;
-		Iterator iter= selection.iterator();
+		Iterator<?> iter= selection.iterator();
 		while (iter.hasNext()) {
 			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
-			Iterator entryIter= entry.getMarkers().iterator();
+			Iterator<IMarker> entryIter= entry.getMarkers().iterator();
 			while (entryIter.hasNext()) {
-				IMarker marker= (IMarker)entryIter.next();
+				IMarker marker= entryIter.next();
 				if (marker.getAttribute(SearchUI.POTENTIAL_MATCH, false)) {
 					markerCount++;
 				}

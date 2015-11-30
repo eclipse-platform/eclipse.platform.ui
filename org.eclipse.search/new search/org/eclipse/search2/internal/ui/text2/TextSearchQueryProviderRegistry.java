@@ -91,7 +91,7 @@ public class TextSearchQueryProviderRegistry {
 	}
 
 	public String[][] getAvailableProviders() {
-		ArrayList res= new ArrayList();
+		ArrayList<String[]> res= new ArrayList<>();
 		res.add(new String[] { SearchMessages.TextSearchQueryProviderRegistry_defaultProviderLabel, "" }); //$NON-NLS-1$
 
 		IConfigurationElement[] extensions= Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID);
@@ -101,6 +101,6 @@ public class TextSearchQueryProviderRegistry {
 				res.add(new String[] { engine.getAttribute(ATTRIB_LABEL), engine.getAttribute(ATTRIB_ID) });
 			}
 		}
-		return (String[][]) res.toArray(new String[res.size()][]);
+		return res.toArray(new String[res.size()][]);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class FormattingContext implements IFormattingContext {
 
 	/** Map to store the properties */
-	private final Map fMap= new HashMap();
+	private final Map<Object, Object> fMap= new HashMap<>();
 
 	@Override
 	public void dispose() {
@@ -73,7 +73,7 @@ public class FormattingContext implements IFormattingContext {
 	}
 
 	@Override
-	public void mapToStore(Map map, IPreferenceStore store) {
+	public void mapToStore(Map<Object, Object> map, IPreferenceStore store) {
 
 		final String[] preferences= getPreferenceKeys();
 
@@ -114,7 +114,7 @@ public class FormattingContext implements IFormattingContext {
 	}
 
 	@Override
-	public void storeToMap(IPreferenceStore store, Map map, boolean useDefault) {
+	public void storeToMap(IPreferenceStore store, Map<Object, Object> map, boolean useDefault) {
 
 		final String[] preferences= getPreferenceKeys();
 

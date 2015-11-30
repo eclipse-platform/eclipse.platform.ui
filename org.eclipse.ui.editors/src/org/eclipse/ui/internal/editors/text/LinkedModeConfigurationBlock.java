@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+import org.eclipse.ui.internal.editors.text.OverlayPreferenceStore.OverlayKey;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
@@ -79,9 +81,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		final String highlightKey;
 		final String textStyleKey;
 		final String textKey;
-		final List validStyles;
+		final List<String[]> validStyles;
 
-		ListItem(String label, String colorKey, String textKey, String highlightKey, String textStyleKey, List validStyles) {
+		ListItem(String label, String colorKey, String textKey, String highlightKey, String textStyleKey, List<String[]> validStyles) {
 			this.label= label;
 			this.colorKey= colorKey;
 			this.highlightKey= highlightKey;
@@ -141,7 +143,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	protected static final int INDENT= 20;
 	private OverlayPreferenceStore fStore;
 
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+	private ArrayList<SelectionListener> fMasterSlaveListeners= new ArrayList<>();
 
 	private OverlayPreferenceStore getPreferenceStore() {
 		return fStore;
@@ -155,11 +157,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys(MarkerAnnotationPreferences preferences) {
-		ArrayList overlayKeys= new ArrayList();
+		ArrayList<OverlayKey> overlayKeys= new ArrayList<>();
 
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 
 			if (isLinkedModeAnnotation(info)) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
@@ -183,14 +185,14 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private ListItem[] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
-		ArrayList listModelItems= new ArrayList();
-		Iterator e= preferences.getAnnotationPreferences().iterator();
+		ArrayList<ListItem> listModelItems= new ArrayList<>();
+		Iterator<AnnotationPreference> e= preferences.getAnnotationPreferences().iterator();
 
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 			if (isLinkedModeAnnotation(info)) {
 				String label= info.getPreferenceLabel();
-				List styles= getStyles(info.getAnnotationType());
+				List<String[]> styles= getStyles(info.getAnnotationType());
 				listModelItems.add(new ListItem(label, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getHighlightPreferenceKey(), info.getTextStylePreferenceKey(), styles));
 			}
 		}
@@ -201,7 +203,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 
-	private List getStyles(Object type) {
+	private List<String[]> getStyles(Object type) {
 		if (type.equals(MASTER))
 			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
 		if (type.equals(SLAVE))
@@ -210,7 +212,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
 		if (type.equals(EXIT))
 			return Arrays.asList(new String[][] {IBEAM});
-		return new ArrayList();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -466,7 +468,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		if (changed) {
 			String[] selection= null;
-			ArrayList list= new ArrayList();
+			ArrayList<String[]> list= new ArrayList<>();
 
 			list.addAll(item.validStyles);
 
@@ -476,8 +478,8 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 			// set selection
 			if (selection == null) {
 				String val= getPreferenceStore().getString(item.textStyleKey);
-				for (Iterator iter= list.iterator(); iter.hasNext();) {
-					String[] elem= (String[]) iter.next();
+				for (Iterator<String[]> iter= list.iterator(); iter.hasNext();) {
+					String[] elem= iter.next();
 					if (elem[1].equals(val)) {
 						selection= elem;
 						break;
@@ -487,7 +489,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 			fDecorationViewer.setInput(list.toArray(new Object[list.size()]));
 			if (selection == null)
-				selection= (String[]) list.get(0);
+				selection= list.get(0);
 			fDecorationViewer.setSelection(new StructuredSelection((Object) selection), true);
 		}
 	}
@@ -556,9 +558,9 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	private void initializeFields() {
 
         // Update slaves
-        Iterator iter= fMasterSlaveListeners.iterator();
+        Iterator<SelectionListener> iter= fMasterSlaveListeners.iterator();
         while (iter.hasNext()) {
-            SelectionListener listener= (SelectionListener)iter.next();
+            SelectionListener listener= iter.next();
             listener.widgetSelected(null);
         }
 	}

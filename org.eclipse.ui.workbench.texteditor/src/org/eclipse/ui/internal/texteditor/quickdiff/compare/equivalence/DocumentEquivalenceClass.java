@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public final class DocumentEquivalenceClass {
 
 	private static final boolean DEBUG= false;
 
-	private final ArrayList fHashes;
+	private final ArrayList<Hash> fHashes;
 	private IDocument fDocument;
 	private final IHashFunction fHashFunction;
 
@@ -39,8 +39,8 @@ public final class DocumentEquivalenceClass {
 
 	public DocumentEquivalenceClass(IDocument document, IHashFunction hashFunction) {
 		fDocument= document;
-		Object[] nulls= new Object[fDocument.getNumberOfLines()];
-		fHashes= new ArrayList(Arrays.asList(nulls));
+		Hash[] nulls= new Hash[fDocument.getNumberOfLines()];
+		fHashes= new ArrayList<>(Arrays.asList(nulls));
 
 		if (hashFunction == null)
 			throw new NullPointerException("hashFunction"); //$NON-NLS-1$
@@ -67,7 +67,7 @@ public final class DocumentEquivalenceClass {
 	}
 
 	private Hash internalGetHash(int line) throws BadLocationException {
-		Hash hash= (Hash) fHashes.get(line);
+		Hash hash= fHashes.get(line);
 		if (hash == null) {
 			if (fDocument == null)
 				throw new AssertionError("hash cannot be null after loadAndForget"); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public final class DocumentEquivalenceClass {
 		int changed= Math.min(linesAfter, linesBefore);
 
 		if (delta > 0) {
-			Object[] nulls= new Object[delta];
+			Hash[] nulls= new Hash[delta];
 			fHashes.addAll(firstLine + changed, Arrays.asList(nulls));
 		} else if (delta < 0) {
 			fHashes.subList(firstLine, firstLine - delta).clear();

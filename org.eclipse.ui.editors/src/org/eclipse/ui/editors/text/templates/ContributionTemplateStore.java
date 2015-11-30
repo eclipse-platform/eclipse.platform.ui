@@ -105,15 +105,15 @@ public class ContributionTemplateStore extends TemplateStore {
 	@Override
 	protected void loadContributedTemplates() throws IOException {
 		IConfigurationElement[] extensions= getTemplateExtensions();
-		Collection contributed= readContributedTemplates(extensions);
-		for (Iterator it= contributed.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+		Collection<TemplatePersistenceData> contributed= readContributedTemplates(extensions);
+		for (Iterator<TemplatePersistenceData> it= contributed.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= it.next();
 			internalAdd(data);
 		}
 	}
 
-	private Collection readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
-		Collection templates= new ArrayList();
+	private Collection<TemplatePersistenceData> readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
+		Collection<TemplatePersistenceData> templates= new ArrayList<>();
 		for (int i= 0; i < extensions.length; i++) {
 			if (extensions[i].getName().equals(TEMPLATE))
 				createTemplate(templates, extensions[i]);
@@ -125,7 +125,7 @@ public class ContributionTemplateStore extends TemplateStore {
 		return templates;
 	}
 
-	private void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
+	private void readIncludedTemplates(Collection<TemplatePersistenceData> templates, IConfigurationElement element) throws IOException {
 		String file= element.getAttribute(FILE);
 		if (file != null) {
 			Bundle plugin = Platform.getBundle(element.getContributor().getName());
@@ -218,7 +218,7 @@ public class ContributionTemplateStore extends TemplateStore {
 		return Platform.getExtensionRegistry().getConfigurationElementsFor(TEMPLATES_EXTENSION_POINT);
 	}
 
-	private void createTemplate(Collection map, IConfigurationElement element) {
+	private void createTemplate(Collection<TemplatePersistenceData> map, IConfigurationElement element) {
 		String contextTypeId= element.getAttribute(CONTEXT_TYPE_ID);
 		// log failures since extension point id and name are mandatory
 		if (contextExists(contextTypeId)) {

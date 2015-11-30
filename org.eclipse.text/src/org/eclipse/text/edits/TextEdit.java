@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,12 +98,9 @@ public abstract class TextEdit {
 	 */
 	public static final int UPDATE_REGIONS= 1 << 1;
 
-	private static class InsertionComparator implements Comparator {
+	private static class InsertionComparator implements Comparator<TextEdit> {
 		@Override
-		public int compare(Object o1, Object o2) throws MalformedTreeException {
-			TextEdit edit1= (TextEdit)o1;
-			TextEdit edit2= (TextEdit)o2;
-
+		public int compare(TextEdit edit1, TextEdit edit2) throws MalformedTreeException {
 			int offset1= edit1.getOffset();
 			int length1= edit1.getLength();
 
@@ -134,7 +131,7 @@ public abstract class TextEdit {
 	private int fLength;
 
 	private TextEdit fParent;
-	private List fChildren;
+	private List<TextEdit> fChildren;
 
 	int fDelta;
 
@@ -365,7 +362,7 @@ public abstract class TextEdit {
 	public final TextEdit removeChild(int index) {
 		if (fChildren == null)
 			throw new IndexOutOfBoundsException("Index: " + index + " Size: 0");  //$NON-NLS-1$//$NON-NLS-2$
-		TextEdit result= (TextEdit)fChildren.remove(index);
+		TextEdit result= fChildren.remove(index);
 		result.internalSetParent(null);
 		if (fChildren.isEmpty())
 			fChildren= null;
@@ -405,7 +402,7 @@ public abstract class TextEdit {
 		int size= fChildren.size();
 		TextEdit[] result= new TextEdit[size];
 		for (int i= 0; i < size; i++) {
-			result[i]= (TextEdit)fChildren.get(i);
+			result[i]= fChildren.get(i);
 			result[i].internalSetParent(null);
 		}
 		fChildren= null;
@@ -432,7 +429,7 @@ public abstract class TextEdit {
 	public final TextEdit[] getChildren() {
 		if (fChildren == null)
 			return EMPTY_ARRAY;
-		return (TextEdit[])fChildren.toArray(new TextEdit[fChildren.size()]);
+		return fChildren.toArray(new TextEdit[fChildren.size()]);
 	}
 
 	/**
@@ -566,8 +563,8 @@ public abstract class TextEdit {
 	private void toStringWithChildren(StringBuffer buffer, int indent) {
 		internalToString(buffer, indent);
 		if (fChildren != null) {
-			for (Iterator iterator= fChildren.iterator(); iterator.hasNext();) {
-				TextEdit child= (TextEdit) iterator.next();
+			for (Iterator<TextEdit> iterator= fChildren.iterator(); iterator.hasNext();) {
+				TextEdit child= iterator.next();
 				buffer.append('\n');
 				child.toStringWithChildren(buffer, indent + 1);
 			}
@@ -676,9 +673,9 @@ public abstract class TextEdit {
 	protected final void acceptChildren(TextEditVisitor visitor) {
 		if (fChildren == null)
 			return;
-		Iterator iterator= fChildren.iterator();
+		Iterator<TextEdit> iterator= fChildren.iterator();
 		while (iterator.hasNext()) {
-			TextEdit curr= (TextEdit) iterator.next();
+			TextEdit curr= iterator.next();
 			curr.accept(visitor);
 		}
 	}
@@ -762,11 +759,11 @@ public abstract class TextEdit {
 		fLength= length;
 	}
 
-	List internalGetChildren() {
+	List<TextEdit> internalGetChildren() {
 		return fChildren;
 	}
 
-	void internalSetChildren(List children) {
+	void internalSetChildren(List<TextEdit> children) {
 		fChildren= children;
 	}
 
@@ -777,7 +774,7 @@ public abstract class TextEdit {
 		if (!covers(child))
 			throw new MalformedTreeException(this, child, TextEditMessages.getString("TextEdit.range_outside")); //$NON-NLS-1$
 		if (fChildren == null) {
-			fChildren= new ArrayList(2);
+			fChildren= new ArrayList<>(2);
 		}
 		int index= computeInsertionIndex(child);
 		fChildren.add(index, child);
@@ -789,7 +786,7 @@ public abstract class TextEdit {
 		if (size == 0)
 			return 0;
 		int lastIndex= size - 1;
-		TextEdit last= (TextEdit)fChildren.get(lastIndex);
+		TextEdit last= fChildren.get(lastIndex);
 		if (last.getExclusiveEnd() <= edit.getOffset())
 			return size;
 		try {
@@ -862,11 +859,11 @@ public abstract class TextEdit {
 	 *
 	 * @return the number of indirect move or copy target edit children
 	 */
-	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List<List<TextEdit>> sourceEdits) {
 		int result= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
-				TextEdit child= (TextEdit)fChildren.get(i);
+				TextEdit child= fChildren.get(i);
 				result= Math.max(result, child.traverseConsistencyCheck(processor, document, sourceEdits));
 			}
 		}
@@ -907,7 +904,7 @@ public abstract class TextEdit {
 		int delta= 0;
 		if (fChildren != null) {
 			for (int i= fChildren.size() - 1; i >= 0; i--) {
-				TextEdit child= (TextEdit)fChildren.get(i);
+				TextEdit child= fChildren.get(i);
 				delta+= child.traverseDocumentUpdating(processor, document);
 				childDocumentUpdated();
 			}
@@ -942,8 +939,8 @@ public abstract class TextEdit {
 		performRegionUpdating(accumulatedDelta, delete);
 		if (fChildren != null) {
 			boolean childDelete= delete || deleteChildren();
-			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				TextEdit child= (TextEdit)iter.next();
+			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
+				TextEdit child= iter.next();
 				accumulatedDelta= child.traverseRegionUpdating(processor, document, accumulatedDelta, childDelete);
 				childRegionUpdated();
 			}
@@ -978,8 +975,8 @@ public abstract class TextEdit {
 	void internalMoveTree(int delta) {
 		adjustOffset(delta);
 		if (fChildren != null) {
-			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				((TextEdit)iter.next()).internalMoveTree(delta);
+			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
+				iter.next().internalMoveTree(delta);
 			}
 		}
 	}
@@ -987,8 +984,8 @@ public abstract class TextEdit {
 	void deleteTree() {
 		markAsDeleted();
 		if (fChildren != null) {
-			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				TextEdit child= (TextEdit)iter.next();
+			for (Iterator<TextEdit> iter= fChildren.iterator(); iter.hasNext();) {
+				TextEdit child= iter.next();
 				child.deleteTree();
 			}
 		}

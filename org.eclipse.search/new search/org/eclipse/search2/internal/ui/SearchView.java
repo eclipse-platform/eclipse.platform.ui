@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -91,9 +91,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private static final String MEMENTO_KEY_IS_PINNED= "isPinned"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_LAST_ACTIVATION= "org.eclipse.search.lastActivation"; //$NON-NLS-1$
 	private static final String MEMENTO_KEY_RESTORE= "org.eclipse.search.restore"; //$NON-NLS-1$
-	private HashMap fPartsToPages;
-	private HashMap fPagesToParts;
-	private HashMap fSearchViewStates;
+	private HashMap<DummyPart, IPageBookViewPage> fPartsToPages;
+	private HashMap<ISearchResultPage, DummyPart> fPagesToParts;
+	private HashMap<ISearchResult, Object> fSearchViewStates;
 	private SearchPageRegistry fSearchViewPageService;
 	private SearchHistoryDropDownAction fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
@@ -216,7 +216,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		@Override
 		public void setFocus() {/*dummy*/}
 		@Override
-		public Object getAdapter(Class adapter) { return null; }
+		public <T> T getAdapter(Class<T> adapter) { return null; }
 	}
 
 	static class EmptySearchView extends Page implements ISearchResultPage {
@@ -312,10 +312,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public SearchView() {
 		super();
-		fPartsToPages= new HashMap();
-		fPagesToParts= new HashMap();
+		fPartsToPages= new HashMap<>();
+		fPagesToParts= new HashMap<>();
 		fSearchViewPageService= new SearchPageRegistry();
-		fSearchViewStates= new HashMap();
+		fSearchViewStates= new HashMap<>();
 		fIsPinned= false;
 	}
 
@@ -337,7 +337,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	@Override
 	protected IPage createDefaultPage(PageBook book) {
-		IPageBookViewPage page= new EmptySearchView();
+		ISearchResultPage page= new EmptySearchView();
 		page.createControl(book);
 		initPage(page);
 		DummyPart part= new DummyPart(getSite());
@@ -349,7 +349,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		IPageBookViewPage page = (IPageBookViewPage) fPartsToPages.get(part);
+		IPageBookViewPage page = fPartsToPages.get(part);
 		initPage(page);
 		page.createControl(getPageBook());
 		PageRec rec = new PageRec(part, page);
@@ -409,7 +409,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		if (page != null) {
 			if (page != currentPage) {
-				DummyPart part= (DummyPart) fPagesToParts.get(page);
+				DummyPart part= fPagesToParts.get(page);
 				if (part == null) {
 					part= new DummyPart(getSite());
 					fPagesToParts.put(page, part);
@@ -657,7 +657,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (result != null) {
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
 			// first check if we have a selection for the show in mechanism, bugzilla 127718
-			IShowInSource showInSource= (IShowInSource) getAdapter(IShowInSource.class);
+			IShowInSource showInSource= getAdapter(IShowInSource.class);
 			if (showInSource != null) {
 				ShowInContext context= showInSource.getShowInContext();
 				if (context != null) {
@@ -690,10 +690,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	@Override
 	public void saveState(IMemento memento) {
-		for (Iterator iter= fPagesToParts.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry= (Map.Entry) iter.next();
-			ISearchResultPage page= (ISearchResultPage) entry.getKey();
-			DummyPart part= (DummyPart) entry.getValue();
+		for (Iterator<Entry<ISearchResultPage, DummyPart>> iter= fPagesToParts.entrySet().iterator(); iter.hasNext();) {
+			Entry<ISearchResultPage, DummyPart> entry= iter.next();
+			ISearchResultPage page= entry.getKey();
+			DummyPart part= entry.getValue();
 
 			IMemento child= memento.createChild(MEMENTO_TYPE, page.getID());
 			page.saveState(child);
@@ -778,13 +778,14 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			getProgressService().warnOfContentChange();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		Object superAdapter= super.getAdapter(adapter);
 		if (superAdapter != null)
-			return superAdapter;
+			return (T) superAdapter;
 		if (adapter == IShowInSource.class) {
-			return new IShowInSource() {
+			return (T) new IShowInSource() {
 				@Override
 				public ShowInContext getShowInContext() {
 					return new ShowInContext(null, getSelectionProvider().getSelection());

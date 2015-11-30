@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class Search extends Object {
 	private ImageDescriptor fImageDescriptor;
 	private ILabelProvider fLabelProvider;
 	private ISelection fSelection;
-	private ArrayList fResults;
+	private ArrayList<SearchResultViewEntry> fResults;
 	private IAction fGotoMarkerAction;
 	private IContextMenuContributor fContextMenuContributor;
 	private IActionGroupFactory fActionGroupFactory;
@@ -125,15 +125,15 @@ public class Search extends Object {
 
 	int getItemCount() {
 		int count= 0;
-		Iterator iter= getResults().iterator();
+		Iterator<SearchResultViewEntry> iter= getResults().iterator();
 		while (iter.hasNext())
 			count += ((ISearchResultViewEntry)iter.next()).getMatchCount();
 		return count;
 	}
 
-	List getResults() {
+	List<SearchResultViewEntry> getResults() {
 		if (fResults == null)
-			return new ArrayList();
+			return new ArrayList<>();
 		return fResults;
 	}
 
@@ -161,9 +161,9 @@ public class Search extends Object {
 	}
 
 	void backupMarkers() {
-		Iterator iter= getResults().iterator();
+		Iterator<SearchResultViewEntry> iter= getResults().iterator();
 		while (iter.hasNext()) {
-			((SearchResultViewEntry)iter.next()).backupMarkers();
+			iter.next().backupMarkers();
 		}
 	}
 
@@ -195,7 +195,7 @@ public class Search extends Object {
 		fResults= null;
 	}
 
-	void setResults(ArrayList results) {
+	void setResults(ArrayList<SearchResultViewEntry> results) {
 		Assert.isNotNull(results);
 		fResults= results;
 	}

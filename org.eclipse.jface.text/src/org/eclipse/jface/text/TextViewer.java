@@ -466,9 +466,9 @@ public class TextViewer extends Viewer implements
 		}
 
 		/** List of registered verify key listeners. */
-		private List fListeners= new ArrayList();
+		private List<VerifyKeyListener> fListeners= new ArrayList<>();
 		/** List of pending batches. */
-		private List fBatched= new ArrayList();
+		private List<Batch> fBatched= new ArrayList<>();
 		/** The reentrance count. */
 		private int fReentranceCount= 0;
 
@@ -479,9 +479,9 @@ public class TextViewer extends Viewer implements
 
 			try {
 				fReentranceCount++;
-				Iterator iterator= fListeners.iterator();
+				Iterator<VerifyKeyListener> iterator= fListeners.iterator();
 				while (iterator.hasNext() && event.doit) {
-					VerifyKeyListener listener= (VerifyKeyListener) iterator.next();
+					VerifyKeyListener listener= iterator.next();
 					listener.verifyKey(event); // we might trigger reentrant calls on GTK
 				}
 			} finally {
@@ -496,9 +496,9 @@ public class TextViewer extends Viewer implements
 		 */
 		private void processBatchedRequests() {
 			if (!fBatched.isEmpty()) {
-				Iterator e= fBatched.iterator();
+				Iterator<Batch> e= fBatched.iterator();
 				while (e.hasNext()) {
-					Batch batch= (Batch) e.next();
+					Batch batch= e.next();
 					insertListener(batch.listener, batch.index);
 				}
 				fBatched.clear();
@@ -777,7 +777,7 @@ public class TextViewer extends Viewer implements
 		/** The highlight color of the range of this target. */
 		private Color fScopeHighlightColor;
 		/** The document partitioner remembered in case of a "Replace All". */
-		private Map fRememberedPartitioners;
+		private Map<String, IDocumentPartitioner> fRememberedPartitioners;
 		/**
 		 * The active rewrite session.
 		 * @since 3.1
@@ -1522,7 +1522,7 @@ public class TextViewer extends Viewer implements
 	 * The registered post selection changed listeners.
 	 * @since 3.0
 	 */
-	private List fPostSelectionChangedListeners;
+	private List<ISelectionChangedListener> fPostSelectionChangedListeners;
 	/**
 	 * Queued post selection changed events count.
 	 * @since 3.0
@@ -1537,7 +1537,7 @@ public class TextViewer extends Viewer implements
 	 * The set of registered editor helpers.
 	 * @since 3.1
 	 */
-	private Set fEditorHelpers= new HashSet();
+	private Set<IEditingSupport> fEditorHelpers= new HashSet<>();
 	/**
 	 * The internal rewrite session listener.
 	 * @since 3.1
@@ -1547,25 +1547,25 @@ public class TextViewer extends Viewer implements
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
 	/** The strings a line is prefixed with on SHIFT_RIGHT and removed from each line on SHIFT_LEFT */
-	protected Map fIndentChars;
+	protected Map<String, String[]> fIndentChars;
 	/** The string a line is prefixed with on PREFIX and removed from each line on STRIP_PREFIX */
-	protected Map fDefaultPrefixChars;
+	protected Map<String, String[]> fDefaultPrefixChars;
 	/** The text viewer's text double click strategies */
-	protected Map fDoubleClickStrategies;
+	protected Map<String, ITextDoubleClickStrategy> fDoubleClickStrategies;
 	/** The text viewer's undo manager */
 	protected IUndoManager fUndoManager;
 	/** The text viewer's auto indent strategies */
-	protected Map fAutoIndentStrategies;
+	protected Map<String, List<IAutoEditStrategy>> fAutoIndentStrategies;
 	/** The text viewer's text hovers */
-	protected Map fTextHovers;
+	protected Map<TextHoverKey, ITextHover> fTextHovers;
 	/** All registered view port listeners> */
-	protected List fViewportListeners;
+	protected List<IViewportListener> fViewportListeners;
 	/** The last visible vertical position of the top line */
 	protected int fLastTopPixel;
 	/** All registered text listeners */
-	protected List fTextListeners;
+	protected List<ITextListener> fTextListeners;
 	/** All registered text input listeners */
-	protected List fTextInputListeners;
+	protected List<ITextInputListener> fTextInputListeners;
 	/** The text viewer's event consumer */
 	protected IEventConsumer fEventConsumer;
 	/** Indicates whether the viewer's text presentation should be replaced are modified. */
@@ -1594,7 +1594,7 @@ public class TextViewer extends Viewer implements
 	 * All registered text presentation listeners.
 	 * since 3.0
 	 */
-	protected List fTextPresentationListeners;
+	protected List<ITextPresentationListener> fTextPresentationListeners;
 	/**
 	 * The find/replace document adapter.
 	 * @since 3.0
@@ -1953,9 +1953,9 @@ public class TextViewer extends Viewer implements
 	 */
 	protected final void setAutoEditStrategies(IAutoEditStrategy[] strategies, String contentType) {
 		if (fAutoIndentStrategies == null)
-			fAutoIndentStrategies= new HashMap();
+			fAutoIndentStrategies= new HashMap<>();
 
-		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
 
 		if (strategies == null) {
 			if (autoEditStrategies == null)
@@ -1965,7 +1965,7 @@ public class TextViewer extends Viewer implements
 
 		} else {
 			if (autoEditStrategies == null) {
-				autoEditStrategies= new ArrayList();
+				autoEditStrategies= new ArrayList<>();
 				fAutoIndentStrategies.put(contentType, autoEditStrategies);
 			}
 
@@ -1981,11 +1981,11 @@ public class TextViewer extends Viewer implements
 			throw new IllegalArgumentException();
 
 		if (fAutoIndentStrategies == null)
-			fAutoIndentStrategies= new HashMap();
+			fAutoIndentStrategies= new HashMap<>();
 
-		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
 		if (autoEditStrategies == null) {
-			autoEditStrategies= new ArrayList();
+			autoEditStrategies= new ArrayList<>();
 			fAutoIndentStrategies.put(contentType, autoEditStrategies);
 		}
 
@@ -1997,11 +1997,11 @@ public class TextViewer extends Viewer implements
 		if (fAutoIndentStrategies == null)
 			return;
 
-		List autoEditStrategies= (List) fAutoIndentStrategies.get(contentType);
+		List<IAutoEditStrategy> autoEditStrategies= fAutoIndentStrategies.get(contentType);
 		if (autoEditStrategies == null)
 			return;
 
-		for (final Iterator iterator= autoEditStrategies.iterator(); iterator.hasNext(); ) {
+		for (final Iterator<IAutoEditStrategy> iterator= autoEditStrategies.iterator(); iterator.hasNext(); ) {
 			if (iterator.next().equals(strategy)) {
 				iterator.remove();
 				break;
@@ -2028,7 +2028,7 @@ public class TextViewer extends Viewer implements
 		if (ok) {
 
 			if (fIndentChars == null)
-				fIndentChars= new HashMap();
+				fIndentChars= new HashMap<>();
 
 			fIndentChars.put(contentType, indentPrefixes);
 
@@ -2063,7 +2063,7 @@ public class TextViewer extends Viewer implements
 
 		if (defaultPrefixes != null && defaultPrefixes.length > 0) {
 			if (fDefaultPrefixChars == null)
-				fDefaultPrefixChars= new HashMap();
+				fDefaultPrefixChars= new HashMap<>();
 			fDefaultPrefixChars.put(contentType, defaultPrefixes);
 		} else if (fDefaultPrefixChars != null)
 			fDefaultPrefixChars.remove(contentType);
@@ -2089,7 +2089,7 @@ public class TextViewer extends Viewer implements
 		TextHoverKey key= new TextHoverKey(contentType, stateMask);
 		if (hover != null) {
 			if (fTextHovers == null) {
-				fTextHovers= new HashMap();
+				fTextHovers= new HashMap<>();
 			}
 			fTextHovers.put(key, hover);
 		} else if (fTextHovers != null)
@@ -2103,9 +2103,9 @@ public class TextViewer extends Viewer implements
 		if (fTextHovers == null)
 			return;
 
-		Iterator iter= new HashSet(fTextHovers.keySet()).iterator();
+		Iterator<TextHoverKey> iter= new HashSet<>(fTextHovers.keySet()).iterator();
 		while (iter.hasNext()) {
-			TextHoverKey key= (TextHoverKey)iter.next();
+			TextHoverKey key= iter.next();
 			if (key.fContentType.equals(contentType))
 				fTextHovers.remove(key);
 		}
@@ -2486,7 +2486,7 @@ public class TextViewer extends Viewer implements
 		Assert.isNotNull(listener);
 
 		if (fPostSelectionChangedListeners == null)
-			fPostSelectionChangedListeners= new ArrayList();
+			fPostSelectionChangedListeners= new ArrayList<>();
 
 		if (!fPostSelectionChangedListeners.contains(listener))
 			fPostSelectionChangedListeners.add(listener);
@@ -2613,11 +2613,11 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	private void firePostSelectionChanged(SelectionChangedEvent event) {
-		List listeners= fPostSelectionChangedListeners;
+		List<ISelectionChangedListener> listeners= fPostSelectionChangedListeners;
 		if (listeners != null) {
-			listeners= new ArrayList(listeners);
+			listeners= new ArrayList<>(listeners);
 			for (int i= 0; i < listeners.size(); i++) {
-				ISelectionChangedListener l= (ISelectionChangedListener) listeners.get(i);
+				ISelectionChangedListener l= listeners.get(i);
 				l.selectionChanged(event);
 			}
 		}
@@ -2654,7 +2654,7 @@ public class TextViewer extends Viewer implements
 		Assert.isNotNull(listener);
 
 		if (fTextListeners == null)
-			fTextListeners= new ArrayList();
+			fTextListeners= new ArrayList<>();
 
 		if (!fTextListeners.contains(listener))
 			fTextListeners.add(listener);
@@ -2679,16 +2679,16 @@ public class TextViewer extends Viewer implements
 	 * @param cmd the widget command translated into a text event sent to all text listeners
 	 */
 	protected void updateTextListeners(WidgetCommand cmd) {
-		List textListeners= fTextListeners;
+		List<ITextListener> textListeners= fTextListeners;
 		if (textListeners != null) {
-			textListeners= new ArrayList(textListeners);
+			textListeners= new ArrayList<>(textListeners);
 			DocumentEvent event= cmd.event;
 			if (event instanceof SlaveDocumentEvent)
 				event= ((SlaveDocumentEvent) event).getMasterEvent();
 
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
 			for (int i= 0; i < textListeners.size(); i++) {
-				ITextListener l= (ITextListener) textListeners.get(i);
+				ITextListener l= textListeners.get(i);
 				l.textChanged(e);
 			}
 		}
@@ -2702,7 +2702,7 @@ public class TextViewer extends Viewer implements
 		Assert.isNotNull(listener);
 
 		if (fTextInputListeners == null)
-			fTextInputListeners= new ArrayList();
+			fTextInputListeners= new ArrayList<>();
 
 		if (!fTextInputListeners.contains(listener))
 			fTextInputListeners.add(listener);
@@ -2728,10 +2728,10 @@ public class TextViewer extends Viewer implements
 	 * @param newInput the new input document
 	 */
 	protected void fireInputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-		List listener= fTextInputListeners;
+		List<ITextInputListener> listener= fTextInputListeners;
 		if (listener != null) {
 			for (int i= 0; i < listener.size(); i++) {
-				ITextInputListener l= (ITextInputListener) listener.get(i);
+				ITextInputListener l= listener.get(i);
 				l.inputDocumentAboutToBeChanged(oldInput, newInput);
 			}
 		}
@@ -2745,10 +2745,10 @@ public class TextViewer extends Viewer implements
 	 * @param newInput the new input document
 	 */
 	protected void fireInputDocumentChanged(IDocument oldInput, IDocument newInput) {
-		List listener= fTextInputListeners;
+		List<ITextInputListener> listener= fTextInputListeners;
 		if (listener != null) {
 			for (int i= 0; i < listener.size(); i++) {
-				ITextInputListener l= (ITextInputListener) listener.get(i);
+				ITextInputListener l= listener.get(i);
 				l.inputDocumentChanged(oldInput, newInput);
 			}
 		}
@@ -2937,7 +2937,7 @@ public class TextViewer extends Viewer implements
 	public void addViewportListener(IViewportListener listener) {
 
 		if (fViewportListeners == null) {
-			fViewportListeners= new ArrayList();
+			fViewportListeners= new ArrayList<>();
 			initializeViewportUpdate();
 		}
 
@@ -2966,7 +2966,7 @@ public class TextViewer extends Viewer implements
 			if (topPixel >= 0 && topPixel != fLastTopPixel) {
 				if (fViewportListeners != null) {
 					for (int i= 0; i < fViewportListeners.size(); i++) {
-						IViewportListener l= (IViewportListener) fViewportListeners.get(i);
+						IViewportListener l= fViewportListeners.get(i);
 						l.viewportChanged(topPixel);
 					}
 				}
@@ -3532,7 +3532,7 @@ public class TextViewer extends Viewer implements
 
 		if (strategy != null) {
 			if (fDoubleClickStrategies == null)
-				fDoubleClickStrategies= new HashMap();
+				fDoubleClickStrategies= new HashMap<>();
 			fDoubleClickStrategies.put(contentType, strategy);
 		} else if (fDoubleClickStrategies != null)
 			fDoubleClickStrategies.remove(contentType);
@@ -3542,11 +3542,11 @@ public class TextViewer extends Viewer implements
 	 * Selects from the given map the one which is registered under the content type of the
 	 * partition in which the given offset is located.
 	 * 
-	 * @param plugins the map from which to choose
 	 * @param offset the offset for which to find the plug-in
+	 * @param plugins the map from which to choose
 	 * @return the plug-in registered under the offset's content type or <code>null</code> if none
 	 */
-	protected Object selectContentTypePlugin(int offset, Map plugins) {
+	protected Object selectContentTypePlugin(int offset, Map<String, ?> plugins) {
 		final IDocument document= getDocument();
 		if (document == null)
 			return null;
@@ -3567,7 +3567,7 @@ public class TextViewer extends Viewer implements
 	 * @param plugins the table to be searched
 	 * @return the plug-in in the map for the given content type
 	 */
-	private Object selectContentTypePlugin(String type, Map plugins) {
+	private Object selectContentTypePlugin(String type, Map<String, ?> plugins) {
 
 		if (plugins == null)
 			return null;
@@ -3592,7 +3592,8 @@ public class TextViewer extends Viewer implements
 		if (fTabsToSpacesConverter != null)
 			fTabsToSpacesConverter.customizeDocumentCommand(document, command);
 
-		List strategies= (List) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
+		@SuppressWarnings("unchecked")
+		List<IAutoEditStrategy> strategies= (List<IAutoEditStrategy>) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
 		if (strategies == null)
 			return;
 
@@ -3602,14 +3603,14 @@ public class TextViewer extends Viewer implements
 			break;
 
 		case 1:
-			((IAutoEditStrategy) strategies.iterator().next()).customizeDocumentCommand(document, command);
+			strategies.iterator().next().customizeDocumentCommand(document, command);
 			break;
 
 		// make iterator robust against adding/removing strategies from within strategies
 		default:
-			strategies= new ArrayList(strategies);
-			for (final Iterator iterator= strategies.iterator(); iterator.hasNext(); )
-				((IAutoEditStrategy) iterator.next()).customizeDocumentCommand(document, command);
+			strategies= new ArrayList<>(strategies);
+			for (final Iterator<IAutoEditStrategy> iterator= strategies.iterator(); iterator.hasNext(); )
+				iterator.next().customizeDocumentCommand(document, command);
 
 			break;
 		}
@@ -4219,7 +4220,7 @@ public class TextViewer extends Viewer implements
 			fUndoManager.beginCompoundChange();
 
 		IDocument d= getDocument();
-		Map partitioners= null;
+		Map<String, IDocumentPartitioner> partitioners= null;
 		DocumentRewriteSession rewriteSession= null;
 		try {
 			ITextSelection selection= (ITextSelection) getSelection();
@@ -4251,7 +4252,7 @@ public class TextViewer extends Viewer implements
 				partitioners= TextUtilities.removeDocumentPartitioners(d);
 
 			// Perform the shift operation.
-			Map map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
+			Map<String, String[]> map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
 				for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= (String[]) selectContentTypePlugin(regions[i].getType(), map);
 				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
@@ -4652,27 +4653,27 @@ public class TextViewer extends Viewer implements
 			if (range != null)
 				fTextWidget.setStyleRange(range);
 
-			ArrayList ranges= new ArrayList(presentation.getDenumerableRanges());
-			Iterator e= presentation.getNonDefaultStyleRangeIterator();
+			ArrayList<StyleRange> ranges= new ArrayList<>(presentation.getDenumerableRanges());
+			Iterator<StyleRange> e= presentation.getNonDefaultStyleRangeIterator();
 			while (e.hasNext()) {
-				range= (StyleRange) e.next();
+				range= e.next();
 				range= modelStyleRange2WidgetStyleRange(range);
 				if (range != null)
 					ranges.add(range);
 			}
 
 			if (!ranges.isEmpty())
-				fTextWidget.replaceStyleRanges(0, 0, (StyleRange[])ranges.toArray(new StyleRange[ranges.size()]));
+				fTextWidget.replaceStyleRanges(0, 0, ranges.toArray(new StyleRange[ranges.size()]));
 
 		} else {
 			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
 			if (region == null)
 				return;
 
-			List list= new ArrayList(presentation.getDenumerableRanges());
-			Iterator e= presentation.getAllStyleRangeIterator();
+			List<StyleRange> list= new ArrayList<>(presentation.getDenumerableRanges());
+			Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 			while (e.hasNext()) {
-				range= (StyleRange) e.next();
+				range= e.next();
 				range= modelStyleRange2WidgetStyleRange(range);
 				if (range != null)
 					list.add(range);
@@ -4694,10 +4695,10 @@ public class TextViewer extends Viewer implements
 	 */
 	private void applyTextPresentation(TextPresentation presentation) {
 
-		List list= new ArrayList(presentation.getDenumerableRanges());
-		Iterator e= presentation.getAllStyleRangeIterator();
+		List<StyleRange> list= new ArrayList<>(presentation.getDenumerableRanges());
+		Iterator<StyleRange> e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {
-			StyleRange range= (StyleRange) e.next();
+			StyleRange range= e.next();
 			range= modelStyleRange2WidgetStyleRange(range);
 			if (range != null)
 				list.add(range);
@@ -4742,9 +4743,9 @@ public class TextViewer extends Viewer implements
 		 * and let them apply their presentation.
 		 */
 		if (fTextPresentationListeners != null) {
-			ArrayList listeners= new ArrayList(fTextPresentationListeners);
+			ArrayList<ITextPresentationListener> listeners= new ArrayList<>(fTextPresentationListeners);
 			for (int i= 0, size= listeners.size(); i < size; i++) {
-				ITextPresentationListener listener= (ITextPresentationListener)listeners.get(i);
+				ITextPresentationListener listener= listeners.get(i);
 				listener.applyTextPresentation(presentation);
 			}
 		}
@@ -5459,7 +5460,7 @@ public class TextViewer extends Viewer implements
 		Assert.isNotNull(listener);
 
 		if (fTextPresentationListeners == null)
-			fTextPresentationListeners= new ArrayList();
+			fTextPresentationListeners= new ArrayList<>();
 
 		if (!fTextPresentationListeners.contains(listener))
 			fTextPresentationListeners.add(listener);
@@ -5502,7 +5503,7 @@ public class TextViewer extends Viewer implements
 	 */
 	@Override
 	public IEditingSupport[] getRegisteredSupports() {
-		return (IEditingSupport[]) fEditorHelpers.toArray(new IEditingSupport[fEditorHelpers.size()]);
+		return fEditorHelpers.toArray(new IEditingSupport[fEditorHelpers.size()]);
 	}
 
 	@Override

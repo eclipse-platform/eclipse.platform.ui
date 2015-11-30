@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.Position;
 
 
 /**
@@ -36,21 +37,21 @@ import org.eclipse.jface.text.ISynchronizable;
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @since 3.0
  */
-public interface IAnnotationMap extends Map, ISynchronizable {
+public interface IAnnotationMap extends Map<Annotation, Position>, ISynchronizable {
 
 	/**
 	 * Returns an iterator for a copy of this annotation map's values.
 	 *
 	 * @return an iterator for a copy of this map's values
 	 */
-	Iterator valuesIterator();
+	Iterator<Position> valuesIterator();
 
 	/**
 	 * Returns an iterator for a copy of this map's key set.
 	 *
 	 * @return an iterator for a copy of this map's key set
 	 */
-	Iterator keySetIterator();
+	Iterator<Annotation> keySetIterator();
 
 	/**
 	 * {@inheritDoc}
@@ -58,7 +59,7 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	@Override
-	Set entrySet();
+	Set<Entry<Annotation, Position>> entrySet();
 
 	/**
 	 * {@inheritDoc}
@@ -66,7 +67,7 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 * The returned set is not synchronized on this annotation map's lock object.
 	 */
 	@Override
-	Set keySet();
+	Set<Annotation> keySet();
 
 	/**
 	 * {@inheritDoc}
@@ -74,5 +75,5 @@ public interface IAnnotationMap extends Map, ISynchronizable {
 	 * The returned collection is not synchronized on this annotation map's lock object.
 	 */
 	@Override
-	Collection values();
+	Collection<Position> values();
 }

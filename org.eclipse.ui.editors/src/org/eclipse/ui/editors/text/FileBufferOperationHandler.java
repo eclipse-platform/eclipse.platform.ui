@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,9 +100,9 @@ public class FileBufferOperationHandler extends AbstractHandler {
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
-			ArrayList resources= new ArrayList(structuredSelection.size());
+			ArrayList<Object> resources= new ArrayList<>(structuredSelection.size());
 
-			Iterator e= structuredSelection.iterator();
+			Iterator<?> e= structuredSelection.iterator();
 			while (e.hasNext()) {
 				Object element= e.next();
 				if (element instanceof IResource)
@@ -116,7 +116,7 @@ public class FileBufferOperationHandler extends AbstractHandler {
 			}
 
 			if (!resources.isEmpty())
-				fResources= (IResource[]) resources.toArray(new IResource[resources.size()]);
+				fResources= resources.toArray(new IResource[resources.size()]);
 
 		} else if (selection instanceof ITextSelection) {
 			IWorkbenchWindow window= getWorkbenchWindow();
@@ -170,13 +170,13 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	 * @return an array of files
 	 */
 	protected IFile[] collectFiles(IResource[] resources) {
-		Set files= new HashSet();
+		Set<IResource> files= new HashSet<>();
 		for (int i= 0; i < resources.length; i++) {
 			IResource resource= resources[i];
 			if ((IResource.FILE & resource.getType()) > 0)
 				files.add(resource);
 		}
-		return (IFile[]) files.toArray(new IFile[files.size()]);
+		return files.toArray(new IFile[files.size()]);
 	}
 
 	/**
@@ -246,14 +246,14 @@ public class FileBufferOperationHandler extends AbstractHandler {
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
 		progressMonitor.beginTask(TextEditorMessages.FileBufferOperationHandler_collectionFiles_label, files.length);
 		try {
-			Set locations= new HashSet();
+			Set<IPath> locations= new HashSet<>();
 			for (int i= 0; i < files.length; i++) {
 				IPath fullPath= files[i].getFullPath();
 				if (isAcceptableLocation(fullPath))
 					locations.add(fullPath);
 				progressMonitor.worked(1);
 			}
-			return (IPath[]) locations.toArray(new IPath[locations.size()]);
+			return locations.toArray(new IPath[locations.size()]);
 
 		} finally {
 			progressMonitor.done();

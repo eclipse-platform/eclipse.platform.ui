@@ -112,7 +112,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 */
 	private static final String STORE_EXTENSIONS= "EXTENSIONS"; //$NON-NLS-1$
 
-	private List fPreviousSearchPatterns= new ArrayList(HISTORY_SIZE);
+	private List<SearchPatternData> fPreviousSearchPatterns= new ArrayList<>(HISTORY_SIZE);
 
 	private boolean fFirstTime= true;
 	private boolean fIsCaseSensitive;
@@ -336,10 +336,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private FileTextSearchScope getSelectedResourcesScope() {
-		HashSet resources= new HashSet();
+		HashSet<IResource> resources= new HashSet<>();
 		ISelection sel= getContainer().getSelection();
 		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
-			Iterator iter= ((IStructuredSelection) sel).iterator();
+			Iterator<?> iter= ((IStructuredSelection) sel).iterator();
 			while (iter.hasNext()) {
 				Object curr= iter.next();
 				if (curr instanceof IWorkingSet) {
@@ -368,7 +368,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		} else if (getContainer().getActiveEditorInput() != null) {
 			resources.add(getContainer().getActiveEditorInput().getAdapter(IFile.class));
 		}
-		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
+		IResource[] arr= resources.toArray(new IResource[resources.size()]);
 		return FileTextSearchScope.newSearchScope(arr, getExtensions(), fSearchDerived);
 	}
 
@@ -389,8 +389,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 
 	private SearchPatternData findInPrevious(String pattern) {
-		for (Iterator iter= fPreviousSearchPatterns.iterator(); iter.hasNext();) {
-			SearchPatternData element= (SearchPatternData) iter.next();
+		for (Iterator<SearchPatternData> iter= fPreviousSearchPatterns.iterator(); iter.hasNext();) {
+			SearchPatternData element= iter.next();
 			if (pattern.equals(element.textPattern)) {
 				return element;
 			}
@@ -421,22 +421,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private String[] getPreviousExtensionsOldStyle() {
-		List extensions= new ArrayList(fPreviousSearchPatterns.size());
+		List<String> extensions= new ArrayList<>(fPreviousSearchPatterns.size());
 		int size= fPreviousSearchPatterns.size();
 		for (int i= 0; i < size; i++) {
-			SearchPatternData data= (SearchPatternData)fPreviousSearchPatterns.get(i);
+			SearchPatternData data= fPreviousSearchPatterns.get(i);
 			String text= FileTypeEditor.typesToString(data.fileNamePatterns);
 			if (!extensions.contains(text))
 				extensions.add(text);
 		}
-		return (String[])extensions.toArray(new String[extensions.size()]);
+		return extensions.toArray(new String[extensions.size()]);
 	}
 
 	private String[] getPreviousSearchPatterns() {
 		int size= fPreviousSearchPatterns.size();
 		String [] patterns= new String[size];
 		for (int i= 0; i < size; i++)
-			patterns[i]= ((SearchPatternData) fPreviousSearchPatterns.get(i)).textPattern;
+			patterns[i]= fPreviousSearchPatterns.get(i).textPattern;
 		return patterns;
 	}
 
@@ -632,7 +632,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (selectionIndex < 0 || selectionIndex >= fPreviousSearchPatterns.size())
 			return;
 
-		SearchPatternData patternData= (SearchPatternData) fPreviousSearchPatterns.get(selectionIndex);
+		SearchPatternData patternData= fPreviousSearchPatterns.get(selectionIndex);
 		if (!fPattern.getText().equals(patternData.textPattern))
 			return;
 		fIsCaseSensitiveCheckbox.setSelection(patternData.isCaseSensitive);
@@ -852,7 +852,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			// ignore
 		}
 
-		Set previousExtensions= new LinkedHashSet(HISTORY_SIZE);
+		Set<String> previousExtensions= new LinkedHashSet<>(HISTORY_SIZE);
 		IDialogSettings extensionsSettings= s.getSection(STORE_EXTENSIONS);
 		if (extensionsSettings != null) {
 			for (int i= 0; i < HISTORY_SIZE; i++) {
@@ -883,13 +883,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		s.put(STORE_HISTORY_SIZE, historySize);
 		for (int i= 0; i < historySize; i++) {
 			IDialogSettings histSettings= s.addNewSection(STORE_HISTORY + i);
-			SearchPatternData data= ((SearchPatternData) fPreviousSearchPatterns.get(i));
+			SearchPatternData data= fPreviousSearchPatterns.get(i);
 			data.store(histSettings);
 		}
 
 		IDialogSettings extensionsSettings= s.addNewSection(STORE_EXTENSIONS);
 		extensionsSettings.put(Integer.toString(0), fExtensions.getText());
-		Set extensions= new HashSet(HISTORY_SIZE);
+		Set<String> extensions= new HashSet<>(HISTORY_SIZE);
 		extensions.add(fExtensions.getText());
 		int length= Math.min(fExtensions.getItemCount(), HISTORY_SIZE - 1);
 		int j= 1;

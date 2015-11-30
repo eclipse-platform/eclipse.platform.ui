@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,10 @@ public class PatternRule implements IPredicateRule {
 	 *
 	 * @since 3.1
 	 */
-	private static class DecreasingCharArrayLengthComparator implements Comparator {
+	private static class DecreasingCharArrayLengthComparator implements Comparator<char[]> {
 		@Override
-		public int compare(Object o1, Object o2) {
-			return ((char[]) o2).length - ((char[]) o1).length;
+		public int compare(char[] o1, char[] o2) {
+			return o2.length - o1.length;
 		}
 	}
 
@@ -67,7 +67,7 @@ public class PatternRule implements IPredicateRule {
 	 * Line delimiter comparator which orders according to decreasing delimiter length.
 	 * @since 3.1
 	 */
-	private Comparator fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
+	private Comparator<char[]> fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
 	/**
 	 * Cached line delimiters.
 	 * @since 3.1

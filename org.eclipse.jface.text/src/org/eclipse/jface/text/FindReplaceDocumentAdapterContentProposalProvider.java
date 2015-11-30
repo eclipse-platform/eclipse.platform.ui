@@ -51,11 +51,11 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		/**
 		 * The high-priority proposals.
 		 */
-		private final ArrayList fPriorityProposals;
+		private final ArrayList<ContentProposal> fPriorityProposals;
 		/**
 		 * The low-priority proposals.
 		 */
-		private final ArrayList fProposals;
+		private final ArrayList<ContentProposal> fProposals;
 		/**
 		 * <code>true</code> iff <code>fExpression</code> ends with an open escape.
 		 */
@@ -69,8 +69,8 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		public ProposalComputer(String contents, int position) {
 			fExpression= contents;
 			fDocumentOffset= position;
-			fPriorityProposals= new ArrayList();
-			fProposals= new ArrayList();
+			fPriorityProposals= new ArrayList<>();
+			fProposals= new ArrayList<>();
 
 			boolean isEscape= false;
 			esc: for (int i= position - 1; i >= 0; i--) {
@@ -196,7 +196,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 			}
 
 			fPriorityProposals.addAll(fProposals);
-			return (IContentProposal[]) fPriorityProposals.toArray(new IContentProposal[fProposals.size()]);
+			return fPriorityProposals.toArray(new IContentProposal[fProposals.size()]);
 		}
 
 		/**
@@ -224,7 +224,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 				addBsProposal("\\C", RegExMessages.getString("displayString_replace_bs_C"), RegExMessages.getString("additionalInfo_replace_bs_C")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			fPriorityProposals.addAll(fProposals);
-			return (IContentProposal[]) fPriorityProposals.toArray(new IContentProposal[fPriorityProposals.size()]);
+			return fPriorityProposals.toArray(new IContentProposal[fPriorityProposals.size()]);
 		}
 
 		/**

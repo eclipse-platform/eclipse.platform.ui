@@ -44,7 +44,7 @@ import org.eclipse.jface.text.TypedRegion;
 public class Reconciler extends AbstractReconciler implements IReconcilerExtension {
 
 	/** The map of reconciling strategies. */
-	private Map fStrategies;
+	private Map<String, IReconcilingStrategy> fStrategies;
 
 	/**
 	 * The partitioning this reconciler uses.
@@ -92,7 +92,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		Assert.isNotNull(contentType);
 
 		if (fStrategies == null)
-			fStrategies= new HashMap();
+			fStrategies= new HashMap<>();
 
 		if (strategy == null)
 			fStrategies.remove(contentType);
@@ -113,7 +113,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		if (fStrategies == null)
 			return null;
 
-		return (IReconcilingStrategy) fStrategies.get(contentType);
+		return fStrategies.get(contentType);
 	}
 
 	/**
@@ -151,9 +151,9 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	@Override
 	protected void reconcilerDocumentChanged(IDocument document) {
 		if (fStrategies != null) {
-			Iterator e= fStrategies.values().iterator();
+			Iterator<IReconcilingStrategy> e= fStrategies.values().iterator();
 			while (e.hasNext()) {
-				IReconcilingStrategy strategy= (IReconcilingStrategy) e.next();
+				IReconcilingStrategy strategy= e.next();
 				strategy.setDocument(document);
 			}
 		}
@@ -164,9 +164,9 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 		super.setProgressMonitor(monitor);
 
 		if (fStrategies != null) {
-			Iterator e= fStrategies.values().iterator();
+			Iterator<IReconcilingStrategy> e= fStrategies.values().iterator();
 			while (e.hasNext()) {
-				IReconcilingStrategy strategy= (IReconcilingStrategy) e.next();
+				IReconcilingStrategy strategy= e.next();
 				if (strategy instanceof IReconcilingStrategyExtension) {
 					IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
 					extension.setProgressMonitor(monitor);
@@ -178,7 +178,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	@Override
 	protected void initialProcess() {
 		ITypedRegion[] regions= computePartitioning(0, getDocument().getLength());
-		List contentTypes= new ArrayList(regions.length);
+		List<String> contentTypes= new ArrayList<>(regions.length);
 		for (int i= 0; i < regions.length; i++) {
 			String contentType= regions[i].getType();
 			if( contentTypes.contains(contentType))

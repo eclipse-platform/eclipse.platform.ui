@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public final class DocumentUndoManagerRegistry {
 		private IDocumentUndoManager undoManager;
 	}
 
-	private static Map fgFactory= new HashMap();
+	private static Map<IDocument, Record> fgFactory= new HashMap<>();
 
 	private DocumentUndoManagerRegistry() {
 		// 	Do not instantiate
@@ -62,7 +62,7 @@ public final class DocumentUndoManagerRegistry {
 	 */
 	public static synchronized void connect(IDocument document) {
 		Assert.isNotNull(document);
-		Record record= (Record)fgFactory.get(document);
+		Record record= fgFactory.get(document);
 		if (record == null) {
 			record= new Record(document);
 			fgFactory.put(document, record);
@@ -77,7 +77,7 @@ public final class DocumentUndoManagerRegistry {
 	 */
 	public static synchronized void disconnect(IDocument document) {
 		Assert.isNotNull(document);
-		Record record= (Record)fgFactory.get(document);
+		Record record= fgFactory.get(document);
 		record.count--;
 		if (record.count == 0)
 			fgFactory.remove(document);
@@ -99,7 +99,7 @@ public final class DocumentUndoManagerRegistry {
 	 */
 	public static synchronized IDocumentUndoManager getDocumentUndoManager(IDocument document) {
 		Assert.isNotNull(document);
-		Record record= (Record)fgFactory.get(document);
+		Record record= fgFactory.get(document);
 		if (record == null)
 			return null;
 		return record.undoManager;

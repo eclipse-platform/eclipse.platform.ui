@@ -25,7 +25,7 @@ import java.util.List;
 class DirtyRegionQueue {
 
 	/** The list of dirty regions. */
-	private List fDirtyRegions= new ArrayList();
+	private List<DirtyRegion> fDirtyRegions= new ArrayList<>();
 
 	/**
 	 * Creates a new empty dirty region.
@@ -70,7 +70,7 @@ class DirtyRegionQueue {
 	 */
 	private DirtyRegion getLastDirtyRegion() {
 		int size= fDirtyRegions.size();
-		return (size == 0 ? null : (DirtyRegion) fDirtyRegions.get(size - 1));
+		return (size == 0 ? null : fDirtyRegions.get(size - 1));
 	}
 
 	/**
@@ -97,7 +97,7 @@ class DirtyRegionQueue {
 	public DirtyRegion removeNextDirtyRegion() {
 		if (fDirtyRegions.size() == 0)
 			return null;
-		DirtyRegion dr= (DirtyRegion) fDirtyRegions.get(0);
+		DirtyRegion dr= fDirtyRegions.get(0);
 		fDirtyRegions.remove(0);
 		return dr;
 	}

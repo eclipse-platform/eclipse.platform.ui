@@ -35,15 +35,15 @@ public class JavaColorProvider {
 	public static final RGB JAVADOC_LINK= new RGB(128, 128, 128);
 	public static final RGB JAVADOC_DEFAULT= new RGB(0, 128, 128);
 
-	protected Map fColorTable= new HashMap(10);
+	protected Map<RGB, Color> fColorTable= new HashMap<>(10);
 
 	/**
 	 * Release all of the color resources held onto by the receiver.
 	 */
 	public void dispose() {
-		Iterator e= fColorTable.values().iterator();
+		Iterator<Color> e= fColorTable.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			 e.next().dispose();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class JavaColorProvider {
 	 * @return the color stored in the color table for the given RGB value
 	 */
 	public Color getColor(RGB rgb) {
-		Color color= (Color) fColorTable.get(rgb);
+		Color color= fColorTable.get(rgb);
 		if (color == null) {
 			color= new Color(Display.getCurrent(), rgb);
 			fColorTable.put(rgb, color);

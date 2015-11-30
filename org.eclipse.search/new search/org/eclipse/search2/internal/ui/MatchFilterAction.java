@@ -41,7 +41,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 		if (input == null) {
 			return;
 		}
-		ArrayList newFilters= new ArrayList();
+		ArrayList<MatchFilter> newFilters= new ArrayList<>();
 		MatchFilter[] activeMatchFilters= input.getActiveMatchFilters();
 		if (activeMatchFilters == null) {
 			return;
@@ -56,7 +56,7 @@ public class MatchFilterAction extends Action implements IUpdate {
 		if (newState) {
 			newFilters.add(fFilter);
 		}
-		input.setActiveMatchFilters((MatchFilter[]) newFilters.toArray(new MatchFilter[newFilters.size()]));
+		input.setActiveMatchFilters(newFilters.toArray(new MatchFilter[newFilters.size()]));
 	}
 
 	public MatchFilter getFilter() {

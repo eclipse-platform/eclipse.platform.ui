@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,18 @@ package org.eclipse.ui.workbench.texteditor.tests.revisions;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.Hunk;
+import org.eclipse.jface.internal.text.revisions.Range;
 
 import org.eclipse.jface.text.revisions.Revision;
-import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  *
@@ -85,36 +85,36 @@ public class ChangeRegionTest extends TestCase {
 
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		assertEquals(fRevision, r.getRevision());
-		RangeUtil.assertEqualRange(new LineRange(12, 3), (ILineRange) r.getAdjustedRanges().get(0));
+		RangeUtil.assertEqualRange(new LineRange(12, 3), r.getAdjustedRanges().get(0));
 		RangeUtil.assertEqualRange(new LineRange(12, 3), r.getAdjustedCoverage());
 	}
 
 	public void testHunkAfter() throws Exception {
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
-		List before= RangeUtil.deepClone(r.getAdjustedRanges());
+		List<Range> before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(16, 3, 2));
 		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
-		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRange(before.get(0), r.getAdjustedCoverage());
 
 		r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(16, -33, 2));
 		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
-		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRange(before.get(0), r.getAdjustedCoverage());
 	}
 
 	public void testHunkRightAfter() throws Exception {
 		ChangeRegion r= new ChangeRegion(fRevision, new LineRange(12, 3));
-		List before= RangeUtil.deepClone(r.getAdjustedRanges());
+		List<Range> before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(15, 3, 2));
 		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
-		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRange(before.get(0), r.getAdjustedCoverage());
 
 		r= new ChangeRegion(fRevision, new LineRange(12, 3));
 		before= RangeUtil.deepClone(r.getAdjustedRanges());
 		r.adjustTo(new Hunk(15, -3, 2));
 		RangeUtil.assertEqualRanges(before, r.getAdjustedRanges());
-		RangeUtil.assertEqualRange((ILineRange) before.get(0), r.getAdjustedCoverage());
+		RangeUtil.assertEqualRange(before.get(0), r.getAdjustedCoverage());
 	}
 
 	public void testHunkBefore() throws Exception {

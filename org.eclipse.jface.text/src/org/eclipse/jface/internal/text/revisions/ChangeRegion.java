@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.jface.text.source.LineRange;
 public final class ChangeRegion {
 	private final Revision fRevision;
 	private final ILineRange fLines;
-	private final List fAdjusted= new LinkedList();
+	private final List<Range> fAdjusted= new LinkedList<>();
 
 	/**
 	 * Creates a new change region for the given revision and line range.
@@ -66,12 +66,12 @@ public final class ChangeRegion {
 	}
 
 	/**
-	 * Returns the list of {@link ILineRange}s of this change region for which the revision
+	 * Returns the list of {@link Range}s of this change region for which the revision
 	 * information is still valid.
 	 *
 	 * @return the list of adjusted line ranges
 	 */
-	public List getAdjustedRanges() {
+	public List<Range> getAdjustedRanges() {
 		return fAdjusted;
 	}
 
@@ -84,8 +84,8 @@ public final class ChangeRegion {
 		if (fAdjusted.isEmpty())
 			return new LineRange(fLines.getStartLine(), 0);
 
-		Range first= (Range) fAdjusted.get(0);
-		Range last= (Range) fAdjusted.get(fAdjusted.size() - 1);
+		Range first= fAdjusted.get(0);
+		Range last= fAdjusted.get(fAdjusted.size() - 1);
 
 		return Range.createAbsolute(first.start(), last.end());
 	}
@@ -104,8 +104,8 @@ public final class ChangeRegion {
 	 * @param hunk the diff hunk to adjust to
 	 */
 	public void adjustTo(Hunk hunk) {
-		for (ListIterator it= fAdjusted.listIterator(); it.hasNext();) {
-			Range range= (Range) it.next();
+		for (ListIterator<Range> it= fAdjusted.listIterator(); it.hasNext();) {
+			Range range= it.next();
 
 			// do we need a split?
 			int unchanged= getUnchanged(hunk, range.start());

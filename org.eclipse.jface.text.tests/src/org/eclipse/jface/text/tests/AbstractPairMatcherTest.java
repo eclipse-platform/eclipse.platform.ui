@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.jface.text.tests;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -30,6 +28,8 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
+
+import junit.framework.TestCase;
 
 /**
  * Generic test of simple character pair matchers
@@ -74,7 +74,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Very simple checks.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testSimpleMatchSameMatcher() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -106,7 +106,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Very simple checks.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testSimpleMatchDifferentMatchers() throws BadLocationException {
 		performMatch("()[]{}", "#(   )%");
@@ -124,7 +124,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Close matches.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testCloseMatches() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -151,7 +151,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Checks of simple situations where no matches should be found.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testIncompleteMatch() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -164,7 +164,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Test that it doesn't match across different partitions.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -201,7 +201,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Test that it works properly next to partition boundaries.
 	 * 
-	 * @throws BadLocationException
+	 * @throws BadLocationException test failure
 	 */
 	public void testTightPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -255,7 +255,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/**
 	 * Test a few boundary conditions.
 	 * 
-	 * * @throws BadLocationException
+	 * * @throws BadLocationException test failure
 	 */
 	public void testBoundaries() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
@@ -519,11 +519,11 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 
 	private static IDocumentPartitioner createPartitioner() {
 		final RuleBasedPartitionScanner scan= new RuleBasedPartitionScanner();
-		final List/*<IPredicateRule>*/ rules= new ArrayList/*<IPredicateRule>*/();
+		final List<SingleLineRule> rules= new ArrayList<>();
 		rules.add(new SingleLineRule("|a", "a|", new Token("a")));
 		rules.add(new SingleLineRule("|b", "b|", new Token("b")));
 		rules.add(new SingleLineRule("|c", "c|", new Token("c")));
-		scan.setPredicateRules((IPredicateRule[]) rules.toArray(new IPredicateRule[rules.size()]));
+		scan.setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
 		scan.setDefaultReturnToken(new Token(DEFAULT_PARTITION));
 		return new FastPartitioner(scan, new String[] { DEFAULT_PARTITION, "a", "b", "c" });
 	}

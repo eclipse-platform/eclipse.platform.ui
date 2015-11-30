@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,12 +170,12 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * @param tracker the list line tracker
 	 */
     TreeLineTracker(ListLineTracker tracker) {
-    	final List lines= tracker.getLines();
+    	final List<Line> lines= tracker.getLines();
     	final int n= lines.size();
     	if (n == 0)
     		return;
 
-    	Line line= (Line) lines.get(0);
+    	Line line= lines.get(0);
     	String delim= line.delimiter;
     	if (delim == null)
     		delim= NO_DELIM;
@@ -184,7 +184,7 @@ abstract class TreeLineTracker implements ILineTracker {
     	Node node= fRoot;
 
 		for (int i= 1; i < n; i++) {
-	        line= (Line) lines.get(i);
+	        line= lines.get(i);
 	        delim= line.delimiter;
 	        if (delim == null)
 	        	delim= NO_DELIM;
@@ -1229,7 +1229,7 @@ abstract class TreeLineTracker implements ILineTracker {
 		int width= WIDTH * leaves;
 		String empty= "."; //$NON-NLS-1$
 
-		List roots= new LinkedList();
+		List<Node> roots= new LinkedList<>();
 		roots.add(fRoot);
 		StringBuffer buf= new StringBuffer((width + 1) * depth);
 		int indents= leaves;
@@ -1240,11 +1240,11 @@ abstract class TreeLineTracker implements ILineTracker {
 			indents /= 2;
 			int spaces= Math.max(0, indents * WIDTH - WIDTH / 2);
 			// print nodes
-			for (ListIterator it= roots.listIterator(); it.hasNext();) {
+			for (ListIterator<Node> it= roots.listIterator(); it.hasNext();) {
 				// pad before
 				buf.append(space, 0, spaces);
 
-				Node node= (Node) it.next();
+				Node node= it.next();
 				String box;
 				// replace the node with its children
 				if (node == null) {

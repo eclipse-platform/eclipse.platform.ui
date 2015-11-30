@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
+
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * FileBuffersForNonExistingWorkspaceFiles
@@ -101,7 +103,7 @@ public class FileStoreFileBuffersForNonExistingWorkspaceFiles extends FileStoreF
 	}
 
 	@Override
-	protected Class getAnnotationModelClass() throws Exception {
+	protected Class<IAnnotationModel> getAnnotationModelClass() throws Exception {
 		return null;
 	}
 }

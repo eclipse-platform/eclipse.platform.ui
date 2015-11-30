@@ -460,7 +460,7 @@ public class ProjectionDocument extends AbstractDocument {
 		if (fragments == null || fragments.length == 0)
 			return new IRegion[] { new Region(offsetInMaster, lengthInMaster) };
 
-		List gaps= new ArrayList();
+		List<Region> gaps= new ArrayList<>();
 
 		IRegion region= fragments[0];
 		if (offsetInMaster < region.getOffset())

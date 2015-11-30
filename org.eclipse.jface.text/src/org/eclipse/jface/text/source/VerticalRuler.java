@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,10 +307,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		int maxLayer= 1;	// loop at least once though layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
-			Iterator iter= fModel.getAnnotationIterator();
+			Iterator<Annotation> iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
 				IAnnotationPresentation annotationPresentation= null;
-				Annotation annotation= (Annotation) iter.next();
+				Annotation annotation= iter.next();
 
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
@@ -394,10 +394,10 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		int maxLayer= 1;	// loop at least once through layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
-			Iterator iter= fModel.getAnnotationIterator();
+			Iterator<Annotation> iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
 				IAnnotationPresentation annotationPresentation= null;
-				Annotation annotation= (Annotation) iter.next();
+				Annotation annotation= iter.next();
 
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)

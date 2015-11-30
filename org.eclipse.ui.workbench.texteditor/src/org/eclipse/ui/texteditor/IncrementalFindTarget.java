@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	private boolean fSearching;
 	/** The current find stack */
-	private Stack fSessionStack;
+	private Stack<SearchResult> fSessionStack;
 	/**
 	 * The previous search string
 	 * @since 2.1
@@ -182,7 +182,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 		SearchResult searchResult= null;
 		if (!fSessionStack.empty())
-			searchResult= (SearchResult) fSessionStack.pop();
+			searchResult= fSessionStack.pop();
 
 		if (searchResult == null) {
 			text.getDisplay().beep();
@@ -272,7 +272,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		}
 
 		fFindString.setLength(0);
-		fSessionStack= new Stack();
+		fSessionStack= new Stack<>();
 		fCasePosition= -1;
 		fWrapPosition= -1;
 		fFound= true;

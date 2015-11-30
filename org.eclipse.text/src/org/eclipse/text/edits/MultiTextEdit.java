@@ -98,11 +98,11 @@ public class MultiTextEdit extends TextEdit {
 		if (fDefined)
 			return super.getOffset();
 
-		List/*<TextEdit>*/ children= internalGetChildren();
+		List<TextEdit> children= internalGetChildren();
 		if (children == null || children.size() == 0)
 			return 0;
 		// the children are already sorted
-		return ((TextEdit)children.get(0)).getOffset();
+		return children.get(0).getOffset();
 	}
 
 	@Override
@@ -110,12 +110,12 @@ public class MultiTextEdit extends TextEdit {
 		if (fDefined)
 			return super.getLength();
 
-		List/*<TextEdit>*/ children= internalGetChildren();
+		List<TextEdit> children= internalGetChildren();
 		if (children == null || children.size() == 0)
 			return 0;
 		// the children are already sorted
-		TextEdit first= (TextEdit)children.get(0);
-		TextEdit last= (TextEdit)children.get(children.size() - 1);
+		TextEdit first= children.get(0);
+		TextEdit last= children.get(children.size() - 1);
 		return last.getOffset() - first.getOffset() + last.getLength();
 	}
 

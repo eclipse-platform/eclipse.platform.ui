@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 
-
 /**
  * Manages the installation and removal of global actions for
  * the same type of editors.
@@ -136,7 +135,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The map of status fields.
 	 * @since 2.0
 	 */
-	private Map fStatusFields;
+	private Map<StatusFieldDef, StatusLineContributionItem> fStatusFields;
 
 
 	/**
@@ -160,7 +159,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fHippieCompletion= new RetargetTextEditorAction(EditorMessages.getBundleForConstructedKeys(), "Editor.HippieCompletion."); //$NON-NLS-1$
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 
-		fStatusFields= new HashMap(3);
+		fStatusFields= new HashMap<>(3);
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			StatusFieldDef fieldDef= STATUS_FIELD_DEFS[i];
 			fStatusFields.put(fieldDef, new StatusLineContributionItem(fieldDef.category, fieldDef.visible, fieldDef.widthInChars));
@@ -226,7 +225,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
-				StatusLineContributionItem statusField= (StatusLineContributionItem) fStatusFields.get(STATUS_FIELD_DEFS[i]);
+				StatusLineContributionItem statusField= fStatusFields.get(STATUS_FIELD_DEFS[i]);
 				statusField.setActionHandler(getAction(editor, STATUS_FIELD_DEFS[i].actionId));
 				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
 				extension.setStatusField(statusField, STATUS_FIELD_DEFS[i].category);
@@ -296,7 +295,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
 		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
-			statusLineManager.add((IContributionItem)fStatusFields.get(STATUS_FIELD_DEFS[i]));
+			statusLineManager.add(fStatusFields.get(STATUS_FIELD_DEFS[i]));
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class JavaCodeScanner extends RuleBasedScanner {
 		IToken comment= new Token(new TextAttribute(provider.getColor(JavaColorProvider.SINGLE_LINE_COMMENT)));
 		IToken other= new Token(new TextAttribute(provider.getColor(JavaColorProvider.DEFAULT)));
 
-		List rules= new ArrayList();
+		List<IRule> rules= new ArrayList<>();
 
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("//", comment)); //$NON-NLS-1$

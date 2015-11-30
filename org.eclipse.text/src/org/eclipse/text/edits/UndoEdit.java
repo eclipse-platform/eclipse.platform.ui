@@ -85,9 +85,9 @@ public final class UndoEdit extends TextEdit {
 	}
 
 	void add(ReplaceEdit edit) {
-		List children= internalGetChildren();
+		List<TextEdit> children= internalGetChildren();
 		if (children == null) {
-			children= new ArrayList(2);
+			children= new ArrayList<>(2);
 			internalSetChildren(children);
 		}
 		children.add(edit);

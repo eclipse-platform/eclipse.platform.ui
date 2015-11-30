@@ -27,7 +27,7 @@ public class DocumentPartitioningChangedEvent {
 	/** The document whose partitionings changed */
 	private final IDocument fDocument;
 	/** The map of partitionings to changed regions. */
-	private final Map fMap= new HashMap();
+	private final Map<String, Region> fMap= new HashMap<>();
 
 
 	/**
@@ -57,7 +57,7 @@ public class DocumentPartitioningChangedEvent {
 	 * @return the changed region of the given partitioning or <code>null</code>
 	 */
 	public IRegion getChangedRegion(String partitioning) {
-		return (IRegion) fMap.get(partitioning);
+		return fMap.get(partitioning);
 	}
 
 	/**
@@ -105,9 +105,9 @@ public class DocumentPartitioningChangedEvent {
 
 		int offset= -1;
 		int endOffset= -1;
-		Iterator e= fMap.values().iterator();
+		Iterator<Region> e= fMap.values().iterator();
 		while (e.hasNext()) {
-			IRegion r= (IRegion) e.next();
+			IRegion r= e.next();
 
 			if (offset < 0 || r.getOffset() < offset)
 				offset= r.getOffset();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class DocumentCommand {
 	 * A command which is added to document commands.
 	 * @since 2.1
 	 */
-	private static class Command implements Comparable {
+	private static class Command implements Comparable<Command> {
 		/** The offset of the range to be replaced */
 		private final int fOffset;
 		/** The length of the range to be replaced. */
@@ -85,15 +85,12 @@ public class DocumentCommand {
 				document.addDocumentListener(fOwner);
 		}
 
-		/*
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
-		public int compareTo(final Object object) {
+		public int compareTo(Command object) {
 			if (isEqual(object))
 				return 0;
 
-			final Command command= (Command) object;
+			Command command= object;
 
 			// diff middle points if not intersecting
 			if (fOffset + fLength <= command.fOffset || command.fOffset + command.fLength <= fOffset) {
@@ -117,17 +114,19 @@ public class DocumentCommand {
 
 	/**
 	 * An iterator, which iterates in reverse over a list.
+	 * 
+	 * @param <E> the type of elements returned by this iterator
 	 */
-	private static class ReverseListIterator implements Iterator {
+	private static class ReverseListIterator<E> implements Iterator<E> {
 
 		/** The list iterator. */
-		private final ListIterator fListIterator;
+		private final ListIterator<E> fListIterator;
 
 		/**
 		 * Creates a reverse list iterator.
 		 * @param listIterator the iterator that this reverse iterator is based upon
 		 */
-		public ReverseListIterator(ListIterator listIterator) {
+		public ReverseListIterator(ListIterator<E> listIterator) {
 			if (listIterator == null)
 				throw new IllegalArgumentException();
 			fListIterator= listIterator;
@@ -139,7 +138,7 @@ public class DocumentCommand {
 		}
 
 		@Override
-		public Object next() {
+		public E next() {
 			return fListIterator.previous();
 		}
 
@@ -152,10 +151,10 @@ public class DocumentCommand {
 	/**
 	 * A command iterator.
 	 */
-	private static class CommandIterator implements Iterator {
+	private static class CommandIterator implements Iterator<Command> {
 
 		/** The command iterator. */
-		private final Iterator fIterator;
+		private final Iterator<Command> fIterator;
 
 		/** The original command. */
 		private Command fCommand;
@@ -170,10 +169,10 @@ public class DocumentCommand {
 		 * @param command the original command
 		 * @param forward the direction
 		 */
-		public CommandIterator(final List commands, final Command command, final boolean forward) {
+		public CommandIterator(final List<Command> commands, final Command command, final boolean forward) {
 			if (commands == null || command == null)
 				throw new IllegalArgumentException();
-			fIterator= forward ? commands.iterator() : new ReverseListIterator(commands.listIterator(commands.size()));
+			fIterator= forward ? commands.iterator() : new ReverseListIterator<>(commands.listIterator(commands.size()));
 			fCommand= command;
 			fForward= forward;
 		}
@@ -184,7 +183,7 @@ public class DocumentCommand {
 		}
 
 		@Override
-		public Object next() {
+		public Command next() {
 
 			if (!hasNext())
 				throw new NoSuchElementException();
@@ -198,7 +197,7 @@ public class DocumentCommand {
 				return tempCommand;
 			}
 
-			final Command command= (Command) fIterator.next();
+			final Command command= fIterator.next();
 			final int compareValue= command.compareTo(fCommand);
 
 			if ((compareValue < 0) ^ !fForward) {
@@ -242,7 +241,7 @@ public class DocumentCommand {
 	 * Additional document commands.
 	 * @since 2.1
 	 */
-	private final List fCommands= new ArrayList();
+	private final List<Command> fCommands= new ArrayList<>();
 	/**
 	 * Indicates whether the caret should be shifted by this command.
 	 * @since 3.0
@@ -319,11 +318,11 @@ public class DocumentCommand {
 		final int insertionIndex= -(index + 1);
 
 		// overlaps to the right?
-		if (insertionIndex != fCommands.size() && intersects((Command) fCommands.get(insertionIndex), command))
+		if (insertionIndex != fCommands.size() && intersects(fCommands.get(insertionIndex), command))
 			throw new BadLocationException();
 
 		// overlaps to the left?
-		if (insertionIndex != 0 && intersects((Command) fCommands.get(insertionIndex - 1), command))
+		if (insertionIndex != 0 && intersects(fCommands.get(insertionIndex - 1), command))
 			throw new BadLocationException();
 
 		fCommands.add(insertionIndex, command);
@@ -336,7 +335,7 @@ public class DocumentCommand {
 	 *
 	 * @return returns the command iterator
 	 */
-	public Iterator getCommandIterator() {
+	public Iterator<Command> getCommandIterator() {
 		Command command= new Command(offset, length, text, owner);
 		return new CommandIterator(fCommands, command, true);
 	}
@@ -403,8 +402,8 @@ public class DocumentCommand {
 			}
 
 			final Command originalCommand= new Command(offset, length, text, owner);
-			for (final Iterator iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); )
-				((Command) iterator.next()).execute(document);
+			for (final Iterator<Command> iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); )
+				iterator.next().execute(document);
 
 		} catch (BadLocationException e) {
 			// ignore

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,9 +186,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 
 	/** Element information of all connected elements */
-	private Map fElementInfoMap= new HashMap();
+	private Map<Object, ElementInfo> fElementInfoMap= new HashMap<>();
 	/** The element state listeners */
-	private List fElementStateListeners= new ArrayList();
+	private List<IElementStateListener> fElementStateListeners= new ArrayList<>();
 	/**
 	 * The current progress monitor
 	 * @since 2.1
@@ -306,7 +306,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @return the element info object, or <code>null</code> if none
 	 */
 	protected ElementInfo getElementInfo(Object element) {
-		return (ElementInfo) fElementInfoMap.get(element);
+		return fElementInfoMap.get(element);
 	}
 
 	/**
@@ -374,11 +374,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	/**
 	 * Enumerates the elements connected via this document provider.
 	 *
-	 * @return the list of elements (element type: <code>Object</code>)
+	 * @return the list of elements
 	 */
-	protected Iterator getConnectedElements() {
-		Set s= new HashSet();
-		Set keys= fElementInfoMap.keySet();
+	protected Iterator<Object> getConnectedElements() {
+		Set<Object> s= new HashSet<>();
+		Set<Object> keys= fElementInfoMap.keySet();
 		if (keys != null)
 			s.addAll(keys);
 		return s.iterator();
@@ -386,7 +386,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	@Override
 	public final void connect(Object element) throws CoreException {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		if (info == null) {
 
 			info= createElementInfo(element);
@@ -418,7 +418,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	@Override
 	public final void disconnect(Object element) {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 
 		if (info == null)
 			return;
@@ -451,7 +451,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return null;
 
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fDocument : null);
 	}
 
@@ -461,7 +461,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return false;
 
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fCount == 1 && info.fCanBeSaved : false);
 	}
 
@@ -471,7 +471,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return null;
 
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fModel : null);
 	}
 
@@ -481,7 +481,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (element == null)
 			return false;
 
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		return (info != null ? info.fCanBeSaved : false);
 	}
 
@@ -494,7 +494,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 3.0
 	 */
 	protected void doResetDocument(Object element, IProgressMonitor monitor) throws CoreException {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		if (info != null) {
 
 			IDocument original= null;
@@ -581,7 +581,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 			@Override
 			protected void execute(IProgressMonitor pm) throws CoreException {
-				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+				ElementInfo info= fElementInfoMap.get(element);
 				if (info != null) {
 					if (info.fDocument != document) {
 						Status status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.ERROR, EditorMessages.AbstractDocumentProvider_error_save_inuse, null);
@@ -655,9 +655,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IElementStateListener#elementDirtyStateChanged(Object, boolean)
 	 */
 	protected void fireElementDirtyStateChanged(Object element, boolean isDirty) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
+			IElementStateListener l= e.next();
 			l.elementDirtyStateChanged(element, isDirty);
 		}
 	}
@@ -670,9 +670,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IElementStateListener#elementContentAboutToBeReplaced(Object)
 	 */
 	protected void fireElementContentAboutToBeReplaced(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
+			IElementStateListener l= e.next();
 			l.elementContentAboutToBeReplaced(element);
 		}
 	}
@@ -685,9 +685,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IElementStateListener#elementContentReplaced(Object)
 	 */
 	protected void fireElementContentReplaced(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
+			IElementStateListener l= e.next();
 			l.elementContentReplaced(element);
 		}
 	}
@@ -700,9 +700,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IElementStateListener#elementDeleted(Object)
 	 */
 	protected void fireElementDeleted(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
+			IElementStateListener l= e.next();
 			l.elementDeleted(element);
 		}
 	}
@@ -715,9 +715,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see IElementStateListener#elementMoved(Object, Object)
 	 */
 	protected void fireElementMoved(Object originalElement, Object movedElement) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
-			IElementStateListener l= (IElementStateListener) e.next();
+			IElementStateListener l= e.next();
 			l.elementMoved(originalElement, movedElement);
 		}
 	}
@@ -757,7 +757,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 */
 	@Override
 	public boolean isStateValidated(Object element) {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		if (info != null)
 			return info.fIsStateValidated;
 		return false;
@@ -784,7 +784,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException {
-				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+				ElementInfo info= fElementInfoMap.get(element);
 				if (info == null)
 					return;
 
@@ -834,7 +834,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	@Override
 	public final void updateStateCache(Object element) throws CoreException {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		if (info != null) {
 			boolean wasReadOnly= isReadOnly(element);
 			doUpdateStateCache(element);
@@ -848,7 +848,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	@Override
 	public void setCanSaveDocument(Object element) {
 		if (element != null) {
-			ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+			ElementInfo info= fElementInfoMap.get(element);
 			if (info != null) {
 				info.fCanBeSaved= true;
 				removeUnchangedElementListeners(element, info);
@@ -867,7 +867,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	protected void fireElementStateValidationChanged(Object element, boolean isStateValidated) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof IElementStateListenerExtension) {
@@ -886,7 +886,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	protected void fireElementStateChanging(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof IElementStateListenerExtension) {
@@ -905,7 +905,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.0
 	 */
 	protected void fireElementStateChangeFailed(Object element) {
-		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		Iterator<IElementStateListener> e= new ArrayList<>(fElementStateListeners).iterator();
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof IElementStateListenerExtension) {
@@ -917,7 +917,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	@Override
 	public IStatus getStatus(Object element) {
-		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
+		ElementInfo info= fElementInfoMap.get(element);
 		if (info != null) {
 			if (info.fStatus != null)
 				return info.fStatus;

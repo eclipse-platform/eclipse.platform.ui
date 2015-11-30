@@ -68,9 +68,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	protected static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
-	private Map fFilesBuffers= new HashMap();
-	private Map fFileStoreFileBuffers= new HashMap();
-	private List fFileBufferListeners= new ArrayList();
+	private Map<IPath, AbstractFileBuffer> fFilesBuffers= new HashMap<>();
+	private Map<IFileStore, FileStoreFileBuffer> fFileStoreFileBuffers= new HashMap<>();
+	private List<IFileBufferListener> fFileBufferListeners= new ArrayList<>();
 	protected ExtensionsRegistry fRegistry;
 	private ISynchronizationContext fSynchronizationContext;
 
@@ -339,13 +339,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 	private AbstractFileBuffer internalGetFileBuffer(IPath location) {
 		synchronized (fFilesBuffers) {
-			return (AbstractFileBuffer)fFilesBuffers.get(location);
+			return fFilesBuffers.get(location);
 		}
 	}
 
 	private FileStoreFileBuffer internalGetFileBuffer(IFileStore fileStore) {
 		synchronized (fFileStoreFileBuffers) {
-			return (FileStoreFileBuffer)fFileStoreFileBuffers.get(fileStore);
+			return fFileStoreFileBuffers.get(fileStore);
 		}
 	}
 
@@ -374,9 +374,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	@Override
 	public ITextFileBuffer getTextFileBuffer(IDocument document) {
 		Assert.isLegal(document != null);
-		Iterator iter;
+		Iterator<AbstractFileBuffer> iter;
 		synchronized (fFilesBuffers) {
-			iter= new ArrayList(fFilesBuffers.values()).iterator();
+			iter= new ArrayList<>(fFilesBuffers.values()).iterator();
 		}
 
 		while (iter.hasNext()) {
@@ -391,7 +391,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 		synchronized (fFileStoreFileBuffers) {
-			iter= new ArrayList(fFileStoreFileBuffers.values()).iterator();
+			iter= new ArrayList<AbstractFileBuffer>(fFileStoreFileBuffers.values()).iterator();
 		}
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
@@ -409,16 +409,16 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	@Override
 	public IFileBuffer[] getFileBuffers() {
 		synchronized (fFilesBuffers) {
-			Collection values= fFilesBuffers.values();
-			return (IFileBuffer[])values.toArray(new IFileBuffer[values.size()]);
+			Collection<AbstractFileBuffer> values= fFilesBuffers.values();
+			return values.toArray(new IFileBuffer[values.size()]);
 		}
 	}
 
 	@Override
 	public IFileBuffer[] getFileStoreFileBuffers() {
 		synchronized (fFileStoreFileBuffers) {
-			Collection values= fFileStoreFileBuffers.values();
-			return (IFileBuffer[])values.toArray(new IFileBuffer[values.size()]);
+			Collection<FileStoreFileBuffer> values= fFileStoreFileBuffers.values();
+			return values.toArray(new IFileBuffer[values.size()]);
 		}
 	}
 
@@ -663,16 +663,16 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 //		return createTextFileBuffer(location);
 //	}
 
-	private Iterator getFileBufferListenerIterator() {
+	private Iterator<IFileBufferListener> getFileBufferListenerIterator() {
 		synchronized (fFileBufferListeners) {
-			return new ArrayList(fFileBufferListeners).iterator();
+			return new ArrayList<>(fFileBufferListeners).iterator();
 		}
 	}
 
 	protected void fireDirtyStateChanged(final IFileBuffer buffer, final boolean isDirty) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -683,9 +683,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferContentAboutToBeReplaced(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -696,9 +696,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferContentReplaced(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -709,9 +709,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireUnderlyingFileMoved(final IFileBuffer buffer, final IPath target) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -722,9 +722,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireUnderlyingFileDeleted(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -735,9 +735,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateValidationChanged(final IFileBuffer buffer, final boolean isStateValidated) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -748,9 +748,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateChanging(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -761,9 +761,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireStateChangeFailed(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -774,9 +774,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferCreated(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {
@@ -787,9 +787,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	protected void fireBufferDisposed(final IFileBuffer buffer) {
-		Iterator e= getFileBufferListenerIterator();
+		Iterator<IFileBufferListener> e= getFileBufferListenerIterator();
 		while (e.hasNext()) {
-			final IFileBufferListener l= (IFileBufferListener) e.next();
+			final IFileBufferListener l= e.next();
 			SafeRunner.run(new SafeNotifier() {
 				@Override
 				public void run() {

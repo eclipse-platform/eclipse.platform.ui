@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,23 +27,24 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 @Deprecated
 public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 
-	private static Class[] PROPERTIES= new Class[] {
+	private static Class<?>[] PROPERTIES= new Class[] {
 		IResource.class, IMarker.class,
 	};
 
 
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return PROPERTIES;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Object element, Class key) {
+	public <T> T getAdapter(Object element, Class<T> key) {
 
 		ISearchResultViewEntry entry= (ISearchResultViewEntry) element;
 
 		if (IMarker.class.equals(key)) {
-			return entry.getSelectedMarker();
+			return (T) entry.getSelectedMarker();
 		}
 		if (IResource.class.equals(key)) {
 			IResource resource= entry.getResource();
@@ -54,7 +55,7 @@ public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 			 */
 			int type= resource.getType();
 			if (type != IResource.PROJECT && type != IResource.ROOT)
-				return resource;
+				return (T) resource;
 		}
 		return null;
 	}

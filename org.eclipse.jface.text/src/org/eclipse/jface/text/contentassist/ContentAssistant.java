@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -906,7 +906,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fIsAutoInserting= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
 	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;
-	private Map fProcessors;
+	private Map<String, IContentAssistProcessor> fProcessors;
 
 	/**
 	 * The partitioning.
@@ -1023,7 +1023,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.4
 	 */
-	private Map fHandlers;
+	private Map<String, IHandler> fHandlers;
 
 	/**
 	 * Tells whether colored labels support is enabled.
@@ -1080,7 +1080,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		Assert.isNotNull(contentType);
 
 		if (fProcessors == null)
-			fProcessors= new HashMap();
+			fProcessors= new HashMap<>();
 
 		if (processor == null)
 			fProcessors.remove(contentType);
@@ -1096,7 +1096,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fProcessors == null)
 			return null;
 
-		return (IContentAssistProcessor) fProcessors.get(contentType);
+		return fProcessors.get(contentType);
 	}
 
 	/**
@@ -1110,10 +1110,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return ""; //$NON-NLS-1$
 
 		StringBuffer buf= new StringBuffer(5);
-		Iterator iter= fProcessors.entrySet().iterator();
+		Iterator<Entry<String, IContentAssistProcessor>> iter= fProcessors.entrySet().iterator();
 		while (iter.hasNext()) {
-			Entry entry= (Entry) iter.next();
-			IContentAssistProcessor processor= (IContentAssistProcessor) entry.getValue();
+			Entry<String, IContentAssistProcessor> entry= iter.next();
+			IContentAssistProcessor processor= entry.getValue();
 			char[] triggers= processor.getCompletionProposalAutoActivationCharacters();
 			if (triggers != null)
 				buf.append(triggers);
@@ -2535,7 +2535,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fHandlers == null)
 			throw new IllegalStateException();
 
-		IHandler handler= (IHandler)fHandlers.get(commandId);
+		IHandler handler= fHandlers.get(commandId);
 		if (handler != null)
 			return handler;
 
@@ -2552,7 +2552,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	protected final void registerHandler(String commandId, IHandler handler) {
 		if (fHandlers == null)
-			fHandlers= new HashMap(2);
+			fHandlers= new HashMap<>(2);
 		fHandlers.put(commandId, handler);
 	}
 

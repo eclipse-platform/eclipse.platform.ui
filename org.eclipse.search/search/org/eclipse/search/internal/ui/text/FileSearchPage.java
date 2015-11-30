@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,7 +104,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	            name1 = "";//$NON-NLS-1$
 	        if (name2 == null)
 	            name2 = "";//$NON-NLS-1$
-	        return getComparator().compare(name1, name2);
+	        @SuppressWarnings("unchecked")
+			int result= getComparator().compare(name1, name2);
+			return result;
 	    }
 	}
 
@@ -308,10 +310,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		memento.putInteger(KEY_LIMIT, getElementLimit().intValue());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IShowInTargetList.class.equals(adapter)) {
-			return SHOW_IN_TARGET_LIST;
+			return (T) SHOW_IN_TARGET_LIST;
 		}
 
 		if (adapter == IShowInSource.class) {
@@ -322,8 +325,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			ISelection selection= selectionProvider.getSelection();
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection structuredSelection= ((StructuredSelection)selection);
-				final Set newSelection= new HashSet(structuredSelection.size());
-				Iterator iter= structuredSelection.iterator();
+				final Set<Object> newSelection= new HashSet<>(structuredSelection.size());
+				Iterator<?> iter= structuredSelection.iterator();
 				while (iter.hasNext()) {
 					Object element= iter.next();
 					if (element instanceof LineElement)
@@ -331,10 +334,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 					newSelection.add(element);
 				}
 
-				return new IShowInSource() {
+				return (T) new IShowInSource() {
 					@Override
 					public ShowInContext getShowInContext() {
-						return new ShowInContext(null, new StructuredSelection(new ArrayList(newSelection)));
+						return new ShowInContext(null, new StructuredSelection(new ArrayList<>(newSelection)));
 					}
 				};
 			}
@@ -395,7 +398,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 
 	@Override
-	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
+	protected void evaluateChangedElements(Match[] matches, Set<Object> changedElements) {
 		if (showLineMatches()) {
 			for (int i = 0; i < matches.length; i++) {
 				changedElements.add(((FileMatch) matches[i]).getLineElement());

@@ -528,7 +528,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 
 	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
-		List list= new ArrayList();
+		List<TypedRegion> list= new ArrayList<>();
 
 		try {
 

@@ -220,7 +220,7 @@ public class SourceViewerDecorationSupport {
 	private ICharacterPairMatcher fCharacterPairMatcher;
 
 	/** Map with annotation type preference per annotation type */
-	private Map fAnnotationTypeKeyMap= new LinkedHashMap();
+	private Map<Object, AnnotationPreference> fAnnotationTypeKeyMap= new LinkedHashMap<>();
 	/** Preference key for the cursor line highlighting */
 	private String fCursorLinePainterEnableKey;
 	/** Preference key for the cursor line background color */
@@ -311,7 +311,7 @@ public class SourceViewerDecorationSupport {
 		else
 			hideMargin();
 
-		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
+		Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
 			Object type= e.next();
 			if (areAnnotationsHighlighted(type) || areAnnotationsShown(type))
@@ -336,7 +336,7 @@ public class SourceViewerDecorationSupport {
 			return null;
 
 		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
-			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
 				String key= info.getTextStylePreferenceKey();
 				if (key != null)
@@ -353,7 +353,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	public void updateOverviewDecorations() {
 		if (fOverviewRuler != null) {
-			Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
+			Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
 			while (e.hasNext()) {
 				Object type= e.next();
 				if (isAnnotationOverviewShown(type))
@@ -510,9 +510,9 @@ public class SourceViewerDecorationSupport {
 	 * @return the annotation preference
 	 */
 	private AnnotationPreference getAnnotationPreferenceInfo(String preferenceKey) {
-		Iterator e= fAnnotationTypeKeyMap.values().iterator();
+		Iterator<AnnotationPreference> e= fAnnotationTypeKeyMap.values().iterator();
 		while (e.hasNext()) {
-			AnnotationPreference info= (AnnotationPreference) e.next();
+			AnnotationPreference info= e.next();
 			if (info != null && info.isPreferenceKey(preferenceKey))
 				return info;
 		}
@@ -664,7 +664,7 @@ public class SourceViewerDecorationSupport {
 	 * @return the color of the annotation type
 	 */
 	private Color getAnnotationTypeColor(Object annotationType) {
-		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+		AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
 			return getColor( info.getColorPreferenceKey());
 		return null;
@@ -679,7 +679,7 @@ public class SourceViewerDecorationSupport {
 	 * @return the layer
 	 */
 	private int getAnnotationTypeLayer(Object annotationType) {
-		AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+		AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 		if (info != null)
 			return info.getPresentationLayer();
 		return 0;
@@ -938,7 +938,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private boolean areAnnotationsShown(Object annotationType) {
 		if (fPreferenceStore != null) {
-			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
 				String key= info.getTextPreferenceKey();
 				return key != null && fPreferenceStore.getBoolean(key);
@@ -956,7 +956,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private boolean areAnnotationsHighlighted(Object annotationType) {
 		if (fPreferenceStore != null) {
-			AnnotationPreference info= (AnnotationPreference)fAnnotationTypeKeyMap.get(annotationType);
+			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null)
 				return info.getHighlightPreferenceKey() != null && fPreferenceStore.getBoolean(info.getHighlightPreferenceKey());
 		}
@@ -971,7 +971,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	private boolean isAnnotationOverviewShown(Object annotationType) {
 		if (fPreferenceStore != null && fOverviewRuler != null) {
-			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+			AnnotationPreference info= fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null)
 				return fPreferenceStore.getBoolean(info.getOverviewRulerPreferenceKey());
 		}
@@ -1012,7 +1012,7 @@ public class SourceViewerDecorationSupport {
 	 */
 	public void hideAnnotationOverview() {
 		if (fOverviewRuler != null) {
-			Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
+			Iterator<Object> e= fAnnotationTypeKeyMap.keySet().iterator();
 			while (e.hasNext())
 				fOverviewRuler.removeAnnotationType(e.next());
 			fOverviewRuler.update();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,11 +70,11 @@ import org.eclipse.ui.editors.text.EditorsUI;
 public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 
 	/** List of annotations whose text range became invalid because of document changes */
-	private List fDeletedAnnotations= new ArrayList(2);
+	private List<Annotation> fDeletedAnnotations= new ArrayList<>(2);
 	/** List of registered and instantiated marker updaters */
-	private List fInstantiatedMarkerUpdaters= null;
+	private List<IMarkerUpdater> fInstantiatedMarkerUpdaters= null;
 	/** List of registered but not yet instantiated marker updaters */
-	private List fMarkerUpdaterSpecifications= null;
+	private List<IConfigurationElement> fMarkerUpdaterSpecifications= null;
 
 	private static final String ID= "id"; //$NON-NLS-1$
 
@@ -262,9 +262,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	private void installMarkerUpdaters() {
 
 		// initialize lists - indicates that the initialization happened
-		fInstantiatedMarkerUpdaters= new ArrayList(2);
-		HashMap markerUpdaterOrderMap = new HashMap(2);
-		LinkedList markerUpdaterSpecificationsLinkedList= new LinkedList();
+		fInstantiatedMarkerUpdaters= new ArrayList<>(2);
+		HashMap<String, Integer> markerUpdaterOrderMap = new HashMap<>(2);
+		LinkedList<IConfigurationElement> markerUpdaterSpecificationsLinkedList= new LinkedList<>();
 
 		// populate list
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(EditorsUI.PLUGIN_ID, "markerUpdaters"); //$NON-NLS-1$
@@ -275,7 +275,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 				markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(i));
 			}
 			//start sorting based on required-updater definition
-			HashMap markerUpdaterRequiredByOrderMap= new HashMap(2);
+			HashMap<String, ArrayList<String>> markerUpdaterRequiredByOrderMap= new HashMap<>(2);
 			for (int i= 0; i < elements.length; i++) {
 				// Required marker should execute before other updater markers
 				IConfigurationElement[] requiredUpdaters= elements[i].getChildren("required-updater"); //$NON-NLS-1$
@@ -292,16 +292,16 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 						// Updating requiredByUpdaters to identify and log error for cyclic Dependency like A required B, B required C, C required D and D required A
 						// or A requires B and B requires A
 
-						ArrayList requiredByUpdaters;
+						ArrayList<String> requiredByUpdaters;
 						if (markerUpdaterRequiredByOrderMap.get(requiredID) == null) {
-							requiredByUpdaters= new ArrayList(2);
+							requiredByUpdaters= new ArrayList<>(2);
 						}
 						else {
-							requiredByUpdaters= (ArrayList)markerUpdaterRequiredByOrderMap.get(requiredID);
+							requiredByUpdaters= markerUpdaterRequiredByOrderMap.get(requiredID);
 						}
 						// Build up extended required id list to identify Case 2
 						if (markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID)) != null) {
-							ArrayList requiredByList= (ArrayList)markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID));
+							ArrayList<String> requiredByList= markerUpdaterRequiredByOrderMap.get(elements[i].getAttribute(ID));
 							requiredByUpdaters.addAll(requiredByList);
 						}
 						if (requiredByUpdaters.contains(requiredID)) { //log error if marker ID is in the required list of required ID
@@ -312,11 +312,11 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 						requiredByUpdaters.add(elements[i].getAttribute(ID));
 						markerUpdaterRequiredByOrderMap.put(requiredID, requiredByUpdaters);
 
-						Integer requiredLocation= (Integer)markerUpdaterOrderMap.get(requiredID);
-						if (requiredLocation.intValue() > ((Integer)markerUpdaterOrderMap.get(elements[i].getAttribute(ID))).intValue()) { // If required marker is not ordered before
-							int newLocation= (((Integer)markerUpdaterOrderMap.get(elements[i].getAttribute(ID))).intValue() == 0) ? 0 : (((Integer)markerUpdaterOrderMap.get(elements[i]
-									.getAttribute(ID))).intValue() - 1);
-							Object requiredMarker= markerUpdaterSpecificationsLinkedList.remove(requiredLocation.intValue());
+						Integer requiredLocation= markerUpdaterOrderMap.get(requiredID);
+						if (requiredLocation.intValue() > markerUpdaterOrderMap.get(elements[i].getAttribute(ID)).intValue()) { // If required marker is not ordered before
+							int newLocation= (markerUpdaterOrderMap.get(elements[i].getAttribute(ID)).intValue() == 0) ? 0 : (markerUpdaterOrderMap.get(elements[i]
+									.getAttribute(ID)).intValue() - 1);
+							IConfigurationElement requiredMarker= markerUpdaterSpecificationsLinkedList.remove(requiredLocation.intValue());
 							markerUpdaterSpecificationsLinkedList.add(newLocation, requiredMarker); // Put the required location before the marker
 							markerUpdaterOrderMap.put(requiredID, new Integer(newLocation));
 							markerUpdaterOrderMap.put(elements[i].getAttribute(ID), new Integer(newLocation + 1));
@@ -324,7 +324,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 					}
 				}
 			}
-			fMarkerUpdaterSpecifications= new ArrayList(markerUpdaterSpecificationsLinkedList);
+			fMarkerUpdaterSpecifications= new ArrayList<>(markerUpdaterSpecificationsLinkedList);
 			//end sorting
 
 		}
@@ -364,7 +364,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	public Position getMarkerPosition(IMarker marker) {
 		MarkerAnnotation a= getMarkerAnnotation(marker);
 		if (a != null) {
-			return (Position) getAnnotationMap().get(a);
+			return getAnnotationMap().get(a);
 		}
 		return null;
 	}
@@ -390,12 +390,12 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	}
 
 	@Override
-	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
+	protected void removeAnnotations(List<? extends Annotation> annotations, boolean fireModelChanged, boolean modelInitiated) {
 		if (annotations != null && annotations.size() > 0) {
 
-			List markerAnnotations= new ArrayList();
-			for (Iterator e= annotations.iterator(); e.hasNext();) {
-				Annotation a= (Annotation) e.next();
+			List<Annotation> markerAnnotations= new ArrayList<>();
+			for (Iterator<? extends Annotation> e= annotations.iterator(); e.hasNext();) {
+				Annotation a= e.next();
 				if (a instanceof MarkerAnnotation)
 					markerAnnotations.add(a);
 
@@ -455,8 +455,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 */
 	private void catchupWithMarkers() throws CoreException {
 
-		for (Iterator e=getAnnotationIterator(false); e.hasNext();) {
-			Annotation a= (Annotation) e.next();
+		for (Iterator<Annotation> e=getAnnotationIterator(false); e.hasNext();) {
+			Annotation a= e.next();
 			if (a instanceof MarkerAnnotation)
 				removeAnnotation(a, false);
 		}
@@ -475,7 +475,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @return the annotation, or <code>null</code> if none
 	 */
 	public final MarkerAnnotation getMarkerAnnotation(IMarker marker) {
-		Iterator e= getAnnotationIterator(false);
+		Iterator<Annotation> e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
@@ -513,9 +513,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @since 2.0
 	 */
 	private void checkMarkerUpdaters(IMarker marker) {
-		List toBeDeleted= new ArrayList();
+		List<IConfigurationElement> toBeDeleted= new ArrayList<>();
 		for (int i= 0; i < fMarkerUpdaterSpecifications.size(); i++) {
-			IConfigurationElement spec= (IConfigurationElement) fMarkerUpdaterSpecifications.get(i);
+			IConfigurationElement spec= fMarkerUpdaterSpecifications.get(i);
 			String markerType= spec.getAttribute("markerType"); //$NON-NLS-1$
 			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
 				toBeDeleted.add(spec);
@@ -561,7 +561,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		boolean isOK= true;
 
 		for (int i= 0; i < fInstantiatedMarkerUpdaters.size();  i++) {
-			IMarkerUpdater updater= (IMarkerUpdater) fInstantiatedMarkerUpdaters.get(i);
+			IMarkerUpdater updater= fInstantiatedMarkerUpdaters.get(i);
 			String markerType= updater.getMarkerType();
 			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
 
@@ -624,12 +624,12 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		try {
 
 			// update all markers with the positions known by the annotation model
-			for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
+			for (Iterator<Annotation> e= getAnnotationIterator(false); e.hasNext();) {
 				Object o= e.next();
 				if (o instanceof MarkerAnnotation) {
 					MarkerAnnotation a= (MarkerAnnotation) o;
 					IMarker marker= a.getMarker();
-					Position position= (Position) annotationMap.get(a);
+					Position position= annotationMap.get(a);
 					if ( !updateMarker(marker, document, position)) {
 						if ( !fDeletedAnnotations.contains(a))
 							fDeletedAnnotations.add(a);
@@ -655,7 +655,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	public void resetMarkers() {
 
 		// re-initializes the positions from the markers
-		for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
+		for (Iterator<Annotation> e= getAnnotationIterator(false); e.hasNext();) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation) o;
@@ -672,7 +672,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		}
 
 		// add the markers of deleted positions back to the annotation model
-		for (Iterator e= fDeletedAnnotations.iterator(); e.hasNext();) {
+		for (Iterator<Annotation> e= fDeletedAnnotations.iterator(); e.hasNext();) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation) o;

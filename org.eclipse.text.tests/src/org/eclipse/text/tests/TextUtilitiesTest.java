@@ -56,7 +56,7 @@ public class TextUtilitiesTest extends TestCase {
 		private final DocumentListener fDocumentListener= new DocumentListener();
 
 		/** The buffered events. */
-		private final List fEvents= new ArrayList();
+		private final List<DocumentEvent> fEvents= new ArrayList<>();
 
 		public LazilyMirroredDocument(IDocument document) {
 			document.addDocumentListener(fDocumentListener);
@@ -107,7 +107,7 @@ public class TextUtilitiesTest extends TestCase {
 		private final DocumentListener fDocumentListener= new DocumentListener();
 
 		/** The buffered events. */
-		private final List fEvents= new ArrayList();
+		private final List<DocumentEvent> fEvents= new ArrayList<>();
 
 		public LazilyMirroredDocument2(IDocument document) {
 			document.addDocumentListener(fDocumentListener);
@@ -187,7 +187,7 @@ public class TextUtilitiesTest extends TestCase {
 
 		try {
 
-			List events= new ArrayList();
+			List<DocumentEvent> events= new ArrayList<>();
 			int currentLength= 0;
 
 			events.add(new DocumentEvent(reference, 0, 0, "foo bar goo haa"));
@@ -198,8 +198,8 @@ public class TextUtilitiesTest extends TestCase {
 			events.add(new DocumentEvent(reference, 9, 2, "asd"));
 			events.add(new DocumentEvent(reference, 0, 2, "asd"));
 
-			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= (DocumentEvent) iterator.next();
+			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
+				DocumentEvent event= iterator.next();
 				currentLength += event.getText().length() - event.getLength();
 			}
 
@@ -210,8 +210,8 @@ public class TextUtilitiesTest extends TestCase {
 				events.add(event);
 			}
 
-			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= (DocumentEvent) iterator.next();
+			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
+				DocumentEvent event= iterator.next();
 
 //				System.err.println(event.getOffset() + ", " + event.getLength() + ", [" + event.getText() + "]") ;
 
@@ -239,7 +239,7 @@ public class TextUtilitiesTest extends TestCase {
 
 		try {
 
-			List events= new ArrayList();
+			List<DocumentEvent> events= new ArrayList<>();
 			int currentLength= 0;
 
 			events.add(new DocumentEvent(reference, 0, 0, "foo bar goo haa"));
@@ -250,8 +250,8 @@ public class TextUtilitiesTest extends TestCase {
 			events.add(new DocumentEvent(reference, 9, 2, "asd"));
 			events.add(new DocumentEvent(reference, 0, 2, "asd"));
 
-			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= (DocumentEvent) iterator.next();
+			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
+				DocumentEvent event= iterator.next();
 				currentLength += event.getText().length() - event.getLength();
 			}
 
@@ -262,8 +262,8 @@ public class TextUtilitiesTest extends TestCase {
 				events.add(event);
 			}
 
-			for (Iterator iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= (DocumentEvent) iterator.next();
+			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
+				DocumentEvent event= iterator.next();
 
 				reference.replace(event.getOffset(), event.getLength(), event.getText());
 				if (Math.random() < 0.3) {

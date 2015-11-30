@@ -58,11 +58,11 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	/**
 	 * VerifyKeyListeners for the control.
 	 */
-	private List fVerifyKeyListeners;
+	private List<VerifyKeyListener> fVerifyKeyListeners;
 	/**
 	 * KeyListeners for the control.
 	 */
-	private Set fKeyListeners;
+	private Set<KeyListener> fKeyListeners;
 	/**
 	 * The Listener installed on the control which passes events to
 	 * {@link #fVerifyKeyListeners fVerifyKeyListeners} and {@link #fKeyListeners}.
@@ -88,8 +88,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
 	 */
 	public AbstractControlContentAssistSubjectAdapter() {
-		fVerifyKeyListeners= new ArrayList(1);
-		fKeyListeners= new HashSet(1);
+		fVerifyKeyListeners= new ArrayList<>(1);
+		fKeyListeners= new HashSet<>(1);
 	}
 
 	@Override
@@ -192,8 +192,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 							dump("before traverse", e, verifyEvent); //$NON-NLS-1$
 
 						verifyEvent.doit= true;
-						for (Iterator iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
-							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
+						for (Iterator<VerifyKeyListener> iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
+							iter.next().verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.detail= SWT.TRAVERSE_NONE;
 								e.doit= true;
@@ -208,8 +208,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						break;
 
 					case SWT.KeyDown:
-						for (Iterator iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
-							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
+						for (Iterator<VerifyKeyListener> iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
+							iter.next().verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.doit= verifyEvent.doit;
 								if (DEBUG)
@@ -221,8 +221,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 						if (DEBUG)
 							dump("keyDown OK", e, verifyEvent); //$NON-NLS-1$
 
-						for (Iterator iter= fKeyListeners.iterator(); iter.hasNext();) {
-							((KeyListener) iter.next()).keyPressed(keyEvent);
+						for (Iterator<KeyListener> iter= fKeyListeners.iterator(); iter.hasNext();) {
+							iter.next().keyPressed(keyEvent);
 						}
 						break;
 

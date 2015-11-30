@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
 
 
 
@@ -116,8 +117,8 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * @param markerDeltas the array of marker deltas
 	 */
 	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
-		HashSet removedMarkers= new HashSet(markerDeltas.length);
-		HashSet modifiedMarkers= new HashSet(markerDeltas.length);
+		HashSet<IMarker> removedMarkers= new HashSet<>(markerDeltas.length);
+		HashSet<IMarker> modifiedMarkers= new HashSet<>(markerDeltas.length);
 
 		for (int i= 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta= markerDeltas[i];
@@ -137,7 +138,7 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
 			return;
 
-		Iterator e= getAnnotationIterator(false);
+		Iterator<Annotation> e= getAnnotationIterator(false);
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
@@ -161,9 +162,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		}
 
-		Iterator iter= modifiedMarkers.iterator();
+		Iterator<IMarker> iter= modifiedMarkers.iterator();
 		while (iter.hasNext())
-			addMarkerAnnotation((IMarker)iter.next());
+			addMarkerAnnotation(iter.next());
 	}
 
 	@Override

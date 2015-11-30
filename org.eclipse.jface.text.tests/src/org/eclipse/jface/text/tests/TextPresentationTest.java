@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,6 @@ package org.eclipse.jface.text.tests;
 
 import java.util.Iterator;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -23,6 +19,10 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TextPresentationTest extends TestCase {
 
@@ -98,7 +98,7 @@ public class TextPresentationTest extends TestCase {
 	}
 
 	private void checkRegions(StyleRange[] expectedAllRanges, StyleRange[] expectedNonDefaultRanges) {
-		Iterator e= fTextPresentation.getAllStyleRangeIterator();
+		Iterator<StyleRange> e= fTextPresentation.getAllStyleRangeIterator();
 		for (int i= 0; i < expectedAllRanges.length; i++) {
 			assertTrue(e.hasNext());
 			assertEquals(expectedAllRanges[i], e.next());

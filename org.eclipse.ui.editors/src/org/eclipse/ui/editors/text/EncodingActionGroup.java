@@ -326,7 +326,7 @@ public class EncodingActionGroup extends ActionGroup {
 
 
 	/** List of encoding actions of this group. */
-	private List fRetargetActions= new ArrayList();
+	private List<RetargetTextEditorAction> fRetargetActions= new ArrayList<>();
 
 	/**
 	 * Creates a new encoding action group for an action bar contributor.
@@ -357,11 +357,11 @@ public class EncodingActionGroup extends ActionGroup {
 				}
 			});
 
-			Iterator e= fRetargetActions.iterator();
-			subMenu.add((IAction) e.next());
+			Iterator<RetargetTextEditorAction> e= fRetargetActions.iterator();
+			subMenu.add(e.next());
 			subMenu.add(new Separator());
 			while (e.hasNext())
-				subMenu.add((IAction) e.next());
+				subMenu.add(e.next());
 
 			editMenu.add(subMenu);
 		}
@@ -374,9 +374,9 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public void retarget(ITextEditor editor) {
 		fTextEditor= editor;
-		Iterator e= fRetargetActions.iterator();
+		Iterator<RetargetTextEditorAction> e= fRetargetActions.iterator();
 		while (e.hasNext()) {
-			RetargetTextEditorAction a= (RetargetTextEditorAction) e.next();
+			RetargetTextEditorAction a= e.next();
 			a.setAction(editor == null ? null : editor.getAction(a.getId()));
 		}
 	}

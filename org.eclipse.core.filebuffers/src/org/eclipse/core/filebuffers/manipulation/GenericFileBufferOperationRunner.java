@@ -200,21 +200,21 @@ public class GenericFileBufferOperationRunner {
 	}
 
 	private IFileBuffer[] findUnsynchronizedFileBuffers(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (!fileBuffers[i].isSynchronizationContextRequested())
 				list.add(fileBuffers[i]);
 		}
-		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
+		return list.toArray(new IFileBuffer[list.size()]);
 	}
 
 	private IFileBuffer[] findSynchronizedFileBuffers(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (fileBuffers[i].isSynchronizationContextRequested())
 				list.add(fileBuffers[i]);
 		}
-		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
+		return list.toArray(new IFileBuffer[list.size()]);
 	}
 
 	private IFileBuffer[] createFileBuffers(IPath[] locations, IProgressMonitor progressMonitor) throws CoreException {
@@ -255,13 +255,13 @@ public class GenericFileBufferOperationRunner {
 	}
 
 	private IFileBuffer[] findFileBuffersToSave(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<IFileBuffer> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			IFileBuffer buffer= fileBuffers[i];
 			if (!buffer.isDirty())
 				list.add(buffer);
 		}
-		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
+		return list.toArray(new IFileBuffer[list.size()]);
 	}
 
 	private boolean isCommitable(IFileBuffer[] fileBuffers) {
@@ -273,7 +273,7 @@ public class GenericFileBufferOperationRunner {
 	}
 
 	protected ISchedulingRule computeCommitRule(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
+		ArrayList<ISchedulingRule> list= new ArrayList<>();
 		for (int i= 0; i < fileBuffers.length; i++) {
 			ISchedulingRule rule= fileBuffers[i].computeCommitRule();
 			if (rule != null)

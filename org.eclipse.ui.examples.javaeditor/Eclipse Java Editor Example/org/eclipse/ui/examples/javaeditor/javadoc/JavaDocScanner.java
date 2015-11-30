@@ -64,7 +64,7 @@ public class JavaDocScanner extends RuleBasedScanner {
 		IToken tag= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_TAG)));
 		IToken link= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_LINK)));
 
-		List list= new ArrayList();
+		List<IRule> list= new ArrayList<>();
 
 		// Add rule for tags.
 		list.add(new SingleLineRule("<", ">", tag)); //$NON-NLS-2$ //$NON-NLS-1$

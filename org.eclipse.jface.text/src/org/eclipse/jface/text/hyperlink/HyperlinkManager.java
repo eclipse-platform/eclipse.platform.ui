@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -267,7 +267,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @since 3.7
 	 */
 	private IHyperlink[] findHyperlinks(IRegion region) {
-		List allHyperlinks= new ArrayList(fHyperlinkDetectors.length * 2);
+		List<IHyperlink> allHyperlinks= new ArrayList<>(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
 			for (int i= 0, length= fHyperlinkDetectors.length; i < length; i++) {
 				IHyperlinkDetector detector= fHyperlinkDetectors[i];
@@ -304,18 +304,18 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 		if (fDetectionStrategy != ALL) {
 			int maxLength= computeLongestHyperlinkLength(allHyperlinks);
-			Iterator iter= new ArrayList(allHyperlinks).iterator();
+			Iterator<IHyperlink> iter= new ArrayList<>(allHyperlinks).iterator();
 			while (iter.hasNext()) {
-				IHyperlink hyperlink= (IHyperlink)iter.next();
+				IHyperlink hyperlink= iter.next();
 				if (hyperlink.getHyperlinkRegion().getLength() < maxLength)
 					allHyperlinks.remove(hyperlink);
 			}
 		}
 
 		if (fDetectionStrategy == LONGEST_REGION_FIRST)
-			return new IHyperlink[] {(IHyperlink)allHyperlinks.get(0)};
+			return new IHyperlink[] {allHyperlinks.get(0)};
 
-		return (IHyperlink[])allHyperlinks.toArray(new IHyperlink[allHyperlinks.size()]);
+		return allHyperlinks.toArray(new IHyperlink[allHyperlinks.size()]);
 
 	}
 
@@ -325,12 +325,12 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @param hyperlinks the list of hyperlinks
 	 * @return the length of the longest detected
 	 */
-	protected int computeLongestHyperlinkLength(List hyperlinks) {
+	protected int computeLongestHyperlinkLength(List<? extends IHyperlink> hyperlinks) {
 		Assert.isLegal(hyperlinks != null && !hyperlinks.isEmpty());
-		Iterator iter= hyperlinks.iterator();
+		Iterator<? extends IHyperlink> iter= hyperlinks.iterator();
 		int length= Integer.MIN_VALUE;
 		while (iter.hasNext()) {
-			IRegion region= ((IHyperlink)iter.next()).getHyperlinkRegion();
+			IRegion region= iter.next().getHyperlinkRegion();
 			if (region.getLength() < length)
 				continue;
 			length= region.getLength();

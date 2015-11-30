@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,18 +36,10 @@ class TabStopIterator {
 	 * Comparator for <code>LinkedPosition</code>s. If the sequence number of two positions is equal, the
 	 * offset is used.
 	 */
-	private static class SequenceComparator implements Comparator {
+	private static class SequenceComparator implements Comparator<LinkedPosition> {
 
-		/**
-		 * {@inheritDoc}
-		 *
-		 * <p><code>o1</code> and <code>o2</code> are required to be instances
-		 * of <code>LinkedPosition</code>.</p>
-		 */
 		@Override
-		public int compare(Object o1, Object o2) {
-			LinkedPosition p1= (LinkedPosition)o1;
-			LinkedPosition p2= (LinkedPosition)o2;
+		public int compare(LinkedPosition p1, LinkedPosition p2) {
 			int i= p1.getSequenceNumber() - p2.getSequenceNumber();
 			if (i != 0)
 				return i;
@@ -57,10 +49,10 @@ class TabStopIterator {
 	}
 
 	/** The comparator to sort the list of positions. */
-	private static final Comparator fComparator= new SequenceComparator();
+	private static final Comparator<LinkedPosition> fComparator= new SequenceComparator();
 
 	/** The iteration sequence. */
-	private final ArrayList fList;
+	private final ArrayList<LinkedPosition> fList;
 	/** The size of <code>fList</code>. */
 	private int fSize;
 	/** Index of the current element, to the first one initially. */
@@ -68,9 +60,9 @@ class TabStopIterator {
 	/** Cycling property. */
 	private boolean fIsCycling= false;
 
-	TabStopIterator(List positionSequence) {
+	TabStopIterator(List<LinkedPosition> positionSequence) {
 		Assert.isNotNull(positionSequence);
-		fList= new ArrayList(positionSequence);
+		fList= new ArrayList<>(positionSequence);
 		Collections.sort(fList, fComparator);
 		fSize= fList.size();
 		fIndex= -1;
@@ -113,8 +105,8 @@ class TabStopIterator {
 
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
-		for (Iterator it= fList.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fList.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			if (p.offset > current.offset)
 				if (found == null || found.offset > p.offset)
 					found= p;
@@ -163,8 +155,8 @@ class TabStopIterator {
 
 		// find the position that follows closest to the current position
 		LinkedPosition found= null;
-		for (Iterator it= fList.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fList.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			if (p.offset < current.offset)
 				if (found == null || found.offset < p.offset)
 					found= p;
@@ -180,20 +172,20 @@ class TabStopIterator {
 	LinkedPosition next(LinkedPosition current) {
 		if (!hasNext(current))
 			throw new NoSuchElementException();
-		return (LinkedPosition) fList.get(fIndex= getNextIndex(current));
+		return fList.get(fIndex= getNextIndex(current));
 	}
 
 	LinkedPosition previous(LinkedPosition current) {
 		if (!hasPrevious(current))
 			throw new NoSuchElementException();
-		return (LinkedPosition) fList.get(fIndex= getPreviousIndex(current));
+		return fList.get(fIndex= getPreviousIndex(current));
 	}
 
 	void setCycling(boolean mode) {
 		fIsCycling= mode;
 	}
 
-	void addPosition(Position position) {
+	void addPosition(LinkedPosition position) {
 		fList.add(fSize++, position);
 		Collections.sort(fList, fComparator);
 	}
@@ -211,6 +203,6 @@ class TabStopIterator {
 	}
 
 	LinkedPosition[] getPositions() {
-		return (LinkedPosition[]) fList.toArray(new LinkedPosition[fSize]);
+		return fList.toArray(new LinkedPosition[fSize]);
 	}
 }

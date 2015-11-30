@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,11 @@ public class AntVariableResolver extends TemplateVariableResolver {
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals= new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-		Arrays.sort(proposals, new Comparator() {
+		Arrays.sort(proposals, new Comparator<String>() {
 
 			@Override
-			public int compare(Object o1, Object o2) {
-				return getCommonPrefixLength(getType(), (String) o2) - getCommonPrefixLength(getType(), (String) o1);
+			public int compare(String o1, String o2) {
+				return getCommonPrefixLength(getType(), o2) - getCommonPrefixLength(getType(), o1);
 			}
 
 			private int getCommonPrefixLength(String type, String var) {

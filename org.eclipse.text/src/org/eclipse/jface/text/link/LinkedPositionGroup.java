@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class LinkedPositionGroup {
 	/* members */
 
 	/** The linked positions of this group. */
-	private final List fPositions= new LinkedList();
+	private final List<LinkedPosition> fPositions= new LinkedList<>();
 	/** Whether we are sealed or not. */
 	private boolean fIsSealed= false;
 	/**
@@ -137,7 +137,7 @@ public class LinkedPositionGroup {
 	 */
 	private void checkContent(LinkedPosition position) throws BadLocationException {
 		if (fPositions.size() > 0) {
-			LinkedPosition groupPosition= (LinkedPosition) fPositions.get(0);
+			LinkedPosition groupPosition= fPositions.get(0);
 			String groupContent= groupPosition.getContent();
 			String positionContent= position.getContent();
 			if (!fMustEnforceEqualContents && !groupContent.equals(positionContent)) {
@@ -153,8 +153,8 @@ public class LinkedPositionGroup {
 	 * @throws BadLocationException if the disjointness check fails
 	 */
 	private void enforceDisjoint(LinkedPosition position) throws BadLocationException {
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			if (p.overlapsWith(position))
 				throw new BadLocationException();
 		}
@@ -168,8 +168,8 @@ public class LinkedPositionGroup {
 	 */
 	void enforceDisjoint(LinkedPositionGroup group) throws BadLocationException {
 		Assert.isNotNull(group);
-		for (Iterator it= group.fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= group.fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			enforceDisjoint(p);
 		}
 	}
@@ -186,8 +186,8 @@ public class LinkedPositionGroup {
 		fLastPosition= null;
 		fLastRegion= null;
 
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition pos= it.next();
 			if (overlapsOrTouches(pos, event)) {
 				if (fLastPosition != null) {
 					fLastPosition= null;
@@ -226,11 +226,11 @@ public class LinkedPositionGroup {
 	 * @return a map of edits, grouped by edited document, or <code>null</code>
 	 *         if there are no edits
 	 */
-	Map handleEvent(DocumentEvent event) {
+	Map<IDocument, TextEdit> handleEvent(DocumentEvent event) {
 
 		if (fLastPosition != null) {
 
-			Map map= new HashMap();
+			Map<IDocument, List<ReplaceEdit>> map= new HashMap<>();
 
 
 			int relativeOffset= event.getOffset() - fLastRegion.getOffset();
@@ -250,14 +250,14 @@ public class LinkedPositionGroup {
 			if (text == null)
 				text= ""; //$NON-NLS-1$
 
-			for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-				LinkedPosition p= (LinkedPosition) it.next();
+			for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+				LinkedPosition p= it.next();
 				if (p == fLastPosition || p.isDeleted())
 					continue; // don't re-update the origin of the change
 
-				List edits= (List) map.get(p.getDocument());
+				List<ReplaceEdit> edits= map.get(p.getDocument());
 				if (edits == null) {
-					edits= new ArrayList();
+					edits= new ArrayList<>();
 					map.put(p.getDocument(), edits);
 				}
 
@@ -274,14 +274,15 @@ public class LinkedPositionGroup {
 			fMustEnforceEqualContents= false;
 
 			try {
-				for (Iterator it= map.keySet().iterator(); it.hasNext();) {
-					IDocument d= (IDocument) it.next();
+				Map<IDocument, TextEdit> result= new HashMap<>();
+				for (Iterator<IDocument> it= map.keySet().iterator(); it.hasNext();) {
+					IDocument d= it.next();
 					TextEdit edit= new MultiTextEdit(0, d.getLength());
-					edit.addChildren((TextEdit[]) ((List) map.get(d)).toArray(new TextEdit[0]));
-					map.put(d, edit);
+					edit.addChildren(map.get(d).toArray(new TextEdit[0]));
+					result.put(d, edit);
 				}
 
-				return map;
+				return result;
 			} catch (MalformedTreeException x) {
 				// may happen during undo, as LinkedModeModel does not know
 				// that the changes technically originate from a parent environment
@@ -305,23 +306,23 @@ public class LinkedPositionGroup {
 		fIsSealed= true;
 
 		if (fHasCustomIteration == false && fPositions.size() > 0) {
-			((LinkedPosition) fPositions.get(0)).setSequenceNumber(0);
+			fPositions.get(0).setSequenceNumber(0);
 		}
 	}
 
 	IDocument[] getDocuments() {
 		IDocument[] docs= new IDocument[fPositions.size()];
 		int i= 0;
-		for (Iterator it= fPositions.iterator(); it.hasNext(); i++) {
-			LinkedPosition pos= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); i++) {
+			LinkedPosition pos= it.next();
 			docs[i]= pos.getDocument();
 		}
 		return docs;
 	}
 
 	void register(LinkedModeModel model) throws BadLocationException {
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-            LinkedPosition pos= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+            LinkedPosition pos= it.next();
             model.register(pos);
         }
 	}
@@ -338,11 +339,11 @@ public class LinkedPositionGroup {
 	 */
 	LinkedPosition adopt(LinkedPositionGroup group) throws BadLocationException {
 		LinkedPosition found= null;
-		for (Iterator it= group.fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= group.fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition pos= it.next();
 			LinkedPosition localFound= null;
-			for (Iterator it2= fPositions.iterator(); it2.hasNext(); ) {
-				LinkedPosition myPos= (LinkedPosition) it2.next();
+			for (Iterator<LinkedPosition> it2= fPositions.iterator(); it2.hasNext(); ) {
+				LinkedPosition myPos= it2.next();
 				if (myPos.includes(pos)) {
 					if (found == null)
 						found= myPos;
@@ -366,8 +367,8 @@ public class LinkedPositionGroup {
 	 * @return the closest position to <code>toFind</code>.
 	 */
 	LinkedPosition getPosition(LinkedPosition toFind) {
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			if (p.includes(toFind))
 				return p;
 		}
@@ -382,8 +383,8 @@ public class LinkedPositionGroup {
 	 * @return <code>true</code> if offset is contained by this group
 	 */
 	boolean contains(int offset) {
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition pos= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition pos= it.next();
 			if (pos.includes(offset)) {
 				return true;
 			}
@@ -420,7 +421,7 @@ public class LinkedPositionGroup {
 	 * @return the positions of this group in no particular order
 	 */
 	public LinkedPosition[] getPositions() {
-		return (LinkedPosition[]) fPositions.toArray(new LinkedPosition[0]);
+		return fPositions.toArray(new LinkedPosition[0]);
 	}
 
 	/**
@@ -430,8 +431,8 @@ public class LinkedPositionGroup {
 	 * @return <code>true</code> if the receiver contains <code>position</code>
 	 */
 	boolean contains(Position position) {
-		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
-			LinkedPosition p= (LinkedPosition) it.next();
+		for (Iterator<LinkedPosition> it= fPositions.iterator(); it.hasNext(); ) {
+			LinkedPosition p= it.next();
 			if (position.equals(p))
 				return true;
 		}

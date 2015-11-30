@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -226,11 +226,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public boolean fCachedReadOnlyState;
 	}
 
-	static private class SingleElementIterator implements Iterator {
+	static private class SingleElementIterator<E> implements Iterator<E> {
 
-		private Object fElement;
+		private E fElement;
 
-		public SingleElementIterator(Object element) {
+		public SingleElementIterator(E element) {
 			fElement= element;
 		}
 
@@ -240,9 +240,9 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		}
 
 		@Override
-		public Object next() {
+		public E next() {
 			if (fElement != null) {
-				Object result= fElement;
+				E result= fElement;
 				fElement= null;
 				return result;
 			}
@@ -262,11 +262,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void bufferContentAboutToBeReplaced(IFileBuffer file) {
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
-				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file);
+				IElementStateListener l= e.next();
+				Iterator<Object> i= getElements(file);
 				while (i.hasNext())
 					l.elementContentAboutToBeReplaced(i.next());
 			}
@@ -274,11 +274,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void bufferContentReplaced(IFileBuffer file) {
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
-				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file);
+				IElementStateListener l= e.next();
+				Iterator<Object> i= getElements(file);
 				while (i.hasNext())
 					l.elementContentReplaced(i.next());
 			}
@@ -286,18 +286,18 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void stateChanging(IFileBuffer file) {
-			Iterator i= getElements(file);
+			Iterator<Object> i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChanging(i.next());
 		}
 
 		@Override
 		public void dirtyStateChanged(IFileBuffer file, boolean isDirty) {
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
-				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file);
+				IElementStateListener l= e.next();
+				Iterator<Object> i= getElements(file);
 				while (i.hasNext())
 					l.elementDirtyStateChanged(i.next(), isDirty);
 			}
@@ -305,13 +305,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void stateValidationChanged(IFileBuffer file, boolean isStateValidated) {
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
 				Object l= e.next();
 				if (l instanceof IElementStateListenerExtension) {
 					IElementStateListenerExtension x= (IElementStateListenerExtension) l;
-					Iterator i= getElements(file);
+					Iterator<Object> i= getElements(file);
 					while (i.hasNext())
 						x.elementStateValidationChanged(i.next(), isStateValidated);
 				}
@@ -323,11 +323,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			IWorkspace workspace=ResourcesPlugin.getWorkspace();
 			IFile newFile= workspace.getRoot().getFile(newLocation);
 			IEditorInput input= new FileEditorInput(newFile);
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
-				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file);
+				IElementStateListener l= e.next();
+				Iterator<Object> i= getElements(file);
 				while (i.hasNext())
 					l.elementMoved(i.next(), input);
 			}
@@ -335,11 +335,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void underlyingFileDeleted(IFileBuffer file) {
-			List list= new ArrayList(fElementStateListeners);
-			Iterator e= list.iterator();
+			List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+			Iterator<IElementStateListener> e= list.iterator();
 			while (e.hasNext()) {
-				IElementStateListener l= (IElementStateListener) e.next();
-				Iterator i= getElements(file);
+				IElementStateListener l= e.next();
+				Iterator<Object> i= getElements(file);
 				while (i.hasNext())
 					l.elementDeleted(i.next());
 			}
@@ -347,7 +347,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		@Override
 		public void stateChangeFailed(IFileBuffer file) {
-			Iterator i= getElements(file);
+			Iterator<Object> i= getElements(file);
 			while (i.hasNext())
 				fireElementStateChangeFailed(i.next());
 		}
@@ -366,11 +366,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	/** The parent document provider. */
 	private IDocumentProvider fParentProvider;
 	/** Element information of all connected elements. */
-	private final Map fFileInfoMap= new HashMap();
-	/** Map from file buffers to their connected elements. */
-	private final Map fFileBufferMap= new HashMap();
+	private final Map<Object, FileInfo> fFileInfoMap= new HashMap<>();
+	/** Map from file buffers to their connected elements. Value is an Object or a {@code List<Object>}. */
+	private final Map<ITextFileBuffer, Object> fFileBufferMap= new HashMap<>();
 	/** The list of element state listeners. */
-	private List fElementStateListeners= new ArrayList();
+	private List<IElementStateListener> fElementStateListeners= new ArrayList<>();
 	/** The file buffer listener. */
 	private final IFileBufferListener fFileBufferListener= new FileBufferListener();
 	/** The progress monitor. */
@@ -472,7 +472,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void connect(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info == null) {
 
 			info= createFileInfo(element);
@@ -499,7 +499,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		Object value= fFileBufferMap.get(info.fTextFileBuffer);
 
 		if (value instanceof List) {
-			List list= (List) value;
+			@SuppressWarnings("unchecked")
+			List<Object> list= (List<Object>) value;
 			list.add(element);
 			return;
 		}
@@ -507,7 +508,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (value == null) {
 			value= element;
 		} else {
-			List list= new ArrayList(2);
+			List<Object> list= new ArrayList<>(2);
 			list.add(value);
 			list.add(element);
 
@@ -637,7 +638,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void disconnect(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 
 		if (info == null)  {
 			getParentProvider().disconnect(element);
@@ -667,7 +668,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return;
 
 		if (value instanceof List) {
-			List list= (List) value;
+			List<?> list= (List<?>) value;
 			list.remove(element);
 			if (list.size() == 1)
 				fFileBufferMap.put(info.fTextFileBuffer, list.get(0));
@@ -705,16 +706,16 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @param file the file buffer
 	 * @return an iterator for all elements connected with the given file buffer
 	 */
-	protected Iterator getElements(IFileBuffer file) {
+	protected Iterator<Object> getElements(IFileBuffer file) {
 		Object value= fFileBufferMap.get(file);
 		if (value instanceof List)
-			return new ArrayList((List) value).iterator();
-		return new SingleElementIterator(value);
+			return new ArrayList<Object>((List<?>) value).iterator();
+		return new SingleElementIterator<>(value);
 	}
 
 	@Override
 	public IDocument getDocument(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getDocument();
 		return getParentProvider().getDocument(element);
@@ -722,7 +723,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void resetDocument(Object element) throws CoreException {
-		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		final FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
 				@Override
@@ -763,7 +764,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	}
 
 	protected DocumentProviderOperation createSaveOperation(final Object element, final IDocument document, final boolean overwrite) throws CoreException {
-		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		final FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
 
 			if (info.fTextFileBuffer.getDocument() != document) {
@@ -898,7 +899,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public long getModificationStamp(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getModificationStamp();
 		return getParentProvider().getModificationStamp(element);
@@ -906,7 +907,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public long getSynchronizationStamp(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return 0;
 		return getParentProvider().getSynchronizationStamp(element);
@@ -914,7 +915,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean isDeleted(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)  {
 			IFileStore fileStore= getFileStore(info);
 			return fileStore == null ? true : !fileStore.fetchInfo().exists();
@@ -924,7 +925,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean mustSaveDocument(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return (info.fCount == 1) && info.fTextFileBuffer.isDirty();
 		return getParentProvider().mustSaveDocument(element);
@@ -932,7 +933,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean canSaveDocument(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isDirty();
 		return getParentProvider().canSaveDocument(element);
@@ -940,7 +941,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public IAnnotationModel getAnnotationModel(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fModel;
 		return getParentProvider().getAnnotationModel(element);
@@ -948,14 +949,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void aboutToChange(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info == null)
 			getParentProvider().aboutToChange(element);
 	}
 
 	@Override
 	public void changed(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info == null)
 			getParentProvider().changed(element);
 	}
@@ -986,7 +987,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean isReadOnly(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fCachedReadOnlyState;
 		return ((IDocumentProviderExtension) getParentProvider()).isReadOnly(element);
@@ -994,7 +995,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean isModifiable(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isStateValidated() ? !isReadOnly(element) : true;
 		return ((IDocumentProviderExtension) getParentProvider()).isModifiable(element);
@@ -1002,7 +1003,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void validateState(Object element, final Object computationContext) throws CoreException {
-		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		final FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
 				@Override
@@ -1025,7 +1026,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean isStateValidated(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isStateValidated();
 		return ((IDocumentProviderExtension) getParentProvider()).isStateValidated(element);
@@ -1033,7 +1034,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void updateStateCache(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
 			boolean isReadOnly= isSystemFileReadOnly(info);
 			// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469 for the dirty bit check
@@ -1048,14 +1049,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void setCanSaveDocument(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info == null)
 			((IDocumentProviderExtension) getParentProvider()).setCanSaveDocument(element);
 	}
 
 	@Override
 	public IStatus getStatus(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info == null)
 			return ((IDocumentProviderExtension) getParentProvider()).getStatus(element);
 
@@ -1086,7 +1087,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void synchronize(Object element) throws CoreException {
-		final FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		final FileInfo info= fFileInfoMap.get(element);
 		if (info != null) {
 			DocumentProviderOperation operation= new DocumentProviderOperation() {
 				@Override
@@ -1121,7 +1122,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public boolean isSynchronized(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.isSynchronized();
 		return ((IDocumentProviderExtension3) getParentProvider()).isSynchronized(element);
@@ -1146,7 +1147,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public String getEncoding(Object element) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getEncoding();
 		return ((IStorageDocumentProvider) getParentProvider()).getEncoding(element);
@@ -1154,7 +1155,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public void setEncoding(Object element, String encoding) {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			info.fTextFileBuffer.setEncoding(encoding);
 		else
@@ -1163,7 +1164,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	@Override
 	public IContentType getContentType(Object element) throws CoreException {
-		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		FileInfo info= fFileInfoMap.get(element);
 		if (info != null)
 			return info.fTextFileBuffer.getContentType();
 		IDocumentProvider parent= getParentProvider();
@@ -1232,25 +1233,25 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @return the file info object, or <code>null</code> if none
 	 */
 	protected FileInfo getFileInfo(Object element)  {
-		return (FileInfo) fFileInfoMap.get(element);
+		return fFileInfoMap.get(element);
 	}
 
 	/**
 	 * Returns an iterator over the elements connected via this document provider.
 	 *
-	 * @return an iterator over the list of elements (element type: {@link java.lang.Object})
+	 * @return an iterator over the list of elements
 	 */
-	protected Iterator getConnectedElementsIterator()  {
-		return new HashSet(fFileInfoMap.keySet()).iterator();
+	protected Iterator<Object> getConnectedElementsIterator()  {
+		return new HashSet<>(fFileInfoMap.keySet()).iterator();
 	}
 
 	/**
 	 * Returns an iterator over this document provider's file info objects.
 	 *
-	 * @return the iterator over list of file info objects (element type: {@link TextFileDocumentProvider.FileInfo})
+	 * @return the iterator over list of file info objects
 	 */
-	protected Iterator getFileInfosIterator()  {
-		return new ArrayList(fFileInfoMap.values()).iterator();
+	protected Iterator<FileInfo> getFileInfosIterator()  {
+		return new ArrayList<>(fFileInfoMap.values()).iterator();
 	}
 
 	/**
@@ -1261,8 +1262,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @see IElementStateListenerExtension#elementStateChanging(Object)
 	 */
 	protected void fireElementStateChanging(Object element) {
-		List list= new ArrayList(fElementStateListeners);
-		Iterator e= list.iterator();
+		List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+		Iterator<IElementStateListener> e= list.iterator();
 		while (e.hasNext()) {
 			Object l= e.next();
 			if (l instanceof IElementStateListenerExtension) {
@@ -1280,8 +1281,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)
 	 */
 	protected void fireElementStateChangeFailed(Object element) {
-		List list= new ArrayList(fElementStateListeners);
-		Iterator e= list.iterator();
+		List<IElementStateListener> list= new ArrayList<>(fElementStateListeners);
+		Iterator<IElementStateListener> e= list.iterator();
 		while (e.hasNext()) {
 			Object l= e.next();
 			if (l instanceof IElementStateListenerExtension) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public final class CopySourceEdit extends TextEdit {
 
 	private static class PartialCopier extends TextEditVisitor {
 		TextEdit fResult;
-		List fParents= new ArrayList();
+		List<TextEdit> fParents= new ArrayList<>();
 		TextEdit fCurrentParent;
 
 		public static TextEdit perform(TextEdit source) {
@@ -64,7 +64,7 @@ public final class CopySourceEdit extends TextEdit {
 		}
 		@Override
 		public void postVisit(TextEdit edit) {
-			fCurrentParent= (TextEdit)fParents.remove(fParents.size() - 1);
+			fCurrentParent= fParents.remove(fParents.size() - 1);
 		}
 		@Override
 		public boolean visitNode(TextEdit edit) {
@@ -220,22 +220,22 @@ public final class CopySourceEdit extends TextEdit {
 	//---- consistency check ----------------------------------------------------
 
 	@Override
-	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
+	int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List<List<TextEdit>> sourceEdits) {
 		int result= super.traverseConsistencyCheck(processor, document, sourceEdits);
 		// Since source computation takes place in a recursive fashion (see
 		// performSourceComputation) we only do something if we don't have a
 		// computed source already.
 		if (fSourceContent == null) {
 			if (sourceEdits.size() <= result) {
-				List list= new ArrayList();
+				List<TextEdit> list= new ArrayList<>();
 				list.add(this);
 				for (int i= sourceEdits.size(); i < result; i++)
 					sourceEdits.add(null);
 				sourceEdits.add(list);
 			} else {
-				List list= (List)sourceEdits.get(result);
+				List<TextEdit> list= sourceEdits.get(result);
 				if (list == null) {
-					list= new ArrayList();
+					list= new ArrayList<>();
 					sourceEdits.add(result, list);
 				}
 				list.add(this);

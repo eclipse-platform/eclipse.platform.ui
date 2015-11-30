@@ -317,7 +317,7 @@ public class AnnotationPreference {
 	 * The map of attributes.
 	 * @since 3.0
 	 */
-	private Map fAttributes= new HashMap();
+	private Map<Object, Object> fAttributes= new HashMap<>();
 
 
 

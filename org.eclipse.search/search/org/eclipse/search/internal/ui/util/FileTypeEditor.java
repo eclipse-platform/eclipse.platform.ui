@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,8 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	private final static String TYPE_DELIMITER= SearchMessages.FileTypeEditor_typeDelimiter;
 	public final static String FILE_PATTERN_NEGATOR= "!"; //$NON-NLS-1$
 
-	private static final Comparator FILE_TYPES_COMPARATOR= new Comparator() {
+	private static final Comparator<String> FILE_TYPES_COMPARATOR= new Comparator<String>() {
 		@Override
-		public int compare(Object o1, Object o2) {
-			return compare((String) o1, (String) o2);
-		}
 		public int compare(String fp1, String fp2) {
 			boolean isNegative1= fp1.startsWith(FILE_PATTERN_NEGATOR);
 			boolean isNegative2= fp2.startsWith(FILE_PATTERN_NEGATOR);
@@ -78,14 +75,14 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 	}
 
 	public String[] getFileTypes() {
-		Set result= new HashSet();
+		Set<String> result= new HashSet<>();
 		StringTokenizer tokenizer= new StringTokenizer(fTextField.getText(), TYPE_DELIMITER);
 
 		while (tokenizer.hasMoreTokens()) {
 			String currentExtension= tokenizer.nextToken().trim();
 			result.add(currentExtension);
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public void setFileTypes(String[] types) {
@@ -96,7 +93,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), Arrays.asList(getFileTypes()));
 		if (dialog.open() == Window.OK) {
 			Object[] result= dialog.getResult();
-			HashSet patterns= new HashSet();
+			HashSet<String> patterns= new HashSet<>();
 			boolean starIncluded= false;
 			for (int i= 0; i < result.length; i++) {
 				String curr= result[i].toString();
@@ -109,7 +106,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener 
 			if (patterns.isEmpty() && starIncluded) { // remove star when other file extensions active
 				patterns.add("*"); //$NON-NLS-1$
 			}
-			String[] filePatterns= (String[]) patterns.toArray(new String[patterns.size()]);
+			String[] filePatterns= patterns.toArray(new String[patterns.size()]);
 			Arrays.sort(filePatterns);
 			setFileTypes(filePatterns);
 		}

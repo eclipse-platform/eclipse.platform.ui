@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -224,7 +224,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		final static int REDRAW_COSTS= 15;
 		final static int INVALIDATION_COSTS= 10;
 
-		List fList= new ArrayList(15);
+		List<ProjectionCommand> fList= new ArrayList<>(15);
 		int fExpectedExecutionCosts= -1;
 
 
@@ -232,7 +232,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fList.add(command);
 		}
 
-		Iterator iterator() {
+		Iterator<ProjectionCommand> iterator() {
 			return fList.iterator();
 		}
 
@@ -258,9 +258,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			fExpectedExecutionCosts= fList.size();
 			if (fExpectedExecutionCosts <= max_costs) {
 				ProjectionCommand command;
-				Iterator e= fList.iterator();
+				Iterator<ProjectionCommand> e= fList.iterator();
 				while (e.hasNext()) {
-					command= (ProjectionCommand) e.next();
+					command= e.next();
 					fExpectedExecutionCosts += command.computeExpectedCosts();
 					if (fExpectedExecutionCosts > max_costs)
 						break;
@@ -280,11 +280,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/** Indication whether projection changes in the visible document should be considered. */
 	private boolean fHandleProjectionChanges= true;
 	/** The list of projection listeners. */
-	private List fProjectionListeners;
+	private List<IProjectionListener> fProjectionListeners;
 	/** Internal lock for protecting the list of pending requests */
 	private Object fLock= new Object();
 	/** The list of pending requests */
-	private List fPendingRequests= new ArrayList();
+	private List<AnnotationModelEvent> fPendingRequests= new ArrayList<>();
 	/** The replace-visible-document execution trigger */
 	private IDocument fReplaceVisibleDocumentExecutionTrigger;
 	/** <code>true</code> if projection was on the last time we switched to segmented mode. */
@@ -436,7 +436,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		Assert.isNotNull(listener);
 
 		if (fProjectionListeners == null)
-			fProjectionListeners= new ArrayList();
+			fProjectionListeners= new ArrayList<>();
 
 		if (!fProjectionListeners.contains(listener))
 			fProjectionListeners.add(listener);
@@ -466,9 +466,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected void fireProjectionEnabled() {
 		if (fProjectionListeners != null) {
-			Iterator e= new ArrayList(fProjectionListeners).iterator();
+			Iterator<IProjectionListener> e= new ArrayList<>(fProjectionListeners).iterator();
 			while (e.hasNext()) {
-				IProjectionListener l= (IProjectionListener) e.next();
+				IProjectionListener l= e.next();
 				l.projectionEnabled();
 			}
 		}
@@ -480,9 +480,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected void fireProjectionDisabled() {
 		if (fProjectionListeners != null) {
-			Iterator e= new ArrayList(fProjectionListeners).iterator();
+			Iterator<IProjectionListener> e= new ArrayList<>(fProjectionListeners).iterator();
 			while (e.hasNext()) {
-				IProjectionListener l= (IProjectionListener) e.next();
+				IProjectionListener l= e.next();
 				l.projectionDisabled();
 			}
 		}
@@ -535,7 +535,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Position found= null;
 			Annotation bestMatch= null;
 			Point selection= getSelectedRange();
-			for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+			for (Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 				if (annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
@@ -564,7 +564,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			Position found= null;
 			Annotation bestMatch= null;
 			Point selection= getSelectedRange();
-			for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+			for (Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 				if (!annotation.isCollapsed()) {
 					Position position= fProjectionAnnotationModel.getPosition(annotation);
@@ -883,7 +883,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 										synchronized (fLock) {
 											if (fPendingRequests.size() == 0)
 												return;
-											ame= (AnnotationModelEvent) fPendingRequests.remove(0);
+											ame= fPendingRequests.remove(0);
 										}
 										catchupWithProjectionAnnotationModel(ame);
 									}
@@ -959,7 +959,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			int topIndex= isRedrawing ? getTopIndex() : -1;
 
 			processDeletions(event, removedAnnotations, true);
-			List coverage= new ArrayList();
+			List<Position> coverage= new ArrayList<>();
 			processChanges(addedAnnotations, true, coverage);
 			processChanges(changedAnnotation, true, coverage);
 
@@ -991,9 +991,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void executeProjectionCommands(ProjectionCommandQueue commandQueue, boolean fireRedraw) throws BadLocationException {
 
 		ProjectionCommand command;
-		Iterator e= commandQueue.iterator();
+		Iterator<ProjectionCommand> e= commandQueue.iterator();
 		while (e.hasNext()) {
-			command= (ProjectionCommand) e.next();
+			command= e.next();
 			switch (command.fType) {
 				case ProjectionCommand.ADD:
 					addMasterDocumentRange(command.fProjection, command.fOffset, command.fLength);
@@ -1012,8 +1012,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	private ProjectionAnnotation[] computeCollapsedNestedAnnotations(int offset, int length) {
-		List annotations= new ArrayList(5);
-		Iterator e= fProjectionAnnotationModel.getAnnotationIterator(offset, length, false, false);
+		List<ProjectionAnnotation> annotations= new ArrayList<>(5);
+		Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator(offset, length, false, false);
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			if (annotation.isCollapsed()) {
@@ -1140,7 +1140,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return null;
 	}
 
-	private void processChanges(Annotation[] annotations, boolean fireRedraw, List coverage) throws BadLocationException {
+	private void processChanges(Annotation[] annotations, boolean fireRedraw, List<Position> coverage) throws BadLocationException {
 		for (int i= 0; i < annotations.length; i++) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
@@ -1162,10 +1162,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
-	private boolean covers(List coverage, Position position) {
-		Iterator e= coverage.iterator();
+	private boolean covers(List<Position> coverage, Position position) {
+		Iterator<Position> e= coverage.iterator();
 		while (e.hasNext()) {
-			Position p= (Position) e.next();
+			Position p= e.next();
 			if (p.getOffset() <= position.getOffset() && position.getOffset() + position.getLength() <= p.getOffset() + p.getLength())
 				return true;
 		}
@@ -1195,7 +1195,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 
 		if (projection != null) {
-			Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
+			Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator();
 			while (e.hasNext()) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 				if (annotation.isCollapsed()) {
@@ -1260,9 +1260,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	public void setRangeIndication(int offset, int length, boolean moveCursor) {
 		IRegion rangeIndication= getRangeIndication();
 		if (moveCursor && fProjectionAnnotationModel != null && (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())) {
-			List expand= new ArrayList(2);
+			List<ProjectionAnnotation> expand= new ArrayList<>(2);
 			// expand the immediate affected collapsed regions
-			Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
+			Iterator<Annotation> iterator= fProjectionAnnotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation)iterator.next();
 				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
@@ -1270,9 +1270,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 
 			if (!expand.isEmpty()) {
-				Iterator e= expand.iterator();
+				Iterator<ProjectionAnnotation> e= expand.iterator();
 				while (e.hasNext())
-					fProjectionAnnotationModel.expand((Annotation)e.next());
+					fProjectionAnnotationModel.expand(e.next());
 			}
 		}
 		super.setRangeIndication(offset, length, moveCursor);
@@ -1646,14 +1646,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @since 3.1
 	 */
 	private Position[] computeOverlappingAnnotationPositions(IRegion modelSelection) {
-		List positions= new ArrayList();
-		for (Iterator e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
+		List<Position> positions= new ArrayList<>();
+		for (Iterator<Annotation> e= fProjectionAnnotationModel.getAnnotationIterator(); e.hasNext();) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			Position position= fProjectionAnnotationModel.getPosition(annotation);
 			if (position != null && position.overlapsWith(modelSelection.getOffset(), modelSelection.getLength()) && modelRange2WidgetRange(position) != null)
 				positions.add(position);
 		}
-		return (Position[]) positions.toArray(new Position[positions.size()]);
+		return positions.toArray(new Position[positions.size()]);
 	}
 
 	@Override

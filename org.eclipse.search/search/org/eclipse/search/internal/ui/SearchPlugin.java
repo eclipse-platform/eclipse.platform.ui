@@ -85,8 +85,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private static SearchPlugin fgSearchPlugin;
 
 
-	private List fPageDescriptors;
-	private List fSorterDescriptors;
+	private List<SearchPageDescriptor> fPageDescriptors;
+	private List<SorterDescriptor> fSorterDescriptors;
 	private TextSearchEngineRegistry fTextSearchEngineRegistry;
 	private TextSearchQueryProviderRegistry fTextSearchQueryProviderRegistry;
 
@@ -226,7 +226,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * @return Returns all search pages contributed to the workbench.
 	 */
-	public List getSearchPageDescriptors() {
+	public List<SearchPageDescriptor> getSearchPageDescriptors() {
 		if (fPageDescriptors == null) {
 			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SEARCH_PAGE_EXTENSION_POINT);
 			fPageDescriptors= createSearchPageDescriptors(elements);
@@ -238,11 +238,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @param pageId the page id or <code>null</code>
 	 * @return all descriptors of the enabled search pages, plus the descriptor for the given page id
 	 */
-	public List getEnabledSearchPageDescriptors(String pageId) {
-		Iterator iter= getSearchPageDescriptors().iterator();
-		List enabledDescriptors= new ArrayList(5);
+	public List<SearchPageDescriptor> getEnabledSearchPageDescriptors(String pageId) {
+		Iterator<SearchPageDescriptor> iter= getSearchPageDescriptors().iterator();
+		List<SearchPageDescriptor> enabledDescriptors= new ArrayList<>(5);
 		while (iter.hasNext()) {
-			SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+			SearchPageDescriptor desc= iter.next();
 			if (desc.isEnabled() || desc.getId().equals(pageId))
 				enabledDescriptors.add(desc);
 		}
@@ -261,9 +261,9 @@ public class SearchPlugin extends AbstractUIPlugin {
 		Search currentSearch= SearchManager.getDefault().getCurrentSearch();
 		if (currentSearch != null) {
 			String pageId= currentSearch.getPageId();
-			Iterator iter= getSearchPageDescriptors().iterator();
+			Iterator<SearchPageDescriptor> iter= getSearchPageDescriptors().iterator();
 			while (iter.hasNext()) {
-				SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+				SearchPageDescriptor desc= iter.next();
 				if (desc.getId().equals(pageId)) {
 					String helpId= desc.getSearchViewHelpContextId();
 					if (helpId == null)
@@ -280,8 +280,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @param elements the configuration elements
 	 * @return the created SearchPageDescriptor
 	 */
-	private List createSearchPageDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(5);
+	private List<SearchPageDescriptor> createSearchPageDescriptors(IConfigurationElement[] elements) {
+		List<SearchPageDescriptor> result= new ArrayList<>(5);
 		for (int i= 0; i < elements.length; i++) {
 			IConfigurationElement element= elements[i];
 			if (SearchPageDescriptor.PAGE_TAG.equals(element.getName())) {
@@ -296,7 +296,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * @return Returns all sorters contributed to the workbench.
 	 */
-	public List getSorterDescriptors() {
+	public List<SorterDescriptor> getSorterDescriptors() {
 		if (fSorterDescriptors == null) {
 			IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(NewSearchUI.PLUGIN_ID, SORTER_EXTENSION_POINT);
 			fSorterDescriptors= createSorterDescriptors(elements);
@@ -324,8 +324,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @param elements the configuration elements
 	 * @return the created SorterDescriptor
 	 */
-	private List createSorterDescriptors(IConfigurationElement[] elements) {
-		List result= new ArrayList(5);
+	private List<SorterDescriptor> createSorterDescriptors(IConfigurationElement[] elements) {
+		List<SorterDescriptor> result= new ArrayList<>(5);
 		for (int i= 0; i < elements.length; i++) {
 			IConfigurationElement element= elements[i];
 			if (SorterDescriptor.SORTER_TAG.equals(element.getName()))

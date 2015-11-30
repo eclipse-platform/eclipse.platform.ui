@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import java.util.Map;
 public class ContextTypeRegistry {
 
 	/** all known context types */
-	private final Map fContextTypes= new LinkedHashMap();
+	private final Map<String, TemplateContextType> fContextTypes= new LinkedHashMap<>();
 
 	/**
 	 * Adds a context type to the registry. If there already is a context type
@@ -46,15 +46,15 @@ public class ContextTypeRegistry {
 	 * @return the context type if <code>name</code> is valid, <code>null</code> otherwise
 	 */
 	public TemplateContextType getContextType(String id) {
-		return (TemplateContextType) fContextTypes.get(id);
+		return fContextTypes.get(id);
 	}
 
 	/**
 	 * Returns an iterator over all registered context types.
 	 *
-	 * @return an iterator over all registered context types (element type: {@link TemplateContextType})
+	 * @return an iterator over all registered context types
 	 */
-	public Iterator contextTypes() {
+	public Iterator<TemplateContextType> contextTypes() {
 		return fContextTypes.values().iterator();
 	}
 }

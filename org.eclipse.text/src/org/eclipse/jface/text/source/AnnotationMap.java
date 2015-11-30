@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.jface.text.Position;
 
 
 /**
@@ -38,7 +40,7 @@ class AnnotationMap implements IAnnotationMap {
     private final Object fInternalLockObject= new Object();
 
     /** The map holding the annotations */
-    private Map fInternalMap;
+    private Map<Annotation, Position> fInternalMap;
 
     /**
      * Creates a new annotation map with the given capacity.
@@ -46,7 +48,7 @@ class AnnotationMap implements IAnnotationMap {
      * @param capacity the capacity
      */
     public AnnotationMap(int capacity) {
-        fInternalMap= new HashMap(capacity);
+        fInternalMap= new HashMap<>(capacity);
     }
 
     @Override
@@ -62,16 +64,16 @@ class AnnotationMap implements IAnnotationMap {
     }
 
     @Override
-	public Iterator valuesIterator() {
+	public Iterator<Position> valuesIterator() {
         synchronized (getLockObject()) {
-            return new ArrayList(fInternalMap.values()).iterator();
+            return new ArrayList<>(fInternalMap.values()).iterator();
         }
     }
 
     @Override
-	public Iterator keySetIterator() {
+	public Iterator<Annotation> keySetIterator() {
         synchronized (getLockObject()) {
-            return new ArrayList(fInternalMap.keySet()).iterator();
+            return new ArrayList<>(fInternalMap.keySet()).iterator();
         }
     }
 
@@ -83,14 +85,14 @@ class AnnotationMap implements IAnnotationMap {
     }
 
     @Override
-	public Object put(Object annotation, Object position) {
+	public Position put(Annotation annotation, Position position) {
         synchronized (getLockObject()) {
             return fInternalMap.put(annotation, position);
         }
     }
 
     @Override
-	public Object get(Object annotation) {
+	public Position get(Object annotation) {
         synchronized (getLockObject()) {
             return fInternalMap.get(annotation);
         }
@@ -104,7 +106,7 @@ class AnnotationMap implements IAnnotationMap {
     }
 
     @Override
-	public Object remove(Object annotation) {
+	public Position remove(Object annotation) {
         synchronized (getLockObject()) {
             return fInternalMap.remove(annotation);
         }
@@ -132,28 +134,28 @@ class AnnotationMap implements IAnnotationMap {
 	}
 
 	@Override
-	public void putAll(Map map) {
+	public void putAll(Map<? extends Annotation, ? extends Position> map) {
 		synchronized (getLockObject()) {
 			fInternalMap.putAll(map);
 		}
 	}
 
 	@Override
-	public Set entrySet() {
+	public Set<Entry<Annotation, Position>> entrySet() {
 		synchronized (getLockObject()) {
 			return fInternalMap.entrySet();
 		}
 	}
 
 	@Override
-	public Set keySet() {
+	public Set<Annotation> keySet() {
 		synchronized (getLockObject()) {
 			return fInternalMap.keySet();
 		}
 	}
 
 	@Override
-	public Collection values() {
+	public Collection<Position> values() {
 		synchronized (getLockObject()) {
 			return fInternalMap.values();
 		}

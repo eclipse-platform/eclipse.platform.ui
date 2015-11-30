@@ -44,7 +44,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	private final String fDescription;
 	private final IResource[] fRootElements;
 
-	private final Set fFileNamePatterns;
+	private final Set<String> fFileNamePatterns;
 	private Matcher fFileNameMatcher;
 
 	private boolean fVisitDerived;
@@ -53,7 +53,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 		Assert.isNotNull(description);
 		fDescription= description;
 		fRootElements= resources;
-		fFileNamePatterns=  new HashSet(3);
+		fFileNamePatterns=  new HashSet<>(3);
 		fFileNameMatcher= null;
 		fVisitDerived= visitDerived;
 	}
@@ -119,7 +119,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 			if (fFileNamePatterns.isEmpty()) {
 				pattern= Pattern.compile(".*"); //$NON-NLS-1$
 			} else {
-				String[] patternStrings= (String[]) fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
+				String[] patternStrings= fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
 				pattern= PatternConstructor.createPattern(patternStrings, IS_CASE_SENSITIVE_FILESYSTEM);
 			}
 			fFileNameMatcher= pattern.matcher(""); //$NON-NLS-1$
@@ -141,7 +141,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * @return the description of the scope
 	 */
 	public String getFileNamePatternDescription() {
-		String[] ext= (String[]) fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
+		String[] ext= fFileNamePatterns.toArray(new String[fFileNamePatterns.size()]);
 		Arrays.sort(ext);
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < ext.length; i++) {
@@ -155,21 +155,21 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 
 
 	private static IResource[] removeRedundantEntries(IResource[] elements, boolean includeDerived) {
-		ArrayList res= new ArrayList();
+		ArrayList<IResource> res= new ArrayList<>();
 		for (int i= 0; i < elements.length; i++) {
 			IResource curr= elements[i];
 			addToList(res, curr, includeDerived);
 		}
-		return (IResource[])res.toArray(new IResource[res.size()]);
+		return res.toArray(new IResource[res.size()]);
 	}
 
-	private static void addToList(ArrayList res, IResource curr, boolean includeDerived) {
+	private static void addToList(ArrayList<IResource> res, IResource curr, boolean includeDerived) {
 		if (!includeDerived && curr.isDerived(IResource.CHECK_ANCESTORS)) {
 			return;
 		}
 		IPath currPath= curr.getFullPath();
 		for (int k= res.size() - 1; k >= 0 ; k--) {
-			IResource other= (IResource) res.get(k);
+			IResource other= res.get(k);
 			IPath otherPath= other.getFullPath();
 			if (otherPath.isPrefixOf(currPath)) {
 				return;

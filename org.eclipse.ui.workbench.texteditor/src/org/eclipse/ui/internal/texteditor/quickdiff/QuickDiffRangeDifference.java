@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class QuickDiffRangeDifference extends org.eclipse.compare.rangedifferenc
 	 * @param source the original document (left document) that this difference refers to
 	 * @return a <code>DiffRegion</code> corresponding to this difference
 	 */
-	public DiffRegion getDiffRegion(List differences, IDocument source) {
+	public DiffRegion getDiffRegion(List<QuickDiffRangeDifference> differences, IDocument source) {
 		if (fRegion == null)
 			fRegion= new DiffRegion(this, 0, differences, source);
 		return fRegion;

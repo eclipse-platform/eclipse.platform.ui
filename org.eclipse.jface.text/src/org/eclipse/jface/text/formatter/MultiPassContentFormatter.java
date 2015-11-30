@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
@@ -103,7 +104,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	/** The partitioning of this content formatter */
 	private final String fPartitioning;
 	/** The slave formatting strategies */
-	private final Map fSlaves= new HashMap();
+	private final Map<String, IFormattingStrategy> fSlaves= new HashMap<>();
 	/** The default content type */
 	private final String fType;
 
@@ -240,7 +241,7 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 	 */
 	protected void formatSlaves(final IFormattingContext context, final IDocument document, final int offset, final int length) {
 
-		Map partitioners= new HashMap(0);
+		Map<String, IDocumentPartitioner> partitioners= new HashMap<>(0);
 		try {
 
 			final ITypedRegion[] partitions= TextUtilities.computePartitioning(document, fPartitioning, offset, length, false);

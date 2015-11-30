@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eclipse.jface.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.osgi.util.TextProcessor;
@@ -291,7 +290,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** The key listener to control navigation. */
 	private ProposalSelectionListener fKeyListener;
 	/** List of document events used for filtering proposals. */
-	private final List fDocumentEvents= new ArrayList();
+	private final List<DocumentEvent> fDocumentEvents= new ArrayList<>();
 	/** Listener filling the document event queue. */
 	private IDocumentListener fDocumentListener;
 	/** The filter list of proposals. */
@@ -1509,7 +1508,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 		int length= proposals.length;
-		List filtered= new ArrayList(length);
+		List<Object> filtered= new ArrayList<>(length);
 		for (int i= 0; i < length; i++) {
 
 			if (proposals[i] instanceof ICompletionProposalExtension2) {
@@ -1540,7 +1539,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		}
 
-		return (ICompletionProposal[]) filtered.toArray(new ICompletionProposal[filtered.size()]);
+		return filtered.toArray(new ICompletionProposal[filtered.size()]);
 	}
 
 	/**
@@ -1658,7 +1657,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		// contains the common postfix in the case that there are any proposals matching our LHS
 		StringBuffer rightCasePostfix= null;
-		List rightCase= new ArrayList();
+		List<ICompletionProposal> rightCase= new ArrayList<>();
 
 		boolean isWrongCaseMatch= false;
 
@@ -1668,7 +1667,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		int wrongCasePrefixStart= 0;
 		// contains the common postfix of all case-insensitive matches
 		StringBuffer wrongCasePostfix= null;
-		List wrongCase= new ArrayList();
+		List<ICompletionProposal> wrongCase= new ArrayList<>();
 
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
@@ -1721,7 +1720,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// 2: replace single proposals
 
 		if (rightCase.size() == 1) {
-			ICompletionProposal proposal= (ICompletionProposal) rightCase.get(0);
+			ICompletionProposal proposal= rightCase.get(0);
 			if (canAutoInsert(proposal) && rightCasePostfix.length() > 0) {
 				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
 				hide();
@@ -1729,7 +1728,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 			return false;
 		} else if (isWrongCaseMatch && wrongCase.size() == 1) {
-			ICompletionProposal proposal= (ICompletionProposal) wrongCase.get(0);
+			ICompletionProposal proposal= wrongCase.get(0);
 			if (canAutoInsert(proposal)) {
 				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
 				hide();
@@ -1904,12 +1903,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.8
 	 */
 	private void sortProposals(final ICompletionProposal[] proposals) {
-		Arrays.sort(proposals, new Comparator() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return fSorter.compare((ICompletionProposal)o1,
-						(ICompletionProposal)o2);
-			}
-		});
+		Arrays.sort(proposals, fSorter::compare);
 	}
 }

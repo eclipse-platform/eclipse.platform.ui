@@ -26,15 +26,15 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 public class WindowAnnotationManager {
 	private IWorkbenchWindow fWindow;
-	private Map fAnnotationManagers;
+	private Map<IEditorPart, EditorAnnotationManager> fAnnotationManagers;
 	private IPartListener2 fPartListener;
-	private ArrayList fSearchResults;
+	private ArrayList<AbstractTextSearchResult> fSearchResults;
 
 	public WindowAnnotationManager(IWorkbenchWindow window) {
 		fWindow = window;
-		fAnnotationManagers = new HashMap();
+		fAnnotationManagers = new HashMap<>();
 
-		fSearchResults= new ArrayList();
+		fSearchResults= new ArrayList<>();
 
 		initEditors();
 		fPartListener= new IPartListener2() {
@@ -83,7 +83,7 @@ public class WindowAnnotationManager {
 	private void startHighlighting(IEditorPart editor) {
 		if (editor == null)
 			return;
-		EditorAnnotationManager mgr= (EditorAnnotationManager) fAnnotationManagers.get(editor);
+		EditorAnnotationManager mgr= fAnnotationManagers.get(editor);
 		if (mgr == null) {
 			mgr= new EditorAnnotationManager(editor);
 			fAnnotationManagers.put(editor, mgr);
@@ -94,7 +94,7 @@ public class WindowAnnotationManager {
 	private void updateHighlighting(IEditorPart editor) {
 		if (editor == null)
 			return;
-		EditorAnnotationManager mgr= (EditorAnnotationManager) fAnnotationManagers.get(editor);
+		EditorAnnotationManager mgr= fAnnotationManagers.get(editor);
 		if (mgr != null) {
 			mgr.doEditorInputChanged();
 		}
@@ -117,7 +117,7 @@ public class WindowAnnotationManager {
 	private void stopHighlighting(IEditorPart editor) {
 		if (editor == null)
 			return;
-		EditorAnnotationManager mgr= (EditorAnnotationManager) fAnnotationManagers.remove(editor);
+		EditorAnnotationManager mgr= fAnnotationManagers.remove(editor);
 		if (mgr != null)
 			mgr.dispose();
 	}
@@ -131,8 +131,8 @@ public class WindowAnnotationManager {
 
 	void dispose() {
 		fWindow.getPartService().removePartListener(fPartListener);
-		for (Iterator mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-			EditorAnnotationManager mgr = (EditorAnnotationManager) mgrs.next();
+		for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
+			EditorAnnotationManager mgr = mgrs.next();
 			mgr.dispose();
 		}
 		fAnnotationManagers= null;
@@ -142,8 +142,8 @@ public class WindowAnnotationManager {
 		boolean alreadyShown= fSearchResults.contains(result);
 		fSearchResults.add(result);
 		if (!alreadyShown) {
-			for (Iterator mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-				EditorAnnotationManager mgr = (EditorAnnotationManager) mgrs.next();
+			for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
+				EditorAnnotationManager mgr = mgrs.next();
 				mgr.addSearchResult(result);
 			}
 		}
@@ -153,8 +153,8 @@ public class WindowAnnotationManager {
 		fSearchResults.remove(result);
 		boolean stillShown= fSearchResults.contains(result);
 		if (!stillShown) {
-			for (Iterator mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
-				EditorAnnotationManager mgr = (EditorAnnotationManager) mgrs.next();
+			for (Iterator<EditorAnnotationManager> mgrs = fAnnotationManagers.values().iterator(); mgrs.hasNext();) {
+				EditorAnnotationManager mgr = mgrs.next();
 				mgr.removeSearchResult(result);
 			}
 		}

@@ -96,9 +96,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 
 				// create quickdiff menu
 				menu= new MenuManager(QuickDiffMessages.quickdiff_menu_label, MENU_ID);
-				List descriptors= new QuickDiff().getReferenceProviderDescriptors();
-				for (Iterator it= descriptors.iterator(); it.hasNext();) {
-					ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) it.next();
+				List<ReferenceProviderDescriptor> descriptors= new QuickDiff().getReferenceProviderDescriptors();
+				for (Iterator<ReferenceProviderDescriptor> it= descriptors.iterator(); it.hasNext();) {
+					ReferenceProviderDescriptor desc= it.next();
 					ReferenceSelectionAction action= new ReferenceSelectionAction(desc, fEditor);
 					if (action.isEnabled())
 						menu.add(action);

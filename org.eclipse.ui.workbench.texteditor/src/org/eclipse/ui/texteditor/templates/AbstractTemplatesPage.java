@@ -344,13 +344,13 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		}
 
 		private TemplatePersistenceData[] getTemplates(String contextId) {
-			List templateList= new ArrayList();
+			List<TemplatePersistenceData> templateList= new ArrayList<>();
 			TemplatePersistenceData[] datas= getTemplateStore().getTemplateData(false);
 			for (int i= 0; i < datas.length; i++) {
 				if (datas[i].isEnabled() && datas[i].getTemplate().getContextTypeId().equals(contextId))
 					templateList.add(datas[i]);
 			}
-			return (TemplatePersistenceData[]) templateList
+			return templateList
 					.toArray(new TemplatePersistenceData[templateList.size()]);
 		}
 
@@ -386,10 +386,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			List contextTypes= new ArrayList();
+			List<TemplateContextType> contextTypes= new ArrayList<>();
 
-			for (Iterator iterator= getContextTypeRegistry().contextTypes(); iterator.hasNext();) {
-				TemplateContextType contextType= (TemplateContextType) iterator.next();
+			for (Iterator<TemplateContextType> iterator= getContextTypeRegistry().contextTypes(); iterator.hasNext();) {
+				TemplateContextType contextType= iterator.next();
 				if (!fLinkWithEditorAction.isChecked() || isActiveContext(contextType))
 					contextTypes.add(contextType);
 			}
@@ -435,7 +435,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private Action fCopyAction;
 
 	/* Current active context types for the editor */
-	private List fActiveTypes;
+	private List<String> fActiveTypes;
 
 	/* Preference stores */
 	private IPreferenceStore fPreferenceStore;
@@ -1198,7 +1198,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void setSelectedTemplates() {
 		IStructuredSelection selection= (IStructuredSelection) fTreeViewer.getSelection();
 
-		Iterator it= selection.iterator();
+		Iterator<?> it= selection.iterator();
 		TemplatePersistenceData[] data= new TemplatePersistenceData[selection.size()];
 		int i= 0;
 		while (it.hasNext()) {
@@ -1247,7 +1247,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		Object item;
 
 		if (selection.size() == 0)
-			return ((TemplateContextType) getContextTypeRegistry().contextTypes().next()).getId();
+			return getContextTypeRegistry().contextTypes().next().getId();
 
 		if (selection.size() == 1) {
 			item= selection.getFirstElement();
@@ -1255,14 +1255,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				return ((TemplatePersistenceData) item).getTemplate().getContextTypeId();
 			return ((TemplateContextType) item).getId();
 		}
-		Iterator it= selection.iterator();
+		Iterator<?> it= selection.iterator();
 		String contextId= null;
 		while (it.hasNext()) {
 			item= it.next();
 			if (contextId == null)
 				contextId= getContextId(item);
 			else if (!contextId.equals(getContextId(item)))
-				return ((TemplateContextType) getContextTypeRegistry().contextTypes().next())
+				return getContextTypeRegistry().contextTypes().next()
 						.getId();
 		}
 		return contextId;

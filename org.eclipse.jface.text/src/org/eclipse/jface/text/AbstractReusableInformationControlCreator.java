@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
 
-	private Map fInformationControls= new HashMap();
+	private Map<Shell, IInformationControl> fInformationControls= new HashMap<>();
 
 	/**
 	 * Creates the control.
@@ -38,7 +38,7 @@ public abstract class AbstractReusableInformationControlCreator implements IInfo
 
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
-		IInformationControl control= (IInformationControl)fInformationControls.get(parent);
+		IInformationControl control= fInformationControls.get(parent);
 		if (control == null) {
 			control= doCreateInformationControl(parent);
 			control.addDisposeListener(this);

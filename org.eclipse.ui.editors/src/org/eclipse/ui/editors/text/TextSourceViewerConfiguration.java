@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,15 +230,15 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected final IHyperlinkDetector[] getRegisteredHyperlinkDetectors(ISourceViewer sourceViewer) {
 		HyperlinkDetectorRegistry registry= EditorsUI.getHyperlinkDetectorRegistry();
 
-		Map targets= getHyperlinkDetectorTargets(sourceViewer);
+		Map<String, IAdaptable> targets= getHyperlinkDetectorTargets(sourceViewer);
 		Assert.isNotNull(targets);
 
 		IHyperlinkDetector[] result= null;
-		Iterator iter= targets.entrySet().iterator();
+		Iterator<Entry<String, IAdaptable>> iter= targets.entrySet().iterator();
 		while (iter.hasNext()) {
-			Entry target= (Entry)iter.next();
-			String targetId= (String)target.getKey();
-			IAdaptable context= (IAdaptable)target.getValue();
+			Entry<String, IAdaptable> target= iter.next();
+			String targetId= target.getKey();
+			IAdaptable context= target.getValue();
 			result= merge(result, registry.createHyperlinkDetectors(targetId, context));
 		}
 		return result;
@@ -256,8 +256,8 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * 			and the target context (<code>IAdaptable</code>) as value
 	 * @since 3.3
 	 */
-	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
-		Map targets= new HashMap();
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map<String, IAdaptable> targets= new HashMap<>();
 		targets.put(EditorsUI.DEFAULT_TEXT_EDITOR_ID, null);
 		return targets;
 	}

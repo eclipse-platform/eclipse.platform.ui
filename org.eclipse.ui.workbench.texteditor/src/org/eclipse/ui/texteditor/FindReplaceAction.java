@@ -111,7 +111,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		}
 
 		private void partActivated(IWorkbenchPart part) {
-			IFindReplaceTarget target= part == null ? null : (IFindReplaceTarget) part.getAdapter(IFindReplaceTarget.class);
+			IFindReplaceTarget target= part == null ? null : part.getAdapter(IFindReplaceTarget.class);
 			fPreviousPart= fPart;
 			fPart= target == null ? null : part;
 

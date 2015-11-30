@@ -32,7 +32,7 @@ public final class HunkComputer {
 	 * @return the corresponding {@link Hunk} information
 	 */
 	public static Hunk[] computeHunks(ILineDiffer differ, int lines) {
-		List hunks= new ArrayList(lines);
+		List<Hunk> hunks= new ArrayList<>(lines);
 
 		int added= 0;
 		int changed= 0;
@@ -70,7 +70,7 @@ public final class HunkComputer {
 			}
 		}
 
-		return (Hunk[]) hunks.toArray(new Hunk[hunks.size()]);
+		return hunks.toArray(new Hunk[hunks.size()]);
 	}
 	private HunkComputer() {
 	}

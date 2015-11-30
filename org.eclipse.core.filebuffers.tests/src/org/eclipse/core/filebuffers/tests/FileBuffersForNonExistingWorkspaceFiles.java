@@ -23,6 +23,8 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.LocationKind;
 
+import org.eclipse.jface.text.source.IAnnotationModel;
+
 /**
  * FileBuffersForNonExistingWorkspaceFiles
  */
@@ -101,7 +103,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	}
 
 	@Override
-	protected Class getAnnotationModelClass() throws Exception {
+	protected Class<IAnnotationModel> getAnnotationModelClass() throws Exception {
 		return null;
 	}
 }

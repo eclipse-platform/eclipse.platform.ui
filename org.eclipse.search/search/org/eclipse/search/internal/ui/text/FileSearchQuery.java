@@ -52,7 +52,7 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 
 		private final boolean fIsLightweightAutoRefresh;
-		private Map fCachedMatches; // map of IFile -> ArrayList of FileMatches
+		private Map<IFile, ArrayList<FileMatch>> fCachedMatches;
 		private Object fLock= new Object();
 
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
@@ -89,7 +89,7 @@ public class FileSearchQuery implements ISearchQuery {
 
 		@Override
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
-			ArrayList matches;
+			ArrayList<FileMatch> matches;
 			synchronized(fLock) {
 				// fCachedMatches is set to null when the caller invokes endReporting(),
 				// indicating that no further results are desired/expected, so discard
@@ -97,7 +97,7 @@ public class FileSearchQuery implements ISearchQuery {
 				if (fCachedMatches == null) {
 					return false;
 				}
-				matches= (ArrayList) fCachedMatches.get(matchRequestor.getFile());
+				matches= fCachedMatches.get(matchRequestor.getFile());
 			}
 
 			int matchOffset= matchRequestor.getMatchOffset();
@@ -120,9 +120,9 @@ public class FileSearchQuery implements ISearchQuery {
 					if (fCachedMatches == null) {
 						return false;
 					}
-					matches= (ArrayList) fCachedMatches.get(matchRequestor.getFile());
+					matches= fCachedMatches.get(matchRequestor.getFile());
 					if (matches == null) {
-						matches= new ArrayList();
+						matches= new ArrayList<>();
 						fCachedMatches.put(matchRequestor.getFile(), matches);
 					}
 					matches.add(fileMatch);
@@ -131,13 +131,13 @@ public class FileSearchQuery implements ISearchQuery {
 			return true;
 		}
 
-		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor, ArrayList matches) {
+		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor, ArrayList<FileMatch> matches) {
 			int lineNumber= 1;
 			int lineStart= 0;
 
 			if (matches != null) {
 				// match on same line as last?
-				FileMatch last= (FileMatch) matches.get(matches.size() - 1);
+				FileMatch last= matches.get(matches.size() - 1);
 				LineElement lineElement= last.getLineElement();
 				if (lineElement.contains(offset)) {
 					return lineElement;
@@ -188,7 +188,7 @@ public class FileSearchQuery implements ISearchQuery {
 
 		@Override
 		public void beginReporting() {
-			fCachedMatches= new HashMap();
+			fCachedMatches= new HashMap<>();
 		}
 
 		@Override
@@ -202,10 +202,10 @@ public class FileSearchQuery implements ISearchQuery {
 		private void flushMatches() {
 			synchronized (fLock) {
 				if (fCachedMatches != null && !fCachedMatches.isEmpty()) {
-					Iterator it = fCachedMatches.values().iterator();
+					Iterator<ArrayList<FileMatch>> it = fCachedMatches.values().iterator();
 					while(it.hasNext()) {
-						ArrayList matches= (ArrayList) it.next();
-						fResult.addMatches((Match[]) matches.toArray(new Match[matches.size()]));
+						ArrayList<FileMatch> matches= it.next();
+						fResult.addMatches(matches.toArray(new Match[matches.size()]));
 					}
 					fCachedMatches.clear();
 				}
