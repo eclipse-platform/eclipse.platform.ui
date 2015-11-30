@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestSwitch.java,v 1.3 2010/06/04 20:22:21 johna Exp $
+ * $Id: TestSwitch.java,v 1.3 2010, 2015/06/04 20:22:21 johna Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.util;
 

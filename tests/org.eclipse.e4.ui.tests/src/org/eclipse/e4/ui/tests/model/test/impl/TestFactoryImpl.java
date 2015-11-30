@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestFactoryImpl.java,v 1.3 2010/06/04 20:22:20 johna Exp $
+ * $Id: TestFactoryImpl.java,v 1.3 2010, 2015/06/04 20:22:20 johna Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 

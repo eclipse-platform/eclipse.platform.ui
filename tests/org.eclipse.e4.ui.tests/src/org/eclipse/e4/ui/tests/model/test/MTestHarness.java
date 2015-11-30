@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestHarness.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
+ * $Id: MTestHarness.java,v 1.2 2010, 2011/04/16 17:28:39 pwebster Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 

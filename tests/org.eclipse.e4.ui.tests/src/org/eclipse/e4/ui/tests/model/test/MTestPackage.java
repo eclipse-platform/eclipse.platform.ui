@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestPackage.java,v 1.10 2011/04/16 10:39:14 tschindl Exp $
+ * $Id: MTestPackage.java,v 1.10 2011, 2015/04/16 10:39:14 tschindl Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 

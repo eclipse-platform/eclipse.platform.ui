@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestAdapterFactory.java,v 1.1.2.1 2010/04/16 12:24:24 tschindl Exp $
+ * $Id: TestAdapterFactory.java,v 1.1.2.1 2010, 2015/04/16 12:24:24 tschindl Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.util;
 
