@@ -33,9 +33,7 @@ import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Before;
 import org.junit.Test;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 import org.osgi.service.event.EventAdmin;
 
 public class InjectionEventTest {
@@ -123,13 +121,9 @@ public class InjectionEventTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ensureEventAdminStarted();
-		BundleContext bundleContext = Activator.getDefault().getBundle()
-				.getBundleContext();
-		IEclipseContext localContext = EclipseContextFactory
-				.getServiceContext(bundleContext);
-		helper = ContextInjectionFactory.make(EventAdminHelper.class,
-				localContext);
+		BundleContext bundleContext = Activator.getDefault().getBundle().getBundleContext();
+		IEclipseContext localContext = EclipseContextFactory.getServiceContext(bundleContext);
+		helper = ContextInjectionFactory.make(EventAdminHelper.class, localContext);
 	}
 
 	@Test
@@ -272,21 +266,4 @@ public class InjectionEventTest {
 		target.valid = false;
 	}
 
-	private void ensureEventAdminStarted() {
-		if (Activator.getDefault().getEventAdmin() == null) {
-			Bundle[] bundles = Activator.getDefault().getBundle()
-					.getBundleContext().getBundles();
-			for (Bundle bundle : bundles) {
-				if (!"org.eclipse.equinox.event".equals(bundle
-						.getSymbolicName()))
-					continue;
-				try {
-					bundle.start(Bundle.START_TRANSIENT);
-				} catch (BundleException e) {
-					e.printStackTrace();
-				}
-				break;
-			}
-		}
-	}
 }
