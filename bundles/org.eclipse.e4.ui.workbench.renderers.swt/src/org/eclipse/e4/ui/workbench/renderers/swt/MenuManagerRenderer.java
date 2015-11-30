@@ -633,6 +633,30 @@ MenuManagerEventHelper.getInstance()
 			final ArrayList<MMenuElement> menuContributionsToRemove) {
 		for (MMenuElement item : menuContributionsToRemove) {
 			menuModel.getChildren().remove(item);
+
+			if (item instanceof MMenu) {
+				removeMenuContribution((MMenu) item);
+			}
+		}
+	}
+
+	/**
+	 * Ensure when a menu contribution is removed, if it contains nested menus,
+	 * their contributions are also removed.
+	 *
+	 * @param menuModel
+	 */
+	private void removeMenuContribution(final MMenu menuModel) {
+		clearModelToContribution(menuModel, modelToContribution.get(menuModel));
+
+		if (menuModel.getChildren() != null) {
+			for (MMenuElement child : menuModel.getChildren()) {
+				if (child instanceof MMenu) {
+					removeMenuContribution((MMenu) child);
+				} else {
+					clearModelToContribution(child, modelToContribution.get(child));
+				}
+			}
 		}
 	}
 
@@ -1163,6 +1187,43 @@ MenuManagerEventHelper.getInstance()
 				clearModelToContribution(menuModel, ici);
 			}
 			menuManager.remove(ici);
+			clearModelToContribution(mMenuElement, ici);
+		}
+	}
+
+	/**
+	 * Remove all dynamic contribution items and their model for the MenuManager
+	 * specified.
+	 *
+	 * @param menuManager
+	 * @param menuModel
+	 */
+	@SuppressWarnings("unchecked")
+	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel) {
+		for (MMenuElement menuElement : new HashSet<>(modelToContribution.keySet())) {
+			if (menuElement instanceof MDynamicMenuContribution) {
+				//
+				// Find Dynamic MMenuElements for the MenuManager specified.
+				//
+				final IContributionItem contributionItem = modelToContribution.get(menuElement);
+
+				if (contributionItem instanceof DynamicContributionContributionItem) {
+					final DynamicContributionContributionItem dynamicContributionItem = (DynamicContributionContributionItem) contributionItem;
+
+					if ((dynamicContributionItem.getParent() instanceof MenuManager)
+							&& dynamicContributionItem.getParent().equals(menuManager)) {
+						//
+						// Remove the dynamically created menu elements.
+						//
+						final ArrayList<MMenuElement> childElements = (ArrayList<MMenuElement>) menuElement
+								.getTransientData().get(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
+
+						if (childElements != null) {
+							removeDynamicMenuContributions(menuManager, menuModel, childElements);
+						}
+					}
+				}
+			}
 		}
 	}
 
