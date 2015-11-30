@@ -56,7 +56,7 @@ public class MarkAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		IMarkRegionTarget target= (IMarkRegionTarget) editor.getAdapter(IMarkRegionTarget.class);
+		IMarkRegionTarget target= editor.getAdapter(IMarkRegionTarget.class);
 		if (target == null)
 			return;
 

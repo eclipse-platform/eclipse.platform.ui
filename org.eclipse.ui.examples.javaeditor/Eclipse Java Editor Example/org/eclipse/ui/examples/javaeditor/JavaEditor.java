@@ -58,7 +58,7 @@ public class JavaEditor extends TextEditor {
 		}
 
 		private IAnnotationModel getAnnotationModel(ITextEditor editor) {
-			return (IAnnotationModel) editor.getAdapter(ProjectionAnnotationModel.class);
+			return editor.getAdapter(ProjectionAnnotationModel.class);
 		}
 
 		@Override

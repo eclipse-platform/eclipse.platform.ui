@@ -321,7 +321,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 
 			IMarker marker= getMarker();
 			if (marker.exists()) {
-				IWorkbenchAdapter adapter= (IWorkbenchAdapter) marker.getAdapter(IWorkbenchAdapter.class);
+				IWorkbenchAdapter adapter= marker.getAdapter(IWorkbenchAdapter.class);
 				if (adapter != null) {
 					ImageDescriptor descriptor= adapter.getImageDescriptor(marker);
 					if (descriptor != null)

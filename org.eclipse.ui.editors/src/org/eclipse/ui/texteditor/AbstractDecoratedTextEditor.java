@@ -1971,7 +1971,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SAVE, new Separator(ITextEditorActionConstants.GROUP_OPEN));
 
 		IEditorInput editorInput= getEditorInput();
-		if (((IResource)editorInput.getAdapter(IResource.class)) instanceof IFile) {
+		if ((editorInput.getAdapter(IResource.class)) instanceof IFile) {
 			MenuManager openWithSubMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_openWith_menu);
 			final IWorkbenchPage page= getEditorSite().getPage();
 
@@ -2056,7 +2056,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	private String getShowInMenuLabel() {
 		String keyBinding= null;
 
-		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
 			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 

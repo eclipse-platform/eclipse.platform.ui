@@ -683,7 +683,7 @@ public class SearchResultViewer extends TableViewer {
 				if (curr instanceof IResource)
 					fResourceToItemsMapper.resourceChanged((IResource) curr);
 				else if (curr instanceof IAdaptable) {
-					IResource resource= (IResource)((IAdaptable)curr).getAdapter(IResource.class);
+					IResource resource= ((IAdaptable)curr).getAdapter(IResource.class);
 					if (resource != null)
 						fResourceToItemsMapper.resourceChanged(resource);
 				} else

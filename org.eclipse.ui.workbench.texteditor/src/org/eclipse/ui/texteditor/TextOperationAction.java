@@ -152,7 +152,7 @@ public final class TextOperationAction extends TextEditorAction {
 
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
-			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
 
 		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 		setEnabled(isEnabled);

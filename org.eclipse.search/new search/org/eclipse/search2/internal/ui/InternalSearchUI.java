@@ -150,7 +150,7 @@ public class InternalSearchUI {
 		if (view != null) {
 			IWorkbenchPartSite site= view.getSite();
 			if (site != null)
-				return (IWorkbenchSiteProgressService)view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+				return view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
 		}
 		return null;
 	}

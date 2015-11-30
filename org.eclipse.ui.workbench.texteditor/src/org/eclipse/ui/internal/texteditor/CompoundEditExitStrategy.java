@@ -183,13 +183,13 @@ public final class CompoundEditExitStrategy {
 			fWidgetEventSource.addFocusListener(fEventListener);
 		}
 
-		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.addExecutionListener(fEventListener);
 	}
 
 	private void removeListeners() {
-		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.removeExecutionListener(fEventListener);
 

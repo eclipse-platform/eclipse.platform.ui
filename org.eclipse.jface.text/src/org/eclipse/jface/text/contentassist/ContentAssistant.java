@@ -797,7 +797,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 */
 		@Override
 		public void verifyKey(VerifyEvent e) {
-			IContentAssistListener[] listeners= (IContentAssistListener[]) fListeners.clone();
+			IContentAssistListener[] listeners= fListeners.clone();
 			for (int i= 0; i < listeners.length; i++) {
 				if (listeners[i] != null) {
 					if (!listeners[i].verifyKey(e) || !e.doit)
@@ -816,7 +816,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			installKeyListener();
 
-			IContentAssistListener[] listeners= (IContentAssistListener[]) fListeners.clone();
+			IContentAssistListener[] listeners= fListeners.clone();
 			for (int i= 0; i < listeners.length; i++) {
 				if (listeners[i] != null) {
 					listeners[i].processEvent(event);

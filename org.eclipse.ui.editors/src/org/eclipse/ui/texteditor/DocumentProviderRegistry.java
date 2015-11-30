@@ -308,7 +308,7 @@ public class DocumentProviderRegistry {
 
 		IDocumentProvider provider= null;
 
-		IFile file= (IFile) editorInput.getAdapter(IFile.class);
+		IFile file= editorInput.getAdapter(IFile.class);
 		if (file != null)
 			provider= getDocumentProvider(file.getFileExtension());
 

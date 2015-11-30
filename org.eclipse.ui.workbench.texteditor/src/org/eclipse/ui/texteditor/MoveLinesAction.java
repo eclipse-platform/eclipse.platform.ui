@@ -130,7 +130,7 @@ public class MoveLinesAction extends TextEditorAction {
 
 		fStrategy.arm(fTextViewer);
 
-		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.beginCompoundChange();
 		}
@@ -189,7 +189,7 @@ public class MoveLinesAction extends TextEditorAction {
 		if (!fEditInProgress || editor == null)
 			return;
 
-		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 		if (target != null) {
 			target.endCompoundChange();
 		}
@@ -402,7 +402,7 @@ public class MoveLinesAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		IEditorStatusLine status= (IEditorStatusLine)editor.getAdapter(IEditorStatusLine.class);
+		IEditorStatusLine status= editor.getAdapter(IEditorStatusLine.class);
 		if (status == null)
 			return;
 		status.setMessage(false, EditorMessages.Editor_MoveLines_IllegalMove_status, null);

@@ -176,9 +176,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 
 	public static String evaluateEnclosingProject(IAdaptable adaptable) {
-		IProject project= (IProject) adaptable.getAdapter(IProject.class);
+		IProject project= adaptable.getAdapter(IProject.class);
 		if (project == null) {
-			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+			IResource resource= adaptable.getAdapter(IResource.class);
 			if (resource != null) {
 				project= resource.getProject();
 			}

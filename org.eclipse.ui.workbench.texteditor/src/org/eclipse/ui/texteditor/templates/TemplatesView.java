@@ -121,9 +121,9 @@ public final class TemplatesView extends PageBookView {
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		// Try to get template page.
-		ITemplatesPage page= (ITemplatesPage)part.getAdapter(ITemplatesPage.class);
+		ITemplatesPage page= part.getAdapter(ITemplatesPage.class);
 		if (page == null)
-			page= (ITemplatesPage)Platform.getAdapterManager().getAdapter(part, ITemplatesPage.class);
+			page= Platform.getAdapterManager().getAdapter(part, ITemplatesPage.class);
 		if (page == null)
 			return null; // There is no template page
 

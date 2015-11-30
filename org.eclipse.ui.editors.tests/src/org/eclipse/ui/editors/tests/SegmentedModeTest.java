@@ -77,7 +77,7 @@ public class SegmentedModeTest extends TestCase {
 					editor.showHighlightRangeOnly(true);
 					editor.setHighlightRange(5, 0, true);
 
-					Control control= (Control) part.getAdapter(Control.class);
+					Control control= part.getAdapter(Control.class);
 					if (control instanceof StyledText) {
 						StyledText styledText= (StyledText) control;
 						int caret= styledText.getCaretOffset();
@@ -116,7 +116,7 @@ public class SegmentedModeTest extends TestCase {
 					editor.showHighlightRangeOnly(true);
 					editor.setHighlightRange(0, 0, true);
 
-					Control control= (Control)part.getAdapter(Control.class);
+					Control control= part.getAdapter(Control.class);
 					if (control instanceof StyledText) {
 						StyledText styledText= (StyledText)control;
 						String text= styledText.getText();

@@ -51,13 +51,13 @@ public class SelectAnnotationRulerAction extends TextEditorAction implements IVe
 	@Override
 	public void setEditor(ITextEditor editor) {
 		if (getTextEditor() != null) {
-			IVerticalRulerInfo service= (IVerticalRulerInfo) getTextEditor().getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo service= getTextEditor().getAdapter(IVerticalRulerInfo.class);
 			if (service instanceof IVerticalRulerInfoExtension)
 				((IVerticalRulerInfoExtension) service).removeVerticalRulerListener(this);
 		}
 		super.setEditor(editor);
 		if (getTextEditor() != null) {
-			IVerticalRulerInfo service= (IVerticalRulerInfo) getTextEditor().getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo service= getTextEditor().getAdapter(IVerticalRulerInfo.class);
 			if (service instanceof IVerticalRulerInfoExtension)
 				((IVerticalRulerInfoExtension) service).addVerticalRulerListener(this);
 		}

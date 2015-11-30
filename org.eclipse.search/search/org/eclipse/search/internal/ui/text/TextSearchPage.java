@@ -349,7 +349,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					}
 					IAdaptable[] elements= workingSet.getElements();
 					for (int i= 0; i < elements.length; i++) {
-						IResource resource= (IResource)elements[i].getAdapter(IResource.class);
+						IResource resource= elements[i].getAdapter(IResource.class);
 						if (resource != null && resource.isAccessible()) {
 							resources.add(resource);
 						}
@@ -359,7 +359,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					if (resource != null && resource.isAccessible())
 						resources.add(resource);
 				} else if (curr instanceof IAdaptable) {
-					IResource resource= (IResource) ((IAdaptable)curr).getAdapter(IResource.class);
+					IResource resource= ((IAdaptable)curr).getAdapter(IResource.class);
 					if (resource != null && resource.isAccessible()) {
 						resources.add(resource);
 					}

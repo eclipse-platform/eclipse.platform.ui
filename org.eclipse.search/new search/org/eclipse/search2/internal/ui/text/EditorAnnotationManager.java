@@ -180,7 +180,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (fgHighlighterType != HIGHLLIGHTER_ANY) {
 			return debugCreateHighlighter(editor);
 		}
-		ISearchEditorAccess access= (ISearchEditorAccess) editor.getAdapter(ISearchEditorAccess.class);
+		ISearchEditorAccess access= editor.getAdapter(ISearchEditorAccess.class);
 		if (access != null)
 			return new EditorAccessHighlighter(access);
 		IAnnotationModel model= getAnnotationModel(editor);
@@ -209,7 +209,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			}
 
 		} else if (fgHighlighterType == HIGHLIGHTER_EDITOR_ACCESS) {
-			ISearchEditorAccess access= (ISearchEditorAccess) editor.getAdapter(ISearchEditorAccess.class);
+			ISearchEditorAccess access= editor.getAdapter(ISearchEditorAccess.class);
 			if (access != null)
 				return new EditorAccessHighlighter(access);
 		}
@@ -251,7 +251,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	private static IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
 		IAnnotationModel model= null;
-		model= (IAnnotationModel) part.getAdapter(IAnnotationModel.class);
+		model= part.getAdapter(IAnnotationModel.class);
 		if (model == null) {
 			ITextEditor textEditor= null;
 			if (part instanceof ITextEditor) {
@@ -268,7 +268,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 
 	private static IDocument getDocument(IWorkbenchPart part) {
 		IDocument doc= null;
-		doc= (IDocument) part.getAdapter(IDocument.class);
+		doc= part.getAdapter(IDocument.class);
 		if (doc == null) {
 			ITextEditor textEditor= null;
 			if (part instanceof ITextEditor) {

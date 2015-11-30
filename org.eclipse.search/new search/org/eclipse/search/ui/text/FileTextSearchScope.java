@@ -278,7 +278,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			}
 			IAdaptable[] elements= workingSet.getElements();
 			for (int k= 0; k < elements.length; k++) {
-				IResource curr= (IResource) elements[k].getAdapter(IResource.class);
+				IResource curr= elements[k].getAdapter(IResource.class);
 				if (curr != null) {
 					addToList(res, curr, includeDerived);
 				}

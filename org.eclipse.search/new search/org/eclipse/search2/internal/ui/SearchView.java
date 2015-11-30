@@ -596,7 +596,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fCancelAction.setEnabled(false);
 		fPinSearchViewAction= new PinSearchViewAction(this);
 
-		IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		IUndoContext workspaceContext= ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		fUndoRedoActionGroup= new UndoRedoActionGroup(getViewSite(), workspaceContext, true);
 	}
 
@@ -675,7 +675,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private String getShowInMenuLabel() {
 		String keyBinding= null;
 
-		IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
 			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 

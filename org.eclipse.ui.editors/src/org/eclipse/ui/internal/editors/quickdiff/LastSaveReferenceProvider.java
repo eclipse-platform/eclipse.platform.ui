@@ -269,7 +269,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		if (storage instanceof ISchedulingRule)
 			return (ISchedulingRule) storage;
 		else if (storage != null)
-			return (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
+			return storage.getAdapter(ISchedulingRule.class);
 		return null;
 	}
 

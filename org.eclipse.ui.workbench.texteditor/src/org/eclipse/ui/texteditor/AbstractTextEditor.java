@@ -3273,7 +3273,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	protected void initializeDragAndDrop(ISourceViewer viewer) {
-		IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		IDragAndDropService dndService= getSite().getService(IDragAndDropService.class);
 		if (dndService == null)
 			return;
 
@@ -3491,7 +3491,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (viewer == null || fIsTextDragAndDropInstalled)
 			return;
 
-		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		final IDragAndDropService dndService= getSite().getService(IDragAndDropService.class);
 		if (dndService == null)
 			return;
 
@@ -3673,7 +3673,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (viewer == null || !fIsTextDragAndDropInstalled)
 			return;
 
-		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		final IDragAndDropService dndService= getSite().getService(IDragAndDropService.class);
 		if (dndService == null)
 			return;
 
@@ -4139,7 +4139,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *            provider
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
-		ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+		ISaveablesLifecycleListener listener= getSite().getService(ISaveablesLifecycleListener.class);
 		if (listener == null)
 			fSavable= null;
 

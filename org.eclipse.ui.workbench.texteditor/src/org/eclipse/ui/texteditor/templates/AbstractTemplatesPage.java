@@ -775,7 +775,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Setup the editor site as a drop target.
 	 */
 	private void setupEditorDropTarget() {
-		Control control= (Control)fTextEditor.getAdapter(Control.class);
+		Control control= fTextEditor.getAdapter(Control.class);
 		if (control == null)
 			return;
 

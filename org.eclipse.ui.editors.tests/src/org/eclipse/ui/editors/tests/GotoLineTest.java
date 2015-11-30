@@ -96,7 +96,7 @@ public class GotoLineTest extends TestCase {
 				IAction action= editor.getAction(ITextEditorActionConstants.GOTO_LINE);
 				Accessor accessor= new Accessor(action, GotoLineAction.class);
 				accessor.invoke("gotoLine", new Class[] {int.class}, new Integer[] {new Integer(line)});
-				Control control= (Control) part.getAdapter(Control.class);
+				Control control= part.getAdapter(Control.class);
 				if (control instanceof StyledText) {
 					int caretLine= -1;
 					StyledText styledText= (StyledText) control;

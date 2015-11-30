@@ -100,7 +100,7 @@ public final class ContentAssistAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 
 		if (fOperationTarget == null && editor!= null)
-			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
 
 		if (fOperationTarget == null) {
 			setEnabled(false);

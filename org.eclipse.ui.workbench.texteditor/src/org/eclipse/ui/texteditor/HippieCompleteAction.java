@@ -227,7 +227,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 
 		if (editor != null) {
-			IRewriteTarget target= (IRewriteTarget) editor.getAdapter(IRewriteTarget.class);
+			IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 			if (target != null) {
 				fExitStrategy.disarm();
 				target.endCompoundChange();
@@ -387,7 +387,7 @@ final class HippieCompleteAction extends TextEditorAction {
 				return;
 			}
 
-			IRewriteTarget target= (IRewriteTarget)getTextEditor().getAdapter(IRewriteTarget.class);
+			IRewriteTarget target= getTextEditor().getAdapter(IRewriteTarget.class);
 			if (target != null)
 				target.beginCompoundChange();
 

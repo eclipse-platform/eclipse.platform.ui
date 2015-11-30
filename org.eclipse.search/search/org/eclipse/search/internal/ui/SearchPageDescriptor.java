@@ -313,11 +313,11 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 		if (element instanceof IAdaptable) {
 			int score= ISearchPageScoreComputer.UNKNOWN;
 
-			ISearchPageScoreComputer tester= (ISearchPageScoreComputer)((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
+			ISearchPageScoreComputer tester= ((IAdaptable)element).getAdapter(ISearchPageScoreComputer.class);
 			if (tester != null)
 				score= tester.computeScore(getId(), element);
 
-			IResource resource= (IResource)((IAdaptable)element).getAdapter(IResource.class);
+			IResource resource= ((IAdaptable)element).getAdapter(IResource.class);
 			if (resource != null && resource.getType() == IResource.FILE) {
 				String extension= ((IFile)resource).getFileExtension();
 				if (extension != null)

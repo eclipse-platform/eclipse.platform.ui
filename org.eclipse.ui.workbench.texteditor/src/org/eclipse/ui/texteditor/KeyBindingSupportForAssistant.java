@@ -131,7 +131,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 
 	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
-		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService commandService= PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandler handler= getHandler(ContentAssistant.SELECT_NEXT_PROPOSAL_COMMAND_ID);
 		fReplacedCommands= new ArrayList(10);
 		fReplacedCommands.add(new ReplacedCommand(ITextEditorActionDefinitionIds.LINE_DOWN, handler, commandService));

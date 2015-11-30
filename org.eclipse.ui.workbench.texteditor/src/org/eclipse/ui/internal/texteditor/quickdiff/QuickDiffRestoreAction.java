@@ -72,7 +72,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 		ITextEditor editor= getTextEditor();
 		if (editor == null || !validateEditorInputState())
 			return;
-		IRewriteTarget target= (IRewriteTarget)editor.getAdapter(IRewriteTarget.class);
+		IRewriteTarget target= editor.getAdapter(IRewriteTarget.class);
 		if (target != null)
 			target.beginCompoundChange();
 		runCompoundChange();
@@ -203,7 +203,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 */
 	protected IVerticalRulerInfo getRuler() {
 		if (getTextEditor() != null)
-			return (IVerticalRulerInfo)getTextEditor().getAdapter(IVerticalRulerInfo.class);
+			return getTextEditor().getAdapter(IVerticalRulerInfo.class);
 		return null;
 	}
 
@@ -214,7 +214,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction implements
 	 */
 	protected void setStatus(String string) {
 		if (getTextEditor() != null) {
-			IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
+			IEditorStatusLine statusLine= getTextEditor().getAdapter(IEditorStatusLine.class);
 			if (statusLine != null) {
 				statusLine.setMessage(true, string, null);
 			}

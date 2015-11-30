@@ -62,7 +62,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
-			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				Control control= rulerInfo.getControl();
 				if (control != null && !control.isDisposed())
@@ -73,7 +73,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 				((ITextEditorExtension) fEditor).removeRulerContextMenuListener(this);
 		}
 
-		fEditor= (ITextEditor)(targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class));
+		fEditor= targetEditor == null ? null : targetEditor.getAdapter(ITextEditor.class);
 		fCallerAction= callerAction;
 		fAction= null;
 
@@ -81,7 +81,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 			if (fEditor instanceof ITextEditorExtension)
 				((ITextEditorExtension) fEditor).addRulerContextMenuListener(this);
 
-			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
+			IVerticalRulerInfo rulerInfo= fEditor.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
 				fAction= createAction(fEditor, rulerInfo);
 				update();

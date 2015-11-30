@@ -106,7 +106,7 @@ public class EncodingActionGroup extends ActionGroup {
 		private IEncodingSupport getEncodingSupport() {
 			ITextEditor editor= getTextEditor();
 			if (editor != null)
-				return (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
+				return editor.getAdapter(IEncodingSupport.class);
 			return null;
 		}
 
@@ -253,7 +253,7 @@ public class EncodingActionGroup extends ActionGroup {
 			if (editor == null)
 				return;
 
-			IEncodingSupport encodingSupport= (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
+			IEncodingSupport encodingSupport= editor.getAdapter(IEncodingSupport.class);
 			if (encodingSupport == null)
 				return;
 

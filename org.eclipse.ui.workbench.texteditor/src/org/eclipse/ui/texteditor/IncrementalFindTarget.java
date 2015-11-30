@@ -352,7 +352,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		else
 			text.addVerifyKeyListener(this);
 
-		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.addExecutionListener(this);
 
@@ -384,7 +384,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				text.removeVerifyKeyListener(this);
 		}
 
-		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		ICommandService commandService= PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.removeExecutionListener(this);
 

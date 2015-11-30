@@ -108,7 +108,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
 
 		if (fWorkbenchPart != null)
-			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IncrementalFindTarget.class);
+			fTarget= fWorkbenchPart.getAdapter(IncrementalFindTarget.class);
 		else
 			fTarget= null;
 

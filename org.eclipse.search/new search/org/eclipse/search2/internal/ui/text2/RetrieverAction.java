@@ -140,7 +140,7 @@ abstract public class RetrieverAction extends Action {
 		} else if (sel instanceof IStructuredSelection) {
 			Object firstElement= ((IStructuredSelection) sel).getFirstElement();
 			if (firstElement instanceof IAdaptable) {
-				IWorkbenchAdapter wbAdapter= (IWorkbenchAdapter) ((IAdaptable) firstElement).getAdapter(IWorkbenchAdapter.class);
+				IWorkbenchAdapter wbAdapter= ((IAdaptable) firstElement).getAdapter(IWorkbenchAdapter.class);
 				if (wbAdapter != null) {
 					return wbAdapter.getLabel(firstElement);
 				}

@@ -551,7 +551,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		private void initializeActions() {
 			final ArrayList handlerActivations= new ArrayList(3);
-			final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+			final IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 			final Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
 
 			getShell().addDisposeListener(new DisposeListener() {

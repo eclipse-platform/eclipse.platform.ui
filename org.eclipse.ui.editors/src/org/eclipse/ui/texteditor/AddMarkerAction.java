@@ -331,7 +331,7 @@ public class AddMarkerAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		if (editor != null) {
 			IEditorInput input= editor.getEditorInput();
-			return (IResource) ((IAdaptable) input).getAdapter(IResource.class);
+			return ((IAdaptable) input).getAdapter(IResource.class);
 		}
 		return null;
 	}

@@ -102,7 +102,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor != null && fOperationCode != -1)
-			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
 
 	}
 
@@ -122,7 +122,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 
 			ITextEditor editor= getTextEditor();
 			if (fOperationTarget == null && editor != null && fOperationCode != -1)
-				fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+				fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
 
 			boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 			setEnabled(isEnabled);
@@ -150,7 +150,7 @@ public class ShiftAction extends TextEditorAction implements IReadOnlyDependent 
 		 */
 		ITextEditor editor= getTextEditor();
 		if (fOperationTarget == null && editor!= null && fOperationCode != -1)
-			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
+			fOperationTarget= editor.getAdapter(ITextOperationTarget.class);
 
 		return (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
 	}

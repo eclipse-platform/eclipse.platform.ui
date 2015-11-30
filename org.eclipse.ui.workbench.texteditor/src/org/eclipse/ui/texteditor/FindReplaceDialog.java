@@ -1294,7 +1294,7 @@ class FindReplaceDialog extends Dialog {
 		if (editor == null)
 			return null;
 
-		return (IEditorStatusLine) editor.getAdapter(IEditorStatusLine.class);
+		return editor.getAdapter(IEditorStatusLine.class);
 	}
 
 	/**

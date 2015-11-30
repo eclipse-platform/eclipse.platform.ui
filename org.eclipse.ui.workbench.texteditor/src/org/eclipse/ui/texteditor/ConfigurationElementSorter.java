@@ -142,7 +142,7 @@ public abstract class ConfigurationElementSorter {
 				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
 				fPrereqsMapping.put(bundle.getSymbolicName(), prereqUIds);
 
-				String requires = (String)bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
+				String requires = bundle.getHeaders().get(Constants.REQUIRE_BUNDLE);
 				ManifestElement[] manifestElements;
                 try {
                     manifestElements = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, requires);

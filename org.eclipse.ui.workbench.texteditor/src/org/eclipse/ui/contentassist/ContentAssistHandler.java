@@ -179,7 +179,7 @@ public class ContentAssistHandler {
 		ILabelProvider labelProvider= new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+				IBindingService bindingService= PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 				TriggerSequence[] activeBindings= bindingService.getActiveBindingsFor(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				if (activeBindings.length == 0)
 					return ContentAssistMessages.ContentAssistHandler_contentAssistAvailable;
@@ -212,7 +212,7 @@ public class ContentAssistHandler {
 	 * Create and register fHandlerSubmission.
 	 */
 	private void activateHandler() {
-		IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		if (handlerService == null)
 			return;
 
@@ -231,7 +231,7 @@ public class ContentAssistHandler {
 	 * Unregister the {@link IHandlerActivation} from the shell.
 	 */
 	private void deactivateHandler() {
-		IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		IHandlerService handlerService= PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		if (handlerService != null)
 			handlerService.deactivateHandler(fHandlerActivation);
 		fHandlerActivation= null;

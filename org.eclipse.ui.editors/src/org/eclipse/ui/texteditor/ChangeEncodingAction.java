@@ -208,7 +208,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 */
 	private IResource getResource() {
 		if (getTextEditor() != null && getTextEditor().getEditorInput() != null)
-			return (IResource)getTextEditor().getEditorInput().getAdapter(IResource.class);
+			return getTextEditor().getEditorInput().getAdapter(IResource.class);
 
 		return null;
 	}
@@ -220,7 +220,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 */
 	private IEncodingSupport getEncodingSupport() {
 		if (getTextEditor() != null)
-			return (IEncodingSupport)getTextEditor().getAdapter(IEncodingSupport.class);
+			return getTextEditor().getAdapter(IEncodingSupport.class);
 
 		return null;
 	}

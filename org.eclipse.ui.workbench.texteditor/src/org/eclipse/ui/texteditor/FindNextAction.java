@@ -222,7 +222,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			fWorkbenchPart= fWorkbenchWindow.getPartService().getActivePart();
 
 		if (fWorkbenchPart != null)
-			fTarget= (IFindReplaceTarget) fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
+			fTarget= fWorkbenchPart.getAdapter(IFindReplaceTarget.class);
 		else
 			fTarget= null;
 

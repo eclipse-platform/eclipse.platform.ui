@@ -211,7 +211,7 @@ public class DeleteLineAction extends TextEditorAction {
 
 		ITextEditor editor= getTextEditor();
 		if (editor != null)
-			fTarget= (IDeleteLineTarget)editor.getAdapter(IDeleteLineTarget.class);
+			fTarget= editor.getAdapter(IDeleteLineTarget.class);
 		else
 			fTarget= null;
 

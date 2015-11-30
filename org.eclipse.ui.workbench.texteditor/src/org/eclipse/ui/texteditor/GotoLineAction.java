@@ -205,7 +205,7 @@ public class GotoLineAction extends TextEditorAction {
 		ISelection selection= editor.getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
-			Control textWidget= (Control)editor.getAdapter(Control.class);
+			Control textWidget= editor.getAdapter(Control.class);
 			boolean caretAtStartOfSelection= false;
 			if (textWidget instanceof StyledText)
 				caretAtStartOfSelection= ((StyledText)textWidget).getSelection().x == ((StyledText)textWidget).getCaretOffset();

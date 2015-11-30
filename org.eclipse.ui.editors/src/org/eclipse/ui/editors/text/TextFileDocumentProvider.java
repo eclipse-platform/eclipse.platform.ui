@@ -552,14 +552,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		ITextFileBuffer fileBuffer= null;
 		LocationKind locationKind= null;
 
-		file= (IFile)adaptable.getAdapter(IFile.class);
+		file= adaptable.getAdapter(IFile.class);
 		if (file != null) {
 			IPath location= file.getFullPath();
 			locationKind= LocationKind.IFILE;
 			manager.connect(location, locationKind,getProgressMonitor());
 			fileBuffer= manager.getTextFileBuffer(location, locationKind);
 		} else {
-			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			ILocationProvider provider= adaptable.getAdapter(ILocationProvider.class);
 			if (provider instanceof ILocationProviderExtension) {
 				URI uri= ((ILocationProviderExtension)provider).getURI(element);
 				if (ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri).length == 0) {
@@ -1063,7 +1063,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
 			String message= status.getMessage();
-			IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
+			IBindingService bindingService= PlatformUI.getWorkbench().getService(IBindingService.class);
 			String keySequence= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_REFRESH);
 			if (keySequence != null)
 				message= message + NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHintWithKeyBinding, keySequence);
