@@ -1671,11 +1671,17 @@
          point="org.eclipse.ui.menus">
          <menuContribution
             locationURI="menu:window?after=org.eclipse.ui.editors">
-         <command
-               commandId="org.eclipse.ui.ToggleCoolbarAction"
-               tooltip="%menu.toggleCoolbar.tooltip"
-               style="push">
-         </command>
+         <menu
+               id="org.eclipse.ui.appearance"
+               label="%menu.window.appearance.label"
+               mnemonic="%menu.window.appearance.mnemonic"
+               tooltip="%menu.window.appearance.tooltip">
+            <command
+                  commandId="org.eclipse.ui.ToggleCoolbarAction"
+                  style="push"
+                  tooltip="%menu.toggleCoolbar.tooltip">
+            </command>
+         </menu>
       </menuContribution>
 
 
