@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -577,7 +578,7 @@ public abstract class QuickAccessContents {
 						e.display.timerExec(100, new Runnable() {
 							@Override
 							public void run() {
-								if (table != null && !table.isDisposed()) {
+								if (table != null && !table.isDisposed() && filterText !=null && !filterText.isDisposed()) {
 									refresh(filterText.getText().toLowerCase());
 								}
 								resized = false;
