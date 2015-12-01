@@ -60,7 +60,7 @@ public class AntEditorMarkerUpdater {
 	}
 
 	private IAntModel fModel = null;
-	private List<IProblem> fCollectedProblems = new ArrayList<IProblem>();
+	private List<IProblem> fCollectedProblems = new ArrayList<>();
 	public static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".buildFileProblem"; //$NON-NLS-1$
 	private IFile fFile = null;
 
@@ -95,7 +95,7 @@ public class AntEditorMarkerUpdater {
 
 	private void createMarker(IProblem problem) {
 		IFile file = getFile();
-		Map<String, Integer> attributes = getMarkerAttributes(problem);
+		Map<String, Object> attributes = getMarkerAttributes(problem);
 		try {
 			MarkerUtilities.createMarker(file, attributes, BUILDFILE_PROBLEM_MARKER);
 		}
@@ -111,7 +111,7 @@ public class AntEditorMarkerUpdater {
 	public synchronized void updateMarkers() {
 		IFile file = getFile();
 		if (file != null) {
-			List<IProblem> problems = new ArrayList<IProblem>(fCollectedProblems.size());
+			List<IProblem> problems = new ArrayList<>(fCollectedProblems.size());
 			Iterator<IProblem> e = fCollectedProblems.iterator();
 			while (e.hasNext()) {
 				problems.add(e.next());
@@ -150,9 +150,9 @@ public class AntEditorMarkerUpdater {
 	 * 
 	 * @return the initial marker attributes
 	 */
-	private Map<String, Integer> getMarkerAttributes(IProblem problem) {
+	private Map<String, Object> getMarkerAttributes(IProblem problem) {
 
-		Map<String, Integer> attributes = new HashMap<String, Integer>(11);
+		Map<String, Object> attributes = new HashMap<>(11);
 		int severity = IMarker.SEVERITY_ERROR;
 		if (problem.isWarning()) {
 			severity = IMarker.SEVERITY_WARNING;
