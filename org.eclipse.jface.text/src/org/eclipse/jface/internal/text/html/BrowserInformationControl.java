@@ -427,9 +427,8 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		// Instead of inserting an empty line, it just adds a single line break.
 		// Furthermore, the indentation of <dl><dd> elements is too small (e.g with a long @see line)
 		TextPresentation presentation= new TextPresentation();
-		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInput.getHtml()), presentation);
 		String text;
-		try {
+		try (HTML2TextReader reader= new HTML2TextReader(new StringReader(fInput.getHtml()), presentation)) {
 			text= reader.getString();
 		} catch (IOException e) {
 			text= ""; //$NON-NLS-1$

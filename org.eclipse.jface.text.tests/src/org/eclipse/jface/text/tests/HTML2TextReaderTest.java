@@ -56,8 +56,10 @@ public class HTML2TextReaderTest extends TestCase {
 	private void verify(String input, String expectedOutput, int styleRangeCount) throws IOException {
 		Reader reader= new StringReader(input);
 		TextPresentation textPresentation= new TextPresentation();
-		HTML2TextReader htmlReader= new HTML2TextReader(reader, textPresentation);
-		String result= htmlReader.getString();
+		String result;
+		try (HTML2TextReader htmlReader= new HTML2TextReader(reader, textPresentation)) {
+			result= htmlReader.getString();
+		}
 		if (DEBUG)
 			System.out.println("<" + result + "/>");
 		assertEquals(expectedOutput, result);
@@ -86,8 +88,10 @@ public class HTML2TextReaderTest extends TestCase {
 	private void verify(String input, String expectedOutput, StyleRange[] styleRanges) throws IOException {
 		Reader reader= new StringReader(input);
 		TextPresentation textPresentation= new TextPresentation();
-		HTML2TextReader htmlReader= new HTML2TextReader(reader, textPresentation);
-		String result= htmlReader.getString();
+		String result;
+		try (HTML2TextReader htmlReader= new HTML2TextReader(reader, textPresentation)) {
+			result= htmlReader.getString();
+		}
 		if (DEBUG)
 			System.out.println("<" + result + "/>");
 		assertEquals(expectedOutput, result);
@@ -174,7 +178,9 @@ public class HTML2TextReaderTest extends TestCase {
 
 		char[] cb= new char[20];
 		StringReader reader= new StringReader("<head>");
-		new HTML2TextReader(reader, null).read(cb);
+		try (HTML2TextReader r= new HTML2TextReader(reader, null)) {
+			r.read(cb);
+		}
 		assertTrue(Arrays.equals(new char[20], cb));
 	}
 

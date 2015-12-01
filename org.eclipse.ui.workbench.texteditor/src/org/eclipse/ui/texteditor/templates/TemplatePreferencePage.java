@@ -1586,7 +1586,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 				String left= ((TemplateLabelProvider)baseLabel).getColumnText(e1, fSortColumn);
 				String right= ((TemplateLabelProvider)baseLabel).getColumnText(e2, fSortColumn);
-				@SuppressWarnings("unchecked")
 				int sortResult= getComparator().compare(left, right);
 				return sortResult * fSortOrder;
 			}
