@@ -644,7 +644,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int maxLayer= 1;	// loop at least once through layers.
-
+		boolean isWrapActive= fCachedTextWidget.getWordWrap();
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator<Annotation> iter;
 			if (fModel instanceof IAnnotationModelExtension2)
@@ -695,13 +695,21 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
 
 					r.width= dimension.x;
 					int lines= endLine - startLine;
 
-					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
-
+					if (startLine != endLine || !isWrapActive || length <= 0) {
+						// line height for different lines includes wrapped line info already, 
+						// end we show annotations without offset info at very first line anyway
+						r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
+						r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine) - fScrollPos;
+					} else {
+						// annotate only the part of the line related to the given offset
+						Rectangle textBounds= fCachedTextWidget.getTextBounds(offset, offset + length);
+						r.height= textBounds.height;
+						r.y= textBounds.y;
+					}
 					if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 						fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
 
@@ -733,7 +741,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		ReusableRegion range= new ReusableRegion();
-
+		boolean isWrapActive= fCachedTextWidget.getWordWrap();
 		int minLayer= Integer.MAX_VALUE, maxLayer= Integer.MIN_VALUE;
 		fCachedAnnotations.clear();
 		Iterator<Annotation> iter;
@@ -785,21 +793,33 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 				if (widgetRegion == null)
 					continue;
 
-				int startLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset());
+				int offset= widgetRegion.getOffset();
+				int startLine= extension.widgetLineOfWidgetOffset(offset);
 				if (startLine == -1)
 					continue;
 
-				int endLine= extension.widgetLineOfWidgetOffset(widgetRegion.getOffset() + Math.max(widgetRegion.getLength() -1, 0));
+				int length= Math.max(widgetRegion.getLength() -1, 0);
+				int endLine= extension.widgetLineOfWidgetOffset(offset + length);
 				if (endLine == -1)
 					continue;
 
 				r.x= 0;
-				r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
 
 				r.width= dimension.x;
 				int lines= endLine - startLine;
-				r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
 
+				if(startLine != endLine || !isWrapActive || length <= 0){
+					// line height for different lines includes wrapped line info already, 
+					// end we show annotations without offset info at very first line anyway
+					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
+					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
+				} else {
+					// annotate only the part of the line related to the given offset
+					Rectangle textBounds= fCachedTextWidget.getTextBounds(offset, offset + length);
+					r.height= textBounds.height;
+					r.y = textBounds.y;
+				}
+				
 				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
 					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
 			}
