@@ -12,6 +12,8 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.e4.core.commands.CommandServiceAddon;
@@ -78,6 +80,43 @@ public class MApplicationCommandAccessTest {
 			}
 		}
 		assertTrue(found);
+	}
+
+	@Test
+	public void testFindCorrectCommandDirectAccess() {
+		final MApplication application = createAppWithCommands();
+
+		MCommand command = application.getCommand(String.valueOf(NUMBER_OF_COMMANDS - 1));
+		assertNotNull(command);
+		MCommand commandShouldBeNull = application.getCommand("invalid");
+		assertNull(commandShouldBeNull);
+	}
+
+	@Test
+	public void testFindNullAfterCommandRemoval() {
+		final MApplication application = createAppWithCommands();
+
+		MCommand command = application.getCommand(String.valueOf(NUMBER_OF_COMMANDS - 1));
+		assertNotNull(command);
+		application.getCommands().remove(command);
+		MCommand commandShouldBeNull = application.getCommand(String.valueOf(NUMBER_OF_COMMANDS - 1));
+		assertNull(commandShouldBeNull);
+	}
+
+	@Test
+	public void testCommandAfterAddingIt() {
+		final MApplication application = createAppWithCommands();
+		EModelService modelService = applicationContext.get(EModelService.class);
+
+		MCommand commandShouldBeNull = application.getCommand("neucommand");
+		assertNull(commandShouldBeNull);
+		// Create and add new command to application
+		MCommand mCommand = modelService.createModelElement(MCommand.class);
+		mCommand.setElementId("neucommand");
+		application.getCommands().add(mCommand);
+
+		MCommand neuCommnad = application.getCommand("neucommand");
+		assertNotNull(neuCommnad);
 	}
 
 	/**
