@@ -54,9 +54,7 @@ public class MethodRequestor extends Requestor<Method> {
 		}
 		try {
 			result = location.invoke(userObject, actualArgs);
-		} catch (IllegalArgumentException e) {
-			throw new InjectionException(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new InjectionException(e);
 		} catch (InvocationTargetException e) {
 			Throwable originalException = e.getCause();

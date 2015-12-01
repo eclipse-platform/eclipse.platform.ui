@@ -40,12 +40,10 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 		}
 		try {
 			result = location.newInstance(actualArgs);
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new InjectionException(e);
 		} catch (InstantiationException e) {
 			throw new InjectionException("Unable to instantiate " + location, e); //$NON-NLS-1$
-		} catch (IllegalAccessException e) {
-			throw new InjectionException(e);
 		} catch (InvocationTargetException e) {
 			Throwable originalException = e.getCause();
 			// Errors such as ThreadDeath or OutOfMemoryError should not be trapped

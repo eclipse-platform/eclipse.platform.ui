@@ -116,9 +116,7 @@ public class InjectorImpl implements IInjector {
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		try {
 			inject(object, objectSupplier, null);
-		} catch (NoClassDefFoundError e) {
-			throw new InjectionException(e);
-		} catch (NoSuchMethodError e) {
+		} catch (NoClassDefFoundError | NoSuchMethodError e) {
 			throw new InjectionException(e);
 		}
 	}
@@ -384,9 +382,7 @@ public class InjectorImpl implements IInjector {
 				}
 			}
 			throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
-		} catch (NoClassDefFoundError e) {
-			throw new InjectionException(e);
-		} catch (NoSuchMethodError e) {
+		} catch (NoClassDefFoundError | NoSuchMethodError e) {
 			throw new InjectionException(e);
 		} finally {
 			if (shouldDebug)

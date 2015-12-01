@@ -48,9 +48,7 @@ public class FieldRequestor extends Requestor<Field> {
 		}
 		try {
 			field.set(userObject, value);
-		} catch (IllegalArgumentException e) {
-			throw new InjectionException(e);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new InjectionException(e);
 		} finally {
 			if (!wasAccessible)
