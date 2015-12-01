@@ -61,7 +61,7 @@ public class AddReadmeMarkerAction extends Action {
      */
     @Override
 	public void run() {
-        Map<Object, Object> attributes = new HashMap<>(11);
+        Map<String, Object> attributes = new HashMap<>(11);
 
         ITextSelection selection = (ITextSelection) textEditor
                 .getSelectionProvider().getSelection();
@@ -85,7 +85,7 @@ public class AddReadmeMarkerAction extends Action {
 
             // set custom attribute values
             for (int i = 0; i < customAttributes.length; i++) {
-                attributes.put(customAttributes[i][0], customAttributes[i][1]);
+                attributes.put((String) customAttributes[i][0], customAttributes[i][1]);
             }
 
             MarkerUtilities.setMessage(attributes, message);
