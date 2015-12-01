@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440270
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
  *******************************************************************************/
 
 package org.eclipse.jface.action;
@@ -650,8 +651,7 @@ import org.eclipse.swt.widgets.ToolItem;
 		if (fTaskName == null || fTaskName.length() == 0) {
 			text = newName;
 		} else {
-			text = JFaceResources.format(
-					"Set_SubTask", new Object[] { fTaskName, newName });//$NON-NLS-1$
+			text = JFaceResources.format("Set_SubTask", fTaskName, newName);//$NON-NLS-1$
 		}
 		setMessage(text);
 	}

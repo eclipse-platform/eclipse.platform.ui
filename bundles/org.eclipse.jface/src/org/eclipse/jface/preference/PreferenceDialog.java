@@ -10,6 +10,7 @@
  *     Teddy Walker <teddy.walker@googlemail.com>
  *     	- Bug 188056 [Preferences] PreferencePages have to less indent in PreferenceDialog
  *     Stefan Xenos <sxenos@google.com> - Bug 466793
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -813,8 +814,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					try {
 						((IPersistentPreferenceStore) store).save();
 					} catch (IOException e) {
-						String message =JFaceResources.format(
-                                "PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage() }); //$NON-NLS-1$
+						String message = JFaceResources.format("PreferenceDialog.saveErrorMessage", page.getTitle(), //$NON-NLS-1$
+								e.getMessage());
 			            Policy.getStatusHandler().show(
 			                    new Status(IStatus.ERROR, Policy.JFACE, message, e),
 			                    JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$

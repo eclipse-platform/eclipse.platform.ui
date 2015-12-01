@@ -11,6 +11,7 @@
  * 			be activated and used by other components.
  *      Krzysztof Daniel <krzysztof.daniel@gmail.com> Bug 96373 - [ErrorHandling]
  *          ErrorDialog details area becomes huge with multi-line strings
+ *      Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -144,9 +145,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 				.getString("Problem_Occurred") : //$NON-NLS-1$
 				dialogTitle;
 		this.message = message == null ? status.getMessage()
-				: JFaceResources
-						.format(
-								"Reason", new Object[] { message, status.getMessage() }); //$NON-NLS-1$
+				: JFaceResources.format("Reason", message, status.getMessage()); //$NON-NLS-1$
 		this.status = status;
 		this.displayMask = displayMask;
 	}

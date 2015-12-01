@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 475879
  *******************************************************************************/
 package org.eclipse.jface.util;
 
@@ -69,9 +70,8 @@ class SafeRunnableDialog extends ErrorDialog {
 					.getException().toString() : status.getException()
 					.getMessage();
 		}
-		this.message = JFaceResources.format(
-				"SafeRunnableDialog_reason", new Object[] { //$NON-NLS-1$
-				status.getMessage(), reason });
+		this.message = JFaceResources.format("SafeRunnableDialog_reason", //$NON-NLS-1$
+				status.getMessage(), reason);
 	}
 
 	/**
