@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> -
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 483362
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests;
@@ -45,7 +45,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.ThemeDefinitionChangedHandlerTe
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-//import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 
 /**
  * All E4 UI-related tests
