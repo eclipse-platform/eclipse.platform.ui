@@ -1485,13 +1485,13 @@ public final class Workbench extends EventManager implements IWorkbench,
 		}
 
 		MWindow activeWindow = application.getSelectedElement();
-		if (activeWindow == null && !application.getChildren().isEmpty()) {
+		if ((activeWindow == null || activeWindow.getWidget() == null) && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
 		}
 
 		// We can't return a window with no widget...it's in the process
 		// of closing...see Bug 379717
-		if (activeWindow != null && activeWindow.getWidget() == null) {
+		if (activeWindow == null || (activeWindow != null && activeWindow.getWidget() == null)) {
 			return null;
 		}
 
