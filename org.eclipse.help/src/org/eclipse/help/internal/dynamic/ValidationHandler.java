@@ -43,6 +43,7 @@ public class ValidationHandler extends ProcessorHandler {
 		this.deprecatedElements = deprecatedElements;
 	}
 
+	@Override
 	public short handle(UAElement element, String id) {
 		if (deprecatedElements != null) {
 			String suggestion = (String)deprecatedElements.get(element.getElementName());

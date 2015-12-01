@@ -35,6 +35,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractCriteriaDefinitionProvider#getCriteriaDefinitionContributions(java.lang.String)
 	 */
+	@Override
 	public ICriteriaDefinitionContribution[] getCriteriaDefinitionContributions(String locale) {
 		List contributions = new ArrayList();
 		CriteriaDefinitionFile[] criteriaDefinitionFiles = getCriteriaDefinitionFiles(locale);

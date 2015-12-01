@@ -35,6 +35,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
 	 */
+	@Override
 	public IIndexContribution[] getIndexContributions(String locale) {
 		List contributions = new ArrayList();
 		IndexFile[] indexFiles = getIndexFiles(locale);

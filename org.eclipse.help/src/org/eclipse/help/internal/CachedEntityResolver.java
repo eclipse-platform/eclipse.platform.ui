@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 
 public class CachedEntityResolver implements EntityResolver {
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) {
         int index = systemId.lastIndexOf("/"); //$NON-NLS-1$
         File cachedCopy = null;

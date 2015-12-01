@@ -29,6 +29,7 @@ public class TocContribution implements ITocContribution {
 		isSubToc = false;
 	}
 	
+	@Override
 	public String getCategoryId() {
 		return categoryId;
 	}
@@ -37,6 +38,7 @@ public class TocContribution implements ITocContribution {
 		this.categoryId = categoryId;
 	}
 	
+	@Override
 	public String getContributorId() {
 		return contributorId;
 	}
@@ -45,6 +47,7 @@ public class TocContribution implements ITocContribution {
 		this.contributorId = contributorId;
 	}
 	
+	@Override
 	public String[] getExtraDocuments() {
 		return extraDocuments;
 	}
@@ -53,6 +56,7 @@ public class TocContribution implements ITocContribution {
 		this.extraDocuments = extraDocuments;
 	}
 	
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -61,6 +65,7 @@ public class TocContribution implements ITocContribution {
 		this.id = id;
 	}
 	
+	@Override
 	public String getLocale() {
 		return locale;
 	}
@@ -69,6 +74,7 @@ public class TocContribution implements ITocContribution {
 		this.locale = locale;
 	}
 	
+	@Override
 	public String getLinkTo() {
 		String link = toc.getLinkTo();
 		return ProductPreferences.resolveSpecialIdentifiers(link);
@@ -78,6 +84,7 @@ public class TocContribution implements ITocContribution {
 		toc.setLinkTo(linkTo);
 	}
 	
+	@Override
 	public IToc getToc() {
 		return toc;
 	}
@@ -87,6 +94,7 @@ public class TocContribution implements ITocContribution {
 		toc.setTocContribution(this);
 	}
 	
+	@Override
 	public boolean isPrimary() {
 		return isPrimary;
 	}

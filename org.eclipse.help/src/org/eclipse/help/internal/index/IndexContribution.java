@@ -19,14 +19,17 @@ public class IndexContribution implements IIndexContribution {
 	private IIndex index;
 	private String locale;
 	
+	@Override
 	public String getId() {
 		return id;
 	}
 	
+	@Override
 	public IIndex getIndex() {
 		return index;
 	}
 	
+	@Override
 	public String getLocale() {
 		return locale;
 	}

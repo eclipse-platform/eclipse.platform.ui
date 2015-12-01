@@ -27,6 +27,7 @@ public class Anchor extends UAElement implements IAnchor {
 		super(src);
 	}
 
+	@Override
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}

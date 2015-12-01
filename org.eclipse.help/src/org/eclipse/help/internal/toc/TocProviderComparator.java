@@ -17,6 +17,7 @@ import org.eclipse.help.AbstractTocProvider;
 
 public class TocProviderComparator implements Comparator{
 
+	@Override
 	public int compare(Object obj1,Object obj2)
 	{
 		AbstractTocProvider provider1 = (AbstractTocProvider)obj1;

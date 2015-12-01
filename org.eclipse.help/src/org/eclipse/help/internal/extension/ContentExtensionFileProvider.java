@@ -35,6 +35,7 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
 	 */
+	@Override
 	public IContentExtension[] getContentExtensions(String locale) {
 		List extensions = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();

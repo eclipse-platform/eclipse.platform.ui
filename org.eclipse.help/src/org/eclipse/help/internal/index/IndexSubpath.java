@@ -29,6 +29,7 @@ public class IndexSubpath extends UAElement implements IIndexSubpath {
 		super(src);
 	}
 
+	@Override
 	public String getKeyword() {
 		return getAttribute(ATTRIBUTE_KEYWORD);
 	}

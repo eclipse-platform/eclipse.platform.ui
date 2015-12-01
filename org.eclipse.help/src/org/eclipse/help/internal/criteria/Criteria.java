@@ -37,10 +37,12 @@ public class Criteria extends UAElement implements ICriteria {
 		super(element);  
 	}
 
+	@Override
 	public String getName() { 
 		return getAttribute(ATTRIBUTE_NAME);
 	}
 
+	@Override
 	public String getValue() { 
 		return getAttribute(ATTRIBUTE_VALUE);
 	}

@@ -147,6 +147,7 @@ public class TocAssembler {
 		ProcessorHandler[] linkFinder = new ProcessorHandler[] {
 			new ValidationHandler(getRequiredAttributes()),
 			new ProcessorHandler() {
+				@Override
 				public short handle(UAElement element, String id) {
 					if (element instanceof Link) {
 						Link link = (Link)element;
@@ -348,6 +349,7 @@ public class TocAssembler {
 	 * the linked-to toc's children.
 	 */
 	private class LinkHandler extends ProcessorHandler {
+		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Link) {
 				Link link = (Link)element;
@@ -379,6 +381,7 @@ public class TocAssembler {
 	 * into this one at the current anchor, link it in.
 	 */
 	private class AnchorHandler extends ProcessorHandler {
+		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Anchor) {
 				if (tocsToFilter.contains(id)) {
@@ -426,6 +429,7 @@ public class TocAssembler {
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
 	 */
 	private class NormalizeHandler extends ProcessorHandler {
+		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Topic) {
 				Topic topic = (Topic)element;

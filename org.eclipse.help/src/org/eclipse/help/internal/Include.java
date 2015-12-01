@@ -27,6 +27,7 @@ public class Include extends UAElement implements IInclude {
 		super(src);
 	}
 
+	@Override
 	public String getPath() {
 		return getAttribute(ATTRIBUTE_PATH);
 	}

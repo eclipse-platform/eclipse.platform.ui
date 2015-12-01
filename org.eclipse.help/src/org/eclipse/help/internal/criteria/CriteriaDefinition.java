@@ -33,6 +33,7 @@ public class CriteriaDefinition extends UAElement implements ICriteriaDefinition
 		super(src);
 	}
 
+	@Override
 	public ICriterionDefinition[] getCriterionDefinitions() {
 		return (ICriterionDefinition[])getChildren(ICriterionDefinition.class);
 	}

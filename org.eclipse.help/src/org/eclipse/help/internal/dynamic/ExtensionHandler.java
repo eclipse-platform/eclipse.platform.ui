@@ -38,6 +38,7 @@ public class ExtensionHandler extends ProcessorHandler {
 		this.locale = locale;
 	}
 	
+	@Override
 	public short handle(UAElement element, String path) {
 		if (element instanceof Anchor) {
 			return handleExtension(element, path, ContentExtension.CONTRIBUTION);

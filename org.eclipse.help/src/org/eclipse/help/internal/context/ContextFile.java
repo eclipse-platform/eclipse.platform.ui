@@ -44,6 +44,7 @@ public class ContextFile {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ContextFile) {
 			if (obj == this) {
@@ -57,6 +58,7 @@ public class ContextFile {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return bundleId.hashCode() + file.hashCode();
 	}

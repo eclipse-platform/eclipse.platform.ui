@@ -33,14 +33,17 @@ public class ContentExtension extends UAElement implements IContentExtension {
 		super(src);
 	}
 
+	@Override
 	public String getContent() {
 		return getAttribute(ATTRIBUTE_CONTENT);
 	}
 	
+	@Override
 	public String getPath() {
 		return getAttribute(ATTRIBUTE_PATH);
 	}
 	
+	@Override
 	public int getType() {
 		String name = getElementName();
 		return (NAME_CONTRIBUTION.equals(name) || NAME_CONTRIBUTION_LEGACY.equals(name)) ? CONTRIBUTION : REPLACEMENT;

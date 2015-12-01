@@ -65,6 +65,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	private DocumentWriter writer;
 	private Map requiredAttributes;
 	
+	@Override
 	public IContext getContext(String contextId, String locale) {
 		int index = contextId.lastIndexOf('.');
 		String pluginId = contextId.substring(0, index);
@@ -109,6 +110,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
 	 */
+	@Override
 	public String[] getPlugins() {
 		Map associations = getPluginAssociations();
 		return (String[])associations.keySet().toArray(new String[associations.size()]);
@@ -290,6 +292,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 *    (e.g. "/plugin.id/path/file.html"). 
 	 */
 	private class NormalizeHandler extends ProcessorHandler {
+		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Context) {
 				Context context = (Context)element;

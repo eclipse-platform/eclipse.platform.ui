@@ -23,6 +23,7 @@ public class CriteriaDefinitionDocumentReader extends DocumentReader {
 	private static final String CRITERION_ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	
 	
+	@Override
 	protected void prepareDocument(Document document) {
 		prune(document.getDocumentElement());
 	}

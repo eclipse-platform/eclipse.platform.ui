@@ -196,6 +196,7 @@ public class HelpData {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
+		@Override
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 			if (ELEMENT_TOC_ORDER.equals(name)) {
 				inTocOrder = true;
@@ -231,6 +232,7 @@ public class HelpData {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void endElement(String uri, String localName, String name) throws SAXException {
 			if (ELEMENT_TOC_ORDER.equals(name)) {
 				inTocOrder = false;
@@ -246,6 +248,7 @@ public class HelpData {
 		 * 
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}

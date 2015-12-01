@@ -98,6 +98,7 @@ public class ResourceLocator {
 			 * 
 			 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 			 */
+			@Override
 			public void registryChanged(IRegistryChangeEvent event) {
 				IExtensionDelta[] deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID,
 						CONTENTPRODUCER_XP_NAME);

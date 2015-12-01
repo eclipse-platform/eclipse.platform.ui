@@ -30,10 +30,12 @@ public class CriterionValueDefinition extends UAElement implements ICriterionVal
 		super(src);
 	}
 
+	@Override
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
+	@Override
 	public String getName() {
 		return getAttribute(ATTRIBUTE_NAME);
 	}

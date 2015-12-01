@@ -32,10 +32,12 @@ public class CriterionDefinition extends UAElement implements ICriterionDefiniti
 		super(src);
 	}
 
+	@Override
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
+	@Override
 	public String getName() {
 		return getAttribute(ATTRIBUTE_NAME);
 	}
@@ -48,6 +50,7 @@ public class CriterionDefinition extends UAElement implements ICriterionDefiniti
 		setAttribute(ATTRIBUTE_NAME, name);
 	}
 
+	@Override
 	public ICriterionValueDefinition[] getCriterionValueDefinitions() {
 		return (ICriterionValueDefinition[])getChildren(ICriterionValueDefinition.class);
 	}

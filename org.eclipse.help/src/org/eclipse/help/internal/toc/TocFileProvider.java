@@ -38,6 +38,7 @@ public class TocFileProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
+	@Override
 	public ITocContribution[] getTocContributions(String locale) {
 		List contributions = new ArrayList();
 		TocFile[] tocFiles = getTocFiles(locale);
@@ -99,6 +100,7 @@ public class TocFileProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
 	 */
+	@Override
 	public int getPriority() {
 		return TOC_FILE_PRIORITY;
 	}

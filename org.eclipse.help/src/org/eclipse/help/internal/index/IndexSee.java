@@ -33,6 +33,7 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
 		appendChildren(src.getChildren());
 	}
 
+	@Override
 	public String getKeyword() {
 		return getAttribute(ATTRIBUTE_KEYWORD);
 	}
@@ -65,6 +66,7 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
 		return 4;
 	}
 	
+	@Override
 	public int compareTo(Object arg0) {
 		Collator collator = Collator.getInstance();
 		if (arg0 instanceof IndexSee) {
@@ -87,10 +89,12 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
 		return 0;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof IndexSee && compareTo(obj) == 0;
 	}
 	
+	@Override
 	public int hashCode() {
 		int result = getKeyword().hashCode();
 		IIndexSubpath[] subpaths = getSubpathElements();
@@ -100,11 +104,13 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
 		return result;
     }
 
+	@Override
 	public boolean isSeeAlso() {
 		UAElement parentElement = getParentElement();
 		return ! (parentElement.getChildren()[0] instanceof IIndexSee);
 	}
 
+	@Override
 	public IIndexSubpath[] getSubpathElements() {
 		return (IIndexSubpath[])getChildren(IIndexSubpath.class);
 	}

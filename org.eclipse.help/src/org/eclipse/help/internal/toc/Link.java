@@ -28,6 +28,7 @@ public class Link extends UAElement implements ILink {
 		super(src);
 	}
 
+	@Override
 	public String getToc() {
 		return getAttribute(ATTRIBUTE_TOC);
 	}

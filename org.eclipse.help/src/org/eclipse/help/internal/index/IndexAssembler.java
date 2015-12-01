@@ -204,6 +204,7 @@ public class IndexAssembler {
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
 	 */
 	private class NormalizeHandler extends ProcessorHandler {
+		@Override
 		public short handle(UAElement element, String id) {
 			if (element instanceof Topic) {
 				Topic topic = (Topic)element;
@@ -226,6 +227,7 @@ public class IndexAssembler {
 
 	private class IndexComparator implements Comparator {
 		Collator collator = Collator.getInstance();
+		@Override
 		public int compare(Object o1, Object o2) {
 			/*
 			 * First separate the objects into different groups by type;

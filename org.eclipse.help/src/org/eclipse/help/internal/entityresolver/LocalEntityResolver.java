@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 
 public class LocalEntityResolver implements EntityResolver {
 
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
 		int index = systemId.lastIndexOf("/"); //$NON-NLS-1$
 		if (index >= 0) {

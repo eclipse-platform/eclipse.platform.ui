@@ -229,6 +229,7 @@ public class ProductPreferences {
 			this.tocNames = tocNames;
 		}
 		
+		@Override
 		public int compare(Object o1, Object o2) {
 			Object name1 = tocNames.get(o1);
 			Object name2 = tocNames.get(o2);

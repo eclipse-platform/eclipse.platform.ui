@@ -52,6 +52,7 @@ public class TopicSorter {
 	private class TopicComparator implements Comparator {
 		Collator collator = Collator.getInstance();
 		
+		@Override
 		public int compare(Object o1, Object o2) {
 			String label1 = ((ITopic)o1).getLabel();
 			String label2 = ((ITopic)o2).getLabel();

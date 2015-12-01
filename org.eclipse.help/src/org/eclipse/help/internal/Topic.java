@@ -34,10 +34,12 @@ public class Topic extends UAElement implements ITopic2 {
 		appendChildren(src.getChildren());
 	}
 
+	@Override
 	public String getIcon(){
 		return getAttribute(ATTRIBUTE_ICON);
 	}
 	
+	@Override
 	public boolean isSorted(){
 		return "true".equalsIgnoreCase(getAttribute(ATTRIBUTE_SORT)); //$NON-NLS-1$
 	}
@@ -46,18 +48,22 @@ public class Topic extends UAElement implements ITopic2 {
 		super(src);
 	}
 
+	@Override
 	public String getHref() {
 		return getAttribute(ATTRIBUTE_HREF);
 	}
 	
+	@Override
 	public String getLabel() {
 		return getAttribute(ATTRIBUTE_LABEL);
 	}
 	
+	@Override
 	public ITopic[] getSubtopics() {
 		return (ITopic[])getChildren(ITopic.class);
 	}
 	
+	@Override
 	public ICriteria[] getCriteria() {
 		return (ICriteria[]) getChildren(ICriteria.class);
 	}

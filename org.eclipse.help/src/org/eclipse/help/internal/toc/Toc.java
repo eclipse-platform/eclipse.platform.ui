@@ -93,14 +93,17 @@ public class Toc extends UAElement implements IToc2 {
 		}
 	}
 
+	@Override
 	public String getHref() {
 		return getAttribute(ATTRIBUTE_HREF);
 	}
 
+	@Override
 	public String getIcon() {
 		return getAttribute(ATTRIBUTE_ICON);
 	}
 
+	@Override
 	public boolean isSorted() {
 		return "true".equalsIgnoreCase(getAttribute(ATTRIBUTE_SORT)); //$NON-NLS-1$
 	}
@@ -115,6 +118,7 @@ public class Toc extends UAElement implements IToc2 {
 		return href2TopicMap;
 	}
 
+	@Override
 	public String getLabel() {
 		return getAttribute(ATTRIBUTE_LABEL);
 	}
@@ -127,39 +131,48 @@ public class Toc extends UAElement implements IToc2 {
 		return getAttribute(ATTRIBUTE_TOPIC);
 	}
 
+	@Override
 	public ITopic getTopic(String href) {
 		if (href == null) {
 			if (topic == null) {
 				topic = new ITopic2() {
 
+					@Override
 					public String getHref() {
 						return getTopic();
 					}
 
+					@Override
 					public String getLabel() {
 						return Toc.this.getLabel();
 					}
 
+					@Override
 					public ITopic[] getSubtopics() {
 						return getTopics();
 					}
 
+					@Override
 					public boolean isEnabled(IEvaluationContext context) {
 						return Toc.this.isEnabled(context);
 					}
 
+					@Override
 					public IUAElement[] getChildren() {
 						return new IUAElement[0];
 					}
 
+					@Override
 					public ICriteria[] getCriteria() {
 						return Toc.this.getCriteria();
 					}
 
+					@Override
 					public String getIcon() {
 						return null;
 					}
 
+					@Override
 					public boolean isSorted() {
 						return false;
 					}
@@ -171,10 +184,12 @@ public class Toc extends UAElement implements IToc2 {
 		}
 	}
 
+	@Override
 	public ITopic[] getTopics() {
 		return (ITopic[]) getChildren(ITopic.class);
 	}
 	
+	@Override
 	public ICriteria[] getCriteria() {
 		return (ICriteria[]) getChildren(ICriteria.class);
 	}

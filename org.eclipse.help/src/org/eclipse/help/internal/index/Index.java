@@ -37,6 +37,7 @@ public class Index extends UAElement implements IIndex {
 		super(src);
 	}
 
+	@Override
 	public IIndexEntry[] getEntries() {
 		return (IIndexEntry[])getChildren(IIndexEntry.class);
 	}

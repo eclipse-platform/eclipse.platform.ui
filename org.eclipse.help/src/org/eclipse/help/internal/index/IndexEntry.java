@@ -34,14 +34,17 @@ public class IndexEntry extends UAElement implements IIndexEntry2 {
 		super(src);
 	}
 
+	@Override
 	public String getKeyword() {
 		return getAttribute(ATTRIBUTE_KEYWORD);
 	}
 	
+	@Override
 	public IIndexEntry[] getSubentries() {
 		return (IIndexEntry[])getChildren(IIndexEntry.class);
 	}
 	
+	@Override
 	public ITopic[] getTopics() {
 		return (ITopic[])getChildren(ITopic.class);
 	}
@@ -50,6 +53,7 @@ public class IndexEntry extends UAElement implements IIndexEntry2 {
 		setAttribute(ATTRIBUTE_KEYWORD, keyword);
 	}
 
+	@Override
 	public IIndexSee[] getSees() {
 		return (IIndexSee[])getChildren(IIndexSee.class);
 	}

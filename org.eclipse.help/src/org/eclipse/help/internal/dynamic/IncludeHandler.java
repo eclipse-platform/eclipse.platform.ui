@@ -32,6 +32,7 @@ public class IncludeHandler extends ProcessorHandler {
 		this.locale = locale;
 	}
 	
+	@Override
 	public short handle(UAElement element, String id) {
 		if (element instanceof Include) {
 			String path = ((Include)element).getPath();

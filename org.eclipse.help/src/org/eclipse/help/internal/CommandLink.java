@@ -29,10 +29,12 @@ public class CommandLink extends UAElement implements ICommandLink {
 		super(src);
 	}
 
+	@Override
 	public String getLabel() {
 		return getAttribute(ATTRIBUTE_LABEL);
 	}
 
+	@Override
 	public String getSerialization() {
 		return getAttribute(ATTRIBUTE_SERIALIZATION);
 	}

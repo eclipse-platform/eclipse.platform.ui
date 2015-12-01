@@ -27,6 +27,7 @@ public class FilterHandler extends ProcessorHandler {
 		this.context = context;
 	}
 
+	@Override
 	public short handle(UAElement element, String id) {
 		if (UAContentFilter.isFiltered(element, context)) {
 			UAElement parent = element.getParentElement();

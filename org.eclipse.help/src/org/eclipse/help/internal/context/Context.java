@@ -76,6 +76,7 @@ public class Context extends UAElement implements IContext3 {
 		}
 	}
 
+	@Override
 	public String getCategory(IHelpResource topic) {
 		return null;
 	}
@@ -84,18 +85,22 @@ public class Context extends UAElement implements IContext3 {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
+	@Override
 	public ICommandLink[] getRelatedCommands() {
 		return (ICommandLink[])getChildren(ICommandLink.class);
 	}
 	
+	@Override
 	public IHelpResource[] getRelatedTopics() {
 		return (IHelpResource[])getChildren(IHelpResource.class);
 	}
 
+	@Override
 	public String getStyledText() {
 		return null;
 	}
 	
+	@Override
 	public String getText() {
 		Node node = getElement().getFirstChild();
 		while (node != null) {
@@ -116,6 +121,7 @@ public class Context extends UAElement implements IContext3 {
 		return null; 
 	}
 	
+	@Override
 	public String getTitle() {
 		String title = getAttribute(ATTRIBUTE_TITLE);
 		if (title == null || title.length() == 0) {

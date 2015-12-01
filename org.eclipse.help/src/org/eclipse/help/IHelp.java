@@ -22,6 +22,7 @@ package org.eclipse.help;
  *             {@link org.eclipse.ui.help.WorkbenchHelp WorkbenchHelp}to
  *             display help resources.
  */
+@Deprecated
 public interface IHelp {
 
 	/**
@@ -33,6 +34,7 @@ public interface IHelp {
 	 * @since 2.0
 	 * @deprecated Use WorkbenchHelp.displayHelp() instead.
 	 */
+	@Deprecated
 	public void displayHelp();
 
 	/**
@@ -54,6 +56,7 @@ public interface IHelp {
 	 * @since 2.0
 	 * @deprecated Use WorkbenchHelp.displayContext(context,x,y) instead.
 	 */
+	@Deprecated
 	public void displayContext(IContext context, int x, int y);
 
 	/**
@@ -80,6 +83,7 @@ public interface IHelp {
 	 *             WorkbenchHelp.displayContext(HelpSystem.getContext(contextId),x,y)
 	 *             instead.
 	 */
+	@Deprecated
 	public void displayContext(String contextId, int x, int y);
 
 	/**
@@ -103,6 +107,7 @@ public interface IHelp {
 	 * @since 2.0
 	 * @deprecated Use WorkbenchHelp.displayHelpResource(href) instead.
 	 */
+	@Deprecated
 	public void displayHelpResource(String href);
 
 	/**
@@ -123,6 +128,7 @@ public interface IHelp {
 	 * @deprecated Use WorkbenchHelp.displayHelpResource(helpResource.getHref())
 	 *             instead.
 	 */
+	@Deprecated
 	public void displayHelpResource(IHelpResource helpResource);
 
 	/**
@@ -142,6 +148,7 @@ public interface IHelp {
 	 *            <code>"org.eclipse.help.toc"</code> extenstion point
 	 * @deprecated Use WorkbenchHelp.displayHelpResource(toc) instead.
 	 */
+	@Deprecated
 	public void displayHelp(String toc);
 
 	/**
@@ -168,6 +175,7 @@ public interface IHelp {
 	 * @see #displayHelp(java.lang.String)
 	 * @deprecated Use WorkbenchHelp.displayHelpResource(selectedTopic) instead.
 	 */
+	@Deprecated
 	public void displayHelp(String toc, String selectedTopic);
 
 	/**
@@ -190,6 +198,7 @@ public interface IHelp {
 	 *             WorkbenchHelp.displayContext(HelpSystem.getContext(contextId),x,y)
 	 *             instead.
 	 */
+	@Deprecated
 	public void displayHelp(String contextId, int x, int y);
 
 	/**
@@ -210,6 +219,7 @@ public interface IHelp {
 	 *            verifical position
 	 * @deprecated Use WorkbenchHelp.displayContext(context,x,y) instead.
 	 */
+	@Deprecated
 	public void displayHelp(IContext context, int x, int y);
 
 	/**
@@ -220,6 +230,7 @@ public interface IHelp {
 	 * @return the context, or <code>null</code> if none
 	 * @deprecated Use HelpSystem.getContext(contextId) instead.
 	 */
+	@Deprecated
 	public IContext getContext(String contextId);
 
 	/**
@@ -229,6 +240,7 @@ public interface IHelp {
 	 * @since 2.0
 	 * @deprecated Use HelpSystem.getTocs() instead.
 	 */
+	@Deprecated
 	public IToc[] getTocs();
 
 	/**
@@ -237,5 +249,6 @@ public interface IHelp {
 	 * 
 	 * @deprecated Use WorkbenchHelp.isContextHelpDisplayed() instead.
 	 */
+	@Deprecated
 	public boolean isContextHelpDisplayed();
 }

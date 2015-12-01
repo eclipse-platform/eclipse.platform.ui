@@ -166,6 +166,7 @@ public class UAElement implements IUAElement {
 	 * path which could get blocked and cause deadlock. When modifying this source be careful not 
 	 * to introduce any logic which could possibly cause this thread to block.
 	 */
+	@Override
 	public synchronized IUAElement[] getChildren() {
 		if (children == null) {
 			if (element.hasChildNodes()) {
@@ -244,6 +245,7 @@ public class UAElement implements IUAElement {
 		}
 	}
 	
+	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		if (!ProductPreferences.useEnablementFilters()) {
 			return true;

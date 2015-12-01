@@ -286,10 +286,12 @@ public class SequenceResolver {
 		public int rank;
 		public List src;
 		
+		@Override
 		public boolean equals(Object obj) {
 			return item.equals(obj);
 		}
 		
+		@Override
 		public int hashCode() {
 			return item.hashCode();
 		}

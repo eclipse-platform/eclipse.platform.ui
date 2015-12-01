@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 
 public class IndexDocumentReader extends DocumentReader {
 	
+	@Override
 	protected void prepareDocument(Document document) {
 		prune(document.getDocumentElement());
 	}
