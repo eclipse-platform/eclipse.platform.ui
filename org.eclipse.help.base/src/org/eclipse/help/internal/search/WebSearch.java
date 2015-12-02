@@ -65,10 +65,12 @@ public final class WebSearch implements ISearchEngine {
 			this.urlTemplate = urlTemplate;
 		}
 
+		@Override
 		public String getDescription() {
 			return HelpBaseResources.WebSearch_click;
 		}
 
+		@Override
 		public String getHref() {
 			String href = null;
 			String equery;
@@ -82,10 +84,12 @@ public final class WebSearch implements ISearchEngine {
 			return href;
 		}
 
+		@Override
 		public String getLabel() {
 			return HelpBaseResources.WebSearch_label;
 		}
 
+		@Override
 		public float getScore() {
 			return 1;
 		}
@@ -95,14 +99,17 @@ public final class WebSearch implements ISearchEngine {
 		 *
 		 * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getCategory()
 		 */
+		@Override
 		public IHelpResource getCategory() {
 			return null;
 		}
 
+		@Override
 		public boolean getForceExternalWindow() {
 			return true;
 		}
 
+		@Override
 		public String toAbsoluteHref(String href, boolean frames) {
 			return href;
 		}
@@ -116,6 +123,7 @@ public final class WebSearch implements ISearchEngine {
 	 *      org.eclipse.help.internal.search.federated.ISearchEngineResultCollector,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(String query, ISearchScope scope,
 			ISearchEngineResultCollector collector, IProgressMonitor monitor)
 			throws CoreException {

@@ -35,6 +35,7 @@ public abstract class AdaptableHelpResource
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IHelpResource.class)
@@ -62,6 +63,7 @@ public abstract class AdaptableHelpResource
 	 * @return true=the object equals the receiver, the name is the same. false
 	 *         otherwise
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (this == object)
 			return true;
@@ -78,6 +80,7 @@ public abstract class AdaptableHelpResource
 	 *
 	 * @return the hash code.
 	 */
+	@Override
 	public int hashCode() {
 		if (element == null)
 			return -1;
@@ -92,6 +95,7 @@ public abstract class AdaptableHelpResource
 	/**
 	 * @see org.eclipse.help.IHelpResource#getHref()
 	 */
+	@Override
 	public String getHref() {
 		return element.getHref();
 	}
@@ -99,6 +103,7 @@ public abstract class AdaptableHelpResource
 	/**
 	 * @see org.eclipse.help.IHelpResource#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return element.getLabel();
 	}

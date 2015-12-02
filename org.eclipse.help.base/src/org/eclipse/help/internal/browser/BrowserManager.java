@@ -130,15 +130,19 @@ public class BrowserManager {
 			// If no browsers at all, use the Null Browser Adapter
 			defaultBrowserDesc = new BrowserDescriptor("", "Null Browser", //$NON-NLS-1$ //$NON-NLS-2$
 					new IBrowserFactory() {
+						@Override
 						public boolean isAvailable() {
 							return true;
 						}
 
+						@Override
 						public IBrowser createBrowser() {
 							return new IBrowser() {
+								@Override
 								public void close() {
 								}
 
+								@Override
 								public void displayURL(String url) {
 									HelpBasePlugin
 											.logError(
@@ -151,21 +155,26 @@ public class BrowserManager {
 											.displayError(msg);
 								}
 
+								@Override
 								public boolean isCloseSupported() {
 									return false;
 								}
 
+								@Override
 								public boolean isSetLocationSupported() {
 									return false;
 								}
 
+								@Override
 								public boolean isSetSizeSupported() {
 									return false;
 								}
 
+								@Override
 								public void setLocation(int width, int height) {
 								}
 
+								@Override
 								public void setSize(int x, int y) {
 								}
 							};

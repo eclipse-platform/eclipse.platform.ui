@@ -42,9 +42,11 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 	static {
 		dummy_collector = new ISearchHitCollector() {
+			@Override
 			public void addHits(List<SearchHit> hits, String s) {
 			}
 
+			@Override
 			public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
                 throw exception;
 			}
@@ -58,27 +60,33 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		started = done = canceled = false;
 	}
 
+	@Override
 	public void beginTask(String name, int totalWork) {
 		this.totalWork = totalWork;
 		this.started = true;
 	}
 
+	@Override
 	public void done() {
 		currWork = totalWork;
 		this.done = true;
 		this.started = true;
 	}
 
+	@Override
 	public void setTaskName(String name) {
 	}
 
+	@Override
 	public void subTask(String name) {
 	}
 
+	@Override
 	public void worked(int work) {
 		internalWorked(work);
 	}
 
+	@Override
 	public void internalWorked(double work) {
 		currWork += work;
 		if (currWork > totalWork)
@@ -103,6 +111,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	 *
 	 * @return Returns a boolean
 	 */
+	@Override
 	public boolean isCanceled() {
 		return canceled;
 	}
@@ -138,6 +147,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	 * @param canceled
 	 *            The isCanceled to set
 	 */
+	@Override
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
 	}
@@ -157,6 +167,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 
 		// spawn a thread that will cause indexing if needed
 		Thread indexer = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					BaseHelpSystem.getSearchManager().search(
@@ -205,6 +216,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		/**
 		 * Obtains names of fields in addition to default field
 		 */
+		@Override
 		public Collection<String> getFieldNames() {
 			return new ArrayList<String>();
 		}
@@ -212,6 +224,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		/**
 		 * Obtains search word (user query)
 		 */
+		@Override
 		public String getSearchWord() {
 			return "dummy"; //$NON-NLS-1$
 		}
@@ -220,6 +233,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		 * @return true if search only in specified fields, not the default
 		 *         field
 		 */
+		@Override
 		public boolean isFieldSearch() {
 			return false;
 		}
@@ -227,6 +241,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		/**
 		 * Obtains locale
 		 */
+		@Override
 		public String getLocale() {
 			return l;
 		}

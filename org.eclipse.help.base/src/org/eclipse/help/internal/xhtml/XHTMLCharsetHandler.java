@@ -29,6 +29,7 @@ public class XHTMLCharsetHandler extends ProcessorHandler {
 	private static final String PREFIX_CHARSET = "text/html; charset="; //$NON-NLS-1$
 	private static final String ENCODING_UTF8 = "UTF-8"; //$NON-NLS-1$
 
+	@Override
 	public short handle(UAElement element, String id) {
 		if (ELEMENT_META.equals(element.getElementName())) {
 			String content = element.getAttribute(ATTRIBUTE_CONTENT);

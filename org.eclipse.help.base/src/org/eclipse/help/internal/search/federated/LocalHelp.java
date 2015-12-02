@@ -38,6 +38,7 @@ public class LocalHelp implements ISearchEngine2 {
 	 *      org.eclipse.help.internal.search.federated.ISearchEngineResultCollector,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(String query, ISearchScope scope,
 			final ISearchEngineResultCollector collector,
 			IProgressMonitor monitor) throws CoreException {
@@ -146,6 +147,7 @@ public class LocalHelp implements ISearchEngine2 {
 		return altList;
 	}
 
+	@Override
 	public boolean open(String id) {
 		int sep = id.indexOf('/');
 		if (sep== -1)

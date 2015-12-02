@@ -37,18 +37,21 @@ public class CurrentBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#close()
 	 */
+	@Override
 	public void close() {
 		browserAdapter.close();
 	}
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
 	 */
+	@Override
 	public boolean isCloseSupported() {
 		return browserAdapter.isCloseSupported();
 	}
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
 	 */
+	@Override
 	public void displayURL(String url) throws Exception {
 		checkDefaultAdapter();
 		if (newBrowserAdapter != null) {
@@ -69,6 +72,7 @@ public class CurrentBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
 	 */
+	@Override
 	public boolean isSetLocationSupported() {
 		checkDefaultAdapter();
 		if (newBrowserAdapterId == null) {
@@ -80,6 +84,7 @@ public class CurrentBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
 	 */
+	@Override
 	public boolean isSetSizeSupported() {
 		checkDefaultAdapter();
 		if (newBrowserAdapterId == null) {
@@ -91,6 +96,7 @@ public class CurrentBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
 	 */
+	@Override
 	public void setLocation(int x, int y) {
 		checkDefaultAdapter();
 		browserAdapter.setLocation(x, y);
@@ -101,6 +107,7 @@ public class CurrentBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
 	 */
+	@Override
 	public void setSize(int width, int height) {
 		checkDefaultAdapter();
 		browserAdapter.setSize(width, height);

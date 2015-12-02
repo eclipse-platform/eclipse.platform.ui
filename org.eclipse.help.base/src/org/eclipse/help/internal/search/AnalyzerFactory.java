@@ -56,6 +56,7 @@ public class AnalyzerFactory implements IExecutableExtension{
 
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
 		if (data instanceof String)

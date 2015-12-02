@@ -153,9 +153,11 @@ public final class BaseHelpSystem {
 	public static void startup() {
 		try {
 			setDefaultErrorUtil(new IErrorUtil() {
+				@Override
 				public void displayError(String msg) {
 					System.out.println(msg);
 				}
+				@Override
 				public void displayError(String msg, Thread uiThread) {
 					System.out.println(msg);
 				}

@@ -109,6 +109,7 @@ public class HelpURLConnection extends URLConnection {
 	/**
 	 * @see URLConnection#connect()
 	 */
+	@Override
 	public void connect() throws IOException {
 	}
 
@@ -116,6 +117,7 @@ public class HelpURLConnection extends URLConnection {
 	 * see URLConnection#getInputStream(); Note: this method can throw IOException, but should never
 	 * return null
 	 */
+	@Override
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
 		Bundle plugin = getPlugin();
@@ -169,6 +171,7 @@ public class HelpURLConnection extends URLConnection {
 		return in;
 	}
 
+	@Override
 	public long getExpiration() {
 		return isCacheable() ? new Date().getTime() + 10000 : 0;
 	}
@@ -212,6 +215,7 @@ public class HelpURLConnection extends URLConnection {
 		}
 	}
 
+	@Override
 	public String getContentType() {
 		// Check if the file is hypertext or plain text
 		String file = pluginAndFile.toLowerCase(Locale.US);
@@ -330,6 +334,7 @@ public class HelpURLConnection extends URLConnection {
 		return cachingEnabled;
 	}
 
+	@Override
 	public String toString() {
 		return pluginAndFile;
 	}

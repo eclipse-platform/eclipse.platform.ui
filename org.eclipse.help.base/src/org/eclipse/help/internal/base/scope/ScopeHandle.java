@@ -24,10 +24,12 @@ public class ScopeHandle implements IScopeHandle{
 		this.scope = scope;
 	}
 
+	@Override
 	public AbstractHelpScope getScope() {
 		return scope;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}

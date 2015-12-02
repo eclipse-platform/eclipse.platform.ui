@@ -175,6 +175,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 *
 	 * @return true if operation was successful
 	 */
+	@Override
 	public boolean save() {
 		if (super.save()) {
 			doComparison = false;

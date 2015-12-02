@@ -29,6 +29,7 @@ public class SearchResult implements ISearchResult{
 	private IToc toc;
 	private boolean isPotentialHit;
 
+	@Override
 	public String getHref() {
 		return href;
 	}
@@ -37,6 +38,7 @@ public class SearchResult implements ISearchResult{
 		this.href = href;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -45,6 +47,7 @@ public class SearchResult implements ISearchResult{
 		this.id = id;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -53,6 +56,7 @@ public class SearchResult implements ISearchResult{
 		this.description = description;
 	}
 
+	@Override
 	public String getSummary() {
 		return summary;
 	}
@@ -61,6 +65,7 @@ public class SearchResult implements ISearchResult{
 		this.summary = summary;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -69,6 +74,7 @@ public class SearchResult implements ISearchResult{
 		this.label = label;
 	}
 
+	@Override
 	public URL getIcon() {
 		return icon;
 	}
@@ -77,6 +83,7 @@ public class SearchResult implements ISearchResult{
 		this.icon = icon;
 	}
 
+	@Override
 	public float getScore() {
 		return score;
 	}
@@ -86,6 +93,7 @@ public class SearchResult implements ISearchResult{
 	}
 
 
+	@Override
 	public IToc getToc() {
 		return toc;
 	}
@@ -96,6 +104,7 @@ public class SearchResult implements ISearchResult{
 	}
 
 
+	@Override
 	public String getParticipantId() {
 		return participantId;
 	}
@@ -105,6 +114,7 @@ public class SearchResult implements ISearchResult{
 		this.participantId = participantId;
 	}
 
+	@Override
 	public boolean isPotentialHit() {
 		return isPotentialHit;
 	}

@@ -38,6 +38,7 @@ public class SearchQuery implements ISearchQuery {
 	 *
 	 * @return Collection
 	 */
+	@Override
 	public Collection<String> getFieldNames() {
 		return fieldNames;
 	}
@@ -47,6 +48,7 @@ public class SearchQuery implements ISearchQuery {
 	 *
 	 * @return boolean
 	 */
+	@Override
 	public boolean isFieldSearch() {
 		return fieldSearch;
 	}
@@ -56,6 +58,7 @@ public class SearchQuery implements ISearchQuery {
 	 *
 	 * @return String
 	 */
+	@Override
 	public String getLocale() {
 		return locale;
 	}
@@ -65,6 +68,7 @@ public class SearchQuery implements ISearchQuery {
 	 *
 	 * @return String
 	 */
+	@Override
 	public String getSearchWord() {
 		return searchWord;
 	}

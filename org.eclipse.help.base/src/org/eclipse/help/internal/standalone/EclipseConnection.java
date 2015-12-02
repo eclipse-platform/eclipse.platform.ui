@@ -58,6 +58,7 @@ public class EclipseConnection {
 				// continue even if the default rules for
 				// URL hostname verification fail.
 				secureConnection.setHostnameVerifier(new HostnameVerifier() {
+					@Override
 					public boolean verify(String urlHostName, javax.net.ssl.SSLSession session) {
 						if (Options.isDebug()) {
 							System.out.println("Warning: URL Host: " //$NON-NLS-1$

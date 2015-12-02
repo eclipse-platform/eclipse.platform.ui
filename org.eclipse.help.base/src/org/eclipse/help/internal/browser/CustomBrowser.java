@@ -28,12 +28,14 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#close()
 	 */
+	@Override
 	public void close() {
 	}
 
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
 	 */
+	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
@@ -41,6 +43,7 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
 	 */
+	@Override
 	public void displayURL(String url) throws Exception {
 		String path =  Platform.getPreferencesService().getString
 		   (HelpBasePlugin.PLUGIN_ID, CustomBrowser.CUSTOM_BROWSER_PATH_KEY, "", null); //$NON-NLS-1$
@@ -70,6 +73,7 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
 	 */
+	@Override
 	public boolean isSetLocationSupported() {
 		return false;
 	}
@@ -77,6 +81,7 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
 	 */
+	@Override
 	public boolean isSetSizeSupported() {
 		return false;
 	}
@@ -84,12 +89,14 @@ public class CustomBrowser implements IBrowser {
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
 	 */
+	@Override
 	public void setLocation(int x, int y) {
 	}
 
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
 	 */
+	@Override
 	public void setSize(int width, int height) {
 	}
 

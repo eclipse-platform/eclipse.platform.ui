@@ -48,6 +48,7 @@ public class BuildHelpIndex extends Task {
 	 *
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		File file = getFile(manifest);
 		if (file == null)

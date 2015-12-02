@@ -30,6 +30,7 @@ public final class Analyzer_en extends Analyzer {
 	 * Creates a TokenStream which tokenizes all the text in the provided
 	 * Reader.
 	 */
+	@Override
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new PorterStemFilter(new StopFilter(Version.LUCENE_30, new LowerCaseAndDigitsTokenizer(reader), getStopWords(), false));
 	}

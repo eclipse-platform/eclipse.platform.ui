@@ -26,18 +26,22 @@ import org.eclipse.help.internal.base.HelpBaseResources;
 
 public class SearchScopeScope extends AbstractHelpScope {
 
+	@Override
 	public boolean inScope(IToc toc) {
 		return false;
 	}
 
+	@Override
 	public boolean inScope(ITopic topic) {
 		return false;
 	}
 
+	@Override
 	public boolean inScope(IIndexEntry entry) {
 		return false;
 	}
 
+	@Override
 	public boolean inScope(IIndexSee see) {
 		return false;
 	}
@@ -47,6 +51,7 @@ public class SearchScopeScope extends AbstractHelpScope {
 	 * the help system running in workbench mode so there is not need to
 	 * be able to return a name in any locale, just the current one.
 	 */
+	@Override
 	public String getName(Locale locale) {
 		return HelpBaseResources.SearchScopeFilterName;
 	}

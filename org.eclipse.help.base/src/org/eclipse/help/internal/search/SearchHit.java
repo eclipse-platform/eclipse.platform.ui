@@ -53,6 +53,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		this.isPotentialHit = isPotentialHit;
 	}
 
+	@Override
 	public int compareTo(SearchHit o) {
 		if (o == this) {
 			return 0;
@@ -62,6 +63,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		return (s1 < s2 ? 1 : s1 > s2 ? -1 : 0);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SearchHit) {
 			if (obj == this) {
@@ -72,14 +74,17 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		return false;
 	}
 
+	@Override
 	public String getHref() {
 		return href;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public float getScore() {
 		return score;
 	}
@@ -88,6 +93,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		return toc;
 	}
 
+	@Override
 	public int hashCode() {
 		return href.hashCode();
 	}
@@ -112,10 +118,12 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		this.toc = toc;
 	}
 
+	@Override
 	public String getDescription() {
 		return getSummary();
 	}
 
+	@Override
 	public IHelpResource getCategory() {
 		if (participantId == null)
 			return toc;
@@ -130,14 +138,17 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		this.summary = summary;
 	}
 
+	@Override
 	public boolean getForceExternalWindow() {
 		return participantId == null ? false : true;
 	}
 
+	@Override
 	public String toAbsoluteHref(String href, boolean frames) {
 		return href;
 	}
 
+	@Override
 	public String getId() {
 		return participantId + "/" + id; //$NON-NLS-1$
 	}
@@ -150,12 +161,14 @@ public class SearchHit implements ISearchEngineResult2, Comparable<SearchHit> {
 		return participantId;
 	}
 
+	@Override
 	public URL getIconURL() {
 		if (participantId == null)
 			return null;
 		return BaseHelpSystem.getLocalSearchManager().getParticipantIconURL(participantId);
 	}
 
+	@Override
 	public boolean canOpen() {
 		return participantId != null;
 	}

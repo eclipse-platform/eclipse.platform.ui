@@ -190,6 +190,7 @@ public class PluginIndex {
 		return "/" + prefix.substring(0, prefix.length() - 1); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if ( !(obj instanceof PluginIndex) ) {
 			return false;
@@ -198,10 +199,12 @@ public class PluginIndex {
 		return pluginId.equals(index.pluginId) && path.equals(index.path);
 	}
 
+	@Override
 	public int hashCode() {
 		return pluginId.hashCode() + path.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer ret = new StringBuffer(pluginId);
 		ret.append(":"); //$NON-NLS-1$

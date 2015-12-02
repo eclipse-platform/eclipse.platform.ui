@@ -22,6 +22,7 @@ public class HelpURLStreamHandler extends URLStreamHandler {
 	/**
 	 * @see java.net.URLStreamHandler#openConnection(java.net.URL)
 	 */
+	@Override
 	protected URLConnection openConnection(URL url) throws IOException {
 		String protocol = url.getProtocol();
 		if (protocol.equals("help")) { //$NON-NLS-1$

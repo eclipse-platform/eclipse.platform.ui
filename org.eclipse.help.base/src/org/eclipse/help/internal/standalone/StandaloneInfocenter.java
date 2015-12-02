@@ -51,6 +51,7 @@ public class StandaloneInfocenter extends EclipseController {
 			final String adminId = Options.getAdminId();
 			final String adminPassword = Options.getAdminPassword();
 			Authenticator.setDefault(new Authenticator() {
+				@Override
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(adminId, adminPassword.toCharArray());
 				}

@@ -56,6 +56,7 @@ public class JettyHelpServer extends HelpServer {
 			this.webappName = webappName;
 		}
 
+		@Override
 		public void run() {
 			try {
 				final Dictionary<String, Object> d = new Hashtable<String, Object>();
@@ -91,6 +92,7 @@ public class JettyHelpServer extends HelpServer {
 			this.webappName = webappName;
 		}
 
+		@Override
 		public void run() {
 			try {
 				JettyConfigurator.stopServer(webappName);
@@ -106,6 +108,7 @@ public class JettyHelpServer extends HelpServer {
 	protected int port = -1;
 	protected static final int AUTO_SELECT_JETTY_PORT = 0;
 
+	@Override
 	public void start(final String webappName) throws Exception {
 		WorkerThread startRunnable = new StartServerThread(webappName);
 		execute(startRunnable);
@@ -132,6 +135,7 @@ public class JettyHelpServer extends HelpServer {
 		}
 	}
 
+	@Override
 	public void stop(final String webappName) throws CoreException {
 		try {
 			WorkerThread stopRunnable = new StopServerThread(webappName);
@@ -168,6 +172,7 @@ public class JettyHelpServer extends HelpServer {
 		}
 	}
 
+	@Override
 	public int getPort() {
 		return port;
 	}
@@ -197,6 +202,7 @@ public class JettyHelpServer extends HelpServer {
 		return port;
 	}
 
+	@Override
 	public String getHost() {
 		if (host == null) {
 			String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$

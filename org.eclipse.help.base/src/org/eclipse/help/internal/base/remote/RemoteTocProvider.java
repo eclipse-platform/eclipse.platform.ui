@@ -38,6 +38,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 	 */
 	public RemoteTocProvider() {
 		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				contentChanged();
 			}
@@ -49,6 +50,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 	 *
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
+	@Override
 	public ITocContribution[] getTocContributions(String locale) {
 
 		if (RemoteHelp.isEnabled()) {
@@ -150,6 +152,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
 	 */
+	@Override
 	public int getPriority() {
 
 		int helpOption=PreferenceFileHandler.getEmbeddedHelpOption();

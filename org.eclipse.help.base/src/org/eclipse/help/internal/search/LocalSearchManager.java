@@ -107,10 +107,12 @@ public class LocalSearchManager {
 			return element.equals(el);
 		}
 
+		@Override
 		public String getHref() {
 			return null;
 		}
 
+		@Override
 		public String getLabel() {
 			return element.getAttribute("name"); //$NON-NLS-1$
 		}

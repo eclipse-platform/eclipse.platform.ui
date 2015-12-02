@@ -87,6 +87,7 @@ public final class DefaultAnalyzer extends Analyzer {
 	 * Creates a TokenStream which tokenizes all the text in the provided
 	 * Reader.
 	 */
+	@Override
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		return new LowerCaseFilter(Version.LUCENE_30, new WordTokenStream(fieldName, reader, locale));
 	}

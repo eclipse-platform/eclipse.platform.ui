@@ -236,6 +236,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		return new URL(urlStr.toString());
 	}
 
+	@Override
 	public void eclipseEnded() {
 		eclipseEnded = true;
 		connection.reset();
@@ -311,6 +312,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	public class EclipseCleaner extends Thread {
+		@Override
 		public void run() {
 			if (eclipse != null) {
 				eclipse.killProcess();

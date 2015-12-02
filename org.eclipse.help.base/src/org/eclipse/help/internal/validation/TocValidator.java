@@ -55,6 +55,7 @@ public class TocValidator {
 	}
 
 	public static class PassThroughFilter extends Filter {
+		@Override
 		public boolean isIncluded(String href) {
 			return true;
 		}

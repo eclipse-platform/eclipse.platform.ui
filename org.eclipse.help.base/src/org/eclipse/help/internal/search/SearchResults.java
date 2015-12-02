@@ -70,6 +70,7 @@ public class SearchResults implements ISearchHitCollector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(List, String)
 	 */
+	@Override
 	public void addHits(List<SearchHit> hits, String highlightTerms) {
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
 		List<SearchHit> searchHitList = new ArrayList<SearchHit>();
@@ -295,6 +296,7 @@ public class SearchResults implements ISearchHitCollector {
 		return criteriaScopes;
 	}
 
+	@Override
 	public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
 		this.searchException = exception;
 	}

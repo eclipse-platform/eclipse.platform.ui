@@ -134,6 +134,7 @@ public class ProxyUtil {
 			this.password = password;
 		}
 
+		@Override
 		protected PasswordAuthentication getPasswordAuthentication() {
 			return new PasswordAuthentication(user, password.toCharArray());
 		}

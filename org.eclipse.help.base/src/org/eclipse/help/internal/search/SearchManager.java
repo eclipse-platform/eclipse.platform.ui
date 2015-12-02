@@ -58,6 +58,7 @@ public class SearchManager {
 			 */
 			localSearchJob = new Job("localSearchJob") { //$NON-NLS-1$
 
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					localManager.search(searchQuery, bufferedCollector, localMonitor);
 					return Status.OK_STATUS;
@@ -65,6 +66,7 @@ public class SearchManager {
 			};
 			remoteSearchJob = new Job("remoteSearchJob") { //$NON-NLS-1$
 
+				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					remoteManager.search(searchQuery, bufferedCollector, remoteMonitor);
 					return Status.OK_STATUS;
@@ -253,6 +255,7 @@ public class SearchManager {
 		/* (non-Javadoc)
 		 * @see org.eclipse.help.internal.search.ISearchHitCollector#addHits(java.util.List, java.lang.String)
 		 */
+		@Override
 		public void addHits(List<SearchHit> hits, String wordsSearched) {
 			if (wordsSearched != null) {
 				this.wordsSearched = wordsSearched;
@@ -273,6 +276,7 @@ public class SearchManager {
 			wordsSearched = null;
 		}
 
+		@Override
 		public void addQTCException(QueryTooComplexException exception) throws QueryTooComplexException {
 			throw exception;
 		}

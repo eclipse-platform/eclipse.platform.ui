@@ -37,6 +37,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == ITopic.class)
@@ -44,6 +45,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public AdaptableHelpResource[] getChildren() {
 		ITopic[] topics = this.getSubtopics();
 		AdaptableHelpResource[] adaptableTopic = new AdaptableTopic[topics.length];
@@ -68,6 +70,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 	 * @param href
 	 *            The topic's href value.
 	 */
+	@Override
 	public ITopic getTopic(String href) {
 		if (href == null)
 			return null;
@@ -96,6 +99,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 		return (ITopic) topicMap.get(href);
 	}
 
+	@Override
 	public void saveState(Element element) {
 		AdaptableToc toc = (AdaptableToc) getParent();
 		toc.saveState(element);

@@ -39,6 +39,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	 */
 	public RemoteIndexProvider() {
 		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				contentChanged();
 			}
@@ -48,6 +49,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(String)
 	 */
+	@Override
 	public IIndexContribution[] getIndexContributions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			List<IIndexContribution> contributions = new ArrayList<IIndexContribution>();

@@ -33,31 +33,41 @@ public class HelpBasePlugin extends Plugin {
 	private BundleContext context;
 
 	private IHelpActivitySupport helpActivitySupport = new IHelpActivitySupport() {
+		@Override
 		public boolean isEnabled(String href) {
 			return true;
 		}
+		@Override
 		public boolean isRoleEnabled(String href) {
 			return true;
 		}
+		@Override
 		public boolean isEnabledTopic(String href, String locale) {
 			return true;
 		}
+		@Override
 		public void enableActivities(String href) {
 		}
+		@Override
 		public boolean isFilteringEnabled() {
 			return false;
 		}
+		@Override
 		public void setFilteringEnabled(boolean enabled) {
 		}
+		@Override
 		public boolean isUserCanToggleFiltering() {
 			return false;
 		}
+		@Override
 		public String getShowAllMessage() {
 			return null;
 		}
+		@Override
 		public String getDocumentMessage(boolean embedded) {
 			return null;
 		}
+		@Override
 		public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
 			return false;
 		}
@@ -79,6 +89,7 @@ public class HelpBasePlugin extends Plugin {
 		return plugin;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		BaseHelpSystem.shutdown();
 		this.context = null;
@@ -86,6 +97,7 @@ public class HelpBasePlugin extends Plugin {
 		super.stop(context);
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;

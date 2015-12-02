@@ -26,6 +26,7 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 public class FilterScope extends AbstractHelpScope {
 
+	@Override
 	public boolean inScope(IToc toc) {
 		if (!toc.isEnabled(HelpEvaluationContext.getContext())) {
 			return false;
@@ -33,6 +34,7 @@ public class FilterScope extends AbstractHelpScope {
 		return hasInScopeChildren(toc);
 	}
 
+	@Override
 	public boolean inScope(ITopic topic) {
 		if (!topic.isEnabled(HelpEvaluationContext.getContext())) {
 			return false;
@@ -43,14 +45,17 @@ public class FilterScope extends AbstractHelpScope {
 		return ScopeUtils.hasInScopeDescendent(topic, this);
 	}
 
+	@Override
 	public boolean inScope(IIndexEntry entry) {
 		return entry.isEnabled(HelpEvaluationContext.getContext());
 	}
 
+	@Override
 	public boolean inScope(IIndexSee see) {
 		return see.isEnabled(HelpEvaluationContext.getContext());
 	}
 
+	@Override
 	public String getName(Locale locale) {
 		// TODO Auto-generated method stub
 		return null;

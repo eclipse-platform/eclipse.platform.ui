@@ -83,10 +83,12 @@ public final class InfoCenter implements ISearchEngine {
 				category = tocs.get(href);
 				if (category == null) {
 					category = new IHelpResource() {
+						@Override
 						public String getLabel() {
 							return label;
 						}
 
+						@Override
 						public String getHref() {
 							return href;
 						}
@@ -96,22 +98,27 @@ public final class InfoCenter implements ISearchEngine {
 			}
 		}
 
+		@Override
 		public String getLabel() {
 			return node.getAttribute("label"); //$NON-NLS-1$
 		}
 
+		@Override
 		public String getDescription() {
 			return null;
 		}
 
+		@Override
 		public IHelpResource getCategory() {
 			return category;
 		}
 
+		@Override
 		public String getHref() {
 			return node.getAttribute("href"); //$NON-NLS-1$
 		}
 
+		@Override
 		public float getScore() {
 			String value = node.getAttribute("score"); //$NON-NLS-1$
 			if (value != null)
@@ -119,10 +126,12 @@ public final class InfoCenter implements ISearchEngine {
 			return (float) 0.0;
 		}
 
+		@Override
 		public boolean getForceExternalWindow() {
 			return false;
 		}
 
+		@Override
 		public String toAbsoluteHref(String href, boolean frames) {
 			String url = baseURL;
 			if (!url.endsWith("/")) //$NON-NLS-1$
@@ -150,6 +159,7 @@ public final class InfoCenter implements ISearchEngine {
 	 * @see ISearchEngine#run(String, ISearchScope,
 	 *      ISearchEngineResultCollector, IProgressMonitor)
 	 */
+	@Override
 	public void run(String query, ISearchScope scope,
 			ISearchEngineResultCollector collector, IProgressMonitor monitor)
 			throws CoreException {

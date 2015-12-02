@@ -83,6 +83,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		restoreState();
 	}
 
+	@Override
 	public AdaptableTocsArray getRoot() {
 		if (root == null)
 			root = new AdaptableTocsArray(HelpPlugin.getTocManager().getTocs(
@@ -93,6 +94,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Adds a new working set and saves it
 	 */
+	@Override
 	public void addWorkingSet(WorkingSet workingSet) {
 		if (workingSet == null || workingSets.contains(workingSet))
 			return;
@@ -103,11 +105,13 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Creates a new working set
 	 */
+	@Override
 	public WorkingSet createWorkingSet(String name,
 			AdaptableHelpResource[] elements) {
 		return new WorkingSet(name, elements);
 	}
 
+	@Override
 	public WorkingSet createWorkingSet(String name, AdaptableHelpResource[] elements, CriterionResource[] criteria) {
 		return new WorkingSet(name, elements, criteria);
 	}
@@ -122,6 +126,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * @return true=the object equals the receiver, it has the same working
 	 *         sets. false otherwise
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
 			return true;
@@ -137,6 +142,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * Returns a working set by name
 	 *
 	 */
+	@Override
 	public WorkingSet getWorkingSet(String name) {
 		if (name == null || workingSets == null)
 			return null;
@@ -155,6 +161,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 *
 	 * @return the hash code.
 	 */
+	@Override
 	public int hashCode() {
 		return workingSets.hashCode();
 	}
@@ -164,6 +171,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 *
 	 * @see org.eclipse.ui.IWorkingSetManager#getWorkingSets()
 	 */
+	@Override
 	public WorkingSet[] getWorkingSets() {
 		return workingSets.toArray(new WorkingSet[workingSets
 				.size()]);
@@ -183,6 +191,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Removes specified working set
 	 */
+	@Override
 	public void removeWorkingSet(WorkingSet workingSet) {
 		workingSets.remove(workingSet);
 		saveState();
@@ -395,14 +404,17 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * @param changedWorkingSet
 	 *            the working set that has changed
 	 */
+	@Override
 	public void workingSetChanged(WorkingSet changedWorkingSet) {
 		saveState();
 	}
 
+	@Override
 	public AdaptableToc getAdaptableToc(String href) {
 		return getRoot().getAdaptableToc(href);
 	}
 
+	@Override
 	public AdaptableTopic getAdaptableTopic(String id) {
 
 		if (id == null || id.length() == 0)
@@ -435,11 +447,13 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		return null;
 	}
 
+	@Override
 	public String getCurrentWorkingSet() {
 		return Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID,
 				BaseHelpSystem.WORKING_SET, "", null); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setCurrentWorkingSet(String workingSet) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(BaseHelpSystem.WORKING_SET, workingSet);
@@ -456,6 +470,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		restoreState();
 	}
 
+	@Override
 	public boolean isCriteriaScopeEnabled(){
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
@@ -467,6 +482,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		}
 	}
 
+	@Override
 	public String[] getCriterionIds() {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
@@ -486,6 +502,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		return ids;
 	}
 
+	@Override
 	public String[] getCriterionValueIds(String criterionName) {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
@@ -504,10 +521,12 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		return valueIdsArray;
 	}
 
+	@Override
 	public String getCriterionDisplayName(String criterionId) {
 		return HelpPlugin.getCriteriaManager().getCriterionDisplayName(criterionId, Platform.getNL());
 	}
 
+	@Override
 	public String getCriterionValueDisplayName(String criterionId, String criterionValueId) {
 		return HelpPlugin.getCriteriaManager().getCriterionValueDisplayName(criterionId, criterionValueId, Platform.getNL());
 	}

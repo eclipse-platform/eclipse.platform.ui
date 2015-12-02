@@ -57,14 +57,17 @@ public class BookmarkManager extends Observable {
 			this.href = href;
 		}
 
+		@Override
 		public String getHref() {
 			return href;
 		}
 
+		@Override
 		public String getLabel() {
 			return label;
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			if (object == null)
 				return false;

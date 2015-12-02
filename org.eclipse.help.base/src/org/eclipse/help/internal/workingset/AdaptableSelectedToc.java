@@ -30,6 +30,7 @@ public class AdaptableSelectedToc extends AdaptableHelpResource {
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IToc.class)
@@ -37,6 +38,7 @@ public class AdaptableSelectedToc extends AdaptableHelpResource {
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public AdaptableHelpResource[] getChildren() {
 		return new AdaptableHelpResource[0];
 	}
@@ -49,6 +51,7 @@ public class AdaptableSelectedToc extends AdaptableHelpResource {
 	 * @param href
 	 *            The topic's href value.
 	 */
+	@Override
 	public ITopic getTopic(String href) {
 		if(null == href){
 			return null;
@@ -59,6 +62,7 @@ public class AdaptableSelectedToc extends AdaptableHelpResource {
 		return null;
 	}
 
+	@Override
 	public void saveState(Element element) {
 
 	}

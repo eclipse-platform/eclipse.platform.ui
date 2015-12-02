@@ -45,6 +45,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	@Override
 	public synchronized Object start(IApplicationContext context) throws Exception {
 		if (status == STATE_RESTARTING) {
 			return EXIT_RESTART;
@@ -85,6 +86,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
+	@Override
 	public void stop() {
 		stopHelp();
 
@@ -115,6 +117,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement configElement, String propertyName, Object data) {
 		String value = (String)((Map<?, ?>)data).get("mode"); //$NON-NLS-1$
 		if ("infocenter".equalsIgnoreCase(value)) { //$NON-NLS-1$

@@ -34,6 +34,7 @@ public class ASCIIReader extends Reader {
 	/**
 	 * @see java.io.Reader#read(char[], int, int)
 	 */
+	@Override
 	public int read(char[] cbuf, int off, int len) throws IOException {
 		int n = stream.read(buf, 0, Math.min(bufSize, len));
 		for (int i = 0; i < n; i++) {
@@ -45,6 +46,7 @@ public class ASCIIReader extends Reader {
 	/**
 	 * @see java.io.Reader#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		stream.close();
 	}

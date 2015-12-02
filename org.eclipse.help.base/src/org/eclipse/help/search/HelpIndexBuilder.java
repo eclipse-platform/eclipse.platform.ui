@@ -168,6 +168,7 @@ public class HelpIndexBuilder {
 			createInfo(id, fid);
 		}
 
+		@Override
 		protected void createTable(Collection<String> docBundleIds) {
 			// do nothing
 		}

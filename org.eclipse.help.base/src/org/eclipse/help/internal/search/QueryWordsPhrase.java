@@ -38,6 +38,7 @@ public class QueryWordsPhrase extends QueryWordsToken {
 	/**
 	 * Creates a lucene query for a field
 	 */
+	@Override
 	public Query createLuceneQuery(String field, float boost) {
 		PhraseQuery q = new PhraseQuery();
 		for (Iterator<String> it = getWords().iterator(); it.hasNext();) {

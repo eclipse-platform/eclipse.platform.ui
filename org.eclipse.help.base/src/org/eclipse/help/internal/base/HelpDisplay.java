@@ -37,6 +37,7 @@ public class HelpDisplay {
 
 	private static class DefaultDisplay extends AbstractHelpDisplay {
 
+		@Override
 		public String getHelpHome(String hostname, int port, String tab) {
 			String helpURL = getFramesetURL();
 			if (tab != null) {
@@ -45,6 +46,7 @@ public class HelpDisplay {
 			return helpURL;
 		}
 
+		@Override
 		public String getHelpForTopic(String topic, String hostname, int port) {
 			return getFramesetURL() + "?topic=" + topic; //$NON-NLS-1$
 		}

@@ -30,21 +30,25 @@ public class LuceneSearchDocument implements ISearchDocument {
 		this.doc = document;
 	}
 
+	@Override
 	public void setTitle(String title) {
 		doc.add(new Field("title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
 		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
 		doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setSummary(String summary) {
 	  	doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
 
+	@Override
 	public void addContents(String contents) {
 		doc.add(new Field("contents", new StringReader(contents))); //$NON-NLS-1$
 		doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setHasFilters(boolean hasFilters) {
 		doc.add(new Field("filters", Boolean.toString(hasFilters), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
@@ -53,6 +57,7 @@ public class LuceneSearchDocument implements ISearchDocument {
 		return doc;
 	}
 
+	@Override
 	public void addContents(Reader contents, Reader exactContents) {
 		doc.add(new Field("contents", contents)); //$NON-NLS-1$
 		doc.add(new Field("exact_contents", exactContents)); //$NON-NLS-1$

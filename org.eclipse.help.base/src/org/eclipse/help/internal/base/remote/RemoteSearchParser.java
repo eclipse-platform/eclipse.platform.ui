@@ -78,6 +78,7 @@ public class RemoteSearchParser extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if (qName.equals("hit")) { //$NON-NLS-1$
 			handleHit(attributes);
@@ -90,6 +91,7 @@ public class RemoteSearchParser extends DefaultHandler {
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equals("hit")) { //$NON-NLS-1$
 			stack.pop();
@@ -102,6 +104,7 @@ public class RemoteSearchParser extends DefaultHandler {
 		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		// are we in <summary></summary> elements?
 		if (summary != null) {
@@ -138,6 +141,7 @@ public class RemoteSearchParser extends DefaultHandler {
 	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}

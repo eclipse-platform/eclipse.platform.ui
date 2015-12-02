@@ -35,6 +35,7 @@ public final class SmartAnalyzer extends Analyzer {
 	 * Reader. Delegates to DefaultAnalyzer when field used to search for exact
 	 * match, and to plugged-in analyzer for other fields.
 	 */
+	@Override
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
 		if (fieldName != null && fieldName.startsWith("exact_")) { //$NON-NLS-1$
 			return exactAnalyzer.tokenStream(fieldName, reader);

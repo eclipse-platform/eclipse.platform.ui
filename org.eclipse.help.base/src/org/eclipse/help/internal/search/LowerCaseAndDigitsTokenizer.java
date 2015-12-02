@@ -24,11 +24,13 @@ public class LowerCaseAndDigitsTokenizer extends CharTokenizer {
     public LowerCaseAndDigitsTokenizer(Reader input) {
         super(Version.LUCENE_30, input);
     }
-    protected char normalize(char c) {
+    @Override
+	protected char normalize(char c) {
         return Character.toLowerCase(c);
     }
 
-    protected boolean isTokenChar(char c) {
+    @Override
+	protected boolean isTokenChar(char c) {
         return Character.isLetterOrDigit(c);
     }
 

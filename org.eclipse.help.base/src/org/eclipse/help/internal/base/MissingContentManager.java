@@ -65,6 +65,7 @@ public class MissingContentManager {
 			this.placeholderPage = placeholderPage;
 		}
 
+		@Override
 		public int compareTo(Placeholder o) {
 			return o.path.compareTo(path);
 		}

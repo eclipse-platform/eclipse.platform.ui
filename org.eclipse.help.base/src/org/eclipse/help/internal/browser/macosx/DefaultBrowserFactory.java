@@ -21,6 +21,7 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 	/*
 	 * @see IBrowserFactory#isAvailable()
 	 */
+	@Override
 	public boolean isAvailable() {
 		return System.getProperty("os.name").equals("Mac OS X"); //$NON-NLS-1$ //$NON-NLS-2$
 		/*
@@ -32,6 +33,7 @@ public class DefaultBrowserFactory implements IBrowserFactory {
 	/*
 	 * @see IBrowserFactory#createBrowser()
 	 */
+	@Override
 	public IBrowser createBrowser() {
 		return DefaultBrowserAdapter.getInstance();
 	}

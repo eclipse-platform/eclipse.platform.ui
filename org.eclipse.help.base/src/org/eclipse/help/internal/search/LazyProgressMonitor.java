@@ -31,6 +31,7 @@ class LazyProgressMonitor extends ProgressMonitorWrapper {
 	/**
 	 * @see IProgressMonitor#beginTask
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		if (totalWork > 0) {
 			this.totalWork = totalWork;
@@ -43,6 +44,7 @@ class LazyProgressMonitor extends ProgressMonitorWrapper {
 	/**
 	 * @see IProgressMonitor#worked
 	 */
+	@Override
 	public void worked(int newWork) {
 		this.work += newWork;
 		if (work >= treshold) {

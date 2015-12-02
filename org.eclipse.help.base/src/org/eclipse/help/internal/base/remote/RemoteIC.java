@@ -97,7 +97,8 @@ public class RemoteIC {
 
 	//I added this method, which overrides the original "equal" method in the class Object
 
-   public boolean equals(Object anotherObject)throws ClassCastException {
+   @Override
+public boolean equals(Object anotherObject)throws ClassCastException {
         if (!(anotherObject instanceof RemoteIC))
             return false;
         if ( !(((RemoteIC) anotherObject).getName().equals(this.getName())))

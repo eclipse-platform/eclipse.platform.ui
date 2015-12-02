@@ -24,6 +24,7 @@ public class WorkingSetComparator implements Comparator<WorkingSet> {
 	 *
 	 * @see Comparator#compare(Object, Object)
 	 */
+	@Override
 	public int compare(WorkingSet o1,WorkingSet o2) {
 		String name1 = null;
 		String name2 = null;

@@ -46,6 +46,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		}
 	}
 
+	@Override
 	public boolean inScope(IToc toc) {
 		if(null == toc){
 			if(null == criteriaScope || 0 == criteriaScope.length){
@@ -57,6 +58,7 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 		return isCriteriaInScope(criteriaOfToc);
 	}
 
+	@Override
 	public boolean inScope(ITopic topic) {
 		if(null == topic){
 			if(null == criteriaScope || 0 == criteriaScope.length){
@@ -104,10 +106,12 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 	    return criteriaMap;
 	}
 
+	@Override
 	public boolean inScope(IIndexEntry entry) {
 		return hasInScopeChildren(entry);
 	}
 
+	@Override
 	public String getName(Locale locale) {
 		return null;
 	}

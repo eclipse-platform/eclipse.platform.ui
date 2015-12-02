@@ -21,6 +21,7 @@ public class IndexerJob extends Job {
 	public IndexerJob() {
 		super(HelpBaseResources.IndexerJob_name);
 	}
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(Platform.getNL());
 		try {
@@ -42,6 +43,7 @@ public class IndexerJob extends Job {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.OK, HelpBaseResources.IndexerJob_error, e);
 		}
 	}
+	@Override
 	public boolean belongsTo(Object family) {
 		return FAMILY.equals(family);
 	}

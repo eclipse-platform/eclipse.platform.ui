@@ -35,6 +35,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 
 	private DocumentReader reader;
 
+	@Override
 	public IContext getContext(String id, String locale) {
 
 		PreferenceFileHandler prefHandler = new PreferenceFileHandler();
@@ -105,6 +106,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 	 *
 	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
 	 */
+	@Override
 	public String[] getPlugins() {
 		// this is a global provider
 		return null;

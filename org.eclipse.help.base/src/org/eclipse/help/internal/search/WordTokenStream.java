@@ -99,11 +99,13 @@ public final class WordTokenStream extends Tokenizer {
 	    return false;
 	}
 
+	@Override
 	public void reset() throws IOException {
 		super.reset();
 		clearAttributes();
 	}
 
+	@Override
 	public void close() throws IOException {
 		/// Unlikely to be called as this is a reused
 	    if (this.reader != null) {

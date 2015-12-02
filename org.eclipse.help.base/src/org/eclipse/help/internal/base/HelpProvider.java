@@ -28,6 +28,7 @@ public class HelpProvider implements IHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.HelpPlugin.IHelpProvider#getHelpContent(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public InputStream getHelpContent(String href, String locale) {
 		try {
 			URL helpURL = new URL("help", //$NON-NLS-1$

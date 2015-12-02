@@ -58,6 +58,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 		this.name = name;
 	}
 
+	@Override
 	public boolean inScope(IToc toc) {
 		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
 			return inContentScope(toc) && inCriteriaScope(toc);
@@ -131,6 +132,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 	    return criteriaMap;
 	}
 
+	@Override
 	public boolean inScope(ITopic topic) {
 		if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
 			return inContentScope(topic) && inCriteriaScope(topic);
@@ -209,14 +211,17 @@ public class WorkingSetScope extends AbstractHelpScope {
 		return isCriteriaInScope(criteriaOfTopic);
 	}
 
+	@Override
 	public boolean inScope(IIndexEntry entry) {
 		return hasInScopeChildren(entry);
 	}
 
+	@Override
 	public boolean inScope(IIndexSee see) {
 		return hasInScopeChildren(see);
 	}
 
+	@Override
 	public String getName(Locale locale) {
 		return name;
 	}

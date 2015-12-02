@@ -31,6 +31,7 @@ public class IndexToolApplication implements IApplication {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
+	@Override
 	public synchronized Object start(IApplicationContext context) throws Exception {
 		try {
 			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
@@ -60,6 +61,7 @@ public class IndexToolApplication implements IApplication {
 	/* (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
+	@Override
 	public synchronized void stop() {
 	}
 

@@ -62,12 +62,14 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#close()
 	 */
+	@Override
 	public void close() {
 	}
 
 	/*
 	 * @see IBrowser#displayURL(String)
 	 */
+	@Override
 	public void displayURL(String url) {
 		if (lastBrowserThread != null)
 			lastBrowserThread.exitRequested = true;
@@ -83,6 +85,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#isCloseSupported()
 	 */
+	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
@@ -90,6 +93,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#isSetLocationSupported()
 	 */
+	@Override
 	public boolean isSetLocationSupported() {
 		return true;
 	}
@@ -97,6 +101,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#isSetSizeSupported()
 	 */
+	@Override
 	public boolean isSetSizeSupported() {
 		return true;
 	}
@@ -104,6 +109,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#setLocation(int, int)
 	 */
+	@Override
 	public void setLocation(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -113,6 +119,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
+	@Override
 	public void setSize(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -228,6 +235,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			return false;
 		}
 
+		@Override
 		public void run() {
 			// If browser is opening, wait until it fully opens,
 			waitForBrowser();

@@ -34,12 +34,14 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	public RemoteExtensionProvider() {
 		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				contentChanged();
 			}
 		});
 	}
 
+	@Override
 	public IContentExtension[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			List<IContentExtension> contributions = new ArrayList<IContentExtension>();

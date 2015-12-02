@@ -31,6 +31,7 @@ public class XHTMLContentDescriber implements IContentDescriber {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.content.IContentDescriber#describe(java.io.InputStream, org.eclipse.core.runtime.content.IContentDescription)
 	 */
+	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		Reader reader = null;
 		try {
@@ -57,6 +58,7 @@ public class XHTMLContentDescriber implements IContentDescriber {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.content.IContentDescriber#getSupportedOptions()
 	 */
+	@Override
 	public QualifiedName[] getSupportedOptions() {
 		return new QualifiedName[0];
 	}

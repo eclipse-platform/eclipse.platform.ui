@@ -20,6 +20,7 @@ public class CustomBrowserFactory implements IBrowserFactory {
 	/**
 	 * @see org.eclipse.help.browser.IBrowserFactory#isAvailable()
 	 */
+	@Override
 	public boolean isAvailable() {
 		return true;
 	}
@@ -27,6 +28,7 @@ public class CustomBrowserFactory implements IBrowserFactory {
 	/**
 	 * @see org.eclipse.help.browser.IBrowserFactory#createBrowser()
 	 */
+	@Override
 	public IBrowser createBrowser() {
 		return new CustomBrowser();
 	}

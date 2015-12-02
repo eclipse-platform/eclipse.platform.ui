@@ -649,6 +649,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		}
 	}
 
+	@Override
 	public String getLocale() {
 		return locale;
 	}
@@ -1116,6 +1117,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		return htmlSearchParticipant.addDocument(this, pluginId, name, url, id, new LuceneSearchDocument(doc));
 	}
 
+	@Override
 	public IStatus addSearchableDocument(String pluginId, String name, URL url, String id, ISearchDocument doc) {
 		// In the help system the only class that implements ISearchDocument is LuceneSearchDocument
 		LuceneSearchDocument luceneDoc = (LuceneSearchDocument)doc;

@@ -69,6 +69,7 @@ public class Help {
 	 *            directory containing Eclipse plugins
 	 * @deprecated use Help#Help(String[])
 	 */
+	@Deprecated
 	public Help(String pluginsDir) {
 		File plugins = new File(pluginsDir);
 		String install = plugins.getParent();

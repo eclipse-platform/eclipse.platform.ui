@@ -94,14 +94,17 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 			this.locale = locale;
 		}
 
+		@Override
 		public String getLocale() {
 			return locale;
 		}
 
+		@Override
 		public void setTitle(String title) {
 			this.title = title;
 		}
 
+		@Override
 		public void addToSummary(String text) {
 			if (summary.length() >= SUMMARY_LENGTH)
 				return;
@@ -112,6 +115,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 				summary.delete(SUMMARY_LENGTH, summary.length());
 		}
 
+		@Override
 		public void addText(String text) {
 			if (buffer.length() > 0)
 				buffer.append(" "); //$NON-NLS-1$
@@ -147,6 +151,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 			this.data = data;
 		}
 
+		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException {
 			stack.push(qName);
@@ -156,6 +161,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 			}
 		}
 
+		@Override
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			handleEndElement(qName, data);
 			String top = stack.peek();
@@ -168,6 +174,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 		 */
+		@Override
 		public void startDocument() throws SAXException {
 			SearchParticipantXML.this.handleStartDocument(data);
 		}
@@ -177,6 +184,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 		 */
+		@Override
 		public void endDocument() throws SAXException {
 			SearchParticipantXML.this.handleEndDocument(data);
 		}
@@ -187,6 +195,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String,
 		 *      java.lang.String)
 		 */
+		@Override
 		public void processingInstruction(String target, String pidata) throws SAXException {
 			handleProcessingInstruction(target, data);
 		}
@@ -196,6 +205,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
+		@Override
 		public void characters(char[] characters, int start, int length) throws SAXException {
 			if (length == 0)
 				return;
@@ -214,6 +224,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}
@@ -282,6 +293,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 	protected abstract void handleText(String text, IParsedXMLContent data);
 
 
+	@Override
 	public IStatus addDocument(IHelpSearchIndex index, String pluginId,
 			String name, URL url, String id, ISearchDocument doc) {
 		InputStream stream = null;

@@ -58,7 +58,8 @@ public class HTMLParser implements HTMLParserConstants {
   /**
    * @deprecated Use HTMLParser(FileInputStream) instead
    */
-  public HTMLParser(File file) throws FileNotFoundException {
+  @Deprecated
+public HTMLParser(File file) throws FileNotFoundException {
     this(new FileInputStream(file));
   }
 
