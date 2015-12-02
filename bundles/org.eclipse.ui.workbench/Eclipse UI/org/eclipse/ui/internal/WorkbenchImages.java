@@ -140,304 +140,196 @@ public/*final*/class WorkbenchImages {
 		declareImage(ISharedImages.IMG_DEC_FIELD_WARNING, PATH_OVERLAY + "warning_ovr.png", true); //$NON-NLS-1$
 
 		// Pinning
-	    declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
-                PATH_ETOOL + "pin_editor.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED,
-                PATH_DTOOL + "pin_editor.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR, PATH_ETOOL + "pin_editor.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOOL + "pin_editor.png", false); //$NON-NLS-1$
 
-        // other toolbar buttons
+		// other toolbar buttons
 
 		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL + "save_edit.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, PATH_DTOOL
- + "save_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED, PATH_DTOOL + "save_edit.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, PATH_ETOOL
- + "saveas_edit.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL
- + "saveas_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT, PATH_ETOOL + "saveas_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED, PATH_DTOOL + "saveas_edit.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, PATH_ETOOL
- + "saveall_edit.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL
- + "saveall_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT, PATH_ETOOL + "saveall_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED, PATH_DTOOL + "saveall_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_UNDO,
-                PATH_ETOOL + "undo_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_UNDO_DISABLED, PATH_DTOOL
-                + "undo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UNDO, PATH_ETOOL + "undo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UNDO_DISABLED, PATH_DTOOL + "undo_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_REDO,
-                PATH_ETOOL + "redo_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_REDO_DISABLED, PATH_DTOOL
-                + "redo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_REDO, PATH_ETOOL + "redo_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_REDO_DISABLED, PATH_DTOOL + "redo_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_CUT,
-                PATH_ETOOL + "cut_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_CUT_DISABLED, PATH_DTOOL
-                + "cut_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_CUT, PATH_ETOOL + "cut_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_CUT_DISABLED, PATH_DTOOL + "cut_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_COPY,
-                PATH_ETOOL + "copy_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_COPY_DISABLED, PATH_DTOOL
-                + "copy_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_COPY, PATH_ETOOL + "copy_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_COPY_DISABLED, PATH_DTOOL + "copy_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_PASTE, PATH_ETOOL
-                + "paste_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_PASTE_DISABLED, PATH_DTOOL
-                + "paste_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_PASTE, PATH_ETOOL + "paste_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_PASTE_DISABLED, PATH_DTOOL + "paste_edit.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_DELETE, PATH_ETOOL
-                + "delete_edit.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL
-                + "delete_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_DELETE, PATH_ETOOL + "delete_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_DELETE_DISABLED, PATH_DTOOL + "delete_edit.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_DELETE,
-				PATH_ETOOL + "delete.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_DELETE_DISABLED, PATH_DTOOL
-				+ "delete.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_DELETE, PATH_ETOOL + "delete.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_DELETE_DISABLED, PATH_DTOOL + "delete.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_CLEAR,
-				PATH_ETOOL + "clear.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_CLEAR_DISABLED, PATH_DTOOL
-				+ "clear.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_CLEAR, PATH_ETOOL + "clear.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_CLEAR_DISABLED, PATH_DTOOL + "clear.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD,
-                PATH_ETOOL + "new_wiz.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL
-                        + "new_wiz.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD, PATH_ETOOL + "new_wiz.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL + "new_wiz.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT, PATH_ETOOL
-				+ "print_edit.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED, PATH_DTOOL
-				+ "print_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT, PATH_ETOOL + "print_edit.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED, PATH_DTOOL + "print_edit.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS,
-                PATH_ETOOL + "help_contents.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH,
-                PATH_ETOOL + "help_search.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS, PATH_ETOOL + "help_contents.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH, PATH_ETOOL + "help_search.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW,
-                PATH_ETOOL + "new_fastview.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW,
-                PATH_DTOOL + "new_fastview.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW, PATH_ETOOL + "new_fastview.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW, PATH_DTOOL + "new_fastview.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART,
-                PATH_ETOOL + "fastview_restore.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART,
-                PATH_ETOOL + "editor_area.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART, PATH_ETOOL + "fastview_restore.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART, PATH_ETOOL + "editor_area.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL
-                + "forward_nav.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL
-                + "forward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL + "forward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL + "forward_nav.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_BACK, PATH_ELOCALTOOL
-                + "backward_nav.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_BACK_DISABLED, PATH_DLOCALTOOL
-                + "backward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_BACK, PATH_ELOCALTOOL + "backward_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_BACK_DISABLED, PATH_DLOCALTOOL + "backward_nav.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_TOOL_UP,
-                PATH_ELOCALTOOL + "up_nav.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_TOOL_UP_DISABLED, PATH_DLOCALTOOL
-                + "up_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UP, PATH_ELOCALTOOL + "up_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_TOOL_UP_DISABLED, PATH_DLOCALTOOL + "up_nav.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_SYNCED, PATH_ELOCALTOOL
-				+ "synced.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_SYNCED_DISABLED, PATH_DLOCALTOOL
-				+ "synced.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_SYNCED, PATH_ELOCALTOOL + "synced.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_SYNCED_DISABLED, PATH_DLOCALTOOL + "synced.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL
-				+ "collapseall.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED,
-				PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_REMOVE, PATH_ELOCALTOOL
-				+ "remove.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_REMOVE_DISABLED, PATH_DLOCALTOOL
-				+ "remove.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVE, PATH_ELOCALTOOL + "remove.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVE_DISABLED, PATH_DLOCALTOOL + "remove.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_REMOVEALL, PATH_ELOCALTOOL
-				+ "removeall.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_REMOVEALL_DISABLED, PATH_DLOCALTOOL
-				+ "removeall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVEALL, PATH_ELOCALTOOL + "removeall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_REMOVEALL_DISABLED, PATH_DLOCALTOOL + "removeall.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL
-				+ "collapseall.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED,
-				PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL, PATH_ELOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_COLLAPSEALL_DISABLED, PATH_DLOCALTOOL + "collapseall.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ELCL_STOP,
-				PATH_ELOCALTOOL + "stop.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ELCL_STOP_DISABLED, PATH_DLOCALTOOL
-				+ "stop.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_STOP, PATH_ELOCALTOOL + "stop.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ELCL_STOP_DISABLED, PATH_DLOCALTOOL + "stop.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE, PATH_EVIEW
-                + "new_persp.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE, PATH_EVIEW + "new_persp.png", false); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV, PATH_ELOCALTOOL
-				+ "home_nav.png", true); //$NON-NLS-1$
-		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV_DISABLED, PATH_DLOCALTOOL
-				+ "home_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV, PATH_ELOCALTOOL + "home_nav.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_HOME_NAV_DISABLED, PATH_DLOCALTOOL + "home_nav.png", true); //$NON-NLS-1$
 
-		declareImage(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE, PATH_EVIEW
-				+ "default_persp.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE, PATH_EVIEW + "default_persp.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-                        + "new_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN + "new_wiz.png", false); //$NON-NLS-1$
 
-	// testing PNG images cross platform, allows designers to pickup nightly builds
-//        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
-//                + "new_wiz.png", false); //$NON-NLS-1$
+		// testing PNG images cross platform, allows designers to pickup nightly
+		// builds
+		// declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ,
+		// PATH_WIZBAN
+		// + "new_wiz.png", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL
-                        + "import_wiz.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL
-                        + "export_wiz.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN
-                        + "import_wiz.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN
-                        + "export_wiz.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ, PATH_WIZBAN
-                + "importpref_wiz.png", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_PREF_WIZ, PATH_WIZBAN
-                + "exportpref_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL + "import_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL + "export_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN + "import_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ, PATH_WIZBAN + "export_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_PREF_WIZ, PATH_WIZBAN + "importpref_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_PREF_WIZ, PATH_WIZBAN + "exportpref_wiz.png", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ,
-                PATH_WIZBAN + "workset_wiz.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ, PATH_WIZBAN + "workset_wiz.png", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC,
-                PATH_EVIEW + "defaultview_misc.png", false); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC, PATH_EVIEW + "defaultview_misc.png", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT, PATH_OBJECT
-                + "font.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY,
-                PATH_OBJECT + "theme_category.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY, PATH_OBJECT
-                + "activity.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY,
-                PATH_OBJECT + "activity_category.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS,
-     		   PATH_OBJECT + "workingsets.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT, PATH_OBJECT + "font.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY, PATH_OBJECT + "theme_category.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY, PATH_OBJECT + "activity.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY, PATH_OBJECT + "activity_category.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_WORKING_SETS, PATH_OBJECT + "workingsets.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR,
-      		   PATH_OBJECT + "separator.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR, PATH_OBJECT + "separator.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_NODE,
-        		PATH_OBJECT + "generic_elements.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT,
-        		PATH_OBJECT + "generic_element.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_NODE, PATH_OBJECT + "generic_elements.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT, PATH_OBJECT + "generic_element.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_OBJ_ADD,
-                PATH_OBJECT + "add_obj.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJ_FILE,
-                PATH_OBJECT + "file_obj.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJ_FOLDER,
-                PATH_OBJECT + "fldr_obj.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJ_ELEMENT, PATH_OBJECT
-                + "elements_obj.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_DEF_VIEW, PATH_EVIEW
-                + "defaultview_misc.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJ_ADD, PATH_OBJECT + "add_obj.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJ_FILE, PATH_OBJECT + "file_obj.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJ_FOLDER, PATH_OBJECT + "fldr_obj.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJ_ELEMENT, PATH_OBJECT + "elements_obj.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_DEF_VIEW, PATH_EVIEW + "defaultview_misc.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW,
-                PATH_ELOCALTOOL + "close_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW,
-                PATH_ELOCALTOOL + "pin_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW,
-                PATH_ELOCALTOOL + "min_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU,
-                PATH_ELOCALTOOL + "view_menu.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU,
-        		PATH_ELOCALTOOL + "button_menu.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_LCL_LINKTO_HELP,
-                PATH_ELOCALTOOL + "linkto_help.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_ELOCALTOOL + "close_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_ELOCALTOOL + "pin_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_ELOCALTOOL + "min_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL + "view_menu.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU, PATH_ELOCALTOOL + "button_menu.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_LCL_LINKTO_HELP, PATH_ELOCALTOOL + "linkto_help.png", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN,
-                PATH_ELOCALTOOL + "thin_close_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN,
-                PATH_ELOCALTOOL + "thin_hide_toolbar.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN,
-                PATH_ELOCALTOOL + "thin_max_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN,
-                PATH_ELOCALTOOL + "thin_min_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN,
-                PATH_ELOCALTOOL + "thin_restore_view.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_SHOW_TOOLBAR_THIN,
-                PATH_ELOCALTOOL + "thin_show_toolbar.png", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN,
-                PATH_ELOCALTOOL + "thin_view_menu.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN, PATH_ELOCALTOOL + "thin_close_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN, PATH_ELOCALTOOL + "thin_hide_toolbar.png", //$NON-NLS-1$
+				true);
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN, PATH_ELOCALTOOL + "thin_max_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN, PATH_ELOCALTOOL + "thin_min_view.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN, PATH_ELOCALTOOL + "thin_restore_view.png", //$NON-NLS-1$
+				true);
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_SHOW_TOOLBAR_THIN, PATH_ELOCALTOOL + "thin_show_toolbar.png", //$NON-NLS-1$
+				true);
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN, PATH_ELOCALTOOL + "thin_view_menu.png", true); //$NON-NLS-1$
 
+		declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT + "error_tsk.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT + "warn_tsk.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT + "info_tsk.png", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT
-                + "error_tsk.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT
-                + "warn_tsk.png", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT
-                + "info_tsk.png", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE, PATH_POINTER + "left_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_LEFT_MASK, PATH_POINTER + "left_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE, PATH_POINTER + "right_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_MASK, PATH_POINTER + "right_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOP_SOURCE, PATH_POINTER + "top_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOP_MASK, PATH_POINTER + "top_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE, PATH_POINTER + "bottom_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK, PATH_POINTER + "bottom_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE, PATH_POINTER + "invalid_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_INVALID_MASK, PATH_POINTER + "invalid_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_STACK_SOURCE, PATH_POINTER + "stack_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_STACK_MASK, PATH_POINTER + "stack_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE, PATH_POINTER + "offscreen_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK, PATH_POINTER + "offscreen_mask.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
+		declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
 
-        declareImage(ISharedImages.IMG_OBJS_DND_LEFT_SOURCE,
-                PATH_POINTER + "left_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_LEFT_MASK,
-                PATH_POINTER + "left_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_SOURCE,
-                PATH_POINTER + "right_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_RIGHT_MASK,
-                PATH_POINTER + "right_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_TOP_SOURCE,
-                PATH_POINTER + "top_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_TOP_MASK,
-                PATH_POINTER + "top_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_SOURCE,
-                PATH_POINTER + "bottom_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_BOTTOM_MASK,
-                PATH_POINTER + "bottom_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_INVALID_SOURCE,
-                PATH_POINTER + "invalid_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_INVALID_MASK,
-                PATH_POINTER + "invalid_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_STACK_SOURCE,
-                PATH_POINTER + "stack_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_STACK_MASK,
-                PATH_POINTER + "stack_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_SOURCE,
-                PATH_POINTER + "offscreen_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_OFFSCREEN_MASK,
-                PATH_POINTER + "offscreen_mask.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_SOURCE,
-                PATH_POINTER + "tofastview_source.bmp", true); //$NON-NLS-1$
-        declareImage(ISharedImages.IMG_OBJS_DND_TOFASTVIEW_MASK,
-                PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
-
-        // signed jar images
-		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT
-				+ "signed_yes_tbl.png", true); //$NON-NLS-1$
-		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO, PATH_OBJECT
-				+ "signed_no_tbl.png", true); //$NON-NLS-1$
-		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN,
-				PATH_OBJECT + "signed_unkn_tbl.png", true); //$NON-NLS-1$
+		// signed jar images
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT + "signed_yes_tbl.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO, PATH_OBJECT + "signed_no_tbl.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN, PATH_OBJECT + "signed_unkn_tbl.png", true); //$NON-NLS-1$
 
 		declareHoverImages();
 
-        // Manually create the view menu
+		// Manually create the view menu
 
-        Display d = Display.getCurrent();
+		Display d = Display.getCurrent();
 
-        Image viewMenu = new Image(d, 11, 16);
-        Image viewMenuMask = new Image(d, 11, 16);
+		Image viewMenu = new Image(d, 11, 16);
+		Image viewMenuMask = new Image(d, 11, 16);
 
-        GC gc = new GC(viewMenu);
-        GC maskgc = new GC(viewMenuMask);
-        drawViewMenu(gc, maskgc);
-        gc.dispose();
-        maskgc.dispose();
+		GC gc = new GC(viewMenu);
+		GC maskgc = new GC(viewMenuMask);
+		drawViewMenu(gc, maskgc);
+		gc.dispose();
+		maskgc.dispose();
 
-        ImageData data = viewMenu.getImageData();
-        data.transparentPixel = data.getPixel(0,0);
+		ImageData data = viewMenu.getImageData();
+		data.transparentPixel = data.getPixel(0, 0);
 
-        Image vm2 = new Image(d, viewMenu.getImageData(), viewMenuMask.getImageData());
-        viewMenu.dispose();
-        viewMenuMask.dispose();
+		Image vm2 = new Image(d, viewMenu.getImageData(), viewMenuMask.getImageData());
+		viewMenu.dispose();
+		viewMenuMask.dispose();
 
-        getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
+		getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
 
     }
 
