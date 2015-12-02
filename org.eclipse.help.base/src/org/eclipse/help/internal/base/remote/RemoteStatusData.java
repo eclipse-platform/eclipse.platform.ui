@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alex Blewitt - Bug 474070 
+ *     Alex Blewitt - Bug 474070
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
