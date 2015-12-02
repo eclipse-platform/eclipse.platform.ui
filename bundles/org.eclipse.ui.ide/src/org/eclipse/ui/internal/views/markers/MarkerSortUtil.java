@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 1994, 2009
+ * Copyright (c) 1994, 2015
  * Hewlett-Packard Company
  *
  * Permission to use, copy, modify, distribute and sell this software

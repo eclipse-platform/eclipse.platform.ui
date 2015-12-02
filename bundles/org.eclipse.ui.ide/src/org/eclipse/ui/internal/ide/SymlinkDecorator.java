@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012, 2014 Robin Rosenberg <robin.rosenberg@dewire.com>
+ * Copyright (C) 2012, 2015 Robin Rosenberg <robin.rosenberg@dewire.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
