@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
  ******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -127,7 +128,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager()
 				.getWorkingSets();
 		viewer.setInput(workingSets);
-		viewer.setFilters(new ViewerFilter[] { new Filter() });
+		viewer.setFilters(new Filter());
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override

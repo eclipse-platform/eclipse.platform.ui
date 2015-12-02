@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - test case for bug 157309, 177619
  *     Brad Reynolds - test case for bug 141435
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -70,7 +71,7 @@ public class ListViewerTest extends StructuredViewerTest {
     	v.insert(element1, 1);
     	assertNotSame("test insert", element1, v.getElementAt(1));
 
-    	v.setFilters(new ViewerFilter[0]);
+		v.setFilters();
     	v.remove(element);
     	v.remove(element1);
     }

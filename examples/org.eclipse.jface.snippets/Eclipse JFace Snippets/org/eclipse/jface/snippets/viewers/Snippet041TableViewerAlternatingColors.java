@@ -9,6 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 413427, 475361
  *     Jeanderson Candido (http://jeandersonbc.github.io) - Bug 414565
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -114,11 +115,11 @@ public class Snippet041TableViewerAlternatingColors {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (b) {
-					viewer.setFilters(new ViewerFilter[] { createFilterForViewer() });
+					viewer.setFilters(createFilterForViewer());
 					b = false;
 
 				} else {
-					viewer.setFilters(new ViewerFilter[0]);
+					viewer.setFilters();
 					b = true;
 				}
 			}

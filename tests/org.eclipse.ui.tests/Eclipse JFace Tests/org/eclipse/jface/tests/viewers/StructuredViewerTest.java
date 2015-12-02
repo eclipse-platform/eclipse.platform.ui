@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - bug 151205
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -190,14 +191,14 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
 
     public void testSetFilters() {
     	ViewerFilter filter = new TestLabelFilter();
-    	fViewer.setFilters(new ViewerFilter[] { filter, new TestLabelFilter2() });
+		fViewer.setFilters(filter, new TestLabelFilter2());
 //    	System.err.println("Item: " + getItemCount() );
     	assertTrue("2 filters count", getItemCount() == 1);
 
-    	fViewer.setFilters(new ViewerFilter[] { filter });
+		fViewer.setFilters(filter);
     	assertTrue("1 filtered count", getItemCount() == 5);
 
-    	fViewer.setFilters(new ViewerFilter[0]);
+		fViewer.setFilters();
     	assertTrue("unfiltered count", getItemCount() == 10);
     }
 
