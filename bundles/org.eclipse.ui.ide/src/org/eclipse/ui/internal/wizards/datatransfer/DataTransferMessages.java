@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,8 @@ public class DataTransferMessages extends NLS {
 	public static String DataTransfer_exportProblems;
 
 	public static String ExportFile_overwriteExisting;
+	public static String ExportFile_resolveLinkedResources;
+
 	public static String FileExport_selectDestinationTitle;
 	public static String FileExport_selectDestinationMessage;
 	public static String FileExport_exportLocalFileSystem;

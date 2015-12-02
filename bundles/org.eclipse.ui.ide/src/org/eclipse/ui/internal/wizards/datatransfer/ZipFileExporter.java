@@ -31,14 +31,21 @@ public class ZipFileExporter implements IFileExporter {
 
     private boolean useCompression = true;
 
+    private boolean resolveLinks;
+
     /**
-     *	Create an instance of this class.
+     * Create an instance of this class.
      *
-     *	@param filename java.lang.String
-     *	@param compress boolean
-     *	@exception java.io.IOException
+     * @param filename
+     *            java.lang.String
+     * @param compress
+     *            boolean
+     * @param resolveLinks
+     *            boolean
+     * @exception java.io.IOException
      */
-    public ZipFileExporter(String filename, boolean compress) throws IOException {
+    public ZipFileExporter(String filename, boolean compress, boolean resolveLinks) throws IOException {
+        this.resolveLinks = resolveLinks;
         outputStream = new ZipOutputStream(new FileOutputStream(filename));
         useCompression = compress;
     }
@@ -110,6 +117,9 @@ public class ZipFileExporter implements IFileExporter {
     @Override
 	public void write(IContainer container, String destinationPath)
             throws IOException {
+        if (!resolveLinks && container.isLinked(IResource.DEPTH_INFINITE)) {
+            return;
+        }
         ZipEntry newEntry = new ZipEntry(destinationPath);
         outputStream.putNextEntry(newEntry);
     }
@@ -125,6 +135,9 @@ public class ZipFileExporter implements IFileExporter {
     @Override
 	public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
+        if (!resolveLinks && resource.isLinked(IResource.DEPTH_INFINITE)) {
+            return;
+        }
         ZipEntry newEntry = new ZipEntry(destinationPath);
         write(newEntry, resource);
     }

@@ -33,17 +33,23 @@ import org.eclipse.core.runtime.CoreException;
 public class TarFileExporter implements IFileExporter {
     private TarOutputStream outputStream;
     private GZIPOutputStream gzipOutputStream;
+	private boolean resolveLinks;
 
 
     /**
-     *	Create an instance of this class.
-     *
-     *	@param filename java.lang.String
-     *	@param compress boolean
-     *	@exception java.io.IOException
-     */
-    public TarFileExporter(String filename, boolean compress) throws IOException {
-    	if(compress) {
+	 * Create an instance of this class.
+	 *
+	 * @param filename
+	 *            java.lang.String
+	 * @param compress
+	 *            boolean
+	 * @param resolveLinks
+	 *            boolean
+	 * @exception java.io.IOException
+	 */
+	public TarFileExporter(String filename, boolean compress, boolean resolveLinks) throws IOException {
+		this.resolveLinks = resolveLinks;
+		if (compress) {
     		gzipOutputStream = new GZIPOutputStream(new FileOutputStream(filename));
     		outputStream = new TarOutputStream(new BufferedOutputStream(gzipOutputStream));
     	} else {
@@ -100,6 +106,9 @@ public class TarFileExporter implements IFileExporter {
     @Override
 	public void write(IContainer container, String destinationPath)
             throws IOException {
+		if (!resolveLinks && container.isLinked(IResource.DEPTH_INFINITE)) {
+			return;
+		}
         TarEntry newEntry = new TarEntry(destinationPath);
         if(container.getLocalTimeStamp() != IResource.NULL_STAMP) {
         	newEntry.setTime(container.getLocalTimeStamp() / 1000);
@@ -126,7 +135,9 @@ public class TarFileExporter implements IFileExporter {
     @Override
 	public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
-
+		if (!resolveLinks && resource.isLinked(IResource.DEPTH_INFINITE)) {
+			return;
+		}
         TarEntry newEntry = new TarEntry(destinationPath);
         if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
         	newEntry.setTime(resource.getLocalTimeStamp() / 1000);
