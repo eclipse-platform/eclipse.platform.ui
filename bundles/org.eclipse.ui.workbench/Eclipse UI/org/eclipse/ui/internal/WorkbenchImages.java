@@ -229,12 +229,6 @@ public/*final*/class WorkbenchImages {
 
 		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN + "new_wiz.png", false); //$NON-NLS-1$
 
-		// testing PNG images cross platform, allows designers to pickup nightly
-		// builds
-		// declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ,
-		// PATH_WIZBAN
-		// + "new_wiz.png", false); //$NON-NLS-1$
-
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_IMPORT_WIZ, PATH_ETOOL + "import_wiz.png", false); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ, PATH_ETOOL + "export_wiz.png", false); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ, PATH_WIZBAN + "import_wiz.png", false); //$NON-NLS-1$
