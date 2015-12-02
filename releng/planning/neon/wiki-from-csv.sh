@@ -13,7 +13,7 @@ F_TARGET="$1" ; shift
 F_SEARCH="$1" ; shift
 
 NUM=1
-curl -o search.csv 'https://bugs.eclipse.org/bugs/buglist.cgi?classification=Eclipse&component=Runtime&component=IDE&component=User%20Assistance&component=UI&order=bug_status&list_id=5935738&product=Platform&query_format=advanced&target_milestone='$F_SEARCH'&query_based_on=&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Cqa_contact&ctype=csv'
+curl -o search.csv 'https://bugs.eclipse.org/bugs/buglist.cgi?classification=Eclipse&component=Runtime&component=IDE&component=User%20Assistance&component=UI&component=Text&order=bug_status&list_id=5935738&product=Platform&query_format=advanced&target_milestone='$F_SEARCH'&query_based_on=&columnlist=bug_id%2Ctarget_milestone%2Cassigned_to%2Cbug_status%2Cresolution%2Cshort_desc%2Cbug_severity%2Ccomponent&ctype=csv'
 grep -v target_milestone search.csv >t1 ; mv t1 search.csv
 
 
@@ -21,7 +21,7 @@ echo "== $F_TARGET =="
 echo ""
 echo '{| class="wikitable sortable" border="1"'
 echo '|-'
-echo '! !! Bug !! TM !! Sev !! Assign !! Status !! Title'
+echo '! !! Bug !! TM !! Component !! Sev !! Assign !! Status !! Title'
 
 while read line; do
 	BUG=$( echo $line | csvtool col 1 - )
@@ -35,16 +35,13 @@ while read line; do
 	fi
 	TITLE=$( echo $line | csvtool col 6 - )
 	SEV=$( echo $line | csvtool col 7 - )
-	QA=$( echo $line | csvtool col 8 - )
-	if [ "platform-ui-triaged" = "$ASSIGNED_TO" -a ! -z "$QA" ]; then
-		ASSIGNED_TO="$QA"
-	fi
-        if [ "$TITLE -lt 100" ]; then
-		TITLE="${TITLE:0:100}..."
+	COMPONENT=$( echo $line | csvtool col 8 - )
+        if [ "$TITLE -gt 100" ]; then
+		TITLE="${TITLE:0:100}"
 	fi
 
 	echo '|-'
-	echo "| $NUM || $PRE{{bug|$BUG}}$POST || $TARGET || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
+	echo "| $NUM || $PRE{{bug|$BUG}}$POST || $TARGET || $COMPONENT || $SEV || $ASSIGNED_TO || $STATUS || $PRE$TITLE$POST"
 	BUG=""
 	TARGET=""
 	TITLE=""
@@ -53,6 +50,7 @@ while read line; do
 	SEV=""
 	PRE=""
 	POST=""
+	COMPONENT=""
 	(( NUM = NUM + 1 ))
 done < search.csv
 
