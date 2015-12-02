@@ -976,6 +976,7 @@ public class WorkbenchMessages extends NLS {
 
 	// WorkingSetConfigurationBlock
 	public static String WorkingSetConfigurationBlock_SelectWorkingSet_button;
+	public static String WorkingSetConfigurationBlock_NewWorkingSet_button;
 	public static String WorkingSetConfigurationBlock_WorkingSetText_name;
 
 	public static String WorkingSetPropertyPage_ReadOnlyWorkingSet_description;
