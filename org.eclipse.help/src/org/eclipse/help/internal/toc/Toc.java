@@ -3,7 +3,7 @@
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
@@ -188,7 +188,7 @@ public class Toc extends UAElement implements IToc2 {
 	public ITopic[] getTopics() {
 		return (ITopic[]) getChildren(ITopic.class);
 	}
-	
+
 	@Override
 	public ICriteria[] getCriteria() {
 		return (ICriteria[]) getChildren(ICriteria.class);
@@ -217,5 +217,5 @@ public class Toc extends UAElement implements IToc2 {
 	public void setTocContribution(ITocContribution contribution) {
 		this.contribution = contribution;
 	}
-	
+
 }

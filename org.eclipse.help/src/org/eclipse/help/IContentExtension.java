@@ -12,7 +12,7 @@ package org.eclipse.help;
 
 /**
  * An extension of a document's content.
- * 
+ *
  * @since 3.3
  */
 public interface IContentExtension extends IUAElement {
@@ -21,7 +21,7 @@ public interface IContentExtension extends IUAElement {
 	 * Extension type for a contribution at an anchor.
 	 */
 	public static final int CONTRIBUTION = 0;
-	
+
 	/**
 	 * Extension type for element replacement.
 	 */
@@ -31,22 +31,22 @@ public interface IContentExtension extends IUAElement {
 	 * Returns the extension's content path (what to contribute into the
 	 * document). This is a bundle-relative path with an id, of the form
 	 * "path/file.ext#elementId".
-	 * 
+	 *
 	 * @return path to the extension's content
 	 */
 	public String getContent();
-	
+
 	/**
 	 * Returns the extensions target path (what to extend).
-	 * 
+	 *
 	 * @return path to the target element to extend
 	 */
 	public String getPath();
-	
+
 	/**
 	 * Returns the type of extension this is. Must be one of the static
 	 * constants defined by this interface.
-	 * 
+	 *
 	 * @return the extension type
 	 */
 	public int getType();

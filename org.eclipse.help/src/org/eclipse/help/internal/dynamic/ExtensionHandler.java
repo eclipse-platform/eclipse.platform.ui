@@ -28,7 +28,7 @@ public class ExtensionHandler extends ProcessorHandler {
 	private ExtensionResolver resolver;
 	private DocumentReader reader;
 	private String locale;
-	
+
 	/*
 	 * This handler must know the locale since it's pulling content
 	 * in from other documents.
@@ -37,7 +37,7 @@ public class ExtensionHandler extends ProcessorHandler {
 		this.reader = reader;
 		this.locale = locale;
 	}
-	
+
 	@Override
 	public short handle(UAElement element, String path) {
 		if (element instanceof Anchor) {
@@ -48,7 +48,7 @@ public class ExtensionHandler extends ProcessorHandler {
 		}
 		return UNHANDLED;
 	}
-	
+
 	/*
 	 * Handle the given extension-related node. It is either an anchor
 	 * or an element with an id that could potentially be replaced.

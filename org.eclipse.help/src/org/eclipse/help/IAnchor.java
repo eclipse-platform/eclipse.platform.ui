@@ -14,14 +14,14 @@ package org.eclipse.help;
  * Specifies a location in a document where other plug-ins may contribute
  * additional content. Extenders must specify a content extension and reference
  * this anchor to contribute content.
- * 
+ *
  * @since 3.3
  */
 public interface IAnchor extends IUAElement {
 
 	/**
 	 * Returns the anchor's id. This id must be unique within this document.
-	 * 
+	 *
 	 * @return the anchor id
 	 */
 	public String getId();

@@ -13,7 +13,7 @@ package org.eclipse.help;
 /**
  * A directive indicating the content at the given path should be included in
  * this document, and replace this node.
- * 
+ *
  * @since 3.5
  */
 public interface IIndexSubpath extends IUAElement {

@@ -13,7 +13,7 @@ package org.eclipse.help;
 
 /**
  * Represents criteria definition contribution
- * 
+ *
  * @since 3.5
  */
 
@@ -21,21 +21,21 @@ public interface ICriteriaDefinitionContribution {
 
 	/**
 	 * Returns a unique identifier for this criteria definition.
-	 * 
+	 *
 	 * @return the contribution's unique identifier
 	 */
 	public String getId();
 
 	/**
 	 * Returns this contributions criteria definition.
-	 * 
+	 *
 	 * @return the criteria definition data for this contribution
 	 */
 	public ICriteriaDefinition getCriteriaDefinition();
 
 	/**
 	 * Returns the locale for this contribution.
-	 * 
+	 *
 	 * @return the contribution's locale
 	 */
 	public String getLocale();

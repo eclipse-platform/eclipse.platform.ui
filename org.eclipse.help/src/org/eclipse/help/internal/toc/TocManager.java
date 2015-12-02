@@ -40,11 +40,11 @@ import org.eclipse.help.internal.UAElementFactory;
  * providers (AbstractTocProvider).
  */
 public class TocManager {
-	
+
 	private static final String EXTENSION_POINT_ID_TOC = HelpPlugin.PLUGIN_ID + ".toc"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_TOC_PROVIDER = "tocProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
-	
+
 	private AbstractTocProvider[] tocProviders;
 	// There are two sets of TOC contributions, one is used for Toc Assembly and is modified from the original
 	// The other is used by the TocServlet and is unprocessed, i.e. anchors are not replaced with the contributions
@@ -53,7 +53,7 @@ public class TocManager {
 	private Map tocsByLocale = new HashMap();
 	private Map tocsById = new HashMap();
 	private Map tocsByTopic;
-	
+
 	/*
 	 * Returns all toc entries (complete books) for the given locale.
 	 */
@@ -94,7 +94,7 @@ public class TocManager {
 		}
 		return tocs;
 	}
-	
+
 	/*
 	 * Returns the toc whose toc contribution has the given id, for the
 	 * given locale.
@@ -103,7 +103,7 @@ public class TocManager {
 		getTocs(locale);
 		return (Toc)tocsById.get(id);
 	}
-	
+
 	public synchronized Toc getOwningToc(String href) {
 		if (tocsByTopic == null) {
 			tocsByTopic = new HashMap();
@@ -118,7 +118,7 @@ public class TocManager {
 		}
 		return (Toc)tocsByTopic.get(href);
 	}
-	
+
 	public synchronized ITopic getTopic(String href, String locale) {
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i=0;i<tocs.length;++i) {
@@ -133,7 +133,7 @@ public class TocManager {
 		}
 		return null;
 	}
-	
+
 	public synchronized int[] getTopicPath(String href, String locale) {
 		ITopic topic = getTopic(href, locale);
 		try {
@@ -163,7 +163,7 @@ public class TocManager {
 		// no path; not in toc
 		return null;
 	}
-	
+
 	/*
 	 * Returns the zero-based index at which the child topic is located under
 	 * the parent topic/toc.
@@ -186,7 +186,7 @@ public class TocManager {
 		}
 		return -1;
 	}
-	
+
 	/*
 	 * Returns all toc contributions for the given locale, from all toc
 	 * providers.
@@ -194,10 +194,10 @@ public class TocManager {
 	public TocContribution[] getTocContributions(String locale) {
 		return getAndCacheTocContributions(locale, tocContributionsByLocale);
 	}
-	
+
 	private TocContribution[] getTocContributionsForToc(String locale) {
 		return getAndCacheTocContributions(locale, tocContributionsForTocByLocale);
-	}	
+	}
 
 	private synchronized TocContribution[] getAndCacheTocContributions(String locale, Map contributionsByLocale) {
 		TocContribution[] cached = (TocContribution[])contributionsByLocale.get(locale);
@@ -230,7 +230,7 @@ public class TocManager {
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
-				
+
 			}
 			cached = (TocContribution[])contributions.values().toArray(new TocContribution[contributions.size()]);
 			contributionsByLocale.put(locale, cached);
@@ -309,7 +309,7 @@ public class TocManager {
 		List assembled = assembler.assemble(unassembled);
 		return (TocContribution[])assembled.toArray(new TocContribution[assembled.size()]);
 	}
-	
+
 	private Set getIgnoredTocContributions() {
 		HelpData helpData = HelpData.getProductHelpData();
 		if (helpData != null) {
@@ -335,5 +335,5 @@ public class TocManager {
 	public boolean isTocLoaded(String locale) {
 		return tocsByLocale.get(locale) != null;
 	}
-		
+
 }

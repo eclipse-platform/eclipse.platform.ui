@@ -23,23 +23,23 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 public class TocSorter {
-	
+
 	/*
 	 * A category of tocs. A category has an id and a list of contained
 	 * tocs.
 	 */
 	private static class TocCategory extends ArrayList {
-		
+
 		private static final long serialVersionUID = 1L;
-		
+
 		/**
 		 * Constructs a new empty TOC category with the given id.
-		 * 
+		 *
 		 * @param id the category's id
 		 */
 		public TocCategory(String id) {
 		}
-		
+
 	}
 
 	/*
@@ -50,20 +50,20 @@ public class TocSorter {
 		List itemsToOrder = new ArrayList();
 		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
 		Map nameIdMap = createNameIdMap(categorized);
-			
+
 		// order them
 		List orderedItems = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
-			
+
 		// replace with actual TocContribution or category
 		orderedItems = substituteValues(orderedItems, categorized);
-			
+
 		// expand the categories
 		orderedItems = expandCategories(orderedItems);
 		return (ITocContribution[])orderedItems.toArray(new ITocContribution[orderedItems.size()]);
 	}
-	
+
 	// Create a mapping from an id to a label that can be sorted
-	private Map createNameIdMap(Map categorized) { 
+	private Map createNameIdMap(Map categorized) {
 		Map map = new HashMap();
 		for (Iterator iter = categorized.keySet().iterator(); iter.hasNext();) {
 			String key = (String)iter.next();
@@ -144,7 +144,7 @@ public class TocSorter {
 		}
 		return categorized;
 	}
-	
+
 	/*
 	 * Expands all categories in the given list to actual toc contributions
 	 * organized by category.
@@ -163,7 +163,7 @@ public class TocSorter {
 		}
 		return expanded;
 	}
-	
+
 	/*
 	 * Substitutes each item with it's corresponding mapping from the map.
 	 * Original List is not modified.

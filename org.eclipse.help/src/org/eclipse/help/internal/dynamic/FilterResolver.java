@@ -25,17 +25,17 @@ public class FilterResolver {
 	private static final String NAME_ARCH = "arch"; //$NON-NLS-1$
 	private static final String NAME_PRODUCT = "product"; //$NON-NLS-1$
 	private static final String NAME_PLUGIN = "plugin"; //$NON-NLS-1$
-	
+
 	private static Extension extension;
 	private static FilterResolver instance;
-	
+
 	public static FilterResolver getInstance() {
 		if (instance == null) {
 			instance = new FilterResolver();
 		}
 		return instance;
 	}
-	
+
 	/*
 	 * Returns whether or not the given filter expression gets rejected by the
 	 * filter. e.g. "os=win32", "ws!=gtk"
@@ -64,7 +64,7 @@ public class FilterResolver {
 		// don't apply any invalid filters
 		return false;
 	}
-	
+
 	/*
 	 * Returns whether or not the given filter name and value get rejected by
 	 * the filter.
@@ -80,7 +80,7 @@ public class FilterResolver {
 		else if (name.equals(NAME_ARCH)) {
 			filtered = filterByARCH(value);
 		}
-		else if (name.equals(NAME_PRODUCT)) { 
+		else if (name.equals(NAME_PRODUCT)) {
 			filtered = filterByProduct(value);
 		}
 		else if (name.equals(NAME_PLUGIN)) {
@@ -94,7 +94,7 @@ public class FilterResolver {
 		}
 		return not ? !filtered : filtered;
 	}
-	
+
 	/*
 	 * Hack: We don't have access to UI classes from here; the activity
 	 * and category filters are dropped in from org.eclipse.help.ui when it
@@ -160,18 +160,18 @@ public class FilterResolver {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Hack: A way for the org.eclipse.help.ui plugin to extend the filtering
 	 * capability with UI-related filters (this is a core plugin).
 	 */
 	public static interface Extension {
-		
+
 		/*
 		 * Returns whether or not this extension handles the given filter.
 		 */
 		public boolean isHandled(String name);
-		
+
 		/*
 		 * Returns whether the given filter is rejected or not.
 		 */

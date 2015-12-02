@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class TocAssembler {
 
 	private DocumentProcessor processor;
 	private ProcessorHandler[] handlers;
-	
+
 	private Map anchorsByContributionId;
 	private List contributions;
 	private Map contributionsById;
@@ -51,12 +51,12 @@ public class TocAssembler {
 	private Set processedContributions;
 	private Map requiredAttributes;
 	private Set tocsToFilter;
-	
-	
+
+
 	public TocAssembler() {
 		this.tocsToFilter = new HashSet();
 	}
-	
+
 	public TocAssembler(Set tocsToFilter) {
 		this.tocsToFilter = tocsToFilter;
 	}
@@ -71,7 +71,7 @@ public class TocAssembler {
 		contributionsById = null;
 		contributionsByLinkTo = null;
 		processedContributions = null;
-		
+
 		List books = getBooks();
 		Iterator iter = books.iterator();
 		while (iter.hasNext()) {
@@ -80,12 +80,12 @@ public class TocAssembler {
 		}
 		return books;
 	}
-	
+
 	/*
 	 * Returns the list of contributions that should appear as root TOCs
 	 * (books). Contributions are books if the following conditions are
 	 * true:
-	 * 
+	 *
 	 * 1. isPrimary() returns true.
 	 * 2. The toc has no "link_to" attribute defined (does not link into
 	 *    another toc), or the link_to target anchor doesn't exist.
@@ -102,38 +102,38 @@ public class TocAssembler {
 			if (!isValidLinkTo && !isLinkedId) {
 				if (contrib.isPrimary()) {
 				    books.add(contrib);
-				    if (HelpPlugin.DEBUG_TOC) {								
-						String msg = "Primary Toc Found: " + contrib.getId(); //$NON-NLS-1$ 
+				    if (HelpPlugin.DEBUG_TOC) {
+						String msg = "Primary Toc Found: " + contrib.getId(); //$NON-NLS-1$
 						String linkTo = contrib.getLinkTo();
-						if (linkTo != null) { 
+						if (linkTo != null) {
 							msg += " - cannot find link to: "; //$NON-NLS-1$
 							msg += linkTo;
 						}
 					    System.out.println(msg);
-					}	
+					}
 				} else {
-					if (HelpPlugin.DEBUG_TOC) {								
+					if (HelpPlugin.DEBUG_TOC) {
 						String msg = "Table of contents is not primary and not linked to another TOC " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
 						System.out.println(msg);
 					}
 				}
 			} else {
 				contrib.setSubToc(true);
-				if (HelpPlugin.DEBUG_TOC) {								
+				if (HelpPlugin.DEBUG_TOC) {
 					String msg = "Toc " + contrib.getId();  //$NON-NLS-1$
 					if (isValidLinkTo) {
 						msg += " has a valid link to " + contrib.getLinkTo(); //$NON-NLS-1$
-					} 
+					}
 					if (isLinkedId) {
-						msg += " is linked from " + linkedContributionIds.get(contrib.getId()); //$NON-NLS-1$ 
+						msg += " is linked from " + linkedContributionIds.get(contrib.getId()); //$NON-NLS-1$
 					}
 					System.out.println(msg);
-				}	
+				}
 			}
 		}
 		return books;
 	}
-	
+
 	/*
 	 * Returns the set of ids of contributions that are linked to by other
 	 * contributions, i.e. at least one other contribution has a link element
@@ -169,7 +169,7 @@ public class TocAssembler {
 				String id = contrib.getId();
 				if (!tocsToFilter.contains(id)) {
 				    processor.process((Toc)contrib.getToc(), id);
-				} 
+				}
 			}
 			catch (Throwable t) {
 				iter.remove();
@@ -179,7 +179,7 @@ public class TocAssembler {
 		}
 		return linkedContributionIds;
 	}
-	
+
 	/*
 	 * Checks whether the toc contribution with the given id contains the
 	 * given anchor.
@@ -198,7 +198,7 @@ public class TocAssembler {
 		// invalid contribution, or no anchors
 		return false;
 	}
-	
+
 	/*
 	 * Checks whether the given contribution has a link_to defined, and it
 	 * is valid (contribution and anchor exist).
@@ -216,11 +216,11 @@ public class TocAssembler {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Processes the given contribution, if it hasn't been processed yet. This
 	 * performs the following operations:
-	 * 
+	 *
 	 * 1. Topic hrefs are normalized, e.g. "path/doc.html" ->
 	 *    "/my.plugin/path/doc.html"
 	 * 2. Links are resolved, link is replaced with target content, extra docs
@@ -250,9 +250,9 @@ public class TocAssembler {
 			processor.setHandlers(handlers);
 			processor.process((Toc)contribution.getToc(), contribution.getId());
 			processedContributions.add(contribution);
-		} 
+		}
 	}
-	
+
 	/*
 	 * Returns the contribution with the given id.
 	 */
@@ -267,7 +267,7 @@ public class TocAssembler {
 		}
 		return (TocContribution)contributionsById.get(id);
 	}
-	
+
 	/*
 	 * Returns all contributions that define a link_to attribute pointing to
 	 * the given anchor path. The path has the form "<contributionId>#<anchorId>",
@@ -311,7 +311,7 @@ public class TocAssembler {
 		}
 		return contributions;
 	}
-	
+
 	private Map getRequiredAttributes() {
 		if (requiredAttributes == null) {
 			requiredAttributes = new HashMap();
@@ -323,7 +323,7 @@ public class TocAssembler {
 		}
 		return requiredAttributes;
 	}
-	
+
 	/*
 	 * Adds the given extra documents to the contribution.
 	 */
@@ -343,7 +343,7 @@ public class TocAssembler {
 			contribution.setExtraDocuments(combinedExtraDocuments);
 		}
 	}
-	
+
 	/*
 	 * Handler that resolves link elements (replaces the link element with
 	 * the linked-to toc's children.
@@ -402,7 +402,7 @@ public class TocAssembler {
 							anchorsByContributionId.put(id, set);
 						}
 						set.add(anchorId);
-						
+
 						// process contributions
 						TocContribution destContribution = getContribution(id);
 						if (destContribution != null) {
@@ -437,9 +437,9 @@ public class TocAssembler {
 				if (href != null) {
 					topic.setHref(normalize(href, id));
 				}
-				
+
 				processCriteria(element, id);
-				
+
 				return HANDLED_CONTINUE;
 			}
 			else if (element instanceof Toc) {
@@ -449,14 +449,14 @@ public class TocAssembler {
 				if (topic != null) {
 					toc.setTopic(normalize(topic, id));
 				}
-				
+
 				processCriteria(element, id);
-				
+
 				return HANDLED_CONTINUE;
 			}
 			return UNHANDLED;
 		}
-		
+
 		private String normalize(String href, String id) {
 			ITocContribution contribution = getContribution(id);
 			if (contribution != null) {
@@ -472,7 +472,7 @@ public class TocAssembler {
 			}
 			return href;
 		}
-		
+
 		private void processCriteria(UAElement element, String id) {
 			if(HelpPlugin.getCriteriaManager().isCriteriaEnabled()){
 				ITocContribution contribution = getContribution(id);

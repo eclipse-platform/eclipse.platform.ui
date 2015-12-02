@@ -32,14 +32,14 @@ public class CriteriaProviderRegistry {
 	public static final String PROVIDER_XP_NAME = "org.eclipse.help.criteriaProvider"; //$NON-NLS-1$
 
 	private static List providers = null;
-	
+
 	private static CriteriaProviderRegistry instance;
 
 	private boolean initialized = false;
-	
+
 	private CriteriaProviderRegistry() {
 	}
-	
+
 	public static CriteriaProviderRegistry getInstance() {
 		if (instance == null) {
 			instance = new CriteriaProviderRegistry();
@@ -50,7 +50,7 @@ public class CriteriaProviderRegistry {
 	synchronized private void readProviders() {
 		if (initialized ) {
 			return;
-		}	
+		}
 		providers = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
@@ -70,7 +70,7 @@ public class CriteriaProviderRegistry {
 		}
 		initialized = true;
 	}
-	
+
 	public AbstractCriteriaProvider[] getScopes() {
 		readProviders();
 		return (AbstractCriteriaProvider[]) providers.toArray(new AbstractCriteriaProvider[providers.size()]);
@@ -78,7 +78,7 @@ public class CriteriaProviderRegistry {
 
 	public ICriteria[] getAllCriteria(ITopic topic) {
 		readProviders();
-		ICriteria[] criteria; 
+		ICriteria[] criteria;
 		if (topic instanceof ITopic2) {
 			criteria = ((ITopic2) topic).getCriteria();
 		} else {
@@ -100,10 +100,10 @@ public class CriteriaProviderRegistry {
 		}
 		return criteria;
 	}
-	
+
 	public ICriteria[] getAllCriteria(IToc toc) {
 		readProviders();
-		ICriteria[] criteria; 
+		ICriteria[] criteria;
 		if (toc instanceof IToc2) {
 			criteria = ((IToc2) toc).getCriteria();
 		} else {
@@ -124,6 +124,6 @@ public class CriteriaProviderRegistry {
 			}
 		}
 		return criteria;
-	}	
+	}
 
 }

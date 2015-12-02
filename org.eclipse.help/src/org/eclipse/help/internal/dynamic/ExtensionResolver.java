@@ -35,12 +35,12 @@ public class ExtensionResolver {
 
 	private static final String ELEMENT_BODY = "body"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
+
 	private DocumentProcessor processor;
 	private DocumentReader reader;
 	private String locale;
 	private ContentExtensionManager manager;
-	
+
 	/*
 	 * Creates the resolver. The processor is needed to process the extension
 	 * content, and locale because we're pulling in content from other documents.
@@ -50,7 +50,7 @@ public class ExtensionResolver {
 		this.reader = reader;
 		this.locale = locale;
 	}
-	
+
 	/*
 	 * Resolves the given path into nodes to be inserted.
 	 */
@@ -74,7 +74,7 @@ public class ExtensionResolver {
 		}
 		return (Node[])list.toArray(new Node[list.size()]);
 	}
-	
+
 	/*
 	 * Resolves the given content path (the content to insert/replace with) into
 	 * nodes.
@@ -83,7 +83,7 @@ public class ExtensionResolver {
 		String bundleId = null;
 		String relativePath = null;
 		String nodeId = null;
-		
+
 		int bundleStart = 0;
 		// legacy; can omit leading slash
 		if (content.charAt(0) == '/') {
@@ -116,13 +116,13 @@ public class ExtensionResolver {
 				nodeId = content.substring(pathEnd + 1);
 			}
 		}
-		
+
 		if (bundleId != null && relativePath != null) {
 			return getContent(bundleId, relativePath, nodeId);
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Resolves the given parsed content fragments into nodes.
 	 */
@@ -154,7 +154,7 @@ public class ExtensionResolver {
 			catch (IOException e) {}
 		}
 	}
-	
+
 	/*
 	 * Finds and returns the element with the given elementId from the XML input
 	 * stream, or null if not found.
@@ -162,7 +162,7 @@ public class ExtensionResolver {
 	private Element findElement(InputStream in, String elementId) throws IOException, SAXException, ParserConfigurationException {
 		return findElement(reader.read(in).getElement(), elementId);
 	}
-	
+
 	/*
 	 * Finds and returns the element with the given elementId from the under the
 	 * given element, or null if not found.
@@ -184,14 +184,14 @@ public class ExtensionResolver {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Finds and returns the body node in the given XML input.
 	 */
 	private Element findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 		return findBody(reader.read(in).getElement());
 	}
-	
+
 	/*
 	 * Finds and returns the body node under the given node.
 	 */

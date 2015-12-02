@@ -50,7 +50,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 				buffer.append(getCriteriaDefinitionFilePath(criteriaDefinitionFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
 			    buffer.append(spe.getLineNumber());
-			    buffer.append(". "); //$NON-NLS-1$   
+			    buffer.append(". "); //$NON-NLS-1$
 	            buffer.append(spe.getMessage());
 
 	            // Use the contained exception.
@@ -59,7 +59,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 	                x = spe.getException();
 	            HelpPlugin.logError(buffer.toString(), x);
 
-	        } 
+	        }
 			catch (Throwable t) {
 				String msg = ERROR_READING_HELP_CRITERIA_DEFINITION_FILE + getCriteriaDefinitionFilePath(criteriaDefinitionFile) + "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);
@@ -70,7 +70,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 
 	private String getCriteriaDefinitionFilePath(CriteriaDefinitionFile criteriaDefinitionFile) {
 		String pluginId = criteriaDefinitionFile.getPluginId();
-		String file = criteriaDefinitionFile.getFile();		
+		String file = criteriaDefinitionFile.getFile();
 		return ResourceLocator.getErrorPath(pluginId, file, criteriaDefinitionFile.getLocale());
 	}
 

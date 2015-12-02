@@ -27,7 +27,7 @@ public class TocFile {
 	private String locale;
 	private String extraDir;
 	private String category;
-	
+
 	public TocFile(String pluginId, String file, boolean isPrimary, String locale, String extradir, String category) {
 		this.pluginId = pluginId;
 		this.file = file;
@@ -36,7 +36,7 @@ public class TocFile {
 		this.extraDir = extradir;
 		this.category = category;
 	}
-	
+
 	public String getCategory() {
 		return category;
 	}
@@ -57,7 +57,7 @@ public class TocFile {
 			return new FileInputStream(file);
 		}
 	}
-	
+
 	public String getLocale() {
 		return locale;
 	}

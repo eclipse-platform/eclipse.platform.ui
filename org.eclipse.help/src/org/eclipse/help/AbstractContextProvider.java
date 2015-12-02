@@ -15,7 +15,7 @@ package org.eclipse.help;
  * context-sensitive help for any part of the UI. <code>AbstractContextProvider
  * </code>s must be registered via the <code>org.eclipse.help.contexts</code>
  * extension point.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractContextProvider {
@@ -23,7 +23,7 @@ public abstract class AbstractContextProvider {
 	/**
 	 * Returns the context-sensitive help content for the UI element with the
 	 * given context help ID, and for the given locale.
-	 * 
+	 *
 	 * @param id the unique context help ID, e.g. "org.my.plugin.my_context_id"
 	 * @return the context help, or <code>null</code> if not available
 	 */
@@ -35,7 +35,7 @@ public abstract class AbstractContextProvider {
 	 * the <code>plugin</code> attribute of the <code>contexts</code> element
 	 * of the <code>org.eclipse.help.contexts</code> extension point, except you
 	 * can specify any number of plug-ins.
-	 *  
+	 *
 	 * @return the UI plug-ins for which this provider should be used
 	 */
 	public abstract String[] getPlugins();

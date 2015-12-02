@@ -33,18 +33,18 @@ public class Context extends UAElement implements IContext3 {
 	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
-	
+
 	public Context(Element src) {
 		super(src);
 	}
-	
+
 	public Context(IContext src, String id) {
 		super(NAME);
 		setId(id);
 		children = new ArrayList();
 		mergeContext(src);
 	}
-	
+
 	public void mergeContext(IContext src) {
 	    String text = src.getText();
 		if (getText() == null || getText().length() == 0) {
@@ -80,16 +80,16 @@ public class Context extends UAElement implements IContext3 {
 	public String getCategory(IHelpResource topic) {
 		return null;
 	}
-	
+
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
-	
+
 	@Override
 	public ICommandLink[] getRelatedCommands() {
 		return (ICommandLink[])getChildren(ICommandLink.class);
 	}
-	
+
 	@Override
 	public IHelpResource[] getRelatedTopics() {
 		return (IHelpResource[])getChildren(IHelpResource.class);
@@ -99,7 +99,7 @@ public class Context extends UAElement implements IContext3 {
 	public String getStyledText() {
 		return null;
 	}
-	
+
 	@Override
 	public String getText() {
 		Node node = getElement().getFirstChild();
@@ -118,9 +118,9 @@ public class Context extends UAElement implements IContext3 {
 			}
 			node = node.getNextSibling();
 		}
-		return null; 
+		return null;
 	}
-	
+
 	@Override
 	public String getTitle() {
 		String title = getAttribute(ATTRIBUTE_TITLE);
@@ -151,5 +151,5 @@ public class Context extends UAElement implements IContext3 {
 		    description.appendChild(document.createTextNode(text));
 		}
 	}
-	
+
 }

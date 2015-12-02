@@ -18,12 +18,12 @@ public class Link extends UAElement implements ILink {
 
 	public static final String NAME = "link"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_TOC = "toc"; //$NON-NLS-1$
-	
+
 	public Link(ILink src) {
 		super(NAME, src);
 		setToc(src.getToc());
 	}
-	
+
 	public Link(Element src) {
 		super(src);
 	}
@@ -32,7 +32,7 @@ public class Link extends UAElement implements ILink {
 	public String getToc() {
 		return getAttribute(ATTRIBUTE_TOC);
 	}
-	
+
 	public void setToc(String toc) {
 		setAttribute(ATTRIBUTE_TOC, toc);
 	}

@@ -17,40 +17,40 @@ import org.w3c.dom.Element;
 
 /**
  * A directive indicating the criteria information of a Toc or Topic described in xml
- * 
+ *
  * @since 3.5
  */
 
 public class Criteria extends UAElement implements ICriteria {
-	
+
 	public static final String NAME = "criteria"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
-	
+
 	public Criteria(ICriteria src) {
-		super(NAME,src);	
+		super(NAME,src);
 		setName(src.getName());
 		setValue(src.getValue());
 	}
-	
+
 	public Criteria(Element element) {
-		super(element);  
+		super(element);
 	}
 
 	@Override
-	public String getName() { 
+	public String getName() {
 		return getAttribute(ATTRIBUTE_NAME);
 	}
 
 	@Override
-	public String getValue() { 
+	public String getValue() {
 		return getAttribute(ATTRIBUTE_VALUE);
 	}
-	
+
 	public void setName(String name) {
 		setAttribute(ATTRIBUTE_NAME, name);
 	}
-	
+
 	public void setValue(String value) {
 		setAttribute(ATTRIBUTE_VALUE, value);
 	}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,13 +17,13 @@ import org.eclipse.help.*;
  * org.eclipse.help.ui.internal.ContextHelpDialog TODO Create interface that
  * will return description as XML and make it public
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IStyledContext extends IContext {
 	/**
 	 * Returns the text description for this context with bold markers
-	 * 
+	 *
 	 * @return String with <@#$b>and </@#$b> to mark bold range (as
 	 *         IContext.getText() used to in 2.x)
 	 */

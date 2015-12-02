@@ -43,13 +43,13 @@ public class HelpData {
 	private static final String ELEMENT_TOC = "toc"; //$NON-NLS-1$
 	private static final String ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String ELEMENT_INDEX = "index"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$	
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	private static final String ELEMENT_OTHER_TOCS = "otherTocs"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_SORT = "sort"; //$NON-NLS-1$
 	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 
 	private static HelpData productHelpData;
-	
+
 	private URL url;
 	private List tocOrder;
 	private Set hiddenTocs;
@@ -90,7 +90,7 @@ public class HelpData {
 		}
 		return productHelpData;
 	}
-	
+
 	/*
 	 * For testing
 	 */
@@ -104,7 +104,7 @@ public class HelpData {
 	public HelpData(URL url) {
 		this.url = url;
 	}
-	
+
 	/*
 	 * Returns a list of strings which are the IDs of the tocs/categories listed
 	 * in tocOrder.
@@ -137,7 +137,7 @@ public class HelpData {
 		}
 		return hiddenIndexes;
 	}
-	
+
 	/*
 	 * Returns true if tocs not specified in the toc order are sorted
 	 */
@@ -189,10 +189,10 @@ public class HelpData {
 	 * SAX Handler for parsing the help data file.
 	 */
 	private class Handler extends DefaultHandler {
-		
+
 		private boolean inTocOrder;
 		private boolean inHidden;
-		
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
@@ -228,7 +228,7 @@ public class HelpData {
 				}
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 		 */
@@ -241,11 +241,11 @@ public class HelpData {
 				inHidden = false;
 			}
 		}
-		
+
 		/*
 		 * Note: throws clause does not declare IOException due to a bug in
 		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		@Override

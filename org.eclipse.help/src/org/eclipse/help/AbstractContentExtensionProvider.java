@@ -18,20 +18,20 @@ import org.eclipse.help.internal.HelpPlugin;
  * replacements). <code>AbstractContentExtensionProvider</code>s must be
  * registered via the <code>org.eclipse.help.contentExtension</code>
  * extension point.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractContentExtensionProvider {
-	
+
 	/**
 	 * Returns all extensions for this provider. Providers are free to
 	 * provide any number of contributions (zero or more).
-	 * 
+	 *
 	 * @param locale the locale for which to get contributions
 	 * @return all the content extensions for this provider
 	 */
 	public abstract IContentExtension[] getContentExtensions(String locale);
-	
+
 	/**
 	 * Notifies the platform that the content managed by this provider may
 	 * have changed since the last time <code>getContentExtensions()</code>

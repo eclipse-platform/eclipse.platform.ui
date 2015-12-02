@@ -13,22 +13,22 @@ package org.eclipse.help;
 /**
  * Represents a link with text that invokes a specific command with
  * parameters.
- * 
+ *
  * @since 3.3
  */
 public interface ICommandLink extends IUAElement {
 
 	/**
 	 * Returns the label text to display for this link.
-	 * 
+	 *
 	 * @return the link text
 	 */
 	public String getLabel();
-	
+
 	/**
 	 * Returns the serialized form of the command to invoke, along with
 	 * its parameters.
-	 * 
+	 *
 	 * @return the serialized command
 	 */
 	public String getSerialization();

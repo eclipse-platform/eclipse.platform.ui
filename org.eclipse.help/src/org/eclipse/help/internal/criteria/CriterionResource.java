@@ -22,18 +22,18 @@ import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * A class represents one criterion, which has the name and values
- * 
+ *
  * @since 3.5
  */
 public class CriterionResource {
 
 	private String criterionName;
 	private List criterionValues;
-	
+
 	public CriterionResource(String criterionName){
 		this(criterionName, null);
 	}
-	
+
 	public CriterionResource (String criterionName, List criterionValues){
 		this.criterionName = criterionName;
 		this.criterionValues = new ArrayList();
@@ -41,28 +41,28 @@ public class CriterionResource {
 			this.addCriterionValues(criterionValues);
 		}
 	}
-	
+
 	public String getCriterionName(){
 		return this.criterionName;
 	}
-	
+
 	public List getCriterionValues(){
 		return this.criterionValues;
 	}
-	
+
 	public void addCriterionValue(String criterionValue){
 		if(null != criterionValue && 0 != criterionValue.length() && !criterionValues.contains(criterionValue)){
 			criterionValues.add(criterionValue);
 		}
 	}
-	
+
 	public void addCriterionValues(List criterionValues){
 		for(Iterator iterator = criterionValues.iterator(); iterator.hasNext();){
 			String criterionValue = (String) iterator.next();
 			this.addCriterionValue(criterionValue);
 		}
 	}
-	
+
 	public static CriterionResource[] toCriterionResource(ICriteria[] criteriaElements) {
 		List criteriaList = new ArrayList();
 		outer: for (int i = 0; i < criteriaElements.length; ++i) {
@@ -72,7 +72,7 @@ public class CriterionResource {
 					&& 0 != elementValue.length()) {
 				if (HelpPlugin.getCriteriaManager().isSupportedCriterion(elementName)) {
 					elementName = elementName.toLowerCase();
-					StringTokenizer tokenizer = new StringTokenizer(elementValue, ","); //$NON-NLS-1$ 
+					StringTokenizer tokenizer = new StringTokenizer(elementValue, ","); //$NON-NLS-1$
 					List values = new ArrayList();
 					while (tokenizer.hasMoreTokens()) {
 						values.add(tokenizer.nextToken().trim());
@@ -89,7 +89,7 @@ public class CriterionResource {
 				}
 			}
 		}
-		CriterionResource[] criteria = new CriterionResource[criteriaList.size()];                                        		
+		CriterionResource[] criteria = new CriterionResource[criteriaList.size()];
 		criteriaList.toArray(criteria);
 		return criteria;
 	}

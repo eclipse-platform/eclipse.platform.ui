@@ -11,7 +11,7 @@
 package org.eclipse.help;
 /**
  * Former interface to the help system UI.
- * 
+ *
  * @deprecated This interface became obsolete in 3.0, along with the extension
  *             point that it was associated with. The functionality provided by
  *             this interface is available elsewhere. Use
@@ -30,7 +30,7 @@ public interface IHelp {
 	 * <p>
 	 * This method is called by the platform to launch the help system UI
 	 * </p>
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated Use WorkbenchHelp.displayHelp() instead.
 	 */
@@ -45,8 +45,8 @@ public interface IHelp {
 	 * the top left-most screen corner). The platform is responsible for calling
 	 * this method and supplying the appropriate location.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param context
 	 *            the context to display
 	 * @param x
@@ -67,7 +67,7 @@ public interface IHelp {
 	 * the top left-most screen corner). The platform is responsible for calling
 	 * this method and supplying the appropriate location.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            the help context identifier; the parameter needs to have a
 	 *            form pluginID.pluginContextId, where pluginID is ID of plug-in
@@ -97,7 +97,7 @@ public interface IHelp {
 	 * The help system makes no guarantee that all the help resources can be
 	 * displayed or how they are displayed.
 	 * </p>
-	 * 
+	 *
 	 * @param href
 	 *            the URL of the help resource.
 	 *            <p>
@@ -120,7 +120,7 @@ public interface IHelp {
 	 * The help system makes no guarantee that all the help resources can be
 	 * displayed or how they are displayed.
 	 * </p>
-	 * 
+	 *
 	 * @see IHelp#displayHelpResource(String)
 	 * @param helpResource
 	 *            the help resource to display.
@@ -142,7 +142,7 @@ public interface IHelp {
 	 * Valid toc are contributed through the <code>toc</code> element of the
 	 * <code>"org.eclipse.help.toc"</code> extension point.
 	 * </p>
-	 * 
+	 *
 	 * @param toc
 	 *            the URL of the toc as specified in the
 	 *            <code>"org.eclipse.help.toc"</code> extenstion point
@@ -167,7 +167,7 @@ public interface IHelp {
 	 * plugin directory</dt>
 	 * </dl>
 	 * </p>
-	 * 
+	 *
 	 * @param toc
 	 *            the URL of the toc
 	 * @param selectedTopic
@@ -186,7 +186,7 @@ public interface IHelp {
 	 * the top left-most screen corner). The platform is responsible for calling
 	 * this method and supplying the appropriate location.
 	 * </p>
-	 * 
+	 *
 	 * @param contextId
 	 *            the help context identifier
 	 * @param x
@@ -209,8 +209,8 @@ public interface IHelp {
 	 * the top left-most screen corner). The platform is responsible for calling
 	 * this method and supplying the appropriate location.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param context
 	 *            the context to display
 	 * @param x
@@ -224,7 +224,7 @@ public interface IHelp {
 
 	/**
 	 * Computes and returns context information for the given context id.
-	 * 
+	 *
 	 * @param contextId
 	 *            the context id
 	 * @return the context, or <code>null</code> if none
@@ -235,7 +235,7 @@ public interface IHelp {
 
 	/**
 	 * Returns the list of all integrated tables of contents available.
-	 * 
+	 *
 	 * @return an array of TOC's
 	 * @since 2.0
 	 * @deprecated Use HelpSystem.getTocs() instead.
@@ -246,7 +246,7 @@ public interface IHelp {
 	/**
 	 * Returns <code>true</code> if the context-sensitive help window is
 	 * currently being displayed, <code>false</code> if not.
-	 * 
+	 *
 	 * @deprecated Use WorkbenchHelp.isContextHelpDisplayed() instead.
 	 */
 	@Deprecated

@@ -13,28 +13,28 @@ package org.eclipse.help;
 /**
  * Represents either a complete or partial keyword index, as well as its
  * metadata.
- * 
+ *
  * @since 3.3
  */
 public interface IIndexContribution {
 
 	/**
 	 * Returns a unique identifier for this contribution.
-	 * 
+	 *
 	 * @return the contribution's unique identifier
 	 */
 	public String getId();
 
 	/**
 	 * Returns this contributions index.
-	 * 
+	 *
 	 * @return the index data for this contribution
 	 */
 	public IIndex getIndex();
 
 	/**
 	 * Returns the locale for this contribution.
-	 * 
+	 *
 	 * @return the contribution's locale
 	 */
 	public String getLocale();

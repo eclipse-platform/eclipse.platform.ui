@@ -30,14 +30,14 @@ public class XMLProcessor {
 	private DocumentProcessor processor;
 	private DocumentReader reader;
 	private DocumentWriter writer;
-	
+
 	/*
 	 * Creates the processor, which will use the given handlers.
 	 */
 	public XMLProcessor(ProcessorHandler[] handlers) {
 		this.processor = new DocumentProcessor(handlers);
 	}
-	
+
 	/*
 	 * Processes the given input stream with the supplied document id,
 	 * and returns a new processed input stream.

@@ -24,7 +24,7 @@ public class ValidationHandler extends ProcessorHandler {
 
 	private Map requiredAttributes;
 	private Map deprecatedElements;
-	
+
 	/*
 	 * Creates a new validator that looks for the given mapping of
 	 * element names to required attribute names.

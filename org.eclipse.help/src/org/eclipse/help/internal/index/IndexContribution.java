@@ -18,26 +18,26 @@ public class IndexContribution implements IIndexContribution {
 	private String id;
 	private IIndex index;
 	private String locale;
-	
+
 	@Override
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public IIndex getIndex() {
 		return index;
 	}
-	
+
 	@Override
 	public String getLocale() {
 		return locale;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public void setIndex(IIndex index) {
 		this.index = index;
 	}

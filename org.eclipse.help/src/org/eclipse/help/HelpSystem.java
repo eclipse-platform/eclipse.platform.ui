@@ -24,13 +24,13 @@ import org.eclipse.help.internal.HelpPlugin.IHelpProvider;
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public final class HelpSystem {
 
 	private static boolean fShared;
-	
+
 	/**
 	 * This class is not intended to be instantiated.
 	 */
@@ -41,7 +41,7 @@ public final class HelpSystem {
 	/**
 	 * Computes and returns context information for the given context id
 	 * for the platform's current locale.
-	 * 
+	 *
 	 * @param contextId the context id, e.g. "org.my.plugin.my_id"
 	 * @return the context, or <code>null</code> if none
 	 */
@@ -52,7 +52,7 @@ public final class HelpSystem {
 	/**
 	 * Computes and returns context information for the given context id
 	 * and locale.
-	 * 
+	 *
 	 * @param contextId the context id, e.g. "org.my.plugin.my_id"
 	 * @param locale the locale being requested, e.g. "en_US"
 	 * @return the context, or <code>null</code> if none
@@ -64,7 +64,7 @@ public final class HelpSystem {
 	/**
 	 * Returns the list of all integrated tables of contents available. Each
 	 * entry corresponds of a different help "book".
-	 * 
+	 *
 	 * @return an array of TOC's
 	 */
 	public static IToc[] getTocs() {
@@ -85,7 +85,7 @@ public final class HelpSystem {
 	 * Returns an open input stream on the contents of the specified help
 	 * resource in the platform's current locale. The client is responsible for
 	 * closing the stream when finished.
-	 * 
+	 *
 	 * @param href
 	 *            the URL (as a string) of the help resource
 	 *            <p>
@@ -99,12 +99,12 @@ public final class HelpSystem {
 	public static InputStream getHelpContent(String href) {
 		return getHelpContent(href, Platform.getNL());
 	}
-	
+
 	/**
 	 * Returns an open input stream on the contents of the specified help
 	 * resource for the speficied locale. The client is responsible for closing
 	 * the stream when finished.
-	 * 
+	 *
 	 * @param href
 	 *            the URL (as a string) of the help resource
 	 *            <p>
@@ -130,7 +130,7 @@ public final class HelpSystem {
 	 * can be shared by multiple (potentially remote) users. This is a hint to
 	 * the help system implementation that it should not perform operations that
 	 * are specific to the help system's local environment.
-	 * 
+	 *
 	 * <p>
 	 * For example, when <code>true</code>, the default dynamic content producer
 	 * implementation will not perform any filtering based on local system
@@ -140,26 +140,26 @@ public final class HelpSystem {
 	 * If you are providing your own help implementation that is shared, you
 	 * must notify the platform on startup by calling <code>setShared(true)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return whether or not the help system can be shared by multiple users
 	 * @since 3.2
 	 */
 	public static boolean isShared() {
 		return fShared;
 	}
-	
+
 	/**
 	 * Sets whether or not the help system, in its current mode of operation,
 	 * can be shared by multiple (potentially remote) users. This is a hint to
 	 * the help system implementation that it should not perform operations that
 	 * are specific to the help system's local environment.
-	 * 
+	 *
 	 * <p>
-	 * By default the help system is flagged as not shared. If you are providing 
+	 * By default the help system is flagged as not shared. If you are providing
 	 * your own help implementation that is shared, you must call this on startup
 	 * with the parameter <code>true</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param shared whether or not the help system can be shared by multiple users
 	 */
 	public static void setShared(boolean shared) {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,11 +22,11 @@ import org.eclipse.help.internal.HelpPlugin;
  * Implementations that display such elements should consult this class before
  * attempting to display them.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class UAContentFilter {
-	
+
 	private static final String VARIABLE_PLATFORM = "platform"; //$NON-NLS-1$
 	private static IEvaluationContext defaultContext;
 
@@ -36,14 +36,14 @@ public class UAContentFilter {
 	 * applies to any user assistance component's elements where filters apply
 	 * (e.g. help tocs, topics, intro elements, context help topics). If the
 	 * element is <code>null</code> or is not filterable, this method returns
-	 * <code>false</code>. 
+	 * <code>false</code>.
 	 * </p>
 	 * <p>
 	 * This method is for use in non-UI environments, when serving help outside
 	 * the workbench. If filtering from the UI, use the <code>isFiltered</code>
 	 * method that accepts the evaluation context as well.
 	 * </p>
-	 * 
+	 *
 	 * @param element the element to check
 	 * @return whether or not the element should be filtered out
 	 */
@@ -69,7 +69,7 @@ public class UAContentFilter {
 	 * <code>false</code>. The evaluation context provides the default object
 	 * to test on and a set of variables that can be accessed.
 	 * </p>
-	 * 
+	 *
 	 * @param element the element to check
 	 * @param context the evaluation context for evaluating expressions
 	 * @return whether or not the element should be filtered out

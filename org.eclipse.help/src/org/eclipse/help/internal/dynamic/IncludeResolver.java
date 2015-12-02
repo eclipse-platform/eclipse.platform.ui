@@ -25,19 +25,19 @@ import org.xml.sax.SAXException;
  * replacing the original include with it.
  */
 public class IncludeResolver {
-	
+
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
+
 	private DocumentProcessor processor;
 	private DocumentReader reader;
 	private String locale;
-	
+
 	public IncludeResolver(DocumentProcessor processor, DocumentReader reader, String locale) {
 		this.processor = processor;
 		this.reader = reader;
 		this.locale = locale;
 	}
-	
+
 	/*
 	 * Resolves the include target to a processed Element.
 	 */
@@ -56,7 +56,7 @@ public class IncludeResolver {
 			catch (IOException e) {}
 		}
 	}
-	
+
 	/*
 	 * Finds the specified element from the given XML input stream.
 	 */
@@ -64,7 +64,7 @@ public class IncludeResolver {
 		UAElement element = reader.read(in);
 		return findElement(element, elementId);
 	}
-	
+
 	/*
 	 * Finds the specified element under the given subtree.
 	 */

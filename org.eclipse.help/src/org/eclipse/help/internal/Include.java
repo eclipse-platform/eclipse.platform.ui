@@ -17,12 +17,12 @@ public class Include extends UAElement implements IInclude {
 
 	public static final String NAME = "include"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-	
+
 	public Include(IInclude src) {
 		super(NAME, src);
 		setPath(src.getPath());
 	}
-	
+
 	public Include(Element src) {
 		super(src);
 	}
@@ -31,7 +31,7 @@ public class Include extends UAElement implements IInclude {
 	public String getPath() {
 		return getAttribute(ATTRIBUTE_PATH);
 	}
-	
+
 	public void setPath(String path) {
 		setAttribute(ATTRIBUTE_PATH, path);
 	}

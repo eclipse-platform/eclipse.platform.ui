@@ -15,17 +15,17 @@ import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Element;
 
 public class CriterionValueDefinition extends UAElement implements ICriterionValueDefinition {
-    
+
 	public static final String NAME = "criterion-value"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-	
+
 	public CriterionValueDefinition(ICriterionValueDefinition src) {
 		super(NAME, src);
 		setId(src.getId());
 		setName(src.getName());
 	}
-	
+
 	public CriterionValueDefinition(Element src) {
 		super(src);
 	}
@@ -34,16 +34,16 @@ public class CriterionValueDefinition extends UAElement implements ICriterionVal
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
-	
+
 	@Override
 	public String getName() {
 		return getAttribute(ATTRIBUTE_NAME);
 	}
-	
+
 	public void setId(String id) {
 		setAttribute(ATTRIBUTE_ID, id);
 	}
-	
+
 	public void setName(String name){
 		setAttribute(ATTRIBUTE_NAME, name);
 	}

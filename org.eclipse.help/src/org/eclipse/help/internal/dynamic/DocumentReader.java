@@ -27,12 +27,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * This class manages reuse of DOM parsers. It will keep reusing the same DocumentBuilder unless it is being used 
+ * This class manages reuse of DOM parsers. It will keep reusing the same DocumentBuilder unless it is being used
  * elsewhere in which case a new one is allocated.
  */
 
 public class DocumentReader {
-	
+
 	private class ManagedBuilder {
 		public DocumentBuilder builder;
 		public boolean inUse;
@@ -43,7 +43,7 @@ public class DocumentReader {
 	public UAElement read(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 		return read(in, null);
 	}
-	
+
 	public UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
 		ManagedBuilder managedBuilder = getManagedBuilder();
 		InputSource input = null;
@@ -58,7 +58,7 @@ public class DocumentReader {
 		prepareDocument(document);
 		return UAElementFactory.newElement(document.getDocumentElement());
 	}
-	
+
 	/**
 	 * Allows subclasses to process the DOM before creating a UA element
 	 */

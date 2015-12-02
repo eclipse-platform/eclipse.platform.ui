@@ -21,7 +21,7 @@ import java.util.Set;
 /*
  * Provides an algorithm for determining a recommended sequence of items that
  * satisfies a primary sequence and as many secondary sequences as possible.
- * 
+ *
  * For example, this is used to determine the display order of books on the tocs
  * based on the active product's preferred order as well as all other products'
  * preferred orders.
@@ -33,15 +33,15 @@ public class SequenceResolver {
 	private ListIterator primaryIter;
 	private ListIterator[] secondaryIters;
 	private Set processedItems;
-	
+
 	/*
 	 * Merges the given primary and secondary orderings such that all ordering
 	 * conditions from the primary are satisfied, and as many secondary ordering
 	 * conditions as reasonably possible are also satisfied. An ordering condition
 	 * is a pair of adjacent items in any ordering.
-	 * 
+	 *
 	 * For example:
-	 * 
+	 *
 	 *    primary =             {b, d, f}
 	 *    secondary[0] =        {c, d, e}
 	 *    secondary[1] =        {a, b, c}
@@ -51,22 +51,22 @@ public class SequenceResolver {
 	 * The algorithm works in iterations, where at each iteration we determine
 	 * the next element in the recommended sequence. We maintain a pointer for
 	 * each ordering to keep track of what we've already ordered.
-	 * 
+	 *
 	 * To determine the next item, we locate the current element in each ordering.
 	 * These are the candidates for the next item as the next item can only be
 	 * one of these.
-	 * 
+	 *
 	 * The top candidates are selected from the list of candidates, where a top
 	 * candidate is one that has the lowest rank (there can be many). Rank is
 	 * determined by how many other candidates appear before that candidate
 	 * item in all the orderings. That is, we find out how many items
 	 * the orderings list before each candidate.
-	 * 
+	 *
 	 * If a candidate has no other candidates listed before it, it will be
 	 * the next item. If there are many, the first one is selected. If one of
 	 * the top candidates is from the primary ordering (can only be one), it is
 	 * automatically selected.
-	 * 
+	 *
 	 * Using the top rank ensures that if there are conflicts, and that
 	 * as many orderings as possible are satisfied. For example, if most orderings
 	 * want x before y, but a few want the opposite, x will be placed before y.
@@ -99,7 +99,7 @@ public class SequenceResolver {
 		}
 		processedItems = new HashSet();
 	}
-	
+
 	/*
 	 * Determine the next item in the sequence based on the top
 	 * candidate items.
@@ -120,10 +120,10 @@ public class SequenceResolver {
 			return candidates[0].item;
 		}
 	}
-	
+
 	/*
 	 * Retrieves the top candidates from all the available next item candidates.
-	 * These are the candidates that have the lowest rank 
+	 * These are the candidates that have the lowest rank
 	 */
 	private Candidate[] getTopCandidates() {
 		Candidate[] candidates = getEligibleCandidates();
@@ -145,7 +145,7 @@ public class SequenceResolver {
 		}
 		return candidates;
 	}
-	
+
 	/*
 	 * Returns all eligible candidates. A candidate is eligible if it does not
 	 * conflict with the primary candidate. That is, if the primary candidate's list
@@ -180,7 +180,7 @@ public class SequenceResolver {
 		}
 		return allCandidates;
 	}
-	
+
 	/*
 	 * Retrieve all the candidates for the next item in sequence, with
 	 * no duplicates.
@@ -248,7 +248,7 @@ public class SequenceResolver {
 		}
 		return 0;
 	}
-	
+
 	/*
 	 * Returns the next item available to this iterator, without moving it
 	 * forward.
@@ -285,12 +285,12 @@ public class SequenceResolver {
 		public boolean isPrimary;
 		public int rank;
 		public List src;
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			return item.equals(obj);
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return item.hashCode();

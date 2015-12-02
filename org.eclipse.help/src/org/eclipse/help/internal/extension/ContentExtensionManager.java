@@ -36,11 +36,11 @@ public class ContentExtensionManager {
 	private static final String ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER = "contentExtensionProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 	private static final ContentExtension[] EMPTY_ARRAY = new ContentExtension[0];
-	
+
 	private AbstractContentExtensionProvider[] contentExtensionProviders;
 	private Map extensionsByPath;
 	private Map replacesByPath;
-	
+
 	/*
 	 * Returns all known extensions for the given locale.
 	 */
@@ -59,7 +59,7 @@ public class ContentExtensionManager {
 		}
 		return (ContentExtension[])extensions.toArray(new ContentExtension[extensions.size()]);
 	}
-	
+
 	/*
 	 * Get all extensions of the given type whose target matches the given path.
 	 */
@@ -74,7 +74,7 @@ public class ContentExtensionManager {
 		}
 		return EMPTY_ARRAY;
 	}
-	
+
 	/*
 	 * Clears all cached data, forcing the manager to query the
 	 * providers again next time a request is made.
@@ -117,9 +117,9 @@ public class ContentExtensionManager {
 					list.add(extension);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/*
 	 * Returns all registered content extension providers (potentially cached).
 	 */
@@ -146,7 +146,7 @@ public class ContentExtensionManager {
 		}
 		return contentExtensionProviders;
 	}
-	
+
 	/*
 	 * Normalizes the given path by adding a leading slash if one doesn't
 	 * exist, and converting the final slash into a '#' if it is thought to
@@ -156,10 +156,10 @@ public class ContentExtensionManager {
 		int bundleStart, bundleEnd;
 		int pathStart, pathEnd;
 		int elementStart, elementEnd;
-		
+
 		bundleStart = path.charAt(0) == '/' ? 1 : 0;
 		bundleEnd = path.indexOf('/', bundleStart);
-		
+
 		pathStart = bundleEnd + 1;
 		pathEnd = path.indexOf('#', pathStart);
 		if (pathEnd == -1) {
@@ -178,10 +178,10 @@ public class ContentExtensionManager {
 				pathEnd = path.length();
 			}
 		}
-		
+
 		elementStart = Math.min(pathEnd + 1, path.length());
 		elementEnd = path.length();
-		
+
 		if (bundleEnd > bundleStart && pathStart > bundleEnd && pathEnd > pathStart && elementStart >= pathEnd && elementEnd >= elementStart) {
 			String bundleId = path.substring(bundleStart, bundleEnd);
 			String relativePath = path.substring(pathStart, pathEnd);

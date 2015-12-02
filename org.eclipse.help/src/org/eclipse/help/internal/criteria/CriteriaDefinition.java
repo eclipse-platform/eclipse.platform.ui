@@ -17,18 +17,18 @@ import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Element;
 
 public class CriteriaDefinition extends UAElement implements ICriteriaDefinition {
-    
+
 	public static final String NAME = "criteriaDefinition"; //$NON-NLS-1$
 
 	public CriteriaDefinition() {
 		super(NAME);
 	}
-	
+
 	public CriteriaDefinition(ICriteriaDefinition src) {
 		super(NAME, src);
 		appendChildren(src.getChildren());
 	}
-	
+
 	public CriteriaDefinition(Element src) {
 		super(src);
 	}
@@ -37,5 +37,5 @@ public class CriteriaDefinition extends UAElement implements ICriteriaDefinition
 	public ICriterionDefinition[] getCriterionDefinitions() {
 		return (ICriterionDefinition[])getChildren(ICriterionDefinition.class);
 	}
-	
+
 }

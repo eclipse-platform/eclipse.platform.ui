@@ -40,7 +40,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 	private DocumentProcessor processor;
 	private Map requiredAttributes;
 	private Map deprecatedElements;
-	
+
 	/*
 	 * Parses the specified content extension XML file into model elements.
 	 */

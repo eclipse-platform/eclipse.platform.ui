@@ -13,7 +13,7 @@ package org.eclipse.help;
 /**
  * An <code>ITopic</code> is one topic in the table of contents, which may
  * contain subtopics.
- * 
+ *
  * @since 2.0
  */
 public interface ITopic extends IUAElement, IHelpResource {
@@ -24,7 +24,7 @@ public interface ITopic extends IUAElement, IHelpResource {
 
 	/**
 	 * Obtains the topics contained in this node.
-	 * 
+	 *
 	 * @return Array of ITopic
 	 */
 	public ITopic[] getSubtopics();

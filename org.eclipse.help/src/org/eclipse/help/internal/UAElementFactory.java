@@ -95,7 +95,7 @@ public class UAElementFactory {
 		classByElementName.put(ContentExtension.NAME_REPLACEMENT, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_REPLACEMENT_LEGACY, ContentExtension.class);
 	}
-	
+
 	public static UAElement newElement(Element element) {
 		String name = element.getNodeName();
 		Class clazz = (Class)classByElementName.get(name);

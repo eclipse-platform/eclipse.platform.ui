@@ -31,7 +31,7 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 	private static final String ELEMENT_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
 	 */

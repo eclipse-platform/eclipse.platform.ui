@@ -13,7 +13,7 @@ package org.eclipse.help;
 /**
  * A directive indicating a link to another toc to be inserted at (and replace)
  * this link.
- * 
+ *
  * @since 3.3
  */
 public interface ILink extends IUAElement {
@@ -21,7 +21,7 @@ public interface ILink extends IUAElement {
 	/**
 	 * Returns the unique id of the toc to link, e.g.
 	 * "/org.eclipse.platform.doc.user/toc.xml"
-	 * 
+	 *
 	 * @return the toc id to link
 	 */
 	public String getToc();

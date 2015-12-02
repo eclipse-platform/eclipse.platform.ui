@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,8 +32,8 @@ package org.eclipse.help;
 public interface IContext {
 	/**
 	 * Returns the related topics for this help context.
-	 * 
-	 * @return an array of related help topics.  
+	 *
+	 * @return an array of related help topics.
 	 * If no related topics have been defined for this context a zero length array is returned.
 	 * May not return <code>null</code>
 	 * @since 2.0
@@ -41,7 +41,7 @@ public interface IContext {
 	public IHelpResource[] getRelatedTopics();
 	/**
 	 * Returns the text description for this context.
-	 * 
+	 *
 	 * @return the text description
 	 */
 	public String getText();

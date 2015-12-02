@@ -34,7 +34,7 @@ public class HrefUtil {
 
 	/**
 	 * Creates /pluginid/href from href relative to the current plugin
-	 * 
+	 *
 	 * @param pluginID
 	 *            id of a plugin to which href is relative
 	 * @param href
@@ -73,7 +73,7 @@ public class HrefUtil {
 	}
 	/**
 	 * Parses href and obtains plugin id
-	 * 
+	 *
 	 * @param href
 	 *            String in format /string1[/string2]
 	 * @return plugin ID, or null
@@ -90,7 +90,7 @@ public class HrefUtil {
 
 	/**
 	 * Parses href and obtains resource path relative to the plugin
-	 * 
+	 *
 	 * @param href
 	 *            String in format /string1[/[string2]][#string3]
 	 * @return relative resource path, or null
@@ -112,10 +112,10 @@ public class HrefUtil {
 		// href is /pluginID/
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Parses directory path and obtains simple form path
-	 * 
+	 *
 	 * @param href
 	 *            directory path in format a/../c/1 or a//b/c
 	 *            to  /c/1 and a/b/c

@@ -14,7 +14,7 @@ package org.eclipse.help;
  * An <code>AbstractCriteriaDefinitionProvider</code> is a mechanism to provide display name
  * for criteria attached to toc or topic. <code>AbstractCriteriaDefinitionProvider</code>s must be
  * registered via the <code>org.eclipse.help.criteriaDefinition</code> extension point.
- * 
+ *
  * @since 3.5
  */
 public abstract class AbstractCriteriaDefinitionProvider {
@@ -22,7 +22,7 @@ public abstract class AbstractCriteriaDefinitionProvider {
 	/**
 	 * Returns all criteria definition contributions for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
-	 * 
+	 *
 	 * @param locale the locale for which to get contributions
 	 * @return all the criteria definition contributions for this provider
 	 */

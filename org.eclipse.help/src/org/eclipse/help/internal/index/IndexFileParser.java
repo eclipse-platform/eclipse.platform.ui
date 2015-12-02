@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
 public class IndexFileParser {
 
 	private DocumentReader reader;
-	
+
     public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
 			reader = new IndexDocumentReader();

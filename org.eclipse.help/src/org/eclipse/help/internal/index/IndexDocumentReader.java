@@ -18,7 +18,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class IndexDocumentReader extends DocumentReader {
-	
+
 	@Override
 	protected void prepareDocument(Document document) {
 		prune(document.getDocumentElement());
@@ -26,7 +26,7 @@ public class IndexDocumentReader extends DocumentReader {
 
 	private void prune(Node element) {
 		NodeList nodes = element.getChildNodes();
-		Node node = nodes.item(0); 
+		Node node = nodes.item(0);
 		while (node != null) {
 			short nodeType = node.getNodeType();
 			if (nodeType == Node.TEXT_NODE || nodeType == Node.COMMENT_NODE) {

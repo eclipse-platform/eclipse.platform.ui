@@ -33,7 +33,7 @@ public class CriteriaDefinitionAssembler {
 	public CriteriaDefinition assemble(List contributions) {
 		return merge(contributions);
 	}
-	
+
 	/*
 	 * Merge all criteria definition contributions into one.
 	 */
@@ -47,19 +47,19 @@ public class CriteriaDefinitionAssembler {
 		}
 		return criteriaDefinition;
 	}
-	
+
 	/*
 	 * Merges the children of nodes a and b, and stores them into a. If the two
 	 * contain the same criterion id, only one is kept but its children are merged,
-	 * recursively. In one criterion, if multiple criterion values exist with the 
-	 * same id, only the first one found is kept. 
-	 * 
-	 * Insure criterion has its id at least, and criterion value has both its id and name. 
+	 * recursively. In one criterion, if multiple criterion values exist with the
+	 * same id, only the first one found is kept.
+	 *
+	 * Insure criterion has its id at least, and criterion value has both its id and name.
 	 */
 	private void mergeChildren(UAElement a, UAElement b) {
 		Map criterionById = new HashMap();
 		Set criterionValueIds = new HashSet();
-		
+
 		IUAElement[] childrenA = a.getChildren();
 		for(int i = 0; i < childrenA.length; ++i){
 			UAElement childA = (UAElement)childrenA[i];
@@ -73,10 +73,10 @@ public class CriteriaDefinitionAssembler {
 				String valueName = childA.getAttribute(CriterionValueDefinition.ATTRIBUTE_NAME);
 				if(null != valueId && valueId.trim().length() > 0 && null != valueName && valueName.trim().length() > 0){
 					criterionValueIds.add(childA.getAttribute(CriterionValueDefinition.ATTRIBUTE_ID));
-				}	
+				}
 			}
 		}
-		
+
 		IUAElement[] childrenB = b.getChildren();
 		for(int i = 0; i < childrenB.length; ++i){
 			UAElement childB = (UAElement) childrenB[i];
@@ -101,7 +101,7 @@ public class CriteriaDefinitionAssembler {
 						a.appendChild(childB);
 						criterionValueIds.add(valueIdB);
 					}
-				}				
+				}
 			}
 		}
 	}

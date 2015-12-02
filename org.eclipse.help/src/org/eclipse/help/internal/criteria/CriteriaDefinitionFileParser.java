@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 public class CriteriaDefinitionFileParser {
 
 	private DocumentReader reader;
-	
+
     public CriteriaDefinitionContribution parse(CriteriaDefinitionFile criteriaDefinitionFile) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
 			reader = new CriteriaDefinitionDocumentReader();

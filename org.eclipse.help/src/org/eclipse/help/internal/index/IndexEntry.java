@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
@@ -20,16 +20,16 @@ import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Element;
 
 public class IndexEntry extends UAElement implements IIndexEntry2 {
-	
+
 	public static final String NAME = "entry"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_KEYWORD = "keyword"; //$NON-NLS-1$
-	
+
 	public IndexEntry(IIndexEntry src) {
 		super(NAME, src);
 		setKeyword(src.getKeyword());
 		appendChildren(src.getChildren());
 	}
-	
+
 	public IndexEntry(Element src) {
 		super(src);
 	}
@@ -38,17 +38,17 @@ public class IndexEntry extends UAElement implements IIndexEntry2 {
 	public String getKeyword() {
 		return getAttribute(ATTRIBUTE_KEYWORD);
 	}
-	
+
 	@Override
 	public IIndexEntry[] getSubentries() {
 		return (IIndexEntry[])getChildren(IIndexEntry.class);
 	}
-	
+
 	@Override
 	public ITopic[] getTopics() {
 		return (ITopic[])getChildren(ITopic.class);
 	}
-	
+
 	public void setKeyword(String keyword) {
 		setAttribute(ATTRIBUTE_KEYWORD, keyword);
 	}

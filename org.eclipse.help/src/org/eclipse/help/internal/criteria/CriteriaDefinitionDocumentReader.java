@@ -18,11 +18,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class CriteriaDefinitionDocumentReader extends DocumentReader {
-	
+
 	private static final String CRITERION_ELEMENT = "criterion"; //$NON-NLS-1$
 	private static final String CRITERION_ID_ATTRIBUTE = "id"; //$NON-NLS-1$
-	
-	
+
+
 	@Override
 	protected void prepareDocument(Document document) {
 		prune(document.getDocumentElement());
@@ -30,7 +30,7 @@ public class CriteriaDefinitionDocumentReader extends DocumentReader {
 
 	private void prune(Node element) {
 		NodeList nodes = element.getChildNodes();
-		Node node = nodes.item(0); 
+		Node node = nodes.item(0);
 		while (node != null) {
 			short nodeType = node.getNodeType();
 			if (nodeType == Node.TEXT_NODE || nodeType == Node.COMMENT_NODE) {
@@ -49,7 +49,7 @@ public class CriteriaDefinitionDocumentReader extends DocumentReader {
 			}
 		}
 	}
-	
+
 	/*
 	 * Cause criterion ID is case insensitive, so just change it to lower case.
 	 */

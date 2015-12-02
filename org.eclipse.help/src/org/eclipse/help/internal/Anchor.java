@@ -17,12 +17,12 @@ public class Anchor extends UAElement implements IAnchor {
 
 	public static final String NAME = "anchor"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
+
 	public Anchor(IAnchor src) {
 		super(NAME, src);
 		setId(src.getId());
 	}
-	
+
 	public Anchor(Element src) {
 		super(src);
 	}
@@ -31,7 +31,7 @@ public class Anchor extends UAElement implements IAnchor {
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
-	
+
 	public void setId(String id) {
 		setAttribute(ATTRIBUTE_ID, id);
 	}

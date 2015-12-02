@@ -43,14 +43,14 @@ public class UAElement implements IUAElement {
 
 	private static DocumentBuilder builder;
 	private static Document document;
-	
+
 	private Element element;
 	private UAElement parent;
 	protected List children;
 	private Filter[] filters;
 	private Expression enablementExpression;
     private IUAElement src;
-	
+
 	private class Filter {
 		public Filter(String name, String value, boolean isNegated) {
             this.name = name;
@@ -69,7 +69,7 @@ public class UAElement implements IUAElement {
 	public UAElement(String name) {
 		this.element = getDocument().createElement(name);
 	}
-	
+
 	public UAElement(String name, IUAElement src) {
 		this(name);
 		if (src instanceof UAElement) {
@@ -89,7 +89,7 @@ public class UAElement implements IUAElement {
 		this.enablementExpression = sourceElement.enablementExpression;
 	    this.src = sourceElement.src;
 	}
-	
+
 	private Filter[] getFilterElements() {
 		if (filters == null) {
 			List list = new ArrayList();
@@ -104,7 +104,7 @@ public class UAElement implements IUAElement {
 								enablementExpression = ExpressionConverter.getDefault().perform(enablement);
 							}
 							catch (CoreException e) {
-								
+
 							}
 						} else if (ELEMENT_FILTER.equals(elementKind)) {
 							Element filter = (Element)node;
@@ -129,12 +129,12 @@ public class UAElement implements IUAElement {
 		}
 		return filters;
 	}
-	
+
 	public void appendChild(UAElement uaElementToAppend) {
 		importElement(uaElementToAppend);
 		element.appendChild(uaElementToAppend.element);
 		uaElementToAppend.parent = this;
-		
+
 		if (children != null) {
 			children.add(uaElementToAppend);
 		}
@@ -148,9 +148,9 @@ public class UAElement implements IUAElement {
 			appendChild(children[i] instanceof UAElement ? (UAElement)children[i] : UAElementFactory.newElement(children[i]));
 		}
 	}
-	
+
 	/*
-	 * This method is synchronized to fix Bug 232169. When modifying this source be careful not 
+	 * This method is synchronized to fix Bug 232169. When modifying this source be careful not
 	 * to introduce any logic which could possibly cause this thread to block.
 	 */
 	synchronized public String getAttribute(String name) {
@@ -163,7 +163,7 @@ public class UAElement implements IUAElement {
 
 	/*
 	 * This method is synchronized to fix Bug 230037. A review of the code indicated that there was no
-	 * path which could get blocked and cause deadlock. When modifying this source be careful not 
+	 * path which could get blocked and cause deadlock. When modifying this source be careful not
 	 * to introduce any logic which could possibly cause this thread to block.
 	 */
 	@Override
@@ -188,7 +188,7 @@ public class UAElement implements IUAElement {
 		}
 		return (UAElement[])children.toArray(new UAElement[children.size()]);
 	}
-	
+
 	public Object getChildren(Class clazz) {
 		IUAElement[] children = getChildren();
 		if (children.length > 0) {
@@ -203,11 +203,11 @@ public class UAElement implements IUAElement {
 		}
 		return Array.newInstance(clazz, 0);
 	}
-	
+
 	public String getElementName() {
 		return element.getNodeName();
 	}
-	
+
 	private static Document getDocument() {
 		if (document == null) {
 			if (builder == null) {
@@ -244,7 +244,7 @@ public class UAElement implements IUAElement {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		if (!ProductPreferences.useEnablementFilters()) {
@@ -272,7 +272,7 @@ public class UAElement implements IUAElement {
         }
 		return true;
 	}
-	
+
 	public void removeChild(UAElement elementToRemove) {
 
 	    element.removeChild(elementToRemove.element);
@@ -285,7 +285,7 @@ public class UAElement implements IUAElement {
 			}
 		}
 	}
-	
+
 	public void setAttribute(String name, String value) {
 		element.setAttribute(name, value);
 	}
@@ -305,17 +305,17 @@ public class UAElement implements IUAElement {
 		}
 		uaElementToImport.element = elementToImport;
 	}
-	
+
 	private boolean isEnabledByFilterAttribute(String filter) {
 		return !FilterResolver.getInstance().isFiltered(filter);
 	}
 
-	private boolean isFilterEnabled(Filter filter) {	
+	private boolean isFilterEnabled(Filter filter) {
 		return !FilterResolver.getInstance().isFiltered(filter.name, filter.value, filter.isNegated);
 	}
 
 	public Element getElement() {
 		return element;
 	}
-	
+
 }

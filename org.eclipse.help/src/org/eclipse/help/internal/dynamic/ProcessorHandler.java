@@ -17,13 +17,13 @@ import org.eclipse.help.internal.UAElement;
  * allowing it to process the node and return a result.
  */
 public abstract class ProcessorHandler {
-	
+
 	public static final short UNHANDLED = 0;
 	public static final short HANDLED_CONTINUE = 1;
 	public static final short HANDLED_SKIP = 2;
-	
+
 	private DocumentProcessor processor;
-	
+
 	/*
 	 * Will be called for every node visited by the processor,
 	 * except those requested to be skipped.
@@ -43,5 +43,5 @@ public abstract class ProcessorHandler {
 	 */
 	public void setProcessor(DocumentProcessor processor) {
 		this.processor = processor;
-	}	
+	}
 }

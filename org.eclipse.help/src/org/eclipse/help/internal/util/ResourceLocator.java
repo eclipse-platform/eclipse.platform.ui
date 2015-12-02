@@ -70,7 +70,7 @@ public class ResourceLocator {
 			String id = ex.getUniqueIdentifier();
 			return id != null && id.equals(refId);
 		}
-		
+
 		public void reset() {
 			producer = null;
 		}
@@ -95,7 +95,7 @@ public class ResourceLocator {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 			 */
 			@Override
@@ -121,7 +121,7 @@ public class ResourceLocator {
 
 	/**
 	 * Obtains content provider for a documentation plug-in, creates one if necessary.
-	 * 
+	 *
 	 * @param pluginId
 	 * @return ITopicContentProvider or null
 	 */
@@ -150,7 +150,7 @@ public class ResourceLocator {
 
 	/**
 	 * Creates content proivider for a documentation plug-in
-	 * 
+	 *
 	 * @param pluginId
 	 * @return ITopicContentProvider or null
 	 */
@@ -160,9 +160,9 @@ public class ResourceLocator {
 		if (elements.length == 0) {
 			return null;
 		}
-		
+
 	    checkForDuplicateExtensionElements(elements);
-		
+
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!elements[i].getContributor().getName().equals(pluginId)) {
@@ -183,7 +183,7 @@ public class ResourceLocator {
 	}
 
 	private static boolean isCheckedForDuplicates = false;
-	
+
 	private static void checkForDuplicateExtensionElements(IConfigurationElement[] elements) {
 		if (isCheckedForDuplicates) {
 			return;
@@ -192,7 +192,7 @@ public class ResourceLocator {
 		Set logged = new HashSet();
 		Set keys = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];	
+			IConfigurationElement element = elements[i];
 			String pluginName = element.getContributor().getName();
 			String key = pluginName;
 			if (logged.contains(key)) {
@@ -262,14 +262,14 @@ public class ResourceLocator {
 	/**
 	 * Opens an input stream to a file contained in a plugin. This includes includes OS, WS and NL
 	 * lookup.
-	 * 
+	 *
 	 * @param pluginId
 	 *            the plugin id of the plugin that contains the file you are trying to find
 	 * @param file
 	 *            the relative path of the file to find
 	 * @param locale
 	 *            the locale used as an override or <code>null</code> to use the default locale
-	 * 
+	 *
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
 	public static InputStream openFromPlugin(String pluginId, String file, String locale) {
@@ -282,14 +282,14 @@ public class ResourceLocator {
 	/**
 	 * Opens an input stream to a file contained in a zip in a plugin. This includes OS, WS and NL
 	 * lookup.
-	 * 
+	 *
 	 * @param pluginDesc
 	 *            the plugin description of the plugin that contains the file you are trying to find
 	 * @param file
 	 *            the relative path of the file to find
 	 * @param locale
 	 *            the locale used as an override or <code>null</code> to use the default locale
-	 * 
+	 *
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
 	public static InputStream openFromZip(Bundle pluginDesc, String zip, String file, String locale) {
@@ -344,14 +344,14 @@ public class ResourceLocator {
 	/**
 	 * Opens an input stream to a file contained in a plugin. This includes includes OS, WS and NL
 	 * lookup.
-	 * 
+	 *
 	 * @param pluginDesc
 	 *            the plugin description of the plugin that contains the file you are trying to find
 	 * @param file
 	 *            the relative path of the file to find
 	 * @param locale
 	 *            the locale used as an override or <code>null</code> to use the default locale
-	 * 
+	 *
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
 	public static InputStream openFromPlugin(Bundle pluginDesc, String file, String locale) {
@@ -390,7 +390,7 @@ public class ResourceLocator {
 
 	/*
 	 * Gets an ArrayList that has the path prefixes to search.
-	 * 
+	 *
 	 * @param locale the locale used as an override or <code>null</code> to use the default locale
 	 * @return an ArrayList that has path prefixes that need to be search. The returned ArrayList
 	 * will have an entry for the root of the plugin.
@@ -425,14 +425,14 @@ public class ResourceLocator {
 	/**
 	 * Finds all topics under specified directory (recursively). This includes includes OS, WS and
 	 * NL lookup.
-	 * 
+	 *
 	 * @param pluginDesc
 	 *            the plugin description of the plugin that contains the file you are trying to find
 	 * @param directory
 	 *            the relative path of the directory
 	 * @param locale
 	 *            the locale used as an override or <code>null</code> to use the default locale
-	 * 
+	 *
 	 * @return an InputStream to the file or <code>null</code> if the file wasn't found
 	 */
 	public static Set findTopicPaths(Bundle pluginDesc, String directory, String locale) {
@@ -468,10 +468,10 @@ public class ResourceLocator {
 			}
 		}
 	}
-	
+
 	/**
 	 * Create a path for use in error messages that will identify the plugin and
-	 * file name as well as a resolved path (if available) which will give 
+	 * file name as well as a resolved path (if available) which will give
 	 * information about which fragment the file was located in
 	 * @return pluginId/file followed by a resolved path if the file exists
 	 */

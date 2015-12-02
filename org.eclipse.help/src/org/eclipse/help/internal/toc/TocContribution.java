@@ -24,89 +24,89 @@ public class TocContribution implements ITocContribution {
 	private Toc toc;
 	private boolean isPrimary;
 	private boolean isSubToc;
-	
+
 	public TocContribution() {
 		isSubToc = false;
 	}
-	
+
 	@Override
 	public String getCategoryId() {
 		return categoryId;
 	}
-	
+
 	public void setCategoryId(String categoryId) {
 		this.categoryId = categoryId;
 	}
-	
+
 	@Override
 	public String getContributorId() {
 		return contributorId;
 	}
-	
+
 	public void setContributorId(String contributorId) {
 		this.contributorId = contributorId;
 	}
-	
+
 	@Override
 	public String[] getExtraDocuments() {
 		return extraDocuments;
 	}
-	
+
 	public void setExtraDocuments(String[] extraDocuments) {
 		this.extraDocuments = extraDocuments;
 	}
-	
+
 	@Override
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public String getLocale() {
 		return locale;
 	}
-	
+
 	public void setLocale(String locale) {
 		this.locale = locale;
 	}
-	
+
 	@Override
 	public String getLinkTo() {
 		String link = toc.getLinkTo();
 		return ProductPreferences.resolveSpecialIdentifiers(link);
 	}
-	
+
 	public void setLinkTo(String linkTo) {
 		toc.setLinkTo(linkTo);
 	}
-	
+
 	@Override
 	public IToc getToc() {
 		return toc;
 	}
-	
+
 	public void setToc(Toc toc) {
 		this.toc = toc;
 		toc.setTocContribution(this);
 	}
-	
+
 	@Override
 	public boolean isPrimary() {
 		return isPrimary;
 	}
-	
+
 	public void setPrimary(boolean isPrimary) {
 		this.isPrimary = isPrimary;
 	}
-	
+
 	public boolean isSubToc() {
 		return isSubToc;
 	}
-	
+
 	public void setSubToc(boolean isSubToc) {
 		this.isSubToc = isSubToc;
 	}

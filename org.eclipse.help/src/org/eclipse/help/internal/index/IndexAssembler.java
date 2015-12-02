@@ -56,7 +56,7 @@ public class IndexAssembler {
 		sortAndPrune(index);
 		return index;
 	}
-	
+
 	/*
 	 * Merge all index contributions into one large index, not sorted.
 	 */
@@ -70,12 +70,12 @@ public class IndexAssembler {
 		}
 		return index;
 	}
-	
+
 	/*
 	 * Merges the children of nodes a and b, and stores them into a. If the two
 	 * contain the same keyword, only one is kept but its children are merged,
 	 * recursively. If multiple topics exist with the same href, only the
-	 * first one found is kept. If multiple see elements are found with the same target 
+	 * first one found is kept. If multiple see elements are found with the same target
 	 * only one is retained
 	 */
 	private void mergeChildren(UAElement a, UAElement b) {
@@ -95,7 +95,7 @@ public class IndexAssembler {
 				seeTargets.add(((IndexSee)childA));
 			}
 		}
-		
+
 		// now do the merge
 		IUAElement[] childrenB = b.getChildren();
 		for (int i=0;i<childrenB.length;++i) {
@@ -128,7 +128,7 @@ public class IndexAssembler {
 			}
 		}
 	}
-	
+
 	private void process(List contributions) {
 		if (processor == null) {
 			DocumentReader reader = new DocumentReader();
@@ -154,7 +154,7 @@ public class IndexAssembler {
 		}
 		sortAndPrune(element, comparator);
 	}
-	
+
 	/*
 	 * Sort the given node's descendants recursively using the given
 	 * Comparator. Prune out any empty entry elements. Return true if this node was
@@ -187,7 +187,7 @@ public class IndexAssembler {
 		}
 		return true;
 	}
-	
+
 	boolean isValidSeeReference(IndexSee see) {
 		UAElement ancestor = see.getParentElement();
 		while (!(ancestor instanceof Index)) {
@@ -198,7 +198,7 @@ public class IndexAssembler {
 		}
 		return ((Index)ancestor).getSeeTarget(see) != null;
 	}
-	
+
 	/*
 	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
@@ -284,7 +284,7 @@ public class IndexAssembler {
 				return 6;
 			}
 		}
-		
+
 		/*
 		 * Returns the string that will be displayed for the given object,
 		 * used for sorting.

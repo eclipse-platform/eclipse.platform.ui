@@ -22,7 +22,7 @@ public class TocProviderComparator implements Comparator{
 	{
 		AbstractTocProvider provider1 = (AbstractTocProvider)obj1;
 		AbstractTocProvider provider2 = (AbstractTocProvider)obj2;
-		
+
 		if(provider1.getPriority()<provider2.getPriority())
 			return -1;
 		else if(provider1.getPriority()>provider2.getPriority())

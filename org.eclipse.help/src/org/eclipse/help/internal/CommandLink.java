@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ public class CommandLink extends UAElement implements ICommandLink {
 		setLabel(src.getLabel());
 		setSerialization(src.getSerialization());
 	}
-	
+
 	public CommandLink(Element src) {
 		super(src);
 	}
@@ -42,7 +42,7 @@ public class CommandLink extends UAElement implements ICommandLink {
 	public void setLabel(String label) {
 		setAttribute(ATTRIBUTE_LABEL, label);
 	}
-	
+
 	public void setSerialization(String serialization) {
 		setAttribute(ATTRIBUTE_SERIALIZATION, serialization);
 	}

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ package org.eclipse.help;
  * context switches. If not provided, the query string is computed based on the
  * current context. Providing the string explicitly gives the context owners
  * better control over the search outcome.
- * 
+ *
  * @since 3.1
  * @see IContext
  * @see org.eclipse.core.runtime.IAdaptable
@@ -51,7 +51,7 @@ public interface IContextProvider {
 	/**
 	 * Returns the mask created by combining supported change triggers using the
 	 * bitwise OR operation.
-	 * 
+	 *
 	 * @return a bitwise-OR combination of state change triggers or
 	 *         <code>NONE</code> for a static provider.
 	 */
@@ -63,7 +63,7 @@ public interface IContextProvider {
 	 * providers will be called each time the owner of the target is activated.
 	 * If change triggers are used, the method will be called each time the
 	 * trigger occurs.
-	 * 
+	 *
 	 * @param target
 	 *            the focus of the context help
 	 * @return context help for the provided target or <code>null</code> if
@@ -75,7 +75,7 @@ public interface IContextProvider {
 	 * Returns a search expression that should be used to find more information
 	 * about the current target. If provided, it can be used for background
 	 * search.
-	 * 
+	 *
 	 * @param target
 	 *            the focus of the context help
 	 * @return search expression as defined by the help system search, or

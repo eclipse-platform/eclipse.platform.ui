@@ -21,7 +21,7 @@ import java.util.Locale;
  * obtain content from instance of this class contributed by the plugin. If
  * IHelpContentProvider does not return the content, help system searches
  * doc.zip and plug-in install location for the file and reads its content.
- * 
+ *
  * @since 3.0
  */
 public interface IHelpContentProducer {
@@ -31,7 +31,7 @@ public interface IHelpContentProducer {
 	 * static, and corresponding file exist in a plug-in directory or doc.zip
 	 * file, null might be return as help system can read the file content
 	 * itself.
-	 * 
+	 *
 	 * @param pluginID
 	 *            unique identifier of a plug-in containing the resource
 	 * @param href

@@ -22,7 +22,7 @@ public class IncludeHandler extends ProcessorHandler {
 	private IncludeResolver resolver;
 	private DocumentReader reader;
 	private String locale;
-	
+
 	/*
 	 * Creates the handler. It needs to know which locale the current document
 	 * is in in order to pull content from the correct locale.
@@ -31,7 +31,7 @@ public class IncludeHandler extends ProcessorHandler {
 		this.reader = reader;
 		this.locale = locale;
 	}
-	
+
 	@Override
 	public short handle(UAElement element, String id) {
 		if (element instanceof Include) {
@@ -52,7 +52,7 @@ public class IncludeHandler extends ProcessorHandler {
 		}
 		return UNHANDLED;
 	}
-	
+
 	/*
 	 * Processes the include; replaces the element with the one described by
 	 * the parameters.
@@ -74,7 +74,7 @@ public class IncludeHandler extends ProcessorHandler {
 			}
 		}
 	}
-	
+
 	/*
 	 * Extracts the bundle ID from the given path.
 	 */
@@ -94,7 +94,7 @@ public class IncludeHandler extends ProcessorHandler {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Extracts the bundle-relative path from the given full path.
 	 */
@@ -110,7 +110,7 @@ public class IncludeHandler extends ProcessorHandler {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Extracts the element id from the given path.
 	 */

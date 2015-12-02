@@ -59,9 +59,9 @@ public class TocFileProvider extends AbstractTocProvider {
 				String file = tocFiles[i].getFile();
 				String msg = "Error reading help table of contents file /\""  //$NON-NLS-1$
 					+ ResourceLocator.getErrorPath(pluginId, file, locale)
-					+ locationInfo 
+					+ locationInfo
 					+ "\" (skipping file)"; //$NON-NLS-1$
-				HelpPlugin.logError(msg, t);			
+				HelpPlugin.logError(msg, t);
 			}
 		}
 		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);

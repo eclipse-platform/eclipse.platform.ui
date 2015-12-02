@@ -18,7 +18,7 @@ public class ContextFile {
 
 	private String bundleId;
 	private String file;
-	
+
 	/*
 	 * Creates a new context file reference.
 	 */
@@ -40,7 +40,7 @@ public class ContextFile {
 	public String getFile() {
 		return file;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -54,7 +54,7 @@ public class ContextFile {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

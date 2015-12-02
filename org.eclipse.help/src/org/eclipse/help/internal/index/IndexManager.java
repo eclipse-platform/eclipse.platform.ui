@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
@@ -39,11 +39,11 @@ public class IndexManager {
 	private static final String EXTENSION_POINT_ID_INDEX = HelpPlugin.PLUGIN_ID + ".index"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_INDEX_PROVIDER = "indexProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
-	
+
 	private Map indexContributionsByLocale = new HashMap();
 	private Map indexesByLocale = new HashMap();
 	private AbstractIndexProvider[] indexProviders;
-	
+
 	public synchronized IIndex getIndex(String locale) {
 		Index index = (Index)indexesByLocale.get(locale);
 		if (index == null) {
@@ -64,7 +64,7 @@ public class IndexManager {
 		}
 		return index;
 	}
-	
+
 	/*
 	 * Returns all index contributions for the given locale, from all
 	 * providers.
@@ -114,7 +114,7 @@ public class IndexManager {
 		cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
 		return cached;
 	}
-	
+
 	/*
 	 * Clears all cached contributions, forcing the manager to query the
 	 * providers again next time a request is made.
@@ -150,7 +150,7 @@ public class IndexManager {
 		}
 		return indexProviders;
 	}
-	
+
 	/*
 	 * Returns whether or not the index has been completely loaded for the
 	 * given locale yet or not.

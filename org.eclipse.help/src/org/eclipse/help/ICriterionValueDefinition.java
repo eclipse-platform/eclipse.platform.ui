@@ -14,7 +14,7 @@ package org.eclipse.help;
 /**
  * ICriterionValueDefinition represents one criterion value definition of one criterion.
  * It includes value id and its display name.
- * 
+ *
  * @since 3.5
  */
 public interface ICriterionValueDefinition extends IUAElement {
@@ -28,7 +28,7 @@ public interface ICriterionValueDefinition extends IUAElement {
 
     /**
      * Obtains the display name associated with this criterion value.
-     * 
+     *
      * @return the name
      */
     public String getName();

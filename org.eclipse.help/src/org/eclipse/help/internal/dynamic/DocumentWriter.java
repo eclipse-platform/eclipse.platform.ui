@@ -34,7 +34,7 @@ public class DocumentWriter {
 	public String writeString(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
 		return writeString(element.getElement(), xmlDecl);
 	}
-	
+
 	public String writeString(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
         byte[] bytes = writeBytes(element, xmlDecl);
         String encoding = transformer.getOutputProperty(OutputKeys.ENCODING);
@@ -48,7 +48,7 @@ public class DocumentWriter {
         	return new String(bytes);
         }
 	}
-	
+
 	public byte[] writeBytes(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
 		return writeBytes(element.getElement(), xmlDecl);
 	}
@@ -72,7 +72,7 @@ public class DocumentWriter {
 		}
 		props.setProperty(OutputKeys.OMIT_XML_DECLARATION, xmlDecl ? "no" : "yes"); //$NON-NLS-1$ //$NON-NLS-2$
 		transformer.setOutputProperties(props);
-		
+
 		DOMSource source = new DOMSource(element);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(out);

@@ -33,11 +33,11 @@ public class CriteriaDefinitionManager {
 	private static final String EXTENSION_POINT_ID_CRITERIA_DEFINITION = HelpPlugin.PLUGIN_ID + ".criteriaDefinition"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_CRITERIA_DEFINITION_PROVIDER = "criteriaDefinitionProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
-	
+
 	private Map criteriaDefinitionContributionsByLocale = new HashMap();
 	private Map criteriaDefinitionsByLocale = new HashMap();
 	private AbstractCriteriaDefinitionProvider[] criteriaDefinitionProviders;
-	
+
 	public synchronized ICriteriaDefinition getCriteriaDefinition(String locale) {
 		CriteriaDefinition criteriaDefinition = (CriteriaDefinition)criteriaDefinitionsByLocale.get(locale);
 		if (null == criteriaDefinition) {
@@ -57,7 +57,7 @@ public class CriteriaDefinitionManager {
 		}
 		return criteriaDefinition;
 	}
-	
+
 	/*
 	 * Returns all criteria definition contributions for the given locale, from all providers.
 	 */
@@ -85,7 +85,7 @@ public class CriteriaDefinitionManager {
 				HelpPlugin.logError(msg, t);
 				continue;
 			}
-			
+
 			// check for nulls and root element
 			for (int j=0;j<contrib.length;++j) {
 				if (contrib[j] == null) {
@@ -109,7 +109,7 @@ public class CriteriaDefinitionManager {
 		cached = (CriteriaDefinitionContribution[])contributions.toArray(new CriteriaDefinitionContribution[contributions.size()]);
 		return cached;
 	}
-	
+
 	/*
 	 * Clears all cached contributions, forcing the manager to query the
 	 * providers again next time a request is made.
@@ -145,7 +145,7 @@ public class CriteriaDefinitionManager {
 		}
 		return criteriaDefinitionProviders;
 	}
-	
+
 	public boolean isCriteriaDefinitionLoaded(String locale) {
 		return criteriaDefinitionsByLocale.get(locale) != null;
 	}
@@ -156,7 +156,7 @@ public class CriteriaDefinitionManager {
 	public void setCriteriaDefinitionProviders(AbstractCriteriaDefinitionProvider[] criteriaDefinitionProviders) {
 		this.criteriaDefinitionProviders = criteriaDefinitionProviders;
 	}
-	
+
 	public String getCriterionName(String id, String locale) {
 		ICriteriaDefinition definition = getCriteriaDefinition(locale);
 		ICriterionDefinition[] criterionDefinitions = definition.getCriterionDefinitions();
@@ -166,12 +166,12 @@ public class CriteriaDefinitionManager {
 				String name = criterionDefinition.getName();
 				if(null != name && 0 != name.length()) {
 					return name;
-				}				
+				}
 			}
 		}
 		return id;
 	}
-	
+
 	public String getCriterionValueName(String criterionId, String criterionValueId, String locale) {
 		ICriteriaDefinition definition = getCriteriaDefinition(locale);
 		ICriterionDefinition[] criterionDefinitions = definition.getCriterionDefinitions();
@@ -187,7 +187,7 @@ public class CriteriaDefinitionManager {
 							return name;
 						}
 					}
-				}				
+				}
 			}
 		}
 		return criterionValueId;

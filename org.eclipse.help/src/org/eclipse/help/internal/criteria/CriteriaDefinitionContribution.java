@@ -20,26 +20,26 @@ public class CriteriaDefinitionContribution implements ICriteriaDefinitionContri
 	private String id;
 	private ICriteriaDefinition criteriaDefinition;
 	private String locale;
-	
+
 	@Override
 	public String getId() {
 		return id;
 	}
-	
+
 	@Override
 	public ICriteriaDefinition getCriteriaDefinition() {
 		return criteriaDefinition;
 	}
-	
+
 	@Override
 	public String getLocale() {
 		return locale;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public void setCriteriaDefinition(ICriteriaDefinition criteriaDefinition) {
 		this.criteriaDefinition = criteriaDefinition;
 	}

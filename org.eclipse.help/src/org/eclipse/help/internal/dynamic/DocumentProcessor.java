@@ -20,21 +20,21 @@ import org.eclipse.help.internal.UAElement;
 public class DocumentProcessor {
 
 	private ProcessorHandler[] handlers;
-	
+
 	/*
 	 * Creates a processor with no handlers.
-	 */	
+	 */
 	public DocumentProcessor() {
 		handlers = new ProcessorHandler[0];
 	}
-	
+
 	/*
 	 * Creates a processor with the given handlers.
 	 */
 	public DocumentProcessor(ProcessorHandler[] handlers) {
 		setHandlers(handlers);
 	}
-	
+
 	/*
 	 * Processes the given node and all its descendants, which exist
 	 * inside a document identified by the given id.
@@ -57,7 +57,7 @@ public class DocumentProcessor {
 			process((UAElement)children[i], id);
 		}
 	}
-	
+
 	/*
 	 * Sets the handlers for this processor.
 	 */

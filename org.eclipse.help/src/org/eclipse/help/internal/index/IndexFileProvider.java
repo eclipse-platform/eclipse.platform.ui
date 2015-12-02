@@ -50,7 +50,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 				buffer.append(getIndexFilePath(indexFile));
 				buffer.append("\" at line "); //$NON-NLS-1$
 			    buffer.append(spe.getLineNumber());
-			    buffer.append(". "); //$NON-NLS-1$   
+			    buffer.append(". "); //$NON-NLS-1$
 	            buffer.append(spe.getMessage());
 
 	            // Use the contained exception.
@@ -59,7 +59,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 	                x = spe.getException();
 	            HelpPlugin.logError(buffer.toString(), x);
 
-	        } 
+	        }
 			catch (Throwable t) {
 				String msg = ERROR_READING_HELP_KEYWORD_INDEX_FILE + getIndexFilePath(indexFile) + "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);
@@ -70,7 +70,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 
 	private String getIndexFilePath(IndexFile indexFile) {
 		String pluginId = indexFile.getPluginId();
-		String file = indexFile.getFile();		
+		String file = indexFile.getFile();
 		return ResourceLocator.getErrorPath(pluginId, file, indexFile.getLocale());
 	}
 

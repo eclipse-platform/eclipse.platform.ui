@@ -22,7 +22,7 @@ public class URLCoder {
 			return null;
 		}
 	}
-	
+
 	public static String compactEncode(String s) {
 		try {
 			return urlEncode(s.getBytes("UTF8"), false); //$NON-NLS-1$
@@ -53,9 +53,9 @@ public class URLCoder {
 		}
 		return buf.toString();
 	}
-	
+
 	private static boolean isAlphaNumericOrDot(byte b) {
-		return (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || ( b >= 'A' && b <= 'Z') 
+		return (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || ( b >= 'A' && b <= 'Z')
 		   || b == '.';
 	}
 

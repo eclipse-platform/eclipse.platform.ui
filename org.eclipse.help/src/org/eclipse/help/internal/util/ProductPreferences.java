@@ -39,7 +39,7 @@ import com.ibm.icu.text.Collator;
 /*
  * Reads and processes product preferences by considering not only the active
  * product, but all installed products.
- * 
+ *
  * For example, help orders the books in the table of contents in such a way that
  * satisfies the currently running product's preferred order, and as many other product's
  * preferred orderings.
@@ -51,11 +51,11 @@ public class ProductPreferences {
 	private static Map preferencesToPluginIdMap;
 	private static Map preferencesToProductIdMap;
 	private static List primaryTocOrdering;
-	private static List[] secondaryTocOrderings;	
-	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$	
+	private static List[] secondaryTocOrderings;
+	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private static boolean rtl;
 	private static boolean directionInitialized = false;
-	
+
 	/*
 	 * Returns the recommended order to display the given toc entries in. Each
 	 * toc entry is a String, either the id of the toc contribution or the
@@ -69,7 +69,7 @@ public class ProductPreferences {
 		}
 		return getOrderedList(itemsToOrder, primaryOrdering, secondaryOrdering, nameIdMap);
 	}
-	
+
 	/*
 	 * Returns the primary toc ordering. This is the preferred order for the active
 	 * product (either specified via help data xml file or deprecated comma-separated
@@ -92,7 +92,7 @@ public class ProductPreferences {
 		}
 		return primaryTocOrdering;
 	}
-	
+
 	/*
 	 * Returns all secondary toc ordering. These are the preferred toc orders of all
 	 * defined products except the active product.
@@ -148,11 +148,11 @@ public class ProductPreferences {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Uses the preference service to get the preference. This has changed slightly in Eclipse 3.5.
 	 * The old behavior was undocumented and I think incorrect - CG.
-	 * 
+	 *
 	 * Previous behavior:
 	 * Returns the boolean preference for the given key by consulting every
 	 * product's preferences. If any of the products want the preference to
@@ -221,14 +221,14 @@ public class ProductPreferences {
 		}
 		return result;
 	}
-	
+
 	private static class NameComparator implements Comparator {
 
 		private Map tocNames;
 		public NameComparator(Map tocNames) {
 			this.tocNames = tocNames;
 		}
-		
+
 		@Override
 		public int compare(Object o1, Object o2) {
 			Object name1 = tocNames.get(o1);
@@ -241,7 +241,7 @@ public class ProductPreferences {
 			}
 			return Collator.getInstance().compare((String)name1, (String)name2);
 		}
-		
+
 	}
 
 	private static void sortByName(List remaining, Map categorized) {
@@ -302,7 +302,7 @@ public class ProductPreferences {
 		}
 		return productPreferences;
 	}
-	
+
 	/*
 	 * Returns the value for the given key by consulting the given properties, but giving
 	 * precedence to the primary properties. If the primary properties has the key, it is
@@ -361,11 +361,11 @@ public class ProductPreferences {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Tokenizes the given list of items, allowing them to be separated by whitespace, commas,
 	 * and/or semicolons.
-	 * 
+	 *
 	 * e.g. "item1, item2, item3"
 	 * would return a list of strings containing "item1", "item2", and "item3".
 	 */
@@ -385,11 +385,11 @@ public class ProductPreferences {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	public static void resetPrimaryTocOrdering() {
 		primaryTocOrdering = null;
 	}
-	
+
 	public static boolean isRTL() {
 		if (!directionInitialized) {
 			directionInitialized = true;
@@ -397,7 +397,7 @@ public class ProductPreferences {
 		}
 		return rtl;
 	}
-	
+
 	private static boolean initializeRTL() {
 		// from property
 		String orientation = System.getProperty("eclipse.orientation"); //$NON-NLS-1$
@@ -463,11 +463,11 @@ public class ProductPreferences {
 		}
 		return path;
 	}
-	
+
 	public static boolean useEnablementFilters() {
 		if (!HelpSystem.isShared()) {
 			return true;
 		}
-		return Platform.getPreferencesService().getBoolean(HelpPlugin.PLUGIN_ID, HelpPlugin.FILTER_INFOCENTER_KEY, false, null); 
+		return Platform.getPreferencesService().getBoolean(HelpPlugin.PLUGIN_ID, HelpPlugin.FILTER_INFOCENTER_KEY, false, null);
 	}
 }

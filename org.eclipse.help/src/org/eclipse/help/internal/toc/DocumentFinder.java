@@ -31,11 +31,11 @@ import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.Bundle;
 
 public class DocumentFinder {
-	
+
 	public static String[] collectExtraDocuments(TocFile tocFile) {
 		String dir = HrefUtil.normalizeDirectoryHref(tocFile.getPluginId(), tocFile.getExtraDir());
 		String locale = tocFile.getLocale();
-		
+
 		List result = new ArrayList();
 		String pluginID = HrefUtil.getPluginIDFromHref(dir);
 		if (pluginID == null) {
@@ -62,7 +62,7 @@ public class DocumentFinder {
 			// collect topics from doc.zip file
 			result.addAll(collectExtraDocumentsFromZip(pluginID, directory, url));
 		}
-		
+
 		// Find topics in plugin
 		Set paths = ResourceLocator.findTopicPaths(pluginDesc, directory,
 				locale);
@@ -73,7 +73,7 @@ public class DocumentFinder {
 		}
 		return (String[])result.toArray(new String[result.size()]);
 	}
-	
+
 	private static List collectExtraDocumentsFromZip(String pluginID, String directory,
 			URL url) {
 		List result = new ArrayList();
@@ -103,7 +103,7 @@ public class DocumentFinder {
 		}
 		return result;
 	}
-	
+
 	private static List createExtraTopicsFromZipFile(String pluginID, ZipFile zipFile,
 			String directory) {
 		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$

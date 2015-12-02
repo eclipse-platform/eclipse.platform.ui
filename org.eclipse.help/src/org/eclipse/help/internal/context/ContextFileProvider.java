@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
 
 /*
  * Provides context-sensitive help data to the help system, contributed from
- * context XML files. 
+ * context XML files.
  */
 public class ContextFileProvider extends AbstractContextProvider {
 
@@ -50,27 +50,27 @@ public class ContextFileProvider extends AbstractContextProvider {
 	private static final String ELEMENT_CONTEXTS = "contexts"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PLUGIN = "plugin"; //$NON-NLS-1$
-	
+
 	// locale -> Map(pluginId -> Map(shortContextId -> Context)[])
 	private Map pluginContextsByLocale;
-	
+
 	// pluginId -> ContextFile[]
 	private Map descriptorsByPluginId;
-	
+
 	// locale -> Map(ContextFile -> Map(shortContextId -> Context))
 	private Map contextFilesByLocale;
-	
+
 	private DocumentProcessor processor;
 	private DocumentReader reader;
 	private DocumentWriter writer;
 	private Map requiredAttributes;
-	
+
 	@Override
 	public IContext getContext(String contextId, String locale) {
 		int index = contextId.lastIndexOf('.');
 		String pluginId = contextId.substring(0, index);
 		String shortContextId = contextId.substring(index + 1);
-		
+
 		if (pluginContextsByLocale == null) {
 			pluginContextsByLocale = new HashMap();
 		}
@@ -93,7 +93,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 			}
 		}
 		switch (matches.size()) {
-		case 0: 
+		case 0:
 			return null;
 		case 1:
 			return (IContext)matches.get(0);
@@ -104,9 +104,9 @@ public class ContextFileProvider extends AbstractContextProvider {
 		    	newContext.mergeContext((IContext)matches.get(i));
 		    }
 		    return newContext;
-		} 
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
 	 */
@@ -147,7 +147,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		return descriptorsByPluginId;
 	}
-	
+
 	/*
 	 * Returns the context definitions for the given plug-in and locale,
 	 * as a mapping of short IDs to Context objects (shortContextId -> Context).
@@ -164,7 +164,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		return (Map[])maps.toArray(new Map[maps.size()]);
 	}
-	
+
 	/*
 	 * Returns the context definitions stored in the given file for the given
 	 * locale (shortContextId -> Context).
@@ -187,7 +187,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		return contexts;
 	}
-	
+
 	/*
 	 * Loads the given context file for the given locale, and returns its
 	 * contents as a mapping from short context ids to Context objects
@@ -233,7 +233,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 				});
 			}
 			processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
-			
+
 			// build map
 			IUAElement[] children = root.getChildren();
 			Map contexts = new HashMap();
@@ -247,9 +247,9 @@ public class ContextFileProvider extends AbstractContextProvider {
 						    contexts.put(id, context);
 						else
 						{
-							((Context)existingContext).mergeContext(context);	
+							((Context)existingContext).mergeContext(context);
 
-							if (HelpPlugin.DEBUG_CONTEXT) 
+							if (HelpPlugin.DEBUG_CONTEXT)
 							{
 								String error = "Context help ID '"+id+"' is found multiple times in file '"+descriptor.getBundleId()+'/'+descriptor.getFile()+"'\n"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 									" Description 1: "+((Context)existingContext).getText()+'\n'+ //$NON-NLS-1$
@@ -268,7 +268,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		return null;
 	}
-	
+
 	private String getErrorPath(ContextFile descriptor, String locale) {
 		return ResourceLocator.getErrorPath(descriptor.getBundleId(), descriptor.getFile(), locale);
 	}
@@ -283,13 +283,13 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		return requiredAttributes;
 	}
-	
+
 	/*
 	 * Handler that normalizes:
 	 * 1. Descriptions - any child elements like bold tags are serialized and inserted into the
 	 *    text node under the description element.
 	 * 2. Related topic hrefs - convert from relative (e.g. "path/file.html") to absolute hrefs
-	 *    (e.g. "/plugin.id/path/file.html"). 
+	 *    (e.g. "/plugin.id/path/file.html").
 	 */
 	private class NormalizeHandler extends ProcessorHandler {
 		@Override

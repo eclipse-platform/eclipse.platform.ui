@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,27 +33,27 @@ public class ContextManager {
 	private static final String EXTENSION_POINT_ID_CONTEXT = HelpPlugin.PLUGIN_ID + ".contexts"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_CONTEXT_PROVIDER = "contextProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
-	
+
 	private Map providersByPluginId;
 	private Map contextIDsByPluginId;
 	private List globalProviders;
-	
+
 	public ContextManager()
 	{
 		if (HelpPlugin.DEBUG_CONTEXT)
 			checkContextProviders();
 	}
-	
+
 	/*
 	 * Returns the Context for the given id and locale.
 	 */
 	public IContext getContext(String contextId, String locale) {
-		
-		
+
+
 		if (HelpPlugin.DEBUG_CONTEXT  && contextId != null) {
 			System.out.println("ContextManager.getContext(\"" + contextId + "\")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		// ask the providers
 		int index = contextId.lastIndexOf('.');
 		if (index != -1) {
@@ -76,18 +76,18 @@ public class ContextManager {
 					HelpPlugin.logError(msg, t);
 				}
 			}
-		}		
-		
+		}
+
 		if (HelpPlugin.DEBUG_CONTEXT) {
 			System.out.println("ContextManager.getContext - no context found"); //$NON-NLS-1$
-			
+
 			String id = contextId;
 			ArrayList potentialMatches = new ArrayList();
 			if ((index = contextId.lastIndexOf('.'))>-1)
 				id = contextId.substring(index+1);
 
 			String warning = "Registered Context Provider IDs:\n"; //$NON-NLS-1$
-			Iterator iter = contextIDsByPluginId.keySet().iterator();			
+			Iterator iter = contextIDsByPluginId.keySet().iterator();
 			warning+="--------------------------------\n"; //$NON-NLS-1$
 			while (iter.hasNext())
 			{
@@ -101,19 +101,19 @@ public class ContextManager {
 						break;
 					}
 				}
-			
+
 				warning+=pluginID+' '+contextIDList.toString()+'\n';
 			}
 			warning+="--------------------------------"; //$NON-NLS-1$
 			System.out.println(warning);
-			
+
 			if (!potentialMatches.isEmpty())
 				System.out.println("The ID searched is "+contextId+".  Did you mean to call setHelp with:\n"+potentialMatches); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return null;
 	}
-	
+
 	/*
 	 * Returns all registered context providers (potentially cached) for the
 	 * given plug-in id.
@@ -130,14 +130,14 @@ public class ContextManager {
 		list.addAll(globalProviders);
 		return list;
 	}
-	
+
 	/*
 	 * Finds and instantiates all registered context-sensitive help providers.
 	 */
 	private void loadContextProviders() {
 		providersByPluginId = new HashMap();
 		globalProviders = new ArrayList();
-		
+
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTEXT);
 		for (int i=0;i<elements.length;++i) {
@@ -168,35 +168,35 @@ public class ContextManager {
 			}
 		}
 	}
-	
+
 	/*
 	 * Method only called when debugging context
 	 * sensitive help.
-	 * 
+	 *
 	 * Checks to see if there are any duplicate ids
-	 * 
+	 *
 	 */
 	private void checkContextProviders()
 	{
 		contextIDsByPluginId = new Hashtable();
 		Hashtable contextByContextID = new Hashtable();
-		
+
 		if (providersByPluginId == null) {
 			loadContextProviders();
 		}
-		
+
 		Iterator i = providersByPluginId.keySet().iterator();
-		
+
 		while (i.hasNext())
 		{
 			String pluginID = (String)i.next();
 			ArrayList providers = (ArrayList)providersByPluginId.get(pluginID);
-			
+
 			for (int p=0;p<providers.size();p++)
 			{
 				ContextFileProvider provider = (ContextFileProvider)providers.get(p);
 				Map[] maps = provider.getPluginContexts(pluginID,Platform.getNL());
-				
+
 				for (int m=0;m<maps.length;m++)
 				{
 					Iterator i2 = maps[m].keySet().iterator();
@@ -205,7 +205,7 @@ public class ContextManager {
 						String contextID = (String)i2.next();
 						String fullID = pluginID+'.'+contextID;
 						Context currentContext = (Context)maps[m].get(contextID);
-						
+
 						if (!contextByContextID.containsKey(fullID))
 							contextByContextID.put(fullID,currentContext);
 						else if (HelpPlugin.DEBUG_CONTEXT)
@@ -217,14 +217,14 @@ public class ContextManager {
 
 							System.out.println(error);
 						}
-						
+
 						ArrayList list = (ArrayList)contextIDsByPluginId.get(pluginID);
 						if (list==null){
 							list = new ArrayList();
 							contextIDsByPluginId.put(pluginID,list);
 						}
 						list.add(contextID);
-					}		
+					}
 				}
 			}
 		}
