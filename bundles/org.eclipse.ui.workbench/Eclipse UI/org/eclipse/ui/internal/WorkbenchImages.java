@@ -90,11 +90,6 @@ public/*final*/class WorkbenchImages {
 
     private final static String PATH_WIZBAN = ICONS_PATH + "wizban/"; //Wizard icons//$NON-NLS-1$
 
-	// private final static String PATH_PROD = ICONS_PATH+"prod/"; //Product
-	// images
-	// private final static String PATH_STAT = ICONS_PATH+"stat/";
-	// private final static String PATH_MISC = ICONS_PATH+"misc/";
-
     /**
      * Declares a workbench image given the path of the image file (relative to
      * the workbench plug-in). This is a helper method that creates the image
