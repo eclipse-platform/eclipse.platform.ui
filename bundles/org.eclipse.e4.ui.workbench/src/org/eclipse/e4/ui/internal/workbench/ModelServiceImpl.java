@@ -419,7 +419,7 @@ public class ModelServiceImpl implements EModelService {
 		return element;
 	}
 
-	private void handleNullRefPlaceHolders(MUIElement element, MWindow refWin, boolean resolve) {
+	private void handleNullRefPlaceHolders(MUIElement element, MWindow refWin, boolean resolveAlways) {
 		// use appContext as MApplication.getContext() is null during the processing of
 		// the model processor classes
 		EPlaceholderResolver resolver = appContext.get(EPlaceholderResolver.class);
@@ -427,11 +427,33 @@ public class ModelServiceImpl implements EModelService {
 		List<MPlaceholder> phList = findElements(element, null, MPlaceholder.class, null);
 		List<MPlaceholder> nullRefList = new ArrayList<MPlaceholder>();
 		for (MPlaceholder ph : phList) {
-			if (resolve) {
+			if (resolveAlways) {
 				resolver.resolvePlaceholderRef(ph, refWin);
+			} else if ((!resolveAlways) && (ph.getRef() == null)) {
+				resolver.resolvePlaceholderRef(ph, refWin);
+				MUIElement partElement = ph.getRef();
+				if (partElement instanceof MPart) {
+					MPart part = (MPart) partElement;
+					if (part.getIconURI() == null) {
+						MPartDescriptor desc = getPartDescriptor(part.getElementId());
+						if (desc != null) {
+							part.setIconURI(desc.getIconURI());
+						}
+					}
+				}
 			}
 			if (ph.getRef() == null) {
 				nullRefList.add(ph);
+			}
+		}
+		if (!resolveAlways) {
+			List<MPart> partList = findElements(element, null, MPart.class, null);
+			for (MPart part : partList) {
+				if (COMPATIBILITY_VIEW_URI.equals(part.getContributionURI())
+						&& part.getIconURI() == null) {
+					part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
+							ImageDescriptor.getMissingImageDescriptor().createImage());
+				}
 			}
 		}
 		for (MPlaceholder ph : nullRefList) {

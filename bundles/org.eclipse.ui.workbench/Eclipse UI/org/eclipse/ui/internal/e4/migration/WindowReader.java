@@ -39,6 +39,16 @@ public class WindowReader extends MementoReader {
 		return windowBounds;
 	}
 
+	boolean isMaximized() {
+		return getBoolean(IWorkbenchConstants.TAG_MAXIMIZED, false);
+
+	}
+
+	boolean isMinimized() {
+		return getBoolean(IWorkbenchConstants.TAG_MINIMIZED, false);
+
+	}
+
 	boolean isCoolbarVisible() {
 		IMemento trimLayoutMem = getChild(IWorkbenchConstants.TAG_TRIM);
 		if (trimLayoutMem == null) {
@@ -154,6 +164,15 @@ public class WindowReader extends MementoReader {
 			}
 		}
 		return readers;
+	}
+
+	public Integer getDefaultFastViewSide() {
+		Integer defaultFastViewSide = null;
+		IMemento fastViewData = getChild("fastViewData"); //$NON-NLS-1$
+		if (fastViewData != null) {
+			defaultFastViewSide = fastViewData.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
+		}
+		return defaultFastViewSide;
 	}
 
 	private IMemento getEditorArea() {

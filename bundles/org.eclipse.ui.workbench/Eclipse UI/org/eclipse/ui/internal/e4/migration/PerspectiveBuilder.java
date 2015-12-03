@@ -82,6 +82,8 @@ public class PerspectiveBuilder {
 
 	private ModeledPageLayoutUtils layoutUtils;
 
+	private Integer defaultFastViewSide;
+
 	@PostConstruct
 	private void postConstruct() {
 		layoutUtils = new ModeledPageLayoutUtils(modelService);
@@ -92,6 +94,11 @@ public class PerspectiveBuilder {
 		tags = perspective.getTags();
 		populate();
 		return perspective;
+	}
+
+	public MPerspective createPerspective(Integer defaultFastViewSide) {
+		this.defaultFastViewSide = defaultFastViewSide;
+		return createPerspective();
 	}
 
 	private void create() {
@@ -183,7 +190,24 @@ public class PerspectiveBuilder {
 
 		if (defaultFastViews.size() > 0) {
 			sb.append(DEFAULT_FASTVIEW_STACK).append(' ');
-			sb.append(SideValue.BOTTOM_VALUE).append(' ').append(bottomCounter++);
+			if (defaultFastViewSide != null) {
+				switch (defaultFastViewSide) {
+				case SWT.TOP:
+					sb.append(SideValue.TOP_VALUE).append(' ').append(topCounter++);
+					break;
+				case SWT.BOTTOM:
+					sb.append(SideValue.BOTTOM_VALUE).append(' ').append(bottomCounter++);
+					break;
+				case SWT.RIGHT:
+					sb.append(SideValue.RIGHT_VALUE).append(' ').append(rightCounter++);
+					break;
+				default:
+					sb.append(SideValue.LEFT_VALUE).append(' ').append(leftCounter++);
+					break;
+				}
+			} else {
+				sb.append(SideValue.BOTTOM_VALUE).append(' ').append(bottomCounter++);
+			}
 			sb.append('#');
 		}
 
