@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,11 @@ public class ProcessConsoleManager implements ILaunchListener {
      * Map of processes for a launch to compute removed processes
      */
 	private Map<ILaunch, IProcess[]> fProcesses;
-    
+
+	/**
+	 * Lock for fLineTrackers
+	 */
+	private Object fLineTrackersLock = new Object();
     /**
      * @see ILaunchListener#launchRemoved(ILaunch)
      */
@@ -248,32 +252,37 @@ public class ProcessConsoleManager implements ILaunchListener {
         String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
         
         if (fLineTrackers == null) {
-			fLineTrackers = new HashMap<String, List<IConfigurationElement>>();
-            IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
-            IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-            for (int i = 0; i < elements.length; i++) {
-                IConfigurationElement extension = elements[i];
-                String processType = extension.getAttribute("processType"); //$NON-NLS-1$
-				List<IConfigurationElement> list = fLineTrackers.get(processType);
-                if (list == null) {
-					list = new ArrayList<IConfigurationElement>();
-                    fLineTrackers.put(processType, list);
-                }
-                list.add(extension);
-            }
+			synchronized (fLineTrackersLock) { // can't use fLineTrackers as lock as it is null here
+				fLineTrackers = new HashMap<String, List<IConfigurationElement>>();
+				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
+				IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+				for (int i = 0; i < elements.length; i++) {
+					IConfigurationElement extension = elements[i];
+					String processType = extension.getAttribute("processType"); //$NON-NLS-1$
+					List<IConfigurationElement> list = fLineTrackers.get(processType);
+					if (list == null) {
+						list = new ArrayList<IConfigurationElement>();
+						fLineTrackers.put(processType, list);
+					}
+					list.add(extension);
+				}
+			}
         }
         
 		ArrayList<IConsoleLineTracker> trackers = new ArrayList<IConsoleLineTracker>();
         if (type != null) {
-			List<IConfigurationElement> lineTrackerExtensions = fLineTrackers.get(type);
+			List<IConfigurationElement> lineTrackerExtensions;
+			synchronized (fLineTrackers) {// need to synchronize as the update to list might be still happening
+				lineTrackerExtensions = fLineTrackers.get(type);
+			}
             if(lineTrackerExtensions != null) {   
 				for (IConfigurationElement element : lineTrackerExtensions) {
-                    try {
+					try {
 						trackers.add((IConsoleLineTracker) element.createExecutableExtension("class")); //$NON-NLS-1$
                     } catch (CoreException e) {
                         DebugUIPlugin.log(e);
                     }
-                }
+				}
             }
         }
         return trackers.toArray(new IConsoleLineTracker[0]);
