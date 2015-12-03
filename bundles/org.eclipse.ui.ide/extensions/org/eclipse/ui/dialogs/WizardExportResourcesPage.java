@@ -80,6 +80,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
     // widgets
     private ResourceTreeAndListGroup resourceGroup;
 
+    private boolean showLinkedResources;
+
     private final static String SELECT_TYPES_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectTypes;
 
     private final static String SELECT_ALL_TITLE = IDEWorkbenchMessages.WizardTransferPage_selectAll;
@@ -282,11 +284,12 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
 			}
         }
 
+        showLinkedResources = getShowLinkedResources();
         this.resourceGroup = new ResourceTreeAndListGroup(parent, input,
-                getResourceProvider(IResource.FOLDER | IResource.PROJECT),
+                getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
                 WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
-                getResourceProvider(IResource.FILE), WorkbenchLabelProvider
-                        .getDecoratingWorkbenchLabelProvider(), SWT.NONE,
+                getResourceProvider(IResource.FILE, showLinkedResources),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(), SWT.NONE,
                 DialogUtil.inRegularFontMode(parent));
 
         ICheckStateListener listener = event -> updateWidgetEnablements();
@@ -336,40 +339,89 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         return result;
     }
 
+    private static class ResourceProvider extends WorkbenchContentProvider {
+        private static final Object[] EMPTY = new Object[0];
+        private int resourceType;
+        private boolean showLinkedResources;
+
+        public ResourceProvider(int resourceType, boolean showLinkedResources) {
+            super();
+            this.resourceType = resourceType;
+            this.showLinkedResources = showLinkedResources;
+        }
+
+        @Override
+		public Object[] getChildren(Object o) {
+            if (o instanceof IContainer) {
+                IContainer container = (IContainer) o;
+                if (!showLinkedResources && container.isLinked(IResource.CHECK_ANCESTORS)) {
+                    // just return an empty set of children
+                    return EMPTY;
+                }
+                IResource[] members = null;
+                try {
+                    members = container.members();
+                } catch (CoreException e) {
+                    // just return an empty set of children
+                    return EMPTY;
+                }
+
+                // filter out the desired resource types
+                List<IResource> results = new ArrayList<>();
+                for (int i = 0; i < members.length; i++) {
+                    // And the test bits with the resource types to see if they
+                    // are what we want
+                    IResource resource = members[i];
+                    if (!showLinkedResources && resource.isLinked()) {
+                        continue;
+                    }
+                    if ((resource.getType() & resourceType) > 0) {
+                        results.add(resource);
+                    }
+                }
+                return results.toArray();
+            }
+            // input element case
+            if (o instanceof ArrayList) {
+                return ((List<?>) o).toArray();
+            }
+            return EMPTY;
+        }
+    }
+
     /**
      * Returns a content provider for <code>IResource</code>s that returns
      * only children of the given resource type.
      */
-    private ITreeContentProvider getResourceProvider(final int resourceType) {
-        return new WorkbenchContentProvider() {
-            @Override
-			public Object[] getChildren(Object o) {
-                if (o instanceof IContainer) {
-                    IResource[] members = null;
-                    try {
-                        members = ((IContainer) o).members();
-                    } catch (CoreException e) {
-                        //just return an empty set of children
-                        return new Object[0];
-                    }
+    private ITreeContentProvider getResourceProvider(int resourceType, boolean showLinkedResources) {
+        return new ResourceProvider(resourceType, showLinkedResources);
+    }
 
-                    //filter out the desired resource types
-                    ArrayList results = new ArrayList();
-                    for (int i = 0; i < members.length; i++) {
-                        //And the test bits with the resource types to see if they are what we want
-                        if ((members[i].getType() & resourceType) > 0) {
-                            results.add(members[i]);
-                        }
-                    }
-                    return results.toArray();
-                }
-                //input element case
-                if (o instanceof ArrayList) {
-                    return ((ArrayList) o).toArray();
-                }
-                return new Object[0];
-            }
-        };
+    /**
+     * Returns {<code>true</code> if the page tree and list providers should
+     * show linked resources. Default is false.
+     *
+     * @since 3.12
+     */
+    protected boolean getShowLinkedResources() {
+        return showLinkedResources;
+    }
+
+    /**
+     * Updates the resources tree to show or hide linked resources
+     *
+     * @param showLinked
+     *            {<code>true</code> if the page should show linked resources
+     * @since 3.12
+     */
+    protected void updateContentProviders(boolean showLinked) {
+        showLinkedResources = showLinked;
+        resourceGroup.setTreeProviders(
+                getResourceProvider(IResource.FOLDER | IResource.PROJECT, showLinkedResources),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
+
+        resourceGroup.setListProviders(getResourceProvider(IResource.FILE, showLinkedResources),
+                WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
     }
 
     /**
