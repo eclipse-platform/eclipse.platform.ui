@@ -9,14 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River) - [108066] Project prefs marked dirty on read
  *     James Blackburn (Broadcom Corp.) - ongoing development
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427, 483529
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.preferences.ExportedPreferences;
+import org.eclipse.core.internal.preferences.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
