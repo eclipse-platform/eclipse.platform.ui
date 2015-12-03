@@ -934,6 +934,8 @@ public class ResourceTreeAndListGroup extends EventManager {
     public void setListProviders(IStructuredContentProvider contentProvider, ILabelProvider labelProvider) {
         listViewer.setContentProvider(contentProvider);
         listViewer.setLabelProvider(labelProvider);
+        listContentProvider = contentProvider;
+        listLabelProvider = labelProvider;
     }
 
     /**
@@ -991,6 +993,8 @@ public class ResourceTreeAndListGroup extends EventManager {
     public void setTreeProviders(ITreeContentProvider contentProvider, ILabelProvider labelProvider) {
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(labelProvider);
+		treeContentProvider = contentProvider;
+		treeLabelProvider = labelProvider;
     }
 
     /**
