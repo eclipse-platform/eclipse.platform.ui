@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431093, 440080, 440270, 475873
+ *     Sergey Grant <sergey.grant@me.com> (Google) - Bug 477391
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -463,20 +464,14 @@ public class JFaceResources {
 	 */
 	private static final void declareImage(Object bundle, String key, String path, Class<?> fallback,
 			String fallbackPath) {
-
-		ImageDescriptor descriptor = null;
-
-		if (bundle != null) {
-			URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
-			if (url != null)
-				descriptor = ImageDescriptor.createFromURL(url);
-		}
-
-		// If we failed then load from the backup file
-		if (descriptor == null)
-			descriptor = ImageDescriptor.createFromFile(fallback, fallbackPath);
-
-		imageRegistry.put(key, descriptor);
+		imageRegistry.put(key, ImageDescriptor.createFromSupplier(() -> {
+			if (bundle != null) {
+				URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
+				if (url != null)
+					return ImageDescriptor.createFromURL(url).getImageData();
+			}
+			return ImageDescriptor.createFromFile(fallback, fallbackPath).getImageData();
+		}));
 	}
 
 	/**

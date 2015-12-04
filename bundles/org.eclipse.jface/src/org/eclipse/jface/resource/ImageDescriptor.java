@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Grant <sergey.grant@me.com> (Google) - Bug 477391
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
 import java.net.URL;
+import java.util.function.Supplier;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
@@ -128,6 +130,20 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
     }
 
     /**
+     * Creates an image descriptor using a supplier, which provides ImageData
+     * during {@link #getImageData()}.
+     *
+     * @param supplier provides the result of {@link #getImageData()}. Will be
+     *            invoked on the UI thread and must not return {@code null}.
+     * @return an ImageDescriptor from an ImageData supplier queried on
+     *         {@link #getImageData()}.
+     * @since 3.12
+     */
+    public static ImageDescriptor createFromSupplier(Supplier<ImageData> supplier) {
+        return new SuppliedImageDescriptor(supplier);
+    }
+
+    /**
      * Creates and returns a new image descriptor for the given image. This
      * method takes the Device that created the Image as an argument, allowing
      * the original Image to be reused if the descriptor is asked for another
@@ -137,12 +153,14 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
      * @deprecated use {@link ImageDescriptor#createFromImage(Image)}
      * @since 3.1
      *
-     * @param img image to create
-     * @param theDevice the device that was used to create the Image
+     * @param img
+     *            image to create
+     * @param theDevice
+     *            the device that was used to create the Image
      * @return a newly created image descriptor
      */
     @Deprecated
-	public static ImageDescriptor createFromImage(Image img, Device theDevice) {
+    public static ImageDescriptor createFromImage(Image img, Device theDevice) {
         return new ImageDataImageDescriptor(img);
     }
 
