@@ -337,7 +337,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	IWorkbenchPart createErrorPart() {
 		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
-				WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId));
+				WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId), new Exception());
 		IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
 				.getEditorRegistry();
 		descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
