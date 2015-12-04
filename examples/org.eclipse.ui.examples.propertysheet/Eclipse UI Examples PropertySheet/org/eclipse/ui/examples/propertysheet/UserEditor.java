@@ -38,13 +38,14 @@ public class UserEditor extends TextEditor {
                 new Document(MessageUtil.getString("Editor_instructions"))); //$NON-NLS-1$
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
         if (adapter.equals(IContentOutlinePage.class)) {
-            return getContentOutline();
+            return (T) getContentOutline();
         }
         if (adapter.equals(IPropertySheetPage.class)) {
-            return getPropertySheet();
+            return (T) getPropertySheet();
         }
         return super.getAdapter(adapter);
     }
