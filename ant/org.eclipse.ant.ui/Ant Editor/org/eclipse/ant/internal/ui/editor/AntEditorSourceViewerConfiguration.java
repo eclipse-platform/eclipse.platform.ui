@@ -252,7 +252,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 */
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 
@@ -305,7 +305,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	@Override
-	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+	protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
 		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
 		targets.put("org.eclipse.ant.ui.buildFiles", fEditor); //$NON-NLS-1$
 		return targets;

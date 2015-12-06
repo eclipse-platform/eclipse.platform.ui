@@ -80,7 +80,7 @@ public class AntFoldingStructureProvider {
 	public void updateFoldingRegions(AntModel antModel) {
 		fPositionToElement = new HashMap<Position, IAntElement>();
 		try {
-			ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor.getAdapter(ProjectionAnnotationModel.class);
+			ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 			if (model == null) {
 				return;
 			}

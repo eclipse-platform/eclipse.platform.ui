@@ -249,8 +249,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 
 		private boolean isCanceled() {
-			return fCanceled || fProgressMonitor.isCanceled() || fPostSelectionValidator != null
-					&& !(fPostSelectionValidator.isValid(fSelection) || fForcedMarkOccurrencesSelection == fSelection)
+			return fCanceled || fProgressMonitor.isCanceled()
+					|| fPostSelectionValidator != null
+							&& !(fPostSelectionValidator.isValid(fSelection) || fForcedMarkOccurrencesSelection == fSelection)
 					|| LinkedModeModel.hasInstalledModel(fDocument);
 		}
 
@@ -283,7 +284,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 			// Add occurrence annotations
 			int length = fPositions.size();
-			Map<Annotation, Position> annotationMap = new HashMap<Annotation, Position>(length);
+			Map<Annotation, Position> annotationMap = new HashMap<>(length);
 			for (int i = 0; i < length; i++) {
 
 				if (isCanceled())
@@ -301,7 +302,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 					continue;
 				}
 				annotationMap.put(new Annotation("org.eclipse.jdt.ui.occurrences", false, message), //$NON-NLS-1$
-						position);
+				position);
 			}
 
 			if (isCanceled()) {
@@ -578,21 +579,22 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class key) {
+	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(IContentOutlinePage.class)) {
-			return getOutlinePage();
+			return (T) getOutlinePage();
 		}
 
 		if (fProjectionSupport != null) {
-			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
+			T adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
 			if (adapter != null) {
 				return adapter;
 			}
 		}
 
 		if (key == IShowInTargetList.class) {
-			return new IShowInTargetList() {
+			return (T) new IShowInTargetList() {
 				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
@@ -601,11 +603,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 
 		if (key == IToggleBreakpointsTarget.class) {
-			return new ToggleLineBreakpointAction();
+			return (T) new ToggleLineBreakpointAction();
 		}
 
 		if (key == IRunToLineTarget.class) {
-			return new RunToLineAdapter();
+			return (T) new RunToLineAdapter();
 		}
 
 		return super.getAdapter(key);
@@ -839,7 +841,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
 	@Override
 	protected void setStatusLineErrorMessage(String msg) {
-		IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+		IEditorStatusLine statusLine = getAdapter(IEditorStatusLine.class);
 		if (statusLine != null)
 			statusLine.setMessage(true, msg, null);
 	}
