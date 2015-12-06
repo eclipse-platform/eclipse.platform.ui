@@ -104,7 +104,6 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	            name1 = "";//$NON-NLS-1$
 	        if (name2 == null)
 	            name2 = "";//$NON-NLS-1$
-	        @SuppressWarnings("unchecked")
 			int result= getComparator().compare(name1, name2);
 			return result;
 	    }
