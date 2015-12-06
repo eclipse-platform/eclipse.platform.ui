@@ -1534,6 +1534,11 @@ public class TextViewer extends Viewer implements
 	 */
 	private IRegion fLastSentPostSelectionChange;
 	/**
+	 * <code>true</code> iff a post selection event must be fired even if the selection didn't change
+	 * @since 3.11
+	 */
+	private boolean fFireEqualPostSelectionChange;
+	/**
 	 * The set of registered editor helpers.
 	 * @since 3.1
 	 */
@@ -2533,6 +2538,7 @@ public class TextViewer extends Viewer implements
 			return;
 
 		fNumberOfPostSelectionChangedEvents[0]++;
+		fFireEqualPostSelectionChange|= fireEqualSelection;
 		display.timerExec(getEmptySelectionChangedEventDelay(), new Runnable() {
 			final int id= fNumberOfPostSelectionChangedEvents[0];
 			@Override
@@ -2543,8 +2549,9 @@ public class TextViewer extends Viewer implements
 						Point selection= fTextWidget.getSelectionRange();
 						if (selection != null) {
 							IRegion r= widgetRange2ModelRange(new Region(selection.x, selection.y));
-							if (fireEqualSelection || (r != null && !r.equals(fLastSentPostSelectionChange)) || r == null)  {
+							if (fFireEqualPostSelectionChange || (r != null && !r.equals(fLastSentPostSelectionChange)) || r == null)  {
 								fLastSentPostSelectionChange= r;
+								fFireEqualPostSelectionChange= false;
 								firePostSelectionChanged(selection.x, selection.y);
 							}
 						}

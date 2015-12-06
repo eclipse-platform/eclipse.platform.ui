@@ -179,7 +179,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				} else {
 					fStartLineNumber= lineNumber;
 					fStartLineOffset= document.getLineInformation(fStartLineNumber).getOffset();
-					fCachedTextViewer.setSelectedRange(fStartLineOffset, 0);
+					Point currentSelection= fCachedTextViewer.getSelectedRange();
+					// avoid sending unnecessary selection event, see https://bugs.eclipse.org/483747
+					if (currentSelection.x != fStartLineOffset || currentSelection.y != 0) {
+						fCachedTextViewer.setSelectedRange(fStartLineOffset, 0);
+					}
 				}
 				fCachedViewportSize= getVisibleLinesInViewport();
 
