@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel - <Lars.Vogel@vogella.com> - Bug 402464
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -18,21 +17,18 @@ import java.util.Arrays;
  * A viewer sorter that is provided extra context in the form of the path of the
  * parent element of the elements being sorted.
  *
- ** @deprecated see <code>ViewerSorter</code> for more information.
- *
  * @since 3.2
  */
-@Deprecated
 public class TreePathViewerSorter extends ViewerSorter {
 
 	/**
 	 * Provide a category for the given element that will have the given parent
-	 * path when it is added to the viewer. The provided path is
-	 * relative to the viewer input. The parent path will
-	 * be <code>null</code> when the elements are root elements.
+	 * path when it is added to the viewer. The provided path is relative to the
+	 * viewer input. The parent path will be <code>null</code> when the elements
+	 * are root elements.
 	 * <p>
-	 * By default, the this method calls
-	 * {@link ViewerSorter#category(Object)}. Subclasses may override.
+	 * By default, the this method calls {@code ViewerSorter#category(Object)}.
+	 * Subclasses may override.
 	 *
 	 * @param parentPath
 	 *            the parent path for the element
@@ -51,7 +47,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 * be <code>null</code> when the elements are root elements.
 	 * <p>
 	 * By default, the this method calls
-	 * {@link ViewerSorter#sort(Viewer, Object[])}. Subclasses may override.
+	 * {@code ViewerSorter#sort(Viewer, Object[])}. Subclasses may override.
 	 * @param viewer the viewer
 	 * @param parentPath the parent path for the two elements
      * @param e1 the first element
@@ -72,7 +68,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	 * be <code>null</code> when the elements are root elements.
      * <p>
      * The default implementation of this method calls
-     * {@link ViewerSorter#isSorterProperty(Object, String)}.
+     * {@code ViewerSorter#isSorterProperty(Object, String)}.
      * Subclasses may reimplement.
 	 * @param parentPath the parent path of the element
      * @param element the element
