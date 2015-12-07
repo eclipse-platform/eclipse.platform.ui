@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - 483359 Remove erroneous test
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
@@ -17,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -406,29 +406,6 @@ public class ThemeAPITest extends ThemeTest {
         ITheme theme1 = getTheme1();
         assertEquals(theme1.getColorRegistry().getRGB(DEFAULTEDCOLOR2),
                 theme1.getColorRegistry().getRGB(DEFAULTEDCOLOR3));
-    }
-
-    public void testFontCascadeEvents() {
-        ITheme currentTheme = fManager.getCurrentTheme();
-        assertNotNull(currentTheme);
-
-        ThemePropertyListener managerListener = new ThemePropertyListener();
-        ThemePropertyListener themeListener = new ThemePropertyListener();
-        fManager.addPropertyChangeListener(managerListener);
-        currentTheme.addPropertyChangeListener(themeListener);
-
-        FontRegistry fontRegistry = currentTheme.getFontRegistry();
-        FontData[] oldFont = fontRegistry.getFontData(VALFONT);
-        FontData[] newFont = new FontData[] { new FontData("Courier", 30,
-                SWT.ITALIC) };
-        fontRegistry.put(VALFONT, newFont);
-        fontRegistry.put(VALFONT, oldFont);
-
-        checkEvents(managerListener, fontRegistry, oldFont, newFont);
-        checkEvents(themeListener, fontRegistry, oldFont, newFont);
-
-        fManager.removePropertyChangeListener(managerListener);
-        currentTheme.removePropertyChangeListener(themeListener);
     }
 
     public void testFontPreferenceListener_def_novalfont() {
