@@ -8,7 +8,7 @@
  *  Contributors:
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427, 483862
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
@@ -18,7 +18,6 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * The <code>RefreshJob</code> class maintains a list of resources that
@@ -148,26 +147,24 @@ public class RefreshJob extends WorkspaceJob {
 		String msg = Messages.refresh_refreshErr;
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 		long longestRefresh = 0;
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		try {
 			if (Policy.DEBUG_AUTO_REFRESH)
 				Policy.debug(RefreshManager.DEBUG_PREFIX + " starting refresh job"); //$NON-NLS-1$
 			int refreshCount = 0;
 			int depth = 2;
-			monitor.beginTask("", IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+
 			IResource toRefresh;
 			while ((toRefresh = nextRequest()) != null) {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
 				try {
+					subMonitor.setWorkRemaining(Math.max(fRequests.size(), 10));
 					refreshCount++;
 					long refreshTime = -System.currentTimeMillis();
-					toRefresh.refreshLocal(1000 + depth, Policy.subMonitorFor(monitor, 0));
+					toRefresh.refreshLocal(1000 + depth, subMonitor.split(1));
 					refreshTime += System.currentTimeMillis();
 					if (refreshTime > longestRefresh)
 						longestRefresh = refreshTime;
 					//show occasional progress
-					if (refreshCount % 100 == 0)
-						monitor.subTask(NLS.bind(Messages.refresh_task, Integer.toString(fRequests.size())));
 					if (refreshCount % 1000 == 0) {
 						//be polite to other threads (no effect on some platforms)
 						Thread.yield();
@@ -188,7 +185,6 @@ public class RefreshJob extends WorkspaceJob {
 		} finally {
 			pathPrefixHistory = null;
 			rootPathHistory = null;
-			monitor.done();
 			if (Policy.DEBUG_AUTO_REFRESH)
 				Policy.debug(RefreshManager.DEBUG_PREFIX + " finished refresh job in: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
