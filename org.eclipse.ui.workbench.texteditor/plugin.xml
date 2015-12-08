@@ -540,7 +540,7 @@
 	        commandId="org.eclipse.ui.edit.text.zoomIn"
 	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="M1++"/>
+	        sequence="M1+="/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.zoomOut"
 	        contextId="org.eclipse.ui.textEditorScope"
