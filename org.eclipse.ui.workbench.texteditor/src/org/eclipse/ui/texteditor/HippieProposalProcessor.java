@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,16 +18,21 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.jface.viewers.StyledString;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension4;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension7;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
@@ -52,11 +57,13 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	private static final ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
 	private static final IContextInformation[] NO_CONTEXTS= new IContextInformation[0];
 
-	private static final class Proposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4 {
+	private static final class Proposal implements ICompletionProposal, ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3, ICompletionProposalExtension4,
+			ICompletionProposalExtension6, ICompletionProposalExtension7 {
 
 		private final String fString;
 		private final String fPrefix;
 		private final int fOffset;
+		private StyledString fDisplayString;
 
 		public Proposal(String string, String prefix, int offset) {
 			fString= string;
@@ -161,6 +168,27 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		@Override
 		public boolean isAutoInsertable() {
 			return true;
+		}
+
+		@Override
+		public StyledString getStyledDisplayString() {
+			if (fDisplayString == null) {
+				fDisplayString= new StyledString(getDisplayString());
+			}
+			return fDisplayString;
+		}
+
+		@Override
+		public StyledString emphasizeMatch(IDocument document, int offset, BoldStylerProvider boldStylerProvider) {
+			StyledString styledDisplayString= new StyledString();
+			styledDisplayString.append(getStyledDisplayString());
+
+			int start= getPrefixCompletionStart(document, offset);
+			int patternLength= offset - start;
+			if (patternLength > 0) {
+				styledDisplayString.setStyle(0, patternLength, boldStylerProvider.getBoldStyler());
+			}
+			return styledDisplayString;
 		}
 
 	}

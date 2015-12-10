@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.swt.graphics.Font;
-
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -41,10 +40,10 @@ public interface ICompletionProposalExtension7 {
 	 * 
 	 * @param document the document where content assist is invoked
 	 * @param offset the offset in the document at current caret location
-	 * @param font the font used to display this completion proposal
+	 * @param boldStylerProvider to provide a {@link Styler} that applies bold style
 	 * 
 	 * @return the styled display string for this proposal with emphasized ranges matching the token
 	 *         at the given offset
 	 */
-	StyledString emphasizeMatch(IDocument document, int offset, Font font);
+	StyledString emphasizeMatch(IDocument document, int offset, BoldStylerProvider boldStylerProvider);
 }

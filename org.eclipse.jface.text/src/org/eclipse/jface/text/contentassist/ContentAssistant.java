@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -900,6 +900,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private static final String COMPLETION_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_completion"; //$NON-NLS-1$
 	private static final String CONTEXT_ERROR_MESSAGE_KEY= "ContentAssistant.error_computing_context"; //$NON-NLS-1$
 
+	private BoldStylerProvider fBoldStylerProvider;
+
 	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= DEFAULT_AUTO_ACTIVATION_DELAY;
 	private boolean fIsAutoActivated= false;
@@ -1346,6 +1348,32 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
+	 * Sets the {@link BoldStylerProvider} used to emphasize matches in a proposal's styled display
+	 * string.
+	 * 
+	 * @param boldStylerProvider the bold styler provider
+	 * 
+	 * @see ICompletionProposalExtension7#emphasizeMatch(IDocument, int, BoldStylerProvider)
+	 * @since 3.11
+	 */
+	void setBoldStylerProvider(BoldStylerProvider boldStylerProvider) {
+		fBoldStylerProvider= boldStylerProvider;
+	}
+
+	/**
+	 * Returns the {@link BoldStylerProvider} used to emphasize matches in a proposal's styled
+	 * display string.
+	 * 
+	 * @see ICompletionProposalExtension7#emphasizeMatch(IDocument, int, BoldStylerProvider)
+	 * 
+	 * @return the {@link BoldStylerProvider}, or <code>null</code> if not set
+	 * @since 3.11
+	 */
+	BoldStylerProvider getBoldStylerProvider() {
+		return fBoldStylerProvider;
+	}
+
+	/**
 	 * Sets the context selector's background color.
 	 *
 	 * @param background the background color
@@ -1453,6 +1481,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	@Override
 	public void uninstall() {
 		hide();
+
+		if (fBoldStylerProvider != null) {
+			fBoldStylerProvider.dispose();
+			fBoldStylerProvider= null;
+		}
+
 		manageAutoActivation(false);
 
 		if (fHandlers != null) {
