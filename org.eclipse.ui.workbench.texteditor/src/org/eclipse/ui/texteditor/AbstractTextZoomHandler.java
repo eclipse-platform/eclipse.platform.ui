@@ -149,12 +149,16 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 			res.add(referenceFontName);
 		}
 		String currentFontName= referenceFontName;
+		String rootFontName= referenceFontName;
 		// identify "root" font to change
-		while (fgFontToDefault.get(currentFontName) != null && Arrays.equals(referenceFontData, fontRegistry.getFontData(currentFontName))) {
+		do {
 			currentFontName= fgFontToDefault.get(currentFontName);
-		}
+			if (currentFontName != null && Arrays.equals(referenceFontData, fontRegistry.getFontData(currentFontName))) {
+				rootFontName= currentFontName;
+			}
+		} while (currentFontName != null);
 		LinkedList<String> fontsToProcess= new LinkedList<>();
-		fontsToProcess.add(currentFontName);
+		fontsToProcess.add(rootFontName);
 		// propage to "children" fonts
 		Set<String> alreadyProcessed= new HashSet<>();
 		while (!fontsToProcess.isEmpty()) {
