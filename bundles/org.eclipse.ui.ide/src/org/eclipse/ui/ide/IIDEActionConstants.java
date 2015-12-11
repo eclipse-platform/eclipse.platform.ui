@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kaloyan Raev <kaloyan.r@zend.com> - Bug 322002
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
@@ -196,6 +197,13 @@ public interface IIDEActionConstants {
      * Pop-up menu and cool bar: name of group for File actions (value <code>"group.file"</code>).
      */
     public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
+
+    /**
+     * Pop-up menu and cool bar: name of group for Edit actions (value <code>"group.edit"</code>).
+     *
+     * @since 3.14
+     */
+    public static final String GROUP_EDIT = "group.edit"; //$NON-NLS-1$
 
     /**
      * Coolbar: name of group for Navigate actions (value <code>"group.nav"</code>).

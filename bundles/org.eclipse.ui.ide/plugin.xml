@@ -2520,8 +2520,17 @@
               disable "print" button which is defined by org.eclipse.ui.actions.ActionFactory.PRINT
               and contributed by org.eclipse.ui.internal.ide.WorkbenchActionBuilder
          -->
-         <hiddenToolBarItem id="print">
-         </hiddenToolBarItem>
+         <hiddenToolBarItem id="print" />
+         <!--
+              disable "undo" button which is defined by org.eclipse.ui.actions.ActionFactory.UNDO
+              and contributed by org.eclipse.ui.internal.ide.WorkbenchActionBuilder
+         -->
+         <hiddenToolBarItem id="org.eclipse.ui.edit.undo" />
+         <!--
+              disable "redo" button which is defined by org.eclipse.ui.actions.ActionFactory.REDO
+              and contributed by org.eclipse.ui.internal.ide.WorkbenchActionBuilder
+         -->
+         <hiddenToolBarItem id="org.eclipse.ui.edit.redo" />
       </perspectiveExtension>
    </extension>
    <extension

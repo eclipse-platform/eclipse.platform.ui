@@ -11,6 +11,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457237, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bugs 383569, 420956, 457198, 395601, 445538
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 409633
+ *     Kaloyan Raev <kaloyan.r@zend.com> - Bug 322002
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -225,6 +226,9 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		String name;
 		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(elementId)) {
 			return WorkbenchMessages.WorkbenchWindow_FileToolbar;
+		}
+		if (IWorkbenchActionConstants.TOOLBAR_EDIT.equalsIgnoreCase(elementId)) {
+			return WorkbenchMessages.WorkbenchWindow_EditToolbar;
 		}
 		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(elementId)) {
 			return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
