@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Lohmeier <sebastian@monochromata.de> - Bug 484310
  ******************************************************************************/
 
 package org.eclipse.ui.tests.filteredtree;
@@ -99,14 +100,42 @@ public class FilteredTreeTests extends UITestCase {
 		};
 
 		dialog.create();
+
 		Assert.isNotNull(fTreeViewer, "Filtered tree is null");
-		int itemCount = fTreeViewer.getViewer().getTree().getItemCount();
-		Assert.isTrue(itemCount == NUM_ITEMS, "tree item count " + itemCount
-				+ " does not match expected: " + NUM_ITEMS);
+		assertNumberOfTopLevelItems(NUM_ITEMS);
+
+		dialog.close();
+	}
+
+	public void testAddAndRemovePattern() {
+		Dialog dialog = createFilteredTreeDialog();
+
+		Assert.isNotNull(fTreeViewer, "Filtered tree is null");
+		assertNumberOfTopLevelItems(NUM_ITEMS);
+
+		applyPattern("0-0-0-0 name-*");
+		assertNumberOfTopLevelItems(1);
+
+		applyPattern("");
+		assertNumberOfTopLevelItems(NUM_ITEMS);
+
 		dialog.close();
 	}
 
 	private void runFilteredTreeTest(final int treeStyle){
+		Dialog dialog = createFilteredTreeDialog(treeStyle);
+
+		Assert.isNotNull(fTreeViewer, "Filtered tree is null");
+		assertNumberOfTopLevelItems(NUM_ITEMS);
+
+		dialog.close();
+	}
+
+	private Dialog createFilteredTreeDialog() {
+		return createFilteredTreeDialog(SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	}
+
+	private Dialog createFilteredTreeDialog(final int treeStyle) {
 		fRootElement = TestElement.createModel(DEPTH, NUM_ITEMS);
 
 		Dialog dialog = new FilteredTreeDialog((Shell)null, treeStyle){
@@ -117,11 +146,7 @@ public class FilteredTreeTests extends UITestCase {
 		};
 
 		dialog.create();
-		Assert.isNotNull(fTreeViewer, "Filtered tree is null");
-		int itemCount = fTreeViewer.getViewer().getTree().getItemCount();
-		Assert.isTrue(itemCount == NUM_ITEMS, "tree item count " + itemCount
-				+ " does not match expected: " + NUM_ITEMS);
-		dialog.close();
+		return dialog;
 	}
 
 	private FilteredTree createFilteredTree(Composite parent, int style){
@@ -150,6 +175,17 @@ public class FilteredTreeTests extends UITestCase {
 		fTree.getViewer().setContentProvider(new TestModelContentProvider());
 		fTree.getViewer().setLabelProvider(new LabelProvider());
 		return fTree;
+	}
+
+	private void assertNumberOfTopLevelItems(int expectedCount) {
+		int actualCount = fTreeViewer.getViewer().getTree().getItemCount();
+		Assert.isTrue(actualCount == expectedCount,
+				"tree item count " + actualCount + " does not match expected: " + expectedCount);
+	}
+
+	private void applyPattern(String pattern) {
+		fTreeViewer.getPatternFilter().setPattern(pattern);
+		fTreeViewer.getViewer().refresh();
 	}
 
 	private void setInput() {
