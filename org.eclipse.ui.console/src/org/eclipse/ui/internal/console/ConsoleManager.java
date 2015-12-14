@@ -297,7 +297,8 @@ public class ConsoleManager implements IConsoleManager {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			boolean consoleFound = false;
             IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-            if (window != null && console != null) {
+			IConsole c = console;
+			if (window != null && c != null) {
                 IWorkbenchPage page= window.getActivePage();
                 if (page != null) {
                     synchronized (fConsoleViews) {
@@ -306,11 +307,11 @@ public class ConsoleManager implements IConsoleManager {
 	                            boolean consoleVisible = page.isPartVisible(consoleView);
 	                            if (consoleVisible) {
 	                                consoleFound = true;
-	                                boolean bringToTop = shouldBringToTop(console, consoleView);
+									boolean bringToTop = shouldBringToTop(c, consoleView);
 	                                if (bringToTop) {
 	                                    page.bringToTop(consoleView);
 	                                }
-	                                consoleView.display(console);
+									consoleView.display(c);
 	                            }
                             }
 						}
@@ -319,11 +320,11 @@ public class ConsoleManager implements IConsoleManager {
                     if (!consoleFound) {
                         try {
                             IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
-                            boolean bringToTop = shouldBringToTop(console, consoleView);
+							boolean bringToTop = shouldBringToTop(c, consoleView);
                             if (bringToTop) {
                                 page.bringToTop(consoleView);
                             }
-                            consoleView.display(console);
+							consoleView.display(c);
                         } catch (PartInitException pie) {
                             ConsolePlugin.log(pie);
                         }
