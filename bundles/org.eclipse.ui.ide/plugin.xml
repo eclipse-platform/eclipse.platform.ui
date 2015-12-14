@@ -12,6 +12,7 @@
    <extension-point id="markerSupport" name="%ExtPoint.markerSupport" schema="schema/markerSupport.exsd"/>
    <extension-point id="filesystemSupport" name="%ExtPoint.fileSystemSupport" schema="schema/filesystemSupport.exsd"/>
    <extension-point id="editorAssociationOverride" name="%ExtPoint.editorAssociationOverride" schema="schema/editorAssociationOverride.exsd"/>
+   <extension-point id="unknownEditorStrategy" name="%ExtPoint.unknownEditorStrategy" schema="schema/unknownEditorStrategy.exsd"/>
 
    <extension
          point="org.eclipse.ui.importWizards">
@@ -583,7 +584,7 @@
       <page
             name="%PreferencePages.FileEditors"
             category="org.eclipse.ui.preferencePages.Editors"
-            class="org.eclipse.ui.ExtensionFactory:fileAssociationsPreferencePage"
+            class="org.eclipse.ui.internal.ide.ExtendedFileEditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.editors"/>
@@ -2401,6 +2402,24 @@
          <hiddenToolBarItem id="print">
          </hiddenToolBarItem>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.unknownEditorStrategy">
+      <strategy
+            class="org.eclipse.ui.internal.ide.SystemEditorOrTextEditorStrategy"
+            id="org.eclipse.ui.ide.systemEditorThenTextEditor"
+            label="%systemEditorThenTextEditor">
+      </strategy>
+      <strategy
+            class="org.eclipse.ui.internal.ide.TextEditorStrategy"
+            id="org.eclipse.ui.ide.textEditor"
+            label="%textEditor">
+      </strategy>
+      <strategy
+            class="org.eclipse.ui.internal.ide.AskUserViaPopupUnknowEditorStrategy"
+            id="org.eclipse.ui.ide.askUserForUnknownEditor"
+            label="%askUserViaPopup">
+      </strategy>
    </extension>
 
 </plugin>
