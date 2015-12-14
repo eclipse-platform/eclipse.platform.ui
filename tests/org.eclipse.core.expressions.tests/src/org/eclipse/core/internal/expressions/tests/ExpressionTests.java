@@ -13,6 +13,7 @@ package org.eclipse.core.internal.expressions.tests;
 import java.net.URL;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -215,6 +216,22 @@ public class ExpressionTests extends TestCase {
 		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$
 		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.NotExisting")); //$NON-NLS-1$
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
+		assertTrue(result == EvaluationResult.FALSE);
+	}
+
+	/** Bug 484325 */
+	public void testAdaptExpressionWithNull() throws Exception {
+		// it's surprisingly difficult to craft an EvaluationContext that
+		// provides
+		// a defaultVariable == null
+		IEvaluationContext testContext = new EvaluationContext(null, new Adaptee());
+		testContext.addVariable("nullCarrier", Arrays.asList((Object) null, (Object) null, (Object) null));
+
+		WithExpression withExpression = new WithExpression("nullCarrier");
+		IterateExpression iterateExpression = new IterateExpression("and");
+		iterateExpression.add(new AdaptExpression("org.eclipse.core.internal.expressions.tests.NotExisting"));
+		withExpression.add(iterateExpression);
+		EvaluationResult result = withExpression.evaluate(testContext);
 		assertTrue(result == EvaluationResult.FALSE);
 	}
 

@@ -71,6 +71,9 @@ public class AdaptExpression extends CompositeExpression {
 		if (fTypeName == null)
 			return EvaluationResult.FALSE;
 		Object var= context.getDefaultVariable();
+		if (var == null) {
+			return EvaluationResult.FALSE;
+		}
 		Object adapted= null;
 		IAdapterManager manager= Platform.getAdapterManager();
 		if (Expressions.isInstanceOf(var, fTypeName)) {
