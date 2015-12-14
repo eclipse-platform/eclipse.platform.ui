@@ -428,6 +428,14 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private ICompletionProposalSorter fSorter;
 
 	/**
+	 * Set to true by {@link #computeProposals(int)} when initial sorting is performed on the
+	 * computed proposals using {@link #fSorter}.
+	 * 
+	 * @since 3.11
+	 */
+	private boolean fIsInitialSort;
+
+	/**
 	 * Creates a new completion proposal popup for the given elements.
 	 *
 	 * @param contentAssistant the content assistant feeding this popup
@@ -542,16 +550,25 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Returns the completion proposal available at the given offset of the
-	 * viewer's document. Delegates the work to the content assistant.
+	 * Returns the completion proposals available at the given offset of the viewer's document.
+	 * Delegates the work to the content assistant. Sorts the computed proposals if sorting is
+	 * requested with {@link #fSorter}.
 	 *
 	 * @param offset the offset
 	 * @return the completion proposals available at this offset
 	 */
 	private ICompletionProposal[] computeProposals(int offset) {
-		if (fContentAssistSubjectControl != null)
-			return fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
-		return fContentAssistant.computeCompletionProposals(fViewer, offset);
+		ICompletionProposal[] proposals;
+		if (fContentAssistSubjectControl != null) {
+			proposals= fContentAssistant.computeCompletionProposals(fContentAssistSubjectControl, offset);
+		} else {
+			proposals= fContentAssistant.computeCompletionProposals(fViewer, offset);
+		}
+		if (fSorter != null) {
+			sortProposals(proposals);
+			fIsInitialSort= true;
+		}
+		return proposals;
 	}
 
 	/**
@@ -1148,8 +1165,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 				proposals= new ICompletionProposal[] { fEmptyProposal };
 			}
 
-			if (fSorter != null)
+			if (fSorter != null && !fIsInitialSort) {
 				sortProposals(proposals);
+			}
+			fIsInitialSort= false;
 
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
@@ -1680,39 +1699,61 @@ class CompletionProposalPopup implements IContentAssistListener {
 		StringBuffer wrongCasePostfix= null;
 		List<ICompletionProposal> wrongCase= new ArrayList<>();
 
+		boolean hasMixedProposals= hasMixedProposals();
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
 
 			if (!(proposal instanceof ICompletionProposalExtension3))
 				return false;
 
-			int start= ((ICompletionProposalExtension3)proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
-			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
+			int start= ((ICompletionProposalExtension3)proposal).getPrefixCompletionStart(document, fFilterOffset);
+			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(document, fFilterOffset);
 			if (insertion == null)
 				insertion= TextProcessor.deprocess(proposal.getDisplayString());
 			try {
 				int prefixLength= fFilterOffset - start;
 				int relativeCompletionOffset= Math.min(insertion.length(), prefixLength);
 				String prefix= document.get(start, prefixLength);
-				if (!isWrongCaseMatch && insertion.toString().startsWith(prefix)) {
+				if (!isWrongCaseMatch && insertion.toString().startsWith(prefix) && !hasMixedProposals) {
 					isWrongCaseMatch= false;
 					rightCase.add(proposal);
 					CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
 					if (rightCasePostfix == null)
 						rightCasePostfix= new StringBuffer(newPostfix.toString());
 					else
-						truncatePostfix(rightCasePostfix, newPostfix);
+						truncatePostfix(rightCasePostfix, newPostfix, false);
 				} else if (i == 0 || isWrongCaseMatch) {
-					CharSequence newPrefix= insertion.subSequence(0, relativeCompletionOffset);
-					if (isPrefixCompatible(wrongCasePrefix, wrongCasePrefixStart, newPrefix, start, document)) {
+					String insertionStrLowerCase= insertion.toString().toLowerCase();
+					String prefixLowerCase= prefix.toLowerCase();
+					boolean isSubstringMatch= !insertionStrLowerCase.startsWith(prefixLowerCase) && insertionStrLowerCase.contains(prefixLowerCase);
+
+					CharSequence newPrefix;
+					if (isSubstringMatch) {
+						int subStrStart= insertionStrLowerCase.indexOf(prefixLowerCase);
+						newPrefix= insertion.subSequence(subStrStart, subStrStart + relativeCompletionOffset);
+					} else {
+						newPrefix= insertion.subSequence(0, relativeCompletionOffset);
+					}
+					if (isPrefixCompatible(wrongCasePrefix, wrongCasePrefixStart, newPrefix, start, document, hasMixedProposals)) {
 						isWrongCaseMatch= true;
-						wrongCasePrefix= newPrefix;
+						if (insertionStrLowerCase.isEmpty()) {
+							newPrefix= prefix;
+						}
+						if (wrongCasePrefix == null || !hasMixedProposals || !wrongCasePrefix.toString().equalsIgnoreCase(newPrefix.toString())) {
+							wrongCasePrefix= newPrefix; // ignore casing when there are mixed proposals - don't update if newPrefix differs only in case
+						}
 						wrongCasePrefixStart= start;
-						CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
+						CharSequence newPostfix;
+						if (isSubstringMatch) {
+							int subStrStart= insertionStrLowerCase.indexOf(prefixLowerCase);
+							newPostfix= insertion.subSequence(subStrStart + prefixLength, insertion.length());
+						} else {
+							newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
+						}
 						if (wrongCasePostfix == null)
 							wrongCasePostfix= new StringBuffer(newPostfix.toString());
 						else
-							truncatePostfix(wrongCasePostfix, newPostfix);
+							truncatePostfix(wrongCasePostfix, newPostfix, hasMixedProposals);
 						wrongCase.add(proposal);
 					} else {
 						return false;
@@ -1769,7 +1810,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			// 4: check if parts of the postfix are already in the document
 			int to= Math.min(document.getLength(), fFilterOffset + postfix.length());
 			StringBuffer inDocument= new StringBuffer(document.get(fFilterOffset, to - fFilterOffset));
-			truncatePostfix(inDocument, postfix);
+			truncatePostfix(inDocument, postfix, hasMixedProposals);
 
 			// 5: replace and reveal
 			document.replace(fFilterOffset - prefix.length(), prefix.length() + inDocument.length(), prefix.toString() + postfix.toString());
@@ -1786,10 +1827,52 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
+	/**
+	 * Checks if {@link #fFilteredProposals} list contains proposals based on different rules
+	 * (prefix and substring match rules). While extracting the common prefix, if substring
+	 * proposals are also present along with prefix proposals (i.e. <code>fFilteredProposals</code>
+	 * list has mixed proposals) then casing of substring matches is ignored for the computation of
+	 * common prefix.
+	 * 
+	 * @return <code>true</code> if <code>fFilteredProposals</code> list contains proposals based on
+	 *         different rules
+	 */
+	private boolean hasMixedProposals() {
+		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
+		boolean hasSubstringMatch= false;
+		boolean hasPrefixMatch= false;
+		for (ICompletionProposal proposal : fFilteredProposals) {
+			if (!(proposal instanceof ICompletionProposalExtension3))
+				return false;
+
+			int start= ((ICompletionProposalExtension3) proposal).getPrefixCompletionStart(document, fFilterOffset);
+			CharSequence insertion= ((ICompletionProposalExtension3) proposal).getPrefixCompletionText(document, fFilterOffset);
+			if (insertion == null) {
+				insertion= TextProcessor.deprocess(proposal.getDisplayString());
+			}
+			int prefixLength= fFilterOffset - start;
+			try {
+				String prefix= document.get(start, prefixLength);
+				String insertionString= insertion.toString();
+				if (insertionString.isEmpty() || insertionString.toLowerCase().startsWith(prefix.toLowerCase())) {
+					hasPrefixMatch= true;
+				} else if (insertionString.toLowerCase().contains(prefix.toLowerCase())) {
+					hasSubstringMatch= true;
+				}
+			} catch (BadLocationException e) {
+				return false;
+			}
+			if (hasPrefixMatch && hasSubstringMatch) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/*
 	 * @since 3.1
 	 */
-	private boolean isPrefixCompatible(CharSequence oneSequence, int oneOffset, CharSequence twoSequence, int twoOffset, IDocument document) throws BadLocationException {
+	private boolean isPrefixCompatible(CharSequence oneSequence, int oneOffset, CharSequence twoSequence, int twoOffset, IDocument document, boolean ignoreCase) throws BadLocationException {
 		if (oneSequence == null || twoSequence == null)
 			return true;
 
@@ -1800,7 +1883,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		String one= document.get(oneOffset, min - oneOffset) + oneSequence + document.get(oneEnd, Math.min(fFilterOffset, fFilterOffset - oneEnd));
 		String two= document.get(twoOffset, min - twoOffset) + twoSequence + document.get(twoEnd, Math.min(fFilterOffset, fFilterOffset - twoEnd));
 
-		return one.equals(two);
+		return ignoreCase ? one.equalsIgnoreCase(two) : one.equals(two);
 	}
 
 	/**
@@ -1809,12 +1892,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @param buffer the common postfix to truncate
 	 * @param sequence the characters to truncate with
+	 * @param ignoreCase <code>true</code> to ignore case while comparing
 	 */
-	private void truncatePostfix(StringBuffer buffer, CharSequence sequence) {
+	private void truncatePostfix(StringBuffer buffer, CharSequence sequence, boolean ignoreCase) {
 		// find common prefix
 		int min= Math.min(buffer.length(), sequence.length());
 		for (int c= 0; c < min; c++) {
-			if (sequence.charAt(c) != buffer.charAt(c)) {
+			boolean matches;
+			if (ignoreCase) {
+				matches= Character.toUpperCase(sequence.charAt(c)) == Character.toUpperCase(buffer.charAt(c));
+			} else {
+				matches= sequence.charAt(c) == buffer.charAt(c);
+			}
+			if (!matches) {
 				buffer.delete(c, buffer.length());
 				return;
 			}
