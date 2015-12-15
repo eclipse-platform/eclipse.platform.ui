@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	private String values;
-	private ArrayList subItems;
+	private ArrayList<AbstractSubItem> subItems;
 
 	/**
 	 * Constructor for RepeatedSubItem.
@@ -50,7 +50,7 @@ public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	@Override
 	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
-			subItems = new ArrayList();
+			subItems = new ArrayList<>();
 		}
 		subItems.add(subItem);
 	}
@@ -60,7 +60,7 @@ public class RepeatedSubItem extends AbstractSubItem implements ISubItemItem {
 	 * @return Returns the subItems.
 	 */
 	@Override
-	public ArrayList getSubItems() {
+	public ArrayList<AbstractSubItem> getSubItems() {
 		return subItems;
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.actions.IMenuContributor;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
+import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class CheatSheetPage extends Page implements IMenuContributor {
 	// Colors
@@ -44,11 +45,11 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 
 	private CheatSheet cheatSheet;
 
-	private ArrayList viewItemList;
+	private ArrayList<ViewItem> viewItemList;
 
 	private CheatSheetViewer viewer;
 
-	public CheatSheetPage(CheatSheet cheatSheet, ArrayList viewItemList,
+	public CheatSheetPage(CheatSheet cheatSheet, ArrayList<ViewItem> viewItemList,
 			CheatSheetViewer cheatSheetViewer) {
 		super();
 		this.cheatSheet = cheatSheet;
@@ -80,13 +81,11 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 						"CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createPart() before add loop: "); //$NON-NLS-1$ //$NON-NLS-2$
 		// Get the content info from the parser. This makes up all items except
 		// the intro item.
-		ArrayList items = cheatSheet.getItems();
+		ArrayList<Item> items = cheatSheet.getItems();
 		for (int i = 0; i < items.size(); i++) {
 			Color color = (i % 2) == 0 ? getInactiveColor1() : getInactiveColor2();
 
-			CoreItem coreItem = new CoreItem(this,
-					(org.eclipse.ui.internal.cheatsheets.data.Item) items
-							.get(i), color, viewer);
+			CoreItem coreItem = new CoreItem(this, items.get(i), color, viewer);
 			viewItemList.add(coreItem);
 		}
 		CheatSheetStopWatch

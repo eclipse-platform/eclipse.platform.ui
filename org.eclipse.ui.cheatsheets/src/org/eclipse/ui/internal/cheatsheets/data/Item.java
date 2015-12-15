@@ -22,7 +22,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	private AbstractExecutable executable;
 	private PerformWhen performWhen;
 
-	private ArrayList subItems;
+	private ArrayList<AbstractSubItem> subItems;
 	private String completionMessage;
 
 	/**
@@ -105,7 +105,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	 * Sets the item extensions for this item.
 	 * @param exts the extensions to set
 	 */
-	public void setItemExtensions(ArrayList exts){
+	public void setItemExtensions(ArrayList exts) {
 		this.itemExtensions = exts;
 	}
 
@@ -113,7 +113,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	 * Returns the item extensions, if any, for this item,.
 	 * @return list of the extensions or <code>null</code>
 	 */
-	public ArrayList getItemExtensions(){
+	public ArrayList getItemExtensions() {
 		return itemExtensions;
 	}
 
@@ -139,7 +139,7 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	@Override
 	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
-			subItems = new ArrayList();
+			subItems = new ArrayList<>();
 		}
 		subItems.add(subItem);
 	}
@@ -148,14 +148,14 @@ public class Item extends Intro implements IExecutableItem, IPerformWhenItem, IS
 	 * @return Returns the subItems.
 	 */
 	@Override
-	public ArrayList getSubItems() {
+	public ArrayList<AbstractSubItem> getSubItems() {
 		return subItems;
 	}
 
 	private boolean hasDynamicSubItems() {
 		if( subItems != null) {
-			for (Iterator iter = subItems.iterator(); iter.hasNext();) {
-				AbstractSubItem subItem = (AbstractSubItem)iter.next();
+			for (Iterator<AbstractSubItem> iter = subItems.iterator(); iter.hasNext();) {
+				AbstractSubItem subItem = iter.next();
 				if( subItem instanceof RepeatedSubItem ||
 					subItem instanceof ConditionalSubItem ||
 					subItem instanceof SubItem && ((SubItem)subItem).getPerformWhen() != null ) {

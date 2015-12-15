@@ -45,18 +45,16 @@ public class SuccesorTaskFinder {
     	// TODO this code could be moved to TaskGroup
     	if (ITaskGroup.CHOICE.equals(currentTask.getKind())) {
     		// For a choice if more than one child is runnable return it
-    		List runnableChoices = findRunnableChoices();
+			List<ICompositeCheatSheetTask> runnableChoices = findRunnableChoices();
     		if (runnableChoices.size() != 0) {
-    			return (ICompositeCheatSheetTask[])runnableChoices.toArray
-    			(    new ICompositeCheatSheetTask[runnableChoices.size()]);
+				return runnableChoices.toArray(new ICompositeCheatSheetTask[runnableChoices.size()]);
     		}
     	}
     	return getBestSuccessor();
     }
 
-	private List findRunnableChoices() {
-		List result;
-		result = new ArrayList();
+	private List<ICompositeCheatSheetTask> findRunnableChoices() {
+		List<ICompositeCheatSheetTask> result = new ArrayList<>();
 		if (isStartable(currentTask)) {
 			ICompositeCheatSheetTask[] subtasks = currentTask.getSubtasks();
 			for (int i = 0; i < subtasks.length; i++) {

@@ -34,10 +34,9 @@ public class CommandRunner {
 	private ICommandService getCommandService() {
 		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
-			Object serviceObject = wb.getAdapter(ICommandService.class);
+			ICommandService serviceObject = wb.getAdapter(ICommandService.class);
 		    if (serviceObject != null) {
-			    ICommandService service = (ICommandService)serviceObject;
-			    return service;
+				return serviceObject;
 		    }
 		}
 		return null;
@@ -46,10 +45,9 @@ public class CommandRunner {
 	private IHandlerService getHandlerService() {
 		IWorkbench wb =	PlatformUI.getWorkbench();
 		if (wb != null) {
-			Object serviceObject = wb.getAdapter(IHandlerService.class);
+			IHandlerService serviceObject = wb.getAdapter(IHandlerService.class);
 		    if (serviceObject != null) {
-			    IHandlerService service = (IHandlerService)serviceObject;
-			    return service;
+				return serviceObject;
 		    }
 		}
 		return null;

@@ -123,5 +123,5 @@ public interface ICheatSheetViewer {
 	 * the cheat sheet manager.
 	 * @since 3.2
 	 */
-	public void reset(Map cheatSheetData);
+	public void reset(Map<String, String> cheatSheetData);
 }

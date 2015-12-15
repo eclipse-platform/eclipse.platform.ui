@@ -37,7 +37,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 	private CompositeCheatSheetSaveHelper saveHelper;
 	private URL contentURL;
 	private CheatSheetManager manager;
-	private Set stateChangedSet = new HashSet();
+	private Set<ICompositeCheatSheetTask> stateChangedSet = new HashSet<>();
 
 	public void setRootTask(ICompositeCheatSheetTask task) {
 		rootTask = task;
@@ -138,7 +138,7 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		this.manager = manager;
 	}
 
-	public void loadState(Map layoutData) {
+	public void loadState(Map<String, String> layoutData) {
 		saveHelper.loadCompositeState(this, layoutData);
 	}
 
@@ -162,10 +162,10 @@ public class CompositeCheatSheetModel extends Observable implements ICompositeCh
 		}
 	}
 
-	public void resetAllTasks(Map cheatSheetData) {
+	public void resetAllTasks(Map<String, String> cheatSheetData) {
         if (manager != null) {
     		if (cheatSheetData == null) {
-            	manager.setData(new Hashtable());
+				manager.setData(new Hashtable<>());
     		} else {
     			manager.setData(cheatSheetData);
     		}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.actions;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,14 +17,24 @@ import java.util.List;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-
-import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetHistory;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A menu for cheatsheet selection.
@@ -48,17 +57,15 @@ public class CheatSheetMenu extends ContributionItem {
 
 	private IMenuContributor menuContributor;
 
-	private Comparator comparator = new Comparator() {
+	private Comparator<CheatSheetElement> comparator = new Comparator<CheatSheetElement>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override
-		public int compare(Object ob1, Object ob2) {
+		public int compare(CheatSheetElement ob1, CheatSheetElement ob2) {
 			if(ob1 == null || ob2 == null) {
 				return -1;
 			}
-			CheatSheetElement d1 = (CheatSheetElement) ob1;
-			CheatSheetElement d2 = (CheatSheetElement) ob2;
-			return collator.compare(d1.getLabel(null), d2.getLabel(null));
+			return collator.compare(ob1.getLabel(null), ob2.getLabel(null));
 		}
 	};
 
@@ -120,12 +127,12 @@ public class CheatSheetMenu extends ContributionItem {
 		}
 
 		// Collect and sort cheatsheet items.
-		ArrayList cheatsheets = getCheatSheetItems();
+		ArrayList<CheatSheetElement> cheatsheets = getCheatSheetItems();
 		Collections.sort(cheatsheets, comparator);
 
 		// Add cheatsheet shortcuts
 		for (int i = 0; i < cheatsheets.size(); i++) {
-			CheatSheetElement element = (CheatSheetElement) cheatsheets.get(i);
+			CheatSheetElement element = cheatsheets.get(i);
 			if (element != null) {
 				createMenuItem(menu, index++, element, element.getID().equals(checkID));
 			}
@@ -191,13 +198,13 @@ public class CheatSheetMenu extends ContributionItem {
 	 *
 	 * @return an <code>ArrayList<code> of cheatsheet items <code>CheatSheetElement</code>
 	 */
-	protected ArrayList getCheatSheetItems() {
-		ArrayList list = new ArrayList(MAX_CHEATSHEET_ITEMS);
+	protected ArrayList<CheatSheetElement> getCheatSheetItems() {
+		ArrayList<CheatSheetElement> list = new ArrayList<>(MAX_CHEATSHEET_ITEMS);
 		int emptySlots = MAX_CHEATSHEET_ITEMS;
 
 		// Add cheatsheets from MRU list
 		if (emptySlots > 0) {
-			ArrayList mru = new ArrayList(MAX_CHEATSHEET_ITEMS);
+			ArrayList<CheatSheetElement> mru = new ArrayList<>(MAX_CHEATSHEET_ITEMS);
 			int count = getCheatSheetMru(mru, 0, MAX_CHEATSHEET_ITEMS);
 			for (int i = 0; i < count && emptySlots > 0; i++) {
 				if (!list.contains(mru.get(i))) {
@@ -208,7 +215,7 @@ public class CheatSheetMenu extends ContributionItem {
 		}
 
 		// Add random cheatsheets until the list is filled.
-		CheatSheetCollectionElement cheatSheetsCollection = (CheatSheetCollectionElement)reg.getCheatSheets();
+		CheatSheetCollectionElement cheatSheetsCollection = reg.getCheatSheets();
 		emptySlots = addCheatSheets(list, cheatSheetsCollection, emptySlots);
 
 		return list;
@@ -223,11 +230,12 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @param emptySlots - number of empty slots remaining
 	 * @return int - number of empty slots remaining
 	 */
-	private int addCheatSheets(ArrayList list, CheatSheetCollectionElement cheatSheetsCollection, int emptySlots) {
+	private int addCheatSheets(ArrayList<CheatSheetElement> list, CheatSheetCollectionElement cheatSheetsCollection,
+			int emptySlots) {
 		Object[] cheatSheets = cheatSheetsCollection.getCheatSheets();
 		for (int i = 0; i < cheatSheets.length && emptySlots > 0; i++) {
 			if (!list.contains(cheatSheets[i])) {
-				list.add(cheatSheets[i]);
+				list.add((CheatSheetElement) cheatSheets[i]);
 				emptySlots--;
 			}
 		}
@@ -252,7 +260,7 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @param count number of items to copy from history
 	 * @return the number of items actually copied
 	 */
-	private int getCheatSheetMru(List dest, int destStart, int count) {
+	private int getCheatSheetMru(List<CheatSheetElement> dest, int destStart, int count) {
 		CheatSheetHistory history = CheatSheetPlugin.getPlugin().getCheatSheetHistory();
 		return history.copyItems(dest, destStart, count);
 	}

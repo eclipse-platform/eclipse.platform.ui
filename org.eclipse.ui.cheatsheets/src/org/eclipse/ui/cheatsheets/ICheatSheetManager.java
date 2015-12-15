@@ -84,5 +84,5 @@ public interface ICheatSheetManager {
 	 * @return The set of keys.
 	 * @since 3.2
 	 */
-	public Set getKeySet();
+	public Set<String> getKeySet();
 }

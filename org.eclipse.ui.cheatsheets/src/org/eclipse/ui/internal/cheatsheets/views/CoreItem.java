@@ -271,7 +271,7 @@ public class CoreItem extends ViewItem {
 
 	private AbstractExecutable getExecutable(int index) {
 		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
-			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
+			SubItemCompositeHolder s = listOfSubItemCompositeHolders.get(index);
 			if(s != null) {
 				SubItem subItem = s.getSubItem();
 				AbstractExecutable executable = subItem.getExecutable();
@@ -286,7 +286,7 @@ public class CoreItem extends ViewItem {
 		return null;
 	}
 
-	public ArrayList getListOfSubItemCompositeHolders() {
+	public ArrayList<SubItemCompositeHolder> getListOfSubItemCompositeHolders() {
 		return listOfSubItemCompositeHolders;
 	}
 
@@ -355,7 +355,7 @@ public class CoreItem extends ViewItem {
 		}
 
 		//Instantiate the list to store the sub item composites.
-		listOfSubItemCompositeHolders = new ArrayList(20);
+		listOfSubItemCompositeHolders = new ArrayList<>(20);
 
 		//loop throught the number of sub items, make a new composite for each sub item.
 		//Add the spacer, the label, then the buttons that are applicable for each sub item.
@@ -449,7 +449,7 @@ public class CoreItem extends ViewItem {
 		if (buttonsHandled)
 			return;
 		//Instantiate the list to store the sub item composites.
-		listOfSubItemCompositeHolders = new ArrayList(20);
+		listOfSubItemCompositeHolders = new ArrayList<>(20);
 
 		ArrayList sublist = item.getSubItems();
 
@@ -518,7 +518,7 @@ public class CoreItem extends ViewItem {
 	/*package*/
 	byte runSubItemExecutable(CheatSheetManager csm, int index) {
 		if (item.getSubItems() != null && item.getSubItems().size()>0 && listOfSubItemCompositeHolders != null) {
-			SubItemCompositeHolder s = (SubItemCompositeHolder) listOfSubItemCompositeHolders.get(index);
+			SubItemCompositeHolder s = listOfSubItemCompositeHolders.get(index);
 			if(s != null) {
 				AbstractExecutable executable = getExecutable(index);
 

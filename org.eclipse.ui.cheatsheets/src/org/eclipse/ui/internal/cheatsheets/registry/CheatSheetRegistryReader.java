@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,8 +17,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
+
+import com.ibm.icu.text.Collator;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -162,13 +171,13 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		return instance;
 	}
 
-	protected ArrayList cheatsheetItemExtensions;
+	protected ArrayList<CheatSheetItemExtensionElement> cheatsheetItemExtensions;
 	protected CheatSheetCollectionElement cheatsheets;
-	private ArrayList deferCategories = null;
-	private ArrayList deferCheatSheets = null;
+	private ArrayList<Category> deferCategories = null;
+	private ArrayList<CheatSheetElement> deferCheatSheets = null;
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
-	protected Map taskExplorers = new HashMap();
-	protected Map taskEditors = new HashMap();
+	protected Map<String, TaskExplorerNode> taskExplorers = new HashMap<>();
+	protected Map<String, TaskEditorNode> taskEditors = new HashMap<>();
 	private Map nestedCategoryIds = new HashMap();
 
 	/**
@@ -248,7 +257,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 
 		// Defer for later processing.
 		if (deferCategories == null)
-			deferCategories = new ArrayList(20);
+			deferCategories = new ArrayList<>(20);
 		deferCategories.add(category);
 	}
 
@@ -257,7 +266,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	private void deferCheatSheet(CheatSheetElement element) {
 		if (deferCheatSheets == null)
-			deferCheatSheets = new ArrayList(50);
+			deferCheatSheets = new ArrayList<>(50);
 		deferCheatSheets.add(element);
 	}
 
@@ -284,7 +293,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		if (cheatsheets == null) {
 		    readCheatSheets(); // Ensure that the registry has been read
 		}
-		return (TaskEditorNode)taskEditors.get(id);
+		return taskEditors.get(id);
 	}
 
 	/**
@@ -295,7 +304,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		if (cheatsheets == null) {
 		    readCheatSheets(); // Ensure that the registry has been read
 		}
-		return (TaskExplorerNode)taskExplorers.get(id);
+		return taskExplorers.get(id);
 	}
 
 	/**
@@ -306,8 +315,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		if (cheatsheets == null) {
 		    readCheatSheets(); // Ensure that the registry has been read
 		}
-		Set keys = taskExplorers.keySet();
-		return (String[]) keys.toArray(new String[keys.size()]);
+		Set<String> keys = taskExplorers.keySet();
+		return keys.toArray(new String[keys.size()]);
 	}
 
 	/**
@@ -322,7 +331,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		// Sort categories by flattened name.
 		CategoryNode[] flatArray = new CategoryNode[deferCategories.size()];
 		for (int i = 0; i < deferCategories.size(); i++) {
-			flatArray[i] = new CategoryNode((Category) deferCategories.get(i));
+			flatArray[i] = new CategoryNode(deferCategories.get(i));
 		}
 		Sorter sorter = new Sorter() {
 			private Collator collator = Collator.getInstance();
@@ -350,7 +359,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * Save new category definition.
 	 */
 	private void finishCategory(Category category) {
-		CheatSheetCollectionElement currentResult = (CheatSheetCollectionElement) cheatsheets;
+		CheatSheetCollectionElement currentResult = cheatsheets;
 
 		String[] categoryPath = category.getParentPath();
 		CheatSheetCollectionElement parent = currentResult; // ie.- root
@@ -393,7 +402,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 *	@param currentResult CheatSheetCollectionElement
 	 */
 	private void finishCheatSheet(CheatSheetElement element, IConfigurationElement config, CheatSheetCollectionElement result) {
-		CheatSheetCollectionElement currentResult = (CheatSheetCollectionElement) result;
+		CheatSheetCollectionElement currentResult = result;
 		String category = getCategoryStringFor(config);
 		StringTokenizer familyTokenizer = new StringTokenizer(category, CATEGORY_SEPARATOR);
 
@@ -565,14 +574,14 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		finishCheatSheets();
 
 		if (cheatsheets != null) {
-			CheatSheetCollectionElement parent = (CheatSheetCollectionElement) cheatsheets;
+			CheatSheetCollectionElement parent = cheatsheets;
 			pruneEmptyCategories(parent);
 		}
 	}
 
-	public ArrayList readItemExtensions() {
+	public ArrayList<CheatSheetItemExtensionElement> readItemExtensions() {
 		if (cheatsheetItemExtensions == null) {
-			cheatsheetItemExtensions = new ArrayList();
+			cheatsheetItemExtensions = new ArrayList<>();
 
 			IExtensionRegistry xregistry = Platform.getExtensionRegistry();
 			//Now read the cheat sheet extensions.

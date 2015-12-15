@@ -20,7 +20,7 @@ public class CheatSheet implements ICheatSheet {
 
 	protected String title;
 	private Item introItem;
-	private ArrayList items;
+	private ArrayList<Item> items;
 	private boolean containsCommandOrAction;
 
 	/**
@@ -57,7 +57,7 @@ public class CheatSheet implements ICheatSheet {
 	/**
 	 * Returns the items.
 	 */
-	public ArrayList getItems() {
+	public ArrayList<Item> getItems() {
 		return items;
 	}
 
@@ -75,7 +75,7 @@ public class CheatSheet implements ICheatSheet {
 	 */
 	public void addItem(Item item) {
 		if(items == null) {
-			items = new ArrayList();
+			items = new ArrayList<>();
 		}
 		items.add(item);
 	}
@@ -85,9 +85,9 @@ public class CheatSheet implements ICheatSheet {
 	 *
 	 * @param c the collection of items to add
 	 */
-	public void addItems(Collection c) {
+	public void addItems(Collection<Item> c) {
 		if(items == null) {
-			items = new ArrayList();
+			items = new ArrayList<>();
 		}
 		items.addAll(c);
 	}

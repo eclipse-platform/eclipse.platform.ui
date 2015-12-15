@@ -102,8 +102,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private ViewItem currentItem;
 
 	//Lists
-	private ArrayList expandRestoreList = new ArrayList();
-	private ArrayList viewItemList = new ArrayList();
+	private ArrayList<String> expandRestoreList = new ArrayList<String>();
+	private ArrayList<ViewItem> viewItemList = new ArrayList<>();
 
 	//Composites
 	protected Composite control;
@@ -163,7 +163,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		IntroItem introItem = (IntroItem) getViewItemAtIndex(0);
 		boolean isStarted = introItem.isCompleted();
 
-		expandRestoreList = new ArrayList();
+		expandRestoreList = new ArrayList<>();
 		if(expandRestoreAction != null)
 			expandRestoreAction.setCollapsed(false);
 
@@ -173,15 +173,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if(isStarted)
 			initManager();
 
-		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = (ViewItem) iter.next();
+		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
+			ViewItem item = iter.next();
 			if (item instanceof CoreItem) {
 				CoreItem c = (CoreItem) item;
-				ArrayList l = c.getListOfSubItemCompositeHolders();
+				ArrayList<SubItemCompositeHolder> l = c.getListOfSubItemCompositeHolders();
 				if (l != null)
 					for (int j = 0; j < l.size(); j++) {
-						((SubItemCompositeHolder) l.get(j)).setSkipped(false);
-						((SubItemCompositeHolder) l.get(j)).setCompleted(false);
+						l.get(j).setSkipped(false);
+						l.get(j).setCompleted(false);
 					}
 			}
 		}
@@ -275,7 +275,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	/*package*/ void advanceSubItem(ImageHyperlink link, boolean markAsCompleted, int subItemIndex) {
 		Label l = null;
-		ArrayList list = null;
+		ArrayList<SubItemCompositeHolder> list = null;
 		SubItemCompositeHolder sich = null;
 		CoreItem ciws = null;
 
@@ -286,7 +286,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		if (ciws != null) {
 			list = ciws.getListOfSubItemCompositeHolders();
-			sich = (SubItemCompositeHolder) list.get(subItemIndex);
+			sich = list.get(subItemIndex);
 			l = sich.getCheckDoneLabel();
 		}
 
@@ -320,9 +320,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		saveCurrentSheet();
 	}
 
-	private boolean checkAllAttempted(ArrayList list) {
+	private boolean checkAllAttempted(ArrayList<SubItemCompositeHolder> list) {
 		for (int i = 0; i < list.size(); i++) {
-			SubItemCompositeHolder s = (SubItemCompositeHolder) list.get(i);
+			SubItemCompositeHolder s = list.get(i);
 			if (s.isCompleted() || s.isSkipped()) {
 				continue;
 			}
@@ -331,9 +331,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return true;
 	}
 
-	private boolean checkContainsSkipped(ArrayList list) {
+	private boolean checkContainsSkipped(ArrayList<SubItemCompositeHolder> list) {
 		for (int i = 0; i < list.size(); i++) {
-			SubItemCompositeHolder s = (SubItemCompositeHolder) list.get(i);
+			SubItemCompositeHolder s = list.get(i);
 			if (s.isSkipped()) {
 				return true;
 			}
@@ -364,10 +364,11 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			int itemNum = Integer.parseInt((String) props.get(IParserTags.CURRENT));
 			ArrayList completedStatesList = (ArrayList) props.get(IParserTags.COMPLETED);
 			ArrayList expandedStatesList = (ArrayList) props.get(IParserTags.EXPANDED);
-			expandRestoreList = (ArrayList) props.get(IParserTags.EXPANDRESTORE);
+			expandRestoreList = (ArrayList<String>) props.get(IParserTags.EXPANDRESTORE);
 			String cid = (String) props.get(IParserTags.ID);
 			Hashtable completedSubItems = (Hashtable) props.get(IParserTags.SUBITEMCOMPLETED);
-			Hashtable skippedSubItems = (Hashtable) props.get(IParserTags.SUBITEMSKIPPED);
+			Hashtable<String, String> skippedSubItems = (Hashtable<String, String>) props
+					.get(IParserTags.SUBITEMSKIPPED);
 
 			ArrayList completedSubItemsItemList = new ArrayList();
 			ArrayList skippedSubItemsItemList = new ArrayList();
@@ -429,13 +430,14 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 						StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
 						if (item instanceof CoreItem) {
 							CoreItem coreitemws = (CoreItem) item;
-							ArrayList subItemCompositeHolders = coreitemws.getListOfSubItemCompositeHolders();
+							ArrayList<SubItemCompositeHolder> subItemCompositeHolders = coreitemws
+									.getListOfSubItemCompositeHolders();
 		                    if (subItemCompositeHolders != null) {
 								while (st.hasMoreTokens()) {
 									String token = st.nextToken();
-									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).setCompleted(true);
-									ArrayList l = subItemCompositeHolders;
-									SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
+									subItemCompositeHolders.get(Integer.parseInt(token)).setCompleted(true);
+									ArrayList<SubItemCompositeHolder> l = subItemCompositeHolders;
+									SubItemCompositeHolder s = l.get(Integer.parseInt(token));
 									if (s != null && s.getStartButton() != null) {
 										s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
 										s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
@@ -446,13 +448,14 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 						}
 					}
 					if (skippedSubItemsItemList.contains(Integer.toString(i))) {
-						String subItemNumbers = (String) skippedSubItems.get(Integer.toString(i));
+						String subItemNumbers = skippedSubItems.get(Integer.toString(i));
 						StringTokenizer st = new StringTokenizer(subItemNumbers, ","); //$NON-NLS-1$
 						if (item instanceof CoreItem) {
 							CoreItem coreitemws = (CoreItem) item;
 							while (st.hasMoreTokens()) {
 								String token = st.nextToken();
-								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setSkipped(true);
+								coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))
+										.setSkipped(true);
 							}
 						}
 					}
@@ -523,8 +526,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			currentItem = null;
 			currentItemNum = -1;
 			currentPage = null;
-			expandRestoreList = new ArrayList();
-			viewItemList = new ArrayList();
+			expandRestoreList = new ArrayList<>();
+			viewItemList = new ArrayList<>();
 
 			// Create the errorpage to show the user
 			createErrorPage(Messages.ERROR_APPLYING_STATE_DATA);
@@ -534,15 +537,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	private void clearBackgrounds() {
-		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = (ViewItem) iter.next();
+		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
+			ViewItem item = iter.next();
 			item.setOriginalColor();
 		}
 	}
 
 	private void clearIcons() {
-		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = (ViewItem) iter.next();
+		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
+			ViewItem item = iter.next();
 			item.setOriginalColor();
 			if (item.isCompleted() || item.isExpanded() || item.isSkipped())
 					item.setIncomplete();
@@ -550,11 +553,11 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	private void collapseAllButCurrent(boolean fromAction) {
-		expandRestoreList = new ArrayList();
+		expandRestoreList = new ArrayList<>();
 		try {
 			ViewItem current = getViewItemAtIndex(currentItemNum);
-			for (ListIterator iter = viewItemList.listIterator(viewItemList.size()); iter.hasPrevious();) {
-				ViewItem item = (ViewItem) iter.previous();
+			for (ListIterator<ViewItem> iter = viewItemList.listIterator(viewItemList.size()); iter.hasPrevious();) {
+				ViewItem item = iter.previous();
 				if (item != current && item.isExpanded()) {
 					item.setCollapsed();
 					if (fromAction)
@@ -566,8 +569,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	private void collapseAllButtons() {
-		for (Iterator iter = viewItemList.listIterator(1); iter.hasNext();) {
-			ViewItem item = (ViewItem) iter.next();
+		for (Iterator<ViewItem> iter = viewItemList.listIterator(1); iter.hasNext();) {
+			ViewItem item = iter.next();
 			item.setButtonsVisible(false);
 			item.setCompletionMessageCollapsed();
 		}
@@ -761,13 +764,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	private CheatSheetManager initManager(){
 		CheatSheetManager csManager = getManager();
-		csManager.setData(new Hashtable());
+		csManager.setData(new Hashtable<>());
 		return csManager;
 	}
 
 	private ViewItem getViewItemAtIndex(int index) {
 		if (viewItemList != null && !viewItemList.isEmpty()) {
-			return (ViewItem) viewItemList.get(index);
+			return viewItemList.get(index);
 		}
 		return null;
 	}
@@ -824,7 +827,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private boolean initCheatSheetView() {
 		CheatSheetStopWatch.startStopWatch("CheatSheetViewer.initCheatSheetView()"); //$NON-NLS-1$
 		//Re-initialize list to store items collapsed by expand/restore action on c.s. toolbar.
-		expandRestoreList = new ArrayList();
+		expandRestoreList = new ArrayList<>();
 
 		// re set that action to turned off.
 		if(expandRestoreAction != null)
@@ -833,7 +836,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		//reset current item to be null; next item too.
 		currentItem = null;
 		currentItemNum = 0;
-		viewItemList = new ArrayList();
+		viewItemList = new ArrayList<>();
 
 		// Reset the page variable
 		currentPage = null;
@@ -929,8 +932,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		saveCurrentSheet();
 
-		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
-			ViewItem item = (ViewItem) iter.next();
+		for (Iterator<ViewItem> iter = viewItemList.iterator(); iter.hasNext();) {
+			ViewItem item = iter.next();
 			item.dispose();
 		}
 
@@ -1022,7 +1025,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private void restoreExpandStates() {
 		try {
 			for (int i = 0; i < expandRestoreList.size(); i++) {
-				int index = Integer.parseInt(((String) expandRestoreList.get(i)));
+				int index = Integer.parseInt((expandRestoreList.get(i)));
 				ViewItem item = getViewItemAtIndex(index);
 				if (!item.isExpanded()) {
 					item.setExpanded();
@@ -1079,8 +1082,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			if (coreItem != null) {
 				hookDialogListener();
 				if (coreItem.runSubItemExecutable(getManager(), subItemIndex) == ViewItem.VIEWITEM_ADVANCE && !coreItem.hasConfirm(subItemIndex)) {
-					ArrayList l = coreItem.getListOfSubItemCompositeHolders();
-					SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
+					ArrayList<SubItemCompositeHolder> l = coreItem.getListOfSubItemCompositeHolders();
+					SubItemCompositeHolder s = l.get(subItemIndex);
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
 					s.getStartButton().setToolTipText(Messages.RESTART_TASK_TOOLTIP);
 					advanceSubItem(link, true, subItemIndex);
@@ -1338,7 +1341,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	@Override
-	public void reset(Map cheatSheetData) {
+	public void reset(Map<String, String> cheatSheetData) {
 		if (currentPage instanceof CheatSheetPage) {
 			restart();
 			getManager().setData(cheatSheetData);

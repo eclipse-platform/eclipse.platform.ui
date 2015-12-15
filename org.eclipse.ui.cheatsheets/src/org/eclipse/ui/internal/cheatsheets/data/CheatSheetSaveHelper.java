@@ -67,11 +67,11 @@ public class CheatSheetSaveHelper {
 	 * @param contentPath will be null if the cheatsheet was launched using information from
 	 * the registry, otherwise it is the url of the cheatsheet content file.
 	 */
-	public Properties createProperties(int currentItemNum, ArrayList items,
+	public Properties createProperties(int currentItemNum, ArrayList<ViewItem> items,
 			boolean buttonIsDown, ArrayList expandRestoreStates, String csID, String contentPath) {
 		Properties props = new Properties();
-		Hashtable subcompletedTable = new Hashtable(10);
-		Hashtable subskippedTable = new Hashtable(10);
+		Hashtable<String, String> subcompletedTable = new Hashtable<>(10);
+		Hashtable<String, String> subskippedTable = new Hashtable<>(10);
 
 		int buttonState = 0;
 		if (buttonIsDown)
@@ -82,15 +82,15 @@ public class CheatSheetSaveHelper {
 		if (contentPath != null) {
 			props.put(IParserTags.CONTENT_URL, contentPath);
 		}
-		ArrayList completedList = new ArrayList();
-		ArrayList expandedList = new ArrayList();
+		ArrayList<String> completedList = new ArrayList<>();
+		ArrayList<String> expandedList = new ArrayList<>();
 
 		if (expandRestoreStates == null)
 			expandRestoreStates = new ArrayList();
 
 		// Assemble lists of expanded items and completed items.
 		for (int i = 0; i < items.size(); i++) {
-			ViewItem item = (ViewItem) items.get(i);
+			ViewItem item = items.get(i);
 			if (item.isCompleted()) {
 				completedList.add(Integer.toString(i));
 			}
@@ -100,14 +100,13 @@ public class CheatSheetSaveHelper {
 
 			if (item instanceof CoreItem) {
 				CoreItem withsubs = (CoreItem) item;
-				ArrayList compList = withsubs
+				ArrayList<SubItemCompositeHolder> compList = withsubs
 						.getListOfSubItemCompositeHolders();
 				if (compList != null) {
 					StringBuffer skippedsubItems = new StringBuffer();
 					StringBuffer completedsubItems = new StringBuffer();
 					for (int j = 0; j < compList.size(); j++) {
-						SubItemCompositeHolder sch = (SubItemCompositeHolder) compList
-								.get(j);
+						SubItemCompositeHolder sch = compList.get(j);
 						if (sch.isCompleted())
 							completedsubItems.append(Integer.toString(j) + ","); //$NON-NLS-1$
 						if (sch.isSkipped())
@@ -230,8 +229,10 @@ public class CheatSheetSaveHelper {
 			addListOfStringsToMemento(writeMemento,  properties, IParserTags.EXPANDRESTORE);
 
 			addMapToMemento(writeMemento,  csm.getData(), IParserTags.MANAGERDATA);
-			addMapToMemento(writeMemento,  (Map)properties.get(IParserTags.SUBITEMCOMPLETED), IParserTags.SUBITEMCOMPLETED);
-			addMapToMemento(writeMemento,  (Map)properties.get(IParserTags.SUBITEMSKIPPED), IParserTags.SUBITEMSKIPPED);
+			addMapToMemento(writeMemento, (Map<String, String>) properties.get(IParserTags.SUBITEMCOMPLETED),
+					IParserTags.SUBITEMCOMPLETED);
+			addMapToMemento(writeMemento, (Map<String, String>) properties.get(IParserTags.SUBITEMSKIPPED),
+					IParserTags.SUBITEMSKIPPED);
 
 		} catch (Exception e) {
 			String message = NLS.bind(Messages.ERROR_SAVING_STATEFILE_URL,
@@ -289,22 +290,22 @@ public class CheatSheetSaveHelper {
 	}
 
 
-	private void addMapToMemento(IMemento memento, Map map, String mapName) {
+	private void addMapToMemento(IMemento memento, Map<String, String> map, String mapName) {
 		if (map == null) {
 			return;
 		}
-		for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+		for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
 			IMemento childMemento = memento.createChild(mapName);
-			String itemKey = (String)iter.next();
+			String itemKey = iter.next();
 			childMemento.putString(IParserTags.MANAGERDATAKEY,(itemKey));
-			childMemento.putString(IParserTags.MANAGERDATAVALUE,(String)map.get(itemKey));
+			childMemento.putString(IParserTags.MANAGERDATAVALUE, map.get(itemKey));
 		}
 	}
 
 
 	private void getMapFromMemento(IMemento memento, Properties properties, String mapName) {
 		IMemento[] children = memento.getChildren(mapName);
-		Map map = new Hashtable();
+		Map<String, String> map = new Hashtable<>();
 		for (int i = 0; i < children.length; i++) {
 			map.put(children[i].getString(IParserTags.MANAGERDATAKEY),
 					children[i].getString(IParserTags.MANAGERDATAVALUE));
@@ -314,7 +315,7 @@ public class CheatSheetSaveHelper {
 
 	private void getListOfStringsFromMemento(IMemento memento, Properties properties, String key) {
 		IMemento[] children = memento.getChildren(key);
-		List list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
 			list.add(children[i].getString(IParserTags.ITEM));
 		}

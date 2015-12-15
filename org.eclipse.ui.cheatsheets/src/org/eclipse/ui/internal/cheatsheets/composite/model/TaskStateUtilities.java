@@ -124,14 +124,15 @@ public class TaskStateUtilities {
 	 * Determine which tasks need to be restarted if this tasks is restarted
 	 */
 	public static AbstractTask[] getRestartTasks(ICompositeCheatSheetTask task) {
-		List restartables = new ArrayList();
-		Set visited = new HashSet();
+		List<ICompositeCheatSheetTask> restartables = new ArrayList<>();
+		Set<ICompositeCheatSheetTask> visited = new HashSet<>();
 		addRestartableTasks(restartables, task, visited);
-		return (AbstractTask[])restartables.toArray(new AbstractTask[restartables.size()]);
+		return restartables.toArray(new AbstractTask[restartables.size()]);
 	}
 
 
-	private static void addRestartableTasks(List restartables, ICompositeCheatSheetTask task, Set visited) {
+	private static void addRestartableTasks(List<ICompositeCheatSheetTask> restartables, ICompositeCheatSheetTask task,
+			Set<ICompositeCheatSheetTask> visited) {
 		if (visited.contains(task)) {
 			return;
 		}

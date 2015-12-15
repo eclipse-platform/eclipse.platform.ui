@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.cheatsheets.composite.model;
 
 import java.util.ArrayList;
+
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.TaskGroupParseStrategy;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
@@ -25,7 +26,7 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 
 	private ITaskParseStrategy parserStrategy;
 
-	private ArrayList subtasks;
+	private ArrayList<ICompositeCheatSheetTask> subtasks;
 
 	private CompletionStrategy completionStrategy;
 
@@ -53,12 +54,12 @@ public class TaskGroup extends AbstractTask implements ITaskGroup {
 	@Override
 	public ICompositeCheatSheetTask[] getSubtasks() {
 		if (subtasks==null) return EMPTY;
-		return (ICompositeCheatSheetTask[])subtasks.toArray(new ICompositeCheatSheetTask[subtasks.size()]);
+		return subtasks.toArray(new ICompositeCheatSheetTask[subtasks.size()]);
 	}
 
 	public void addSubtask(ICompositeCheatSheetTask task) {
 		if (subtasks==null) {
-			subtasks = new ArrayList();
+			subtasks = new ArrayList<>();
 		}
 		subtasks.add(task);
 		((AbstractTask)task).setParent(this);

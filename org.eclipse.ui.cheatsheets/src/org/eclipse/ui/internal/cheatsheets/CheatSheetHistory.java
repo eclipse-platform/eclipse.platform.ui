@@ -30,12 +30,12 @@ public class CheatSheetHistory {
 
 	private static final int DEFAULT_DEPTH = 5;
 
-	private ArrayList history;
+	private ArrayList<CheatSheetElement> history;
 	private CheatSheetRegistryReader reg;
 	private ListenerList listeners = new ListenerList();
 
 	public CheatSheetHistory(CheatSheetRegistryReader reg) {
-		this.history = new ArrayList(DEFAULT_DEPTH);
+		this.history = new ArrayList<>(DEFAULT_DEPTH);
 		this.reg = reg;
 	}
 
@@ -67,9 +67,9 @@ public class CheatSheetHistory {
 	}
 
 	public IStatus saveState(IMemento memento) {
-		Iterator iter = history.iterator();
+		Iterator<CheatSheetElement> iter = history.iterator();
 		while (iter.hasNext()) {
-			CheatSheetElement element = (CheatSheetElement)iter.next();
+			CheatSheetElement element = iter.next();
 			if(element != null) {
 				memento.createChild("element", element.getID()); //$NON-NLS-1$
 			}
@@ -104,9 +104,9 @@ public class CheatSheetHistory {
 	public void refreshFromRegistry() {
 		boolean change = false;
 
-		Iterator iter = history.iterator();
+		Iterator<CheatSheetElement> iter = history.iterator();
 		while (iter.hasNext()) {
-			CheatSheetElement element = (CheatSheetElement)iter.next();
+			CheatSheetElement element = iter.next();
 			if (reg.findCheatSheet(element.getID()) == null) {
 				iter.remove();
 				change = true;
@@ -126,7 +126,7 @@ public class CheatSheetHistory {
 	 * @param count number of items to copy from history
 	 * @return the number of items actually copied
 	 */
-	public int copyItems(List dest, int destStart, int count) {
+	public int copyItems(List<CheatSheetElement> dest, int destStart, int count) {
 		int itemCount = count;
 		if (itemCount > history.size())
 			itemCount = history.size();

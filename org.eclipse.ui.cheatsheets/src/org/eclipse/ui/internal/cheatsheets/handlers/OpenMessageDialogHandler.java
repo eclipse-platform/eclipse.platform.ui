@@ -87,7 +87,7 @@ public class OpenMessageDialogHandler extends AbstractHandler {
 
 	private String[] collectButtonLabels(ExecutionEvent event) {
 
-		ArrayList buttonLabelList = new ArrayList();
+		ArrayList<String> buttonLabelList = new ArrayList<>();
 
 		for (int i = 0; i < BUTTON_LABEL_COUNT; i++) {
 			String buttonLabelParamId = PARAM_ID_BUTTON_LABEL_PREFIX
@@ -101,7 +101,7 @@ public class OpenMessageDialogHandler extends AbstractHandler {
 			buttonLabelList.add(buttonLabel);
 		}
 
-		return (String[]) buttonLabelList.toArray(new String[buttonLabelList
+		return buttonLabelList.toArray(new String[buttonLabelList
 				.size()]);
 	}
 

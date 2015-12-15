@@ -19,8 +19,8 @@ import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class BlockedTaskFinder {
 
-	private Set stateChangedTasks;
-	private Set impactedTasks;
+	private Set<ICompositeCheatSheetTask> stateChangedTasks;
+	private Set<ICompositeCheatSheetTask> impactedTasks;
 	/**
 	 * Find which tasks have either become blocked or unblocked so that they
 	 * can be added to the list of change events.
@@ -37,17 +37,17 @@ public class BlockedTaskFinder {
      * <li> Add the successor and its children to the list if not started
 	 */
 
-	public Set findBlockedTaskChanges(Set stateChangedTasks) {
+	public Set findBlockedTaskChanges(Set<ICompositeCheatSheetTask> stateChangedTasks) {
 		this.stateChangedTasks = stateChangedTasks;
-		impactedTasks = new HashSet();
+		impactedTasks = new HashSet<>();
 		visitChangedTasks();
 		findSuccesors();
 		return impactedTasks;
 	}
 
 	private void visitChangedTasks() {
-		for (Iterator iter = stateChangedTasks.iterator(); iter.hasNext(); ) {
-			final ICompositeCheatSheetTask nextTask = (ICompositeCheatSheetTask)iter.next();
+		for (Iterator<ICompositeCheatSheetTask> iter = stateChangedTasks.iterator(); iter.hasNext();) {
+			final ICompositeCheatSheetTask nextTask = iter.next();
 			if (nextTask.getState() != ICompositeCheatSheetTask.IN_PROGRESS) {
 			    findUnstartedChildren(nextTask);
 			}
@@ -73,7 +73,7 @@ public class BlockedTaskFinder {
 	}
 
 	private void findSuccesors() {
-		for (Iterator iter = stateChangedTasks.iterator(); iter.hasNext(); ) {
+		for (Iterator<ICompositeCheatSheetTask> iter = stateChangedTasks.iterator(); iter.hasNext();) {
 			final AbstractTask nextTask = (AbstractTask)iter.next();
 			ICompositeCheatSheetTask[] successors = nextTask.getSuccessorTasks();
 			for (int i = 0; i < successors.length; i++) {

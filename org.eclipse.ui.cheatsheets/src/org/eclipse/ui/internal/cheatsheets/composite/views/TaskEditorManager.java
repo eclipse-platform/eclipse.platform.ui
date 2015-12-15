@@ -48,7 +48,7 @@ public class TaskEditorManager {
 			CheatSheetRegistryReader.getInstance().findTaskEditor(editorKind);
 		if (editorInfo != null) {
 			TaskEditor editorInstance = null;
-			Class extClass = null;
+			Class<?> extClass = null;
 			String className = editorInfo.getClassName();
 			try {
 				Bundle bundle = Platform.getBundle(editorInfo.getPluginId());
@@ -61,8 +61,7 @@ public class TaskEditorManager {
 			try {
 				if (extClass != null) {
 					Constructor c = extClass.getConstructor(new Class[0]);
-					Object[] parameters = new Object[0];
-					editorInstance = (TaskEditor) c.newInstance(parameters);
+					editorInstance = (TaskEditor) c.newInstance();
 				}
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));

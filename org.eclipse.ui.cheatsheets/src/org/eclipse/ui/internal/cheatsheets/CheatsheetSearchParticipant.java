@@ -38,8 +38,8 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 	 * @return a set of hrefs for documents managed by this participant.
 	 */
 	@Override
-	public Set getAllDocuments(String locale) {
-		HashSet set = new HashSet();
+	public Set<String> getAllDocuments(String locale) {
+		HashSet<String> set = new HashSet<>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
 						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.'
@@ -66,12 +66,12 @@ public class CheatsheetSearchParticipant extends SearchParticipantXML {
 	}
 
 	@Override
-	public Set getContributingPlugins() {
+	public Set<String> getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(
 						ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID + '.'
 						+ CheatSheetRegistryReader.CHEAT_SHEET_CONTENT);
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<>();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals(CheatSheetRegistryReader.TAG_CHEATSHEET)) {

@@ -135,8 +135,8 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	private IStatus status = Status.OK_STATUS;
 
 
-	List mostRecentFiles = new ArrayList();
-	List mostRecentUrls = new ArrayList();
+	List<String> mostRecentFiles = new ArrayList<>();
+	List<String> mostRecentUrls = new ArrayList<>();
 
 	private static class ActivityViewerFilter extends ViewerFilter {
 		private boolean hasEncounteredFilteredItem = false;
@@ -451,7 +451,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	protected CheatSheetCollectionElement expandPreviouslyExpandedCategories() {
 		String[] expandedCategoryPaths = settings
 				.getArray(STORE_EXPANDED_CATEGORIES_ID);
-		List categoriesToExpand = new ArrayList(expandedCategoryPaths.length);
+		List<CheatSheetCollectionElement> categoriesToExpand = new ArrayList<>(expandedCategoryPaths.length);
 
 		for (int i = 0; i < expandedCategoryPaths.length; i++) {
 			CheatSheetCollectionElement category = cheatsheetCategories
@@ -681,7 +681,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		loadMRU(mostRecentFiles, STORE_FILE_MRU, selectFileCombo);
 	}
 
-	private void loadMRU(List mostRecentList, String key, Combo combo) {
+	private void loadMRU(List<String> mostRecentList, String key, Combo combo) {
 		for (int i = 0; i < MOST_RECENT_LENGTH; i++) {
 			String name = settings.get(key + i);
 			if (name != null) {
@@ -691,12 +691,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		}
 	}
 
-	private void saveMRU(List mostRecentList, String key, String selection) {
+	private void saveMRU(List<String> mostRecentList, String key, String selection) {
 		if (selection.length() > 0 && !mostRecentList.contains(selection)) {
 		    mostRecentList.add(0, selection);
 		}
 		for (int i = 0; i < MOST_RECENT_LENGTH & i < mostRecentList.size(); i++) {
-			String name = (String)mostRecentList.get(i);
+			String name = mostRecentList.get(i);
 			if (name.length() > 0) {
 			    settings.put(key + i, name);
 			}

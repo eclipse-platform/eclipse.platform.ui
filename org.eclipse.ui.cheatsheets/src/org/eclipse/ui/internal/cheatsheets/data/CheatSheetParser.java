@@ -67,7 +67,7 @@ public class CheatSheetParser implements IStatusContainer {
 
 	private DocumentBuilder documentBuilder;
 	private DocumentProcessor processor;
-	private ArrayList itemExtensionContainerList;
+	private ArrayList<CheatSheetItemExtensionElement> itemExtensionContainerList;
 
 	// Cheatsheet kinds that can be parsed
 	public static final int COMPOSITE_ONLY = 1;
@@ -625,7 +625,7 @@ public class CheatSheetParser implements IStatusContainer {
 		Assert.isNotNull(item);
 		Assert.isNotNull(itemNode);
 
-		ArrayList itemExtensionElements = new ArrayList();
+		ArrayList<AbstractItemExtensionElement[]> itemExtensionElements = new ArrayList<>();
 
 		boolean title = false;
 
@@ -861,12 +861,12 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item, Node node) {
-		ArrayList al = new ArrayList();
+		ArrayList<AbstractItemExtensionElement> al = new ArrayList<>();
 		if (itemExtensionContainerList == null)
 			return null;
 
 		for (int i = 0; i < itemExtensionContainerList.size(); i++) {
-			CheatSheetItemExtensionElement itemExtensionElement = (CheatSheetItemExtensionElement) itemExtensionContainerList.get(i);
+			CheatSheetItemExtensionElement itemExtensionElement = itemExtensionContainerList.get(i);
 
 			if (itemExtensionElement.getItemAttribute().equals(item.getNodeName())) {
 				AbstractItemExtensionElement itemElement = itemExtensionElement.createInstance();
@@ -881,7 +881,7 @@ public class CheatSheetParser implements IStatusContainer {
 			String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {item.getNodeName(), node.getNodeName()}));
 			addStatus(IStatus.WARNING, message, null);
 		}
-		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
+		return al.toArray(new AbstractItemExtensionElement[al.size()]);
 	}
 
 	public ICheatSheet parse(URL url, String pluginId, int cheatSheetKind) {

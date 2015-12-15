@@ -312,7 +312,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	}
 
 	public void saveState() {
-		Map layout = new HashMap();
+		Map<String, String> layout = new HashMap<>();
 		if (selectedTask != null) {
 		    layout.put(ICompositeCheatsheetTags.SELECTED_TASK, selectedTask.getId());
 		}
@@ -499,7 +499,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	public void initialized() {
 		// Open the model
 		model.setSaveHelper(saveHelper);
-		Map layout = new HashMap();
+		Map<String, String> layout = new HashMap<>();
 		model.loadState(layout);
 		setInputModel(model, layout);
 		initialized  = true;
@@ -563,7 +563,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		return index;
 	}
 
-	public void restart(Map cheatSheetData) {
+	public void restart(Map<String, String> cheatSheetData) {
 		model.resetAllTasks(cheatSheetData);
 		currentExplorer.setSelection
 		    (new StructuredSelection(model.getRootTask()), true);

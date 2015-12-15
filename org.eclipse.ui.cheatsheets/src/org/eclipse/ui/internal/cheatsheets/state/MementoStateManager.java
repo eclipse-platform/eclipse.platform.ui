@@ -63,7 +63,7 @@ public class MementoStateManager implements ICheatSheetStateManager {
 	public CheatSheetManager getCheatSheetManager() {
 		CheatSheetManager result = new CheatSheetManager(element);
 		if (getProperties() != null) {
-		    result.setData((Hashtable) getProperties().get(IParserTags.MANAGERDATA));
+			result.setData((Hashtable<String, String>) getProperties().get(IParserTags.MANAGERDATA));
 		}
 		result.setParent(parentCsm);
 		return result;

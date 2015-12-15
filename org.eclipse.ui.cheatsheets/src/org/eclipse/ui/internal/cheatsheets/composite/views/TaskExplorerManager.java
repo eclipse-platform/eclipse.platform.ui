@@ -35,7 +35,7 @@ import org.osgi.framework.Bundle;
 public class TaskExplorerManager {
 private static TaskExplorerManager instance;
 
-    private Map images;
+	private Map<String, Image> images;
 
 	private TaskExplorerManager() {
 
@@ -53,7 +53,7 @@ private static TaskExplorerManager instance;
 			CheatSheetRegistryReader.getInstance().findTaskExplorer(explorerKind);
 		if (explorerInfo != null) {
 			TaskExplorer explorerInstance = null;
-			Class extClass = null;
+			Class<?> extClass = null;
 			String className = explorerInfo.getClassName();
 			try {
 				Bundle bundle = Platform.getBundle(explorerInfo.getPluginId());
@@ -65,9 +65,8 @@ private static TaskExplorerManager instance;
 			}
 			try {
 				if (extClass != null) {
-					Constructor c = extClass.getConstructor(new Class[0]);
-					Object[] parameters = new Object[0];
-					explorerInstance = (TaskExplorer) c.newInstance(parameters);
+					Constructor c = extClass.getConstructor();
+					explorerInstance = (TaskExplorer) c.newInstance();
 				}
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));
@@ -101,7 +100,7 @@ private static TaskExplorerManager instance;
 		}
 	}
 
-	private Map getImages() {
+	private Map<String, Image> getImages() {
 		if (images == null) {
 			initImages();
 		}
@@ -111,7 +110,7 @@ private static TaskExplorerManager instance;
 
 	private void initImages() {
 		if (images == null) {
-			images = new HashMap();
+			images = new HashMap<>();
 			String[] ids = CheatSheetRegistryReader.getInstance().getExplorerIds();
 			for (int i = 0; i < ids.length; i++) {
 				ImageDescriptor descriptor = getImageDescriptor(ids[i]);
@@ -132,7 +131,7 @@ private static TaskExplorerManager instance;
 	}
 
 	public Image getImage(String id) {
-		return (Image)getImages().get(id);
+		return getImages().get(id);
 	}
 
 }

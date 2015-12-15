@@ -22,6 +22,6 @@ public interface ISubItemItem {
 	/**
 	 * @return Returns the subItems.
 	 */
-	public ArrayList getSubItems();
+	public ArrayList<AbstractSubItem> getSubItems();
 
 }

@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 
 public class CompositeCheatSheetSaveHelper {
 	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
-	private Map taskMementoMap;
+	private Map<String, IMemento> taskMementoMap;
 	private ICheatSheetStateManager stateManager;
 
 	/**
@@ -49,7 +49,7 @@ public class CompositeCheatSheetSaveHelper {
 		this.stateManager = stateManager;
 	}
 
-	public IStatus loadCompositeState(CompositeCheatSheetModel model, Map layoutData) {
+	public IStatus loadCompositeState(CompositeCheatSheetModel model, Map<String, String> layoutData) {
 		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(model.getId() + DOT_XML);
 		if (readMemento == null) {
@@ -63,8 +63,8 @@ public class CompositeCheatSheetSaveHelper {
         return Status.OK_STATUS;
 	}
 
-	private Map createTaskMap(XMLMemento readMemento) {
-		Map map = new HashMap();
+	private Map<String, IMemento> createTaskMap(XMLMemento readMemento) {
+		Map<String, IMemento> map = new HashMap<>();
 		IMemento[] tasks = readMemento.getChildren(ICompositeCheatsheetTags.TASK);
 		for (int i = 0; i < tasks.length; i++) {
 			String taskId = tasks[i].getString(ICompositeCheatsheetTags.TASK_ID);
@@ -75,9 +75,9 @@ public class CompositeCheatSheetSaveHelper {
 		return map;
 	}
 
-	private void loadTaskState(Map taskMap, AbstractTask task) {
+	private void loadTaskState(Map<String, IMemento> taskMap, AbstractTask task) {
 		ICompositeCheatSheetTask[] children = task.getSubtasks();
-		IMemento memento = (IMemento)taskMap.get(task.getId());
+		IMemento memento = taskMap.get(task.getId());
 		if (memento != null) {
 			String state = memento.getString(ICompositeCheatsheetTags.STATE);
 			if (state != null) {
@@ -105,7 +105,7 @@ public class CompositeCheatSheetSaveHelper {
 		}
 	}
 
-	private void loadLayoutData(XMLMemento readMemento, Map layoutData) {
+	private void loadLayoutData(XMLMemento readMemento, Map<String, String> layoutData) {
 		if (layoutData == null) {
 			return;
 		}
@@ -125,7 +125,7 @@ public class CompositeCheatSheetSaveHelper {
 	 * @param layoutData Will contain pairs of name/value Strings used to save and restore layout
 	 * @return
 	 */
-	public IStatus saveCompositeState(CompositeCheatSheetModel model, Map layoutData) {
+	public IStatus saveCompositeState(CompositeCheatSheetModel model, Map<String, String> layoutData) {
 		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
 		writeMemento.putString(IParserTags.ID, model.getId());
@@ -142,14 +142,14 @@ public class CompositeCheatSheetSaveHelper {
 		if (!(manager instanceof CheatSheetManager)) {
 			return;
 		}
-		Map data = ((CheatSheetManager)manager).getData();
+		Map<String, String> data = ((CheatSheetManager) manager).getData();
 		saveMap(writeMemento, data, ICompositeCheatsheetTags.CHEAT_SHEET_MANAGER);
 	}
 
-	private void saveMap(XMLMemento writeMemento, Map data, String tag) {
-		for (Iterator iter = data.keySet().iterator(); iter.hasNext();) {
-			String key = (String)iter.next();
-			String value = (String) data.get(key);
+	private void saveMap(XMLMemento writeMemento, Map<String, String> data, String tag) {
+		for (Iterator<String> iter = data.keySet().iterator(); iter.hasNext();) {
+			String key = iter.next();
+			String value = data.get(key);
 			IMemento childMemento = writeMemento.createChild(tag);
 			childMemento.putString(ICompositeCheatsheetTags.KEY, key);
 			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);
@@ -193,7 +193,7 @@ public class CompositeCheatSheetSaveHelper {
 		if (taskMementoMap == null) {
 			return null;
 		}
-	    IMemento childMemento = (IMemento)taskMementoMap.get(id);
+		IMemento childMemento = taskMementoMap.get(id);
 	    if (childMemento == null) {
 	    	return  null;
 	    }

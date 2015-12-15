@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.model.AdaptableList;
@@ -31,7 +34,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	private String name;
 	private CheatSheetCollectionElement parent;
 	private AdaptableList cheatsheets = new AdaptableList();
-	private List childCollections = new ArrayList();
+	private List<CheatSheetCollectionElement> childCollections = new ArrayList<>();
 
 	/**
 	 * Creates a new <code>CheatSheetCollectionElement</code>.  Parent can be null.
@@ -52,7 +55,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 		if (a instanceof CheatSheetElement) {
 			cheatsheets.add(a);
 		} else {
-			childCollections.add(a);
+			childCollections.add((CheatSheetCollectionElement) a);
 		}
 	}
 
@@ -107,9 +110,10 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	 * associated with this object. Returns <code>null</code> if
 	 * no such object can be found.
 	 */
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
-			return this;
+			return (T) this;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

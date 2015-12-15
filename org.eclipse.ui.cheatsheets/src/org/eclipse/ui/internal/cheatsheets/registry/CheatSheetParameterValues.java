@@ -23,17 +23,17 @@ import org.eclipse.core.commands.IParameterValues;
 public class CheatSheetParameterValues implements IParameterValues {
 
 	@Override
-	public Map getParameterValues() {
-		Map values = new TreeMap();
+	public Map<String, String> getParameterValues() {
+		Map<String, String> values = new TreeMap<>();
 
-		CheatSheetCollectionElement cheatSheetCollection = (CheatSheetCollectionElement) CheatSheetRegistryReader
+		CheatSheetCollectionElement cheatSheetCollection = CheatSheetRegistryReader
 				.getInstance().getCheatSheets();
 		populateValues(values, cheatSheetCollection);
 
 		return values;
 	}
 
-	private void populateValues(Map values,
+	private void populateValues(Map<String, String> values,
 			CheatSheetCollectionElement cheatSheetCollection) {
 
 		Object[] cheatsheets = cheatSheetCollection.getCheatSheets();

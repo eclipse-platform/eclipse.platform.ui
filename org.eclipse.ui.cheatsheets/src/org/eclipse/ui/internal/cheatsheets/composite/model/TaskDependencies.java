@@ -50,9 +50,9 @@ public class TaskDependencies {
 		}
 	}
 
-	private List dependencies;
+	private List<Dependency> dependencies;
 
-	private Map taskIdMap = new HashMap();
+	private Map<String, AbstractTask> taskIdMap = new HashMap<>();
 
 	public void saveId(AbstractTask task) {
 		String id = task.getId();
@@ -62,11 +62,11 @@ public class TaskDependencies {
 	}
 
 	public AbstractTask getTask(String id) {
-		return (AbstractTask)taskIdMap.get(id);
+		return taskIdMap.get(id);
 	}
 
 	public TaskDependencies() {
-		dependencies = new ArrayList();
+		dependencies = new ArrayList<>();
 	}
 
 	/**
@@ -84,8 +84,8 @@ public class TaskDependencies {
 	 * @param status An object used to add error status
 	 */
 	public void resolveDependencies(IStatusContainer status) {
-		for (Iterator dependencyIterator = dependencies.iterator(); dependencyIterator.hasNext();) {
-			 Dependency dep = (Dependency)dependencyIterator.next();
+		for (Iterator<Dependency> dependencyIterator = dependencies.iterator(); dependencyIterator.hasNext();) {
+			Dependency dep = dependencyIterator.next();
 			 AbstractTask sourceTask = dep.getSourceTask();
 			 AbstractTask requiredTask = getTask(dep.requiredTaskId);
 			 if (requiredTask == null) {
@@ -110,7 +110,7 @@ public class TaskDependencies {
 	 * @param status
 	 */
 	private void checkForCircularities (IStatusContainer status) {
-		Set tasks = new HashSet();
+		Set<ICompositeCheatSheetTask> tasks = new HashSet<>();
 		// Combine steps 1 + 2
 		for (Iterator idIterator = taskIdMap.values().iterator(); idIterator.hasNext(); ) {
 			AbstractTask nextTask = (AbstractTask)idIterator.next();
@@ -122,11 +122,12 @@ public class TaskDependencies {
 		while (makingProgress) {
 			// Use a new set to store the tasks which are still cycle candidates to avoid
 			// iterating over and deleting from the same set.
-			Set remainingTasks = new HashSet();
+			Set<ICompositeCheatSheetTask> remainingTasks = new HashSet<>();
 			makingProgress = false;
-			for (Iterator taskIterator = tasks.iterator(); taskIterator.hasNext() && !makingProgress; ) {
+			for (Iterator<ICompositeCheatSheetTask> taskIterator = tasks.iterator(); taskIterator.hasNext()
+					&& !makingProgress;) {
 				boolean mayBeInCycle = false;
-				ICompositeCheatSheetTask nextTask = (ICompositeCheatSheetTask)taskIterator.next();
+				ICompositeCheatSheetTask nextTask = taskIterator.next();
 				ICompositeCheatSheetTask[] requiredTasks = nextTask.getRequiredTasks();
 				for (int i = 0; i < requiredTasks.length; i++) {
 					if (tasks.contains(requiredTasks[i])) {
@@ -144,10 +145,11 @@ public class TaskDependencies {
 		if (!tasks.isEmpty()) {
 			status.addStatus(IStatus.ERROR, Messages.ERROR_PARSING_CYCLE_DETECTED, null);
 			// Detect one of the cycles and report its members
-			List cycle = new ArrayList();
-			ICompositeCheatSheetTask cycleStartTask = (ICompositeCheatSheetTask)tasks.iterator().next();
+			List<ICompositeCheatSheetTask> cycle = new ArrayList<>();
+			ICompositeCheatSheetTask cycleStartTask = tasks.iterator().next();
 			while (!cycle.contains(cycleStartTask)) {
-				cycle.add(cycleStartTask);ICompositeCheatSheetTask[] requiredTasks = cycleStartTask.getRequiredTasks();
+				cycle.add(cycleStartTask);
+				ICompositeCheatSheetTask[] requiredTasks = cycleStartTask.getRequiredTasks();
 				for (int i = 0; i < requiredTasks.length; i++) {
 					if (tasks.contains(requiredTasks[i])) {
 						cycleStartTask=requiredTasks[i];
@@ -160,8 +162,8 @@ public class TaskDependencies {
 			String thisTask = null;
 			String lastTask = null;
 			String firstTask = null;
-			for (Iterator cycleIterator = cycle.iterator(); cycleIterator.hasNext();) {
-				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)cycleIterator.next();
+			for (Iterator<ICompositeCheatSheetTask> cycleIterator = cycle.iterator(); cycleIterator.hasNext();) {
+				ICompositeCheatSheetTask task = cycleIterator.next();
 				if (task == cycleStartTask) {
 					cycleStarted = true;
 					firstTask = task.getName();

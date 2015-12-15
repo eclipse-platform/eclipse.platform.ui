@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.model.WorkbenchAdapter;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 import org.osgi.framework.Bundle;
 
 /**
@@ -48,10 +54,11 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	 * associated with this object. Returns <code>null</code> if
 	 * no such object can be found.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class) {
-			return this;
+			return (T) this;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

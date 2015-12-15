@@ -31,9 +31,9 @@ public class ErrorPage extends Page {
 	 * Class used to sort status with errors first, then warnings
 	 */
 	private class StatusSorter {
-		private List errors = new ArrayList();
-		private List warnings = new ArrayList();
-		private List info = new ArrayList();
+		private List<IStatus> errors = new ArrayList<>();
+		private List<IStatus> warnings = new ArrayList<>();
+		private List<IStatus> info = new ArrayList<>();
 
 		public StatusSorter(IStatus status) {
 			sortStatus(status);
@@ -59,8 +59,8 @@ public class ErrorPage extends Page {
 			}
 		}
 
-		public List getSortedStatus() {
-			List result = new ArrayList();
+		public List<IStatus> getSortedStatus() {
+			List<IStatus> result = new ArrayList<IStatus>();
 			result.addAll(errors);
 			result.addAll(warnings);
 			result.addAll(info);
@@ -101,9 +101,9 @@ public class ErrorPage extends Page {
 
 	private void showStatus(IStatus status) {
 		StatusSorter sorter = new StatusSorter(status);
-		List sorted = sorter.getSortedStatus();
-		for (Iterator iter = sorted.iterator(); iter.hasNext();) {
-			IStatus nextStatus = (IStatus)iter.next();
+		List<IStatus> sorted = sorter.getSortedStatus();
+		for (Iterator<IStatus> iter = sorted.iterator(); iter.hasNext();) {
+			IStatus nextStatus = iter.next();
 			Label imageLabel = toolkit.createLabel(form.getBody(), ""); //$NON-NLS-1$
 			imageLabel.setImage(getImage(nextStatus.getSeverity()));
 			Label messageLabel = toolkit.createLabel(form.getBody(), nextStatus.getMessage(), SWT.WRAP);

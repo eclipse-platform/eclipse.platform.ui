@@ -85,7 +85,7 @@ public abstract class ViewItem {
 	private Font boldFont;
 	private Font regularFont;
 	private boolean initialized = false;
-	protected ArrayList listOfSubItemCompositeHolders;
+	protected ArrayList<SubItemCompositeHolder> listOfSubItemCompositeHolders;
 
 	/**
 	 * Constructor for ViewItem.

@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
 public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem {
 	private String condition;
-	private ArrayList subItems;
+	private ArrayList<AbstractSubItem> subItems;
 	private SubItem selectedSubItem;
 
 	/**
@@ -54,7 +54,7 @@ public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem 
 	@Override
 	public void addSubItem(AbstractSubItem subItem) {
 		if(subItems == null) {
-			subItems = new ArrayList();
+			subItems = new ArrayList<>();
 		}
 		subItems.add(subItem);
 	}
@@ -63,7 +63,7 @@ public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem 
 	 * @return Returns the subItems.
 	 */
 	@Override
-	public ArrayList getSubItems() {
+	public ArrayList<AbstractSubItem> getSubItems() {
 		return subItems;
 	}
 
@@ -74,7 +74,7 @@ public class ConditionalSubItem extends AbstractSubItem implements ISubItemItem 
 	public void setSelectedSubItem(CheatSheetManager csm) {
 		String conditionValue = csm.getVariableData(condition);
 
-		for (Iterator iter = subItems.iterator(); iter.hasNext();) {
+		for (Iterator<AbstractSubItem> iter = subItems.iterator(); iter.hasNext();) {
 			SubItem subItem = (SubItem) iter.next();
 			if(subItem.getWhen() != null && subItem.getWhen().equals(conditionValue)) {
 				selectedSubItem = subItem;

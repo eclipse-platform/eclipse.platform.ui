@@ -56,7 +56,7 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 	 */
 	@Override
 	public void run() {
-		CheatSheetCollectionElement cheatSheets = (CheatSheetCollectionElement)CheatSheetRegistryReader.getInstance().getCheatSheets();
+		CheatSheetCollectionElement cheatSheets = CheatSheetRegistryReader.getInstance().getCheatSheets();
 
 		CheatSheetCategoryBasedSelectionDialog dialog = new CheatSheetCategoryBasedSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), cheatSheets);
 

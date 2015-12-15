@@ -41,28 +41,28 @@ public class TreeLabelProvider extends LabelProvider {
 	 */
 	private class ImageSet {
 		// Use a map rather than array so the nuber of icons is not hard coded
-		Map images = new HashMap();
+		Map<String, Image> images = new HashMap<>();
 
 		public void put(int index, Image image) {
 			images.put(Integer.toString(index), image);
 		}
 
 		public Image getImage(int index) {
-			return (Image)images.get(Integer.toString(index));
+			return images.get(Integer.toString(index));
 		}
 
 		void dispose() {
-			for (Iterator iter = images.values().iterator(); iter.hasNext(); ) {
-				Image nextImage = (Image)iter.next();
+			for (Iterator<Image> iter = images.values().iterator(); iter.hasNext();) {
+				Image nextImage = iter.next();
 				nextImage.dispose();
 			}
 		}
 	}
 
-	private Map imageMap = null; // each entry is an ImageSet
+	private Map<String, ImageSet> imageMap = null; // each entry is an ImageSet
 
 	public TreeLabelProvider() {
-		imageMap = new HashMap();
+		imageMap = new HashMap<>();
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class TreeLabelProvider extends LabelProvider {
 	}
 
 	public Image lookupImage(String kind, int state, boolean isBlocked) {
-		ImageSet images = (ImageSet) imageMap.get(kind);
+		ImageSet images = imageMap.get(kind);
 		if (images == null) {
 			images = createImages(kind);
 			imageMap.put(kind, images);
@@ -107,8 +107,7 @@ public class TreeLabelProvider extends LabelProvider {
 	 */
 	private ImageSet createImages(String kind) {
 		ImageSet images = new ImageSet();
-		ImageDescriptor desc;
-		desc = getPredefinedImageDescriptor(kind, true);
+		ImageDescriptor desc = getPredefinedImageDescriptor(kind, true);
         if (desc == null) {
 		    desc = TaskEditorManager.getInstance().getImageDescriptor(kind);
         }
@@ -201,8 +200,8 @@ public class TreeLabelProvider extends LabelProvider {
 	@Override
 	public void dispose() {
 		if (imageMap != null) {
-			for (Iterator iter = imageMap.values().iterator(); iter.hasNext(); ) {
-			    ImageSet nextImages = (ImageSet)iter.next();
+			for (Iterator<ImageSet> iter = imageMap.values().iterator(); iter.hasNext();) {
+				ImageSet nextImages = iter.next();
 			    nextImages.dispose();
 			}
 			imageMap = null;

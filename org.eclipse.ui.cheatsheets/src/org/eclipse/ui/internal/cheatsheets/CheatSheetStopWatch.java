@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Platform;
 public class CheatSheetStopWatch {
 	private static CheatSheetStopWatch stopWatch = null;
 
-	private Map table;
+	private Map<String, Entry> table;
 
 	private CheatSheetStopWatch() {
 
@@ -81,7 +81,7 @@ public class CheatSheetStopWatch {
 	}
 
 	private Entry getEntry(String key) {
-		return (Entry) getTable().get(key);
+		return getTable().get(key);
 	}
 
 	private void putEntry(String key, Entry entry) {
@@ -95,9 +95,9 @@ public class CheatSheetStopWatch {
 		entry.previousLap = -1;
 	}
 
-	private Map getTable() {
+	private Map<String, Entry> getTable() {
 		if (table == null) {
-			table = new HashMap(10);
+			table = new HashMap<>(10);
 		}
 		return table;
 	}

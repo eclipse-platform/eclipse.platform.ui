@@ -40,15 +40,15 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 
 	protected String kind;
 
-	private Dictionary parameters;
+	private Dictionary<String, String> parameters;
 
 	private String description;
 
 	private String completionMessage;
 
-	private ArrayList requiredTasks;
+	private ArrayList<ICompositeCheatSheetTask> requiredTasks;
 
-	private ArrayList successorTasks;
+	private ArrayList<ICompositeCheatSheetTask> successorTasks;
 
 	private boolean skippable;
 
@@ -61,9 +61,9 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		this.id = id;
 		this.name = name;
 		this.kind = kind;
-		this.parameters = new Hashtable();
+		this.parameters = new Hashtable<>();
 		this.description = ""; //$NON-NLS-1$
-		requiredTasks = new ArrayList();
+		requiredTasks = new ArrayList<>();
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	}
 
 	@Override
-	public Dictionary getParameters() {
+	public Dictionary<String, String> getParameters() {
 		return parameters;
 	}
 
@@ -107,20 +107,20 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	@Override
 	public ICompositeCheatSheetTask[] getRequiredTasks() {
 		if (requiredTasks==null) return EMPTY;
-		return (ICompositeCheatSheetTask[])requiredTasks.toArray(new ICompositeCheatSheetTask[requiredTasks.size()]);
+		return requiredTasks.toArray(new ICompositeCheatSheetTask[requiredTasks.size()]);
 	}
 
 	public ICompositeCheatSheetTask[] getSuccessorTasks() {
 		if (successorTasks==null) return EMPTY;
-		return (ICompositeCheatSheetTask[])successorTasks.toArray(new ICompositeCheatSheetTask[successorTasks.size()]);
+		return successorTasks.toArray(new ICompositeCheatSheetTask[successorTasks.size()]);
 	}
 
 	public void addRequiredTask(AbstractTask task) {
 		if (requiredTasks==null)
-			requiredTasks = new ArrayList();
+			requiredTasks = new ArrayList<>();
 		requiredTasks.add(task);
 		if (task.successorTasks==null)
-			task.successorTasks = new ArrayList();
+			task.successorTasks = new ArrayList<>();
 		task.successorTasks.add(this);
 	}
 

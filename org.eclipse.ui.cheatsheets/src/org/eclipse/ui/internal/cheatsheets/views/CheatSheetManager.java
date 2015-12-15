@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.cheatsheets.*;
+import org.eclipse.ui.cheatsheets.CheatSheetListener;
+import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 
 /**
@@ -30,13 +32,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 	private static final String VARIABLE_END = "}"; //$NON-NLS-1$
 	private static final String VARIABLE_BEGIN = "${"; //$NON-NLS-1$
 	private String cheatsheetID;
-	private List listeners;
-	private Map dataTable = null;
+	private List<CheatSheetListener> listeners;
+	private Map<String, String> dataTable = null;
 	private ICheatSheetManager parent;
 
 	public CheatSheetManager(CheatSheetElement element) {
 		cheatsheetID = element.getID();
-		listeners = new ArrayList();
+		listeners = new ArrayList<>();
 		CheatSheetListener listener = element.createListenerInstance();
 		if (listener != null) {
 			addListener(listener);
@@ -50,9 +52,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 	public void fireEvent(int eventType) {
 		// Send an event to every listener
-		for (Iterator iterator = listeners.iterator();iterator.hasNext();) {
+		for (Iterator<CheatSheetListener> iterator = listeners.iterator(); iterator.hasNext();) {
 		    ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
-		    CheatSheetListener listener = (CheatSheetListener)iterator.next();
+			CheatSheetListener listener = iterator.next();
 		    listener.cheatSheetEvent(event);
 		}
 	}
@@ -60,7 +62,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	/**
 	 * returns the hashtable with all manager data stored.
 	 */
-	public Map getData() {
+	public Map<String, String> getData() {
 		return dataTable;
 	}
 
@@ -68,7 +70,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 * Initialize all variables
 	 * @param data a map containg values for all variables
 	 */
-	public void setData(Map data) {
+	public void setData(Map<String, String> data) {
 		dataTable = data;
 	}
 
@@ -76,7 +78,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 	public String getData(String key) {
 		if (dataTable == null)
 			return null;
-		return (String) dataTable.get(key);
+		return dataTable.get(key);
 	}
 
 	/**
@@ -133,7 +135,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return output;
 	}
 
-	/*package*/ void setData(Hashtable data) {
+	/* package */ void setData(Hashtable<String, String> data) {
 		dataTable = data;
 	}
 
@@ -149,7 +151,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 
 		if (dataTable == null) {
-			dataTable = new Hashtable(30);
+			dataTable = new Hashtable<>(30);
 		}
 
 		dataTable.put(key, data);
@@ -192,9 +194,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 	}
 
 	@Override
-	public Set getKeySet() {
+	public Set<String> getKeySet() {
 		if (dataTable == null) {
-			return new HashSet();
+			return new HashSet<>();
 		} else {
 		    return dataTable.keySet();
 		}
