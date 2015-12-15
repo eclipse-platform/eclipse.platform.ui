@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.After;
 import org.junit.Before;
 
@@ -30,6 +31,8 @@ public class UITest {
 
 	private IPresentationEngine engine;
 
+	protected EModelService ems;
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -37,7 +40,7 @@ public class UITest {
 		applicationContext = E4Application.createDefaultContext();
 		application.setContext(applicationContext);
 		applicationContext.set(MApplication.class, application);
-
+		ems = applicationContext.get(EModelService.class);
 		E4Application.initializeServices(application);
 	}
 

@@ -37,7 +37,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -295,7 +294,7 @@ public abstract class HeadlessApplicationTest extends
 				.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
-			MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+			MPart part = ems.createModelElement(MPart.class);
 			part.setLabel(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$

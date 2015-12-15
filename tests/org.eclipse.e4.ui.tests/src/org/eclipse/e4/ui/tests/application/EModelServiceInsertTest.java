@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -24,7 +23,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.After;
 import org.junit.Before;
@@ -36,9 +34,12 @@ public class EModelServiceInsertTest {
 
 	MApplication app = null;
 
+	private EModelService ems;
+
 	@Before
 	public void setUp() throws Exception {
 		applicationContext = E4Application.createDefaultContext();
+		ems = applicationContext.get(EModelService.class);
 	}
 
 	@After
@@ -47,21 +48,21 @@ public class EModelServiceInsertTest {
 	}
 
 	private MApplication createSimpleApplication() {
-		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
+		MApplication app = ems.createModelElement(MApplication.class);
 		app.setContext(applicationContext);
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		window.setElementId("main.Window");
 		app.getChildren().add(window);
 
-		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
 		stack.setElementId("theStack");
 		window.getChildren().add(stack);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
 		part1.setElementId("part1");
 		stack.getChildren().add(part1);
 
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part2 = ems.createModelElement(MPart.class);
 		part2.setElementId("part2");
 		stack.getChildren().add(part2);
 
@@ -69,27 +70,26 @@ public class EModelServiceInsertTest {
 	}
 
 	private MApplication createApplication() {
-		MApplication app = ApplicationFactoryImpl.eINSTANCE.createApplication();
+		MApplication app = ems.createModelElement(MApplication.class);
 		app.setContext(applicationContext);
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		window.setElementId("main.Window");
 		app.getChildren().add(window);
 
-		MPartSashContainer psc = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer psc = ems.createModelElement(MPartSashContainer.class);
 		psc.setHorizontal(true);
 		psc.setElementId("topSash");
 		window.getChildren().add(psc);
 
-		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
 		stack.setElementId("theStack");
 		psc.getChildren().add(stack);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
 		part1.setElementId("part1");
 		stack.getChildren().add(part1);
 
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part2 = ems.createModelElement(MPart.class);
 		part2.setElementId("part2");
 		stack.getChildren().add(part2);
 
@@ -102,7 +102,7 @@ public class EModelServiceInsertTest {
 
 		MUIElement relTo = modelService.find(relToId, app);
 
-		MPart newPart = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart newPart = ems.createModelElement(MPart.class);
 		newPart.setElementId("newPart");
 
 		modelService.insert(newPart, (MPartSashContainerElement) relTo, where,
@@ -197,7 +197,7 @@ public class EModelServiceInsertTest {
 		sharedStack.setElementId("sharedStack");
 		window.getSharedElements().add(sharedStack);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
 		part1.setElementId("part1");
 		sharedStack.getChildren().add(part1);
 
