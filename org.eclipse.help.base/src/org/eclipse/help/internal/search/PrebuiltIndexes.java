@@ -25,7 +25,7 @@ public class PrebuiltIndexes {
 	/**
 	 * Set of PluginIndex
 	 */
-	private Set<PluginIndex> set = new HashSet<PluginIndex>();
+	private Set<PluginIndex> set = new HashSet<>();
 
 	PrebuiltIndexes(SearchIndex targetIndex) {
 		super();
@@ -40,7 +40,7 @@ public class PrebuiltIndexes {
 	 * Removes Plugin indexes with no index
 	 */
 	private void trim() {
-		List<PluginIndex> indexes = new ArrayList<PluginIndex>(set);
+		List<PluginIndex> indexes = new ArrayList<>(set);
 		for (int i = 0; i < indexes.size();) {
 			PluginIndex index = indexes.get(i);
 			if (index.getPaths().size() == 0) {

@@ -121,13 +121,13 @@ public class WorkingSetScope extends AbstractHelpScope {
 	}
 
 	private Map<String, Set<String>> getCriteriaInfo(CriterionResource[] criteria) {
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 
 	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 	    return criteriaMap;
 	}
@@ -142,7 +142,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 	}
 
 	private boolean inContentScope(ITopic topic) {
-		Set<IUAElement> topics = new HashSet<IUAElement>();
+		Set<IUAElement> topics = new HashSet<>();
 		IToc toc = null;
 		topics.add(topic);
 		if (topic instanceof UAElement) {

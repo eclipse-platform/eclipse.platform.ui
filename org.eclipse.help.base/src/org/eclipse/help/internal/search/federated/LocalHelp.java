@@ -44,7 +44,7 @@ public class LocalHelp implements ISearchEngine2 {
 			IProgressMonitor monitor) throws CoreException {
 
 		AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
-		altList = new ArrayList<String>();
+		altList = new ArrayList<>();
 		for (int p=0;p<processors.length;p++)
 		{
 			SearchProcessorInfo result =
@@ -121,7 +121,7 @@ public class LocalHelp implements ISearchEngine2 {
 			return;
 		}
 		// Filtering of results by activities
-		ArrayList<SearchHit> enabledHits = new ArrayList<SearchHit>();
+		ArrayList<SearchHit> enabledHits = new ArrayList<>();
 		for (int i = 0; i < searchHits.length; i++) {
 			SearchHit hit = searchHits[i];
 			if (hit.getParticipantId()!=null) {

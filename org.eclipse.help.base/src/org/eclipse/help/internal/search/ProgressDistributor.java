@@ -28,7 +28,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	/**
 	 * Map work indexed by montitor
 	 */
-	private Collection<IProgressMonitor> monitors = new ArrayList<IProgressMonitor>();
+	private Collection<IProgressMonitor> monitors = new ArrayList<>();
 
 	/**
 	 * @see IProgressMonitor#beginTask(String, int)

@@ -24,7 +24,7 @@ public class RemoteContentLocator {
 	public static void addContentPage(String contributorID, String InfoCenterUrl) {
 
 		if (InfoCenterMap == null){
-			InfoCenterMap = new TreeMap<String, String>(); // sorted map
+			InfoCenterMap = new TreeMap<>(); // sorted map
 		}
 
 		InfoCenterMap.put(contributorID, InfoCenterUrl);

@@ -51,11 +51,11 @@ public class LocalSearchManager {
 	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.searchParticipant"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
 	private static final String BINDING_XP_NAME = "binding"; //$NON-NLS-1$
-	private static final ArrayList<ParticipantDescriptor> PARTICIPANTS_NOT_FOUND = new ArrayList<ParticipantDescriptor>();
-	private Map<String, Object> indexes = new HashMap<String, Object>();
-	private Map<String, AnalyzerDescriptor> analyzerDescriptors = new HashMap<String, AnalyzerDescriptor>();
-	private Map<String, ParticipantDescriptor> searchParticipantsById = new HashMap<String, ParticipantDescriptor>();
-	private Map<String, ArrayList<ParticipantDescriptor>> searchParticipantsByPlugin = new HashMap<String, ArrayList<ParticipantDescriptor>>();
+	private static final ArrayList<ParticipantDescriptor> PARTICIPANTS_NOT_FOUND = new ArrayList<>();
+	private Map<String, Object> indexes = new HashMap<>();
+	private Map<String, AnalyzerDescriptor> analyzerDescriptors = new HashMap<>();
+	private Map<String, ParticipantDescriptor> searchParticipantsById = new HashMap<>();
+	private Map<String, ArrayList<ParticipantDescriptor>> searchParticipantsByPlugin = new HashMap<>();
 	private ArrayList<ParticipantDescriptor> globalSearchParticipants;
 
 	private static class ParticipantDescriptor implements IHelpResource {
@@ -151,7 +151,7 @@ public class LocalSearchManager {
 	 */
 
 	public static List<SearchHit> asList(TopDocs topDocs, IndexSearcher searcher) {
-		List<SearchHit> list = new ArrayList<SearchHit>(topDocs.scoreDocs.length);
+		List<SearchHit> list = new ArrayList<>(topDocs.scoreDocs.length);
 
 		for (int i=0; i<topDocs.scoreDocs.length; ++i) {
 			try {
@@ -359,7 +359,7 @@ public class LocalSearchManager {
 	 */
 
 	public Set<String> getPluginsWithSearchParticipants() {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		addSearchBindings(set);
 		// must ask global search participants directly
 	    SearchParticipant[] gps = getGlobalParticipants();
@@ -423,7 +423,7 @@ public class LocalSearchManager {
 					if (id != null && id.equals(refId)) {
 						// match
 						if (binding == null)
-							binding = new ArrayList<IConfigurationElement>();
+							binding = new ArrayList<>();
 						binding.add(rel);
 						break;
 					}
@@ -435,7 +435,7 @@ public class LocalSearchManager {
 				if (!isParticipantEnabled(String.valueOf(true).equals(element.getAttribute("headless")))) //$NON-NLS-1$
 					continue;
 				if (list == null)
-					list = new ArrayList<ParticipantDescriptor>();
+					list = new ArrayList<>();
 				ParticipantDescriptor desc = new ParticipantDescriptor(element);
 				list.add(desc);
 				searchParticipantsById.put(desc.getId(), desc);
@@ -471,7 +471,7 @@ public class LocalSearchManager {
 					if (desc.contains(refEl)) {
 						// found the matching descriptor - add it to the list
 						if (list == null)
-							list = new ArrayList<ParticipantDescriptor>();
+							list = new ArrayList<>();
 						list.add(desc);
 						found = true;
 						break;
@@ -480,7 +480,7 @@ public class LocalSearchManager {
 			}
 			if (!found) {
 				if (list == null)
-					list = new ArrayList<ParticipantDescriptor>();
+					list = new ArrayList<>();
 				ParticipantDescriptor d = new ParticipantDescriptor(refEl);
 				list.add(d);
 				searchParticipantsById.put(d.getId(), d);
@@ -499,7 +499,7 @@ public class LocalSearchManager {
 		if (globalSearchParticipants == null) {
 			createGlobalSearchParticipants();
 		}
-		ArrayList<SearchParticipant> result = new ArrayList<SearchParticipant>();
+		ArrayList<SearchParticipant> result = new ArrayList<>();
 		for (int i = 0; i < globalSearchParticipants.size(); i++) {
 			ParticipantDescriptor desc = globalSearchParticipants.get(i);
 			SearchParticipant p = desc.getParticipant();
@@ -510,7 +510,7 @@ public class LocalSearchManager {
 	}
 
 	private void createGlobalSearchParticipants() {
-		globalSearchParticipants = new ArrayList<ParticipantDescriptor>();
+		globalSearchParticipants = new ArrayList<>();
 		addSearchParticipants();
 	}
 
@@ -652,7 +652,7 @@ public class LocalSearchManager {
 	}
 
 	public synchronized void tocsChanged() {
-		Collection<Object> activeIndexes = new ArrayList<Object>();
+		Collection<Object> activeIndexes = new ArrayList<>();
 		synchronized (indexes) {
 			activeIndexes.addAll(indexes.values());
 		}

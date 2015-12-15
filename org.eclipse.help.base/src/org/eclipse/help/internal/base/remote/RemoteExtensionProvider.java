@@ -44,7 +44,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 	@Override
 	public IContentExtension[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
-			List<IContentExtension> contributions = new ArrayList<IContentExtension>();
+			List<IContentExtension> contributions = new ArrayList<>();
 			PreferenceFileHandler handler = new PreferenceFileHandler();
 			String isEnabled[] = handler.isEnabled();
 			for (int ic = 0; ic < handler.getTotalRemoteInfocenters(); ic++) {

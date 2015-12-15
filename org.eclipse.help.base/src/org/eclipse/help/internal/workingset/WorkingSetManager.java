@@ -64,7 +64,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 
-	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
+	private SortedSet<WorkingSet> workingSets = new TreeSet<>(new WorkingSetComparator());
 
 	private AdaptableTocsArray root;
 
@@ -271,7 +271,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		String name = workingSetNode.getAttribute("name"); //$NON-NLS-1$
 
 		// scope
-		List<AdaptableHelpResource> helpResources = new ArrayList<AdaptableHelpResource>();
+		List<AdaptableHelpResource> helpResources = new ArrayList<>();
 		NodeList contents = workingSetNode.getElementsByTagName("contents"); //$NON-NLS-1$
 		for (int i = 0; i < contents.getLength(); i++) {
 			Element content = (Element) contents.item(i);
@@ -312,14 +312,14 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 		//criteria
 
-		List<CriterionResource> criteriaResource = new ArrayList<CriterionResource>();
+		List<CriterionResource> criteriaResource = new ArrayList<>();
 		NodeList criteriaContents = workingSetNode.getElementsByTagName("criterion"); //$NON-NLS-1$
 		for (int i = 0; i < criteriaContents.getLength(); ++i) {
 			Element criterion = (Element) criteriaContents.item(i);
 			String criterionName = criterion.getAttribute("name"); //$NON-NLS-1$
 			if(null != name && 0 != name.length()){
 				NodeList items = criterion.getElementsByTagName("item"); //$NON-NLS-1$
-				List<String> criterionValues = new ArrayList<String>();
+				List<String> criterionValues = new ArrayList<>();
 				for(int j = 0; j < items.getLength(); ++j){
 					String value = ((Element) items.item(j)).getAttribute("value"); //$NON-NLS-1$
 					if(null != value && 0 != value.length()){
@@ -466,7 +466,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	public void tocsChanged() {
 		saveState();
 		root = null;
-		workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
+		workingSets = new TreeSet<>(new WorkingSetComparator());
 		restoreState();
 	}
 
@@ -487,7 +487,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
 		}
-		List<String> criterionIds = new ArrayList<String>();
+		List<String> criterionIds = new ArrayList<>();
 		if(null != allCriteriaValues){
 			for(Iterator<String> iter = allCriteriaValues.keySet().iterator(); iter.hasNext();){
 				String criterion = iter.next();
@@ -507,7 +507,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(Platform.getNL());
 		}
-		List<String> valueIds = new ArrayList<String>();
+		List<String> valueIds = new ArrayList<>();
 		if(null != criterionName && null != allCriteriaValues) {
 			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {

@@ -52,7 +52,7 @@ import org.osgi.framework.Bundle;
  */
 public abstract class SearchParticipant {
 
-	private static final HashSet<String> EMPTY_SET = new HashSet<String>();
+	private static final HashSet<String> EMPTY_SET = new HashSet<>();
 
 	private String id;
 

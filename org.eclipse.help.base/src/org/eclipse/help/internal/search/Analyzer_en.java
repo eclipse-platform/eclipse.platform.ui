@@ -39,7 +39,7 @@ public final class Analyzer_en extends Analyzer {
 
 	private Set<String> getStopWords() {
 		if ( stopWords == null ) {
-			stopWords = new HashSet<String>();
+			stopWords = new HashSet<>();
 			for (int i = 0; i < STOP_WORDS.length; i++) {
 			    stopWords.add(STOP_WORDS[i]);
 			}

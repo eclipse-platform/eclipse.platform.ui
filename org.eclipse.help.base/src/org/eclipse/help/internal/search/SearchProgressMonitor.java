@@ -29,7 +29,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class SearchProgressMonitor implements IProgressMonitor {
 
 	// Progress monitors, indexed by locale
-	protected static Map<String, SearchProgressMonitor> progressMonitors = new HashMap<String, SearchProgressMonitor>();
+	protected static Map<String, SearchProgressMonitor> progressMonitors = new HashMap<>();
 
 	// Dummy collector for triggering a progress monitor
 	protected static ISearchHitCollector dummy_collector;
@@ -218,7 +218,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		 */
 		@Override
 		public Collection<String> getFieldNames() {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 
 		/**

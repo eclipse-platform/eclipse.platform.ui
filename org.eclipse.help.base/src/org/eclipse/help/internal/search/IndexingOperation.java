@@ -119,7 +119,7 @@ class IndexingOperation {
 		 * document
 		 */
 		Map<String, String[]> docsToDelete = prebuiltDocs;
-		ArrayList<String> prebuiltHrefs = new ArrayList<String>(prebuiltDocs.keySet());
+		ArrayList<String> prebuiltHrefs = new ArrayList<>(prebuiltDocs.keySet());
 		for (int i = 0; i < prebuiltHrefs.size(); i++) {
 			String href = prebuiltHrefs.get(i);
 			URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
@@ -172,7 +172,7 @@ class IndexingOperation {
 		Collection<URL> docsToIndex = null;
 		int newDocSize = newDocs.size();
 		if (prebuiltDocs.size() > 0) {
-			docsToIndex = new HashSet<URL>(newDocs);
+			docsToIndex = new HashSet<>(newDocs);
 			for (Iterator<String> it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
 				String href = it.next();
 				URL u = SearchIndex.getIndexableURL(index.getLocale(), href);
@@ -337,7 +337,7 @@ class IndexingOperation {
 		Collection<String> addedPlugins = index.getDocPlugins().getAdded();
 
 		if (addedPlugins == null || addedPlugins.isEmpty())
-			return new ArrayList<String>(0);
+			return new ArrayList<>(0);
 		return addedPlugins;
 	}
 
@@ -353,7 +353,7 @@ class IndexingOperation {
 		}
 		// get the list of all navigation urls.
 		Set<String> urls = getAllDocuments(index.getLocale());
-		Set<URL> addedDocs = new HashSet<URL>(urls.size());
+		Set<URL> addedDocs = new HashSet<>(urls.size());
 		for (Iterator<String> docs = urls.iterator(); docs.hasNext();) {
 			String doc = docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
@@ -400,7 +400,7 @@ class IndexingOperation {
 				if (qloc!= -1) {
 					String query = doc.substring(qloc+1);
 					doc = doc.substring(0, qloc);
-					HashMap<String, Object> arguments = new HashMap<String, Object>();
+					HashMap<String, Object> arguments = new HashMap<>();
 					HelpURLConnection.parseQuery(query, arguments);
 					id = (String)arguments.get("id"); //$NON-NLS-1$
 				}
@@ -435,10 +435,10 @@ class IndexingOperation {
 		// Get the list of removed plugins
 		Collection<String> removedPlugins = index.getDocPlugins().getRemoved();
 		if (removedPlugins == null || removedPlugins.isEmpty())
-			return new ArrayList<URL>(0);
+			return new ArrayList<>(0);
 		// get the list of indexed docs. This is a hashtable (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
-		Set<URL> removedDocs = new HashSet<URL>(indexedDocs.size());
+		Set<URL> removedDocs = new HashSet<>(indexedDocs.size());
 		for (Iterator<?> docs = indexedDocs.keySet().iterator(); docs.hasNext();) {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
@@ -478,7 +478,7 @@ class IndexingOperation {
 	 */
 	private Set<String> getAllDocuments(String locale) {
 		// Add documents from TOCs
-		HashSet<String> hrefs = new HashSet<String>();
+		HashSet<String> hrefs = new HashSet<>();
 		Toc[] tocs = index.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();

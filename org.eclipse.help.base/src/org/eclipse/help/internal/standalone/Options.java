@@ -97,7 +97,7 @@ public class Options {
 	 */
 	public static void init(String appId, String[] args) {
 		// convert array of arguments to a list
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (int i = 0; i < args.length; i++) {
 			list.add(args[i]);
 		}
@@ -119,16 +119,16 @@ public class Options {
 	 */
 	public static void init(String appId, List<String> options) {
 		// Initialize eclipseArgs with all passed options
-		eclipseArgs = new ArrayList<String>();
+		eclipseArgs = new ArrayList<>();
 		eclipseArgs.addAll(options);
 
 		// consume -command option
 		helpCommand = extractOption(eclipseArgs, "-command"); //$NON-NLS-1$
 		if (helpCommand == null) {
-			helpCommand = new ArrayList<String>(0);
+			helpCommand = new ArrayList<>(0);
 		}
 		// consume update commands' parameters
-		List<String> parameters = new ArrayList<String>();
+		List<String> parameters = new ArrayList<>();
 		List<String> param = extractOption(eclipseArgs, "-" + PARAM_FEATUREID); //$NON-NLS-1$
 		if (param != null) {
 			parameters.add(PARAM_FEATUREID + "=" + param.get(0)); //$NON-NLS-1$
@@ -242,7 +242,7 @@ public class Options {
 		}
 
 		// consume -vmargs option
-		vmArgs = new ArrayList<String>(0);
+		vmArgs = new ArrayList<>(0);
 		List<String> passedVmArgs = extractOption(eclipseArgs, "-vmargs"); //$NON-NLS-1$
 		if (passedVmArgs != null && passedVmArgs.size() > 0) {
 			vmArgs = passedVmArgs;
@@ -338,7 +338,7 @@ public class Options {
 		for (int i = 0; i < options.size();) {
 			if (optionName.equalsIgnoreCase(options.get(i))) {
 				if (values == null) {
-					values = new ArrayList<String>(1);
+					values = new ArrayList<>(1);
 				}
 				// found the option, remove option
 				options.remove(i);
@@ -375,7 +375,7 @@ public class Options {
 		for (int i = 0; i < options.size(); i++) {
 			if (optionName.equalsIgnoreCase(options.get(i))) {
 				if (values == null) {
-					values = new ArrayList<String>(1);
+					values = new ArrayList<>(1);
 				}
 				// read option parameters
 				for (int j = i + 1; j < options.size(); j++) {

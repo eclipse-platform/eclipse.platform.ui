@@ -35,13 +35,13 @@ public class WorkingSet {
 		this.name = name;
 
 		if (elements == null)
-			elements = new ArrayList<AdaptableHelpResource>();
+			elements = new ArrayList<>();
 		this.elements = elements;
 
 		if (criteria != null) {
 			this.criteria = criteria;
 		} else {
-			this.criteria = new ArrayList<CriterionResource>();
+			this.criteria = new ArrayList<>();
 		}
 	}
 
@@ -55,7 +55,7 @@ public class WorkingSet {
 		if (elements == null)
 			elements = new AdaptableHelpResource[0];
 
-		this.elements = new ArrayList<AdaptableHelpResource>(elements.length);
+		this.elements = new ArrayList<>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			this.elements.add(elements[i]);
 		}
@@ -63,7 +63,7 @@ public class WorkingSet {
 		if (criteria == null)
 			criteria = new CriterionResource[0];
 
-		this.criteria = new ArrayList<CriterionResource>(criteria.length);
+		this.criteria = new ArrayList<>(criteria.length);
 		for (int j = 0; j < criteria.length; j++) {
 			this.criteria.add(criteria[j]);
 		}
@@ -93,14 +93,14 @@ public class WorkingSet {
 	}
 
 	public void setElements(AdaptableHelpResource[] elements) {
-		this.elements = new ArrayList<AdaptableHelpResource>(elements.length);
+		this.elements = new ArrayList<>(elements.length);
 		for (int i = 0; i < elements.length; i++)
 			this.elements.add(elements[i]);
 	}
 
 
 	public void setCriteria(CriterionResource[] criteria) {
-		this.criteria = new ArrayList<CriterionResource>(criteria.length);
+		this.criteria = new ArrayList<>(criteria.length);
 		for(int i = 0; i < criteria.length; i++) {
 			this.criteria.add(criteria[i]);
 		}

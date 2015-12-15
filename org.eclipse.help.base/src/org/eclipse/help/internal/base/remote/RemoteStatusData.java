@@ -56,7 +56,7 @@ public class RemoteStatusData {
 	 */
 	public static ArrayList<URL> checkSitesConnectivity(ArrayList<URL> sites)
 	{
-		ArrayList<URL> badSites = new ArrayList<URL>();
+		ArrayList<URL> badSites = new ArrayList<>();
 
 		for (int i=0;i<sites.size();i++)
 			if (!isConnected(sites.get(i)))
@@ -88,7 +88,7 @@ public class RemoteStatusData {
 	 */
 	public static ArrayList<URL> getRemoteSites()
 	{
-		ArrayList<URL> sites = new ArrayList<URL>();
+		ArrayList<URL> sites = new ArrayList<>();
 
 		boolean remoteHelpEnabled =
 			Platform.getPreferencesService().getBoolean(
@@ -138,7 +138,7 @@ public class RemoteStatusData {
 
 		private ConnectionCache(){
 
-			cache = new Hashtable<URL, Boolean>();
+			cache = new Hashtable<>();
 			resetTimer();
 		}
 

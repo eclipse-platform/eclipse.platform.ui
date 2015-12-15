@@ -95,13 +95,13 @@ public class CriteriaHelpScope extends AbstractHelpScope {
 	}
 
 	private Map<String, Set<String>> getCriteriaInfo(CriterionResource[] criteria) {
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		return criteriaMap;
 	}
 
 	private Map<String, Set<String>> getCriteriaInfo(ICriteria[] criteria) {
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 	    return criteriaMap;
 	}

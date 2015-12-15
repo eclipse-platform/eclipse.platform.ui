@@ -63,8 +63,8 @@ public class PluginIndex {
 			// resolved
 			return;
 		}
-		indexIDs = new ArrayList<String>();
-		resolvedPaths = new ArrayList<String>();
+		indexIDs = new ArrayList<>();
+		resolvedPaths = new ArrayList<>();
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null) {
 			return;

@@ -87,8 +87,8 @@ public class MissingContentManager {
 	 */
 	private MissingContentManager() {
         IExtensionRegistry registry = Platform.getExtensionRegistry();
-        placeholders = new ArrayList<Placeholder>();
-        bundlesToIgnore = new HashSet<String>();
+		placeholders = new ArrayList<>();
+		bundlesToIgnore = new HashSet<>();
         if ( BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER ) {
         	return; // Placeholders are not shown for infocenters
         }
@@ -183,7 +183,7 @@ public class MissingContentManager {
 
 	public Placeholder[] getUnresolvedPlaceholders() {
 		List<Placeholder> unresolved;
-		unresolved = new ArrayList<Placeholder>();
+		unresolved = new ArrayList<>();
 		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {
 			Placeholder ph = iter.next();
 			String bundle = ph.bundle;

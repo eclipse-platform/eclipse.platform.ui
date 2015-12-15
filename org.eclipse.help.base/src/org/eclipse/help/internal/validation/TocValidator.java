@@ -79,14 +79,14 @@ public class TocValidator {
 
 	public static ArrayList<BrokenLink> filteredValidate (String[] hrefs, Filter filter) throws IOException, SAXException, ParserConfigurationException{
 		TocValidator v = new TocValidator();
-		ArrayList<BrokenLink> result = new ArrayList<BrokenLink>();
+		ArrayList<BrokenLink> result = new ArrayList<>();
 		for (int i = 0; i < hrefs.length; i++)
 			v.processToc(hrefs[i], null, result, filter);
 		return result;
 	}
 
 	private TocValidator() {
-		processedTocs = new HashMap<String, Object>();
+		processedTocs = new HashMap<>();
 		parser = new TocFileParser();
 	}
 

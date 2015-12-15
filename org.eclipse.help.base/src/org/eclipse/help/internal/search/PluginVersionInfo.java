@@ -42,9 +42,9 @@ public class PluginVersionInfo extends HelpProperties {
 
 	boolean ignoreSavedVersions;
 
-	Collection<String> added = new ArrayList<String>();
+	Collection<String> added = new ArrayList<>();
 
-	Collection<String> removed = new ArrayList<String>();
+	Collection<String> removed = new ArrayList<>();
 
 	/**
 	 * Creates table of current contributing plugins and their fragments with
@@ -181,8 +181,8 @@ public class PluginVersionInfo extends HelpProperties {
 			doComparison = false;
 			hasChanged = false;
 			ignoreSavedVersions = false;
-			added = new ArrayList<String>();
-			removed = new ArrayList<String>();
+			added = new ArrayList<>();
+			removed = new ArrayList<>();
 			return true;
 		}
 		return false;
@@ -196,7 +196,7 @@ public class PluginVersionInfo extends HelpProperties {
 	 * @return true if plugins and versions match
 	 */
 	private boolean compare(String versions, String oldVersions) {
-		Map<String, String> versionMap = new HashMap<String, String>();
+		Map<String, String> versionMap = new HashMap<>();
 		for (StringTokenizer t = new StringTokenizer(versions, SEPARATOR, false); t
 				.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();
@@ -204,7 +204,7 @@ public class PluginVersionInfo extends HelpProperties {
 				versionMap.put(pluginOrFragment, t.nextToken());
 			}
 		}
-		Map<String, String> oldVersionMap = new HashMap<String, String>();
+		Map<String, String> oldVersionMap = new HashMap<>();
 		for (StringTokenizer t = new StringTokenizer(oldVersions, SEPARATOR,
 				false); t.hasMoreTokens();) {
 			String pluginOrFragment = t.nextToken();

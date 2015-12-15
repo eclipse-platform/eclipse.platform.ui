@@ -22,7 +22,7 @@ public class QueryWordsExactPhrase extends QueryWordsToken {
 	private List<String> words;
 	public QueryWordsExactPhrase() {
 		super(QueryWordsToken.EXACT_PHRASE, ""); //$NON-NLS-1$
-		words = new ArrayList<String>();
+		words = new ArrayList<>();
 	}
 	public void addWord(String word) {
 		words.add(word);

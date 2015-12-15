@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 3.5
  */
 public abstract class SearchParticipantXML extends SearchParticipant {
-	private Stack<String> stack = new Stack<String>();
+	private Stack<String> stack = new Stack<>();
 	private SAXParser parser;
 	private XMLProcessor processor;
 	private boolean hasFilters;

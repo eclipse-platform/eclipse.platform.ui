@@ -100,9 +100,9 @@ public class HelpIndexBuilder {
 
 	private File destination;
 
-	private ArrayList<TocFile> tocFiles = new ArrayList<TocFile>();
+	private ArrayList<TocFile> tocFiles = new ArrayList<>();
 
-	private ArrayList<LocaleDir> localeDirs = new ArrayList<LocaleDir>();
+	private ArrayList<LocaleDir> localeDirs = new ArrayList<>();
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
@@ -127,7 +127,7 @@ public class HelpIndexBuilder {
 	class LocaleDir {
 		String locale;
 		String relativePath;
-		ArrayList<File> dirs = new ArrayList<File>();
+		ArrayList<File> dirs = new ArrayList<>();
 
 		public LocaleDir(String locale, String relativePath) {
 			this.locale = locale;
@@ -368,7 +368,7 @@ public class HelpIndexBuilder {
 		if (!nl.exists() || !nl.isDirectory())
 			return;
 		File [] languages = nl.listFiles();
-		HashSet<String> locales = new HashSet<String>();
+		HashSet<String> locales = new HashSet<>();
 		for (int i=0; i<languages.length; i++) {
 			File language = languages[i];
 			if (!language.isDirectory())
@@ -442,7 +442,7 @@ public class HelpIndexBuilder {
 
 	private boolean isValidLanguage(String language) {
 		if (legalLanguages==null) {
-			legalLanguages = new HashSet<String>();
+			legalLanguages = new HashSet<>();
 			String [] choices = Locale.getISOLanguages();
 			for (int i=0; i<choices.length; i++) {
 				legalLanguages.add(choices[i]);
@@ -453,7 +453,7 @@ public class HelpIndexBuilder {
 
 	private boolean isValidCountry(String country) {
 		if (legalCountries==null) {
-			legalCountries = new HashSet<String>();
+			legalCountries = new HashSet<>();
 			String [] choices = Locale.getISOCountries();
 			for (int i=0; i<choices.length; i++) {
 				legalCountries.add(choices[i]);
@@ -501,7 +501,7 @@ public class HelpIndexBuilder {
 
 	private Collection<String> collectDocs(LocaleDir localeDir)
 			throws CoreException {
-		HashSet<String> docs = new HashSet<String>();
+		HashSet<String> docs = new HashSet<>();
 		for (int i = 0; i < tocFiles.size(); i++) {
 			TocFile tocFile = tocFiles.get(i);
 			collectDocs(docs, getTocFile(localeDir, tocFile.href));
@@ -755,7 +755,7 @@ public class HelpIndexBuilder {
 	}
 
 	private Element[] getTocExtensions(Document doc) {
-		ArrayList<Node> list = new ArrayList<Node>();
+		ArrayList<Node> list = new ArrayList<>();
 		//Node root = doc.getDocumentElement();
 		NodeList children = doc.getElementsByTagName("extension"); //$NON-NLS-1$
 		for (int i = 0; i < children.getLength(); i++) {

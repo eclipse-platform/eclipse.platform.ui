@@ -73,9 +73,9 @@ public class Help {
 	public Help(String pluginsDir) {
 		File plugins = new File(pluginsDir);
 		String install = plugins.getParent();
-		ArrayList<String> options = new ArrayList<String>(2);
+		ArrayList<String> options = new ArrayList<>(2);
 		if (install != null) {
-			options = new ArrayList<String>(2);
+			options = new ArrayList<>(2);
 			options.add("-eclipseHome"); //$NON-NLS-1$
 			options.add(install);
 		}

@@ -52,7 +52,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	@Override
 	public IIndexContribution[] getIndexContributions(String locale) {
 		if (RemoteHelp.isEnabled()) {
-			List<IIndexContribution> contributions = new ArrayList<IIndexContribution>();
+			List<IIndexContribution> contributions = new ArrayList<>();
 			PreferenceFileHandler handler = new PreferenceFileHandler();
 			String isEnabled[] = handler.isEnabled();
 			String [] protocol = handler.getProtocolEntries();

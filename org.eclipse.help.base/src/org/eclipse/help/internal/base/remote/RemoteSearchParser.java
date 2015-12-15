@@ -58,13 +58,13 @@ public class RemoteSearchParser extends DefaultHandler {
 	 */
 	private void init() throws ParserConfigurationException, SAXException {
 		if (hits == null) {
-			hits = new ArrayList<SearchHit>();
+			hits = new ArrayList<>();
 		}
 		else if (!hits.isEmpty()) {
 			hits.clear();
 		}
 		if (stack == null) {
-			stack = new Stack<SearchHit>();
+			stack = new Stack<>();
 		}
 		else if (!stack.isEmpty()) {
 			stack.clear();

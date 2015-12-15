@@ -60,7 +60,7 @@ public class AdaptableTocsArray implements IAdaptable {
 	public AdaptableToc getAdaptableToc(String href) {
 		if (map == null) {
 			getChildren(); // make sure children are initialized
-			map = new HashMap<String, AdaptableToc>(children.length);
+			map = new HashMap<>(children.length);
 			for (int i = 0; i < children.length; i++)
 				map.put(children[i].getHref(), children[i]);
 		}

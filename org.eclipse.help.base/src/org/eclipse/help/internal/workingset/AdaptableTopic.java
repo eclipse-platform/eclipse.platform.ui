@@ -77,7 +77,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
-			topicMap = new HashMap<String, IHelpResource>();
+			topicMap = new HashMap<>();
 			topicMap.put(getHref(), element);
 			FastStack stack = new FastStack();
 			ITopic[] topics = getSubtopics();

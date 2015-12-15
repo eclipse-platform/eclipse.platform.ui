@@ -179,7 +179,7 @@ public class ScopeUtils {
 	public static IIndexEntry[] inScopeEntries(IIndexEntry[] entries, AbstractHelpScope scope) {
 		for (int i=0;i<entries.length;++i) {
 			if (!scope.inScope(entries[i])) {
-				List<IIndexEntry> list = new ArrayList<IIndexEntry>(entries.length);
+				List<IIndexEntry> list = new ArrayList<>(entries.length);
 				for (int j=0;j<entries.length;++j) {
 					if (j < i || scope.inScope(entries[j])) {
 						list.add(entries[j]);
@@ -200,7 +200,7 @@ public class ScopeUtils {
 	public static ITopic[] inScopeTopics(ITopic[] topics, AbstractHelpScope scope) {
 		for (int i=0;i<topics.length;++i) {
 			if (!scope.inScope(topics[i])) {
-				List<ITopic> list = new ArrayList<ITopic>(topics.length);
+				List<ITopic> list = new ArrayList<>(topics.length);
 				for (int j=0;j<topics.length;++j) {
 					if (j < i || scope.inScope(topics[j])) {
 						list.add(topics[j]);

@@ -169,7 +169,7 @@ public class BookmarkManager extends Observable {
 		if (bookmarks==null) {
 			String value = readBookmarks();
 			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			bookmarks = new ArrayList<Bookmark>();
+			bookmarks = new ArrayList<>();
 			while (tokenizer.hasMoreTokens()) {
 				String bookmark = tokenizer.nextToken();
 				// url and title are separated by vertical bar

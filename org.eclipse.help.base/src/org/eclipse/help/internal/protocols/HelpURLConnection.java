@@ -51,7 +51,7 @@ public class HelpURLConnection extends URLConnection {
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http://"; //$NON-NLS-1$
 
-	private static Hashtable<String, String[]> templates = new Hashtable<String, String[]>();
+	private static Hashtable<String, String[]> templates = new Hashtable<>();
 
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
@@ -193,7 +193,7 @@ public class HelpURLConnection extends URLConnection {
 					vector.add(val);
 					arguments.put(arg, existing);
 				} else {
-					Vector<Object> v = new Vector<Object>(2);
+					Vector<Object> v = new Vector<>(2);
 					v.add(existing);
 					v.add(val);
 					arguments.put(arg, v);
@@ -209,7 +209,7 @@ public class HelpURLConnection extends URLConnection {
 	protected void parseQuery() {
 		if (query != null && !"".equals(query)) { //$NON-NLS-1$
 			if (arguments == null) {
-				arguments = new HashMap<String, Object>(5);
+				arguments = new HashMap<>(5);
 			}
 			parseQuery(query, arguments);
 		}

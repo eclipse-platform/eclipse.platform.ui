@@ -70,7 +70,7 @@ public class ScopeRegistry {
 		if (initialized ) {
 			return;
 		}
-		scopes = new ArrayList<IScopeHandle>();
+		scopes = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(SCOPE_XP_NAME);
@@ -112,7 +112,7 @@ public class ScopeRegistry {
 	 */
 	public AbstractHelpScope parseScopePhrases(String phrases[])
 	{
-		ArrayList<AbstractHelpScope> scopes = new ArrayList<AbstractHelpScope>();
+		ArrayList<AbstractHelpScope> scopes = new ArrayList<>();
 
 		for (int p=0;p<phrases.length;p++)
 		{
@@ -142,7 +142,7 @@ public class ScopeRegistry {
 		if (!(phrase.startsWith("(") && !phrase.startsWith("("))) //$NON-NLS-1$ //$NON-NLS-2$
 			phrase = '('+phrase+')';
 
-		Stack<TempScope> scopeStack = new Stack<TempScope>();
+		Stack<TempScope> scopeStack = new Stack<>();
 		ScopePhrase scopePhrase = new ScopePhrase(phrase);
 
 		String elem;
@@ -247,7 +247,7 @@ public class ScopeRegistry {
 		public final static int UNION=1;
 		public final static int INTERSECTION=2;
 
-		private ArrayList<AbstractHelpScope> kids = new ArrayList<AbstractHelpScope>();
+		private ArrayList<AbstractHelpScope> kids = new ArrayList<>();
 		private int type;
 
 		public void setType(int type)

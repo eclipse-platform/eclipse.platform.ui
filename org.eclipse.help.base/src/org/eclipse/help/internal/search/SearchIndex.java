@@ -130,7 +130,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	private volatile boolean closed = false;
 
 	// Collection of searches occuring now
-	private Collection<Thread> searches = new ArrayList<Thread>();
+	private Collection<Thread> searches = new ArrayList<>();
 
 	private FileLock lock;
 	private RandomAccessFile raf =  null;
@@ -454,8 +454,8 @@ public class SearchIndex implements IHelpSearchIndex {
 	 *         or String[] of indexIds with duplicates of the document
 	 */
 	public Map<String, String[]> merge(PluginIndex[] pluginIndexes, IProgressMonitor monitor) {
-		ArrayList<NIOFSDirectory> dirList = new ArrayList<NIOFSDirectory>(pluginIndexes.length);
-		Map<String, String[]> mergedDocs = new HashMap<String, String[]>();
+		ArrayList<NIOFSDirectory> dirList = new ArrayList<>(pluginIndexes.length);
+		Map<String, String[]> mergedDocs = new HashMap<>();
 		// Create directories to merge and calculate all documents added
 		// and which are duplicates (to delete later)
 		for (int p = 0; p < pluginIndexes.length; p++) {
@@ -519,7 +519,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			iw.forceMerge(1, true);
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
-			return new HashMap<String, String[]>();
+			return new HashMap<>();
 		}
 		return mergedDocs;
 	}
@@ -659,7 +659,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
-			Set<String> totalIds = new HashSet<String>();
+			Set<String> totalIds = new HashSet<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry.getExtensionPoint(TocFileProvider.EXTENSION_POINT_ID_TOC);
 			IExtension[] extensions = extensionPoint.getExtensions();

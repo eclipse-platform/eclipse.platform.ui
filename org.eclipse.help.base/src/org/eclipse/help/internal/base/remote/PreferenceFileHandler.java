@@ -193,7 +193,7 @@ public class PreferenceFileHandler {
 	 *
 	 */
 	public ArrayList<RemoteIC> getRemoteICList() {
-		ArrayList<RemoteIC> remoteICList = new ArrayList<RemoteIC>();
+		ArrayList<RemoteIC> remoteICList = new ArrayList<>();
 
 		// Load the preferences in org.eclipse.help.base/preferences.ini
 		RemoteIC initRemoteIC;

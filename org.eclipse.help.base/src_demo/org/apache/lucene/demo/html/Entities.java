@@ -19,7 +19,7 @@ package org.apache.lucene.demo.html;
 import java.util.*;
 
 public class Entities {
-  static final Hashtable<String, String> decoder = new Hashtable<String, String>(300);
+	static final Hashtable<String, String> decoder = new Hashtable<>(300);
   static final String[]  encoder = new String[0x100];
 
   static final String decode(String entity) {

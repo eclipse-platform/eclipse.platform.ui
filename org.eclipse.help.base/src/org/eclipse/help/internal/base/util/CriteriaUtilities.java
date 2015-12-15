@@ -23,7 +23,7 @@ import org.eclipse.help.internal.criteria.CriterionResource;
 public class CriteriaUtilities {
 
     public static List<String> getCriteriaValues(String rawValues) {
-    	List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
     	if (rawValues != null) {
     		String[] values = rawValues.split(","); //$NON-NLS-1$
     		for(int j = 0; j < values.length; ++j){
@@ -45,7 +45,7 @@ public class CriteriaUtilities {
 				name = name.toLowerCase();
 				Set<String> existingValueSet = map.get(name);
 				if (null == existingValueSet) {
-					existingValueSet = new HashSet<String>();
+					existingValueSet = new HashSet<>();
 				}
 				existingValueSet.addAll(values);
 				map.put(name, existingValueSet);
@@ -61,7 +61,7 @@ public class CriteriaUtilities {
 
 			Set<String> existedValueSet = map.get(criterionName);
 			if (null == existedValueSet)
-				existedValueSet = new HashSet<String>();
+				existedValueSet = new HashSet<>();
 			existedValueSet.addAll(criterionValues);
 			map.put(criterionName, existedValueSet);
 		}

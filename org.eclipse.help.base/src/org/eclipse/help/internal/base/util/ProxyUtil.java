@@ -85,7 +85,7 @@ public class ProxyUtil {
 
 	public static List<String> getProxyBypassHosts()
 	{
-		List<String> hosts = new ArrayList<String>();
+		List<String> hosts = new ArrayList<>();
 		if (!isAuthConnSupported())
 			return hosts;
 

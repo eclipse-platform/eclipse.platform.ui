@@ -150,7 +150,7 @@ public final class InfoCenter implements ISearchEngine {
 	 * The default constructor.
 	 */
 	public InfoCenter() {
-		tocs = new Hashtable<String, IHelpResource>();
+		tocs = new Hashtable<>();
 	}
 
 	/*

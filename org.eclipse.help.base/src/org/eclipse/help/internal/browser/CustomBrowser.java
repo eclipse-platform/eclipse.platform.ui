@@ -108,7 +108,7 @@ public class CustomBrowser implements IBrowser {
 	 * @return String[]
 	 */
 	private String[] prepareCommand(String path, String url) {
-		ArrayList<String> tokenList = new ArrayList<String>();
+		ArrayList<String> tokenList = new ArrayList<>();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(path.trim(),
 				"\"", true); //$NON-NLS-1$

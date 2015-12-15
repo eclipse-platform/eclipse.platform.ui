@@ -65,7 +65,7 @@ public class BrowserManager {
 
 	private BrowserDescriptor internalBrowserDesc;
 
-	private Collection<IBrowser> browsers = new ArrayList<IBrowser>();
+	private Collection<IBrowser> browsers = new ArrayList<>();
 
 	private boolean alwaysUseExternal = false;
 
@@ -210,7 +210,7 @@ public class BrowserManager {
 	private BrowserDescriptor[] createBrowserDescriptors() {
 		if (this.browsersDescriptors != null)
 			return this.browsersDescriptors;
-		Collection<BrowserDescriptor> bDescriptors = new ArrayList<BrowserDescriptor>();
+		Collection<BrowserDescriptor> bDescriptors = new ArrayList<>();
 		IConfigurationElement configElements[] = Platform
 				.getExtensionRegistry().getConfigurationElementsFor(
 						HelpBasePlugin.PLUGIN_ID, "browser"); //$NON-NLS-1$

@@ -23,7 +23,7 @@ public class QueryWordsPhrase extends QueryWordsToken {
 	private List<String> words;
 	public QueryWordsPhrase() {
 		super(QueryWordsToken.PHRASE, ""); //$NON-NLS-1$
-		words = new ArrayList<String>();
+		words = new ArrayList<>();
 	}
 	public void addWord(String word) {
 		words.add(word);

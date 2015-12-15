@@ -73,7 +73,7 @@ public class SearchResults implements ISearchHitCollector {
 	@Override
 	public void addHits(List<SearchHit> hits, String highlightTerms) {
 		String urlEncodedWords = URLCoder.encode(highlightTerms);
-		List<SearchHit> searchHitList = new ArrayList<SearchHit>();
+		List<SearchHit> searchHitList = new ArrayList<>();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
 
@@ -274,7 +274,7 @@ public class SearchResults implements ISearchHitCollector {
 		if (wSets == null)
 			return null;
 
-		scopes = new ArrayList<AdaptableHelpResource>(wSets.length);
+		scopes = new ArrayList<>(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			AdaptableHelpResource[] elements = wSets[w].getElements();
 			for (int i = 0; i < elements.length; i++)
@@ -287,7 +287,7 @@ public class SearchResults implements ISearchHitCollector {
 		if (wSets == null)
 			return null;
 
-		ArrayList<CriterionResource> criteriaScopes = new ArrayList<CriterionResource>(wSets.length);
+		ArrayList<CriterionResource> criteriaScopes = new ArrayList<>(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			CriterionResource[] elements = wSets[w].getCriteria();
 			for (int i = 0; i < elements.length; i++)

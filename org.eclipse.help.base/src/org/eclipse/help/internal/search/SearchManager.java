@@ -177,7 +177,7 @@ public class SearchManager {
 		IConfigurationElement[] configs =
 			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.searchProcessor"); //$NON-NLS-1$
 
-		ArrayList<Object> processors = new ArrayList<Object>();
+		ArrayList<Object> processors = new ArrayList<>();
 
 		for (int c=0;c<configs.length;c++)
 		{
@@ -249,7 +249,7 @@ public class SearchManager {
 	 * when flush() is called.
 	 */
 	private class BufferedSearchHitCollector implements ISearchHitCollector {
-		private Set<SearchHit> allHits = new HashSet<SearchHit>();
+		private Set<SearchHit> allHits = new HashSet<>();
 		private String wordsSearched = null;
 
 		/* (non-Javadoc)
@@ -269,7 +269,7 @@ public class SearchManager {
 		 */
 		public void flush(ISearchHitCollector collector) {
 			// sort by score
-			List<SearchHit> hitsList = new ArrayList<SearchHit>(allHits);
+			List<SearchHit> hitsList = new ArrayList<>(allHits);
 			Collections.sort(hitsList);
 			collector.addHits(hitsList, wordsSearched);
 			allHits.clear();
