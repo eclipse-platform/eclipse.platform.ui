@@ -63,17 +63,17 @@ public class ChooseWorkspaceData {
     private static final int PERS_ENCODING_VERSION = 1;
 
     /**
-     * This is the first version of the encode/decode protocol that uses the config area
-     * preference store for persistence.  The only encoding done is to convert the recent
-     * workspace list into a comma-separated list.
-     */
+	 * This is the first version of the encode/decode protocol that uses the
+	 * configuration area preference store for persistence. The only encoding
+	 * done is to convert the recent workspace list into a comma-separated list.
+	 */
     private static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
 
     /**
 	 * This is the second version of the encode/decode protocol that uses the
-	 * confi area preferences store for persistence. This version is the same as
-	 * the previous version except it uses a \n character to seperate the path
-	 * entries instead of commas. (see bug 98467)
+	 * configuration area preferences store for persistence. This version is the
+	 * same as the previous version except it uses a \n character to separate
+	 * the path entries instead of commas. (see bug 98467)
 	 *
 	 * @since 3.3.1
 	 */
@@ -227,7 +227,7 @@ public class ChooseWorkspaceData {
 	 */
 	public void writePersistedData() {
 		// 1. get config pref node
-		Preferences node = new ConfigurationScope().getNode(IDEWorkbenchPlugin.IDE_WORKBENCH);
+		Preferences node = ConfigurationScope.INSTANCE.getNode(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 		// 2. get value for showDialog
 		node.putBoolean(
@@ -405,8 +405,8 @@ public class ChooseWorkspaceData {
 	 *         otherwise
 	 */
 	public boolean readPersistedData() {
-		IPreferenceStore store = new ScopedPreferenceStore(
-				new ConfigurationScope(), IDEWorkbenchPlugin.IDE_WORKBENCH);
+		IPreferenceStore store = new ScopedPreferenceStore(ConfigurationScope.INSTANCE,
+				IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 		// The old way was to store this information in a file, the new is to
 		// use the configuration area preference store. To help users with the
@@ -420,25 +420,21 @@ public class ChooseWorkspaceData {
 		// (currently at 2).  If the value comes back as the default (0), then
 		// none of the preferences were set, revert to the file method.
 
-		int protocol = store
-				.getInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL);
+		int protocol = store.getInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL);
 		if (protocol == IPreferenceStore.INT_DEFAULT_DEFAULT
 				&& readPersistedData_file()) {
 			return true;
 		}
 
 		// 2. get value for showDialog
-		showDialog = store
-				.getBoolean(IDE.Preferences.SHOW_WORKSPACE_SELECTION_DIALOG);
+		showDialog = store.getBoolean(IDE.Preferences.SHOW_WORKSPACE_SELECTION_DIALOG);
 
 		// 3. use value of numRecent to create proper length array
-		int max = store
-				.getInt(IDE.Preferences.MAX_RECENT_WORKSPACES);
+		int max = store.getInt(IDE.Preferences.MAX_RECENT_WORKSPACES);
 		max = Math.max(max, RECENT_MAX_LENGTH);
 
 		// 4. load values of recent workspaces into array
-		String workspacePathPref = store
-				.getString(IDE.Preferences.RECENT_WORKSPACES);
+		String workspacePathPref = store.getString(IDE.Preferences.RECENT_WORKSPACES);
 		recentWorkspaces = decodeStoredWorkspacePaths(protocol, max, workspacePathPref);
 
 		// 5. get value for showRecentWorkspaces
@@ -451,7 +447,7 @@ public class ChooseWorkspaceData {
 	 * The the list of recent workspaces must be stored as a string in the preference node.
 	 */
     private static String encodeStoredWorkspacePaths(String[] recent) {
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 
 		String path = null;
 		for (int i = 0; i < recent.length; ++i) {
@@ -475,8 +471,7 @@ public class ChooseWorkspaceData {
 	 * The the preference for recent workspaces must be converted from the
 	 * storage string into an array.
 	 */
-    private static String[] decodeStoredWorkspacePaths(int protocol, int max,
-			String prefValue) {
+	private static String[] decodeStoredWorkspacePaths(int protocol, int max, String prefValue) {
 		String[] paths = new String[max];
 		if (prefValue == null || prefValue.length() <= 0) {
 			return paths;
@@ -493,10 +488,11 @@ public class ChooseWorkspaceData {
 				tokens = ","; //$NON-NLS-1$
 				break;
 		}
-		if (tokens == null) // unknown version? corrupt file? we can't log it
-							// because we dont have a workspace yet...
+		if (tokens == null) {
+			// Unknown version? corrupt file? we can't log it because we don't
+			// have a workspace yet...
 			return new String[0];
-
+		}
 
 		StringTokenizer tokenizer = new StringTokenizer(prefValue, tokens);
 		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i) {
@@ -507,7 +503,7 @@ public class ChooseWorkspaceData {
 	}
 
     /**
-	 * Return true if the protocol used to encode the argument memento is
+	 * Returns true if the protocol used to encode the argument memento is
 	 * compatible with the receiver's implementation and false otherwise.
 	 */
     private static boolean compatibleFileProtocol(IMemento memento) {
