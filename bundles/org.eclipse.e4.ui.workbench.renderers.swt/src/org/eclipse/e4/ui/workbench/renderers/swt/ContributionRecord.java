@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 484427
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -336,7 +337,9 @@ public class ContributionRecord {
 		if (positionInParent != null && positionInParent.length() > 0) {
 			String[] array = positionInParent.split("="); //$NON-NLS-1$
 			modifier = array[0];
-			id = array[1];
+			if (array.length > 1) {
+				id = array[1];
+			}
 		}
 		if (id == null) {
 			return menuModel.getChildren().size();
