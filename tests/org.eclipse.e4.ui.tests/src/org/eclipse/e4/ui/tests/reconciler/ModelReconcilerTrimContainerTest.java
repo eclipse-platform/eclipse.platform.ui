@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public abstract class ModelReconcilerTrimContainerTest extends
 
 		MTrimmedWindow window = createTrimmedWindow(application);
 
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
 		trimBar.setSide(applicationState);
 		window.getTrimBars().add(trimBar);
 

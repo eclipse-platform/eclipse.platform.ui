@@ -17,9 +17,9 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -32,8 +32,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem item = ems.createModelElement(MDirectMenuItem.class);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -117,8 +117,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem item = ems.createModelElement(MDirectMenuItem.class);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -205,8 +205,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem item = ems.createModelElement(MDirectMenuItem.class);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);

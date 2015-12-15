@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -31,8 +30,7 @@ public abstract class ModelReconcilerGenericTileTest extends
 
 		MWindow window = createWindow(application);
 
-		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer partSashContainer = ems.createModelElement(MPartSashContainer.class);
 		window.getChildren().add(partSashContainer);
 
 		partSashContainer.setHorizontal(applicationState);

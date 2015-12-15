@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -36,8 +35,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
 		Object state = reconciler.serialize();
@@ -57,8 +55,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 	public void testBindingContainer_Remove() {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
 		saveModel();
@@ -85,8 +82,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
 		saveModel();
@@ -94,8 +90,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setKeySequence(keySequence);
 		bindingTable.getBindings().add(keyBinding);
 
@@ -137,12 +132,10 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setKeySequence(keySequence);
 		bindingTable.getBindings().add(keyBinding);
 
@@ -192,11 +185,10 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		saveModel();
@@ -204,8 +196,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setKeySequence(keySequence);
 		keyBinding.setCommand(command);
 		bindingTable.getBindings().add(keyBinding);
@@ -251,15 +242,13 @@ public abstract class ModelReconcilerBindingContainerTest extends
 			throws Exception {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setKeySequence(keySequence);
 		keyBinding.setCommand(command);
 		bindingTable.getBindings().add(keyBinding);

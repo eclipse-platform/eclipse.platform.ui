@@ -18,15 +18,12 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -38,19 +35,18 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Command_Set() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
 		saveModel();
@@ -83,19 +79,18 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Command_Unset() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
 		saveModel();
@@ -128,19 +123,18 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Parameters_Add() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
 		saveModel();
@@ -148,7 +142,7 @@ public abstract class ModelReconcilerHandledItemTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName("parameterName");
 		handledToolItem.getParameters().add(parameter);
 
@@ -179,22 +173,21 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledToolItem_Parameters_Remove() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName("parameterName");
 		handledToolItem.getParameters().add(parameter);
 
@@ -235,16 +228,15 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledMenuItem_Command_Set() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		menu.getChildren().add(handledMenuItem);
 
 		saveModel();
@@ -276,16 +268,15 @@ public abstract class ModelReconcilerHandledItemTest extends
 	public void testHandledMenuItem_Command_Unset() {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		handledMenuItem.setCommand(command);
 		menu.getChildren().add(handledMenuItem);
 
@@ -320,11 +311,10 @@ public abstract class ModelReconcilerHandledItemTest extends
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		menu.getChildren().add(handledMenuItem);
 
 		saveModel();
@@ -332,7 +322,7 @@ public abstract class ModelReconcilerHandledItemTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName("parameterName");
 		handledMenuItem.getParameters().add(parameter);
 
@@ -363,14 +353,13 @@ public abstract class ModelReconcilerHandledItemTest extends
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		menu.getChildren().add(handledMenuItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName("parameterName");
 		handledMenuItem.getParameters().add(parameter);
 

@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -28,12 +27,10 @@ public abstract class ModelReconcilerKeySequenceTest extends
 	private void testKeySequence_KeySequence(String before, String after) {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setKeySequence(before);
 		bindingTable.getBindings().add(keyBinding);
 

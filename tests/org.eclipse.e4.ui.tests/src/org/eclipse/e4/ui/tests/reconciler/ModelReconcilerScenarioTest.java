@@ -24,17 +24,14 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -117,7 +114,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setLabel("name");
 
 		window.getChildren().add(part);
@@ -165,7 +162,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setLabel("name");
 		part.setToBeRendered(true);
 
@@ -217,7 +214,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setLabel("name");
 		part.setToBeRendered(true);
 
@@ -259,11 +256,11 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
 		partA.setToBeRendered(true);
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = ems.createModelElement(MPart.class);
 		partB.setToBeRendered(true);
-		MPart partD = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partD = ems.createModelElement(MPart.class);
 		partD.setToBeRendered(true);
 
 		window.getChildren().add(partA);
@@ -286,7 +283,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partB = (MPart) window.getChildren().get(1);
 		partD = (MPart) window.getChildren().get(2);
 
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partC = ems.createModelElement(MPart.class);
 		partC.setToBeRendered(true);
 
 		window.getChildren().add(2, partC);
@@ -322,9 +319,9 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
+		MPart partC = ems.createModelElement(MPart.class);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
@@ -346,7 +343,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partB = (MPart) window.getChildren().get(1);
 		partC = (MPart) window.getChildren().get(2);
 
-		MPart partD = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partD = ems.createModelElement(MPart.class);
 		window.getChildren().add(partD);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -382,8 +379,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
@@ -404,7 +401,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partA = (MPart) window.getChildren().get(0);
 		partB = (MPart) window.getChildren().get(1);
 
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partC = ems.createModelElement(MPart.class);
 		window.getChildren().add(partC);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
@@ -435,11 +432,11 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack1);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
 		stack1.getChildren().add(part1);
 		stack1.getChildren().add(part2);
 
@@ -448,7 +445,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(0, stack2);
 		stack2.getChildren().add(part1);
 
@@ -490,11 +487,11 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack1);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
 		stack1.getChildren().add(part1);
 		stack1.getChildren().add(part2);
 
@@ -503,7 +500,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack2);
 		stack2.getChildren().add(part1);
 
@@ -548,13 +545,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack1);
 
 		// stack with three children in it
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
+		MPart partC = ems.createModelElement(MPart.class);
 		stack1.getChildren().add(partA);
 		stack1.getChildren().add(partB);
 		stack1.getChildren().add(partC);
@@ -564,7 +561,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = ems.createModelElement(MPartStack.class);
 		// add a new stack at the end of the existing stack
 		window.getChildren().add(stack2);
 		// put A in it
@@ -580,7 +577,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partC = (MPart) stack1.getChildren().get(2);
 
 		// create a new stack
-		MPartStack stack3 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack3 = ems.createModelElement(MPartStack.class);
 
 		if (performMoveFirst) {
 			// place part C in the new stack first
@@ -651,13 +648,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack1);
 
 		// stack with three children in it
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
+		MPart partC = ems.createModelElement(MPart.class);
 		stack1.getChildren().add(partA);
 		stack1.getChildren().add(partB);
 		stack1.getChildren().add(partC);
@@ -667,7 +664,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = ems.createModelElement(MPartStack.class);
 		// add a new stack to the left of the existing stack
 		window.getChildren().add(0, stack2);
 		// put A in it
@@ -683,7 +680,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		partC = (MPart) stack1.getChildren().get(2);
 
 		// create a new stack
-		MPartStack stack3 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack3 = ems.createModelElement(MPartStack.class);
 
 		if (performMoveFirst) {
 			// place part C in the new stack first
@@ -755,18 +752,18 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
-		MPartStack stack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack1);
 
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
 		stack1.getChildren().add(partA);
 		stack1.getChildren().add(partB);
 
-		MPartStack stack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stack2);
 
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partC = ems.createModelElement(MPart.class);
 		stack2.getChildren().add(partC);
 
 		saveModel();
@@ -787,7 +784,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		stack2 = (MPartStack) window.getChildren().get(1);
 		partC = (MPart) stack2.getChildren().get(0);
 
-		MPart partD = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partD = ems.createModelElement(MPart.class);
 		stack2.getChildren().add(partD);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -822,7 +819,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	@Test
 	public void testElementContainer_ActiveChild_New() {
 		MApplication application = createApplication();
-		MWindow window1 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window1 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window1);
 
 		saveModel();
@@ -830,7 +827,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window2);
 		application.setSelectedElement(window2);
 
@@ -858,8 +855,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	@Test
 	public void testElementContainer_ActiveChild_Removed() {
 		MApplication application = createApplication();
-		MWindow window1 = BasicFactoryImpl.eINSTANCE.createWindow();
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window1 = ems.createModelElement(MWindow.class);
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window1);
 		application.getChildren().add(window2);
 
@@ -893,14 +890,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	@Test
 	public void testElementContainer_ActiveChild_Removed2() {
 		MApplication application = createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPartStack partStack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStack1 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack1);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
 		partStack1.getChildren().add(part1);
 		partStack1.getChildren().add(part2);
 
@@ -909,7 +906,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartStack partStack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack2);
 
 		partStack2.getChildren().add(part2);
@@ -955,20 +952,20 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	@Test
 	public void testElementContainer_Children_Move_IdenticalToUserChange() {
 		MApplication application = createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPartStack partStack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
-		MPartStack partStack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStack1 = ems.createModelElement(MPartStack.class);
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack1);
 		window.getChildren().add(partStack2);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
 		partStack1.getChildren().add(part1);
 		partStack1.getChildren().add(part2);
 
-		MPart part3 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part3 = ems.createModelElement(MPart.class);
 		partStack2.getChildren().add(part3);
 
 		saveModel();
@@ -1027,20 +1024,20 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	@Test
 	public void testElementContainer_Children_Move_NewHasSameChildren() {
 		MApplication application = createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPartStack partStack1 = BasicFactoryImpl.eINSTANCE.createPartStack();
-		MPartStack partStack2 = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStack1 = ems.createModelElement(MPartStack.class);
+		MPartStack partStack2 = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack1);
 		window.getChildren().add(partStack2);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
 		partStack1.getChildren().add(part1);
 		partStack1.getChildren().add(part2);
 
-		MPart part3 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part3 = ems.createModelElement(MPart.class);
 		partStack2.getChildren().add(part3);
 
 		saveModel();
@@ -1114,10 +1111,10 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window2);
 
-		MPart editor = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart editor = ems.createModelElement(MPart.class);
 		window2.getChildren().add(editor);
 
 		application.getChildren().remove(window2);
@@ -1162,7 +1159,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window2);
 		application.setSelectedElement(window2);
 
@@ -1209,10 +1206,10 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window2);
 
-		MPart editor = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart editor = ems.createModelElement(MPart.class);
 		window2.getChildren().add(editor);
 		editor.setLabel("editor");
 
@@ -1242,19 +1239,16 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	public void testMenu_MenuOrdering() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MMenuItem fileMenuItem = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		MMenuItem fileMenuItem = ems.createModelElement(MDirectMenuItem.class);
 		fileMenuItem.setLabel("File");
 
-		MMenuItem editMenuItem = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		MMenuItem editMenuItem = ems.createModelElement(MDirectMenuItem.class);
 		editMenuItem.setLabel("Edit");
 
-		MMenuItem helpMenuItem = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		MMenuItem helpMenuItem = ems.createModelElement(MDirectMenuItem.class);
 		helpMenuItem.setLabel("Help");
 
 		menu.getChildren().add(fileMenuItem);
@@ -1266,8 +1260,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MMenuItem cvsMenuItem = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		MMenuItem cvsMenuItem = ems.createModelElement(MDirectMenuItem.class);
 		cvsMenuItem.setLabel("CVS");
 		menu.getChildren().add(2, cvsMenuItem);
 
@@ -1280,7 +1273,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		editMenuItem = (MMenuItem) menu.getChildren().get(1);
 		helpMenuItem = (MMenuItem) menu.getChildren().get(2);
 
-		MMenuItem e4MenuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem e4MenuItem = ems.createModelElement(MDirectMenuItem.class);
 		e4MenuItem.setLabel("e4");
 		menu.getChildren().add(2, e4MenuItem);
 
@@ -1318,7 +1311,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	public void testWindow_AddPartAndChangeMenu() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
 		saveModel();
@@ -1328,7 +1321,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		menu.setLabel("menuLabel");
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
 		Object state = reconciler.serialize();
@@ -1359,19 +1352,18 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	public void testBug338707() {
 		MApplication application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer container = ems.createModelElement(MPartSashContainer.class);
 		window.getChildren().add(container);
 		window.setSelectedElement(container);
 
-		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStackA = ems.createModelElement(MPartStack.class);
 		container.getChildren().add(partStackA);
 
-		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack partStackB = ems.createModelElement(MPartStack.class);
 		container.getChildren().add(partStackB);
 
 		saveModel();
@@ -1379,9 +1371,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPartSashContainer newContainer = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
-		MPartStack partStackC = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartSashContainer newContainer = ems.createModelElement(MPartSashContainer.class);
+		MPartStack partStackC = ems.createModelElement(MPartStack.class);
 		newContainer.getChildren().add(partStackC);
 		newContainer.getChildren().add(partStackB);
 
@@ -1438,7 +1429,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	private void testBug361851(String originalValue, String newValue) {
 		MApplication application = createApplication();
 
-		MAddon addon = ApplicationFactoryImpl.eINSTANCE.createAddon();
+		MAddon addon = ems.createModelElement(MAddon.class);
 		application.getAddons().add(addon);
 		addon.getPersistedState().put("key", originalValue);
 
@@ -1543,23 +1534,19 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 			String userWindowKeyBindingSequence) {
 		MApplication application = createApplication();
 
-		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
-		MBindingTable bindingTable2 = CommandsFactoryImpl.eINSTANCE
-				.createBindingTable();
+		MBindingTable bindingTable = ems.createModelElement(MBindingTable.class);
+		MBindingTable bindingTable2 = ems.createModelElement(MBindingTable.class);
 		application.getBindingTables().add(bindingTable);
 		application.getBindingTables().add(bindingTable2);
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
-		MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding = ems.createModelElement(MKeyBinding.class);
 		keyBinding.setCommand(command);
 		keyBinding.setKeySequence(originalApplicationKeyBindingSequence);
 
-		MKeyBinding keyBinding2 = CommandsFactoryImpl.eINSTANCE
-				.createKeyBinding();
+		MKeyBinding keyBinding2 = ems.createModelElement(MKeyBinding.class);
 		keyBinding2.setCommand(command);
 		keyBinding2.setKeySequence(originalWindowKeyBindingSequence);
 

@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -27,7 +26,7 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 	private void testCommand_CommandName(String before, String after) {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		command.setCommandName(before);
 		application.getCommands().add(command);
 
@@ -104,7 +103,7 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 
 	private void testCommand_Description(String before, String after) {
 		MApplication application = createApplication();
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		command.setDescription(before);
 		application.getCommands().add(command);
 
@@ -182,7 +181,7 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 	@Test
 	public void testCommand_Parameters_Add() {
 		MApplication application = createApplication();
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		saveModel();
@@ -190,8 +189,7 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MCommandParameter parameter = CommandsFactoryImpl.eINSTANCE
-				.createCommandParameter();
+		MCommandParameter parameter = ems.createModelElement(MCommandParameter.class);
 		parameter.setName("parameterName");
 		command.getParameters().add(parameter);
 
@@ -213,11 +211,10 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 	@Test
 	public void testCommand_Parameters_Remove() {
 		MApplication application = createApplication();
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
-		MCommandParameter parameter = CommandsFactoryImpl.eINSTANCE
-				.createCommandParameter();
+		MCommandParameter parameter = ems.createModelElement(MCommandParameter.class);
 		parameter.setName("parameterName");
 		command.getParameters().add(parameter);
 

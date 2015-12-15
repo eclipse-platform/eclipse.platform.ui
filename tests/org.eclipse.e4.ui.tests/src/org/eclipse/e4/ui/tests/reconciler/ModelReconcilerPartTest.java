@@ -19,10 +19,8 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -35,7 +33,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
 		saveModel();
@@ -43,7 +41,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		part.getMenus().add(menu);
 
 		Object state = reconciler.serialize();
@@ -67,10 +65,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		part.getMenus().add(menu);
 
 		saveModel();
@@ -102,10 +100,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		menu.setToBeRendered(before);
 		part.getMenus().add(menu);
 
@@ -158,7 +156,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
 		saveModel();
@@ -166,7 +164,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
 		Object state = reconciler.serialize();
@@ -190,10 +188,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
 		saveModel();
@@ -209,7 +207,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		window = application.getChildren().get(0);
 		part = (MPart) window.getChildren().get(0);
 
-		toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -226,10 +224,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		toolBar.setToBeRendered(before);
 		part.setToolbar(toolBar);
 
@@ -287,10 +285,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
 		Object state = reconciler.serialize();
@@ -316,10 +314,10 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part1 = ems.createModelElement(MPart.class);
 		window.getChildren().add(part1);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part1.setToolbar(toolBar);
 
 		saveModel();
@@ -327,7 +325,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part2 = ems.createModelElement(MPart.class);
 		window.getChildren().add(part2);
 
 		part2.setToolbar(toolBar);
@@ -360,7 +358,7 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setCloseable(before);
 		window.getChildren().add(part);
 

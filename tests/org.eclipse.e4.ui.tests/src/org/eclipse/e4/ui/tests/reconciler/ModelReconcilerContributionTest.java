@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -29,10 +28,10 @@ public abstract class ModelReconcilerContributionTest extends
 			String userChange, String newApplicationState) {
 		MApplication application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.getPersistedState().put("testing", applicationState);
 		window.getChildren().add(part);
 
@@ -260,7 +259,7 @@ public abstract class ModelReconcilerContributionTest extends
 	public void testContribution_NewContribution() {
 		MApplication application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
 		saveModel();
@@ -268,7 +267,7 @@ public abstract class ModelReconcilerContributionTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.getPersistedState().put("key", "value");
 		window.getChildren().add(part);
 
@@ -292,10 +291,10 @@ public abstract class ModelReconcilerContributionTest extends
 	public void testContribution_NewPersistedState() {
 		MApplication application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
 		saveModel();
@@ -328,10 +327,10 @@ public abstract class ModelReconcilerContributionTest extends
 			String newApplicationURI) {
 		MApplication application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setContributionURI(applicationURI);
 		window.getChildren().add(part);
 

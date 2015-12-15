@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -33,8 +32,7 @@ public abstract class ModelReconcilerMenuContributionsTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MMenuContribution contribution = MenuFactoryImpl.eINSTANCE
-				.createMenuContribution();
+		MMenuContribution contribution = ems.createModelElement(MMenuContribution.class);
 		contribution.setElementId("contributionId");
 		application.getMenuContributions().add(contribution);
 
@@ -58,8 +56,7 @@ public abstract class ModelReconcilerMenuContributionsTest extends
 	public void testMenuContributions_MenuContributions_Remove() {
 		MApplication application = createApplication();
 
-		MMenuContribution contribution = MenuFactoryImpl.eINSTANCE
-				.createMenuContribution();
+		MMenuContribution contribution = ems.createModelElement(MMenuContribution.class);
 		contribution.setElementId("contributionId");
 		application.getMenuContributions().add(contribution);
 

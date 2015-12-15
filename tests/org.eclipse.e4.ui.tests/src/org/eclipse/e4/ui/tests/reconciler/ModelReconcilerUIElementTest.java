@@ -21,10 +21,8 @@ import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
@@ -38,7 +36,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setToBeRendered(before);
 		window.getChildren().add(part);
 
@@ -89,7 +87,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setVisible(before);
 		window.getChildren().add(part);
 
@@ -144,7 +142,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setToBeRendered(!defaultValue);
 		part.setLabel("name");
 		window.getChildren().add(part);
@@ -458,14 +456,11 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 	@Test
 	public void testUIElement_CurSharedRef_Set() {
 		MApplication application = createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
-				.createPerspectiveStack();
-		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
-				.createPerspective();
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
-				.createPlaceholder();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		MPart part = ems.createModelElement(MPart.class);
+		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
 
 		application.getChildren().add(window);
 		application.setSelectedElement(window);

@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -28,8 +27,7 @@ public abstract class ModelReconcilerTrimContributionTest extends
 			String after) {
 		MApplication application = createApplication();
 
-		MTrimContribution contribution = MenuFactoryImpl.eINSTANCE
-				.createTrimContribution();
+		MTrimContribution contribution = ems.createModelElement(MTrimContribution.class);
 		application.getTrimContributions().add(contribution);
 		contribution.setPositionInParent(before);
 
@@ -111,8 +109,7 @@ public abstract class ModelReconcilerTrimContributionTest extends
 	private void testTrimContribution_ParentId(String before, String after) {
 		MApplication application = createApplication();
 
-		MTrimContribution contribution = MenuFactoryImpl.eINSTANCE
-				.createTrimContribution();
+		MTrimContribution contribution = ems.createModelElement(MTrimContribution.class);
 		application.getTrimContributions().add(contribution);
 		contribution.setParentId(before);
 

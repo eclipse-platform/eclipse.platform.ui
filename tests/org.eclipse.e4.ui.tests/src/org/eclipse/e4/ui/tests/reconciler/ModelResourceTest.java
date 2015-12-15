@@ -15,13 +15,14 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
+import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -42,6 +43,8 @@ public abstract class ModelResourceTest {
 
 	private XMLResource xmlResource;
 
+	protected EModelService ems;
+
 	@Before
 	public void setUp() throws Exception {
 		temporaryFile = new File(System.getProperty("java.io.tmpdir"),
@@ -50,6 +53,9 @@ public abstract class ModelResourceTest {
 		temporaryURI = URI.createFileURI(temporaryFile.getAbsolutePath());
 		factory = createFactory();
 		assertNotNull(factory);
+
+		IEclipseContext defaultContext = E4Application.createDefaultContext();
+		ems = defaultContext.get(EModelService.class);
 	}
 
 	@After
@@ -96,21 +102,19 @@ public abstract class ModelResourceTest {
 			return (MApplication) resource.getContents().get(0);
 		}
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		resource.getContents().add((EObject) application);
 		return application;
 	}
 
 	protected MWindow createWindow(MApplication application) {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		return window;
 	}
 
 	protected MTrimmedWindow createTrimmedWindow(MApplication application) {
-		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
-				.createTrimmedWindow();
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
 		application.getChildren().add(window);
 		return window;
 	}

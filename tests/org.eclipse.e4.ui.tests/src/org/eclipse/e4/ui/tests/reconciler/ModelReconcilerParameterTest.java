@@ -17,15 +17,12 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.junit.Test;
@@ -35,22 +32,21 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 	private void testHandledToolItem_Parameters_Name(String before, String after) {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName(before);
 		handledToolItem.getParameters().add(parameter);
 
@@ -137,22 +133,21 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 			String after) {
 		MApplication application = createApplication();
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		window.getChildren().add(part);
 
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
 		part.setToolbar(toolBar);
 
-		MHandledToolItem handledToolItem = MenuFactoryImpl.eINSTANCE
-				.createHandledToolItem();
+		MHandledToolItem handledToolItem = ems.createModelElement(MHandledToolItem.class);
 		toolBar.getChildren().add(handledToolItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setValue(before);
 		handledToolItem.getParameters().add(parameter);
 
@@ -240,14 +235,13 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		menu.getChildren().add(handledMenuItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setName(before);
 		handledMenuItem.getParameters().add(parameter);
 
@@ -340,14 +334,13 @@ public abstract class ModelReconcilerParameterTest extends ModelReconcilerTest {
 
 		MWindow window = createWindow(application);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menu);
 
-		MHandledMenuItem handledMenuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MHandledMenuItem handledMenuItem = ems.createModelElement(MHandledMenuItem.class);
 		menu.getChildren().add(handledMenuItem);
 
-		MParameter parameter = CommandsFactoryImpl.eINSTANCE.createParameter();
+		MParameter parameter = ems.createModelElement(MParameter.class);
 		parameter.setValue(before);
 		handledMenuItem.getParameters().add(parameter);
 

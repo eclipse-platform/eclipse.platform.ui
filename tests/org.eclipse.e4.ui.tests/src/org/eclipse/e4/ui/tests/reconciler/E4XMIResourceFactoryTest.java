@@ -18,10 +18,8 @@ import java.util.Collection;
 import org.eclipse.e4.ui.internal.workbench.ModelReconcilingService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
@@ -37,7 +35,7 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 
 		application = createApplication();
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
 		assertFalse(getId(application).equals(getId(window)));
@@ -52,14 +50,14 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MWindow window1 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window1 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window1);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 
-		MWindow window2 = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window2 = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window2);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
@@ -90,14 +88,14 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		command.setElementId("id");
 		application.getCommands().add(command);
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart part = ems.createModelElement(MPart.class);
 		part.setElementId("id");
 		window.getChildren().add(part);
 		window.setSelectedElement(part);
