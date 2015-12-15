@@ -44,6 +44,10 @@ import org.eclipse.ui.progress.IJobRunnable;
  */
 public abstract class Saveable extends InternalSaveable implements IAdaptable {
 
+	/**
+	 * Either {@code null} or the System's {@link SWT#CURSOR_WAIT} cursor
+	 * instance. Should never be disposed.
+	 */
 	private Cursor waitCursor;
 	private Cursor originalCursor;
 
@@ -249,17 +253,18 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	public void disableUI(IWorkbenchPart[] parts, boolean closing) {
 		for (int i = 0; i < parts.length; i++) {
 			IWorkbenchPart workbenchPart = parts[i];
-			Composite paneComposite = (Composite) ((PartSite) workbenchPart
-.getSite()).getModel()
-					.getWidget();
+			Composite paneComposite = (Composite) ((PartSite) workbenchPart.getSite()).getModel().getWidget();
 			Control[] paneChildren = paneComposite.getChildren();
 			Composite toDisable = ((Composite) paneChildren[0]);
 			toDisable.setEnabled(false);
 			if (waitCursor == null) {
-				waitCursor = new Cursor(workbenchPart.getSite().getWorkbenchWindow().getShell().getDisplay(), SWT.CURSOR_WAIT);
+				waitCursor = workbenchPart.getSite().getWorkbenchWindow().getShell().getDisplay()
+						.getSystemCursor(SWT.CURSOR_WAIT);
 			}
-			originalCursor = paneComposite.getCursor();
-			paneComposite.setCursor(waitCursor);
+			if (waitCursor.equals(paneComposite.getCursor())) {
+				originalCursor = paneComposite.getCursor();
+				paneComposite.setCursor(waitCursor);
+			}
 		}
 	}
 
@@ -284,8 +289,11 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 			Control[] paneChildren = paneComposite.getChildren();
 			Composite toEnable = ((Composite) paneChildren[0]);
 			paneComposite.setCursor(originalCursor);
-			if (waitCursor!=null && !waitCursor.isDisposed()) {
-				waitCursor.dispose();
+			if (waitCursor != null) {
+				/*
+				 * waitCursor is always the System SWT.CURSOR_WAIT instance and
+				 * should never be disposed
+				 */
 				waitCursor = null;
 			}
 			toEnable.setEnabled(true);
