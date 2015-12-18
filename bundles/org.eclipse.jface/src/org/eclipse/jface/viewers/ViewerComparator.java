@@ -188,14 +188,25 @@ public class ViewerComparator {
 		try {
 			Arrays.sort(elements, (a, b) -> ViewerComparator.this.compare(viewer, a, b));
 		} catch (IllegalArgumentException e) {
-			String msg = "Workaround for comparator violation:\n\t- set system property java.util.Arrays.useLegacyMergeSort=true\n\t- use a 1.6 JRE "  //$NON-NLS-1$
-					+ "\nmessage: " + e.getLocalizedMessage() //$NON-NLS-1$
+			String msg = e.toString()
+					+ "\nWorkaround for comparator violation:\n\tSet system property -Djava.util.Arrays.useLegacyMergeSort=true" //$NON-NLS-1$
 					+ "\nthis: " + getClass().getName() //$NON-NLS-1$
 					+ "\ncomparator: " + (comparator != null ? comparator.getClass().getName() : null) //$NON-NLS-1$
 					+ "\narray:"; //$NON-NLS-1$
+			StringBuilder labels = new StringBuilder();
+			long timeout = System.currentTimeMillis() + 5000;
 			for (Object element : elements) {
-				msg += "\n\t" + getLabel(viewer, element); //$NON-NLS-1$
+				labels.append("\n\t"); //$NON-NLS-1$
+				if (labels.length() > 50000) {
+					labels.append("... (more elements)"); //$NON-NLS-1$
+					break;
+				} else if (System.currentTimeMillis() > timeout) {
+					labels.append("... (timeout)"); //$NON-NLS-1$
+					break;
+				}
+				labels.append(getLabel(viewer, element));
 			}
+			msg += labels;
 			Policy.getLog().log(new Status(IStatus.ERROR, "org.eclipse.jface", msg)); //$NON-NLS-1$
 			throw e;
 		}
