@@ -30,18 +30,18 @@ public class CriteriaDefinitionAssembler {
 	 * Assembles the given criteria definition contributions into a complete criteria definition.
 	 * The originals are not modified.
 	 */
-	public CriteriaDefinition assemble(List contributions) {
+	public CriteriaDefinition assemble(List<CriteriaDefinitionContribution> contributions) {
 		return merge(contributions);
 	}
 
 	/*
 	 * Merge all criteria definition contributions into one.
 	 */
-	private CriteriaDefinition merge(List contributions) {
+	private CriteriaDefinition merge(List<CriteriaDefinitionContribution> contributions) {
 		CriteriaDefinition criteriaDefinition = new CriteriaDefinition();
-		Iterator iter = contributions.iterator();
+		Iterator<CriteriaDefinitionContribution> iter = contributions.iterator();
 		while (iter.hasNext()) {
-			CriteriaDefinitionContribution contribution = (CriteriaDefinitionContribution)iter.next();
+			CriteriaDefinitionContribution contribution = iter.next();
 			mergeChildren(criteriaDefinition, (CriteriaDefinition)contribution.getCriteriaDefinition());
 			contribution.setCriteriaDefinition(null);
 		}
@@ -57,8 +57,8 @@ public class CriteriaDefinitionAssembler {
 	 * Insure criterion has its id at least, and criterion value has both its id and name.
 	 */
 	private void mergeChildren(UAElement a, UAElement b) {
-		Map criterionById = new HashMap();
-		Set criterionValueIds = new HashSet();
+		Map<String, UAElement> criterionById = new HashMap<>();
+		Set<String> criterionValueIds = new HashSet<>();
 
 		IUAElement[] childrenA = a.getChildren();
 		for(int i = 0; i < childrenA.length; ++i){
@@ -85,7 +85,7 @@ public class CriteriaDefinitionAssembler {
 				if(null != idB && idB.trim().length() > 0){
 					if (criterionById.containsKey(idB)) {
 						// duplicate id; merge children
-						mergeChildren((CriterionDefinition)criterionById.get(idB), childB);
+						mergeChildren(criterionById.get(idB), childB);
 					} else {
 						// wasn't a duplicate
 						a.appendChild(childB);

@@ -34,19 +34,20 @@ public class CriteriaDefinitionManager {
 	private static final String ELEMENT_NAME_CRITERIA_DEFINITION_PROVIDER = "criteriaDefinitionProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 
-	private Map criteriaDefinitionContributionsByLocale = new HashMap();
-	private Map criteriaDefinitionsByLocale = new HashMap();
+	private Map<String, CriteriaDefinitionContribution[]> criteriaDefinitionContributionsByLocale = new HashMap<>();
+	private Map<String, CriteriaDefinition> criteriaDefinitionsByLocale = new HashMap<>();
 	private AbstractCriteriaDefinitionProvider[] criteriaDefinitionProviders;
 
 	public synchronized ICriteriaDefinition getCriteriaDefinition(String locale) {
-		CriteriaDefinition criteriaDefinition = (CriteriaDefinition)criteriaDefinitionsByLocale.get(locale);
+		CriteriaDefinition criteriaDefinition = criteriaDefinitionsByLocale.get(locale);
 		if (null == criteriaDefinition) {
 			HelpPlugin.getTocManager().getTocs(locale);
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_CRITERIA) {
 			    System.out.println("Start to update criteria definition for locale " + locale); //$NON-NLS-1$
 			}
-			List contributions = new ArrayList(Arrays.asList(readCriteriaDefinitionContributions(locale)));
+			List<CriteriaDefinitionContribution> contributions = new ArrayList<>(
+					Arrays.asList(readCriteriaDefinitionContributions(locale)));
 			CriteriaDefinitionAssembler assembler = new CriteriaDefinitionAssembler();
 			criteriaDefinition = assembler.assemble(contributions);
 			criteriaDefinitionsByLocale.put(locale, criteriaDefinition);
@@ -62,7 +63,7 @@ public class CriteriaDefinitionManager {
 	 * Returns all criteria definition contributions for the given locale, from all providers.
 	 */
 	public synchronized CriteriaDefinitionContribution[] getCriteriaDefinitionContributions(String locale) {
-		CriteriaDefinitionContribution[] contributions = (CriteriaDefinitionContribution[])criteriaDefinitionContributionsByLocale.get(locale);
+		CriteriaDefinitionContribution[] contributions = criteriaDefinitionContributionsByLocale.get(locale);
 		if (contributions == null) {
 			contributions = readCriteriaDefinitionContributions(locale);
 			criteriaDefinitionContributionsByLocale.put(locale, contributions);
@@ -72,7 +73,7 @@ public class CriteriaDefinitionManager {
 
 	private CriteriaDefinitionContribution[] readCriteriaDefinitionContributions(String locale) {
 		CriteriaDefinitionContribution[] cached;
-		List contributions = new ArrayList();
+		List<CriteriaDefinitionContribution> contributions = new ArrayList<>();
 		AbstractCriteriaDefinitionProvider[] providers = getCriteriaDefinitionProviders();
 		for (int i=0;i<providers.length;++i) {
 			ICriteriaDefinitionContribution[] contrib;
@@ -106,7 +107,7 @@ public class CriteriaDefinitionManager {
 				}
 			}
 		}
-		cached = (CriteriaDefinitionContribution[])contributions.toArray(new CriteriaDefinitionContribution[contributions.size()]);
+		cached = contributions.toArray(new CriteriaDefinitionContribution[contributions.size()]);
 		return cached;
 	}
 
@@ -124,7 +125,7 @@ public class CriteriaDefinitionManager {
 	 */
 	public AbstractCriteriaDefinitionProvider[] getCriteriaDefinitionProviders() {
 		if (null == criteriaDefinitionProviders) {
-			List providers = new ArrayList();
+			List<AbstractCriteriaDefinitionProvider> providers = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CRITERIA_DEFINITION);
 			for (int i=0;i<elements.length;++i) {
@@ -141,7 +142,7 @@ public class CriteriaDefinitionManager {
 					}
 				}
 			}
-			criteriaDefinitionProviders = (AbstractCriteriaDefinitionProvider[])providers.toArray(new AbstractCriteriaDefinitionProvider[providers.size()]);
+			criteriaDefinitionProviders = providers.toArray(new AbstractCriteriaDefinitionProvider[providers.size()]);
 		}
 		return criteriaDefinitionProviders;
 	}

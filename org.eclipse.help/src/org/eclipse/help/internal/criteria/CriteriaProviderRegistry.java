@@ -31,7 +31,7 @@ public class CriteriaProviderRegistry {
 
 	public static final String PROVIDER_XP_NAME = "org.eclipse.help.criteriaProvider"; //$NON-NLS-1$
 
-	private static List providers = null;
+	private static List<AbstractCriteriaProvider> providers = null;
 
 	private static CriteriaProviderRegistry instance;
 
@@ -51,7 +51,7 @@ public class CriteriaProviderRegistry {
 		if (initialized ) {
 			return;
 		}
-		providers = new ArrayList();
+		providers = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(PROVIDER_XP_NAME);
@@ -65,7 +65,7 @@ public class CriteriaProviderRegistry {
 						+ PROVIDER_XP_NAME + "].", e); //$NON-NLS-1$
 			}
 			if (obj instanceof AbstractCriteriaProvider) {
-				providers.add(obj);
+				providers.add((AbstractCriteriaProvider) obj);
 			}
 		}
 		initialized = true;
@@ -73,7 +73,7 @@ public class CriteriaProviderRegistry {
 
 	public AbstractCriteriaProvider[] getScopes() {
 		readProviders();
-		return (AbstractCriteriaProvider[]) providers.toArray(new AbstractCriteriaProvider[providers.size()]);
+		return providers.toArray(new AbstractCriteriaProvider[providers.size()]);
 	}
 
 	public ICriteria[] getAllCriteria(ITopic topic) {
@@ -84,8 +84,8 @@ public class CriteriaProviderRegistry {
 		} else {
 			criteria = new ICriteria[0];
 		}
-		for (Iterator iter = providers.iterator(); iter.hasNext();) {
-			AbstractCriteriaProvider provider = (AbstractCriteriaProvider) iter.next();
+		for (Iterator<AbstractCriteriaProvider> iter = providers.iterator(); iter.hasNext();) {
+			AbstractCriteriaProvider provider = iter.next();
 			ICriteria[] newCriteria = provider.getCriteria(topic);
 			if (newCriteria.length > 0) {
 				if (criteria.length == 0) {
@@ -109,8 +109,8 @@ public class CriteriaProviderRegistry {
 		} else {
 			criteria = new ICriteria[0];
 		}
-		for (Iterator iter = providers.iterator(); iter.hasNext();) {
-			AbstractCriteriaProvider provider = (AbstractCriteriaProvider) iter.next();
+		for (Iterator<AbstractCriteriaProvider> iter = providers.iterator(); iter.hasNext();) {
+			AbstractCriteriaProvider provider = iter.next();
 			ICriteria[] newCriteria = provider.getCriteria(toc);
 			if (newCriteria.length > 0) {
 				if (criteria.length == 0) {

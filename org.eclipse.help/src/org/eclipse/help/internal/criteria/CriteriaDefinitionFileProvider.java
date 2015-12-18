@@ -37,7 +37,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 	 */
 	@Override
 	public ICriteriaDefinitionContribution[] getCriteriaDefinitionContributions(String locale) {
-		List contributions = new ArrayList();
+		List<ICriteriaDefinitionContribution> contributions = new ArrayList<>();
 		CriteriaDefinitionFile[] criteriaDefinitionFiles = getCriteriaDefinitionFiles(locale);
 		CriteriaDefinitionFileParser parser = new CriteriaDefinitionFileParser();
 		for (int i = 0; i < criteriaDefinitionFiles.length; ++i) {
@@ -65,7 +65,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 				HelpPlugin.logError(msg, t);
 			}
 		}
-		return (ICriteriaDefinitionContribution[])contributions.toArray(new ICriteriaDefinitionContribution[contributions.size()]);
+		return contributions.toArray(new ICriteriaDefinitionContribution[contributions.size()]);
 	}
 
 	private String getCriteriaDefinitionFilePath(CriteriaDefinitionFile criteriaDefinitionFile) {
@@ -78,7 +78,7 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 	 * Returns all available CriteriaDefinitionFiles for the given locale.
 	 */
 	private CriteriaDefinitionFile[] getCriteriaDefinitionFiles(String locale) {
-		List criteriaDefinitionFiles = new ArrayList();
+		List<CriteriaDefinitionFile> criteriaDefinitionFiles = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CRITERIA_DEFINITION);
 		for (int i=0;i<elements.length;++i) {
@@ -90,6 +90,6 @@ public class CriteriaDefinitionFileProvider extends AbstractCriteriaDefinitionPr
 				criteriaDefinitionFiles.add(criteriaDefinitionFile);
 			}
 		}
-		return (CriteriaDefinitionFile[])criteriaDefinitionFiles.toArray(new CriteriaDefinitionFile[criteriaDefinitionFiles.size()]);
+		return criteriaDefinitionFiles.toArray(new CriteriaDefinitionFile[criteriaDefinitionFiles.size()]);
 	}
 }

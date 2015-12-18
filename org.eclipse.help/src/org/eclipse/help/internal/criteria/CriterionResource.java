@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.help.ICriteria;
-
 import org.eclipse.help.internal.HelpPlugin;
 
 /**
@@ -28,15 +27,15 @@ import org.eclipse.help.internal.HelpPlugin;
 public class CriterionResource {
 
 	private String criterionName;
-	private List criterionValues;
+	private List<String> criterionValues;
 
 	public CriterionResource(String criterionName){
 		this(criterionName, null);
 	}
 
-	public CriterionResource (String criterionName, List criterionValues){
+	public CriterionResource(String criterionName, List<String> criterionValues) {
 		this.criterionName = criterionName;
-		this.criterionValues = new ArrayList();
+		this.criterionValues = new ArrayList<>();
 		if(null != criterionValues) {
 			this.addCriterionValues(criterionValues);
 		}
@@ -46,7 +45,7 @@ public class CriterionResource {
 		return this.criterionName;
 	}
 
-	public List getCriterionValues(){
+	public List<String> getCriterionValues() {
 		return this.criterionValues;
 	}
 
@@ -56,15 +55,15 @@ public class CriterionResource {
 		}
 	}
 
-	public void addCriterionValues(List criterionValues){
-		for(Iterator iterator = criterionValues.iterator(); iterator.hasNext();){
-			String criterionValue = (String) iterator.next();
+	public void addCriterionValues(List<String> criterionValues) {
+		for (Iterator<String> iterator = criterionValues.iterator(); iterator.hasNext();) {
+			String criterionValue = iterator.next();
 			this.addCriterionValue(criterionValue);
 		}
 	}
 
 	public static CriterionResource[] toCriterionResource(ICriteria[] criteriaElements) {
-		List criteriaList = new ArrayList();
+		List<CriterionResource> criteriaList = new ArrayList<>();
 		outer: for (int i = 0; i < criteriaElements.length; ++i) {
 			String elementName = criteriaElements[i].getName();
 			String elementValue = criteriaElements[i].getValue();
@@ -73,12 +72,12 @@ public class CriterionResource {
 				if (HelpPlugin.getCriteriaManager().isSupportedCriterion(elementName)) {
 					elementName = elementName.toLowerCase();
 					StringTokenizer tokenizer = new StringTokenizer(elementValue, ","); //$NON-NLS-1$
-					List values = new ArrayList();
+					List<String> values = new ArrayList<>();
 					while (tokenizer.hasMoreTokens()) {
 						values.add(tokenizer.nextToken().trim());
 					}
 					for(int j = 0; j < criteriaList.size(); ++j){
-						CriterionResource criterion = (CriterionResource) criteriaList.get(j);
+						CriterionResource criterion = criteriaList.get(j);
 						if(elementName.equals(criterion.getCriterionName())){
 							criterion.addCriterionValues(values);
 							continue outer;
