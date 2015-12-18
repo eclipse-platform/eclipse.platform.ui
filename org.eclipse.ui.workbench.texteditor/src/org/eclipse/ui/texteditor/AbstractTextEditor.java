@@ -7384,6 +7384,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.10
 	 */
 	protected boolean getInitialWordWrapStatus() {
-		return getPreferenceStore().getBoolean(PREFERENCE_WORD_WRAP_ENABLED);
+		IPreferenceStore store= getPreferenceStore();
+		if (store == null) {
+			return false;
+		}
+		return store.getBoolean(PREFERENCE_WORD_WRAP_ENABLED);
 	}
 }
