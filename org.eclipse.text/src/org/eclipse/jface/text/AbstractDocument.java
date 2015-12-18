@@ -442,7 +442,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @deprecated As of 3.4, replaced by {@link #computeIndexInPositionList(List, int, boolean)}
 	 */
 	@Deprecated
-	protected int computeIndexInPositionList(List<Position> positions, int offset) {
+	protected int computeIndexInPositionList(List<? extends Position> positions, int offset) {
 		return computeIndexInPositionList(positions, offset, true);
 	}
 
@@ -457,7 +457,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @return the computed index
 	 * @since 3.4
 	 */
-	protected int computeIndexInPositionList(List<Position> positions, int offset, boolean orderedByOffset) {
+	protected int computeIndexInPositionList(List<? extends Position> positions, int offset, boolean orderedByOffset) {
 		if (positions.size() == 0)
 			return 0;
 
