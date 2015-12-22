@@ -11,7 +11,7 @@ package org.eclipse.ui.intro.config;
 
 import java.util.Map;
 
-import org.eclipse.ui.internal.intro.impl.IntroPlugin;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.intro.IIntroSite;
 
 
@@ -36,6 +36,8 @@ public abstract class IntroConfigurer {
 	protected Map themeProperties;
 	protected IIntroSite site;
 
+	protected IntroModelRoot model;
+
 	/**
 	 * Provides the opportunity for the configurer to contribute to the action bars and to fetch
 	 * presentation theme properties.
@@ -53,6 +55,21 @@ public abstract class IntroConfigurer {
 	}
 
 	/**
+	 * Internal method to associate the corresponding intro configuration model. May be called
+	 * independently of {@link #init(IIntroSite, Map)}.
+	 * 
+	 * @noreference
+	 */
+	final public void bind(IntroModelRoot model) {
+		// The configurer may vary its returned results based on the theme
+		// properties
+		this.model = model;
+		if (model != null && model.getTheme() != null) {
+			themeProperties = model.getTheme().getProperties();
+		}
+	}
+
+	/**
 	 * Returns the value of the theme property with a given name.
 	 * 
 	 * @param name
@@ -65,8 +82,8 @@ public abstract class IntroConfigurer {
 		if (themeProperties == null)
 			return null;
 		String value = (String)themeProperties.get(name);
-		if (value!=null)
-			value = IntroPlugin.getDefault().getIntroModelRoot().resolveVariables(value);
+		if (value != null && model != null)
+			value = model.resolveVariables(value);
 		return value;
 	}
 

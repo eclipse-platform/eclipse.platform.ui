@@ -218,6 +218,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // Attributes of root page decide if we have a static or dynamic case.
         setModelState(true, true);
+
+		if (configurer != null) {
+			// The configurer may vary its returned results based on the theme
+			// properties
+			configurer.bind(this);
+		}
     }
 
     /**
@@ -260,8 +266,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	if (cname!=null) {
     		try {
     			Object obj = getCfgElement().createExecutableExtension(ATT_CONFIGURER);
-    			if (obj instanceof IntroConfigurer)
+				if (obj instanceof IntroConfigurer) {
     				configurer = (IntroConfigurer)obj;
+				}
     		}
     		catch (CoreException e) {
     			Log.error("Error loading intro configurer", e); //$NON-NLS-1$

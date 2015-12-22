@@ -11,6 +11,18 @@ package org.eclipse.ui.internal.intro.impl.presentations;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -37,17 +49,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.AnimationEngine;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarShortcut;
+import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
-import org.eclipse.ui.internal.layout.ITrimManager;
-import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
@@ -58,26 +67,37 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
  * 'restore' and 'close' actions, as well as actions for each shortcut element contributed in the
  * extension point.
  * 
+ * Reimplemented as an E4 MToolControl for 4.x. Ideally the intro configuration information would be
+ * available from the application IEclipseContext.
+ * 
  * @since 3.1
  */
-public class IntroLaunchBar implements IWindowTrim {
+public class IntroLaunchBar {
+
+	private static final String LAUNCHBAR_ID = "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar"; //$NON-NLS-1$
+	private static final String BUNDLECLASS_URI = "bundleclass://org.eclipse.ui.intro/" //$NON-NLS-1$
+			+ IntroLaunchBar.class.getName();
+
+	/* Information to persist so as to be able to reload the intro state */
+	private static final String LAST_PAGE_ID = "lastPageId"; //$NON-NLS-1$
+	private static final String INTRO_CONFIG_ID = "introConfigId"; //$NON-NLS-1$
 
 	private Composite container;
 
 	protected ToolBarManager toolBarManager;
 
-	protected int orientation;
-
-	protected int location;
-
 	protected String lastPageId;
 
 	protected Action closeAction = null;
 
+	@Inject
+	@Optional
 	private IntroLaunchBarElement element;
 
 	protected boolean simple;
 	
+	@Inject
+	@Optional
 	private IntroTheme theme;
 
 	static final int[] TOP_LEFT_CORNER = new int[] { 0, 6, 1, 5, 1, 4, 4, 1, 5, 1, 6, 0 };
@@ -104,10 +124,12 @@ public class IntroLaunchBar implements IWindowTrim {
 
 	private Color bg;
 
+	private MToolControl trimControl;
+
 	class BarLayout extends Layout {
 
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
-			boolean vertical = (orientation & SWT.VERTICAL) != 0;
+			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
 			int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
 			int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
 			int width = 0;
@@ -133,13 +155,13 @@ public class IntroLaunchBar implements IWindowTrim {
 		}
 
 		protected void layout(Composite composite, boolean changed) {
-			boolean vertical = (orientation & SWT.VERTICAL) != 0;
+			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
 			int marginWidth = vertical | isPlain() ? 1 : simple ? 4 : 7;
 			int marginHeight = !vertical | isPlain() ? 1 : simple ? 4 : 7;
 
 			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			Rectangle carea = composite.getClientArea();
-			int x = carea.x + (location == SWT.LEFT ? 0 : marginWidth);
+			int x = carea.x + (getLocation() == SideValue.LEFT ? 0 : marginWidth);
 			int y = carea.y + marginHeight;
 
 			if (vertical) {
@@ -150,62 +172,104 @@ public class IntroLaunchBar implements IWindowTrim {
 		}
 	}
 
-	public IntroLaunchBar(int orientation, String lastPageId, IntroLaunchBarElement element, IntroTheme theme) {
-		this.orientation = orientation;
-		this.location = element.getLocation();
-		this.lastPageId = lastPageId;
-		this.element = element;
-		this.theme = theme;
+	/**
+	 * Install the Intro Launch Bar into the provided window.
+	 * 
+	 * @param window
+	 *            the window to host the launch bar
+	 * @param modelRoot
+	 *            the current intro configuration, with pages
+	 * @param element
+	 *            the launch bar configuration
+	 * @return the launch bar instance
+	 */
+	public static IntroLaunchBar create(IWorkbenchWindow window, IntroModelRoot modelRoot,
+			IntroLaunchBarElement element) {
+		EModelService modelService = (EModelService) window.getService(EModelService.class);
+		MTrimmedWindow trimmedWindow = (MTrimmedWindow) window.getService(MTrimmedWindow.class);
 
-		simple = true;
-		loadStoredLocation();
+		MToolControl trimControl = modelService.createModelElement(MToolControl.class);
+		trimControl.setElementId(LAUNCHBAR_ID);
+		trimControl.setContributionURI(BUNDLECLASS_URI);
+		// Must record sufficient information so as to be able to obtain the
+		// launch configuration on workspace restart
+		trimControl.getPersistedState().put(INTRO_CONFIG_ID, modelRoot.getId());
+		trimControl.getPersistedState().put(LAST_PAGE_ID, modelRoot.getCurrentPageId());
+		trimControl.getTags().add(IPresentationEngine.DRAGGABLE);
+
+		MTrimBar bar = modelService.getTrim(trimmedWindow, determineLocation(element));
+		bar.getChildren().add(trimControl);
+
+		// should now be rendered
+		return (IntroLaunchBar) trimControl.getObject();
 	}
 
-	private void loadStoredLocation() {
+	private static SideValue determineLocation(IntroLaunchBarElement element) {
+		// Try restoring to the same location if moved previously
 		IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
 		try {
 			int storedLocation = settings.getInt(S_STORED_LOCATION);
 			if (storedLocation > 0)
-				setLocation(storedLocation);
+				return toSideValue(storedLocation);
 		} catch (NumberFormatException e) {
 			// The stored value either does not exist or
 			// is corrupted - just pick the default silently.
 		}
+		return toSideValue(element.getLocation());
+	}
+
+	private static SideValue toSideValue(int location) {
+		switch (location) {
+		case SWT.LEFT:
+			return SideValue.LEFT;
+		case SWT.RIGHT:
+			return SideValue.RIGHT;
+		case SWT.TOP:
+			return SideValue.TOP;
+		case SWT.BOTTOM:
+			return SideValue.BOTTOM;
+		}
+		return SideValue.BOTTOM;
+	}
+
+	private static int toSWT(SideValue sv) {
+		switch (sv) {
+		case LEFT:
+			return SWT.LEFT;
+		case RIGHT:
+			return SWT.RIGHT;
+		case TOP:
+			return SWT.TOP;
+		case BOTTOM:
+			return SWT.BOTTOM;
+		}
+		return SWT.BOTTOM;
+	}
+
+	@PostConstruct
+	void init(Composite parent, MToolControl trimControl) {
+		simple = true;
+		this.trimControl = trimControl;
+		this.lastPageId = (String) trimControl.getPersistedState().get(LAST_PAGE_ID);
+
+		// Handle situation where intro information is not available from the
+		// the application's IEclipseContext
+		if (element == null || theme == null) {
+			String configId = (String) trimControl.getPersistedState().get(INTRO_CONFIG_ID);
+			IntroModelRoot modelRoot = IntroPlugin.getDefault().getExtensionPointManager().getModel(configId);
+			element = modelRoot.getPresentation().getLaunchBarElement();
+			theme = modelRoot.getTheme();
+		}
+
+		createControl(parent);
+		storeLocation(); // since we may have been dragged elsewhere
 	}
 
 	private void storeLocation() {
 		IDialogSettings settings = IntroPlugin.getDefault().getDialogSettings();
-		settings.put(S_STORED_LOCATION, this.location);
+		settings.put(S_STORED_LOCATION, toSWT(getLocation()));
 	}
 
-	/**
-	 * This method now calls dock(location) and then adds itself to the window trim. This is to
-	 * support the re-ordering of IWindowTrim lifecycle related to dock().
-	 */
-	public void createInActiveWindow() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-
-		dock(location);
-
-		ITrimManager trimManager = getTrimManager();
-		trimManager.addTrim(location, this);
-		window.getShell().layout();
-	}
-
-	/**
-	 * Get the trim manager from the default workbench window. If the current
-	 * workbench window is -not- the <code>WorkbenchWindow</code> then return null.
-	 *  
-	 * @return The trim manager for the current workbench window
-	 */
-	private ITrimManager getTrimManager() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window instanceof WorkbenchWindow)
-			return ((WorkbenchWindow)window).getTrimManager();
-		
-		return null; // not using the default workbench window
-	}
-	
 	/**
 	 * Not supported anymore as of the removal of the presentation API
 	 * TODO remove usage, see Bug 446171
@@ -221,7 +285,7 @@ public class IntroLaunchBar implements IWindowTrim {
 		computeColors(parent.getDisplay());
 		container.setLayout(new BarLayout());
 		// boolean vertical = (orientation & SWT.VERTICAL) != 0;
-		toolBarManager = new ToolBarManager(SWT.FLAT | orientation);
+		toolBarManager = new ToolBarManager(SWT.FLAT | getOrientation());
 
 
 		fillToolBar();
@@ -263,15 +327,17 @@ public class IntroLaunchBar implements IWindowTrim {
 		IntroPlugin.getDefault().setLaunchBar(this);
 	}
 
-	protected void startDragging(Point position, boolean usingKeyboard) {
-		Rectangle dragRect = DragUtil.getDisplayBounds(getControl());
-		startDrag(this, dragRect, position, usingKeyboard);
+	private SideValue getLocation() {
+		MElementContainer<?> parent = trimControl.getParent();
+		while (parent != null) {
+			if (parent instanceof MTrimBar) {
+				return ((MTrimBar) parent).getSide();
+			}
+			parent = parent.getParent();
+		}
+		return SideValue.BOTTOM;
 	}
 
-	private void startDrag(Object toDrag, Rectangle dragRect, Point position, boolean usingKeyboard) {
-
-		DragUtil.performDrag(toDrag, dragRect, position, !usingKeyboard);
-	}
 
 	protected void onPaint(PaintEvent e) {
 		GC gc = e.gc;
@@ -287,14 +353,14 @@ public class IntroLaunchBar implements IWindowTrim {
 			gc.fillRectangle(0, 0, size.x, size.y);
 			gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
 		} else {
-			switch (location) {
-			case SWT.LEFT:
+			switch (getLocation()) {
+			case LEFT:
 				paintLeft(gc);
 				break;
-			case SWT.RIGHT:
+			case RIGHT:
 				paintRight(gc);
 				break;
-			case SWT.BOTTOM:
+			case BOTTOM:
 				paintBottom(gc);
 				break;
 			}
@@ -413,6 +479,7 @@ public class IntroLaunchBar implements IWindowTrim {
 		return container;
 	}
 
+	@PreDestroy
 	public void dispose() {
 		if (container != null) {
 			container.dispose();
@@ -486,13 +553,15 @@ public class IntroLaunchBar implements IWindowTrim {
 	protected IIntroPart closeLaunchBar(boolean restore) {
 
 		IntroPlugin.getDefault().setLaunchBar(null);
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
 		// if we've already been removed, this won't hurt us
-		getTrimManager().removeTrim(this);
+		if (trimControl.getParent() != null) {
+			trimControl.getParent().getChildren().remove(trimControl);
+		}
 
 		IIntroPart intro = null;
 		if (restore) {
+			IWorkbenchWindow window = getWorkbenchWindow();
 			intro = PlatformUI.getWorkbench().getIntroManager().showIntro(window, false);
 			CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
 			Rectangle startBounds = Geometry.toDisplay(getControl().getParent(), getControl().getBounds());
@@ -502,8 +571,11 @@ public class IntroLaunchBar implements IWindowTrim {
 			AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds);
 		}
 		dispose();
-		window.getShell().layout();
 		return intro;
+	}
+
+	private IWorkbenchWindow getWorkbenchWindow() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	protected void executeShortcut(String url) {
@@ -533,20 +605,19 @@ public class IntroLaunchBar implements IWindowTrim {
 	}
 
 	public void dock(int side) {
-		dispose();
-		setLocation(side);
-		storeLocation();
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		createControl(window.getShell());
+		// dispose();
+		// setLocation(side);
+		// storeLocation();
 	}
 
-	private void setLocation(int location) {
-		this.orientation = (location == SWT.LEFT || location == SWT.RIGHT) ? SWT.VERTICAL : SWT.HORIZONTAL;
-		this.location = location;
-	}
-
-	public int getValidSides() {
-		return SWT.LEFT | SWT.RIGHT | SWT.BOTTOM;
+	private int getOrientation() {
+		switch (getLocation()) {
+		case LEFT:
+		case RIGHT:
+			return SWT.VERTICAL;
+		default:
+			return SWT.HORIZONTAL;
+		}
 	}
 
 	/*
@@ -555,7 +626,7 @@ public class IntroLaunchBar implements IWindowTrim {
 	 * @see org.eclipse.ui.internal.IWindowTrim#getId()
 	 */
 	public String getId() {
-		return "org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar"; //$NON-NLS-1$
+		return LAUNCHBAR_ID;
 	}
 
 	/*
