@@ -305,17 +305,70 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 								if (max > 0 && insert.length() > max) {
 									insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
 								}
+								int topIndex = -1;
+								StyledText styledText = fSourceViewer.getTextWidget();
+								Point selection = null;
+								// keep scrolling state in details pane in case
+								// of longer string over multiple lines
+								if (containsLineDelimiter(insert)) {
+									int ti = styledText.getTopIndex();
+									if (ti == 0) {
+										int caretOffset = styledText.getCaretOffset();
+										String topStr = styledText.getText().substring(0, caretOffset);
+										if (insert.length() > caretOffset) {
+											String newTopStr = insert.substring(0, caretOffset);
+											// only when string from start to
+											// caretOffset has not changed
+											if (topStr.equals(newTopStr)) {
+												topIndex = ti;
+												selection = styledText.getSelection();
+											}
+										}
+									} else if (ti > 0) {
+										int topOffset = styledText.getOffsetAtLine(ti);
+										String topStr = styledText.getText().substring(0, topOffset);
+										if (insert.length() > topOffset) {
+											String newTopStr = insert.substring(0, topOffset);
+											// only when string from start to
+											// topIndex has not changed
+											if (topStr.equals(newTopStr)) {
+												topIndex = ti;
+												selection = styledText.getSelection();
+											}
+										}
+									}
+								}
+								IDocument detailDoc = getDetailDocument();
 								if (fFirst) {
-									getDetailDocument().set(insert);
+									if (insert.equals(detailDoc.get())) {
+										topIndex = -1; // source not modified,
+														// no need to set the
+														// document
+									} else {
+										detailDoc.set(insert);
+									}
 									fFirst = false;
 								} else {
-									getDetailDocument().replace(length, 0,insert);
+									detailDoc.replace(length, 0, insert);
+								}
+								if (topIndex > -1) {
+									styledText.setTopIndex(topIndex);
+									if (selection != null) {
+										styledText.setSelection(selection);
+									}
 								}
 							} catch (BadLocationException e) {
 								DebugUIPlugin.log(e);
 							}
 						}
 						return Status.OK_STATUS;
+					}
+
+					private boolean containsLineDelimiter(String str) {
+						if (str.contains("\n") || str.contains("\r")) { //$NON-NLS-1$ //$NON-NLS-2$
+							return true;
+						}
+						return false;
 					}
 				};
 				append.setSystem(true);
