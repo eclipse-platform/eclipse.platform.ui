@@ -589,7 +589,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * A cache of launch configuration names currently in the workspace.
 	 */
-	private String[] fSortedConfigNames = null;
+	private volatile String[] fSortedConfigNames = null;
 
 	/**
 	 * Collection of all launch configurations in the workspace.
@@ -916,7 +916,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * The launch config name cache is cleared when a config is added, deleted or changed.
 	 */
-	protected void clearConfigNameCache() {
+	protected synchronized void clearConfigNameCache() {
 		fSortedConfigNames = null;
 	}
 

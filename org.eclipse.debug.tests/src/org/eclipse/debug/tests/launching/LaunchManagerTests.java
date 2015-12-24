@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.launching.CancellingLaunchDelegate.CancellingLaunch;
 
@@ -316,6 +318,59 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 				getLaunchManager().removeLaunch(launches[i]);
 			}
 			config.delete();
+		}
+	}
+
+	/**
+	 * There was a race condition in getting a unique name for a launch
+	 * configuration.
+	 * <p>
+	 * Note, due to the nature of the bug, it is possible that running this test
+	 * will not trigger the original bug. To increase the probability of hitting
+	 * the NPE in the unpatched code, increase the size of config. However,
+	 * increasing the number increases the runtime of the test substantially.
+	 */
+	public void testNPE_Bug484882() throws Exception {
+		// In this thread continuously creates configs so that
+		// org.eclipse.debug.internal.core.LaunchManager.clearConfigNameCache()
+		// is called repeatedly. We also want to make lots of configurations so
+		// the runtime of getAllSortedConfigNames (called by
+		// isExistingLaunchConfigurationName
+		// below) is long enough to hit the race condition.
+		final boolean stop[] = new boolean[] { false };
+		final Throwable exception[] = new Throwable[] { null };
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				ILaunchConfiguration config[] = new ILaunchConfiguration[10000];
+				try {
+					for (int i = 0; i < config.length && !stop[0]; i++) {
+						config[i] = getLaunchConfiguration("Name" + i); //$NON-NLS-1$
+					}
+					for (int i = 0; i < config.length; i++) {
+						if (config[i] != null) {
+							config[i].delete();
+						}
+					}
+				} catch (CoreException e) {
+					exception[0] = e;
+				}
+			}
+		};
+		thread.start();
+		try {
+			ILaunchManager launchManager = getLaunchManager();
+			while (thread.isAlive()) {
+				// This call generated an NPE
+				launchManager.isExistingLaunchConfigurationName("Name"); //$NON-NLS-1$
+			}
+		} finally {
+			stop[0] = true;
+			thread.join(1000);
+			assertFalse(thread.isAlive());
+			if (exception[0] != null) {
+				throw new Exception("Exception in Thread", exception[0]); //$NON-NLS-1$
+			}
 		}
 	}
 }
