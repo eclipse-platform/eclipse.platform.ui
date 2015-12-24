@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2017 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,16 +17,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-
 import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -45,13 +42,11 @@ import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWra
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
-
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IValueDetailListener;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -60,8 +55,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -72,17 +67,16 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
+import org.eclipse.jface.text.WhitespaceCharacterPainter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -98,12 +92,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -111,7 +105,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.progress.WorkbenchJob;
-
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -382,6 +376,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 * and properly deactivate it later.
 	 */
 	private IHandlerActivation fContentAssistActivation;
+	private IPropertyChangeListener fPreferenceStorePropertyChangeListener;
+	private WhitespaceCharacterPainter fWhiteSpacePainter;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
@@ -420,6 +416,56 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		Control control = fSourceViewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
+		toggleWhitespaceCharacterPainter();
+		installWhitespacePreferenceListener();
+	}
+
+	private void installWhitespacePreferenceListener() {
+		IPreferenceStore store = EditorsUI.getPreferenceStore();
+		fPreferenceStorePropertyChangeListener = new IPropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				String property = event.getProperty();
+				if (AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property)) {
+					toggleWhitespaceCharacterPainter();
+				}
+			}
+		};
+		store.addPropertyChangeListener(fPreferenceStorePropertyChangeListener);
+	}
+
+	private void removePreferenceListener() {
+		if (fPreferenceStorePropertyChangeListener != null) {
+			IPreferenceStore store = EditorsUI.getPreferenceStore();
+			store.removePropertyChangeListener(fPreferenceStorePropertyChangeListener);
+			fPreferenceStorePropertyChangeListener = null;
+		}
+	}
+
+	private void disposeWhitespaceCharacterPainter() {
+		if (fWhiteSpacePainter != null) {
+			fSourceViewer.removePainter(fWhiteSpacePainter);
+			fWhiteSpacePainter.dispose();
+			fWhiteSpacePainter = null;
+		}
+	}
+
+	private void toggleWhitespaceCharacterPainter() {
+		if (fSourceViewer == null || fSourceViewer.getTextWidget() == null) {
+			return;
+		}
+		IPreferenceStore store = EditorsUI.getPreferenceStore();
+		boolean checked = store.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
+		if (checked) {
+			fWhiteSpacePainter = new WhitespaceCharacterPainter(fSourceViewer);
+			fSourceViewer.addPainter(fWhiteSpacePainter);
+		} else {
+			if (fWhiteSpacePainter != null) {
+				fSourceViewer.removePainter(fWhiteSpacePainter);
+				fWhiteSpacePainter = null;
+			}
+		}
 	}
 
 	/**
@@ -696,6 +742,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		}
 		fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
 		if (fSourceViewer != null && fSourceViewer.getControl() != null) {
+			removePreferenceListener();
+			disposeWhitespaceCharacterPainter();
 			fSourceViewer.getControl().dispose();
 		}
 
