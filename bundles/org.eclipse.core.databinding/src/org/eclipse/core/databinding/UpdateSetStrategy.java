@@ -15,8 +15,6 @@ package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -82,8 +80,6 @@ public class UpdateSetStrategy extends UpdateStrategy {
 		return i;
 	}
 
-	protected IConverter converter;
-
 	private int updatePolicy;
 
 	protected boolean provideDefaults;
@@ -128,21 +124,6 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	public UpdateSetStrategy(boolean provideDefaults, int updatePolicy) {
 		this.provideDefaults = provideDefaults;
 		this.updatePolicy = updatePolicy;
-	}
-
-	/**
-	 * When an element is added to the destination converts the element from the
-	 * source element type to the destination element type.
-	 * <p>
-	 * Default implementation will use the {@link #setConverter(IConverter)
-	 * converter} if one exists. If no converter exists no conversion occurs.
-	 * </p>
-	 *
-	 * @param element
-	 * @return the converted element
-	 */
-	public Object convert(Object element) {
-		return converter == null ? element : converter.convert(element);
 	}
 
 	/**
@@ -202,9 +183,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 		try {
 			observableSet.add(element);
 		} catch (Exception ex) {
-			return ValidationStatus.error(BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-					ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -221,9 +200,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 		try {
 			observableSet.remove(element);
 		} catch (Exception ex) {
-			return ValidationStatus.error(BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-					ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}

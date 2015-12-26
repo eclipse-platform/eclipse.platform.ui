@@ -22,6 +22,9 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.NumberToStringConverter;
 import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.Activator;
+import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
 import org.eclipse.core.internal.databinding.conversion.CharacterToStringConverter;
@@ -87,6 +90,8 @@ import com.ibm.icu.text.NumberFormat;
 			return Character.class;
 		return clazz;
 	}
+
+	protected IConverter converter;
 
 	final protected void checkAssignable(Object toType, Object fromType,
 			String errorString) {
@@ -680,6 +685,39 @@ import com.ibm.icu.text.NumberFormat;
 					: Boolean.FALSE;
 		}
 		return null;
+	}
+
+	/**
+	 * @param ex
+	 *            the exception, that was caught
+	 * @return the validation status
+	 */
+	protected IStatus logErrorWhileSettingValue(Exception ex) {
+		IStatus errorStatus = ValidationStatus
+				.error(BindingMessages.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE), ex);
+		Policy.getLog().log(errorStatus);
+		return errorStatus;
+	}
+
+	/**
+	 * Converts the value from the source type to the destination type.
+	 * <p>
+	 * Default implementation will use the setConverter(IConverter), if one
+	 * exists. If no converter exists no conversion occurs.
+	 * </p>
+	 *
+	 * @param value
+	 * @return the converted value
+	 */
+	public Object convert(Object value) {
+		if (converter != null) {
+			try {
+				return converter.convert(value);
+			} catch (Exception ex) {
+				Policy.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, ex.getMessage(), ex));
+			}
+		}
+		return value;
 	}
 
 	/*

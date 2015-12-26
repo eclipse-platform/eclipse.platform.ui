@@ -15,8 +15,6 @@ package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -82,8 +80,6 @@ public class UpdateListStrategy extends UpdateStrategy {
 		return i;
 	}
 
-	protected IConverter converter;
-
 	private int updatePolicy;
 
 	protected boolean provideDefaults;
@@ -128,21 +124,6 @@ public class UpdateListStrategy extends UpdateStrategy {
 	public UpdateListStrategy(boolean provideDefaults, int updatePolicy) {
 		this.provideDefaults = provideDefaults;
 		this.updatePolicy = updatePolicy;
-	}
-
-	/**
-	 * When an element is added to the destination converts the element from the
-	 * source element type to the destination element type.
-	 * <p>
-	 * Default implementation will use the {@link #setConverter(IConverter)
-	 * converter} if one exists. If no converter exists no conversion occurs.
-	 * </p>
-	 *
-	 * @param element
-	 * @return the converted element
-	 */
-	public Object convert(Object element) {
-		return converter == null ? element : converter.convert(element);
 	}
 
 	/**
@@ -204,11 +185,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.add(index, element);
 		} catch (Exception ex) {
-			return ValidationStatus
-					.error(
-							BindingMessages
-									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-							ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -225,11 +202,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.remove(index);
 		} catch (Exception ex) {
-			return ValidationStatus
-					.error(
-							BindingMessages
-									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-							ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -279,11 +252,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.move(oldIndex, newIndex);
 		} catch (Exception ex) {
-			return ValidationStatus
-					.error(
-							BindingMessages
-									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-							ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -303,11 +272,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 		try {
 			observableList.set(index, element);
 		} catch (Exception ex) {
-			return ValidationStatus
-					.error(
-							BindingMessages
-									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-							ex);
+			return logErrorWhileSettingValue(ex);
 		}
 		return Status.OK_STATUS;
 	}
