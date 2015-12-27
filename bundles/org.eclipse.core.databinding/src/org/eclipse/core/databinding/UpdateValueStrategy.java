@@ -129,7 +129,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Policy constant denoting that the source observable's state should be
 	 * tracked, and that validation, conversion and updating the destination
-	 * observable's value should be performed automaticlly on every change of
+	 * observable's value should be performed automatically on every change of
 	 * the source observable value.
 	 */
 	public static int POLICY_UPDATE = notInlined(8);
