@@ -41,6 +41,8 @@ import org.eclipse.ui.views.IViewRegistry;
 
 public class ViewRegistry implements IViewRegistry {
 
+	public static final String VIEW_TAG = "View"; //$NON-NLS-1$
+
 	@Inject
 	private MApplication application;
 
@@ -122,7 +124,7 @@ public class ViewRegistry implements IViewRegistry {
 		descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 
 		List<String> tags = descriptor.getTags();
-		tags.add("View"); //$NON-NLS-1$
+		tags.add(VIEW_TAG);
 
 		descriptor.setCloseable(true);
 		descriptor.setAllowMultiple(Boolean.parseBoolean(element

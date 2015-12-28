@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.graphics.Point;
@@ -29,6 +28,8 @@ import org.eclipse.ui.internal.WindowTrimProxy;
  * @since 3.2
  */
 public class TrimArea {
+
+	public static final String STATUS_LINE_MANAGER_ID = "org.eclipse.jface.action.StatusLineManager"; //$NON-NLS-1$
 
 	/**
 	 * This is a convenience class that caches information for a single 'tiled'
@@ -236,8 +237,7 @@ public class TrimArea {
 				CBanner banner = (CBanner) ctrl;
 				prefSize.x = banner.getRightWidth() + banner.getBorderWidth() + MIN_BANNER_LEFT;
 				prefSize.y = 0;  // No height for now, computed later
-			}
-			else if (getData(ctrl).getId().equals("org.eclipse.jface.action.StatusLineManager")) { //$NON-NLS-1$
+			} else if (getData(ctrl).getId().equals(STATUS_LINE_MANAGER_ID)) {
 				// Hack !! should fix StatusLine itself
 				// We have to force the StatusLine to have a consistent
 				// preferred width (it's computeSize takes the message into
