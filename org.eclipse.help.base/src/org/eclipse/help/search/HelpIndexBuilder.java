@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
@@ -304,14 +304,13 @@ public class HelpIndexBuilder {
 		// compute the dir tree
 		computeLocaleDirs(fid!=null);
 
-		monitor.beginTask(HelpBaseResources.HelpIndexBuilder_buildingIndex, localeDirs.size());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, HelpBaseResources.HelpIndexBuilder_buildingIndex, localeDirs.size());
 		MultiStatus multiStatus = null;
 
 		for (int i=0; i<localeDirs.size(); i++) {
 			// process locale dir
 			LocaleDir localeDir = localeDirs.get(i);
-			MultiStatus localeStatus = processLocaleDir(pid, fid,
-					localeDir, new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			MultiStatus localeStatus = processLocaleDir(pid, fid, localeDir, subMonitor.split(1));
 			if (localeStatus != null) {
 				if (multiStatus == null)
 					multiStatus = localeStatus;
@@ -319,7 +318,7 @@ public class HelpIndexBuilder {
 					multiStatus.addAll(localeStatus);
 			}
 		}
-		monitor.done();
+		subMonitor.done();
 		if (multiStatus != null)
 			throw new CoreException(multiStatus);
 	}
@@ -467,12 +466,8 @@ public class HelpIndexBuilder {
 	 * documents according to the tocs, then building the index.
 	 */
 
-	private MultiStatus processLocaleDir(PluginIdentifier id,
-			PluginIdentifier fid, LocaleDir localeDir, IProgressMonitor monitor)
-			throws CoreException {
-		// build an index for each locale directory
-		String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, localeDir.dirs.get(0).getName());
-		monitor.beginTask(message, 5);
+	private MultiStatus processLocaleDir(PluginIdentifier id, PluginIdentifier fid, LocaleDir localeDir,
+			SubMonitor monitor) throws CoreException {
 		File directory = localeDir.dirs.get(0);
 		File indexDirectory = new File(directory, indexPath);
 		prepareDirectory(indexDirectory);
@@ -485,12 +480,9 @@ public class HelpIndexBuilder {
 			IndexerPluginVersionInfo docPlugins = new IndexerPluginVersionInfo(id,
 				fid, indexDirectory);
 			index.setDocPlugins(docPlugins);
-			status = createIndex(id.id, fid!=null, localeDir, index, docs,
-				new SubProgressMonitor(monitor, 5, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			status = createIndex(id.id, fid != null, localeDir, index, docs, monitor);
 			index.deleteLockFile();
 		}
-		monitor.setTaskName(""); //$NON-NLS-1$
-		monitor.done();
 		return status;
 	}
 
@@ -573,10 +565,12 @@ public class HelpIndexBuilder {
 	 * will be ignored.
 	 */
 
-	private MultiStatus createIndex(String pluginId, boolean fragment, LocaleDir localeDir,
-			SearchIndex index, Collection<String> addedDocs, IProgressMonitor monitor)
+	private MultiStatus createIndex(String pluginId, boolean fragment, LocaleDir localeDir, SearchIndex index,
+			Collection<String> addedDocs, SubMonitor monitor)
 			throws CoreException {
-		monitor.beginTask(HelpBaseResources.UpdatingIndex, addedDocs.size());
+		// build an index for each locale directory
+		String taskName = NLS.bind(HelpBaseResources.HelpIndexBuilder_indexFor, localeDir.dirs.get(0).getName());
+		monitor.beginTask(taskName + HelpBaseResources.UpdatingIndex, addedDocs.size());
 		if (!index.beginAddBatch(true)) {
 			throwCoreException(HelpBaseResources.HelpIndexBuilder_error, null);
 		}
@@ -607,7 +601,7 @@ public class HelpIndexBuilder {
 			checkCancelled(monitor);
 			monitor.worked(1);
 		}
-		monitor.subTask(HelpBaseResources.Writing_index);
+		monitor.subTask(taskName + HelpBaseResources.Writing_index);
 		if (!index.endAddBatch(true, true)) {
 			IStatus status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 					IStatus.OK, HelpBaseResources.HelpIndexBuilder_errorWriting, null);
@@ -615,7 +609,6 @@ public class HelpIndexBuilder {
 				multiStatus = createMultiStatus();
 			multiStatus.add(status);
 		}
-		monitor.done();
 		return multiStatus;
 	}
 

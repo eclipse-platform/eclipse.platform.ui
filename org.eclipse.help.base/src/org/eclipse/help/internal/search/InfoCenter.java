@@ -171,11 +171,11 @@ public final class InfoCenter implements ISearchEngine {
 		tocs.clear();
 		try {
 			URLConnection connection = ProxyUtil.getConnection(url);
-			monitor.beginTask(HelpBaseResources.InfoCenter_connecting, 5);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, HelpBaseResources.InfoCenter_connecting, 5);
 			is = connection.getInputStream();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-				monitor.worked(1);
-				load(((Scope) scope).url, reader, collector, new SubProgressMonitor(monitor, 4));
+				subMonitor.worked(1);
+				load(((Scope) scope).url, reader, collector, subMonitor.split(4));
 			}
 		} catch (FileNotFoundException e) {
 			reportError(HelpBaseResources.InfoCenter_fileNotFound, e, collector);
@@ -207,8 +207,8 @@ public final class InfoCenter implements ISearchEngine {
 			parser.setEntityResolver(new LocalEntityResolver());
 			if (monitor.isCanceled())
 				return;
-			monitor.beginTask("", 5); //$NON-NLS-1$
-			monitor.subTask(HelpBaseResources.InfoCenter_searching);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 5);
+			subMonitor.subTask(HelpBaseResources.InfoCenter_searching);
 			document = parser.parse(new InputSource(r));
 			if (monitor.isCanceled())
 				return;
@@ -221,9 +221,8 @@ public final class InfoCenter implements ISearchEngine {
 				if (monitor.isCanceled())
 					return;
 			}
-			monitor.worked(1);
-			load(baseURL, document, (Element) root, collector,
-					new SubProgressMonitor(monitor, 4));
+			subMonitor.worked(1);
+			load(baseURL, document, (Element) root, collector, subMonitor.split(4));
 		} catch (ParserConfigurationException e) {
 			// ignore
 		} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
@@ -95,15 +95,14 @@ class IndexingOperation {
 			BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
 			return;
 		}
-		pm.beginTask(HelpBaseResources.UpdatingIndex, numRemoved + 10
-				* numAdded);
+		SubMonitor subMonitor = SubMonitor.convert(pm, HelpBaseResources.UpdatingIndex, numRemoved + 10 * numAdded);
 
 		// 1. remove all documents for plugins changed (including change in a
 		// fragment)
-		removeStaleDocuments(new SubProgressMonitor(pm, numRemoved), staleDocs);
+		removeStaleDocuments(subMonitor.split(numRemoved), staleDocs);
 		checkCancelled(pm);
 		// 2. merge prebult plugin indexes and addjust
-		addNewDocuments(new SubProgressMonitor(pm, 10 * numAdded), newDocs,
+		addNewDocuments(subMonitor.split(10 * numAdded), newDocs,
 				staleDocs.size() == 0);
 
 		pm.done();
@@ -154,13 +153,11 @@ class IndexingOperation {
 		Collection<URL> docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
 		checkCancelled(pm);
 		Map<String, String[]> docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
-		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(pm, 10 * docsToIndex.size() + docsToDelete.size());
 		checkCancelled(pm);
-		addDocuments(new SubProgressMonitor(pm, 10 * docsToIndex.size()),
-				docsToIndex, docsToDelete.size() == 0);
+		addDocuments(subMonitor.split(10 * docsToIndex.size()), docsToIndex, docsToDelete.size() == 0);
 		checkCancelled(pm);
-		removeNewDocuments(new SubProgressMonitor(pm, docsToDelete.size()),
-				docsToDelete);
+		removeNewDocuments(subMonitor.split(docsToDelete.size()), docsToDelete);
 		pm.done();
 		return docsToDelete;
 	}

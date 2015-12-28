@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
@@ -113,11 +113,11 @@ public class SearchManager {
 		SearchState state = new SearchState();
 		state.searchQuery = searchQuery;
 
-		pm.beginTask("", 100); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(pm, 100);
 
 		// allocate half of the progress bar for each
-		state.localMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-		state.remoteMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+		state.localMonitor = subMonitor.split(50, SubMonitor.SUPPRESS_SUBTASK);
+		state.remoteMonitor = subMonitor.split(50, SubMonitor.SUPPRESS_SUBTASK);
 
 		// start both searches in parallel
 		state.localSearchJob.schedule();

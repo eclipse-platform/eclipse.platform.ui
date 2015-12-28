@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2006, 2016 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.search.ISearchHitCollector;
@@ -38,7 +38,7 @@ public class RemoteSearchManager {
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
-		pm.beginTask("", 100); //$NON-NLS-1$
+		SubMonitor subMonitor = SubMonitor.convert(pm, 100);
 
 		PreferenceFileHandler prefHandler = new PreferenceFileHandler();
 		String host[] = prefHandler.getHostEntries();
@@ -72,7 +72,7 @@ public class RemoteSearchManager {
 
 							RemoteSearchParser parser = new RemoteSearchParser();
 							// parse the XML-serialized search results
-							List<SearchHit> hits = parser.parse(in, new SubProgressMonitor(pm, 100));
+							List<SearchHit> hits = parser.parse(in, subMonitor.split(100));
 							collector.addHits(hits, null);
 						} catch (IOException e) {
 							String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
