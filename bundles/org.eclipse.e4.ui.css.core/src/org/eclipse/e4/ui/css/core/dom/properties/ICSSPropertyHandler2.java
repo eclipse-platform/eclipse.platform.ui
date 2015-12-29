@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Angelo Zerr and others.
+ * Copyright (c) 2008, 2015 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,19 @@ public interface ICSSPropertyHandler2 {
 	 * @param engine
 	 * @throws Exception
 	 */
-	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
-			throws Exception;
+	default void onAllCSSPropertiesApplyed(Object element, CSSEngine engine) throws Exception {
+		// do nothing
+	}
+
+	/**
+	 * Callback method called when all CSS properties are applied.
+	 *
+	 * @param element
+	 * @param engine
+	 * @param pseudo
+	 * @throws Exception
+	 */
+	default void onAllCSSPropertiesApplyed(Object element, CSSEngine engine, String pseudo) throws Exception {
+		onAllCSSPropertiesApplyed(element, engine);
+	}
 }
