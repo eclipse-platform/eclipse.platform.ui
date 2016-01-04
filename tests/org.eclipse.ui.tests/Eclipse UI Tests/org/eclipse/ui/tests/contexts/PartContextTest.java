@@ -102,6 +102,8 @@ public class PartContextTest extends UITestCase {
 		checkActiveContext(globalService, WINDOW_CONTEXT_ID, false);
 
 		IWorkbenchWindow window = openTestWindow();
+		assertTrue(forceActive(window.getShell()));
+
 		IContextService localService = window
 				.getService(IContextService.class);
 		localService.activateContext(WINDOW_CONTEXT_ID);
