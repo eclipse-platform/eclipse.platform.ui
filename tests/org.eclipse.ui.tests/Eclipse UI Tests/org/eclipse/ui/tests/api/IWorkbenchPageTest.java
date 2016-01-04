@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -55,6 +57,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -70,7 +73,11 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+import org.junit.Assume;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IWorkbenchPageTest extends UITestCase {
 
 	private IWorkbenchPage fActivePage;
@@ -155,12 +162,12 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	@Override
 	protected void doTearDown() throws Exception {
-		super.doTearDown();
+		Platform.removeLogListener(openAndHideListener);
 		if (proj != null) {
 			FileUtil.deleteProject(proj);
 			proj = null;
 		}
-		Platform.removeLogListener(openAndHideListener);
+		super.doTearDown();
 	}
 
 	/**
@@ -1044,6 +1051,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	 */
 	public void testFindViewReference() throws Throwable {
 		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findView(MockViewPart.ID));
@@ -1057,6 +1065,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNotNull(fActivePage.findView(MockViewPart.ID2));
 
 		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findView(SessionView.VIEW_ID));
@@ -1078,7 +1087,16 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=471782
 	 */
 	public void testFindViewReferenceAfterShowViewCommand() throws Throwable {
+		boolean activeShell = forceActive(fWin.getShell());
+
+		final AtomicBoolean shellIsActive = new AtomicBoolean(activeShell);
+		Assume.assumeTrue(shellIsActive.get());
+
+		ShellListener shellListener = new ShellStateListener(shellIsActive);
+		fWin.getShell().addShellListener(shellListener);
+
 		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findView(MockViewPart.ID));
@@ -1087,11 +1105,19 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNull(fActivePage.findViewReference(MockViewPart.ID2));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
 
+		Assume.assumeTrue(forceActive(fWin.getShell()));
+
 		showViewViaCommand(MockViewPart.ID2);
+
+		Assume.assumeTrue(fWin.getShell().isVisible());
+		Assume.assumeTrue(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assume.assumeTrue(shellIsActive.get());
+
 		assertNotNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID2));
 
 		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNotNull(fActivePage.findView(SessionView.VIEW_ID));
@@ -1113,8 +1139,17 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=471782
 	 */
 	public void testFindHistoryViewReferenceAfterShowViewCommand() throws Throwable {
+		boolean activeShell = forceActive(fWin.getShell());
+
+		final AtomicBoolean shellIsActive = new AtomicBoolean(activeShell);
+		Assume.assumeTrue(shellIsActive.get());
+
+		ShellListener shellListener = new ShellStateListener(shellIsActive);
+		fWin.getShell().addShellListener(shellListener);
+
 		String historyView = "org.eclipse.team.ui.GenericHistoryView";
 		fWin.getWorkbench().showPerspective(ViewPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNotNull(fActivePage.findView(MockViewPart.ID));
@@ -1124,11 +1159,18 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNull(fActivePage.findViewReference(historyView));
 		assertNotNull(fActivePage.findViewReference(MockViewPart.ID));
 
+		Assume.assumeTrue(forceActive(fWin.getShell()));
 		showViewViaCommand(historyView);
+
+		Assume.assumeTrue(fWin.getShell().isVisible());
+		Assume.assumeTrue(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == fWin);
+		Assume.assumeTrue(shellIsActive.get());
+
 		assertNotNull(fActivePage.findView(historyView));
 		assertNotNull(fActivePage.findViewReference(historyView));
 
 		fWin.getWorkbench().showPerspective(SessionPerspective.ID, fWin);
+		processEvents();
 		assertNull(fActivePage.findView(MockViewPart.ID2));
 		assertNull(fActivePage.findView(MockViewPart.ID4));
 		assertNull(fActivePage.findView(historyView));
@@ -1145,15 +1187,19 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	private void showViewViaCommand(String viewId) throws Throwable {
+		waitForJobs(500, 3000);
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewId);
 
 		Command command = createCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		ExecutionEvent event = createEvent(command, parameters);
+
+		// org.eclipse.ui.handlers.ShowViewHandler needs the *right* window!
+		assertEquals(fWin, HandlerUtil.getActiveWorkbenchWindow(event));
+
 		command.executeWithChecks(event);
-		while (fWorkbench.getDisplay().readAndDispatch()) {
-			// process events, who knows what is flying after command execution
-		}
+		processEvents();
+		waitForJobs(500, 3000);
 	}
 
 	private ExecutionEvent createEvent(Command command, Map<String, String> parameters) {
@@ -1172,6 +1218,7 @@ public class IWorkbenchPageTest extends UITestCase {
 	public void testFindSecondaryViewReference() throws Throwable {
 		fActivePage.getWorkbenchWindow().getWorkbench().showPerspective(
 				SessionPerspective.ID, fActivePage.getWorkbenchWindow());
+		processEvents();
 		assertNull(fActivePage.findViewReference(MockViewPart.IDMULT, "1"));
 
 		fActivePage.showView(MockViewPart.IDMULT, "1", IWorkbenchPage.VIEW_ACTIVATE);
