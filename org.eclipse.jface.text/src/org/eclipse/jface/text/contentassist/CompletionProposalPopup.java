@@ -1147,8 +1147,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
 			if (USE_VIRTUAL) {
-				fProposalTable.setItemCount(newLen);
 				fProposalTable.clearAll();
+				fProposalTable.setItemCount(newLen);
 			} else {
 				fProposalTable.setRedraw(false);
 				fProposalTable.setItemCount(newLen);
