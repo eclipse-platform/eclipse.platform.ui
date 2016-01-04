@@ -22,6 +22,7 @@ import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
+import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
@@ -58,7 +59,8 @@ import org.junit.runners.Suite;
 	AdaptableTestSuite.class,
 	MultiPageEditorTestSuite.class,
 	ContextsTestSuite.class,
-	ConcurrencyTestSuite.class
+	ConcurrencyTestSuite.class,
+	FilteredTreeTests.class
 })
 public class UiTestSuite {
 
@@ -74,7 +76,6 @@ public class UiTestSuite {
 	// PresentationsTestSuite.class,
 	// LeakTests.class,
 	// MultiEditorTestSuite.class,
-	// FilteredTreeTests.class,
 	// StatusHandlingTestSuite.class,
 	// OpenSystemInPlaceEditorTest..class,
 }
