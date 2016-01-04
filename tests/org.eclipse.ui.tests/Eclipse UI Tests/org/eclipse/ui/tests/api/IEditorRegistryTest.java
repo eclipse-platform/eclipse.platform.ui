@@ -33,9 +33,12 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IEditorRegistryTest extends TestCase {
 	private IEditorRegistry fReg;
 
@@ -412,9 +415,9 @@ public class IEditorRegistryTest extends TestCase {
 	}
 
 	public void testSwitchDefaultToExternalBug236104() {
-		IEditorDescriptor htmlDescriptor = fReg.getDefaultEditor("test.html");
-		assertNotNull("Default editor for html files should not be null",
-				htmlDescriptor);
+		IEditorDescriptor editor = fReg.getDefaultEditor("a.mock1");
+		assertNotNull("Default editor should not be null", editor);
+		assertEquals(editor.getId(), MockEditorPart.ID1);
 
 		IFileEditorMapping[] src = fReg.getFileEditorMappings();
 		FileEditorMapping[] maps = new FileEditorMapping[src.length];
@@ -422,7 +425,7 @@ public class IEditorRegistryTest extends TestCase {
 		FileEditorMapping map = null;
 
 		for (FileEditorMapping map2 : maps) {
-			if (map2.getExtension().equals("html")) {
+			if (map2.getExtension().equals("mock1")) {
 				map = map2;
 				break;
 			}
@@ -442,14 +445,14 @@ public class IEditorRegistryTest extends TestCase {
 			PrefUtil.savePrefs();
 
 			IEditorDescriptor newDescriptor = fReg
-					.getDefaultEditor("test.html");
+					.getDefaultEditor("a.mock1");
 
 			assertEquals(
 					"Parameter replaceDescriptor should be the same as parameter new Descriptor",
 					replacementDescriptor, newDescriptor);
 			assertFalse(
-					"Parameter replaceDescriptor should not be equals to htmlDescriptor",
-					replacementDescriptor.equals(htmlDescriptor));
+					"Parameter replaceDescriptor should not be equals to a.mock1 Descriptor",
+					replacementDescriptor.equals(editor));
 		} finally {
 			src = fReg.getFileEditorMappings();
 			maps = new FileEditorMapping[src.length];
@@ -457,7 +460,7 @@ public class IEditorRegistryTest extends TestCase {
 			map = null;
 
 			for (FileEditorMapping map2 : maps) {
-				if (map2.getExtension().equals("html")) {
+				if (map2.getExtension().equals("mock1")) {
 					map = map2;
 					break;
 				}
@@ -467,7 +470,7 @@ public class IEditorRegistryTest extends TestCase {
 					"Parameter map should not be null before setting the default editor",
 					map);
 
-			map.setDefaultEditor(htmlDescriptor);
+			map.setDefaultEditor(editor);
 			((EditorRegistry) fReg).setFileEditorMappings(maps);
 			((EditorRegistry) fReg).saveAssociations();
 			PrefUtil.savePrefs();
