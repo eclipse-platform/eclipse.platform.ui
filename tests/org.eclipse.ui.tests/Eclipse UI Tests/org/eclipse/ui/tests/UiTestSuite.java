@@ -24,6 +24,7 @@ import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.progress.ProgressTestSuite;
+import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.junit.runner.RunWith;
@@ -48,12 +49,12 @@ import org.junit.runners.Suite;
 	OperationsTestSuite.class,
 	FieldAssistTestSuite.class,
 	ServicesTestSuite.class,
-	ProgressTestSuite.class
+	ProgressTestSuite.class,
+	PropertySheetTestSuite.class
 })
 public class UiTestSuite {
 
 	// Not enabled tests:
-	// PropertySheetTestSuite.class,
 	// QuickAccessTestSuite.class,
 	// InternalTestSuite.class,
 	// AdaptableTestSuite.class,

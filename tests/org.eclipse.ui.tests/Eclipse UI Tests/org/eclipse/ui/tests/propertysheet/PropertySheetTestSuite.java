@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
 
+import org.junit.runner.RunWith;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Test areas of the Property Sheet API.
  */
+@RunWith(org.junit.runners.AllTests.class)
 public class PropertySheetTestSuite extends TestSuite {
 
     /**
