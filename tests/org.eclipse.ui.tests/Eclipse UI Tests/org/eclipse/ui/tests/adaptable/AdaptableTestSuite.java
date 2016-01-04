@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
+import org.junit.runner.RunWith;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -17,6 +19,7 @@ import junit.framework.TestSuite;
  * The AdaptableTestSuite is the TestSuite for the
  * adaptable support in the UI.
  */
+@RunWith(org.junit.runners.AllTests.class)
 public class AdaptableTestSuite extends TestSuite {
 
     /**

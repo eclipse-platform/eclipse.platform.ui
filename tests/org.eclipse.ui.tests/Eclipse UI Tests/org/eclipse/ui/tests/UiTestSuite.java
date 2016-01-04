@@ -12,6 +12,7 @@
 package org.eclipse.ui.tests;
 
 import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
+import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.api.StartupTest;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
@@ -50,14 +51,14 @@ import org.junit.runners.Suite;
 	FieldAssistTestSuite.class,
 	ServicesTestSuite.class,
 	ProgressTestSuite.class,
-	PropertySheetTestSuite.class
+	PropertySheetTestSuite.class,
+	AdaptableTestSuite.class
 })
 public class UiTestSuite {
 
 	// Not enabled tests:
 	// QuickAccessTestSuite.class,
 	// InternalTestSuite.class,
-	// AdaptableTestSuite.class,
 	// ZoomTestSuite.class,
 	// DynamicPluginsTestSuite.class,
 	// MultiPageEditorTestSuite.class,
