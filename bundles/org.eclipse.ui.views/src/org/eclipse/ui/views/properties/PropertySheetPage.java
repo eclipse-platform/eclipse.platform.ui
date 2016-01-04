@@ -471,7 +471,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
 		ImageDescriptor imageDescriptor = AbstractUIPlugin
-				.imageDescriptorFromPlugin(String.valueOf(bundle.getBundleId()), ICONS_PATH + relativeIconPath);
+				.imageDescriptorFromPlugin(bundle.getSymbolicName(), ICONS_PATH + relativeIconPath);
 		return imageDescriptor;
     }
 
