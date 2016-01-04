@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.statushandlers;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.internal.registry.RegistryMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -32,6 +30,9 @@ import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.eclipse.ui.tests.harness.util.UITestCase;
+
+import junit.framework.TestCase;
 
 /**
  * Tests whether the errors in wizards are handled properly
@@ -93,9 +94,13 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 	}
 
 	public void testWizardWithNoDefaultContructor() {
+		UITestCase.processEvents();
+
 		final CustomWizardDialog dialog = exportWizard();
 		dialog.setBlockOnOpen(false);
 		dialog.open();
+
+		UITestCase.processEvents();
 
 		// selecting FaultyExportWizard
 		IWizardPage currenPage = dialog.getCurrentPage();
@@ -108,12 +113,15 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 			if (table.getItem(i).getText().equals(FAULTY_WIZARD_NAME)) {
 				table.select(i);
 				table.notifyListeners(SWT.Selection, new Event());
+				UITestCase.processEvents();
 				break;
 			}
 		}
 
 		// pressing "Next"
 		dialog.nextPressed2();
+
+		UITestCase.processEvents();
 		assertStatusAdapter(TestStatusHandler.getLastHandledStatusAdapter());
 		assertEquals(TestStatusHandler.getLastHandledStyle(),
 				StatusManager.SHOW);

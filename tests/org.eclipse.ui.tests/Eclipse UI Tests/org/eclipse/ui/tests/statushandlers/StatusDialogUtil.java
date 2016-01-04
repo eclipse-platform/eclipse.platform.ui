@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
  * This class parses the structure of the Shell and finds necessary widgets.
@@ -57,6 +58,7 @@ public class StatusDialogUtil {
 	}
 
 	public static Shell getStatusShell(){
+		UITestCase.waitForJobs(100, 1000);
 		Shell[] shells = Display.getDefault().getShells();
 		for (int i = 0; i < shells.length; i++) {
 			if (shells[i].getText().equals("Problem Occurred")
