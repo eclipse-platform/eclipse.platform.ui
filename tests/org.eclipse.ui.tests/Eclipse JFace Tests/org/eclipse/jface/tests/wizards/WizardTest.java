@@ -12,8 +12,6 @@
 
 package org.eclipse.jface.tests.wizards;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -25,6 +23,8 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class WizardTest extends TestCase {
 	/**
@@ -229,15 +229,20 @@ public class WizardTest extends TestCase {
 		wizard.setThrowExceptionOnDispose(true);
 
 		final boolean logged[] = new boolean[1];
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				logged[0] = true;
-			}
-		});
-		Shell shell = dialog.getShell();
-		dialog.close();
-
+		Shell shell;
+		ILogger oldLogger = Policy.getLog();
+		try {
+			Policy.setLog(new ILogger() {
+				@Override
+				public void log(IStatus status) {
+					logged[0] = true;
+				}
+			});
+			shell = dialog.getShell();
+			dialog.close();
+		} finally {
+			Policy.setLog(oldLogger);
+		}
         assertTrue(logged[0]);
 
         shell.dispose();
@@ -246,14 +251,18 @@ public class WizardTest extends TestCase {
 	public void testWizardPageDispose() {
         wizard.page2.setThrowExceptionOnDispose(true);
         final boolean logged[] = new boolean[1];
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				logged[0] = true;
-			}
-		});
-        dialog.close();
-
+		ILogger oldLogger = Policy.getLog();
+		try {
+			Policy.setLog(new ILogger() {
+				@Override
+				public void log(IStatus status) {
+					logged[0] = true;
+				}
+			});
+			dialog.close();
+		} finally {
+			Policy.setLog(oldLogger);
+		}
         assertTrue(logged[0]);
         assertTrue(wizard.page1.getControl().isDisposed());
         assertTrue(wizard.page3.getControl().isDisposed());

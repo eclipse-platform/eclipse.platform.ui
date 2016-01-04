@@ -147,26 +147,26 @@ public class FontPreferenceTestCase extends UITestCase {
 		// redirect logging so that we catch the error log
 		final boolean[] errorLogged = new boolean[] { false };
 		ILogger logger = Policy.getLog();
-		Policy.setLog(new ILogger() {
-			@Override
-			public void log(IStatus status) {
-				if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE)) {
-					errorLogged[0] = true;
-				}
-			}} );
-
-
-    	Job job = new Job("Non-UI thread FontRegistry Access Test") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				// this should produce no exception, but should log a error
-				boolean created = checkFont(fontRegistry);
-				assertFalse(created);
-				return Status.OK_STATUS;
-			}
-    	};
-		job.schedule();
 		try {
+			Policy.setLog(new ILogger() {
+				@Override
+				public void log(IStatus status) {
+					if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE)) {
+						errorLogged[0] = true;
+					}
+				}} );
+
+
+	    	Job job = new Job("Non-UI thread FontRegistry Access Test") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					// this should produce no exception, but should log a error
+					boolean created = checkFont(fontRegistry);
+					assertFalse(created);
+					return Status.OK_STATUS;
+				}
+	    	};
+			job.schedule();
 			job.join();
 			assertTrue(errorLogged[0]);
 		} catch (InterruptedException e) {
