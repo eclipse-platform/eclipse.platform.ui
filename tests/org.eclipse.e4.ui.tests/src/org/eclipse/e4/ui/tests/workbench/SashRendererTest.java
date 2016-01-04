@@ -18,12 +18,11 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
 import org.junit.After;
 import org.junit.Before;
@@ -33,11 +32,13 @@ public class SashRendererTest {
 
 	private IEclipseContext appContext;
 	private E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -50,15 +51,13 @@ public class SashRendererTest {
 
 	@Test
 	public void testBug310027() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
-		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
-		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MApplication application = ems.createModelElement(MApplication.class);
+		MWindow window = ems.createModelElement(MWindow.class);
+		MPartSashContainer container = ems.createModelElement(MPartSashContainer.class);
+		MPartStack partStackA = ems.createModelElement(MPartStack.class);
+		MPartStack partStackB = ems.createModelElement(MPartStack.class);
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
 
 		window.setWidth(600);
 		window.setHeight(400);

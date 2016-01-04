@@ -18,11 +18,10 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,12 +29,14 @@ import org.junit.Test;
 public class MPartSashContainerTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -48,11 +49,10 @@ public class MPartSashContainerTest {
 
 	@Test
 	public void testPartSashContainer_Horizontal() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MPartSashContainer partSashContainer = ems.createModelElement(MPartSashContainer.class);
+		MPart partA = ems.createModelElement(MPart.class);
+		MPart partB = ems.createModelElement(MPart.class);
 
 		partSashContainer.setHorizontal(true);
 		partA.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
@@ -63,8 +63,7 @@ public class MPartSashContainerTest {
 		partSashContainer.getChildren().add(partA);
 		partSashContainer.getChildren().add(partB);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);

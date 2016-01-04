@@ -21,14 +21,13 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ToolItem;
@@ -39,12 +38,14 @@ import org.junit.Test;
 public class MToolItemTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -57,11 +58,10 @@ public class MToolItemTest {
 
 	private void testMToolItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
-		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
-				.createTrimmedWindow();
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-		MToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
+		MToolItem toolItem = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem.setLabel(before);
 
@@ -69,8 +69,7 @@ public class MToolItemTest {
 		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -143,11 +142,10 @@ public class MToolItemTest {
 
 	private void testMToolItem_Tooltip(String before, String beforeExpected,
 			String after, String afterExpected) {
-		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
-				.createTrimmedWindow();
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-		MToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
+		MToolItem toolItem = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem.setTooltip(before);
 
@@ -155,8 +153,7 @@ public class MToolItemTest {
 		trimBar.getChildren().add(toolBar);
 		toolBar.getChildren().add(toolItem);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -229,12 +226,11 @@ public class MToolItemTest {
 
 	@Test
 	public void testMToolItem_RadioItems() {
-		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
-				.createTrimmedWindow();
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-		MToolItem toolItem1 = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
-		MToolItem toolItem2 = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+		MTrimmedWindow window = ems.createModelElement(MTrimmedWindow.class);
+		MTrimBar trimBar = ems.createModelElement(MTrimBar.class);
+		MToolBar toolBar = ems.createModelElement(MToolBar.class);
+		MToolItem toolItem1 = ems.createModelElement(MDirectToolItem.class);
+		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
 
 		toolItem1.setType(ItemType.RADIO);
 		toolItem2.setType(ItemType.RADIO);
@@ -244,8 +240,7 @@ public class MToolItemTest {
 		toolBar.getChildren().add(toolItem1);
 		toolBar.getChildren().add(toolItem2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);

@@ -32,18 +32,14 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.junit.After;
 import org.junit.Before;
@@ -79,6 +75,7 @@ public class HandlerActivationTest {
 	private MPart partA2;
 	private EPartService partService;
 	private MPart partB1;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
@@ -87,6 +84,7 @@ public class HandlerActivationTest {
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
 		appContext.set(IWorkbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 		createLayoutWithThreeContextLayers();
 	}
 
@@ -102,23 +100,24 @@ public class HandlerActivationTest {
 	 * Creates an example application model with one window and two perspectives
 	 */
 	public void createLayoutWithThreeContextLayers() {
-		window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MPerspectiveStack perspectiveStack = MAdvancedFactory.INSTANCE.createPerspectiveStack();
+		window = ems.createModelElement(MWindow.class);
+		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
 		window.getChildren().add(perspectiveStack);
 
-		perspectiveA = MAdvancedFactory.INSTANCE.createPerspective();
-		perspectiveB = MAdvancedFactory.INSTANCE.createPerspective();
+		perspectiveA = ems.createModelElement(MPerspective.class);
+		perspectiveB = ems.createModelElement(MPerspective.class);
 
-		MPartStack stackA = MBasicFactory.INSTANCE.createPartStack();
-		partA1 = MBasicFactory.INSTANCE.createPart();
-		partA2 = MBasicFactory.INSTANCE.createPart();
+		MPartStack stackA = ems.createModelElement(MPartStack.class);
+		partA1 = ems.createModelElement(MPart.class);
+		partA2 = ems.createModelElement(MPart.class);
 		stackA.getChildren().add(partA1);
 		stackA.getChildren().add(partA2);
 		perspectiveA.getChildren().add(stackA);
 		perspectiveStack.getChildren().add(perspectiveA);
 
-		MPartStack stackB = MBasicFactory.INSTANCE.createPartStack();
-		partB1 = MBasicFactory.INSTANCE.createPart();
+		MPartStack stackB = ems.createModelElement(MPartStack.class);
+		partB1 = ems.createModelElement(MPart.class);
+		;
 		stackB.getChildren().add(partB1);
 		stackB.setSelectedElement(partB1);
 		perspectiveB.getChildren().add(stackB);
@@ -127,11 +126,11 @@ public class HandlerActivationTest {
 		perspectiveStack.setSelectedElement(perspectiveA);
 		stackA.setSelectedElement(partA1);
 
-		command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		command = ems.createModelElement(MCommand.class);
 		command.setElementId(COMMANDID);
 		command.setCommandName("Test Handler Activation");
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getCommands().add(command);
 		application.getChildren().add(window);
 		application.setContext(appContext);
@@ -267,7 +266,7 @@ public class HandlerActivationTest {
 	}
 
 	private TestHandler createTestHandlerInHandlerContainer(MHandlerContainer handlerContainer) {
-		MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
+		MHandler handler = ems.createModelElement(MHandler.class);
 		handler.setCommand(command);
 		TestHandler testHandler = new TestHandler() {
 

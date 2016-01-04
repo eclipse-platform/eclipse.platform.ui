@@ -20,12 +20,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,10 +46,12 @@ public class Bug308317Test {
 	}
 
 	protected IEclipseContext appContext;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -60,24 +61,23 @@ public class Bug308317Test {
 
 	@Test
 	public void testBug308317() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MApplication application = ems.createModelElement(MApplication.class);
+		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartStack stackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stackA = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stackA);
 		window.setSelectedElement(stackA);
 
-		MPartStack stackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stackB = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(stackB);
 
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partA = ems.createModelElement(MPart.class);
 		stackA.getChildren().add(partA);
 		stackA.setSelectedElement(partA);
 
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart partB = ems.createModelElement(MPart.class);
 		stackB.getChildren().add(partB);
 		stackB.setSelectedElement(partB);
 

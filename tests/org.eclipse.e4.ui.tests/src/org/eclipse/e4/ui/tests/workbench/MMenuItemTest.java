@@ -32,16 +32,12 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
@@ -49,8 +45,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
@@ -68,6 +64,7 @@ import org.junit.Test;
 public class MMenuItemTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
@@ -77,6 +74,7 @@ public class MMenuItemTest {
 		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -89,17 +87,16 @@ public class MMenuItemTest {
 
 	private void testMMenuItem_Text(String before, String beforeExpected,
 			String after, String afterExpected) {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem menuItem = ems.createModelElement(MDirectMenuItem.class);
 
 		menuItem.setLabel(before);
 
 		window.setMainMenu(menu);
 		menu.getChildren().add(menuItem);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -174,10 +171,10 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMMenuItem_RadioItems() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem menuItem1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		MMenuItem menuItem2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem menuItem1 = ems.createModelElement(MDirectMenuItem.class);
+		MMenuItem menuItem2 = ems.createModelElement(MDirectMenuItem.class);
 
 		menuItem1.setType(ItemType.RADIO);
 		menuItem2.setType(ItemType.RADIO);
@@ -186,8 +183,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem2);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -234,9 +230,9 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMDirectMenuItem_Check_Bug316752() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MMenuItem menuItem = ems.createModelElement(MDirectMenuItem.class);
 
 		menuItem.setType(ItemType.CHECK);
 		menuItem.setSelected(true);
@@ -244,8 +240,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -265,11 +260,10 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMHandledMenuItem_Check_Bug316752() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MHandledMenuItem menuItem = ems.createModelElement(MHandledMenuItem.class);
+		MCommand command = ems.createModelElement(MCommand.class);
 
 		command.setElementId("commandId");
 
@@ -280,8 +274,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -303,10 +296,10 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMHandledMenuItem_Check_Bug463280() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MHandledMenuItem menuItem = ems.createModelElement(MHandledMenuItem.class);
+		MCommand command = ems.createModelElement(MCommand.class);
 
 		command.setElementId("commandId");
 
@@ -319,7 +312,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -340,32 +333,31 @@ public class MMenuItemTest {
 
 	@Test
 	public void testSubMenuCreation() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -388,33 +380,32 @@ public class MMenuItemTest {
 
 	@Test
 	public void testTbrItem() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 		item2.setToBeRendered(false);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -437,33 +428,32 @@ public class MMenuItemTest {
 
 	@Test
 	public void testInvisibleItem() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 		item2.setVisible(false);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -488,32 +478,31 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMenuContribution() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -534,32 +523,31 @@ public class MMenuItemTest {
 
 	@Test
 	public void testWithVisible() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -622,32 +610,31 @@ public class MMenuItemTest {
 
 	@Test
 	public void testMenuBarVisibility() throws Exception {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		MWindow window = ems.createModelElement(MWindow.class);
+		MMenu menuBar = ems.createModelElement(MMenu.class);
 		menuBar.setElementId("org.eclipse.ui.main.menu");
 		window.setMainMenu(menuBar);
 
-		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setElementId("file");
 		fileMenu.setLabel("File");
 		menuBar.getChildren().add(fileMenu);
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
 
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		MMenuSeparator sep = ems.createModelElement(MMenuSeparator.class);
 		sep.setElementId("group1");
 		fileMenu.getChildren().add(sep);
 
-		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -690,7 +677,7 @@ public class MMenuItemTest {
 
 	@Test
 	public void testElementHierarchyInContext_DirectItem() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 
 		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
 		final MPart activePart = MBasicFactory.INSTANCE.createPart();
@@ -701,9 +688,8 @@ public class MMenuItemTest {
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MDirectMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MDirectMenuItem menuItem = ems.createModelElement(MDirectMenuItem.class);
 		final boolean executed[] = { false };
 		menuItem.setObject(new Object() {
 			@Execute
@@ -725,8 +711,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -755,7 +740,7 @@ public class MMenuItemTest {
 
 	@Test
 	public void testElementHierarchyInContext_HandledItem() {
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MWindow window = ems.createModelElement(MWindow.class);
 
 		MPartStack stack = MBasicFactory.INSTANCE.createPartStack();
 		final MPart activePart = MBasicFactory.INSTANCE.createPart();
@@ -766,16 +751,15 @@ public class MMenuItemTest {
 		window.getChildren().add(stack);
 		window.setSelectedElement(stack);
 
-		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		MCommand command = ems.createModelElement(MCommand.class);
 		command.setElementId("testElementHierarchyInContext_HandledItem");
 		command.setCommandName("Test HandledItem");
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
-		MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-				.createHandledMenuItem();
+		MMenu menu = ems.createModelElement(MMenu.class);
+		MHandledMenuItem menuItem = ems.createModelElement(MHandledMenuItem.class);
 		menuItem.setCommand(command);
 
-		MHandler handler = CommandsFactoryImpl.eINSTANCE.createHandler();
+		MHandler handler = ems.createModelElement(MHandler.class);
 		handler.setCommand(command);
 		final boolean executed[] = { false };
 		handler.setObject(new Object() {
@@ -799,8 +783,7 @@ public class MMenuItemTest {
 		menu.getChildren().add(menuItem);
 		window.setMainMenu(menu);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getCommands().add(command);
 		application.getChildren().add(window);
 		application.setContext(appContext);
@@ -835,20 +818,18 @@ public class MMenuItemTest {
 	}
 
 	private MMenuContribution createContribution(boolean withVisibleWhen) {
-		MMenuContribution mmc = MenuFactoryImpl.eINSTANCE
-				.createMenuContribution();
+		MMenuContribution mmc = ems.createModelElement(MMenuContribution.class);
 		mmc.setElementId("test.contrib1");
 		mmc.setParentId("file");
 		mmc.setPositionInParent("after=additions");
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("mmc.item1");
 		item1.setLabel("mmc.item1");
 		mmc.getChildren().add(item1);
 
 		if (withVisibleWhen) {
-			MCoreExpression exp = UiFactoryImpl.eINSTANCE
-					.createCoreExpression();
+			MCoreExpression exp = ems.createModelElement(MCoreExpression.class);
 			exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
 			mmc.setVisibleWhen(exp);
 		}
@@ -857,36 +838,31 @@ public class MMenuItemTest {
 	}
 
 	private void createMenuContribution(MApplication application) {
-		MMenuContribution mmc = MenuFactoryImpl.eINSTANCE
-				.createMenuContribution();
+		MMenuContribution mmc = ems.createModelElement(MMenuContribution.class);
 		mmc.setElementId("test.contrib2");
 		mmc.setParentId("org.eclipse.ui.main.menu");
 		mmc.setPositionInParent("after=additions");
 
-		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		MMenu menu = ems.createModelElement(MMenu.class);
 		menu.setElementId("vanish");
 		menu.setLabel("Vanish");
 		mmc.getChildren().add(menu);
 
-		MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+		MCoreExpression exp = ems.createModelElement(MCoreExpression.class);
 		exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
 		mmc.setVisibleWhen(exp);
 
 		application.getMenuContributions().add(mmc);
 
-		mmc = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		mmc = ems.createModelElement(MMenuContribution.class);
 		mmc.setElementId("test.contrib3");
 		mmc.setParentId("vanish");
 		mmc.setPositionInParent("after=additions");
 
-		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("mmc.item2");
 		item1.setLabel("mmc.item2");
 		mmc.getChildren().add(item1);
-
-		// exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
-		// exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
-		// mmc.setVisibleWhen(exp);
 
 		application.getMenuContributions().add(mmc);
 	}

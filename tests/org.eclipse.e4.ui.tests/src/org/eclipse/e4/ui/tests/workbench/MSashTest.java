@@ -18,11 +18,10 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.After;
@@ -57,12 +56,14 @@ import org.junit.Test;
 public class MSashTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -77,8 +78,7 @@ public class MSashTest {
 	public void testSashWeights() {
 		MWindow window = createSashWithNViews(2);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
@@ -114,16 +114,15 @@ public class MSashTest {
 	}
 
 	private MWindow createSashWithNViews(int n) {
-		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		final MWindow window = ems.createModelElement(MWindow.class);
 		window.setHeight(300);
 		window.setWidth(401);
 		window.setLabel("MyWindow");
-		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer sash = ems.createModelElement(MPartSashContainer.class);
 		window.getChildren().add(sash);
 
 		for (int i = 0; i < n; i++) {
-			MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
+			MPart contributedPart = ems.createModelElement(MPart.class);
 			contributedPart.setLabel("Sample View" + i);
 			contributedPart
 					.setContributionURI("bundleclass://org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");

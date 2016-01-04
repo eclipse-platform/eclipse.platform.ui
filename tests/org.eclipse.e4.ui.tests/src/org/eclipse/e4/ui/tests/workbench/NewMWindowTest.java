@@ -26,11 +26,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
@@ -51,12 +51,14 @@ import org.junit.Test;
 public class NewMWindowTest {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		ems = appContext.get(EModelService.class);
 	}
 
 	@After
@@ -69,7 +71,7 @@ public class NewMWindowTest {
 
 	@Test
 	public void testCreateWindow() {
-		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		final MWindow window = ems.createModelElement(MWindow.class);
 		window.setLabel("MyWindow");
 		wb = new E4Workbench(window, appContext);
 
@@ -188,16 +190,15 @@ public class NewMWindowTest {
 	}
 
 	private MWindow createWindowWithOneView() {
-		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		final MWindow window = ems.createModelElement(MWindow.class);
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setLabel("MyWindow");
-		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer sash = ems.createModelElement(MPartSashContainer.class);
 		window.getChildren().add(sash);
-		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
 		sash.getChildren().add(stack);
-		MPart contributedPart = BasicFactoryImpl.eINSTANCE.createPart();
+		MPart contributedPart = ems.createModelElement(MPart.class);
 		stack.getChildren().add(contributedPart);
 		contributedPart.setLabel("Sample View");
 		contributedPart
@@ -208,20 +209,18 @@ public class NewMWindowTest {
 
 	private MWindow createWindowWithOneViewAndMenu() {
 		final MWindow window = createWindowWithOneView();
-		final MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		final MMenu menuBar = ems.createModelElement(MMenu.class);
 		window.setMainMenu(menuBar);
-		final MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		final MMenu fileMenu = ems.createModelElement(MMenu.class);
 		fileMenu.setLabel("File");
 		fileMenu.setElementId("file");
 		menuBar.getChildren().add(fileMenu);
 
-		final MMenuItem item1 = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		final MMenuItem item1 = ems.createModelElement(MDirectMenuItem.class);
 		item1.setElementId("item1");
 		item1.setLabel("item1");
 		fileMenu.getChildren().add(item1);
-		final MMenuItem item2 = MenuFactoryImpl.eINSTANCE
-				.createDirectMenuItem();
+		final MMenuItem item2 = ems.createModelElement(MDirectMenuItem.class);
 		item2.setElementId("item2");
 		item2.setLabel("item2");
 		fileMenu.getChildren().add(item2);

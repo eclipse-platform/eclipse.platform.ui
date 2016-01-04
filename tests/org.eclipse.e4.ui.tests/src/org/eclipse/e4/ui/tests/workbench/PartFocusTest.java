@@ -25,16 +25,15 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.swt.SWT;
@@ -62,6 +61,7 @@ public class PartFocusTest {
 	protected MToolControl toolControl;
 
 	protected MPart otherPart;
+	private EModelService ems;
 
 	@Before
 	public void setUp() throws Exception {
@@ -69,43 +69,43 @@ public class PartFocusTest {
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 
-		window = BasicFactoryImpl.eINSTANCE.createWindow();
+		ems = appContext.get(EModelService.class);
+
+		window = ems.createModelElement(MWindow.class);
 		window.setWidth(500);
 		window.setHeight(500);
 
-		MPartSashContainer sash = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
+		MPartSashContainer sash = ems.createModelElement(MPartSashContainer.class);
 		window.getChildren().add(sash);
 		window.setSelectedElement(sash);
 
-		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		MPartStack stack = ems.createModelElement(MPartStack.class);
 		sash.getChildren().add(stack);
 		sash.setSelectedElement(stack);
 
-		part = BasicFactoryImpl.eINSTANCE.createPart();
+		part = ems.createModelElement(MPart.class);
 		part.setElementId("Part");
 		part.setLabel("Part");
-		part.setToolbar(MenuFactoryImpl.eINSTANCE.createToolBar());
+		part.setToolbar(ems.createModelElement(MToolBar.class));
 		part.setContributionURI(Activator.asURI(PartBackend.class));
 		stack.getChildren().add(part);
 
-		toolControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		toolControl = ems.createModelElement(MToolControl.class);
 		toolControl.setElementId("ToolControl");
 		toolControl.setContributionURI(Activator.asURI(TextField.class));
 		part.getToolbar().getChildren().add(toolControl);
 
-		stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack = ems.createModelElement(MPartStack.class);
 		sash.getChildren().add(stack);
 		sash.setSelectedElement(stack);
 
-		otherPart = BasicFactoryImpl.eINSTANCE.createPart();
+		otherPart = ems.createModelElement(MPart.class);
 		otherPart.setElementId("OtherPart");
 		otherPart.setLabel("OtherPart");
 		otherPart.setContributionURI(Activator.asURI(PartBackend.class));
 		stack.getChildren().add(otherPart);
 
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
+		MApplication application = ems.createModelElement(MApplication.class);
 		application.getChildren().add(window);
 		application.setContext(appContext);
 		appContext.set(MApplication.class, application);
