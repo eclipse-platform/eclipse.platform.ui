@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import org.junit.runner.RunWith;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -18,6 +20,7 @@ import junit.framework.TestSuite;
  *
  * @since 3.1
  */
+@RunWith(org.junit.runners.AllTests.class)
 public final class ConcurrencyTestSuite extends TestSuite {
 
     /**

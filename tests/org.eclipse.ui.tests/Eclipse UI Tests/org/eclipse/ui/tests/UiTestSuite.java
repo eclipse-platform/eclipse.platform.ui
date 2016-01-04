@@ -15,6 +15,7 @@ import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
 import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
 import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.api.StartupTest;
+import org.eclipse.ui.tests.concurrency.ConcurrencyTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
 import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
@@ -56,7 +57,8 @@ import org.junit.runners.Suite;
 	PropertySheetTestSuite.class,
 	AdaptableTestSuite.class,
 	MultiPageEditorTestSuite.class,
-	ContextsTestSuite.class
+	ContextsTestSuite.class,
+	ConcurrencyTestSuite.class
 })
 public class UiTestSuite {
 
@@ -71,7 +73,6 @@ public class UiTestSuite {
 	// MenusTestSuite.class,
 	// PresentationsTestSuite.class,
 	// LeakTests.class,
-	// ConcurrencyTestSuite.class,
 	// MultiEditorTestSuite.class,
 	// FilteredTreeTests.class,
 	// StatusHandlingTestSuite.class,
