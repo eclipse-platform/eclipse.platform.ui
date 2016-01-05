@@ -104,6 +104,11 @@ public class WorkingSet extends AbstractWorkingSet {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "WS [name=" + getName() + ", elements=" + getElementsArray() + ", id=" + getId() + "]"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
