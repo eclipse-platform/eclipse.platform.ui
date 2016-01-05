@@ -29,8 +29,8 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Handle sunresolved toc place holders as well as situations
- * where remote help is unavailable
+ * Handles unresolved toc place holders as well as situations where remote help
+ * is unavailable
  */
 
 public class MissingContentManager {

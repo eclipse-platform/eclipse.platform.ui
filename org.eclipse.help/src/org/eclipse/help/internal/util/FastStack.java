@@ -13,9 +13,9 @@ package org.eclipse.help.internal.util;
 import java.util.ArrayList;
 
 /**
- * Fast Stack is similar to java.uiti.Stack, but simplified for speed. It uses
- * ArrayList as an underlying collection. The methods in this class are not
- * thread safe.
+ * Fast Stack is similar to {@link java.util.Stack}, but simplified for speed.
+ * It uses ArrayList as an underlying collection. The methods in this class are
+ * not thread safe.
  */
 public class FastStack extends ArrayList {
 

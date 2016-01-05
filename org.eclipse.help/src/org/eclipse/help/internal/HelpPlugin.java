@@ -87,7 +87,7 @@ public class HelpPlugin extends Plugin {
 	}
 
 	/**
-	 * Used to obtain Toc Naviagiont Manager
+	 * Used to obtain Toc Navigation Manager
 	 *
 	 * @return instance of TocManager
 	 */
