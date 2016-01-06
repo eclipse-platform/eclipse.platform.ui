@@ -2416,7 +2416,7 @@
             label="%textEditor">
       </strategy>
       <strategy
-            class="org.eclipse.ui.internal.ide.AskUserViaPopupUnknowEditorStrategy"
+            class="org.eclipse.ui.internal.ide.AskUserViaPopupUnknownEditorStrategy"
             id="org.eclipse.ui.ide.askUserForUnknownEditor"
             label="%askUserViaPopup">
       </strategy>
