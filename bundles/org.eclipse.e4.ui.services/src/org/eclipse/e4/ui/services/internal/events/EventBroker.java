@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,14 @@ public class EventBroker implements IEventBroker {
 	@Override
 	public boolean send(String topic, Object data) {
 		Event event = constructEvent(topic, data);
-		EventAdmin eventAdmin = Activator.getDefault().getEventAdmin();
+		Activator activator = Activator.getDefault();
+		if (activator == null) {
+			if (logger != null) {
+				logger.error(NLS.bind(ServiceMessages.NO_EVENT_ADMIN, event.toString()));
+			}
+			return false;
+		}
+		EventAdmin eventAdmin = activator.getEventAdmin();
 		if (eventAdmin == null) {
 			if (logger != null) {
 				logger.error(NLS.bind(ServiceMessages.NO_EVENT_ADMIN, event.toString()));
@@ -89,7 +96,14 @@ public class EventBroker implements IEventBroker {
 	@Override
 	public boolean post(String topic, Object data) {
 		Event event = constructEvent(topic, data);
-		EventAdmin eventAdmin = Activator.getDefault().getEventAdmin();
+		Activator activator = Activator.getDefault();
+		if (activator == null) {
+			if (logger != null) {
+				logger.error(NLS.bind(ServiceMessages.NO_EVENT_ADMIN, event.toString()));
+			}
+			return false;
+		}
+		EventAdmin eventAdmin = activator.getEventAdmin();
 		if (eventAdmin == null) {
 			if (logger != null) {
 				logger.error(NLS.bind(ServiceMessages.NO_EVENT_ADMIN, event.toString()));
