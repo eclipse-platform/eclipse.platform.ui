@@ -14,14 +14,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
+import org.junit.Assert;
 
 /**
  * This utility class is used to record the order in which the hooks are called.
@@ -36,9 +35,9 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
  */
 public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
-    private List operations = new LinkedList();
+	private List<String> operations = new LinkedList<>();
 
-    private Iterator iterator;
+	private Iterator<String> iterator;
 
     public final static String INITIALIZE = "initialize"; //$NON-NLS-1$
 
@@ -78,7 +77,7 @@ public class WorkbenchAdvisorObserver extends RCPTestWorkbenchAdvisor {
 
     public void assertNextOperation(String expected) {
         Assert.assertTrue(iterator.hasNext());
-        Assert.assertEquals(expected, (String) iterator.next());
+        Assert.assertEquals(expected, iterator.next());
     }
 
     public void assertAllOperationsExamined() {
