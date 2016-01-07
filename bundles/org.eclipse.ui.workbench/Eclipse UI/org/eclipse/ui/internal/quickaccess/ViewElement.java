@@ -60,6 +60,11 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public void execute() {
+		/*
+		 * TODO: see bug 483699: the code below duplicates the code in
+		 * org.eclipse.ui.handlers.ShowViewHandler#openView() and should be
+		 * refactored to some user friendly API
+		 */
 		String id = viewDescriptor.getElementId();
 		if (id != null) {
 			if (CompatibilityPart.COMPATIBILITY_VIEW_URI

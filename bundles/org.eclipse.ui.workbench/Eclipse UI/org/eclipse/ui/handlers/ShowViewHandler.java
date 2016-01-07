@@ -119,6 +119,11 @@ public final class ShowViewHandler extends AbstractHandler {
 	 */
 	private static final void openView(IWorkbenchWindow window, final MPartDescriptor viewDescriptor,
 			EPartService partService) {
+		/*
+		 * TODO: see bug 483699: the code below duplicates the code in
+		 * org.eclipse.ui.internal.quickaccess.ViewElement#execute() and should
+		 * be refactored to some user friendly API
+		 */
 		String viewId = viewDescriptor.getElementId();
 		if (CompatibilityPart.COMPATIBILITY_VIEW_URI.equals(viewDescriptor.getContributionURI())) {
 			IWorkbenchPage page = window.getActivePage();
