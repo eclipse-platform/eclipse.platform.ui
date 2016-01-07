@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,8 @@ public final class IDEInternalWorkbenchImages {
 	public final static String IMG_ETOOL_PROBLEMS_VIEW_ERROR= "IMG_ETOOL_PROBLEMS_VIEW_ERROR"; //$NON-NLS-1$
 
 	public final static String IMG_ETOOL_PROBLEMS_VIEW_WARNING= "IMG_ETOOL_PROBLEMS_VIEW_WARNING"; //$NON-NLS-1$
+
+	public final static String IMG_ETOOL_PROBLEMS_VIEW_INFO = "IMG_ETOOL_PROBLEMS_VIEW_INFO"; //$NON-NLS-1$
 
     public final static String IMG_LCL_FLAT_LAYOUT = "IMG_LCL_FLAT_LAYOUT"; //$NON-NLS-1$
 
