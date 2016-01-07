@@ -44,7 +44,8 @@ public class NavigatorUIPluginImages {
 	// Create the icon location
 	static {
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-		fgIconLocation = FileLocator.find(NavigatorPlugin.getDefault().getBundle(), new Path(pathSuffix), Collections.EMPTY_MAP);
+		fgIconLocation = FileLocator.find(NavigatorPlugin.getDefault().getBundle(), new Path(pathSuffix),
+				Collections.<String, String> emptyMap());
 	}
 
 	/**
