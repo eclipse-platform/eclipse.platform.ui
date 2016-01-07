@@ -21,7 +21,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 
 public class ContextSet {
-	public static ContextSet EMPTY = new ContextSet(Collections.EMPTY_LIST);
+	public static ContextSet EMPTY = new ContextSet(Collections.<Context> emptyList());
 
 	public static class CComp implements Comparator<Context> {
 		private ContextManager manager;
