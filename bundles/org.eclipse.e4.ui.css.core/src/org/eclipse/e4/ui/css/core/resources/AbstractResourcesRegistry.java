@@ -60,7 +60,7 @@ public abstract class AbstractResourcesRegistry implements IResourcesRegistry {
 				return resourcesMap;
 			}
 		}
-		return Collections.EMPTY_MAP;
+		return Collections.emptyMap();
 	}
 
 	@Override
