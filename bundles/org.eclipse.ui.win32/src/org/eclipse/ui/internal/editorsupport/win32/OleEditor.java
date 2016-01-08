@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -149,42 +148,6 @@ public class OleEditor extends EditorPart {
     //can be used or if the input changed
     boolean sourceChanged = false;
 
-    /**
-     * Keep track of whether we have an active client so we do not
-     * deactivate multiple times
-     */
-    private boolean clientActive = false;
-
-    /**
-     * Keep track of whether we have activated OLE or not as some applications
-     * will only allow single activations.
-     */
-    private boolean oleActivated = false;
-
-    private IPartListener partListener = new IPartListener() {
-        @Override
-		public void partActivated(IWorkbenchPart part) {
-            activateClient(part);
-        }
-
-        @Override
-		public void partBroughtToTop(IWorkbenchPart part) {
-        }
-
-        @Override
-		public void partClosed(IWorkbenchPart part) {
-        }
-
-        @Override
-		public void partOpened(IWorkbenchPart part) {
-        }
-
-        @Override
-		public void partDeactivated(IWorkbenchPart part) {
-            deactivateClient(part);
-        }
-    };
-
     private static final String RENAME_ERROR_TITLE = OleMessages
             .getString("OleEditor.errorSaving"); //$NON-NLS-1$
 
@@ -213,13 +176,6 @@ public class OleEditor extends EditorPart {
         //Do nothing
     }
 
-    private void activateClient(IWorkbenchPart part) {
-        if (part == this) {
-            oleActivate();
-            this.clientActive = true;
-        }
-    }
-
     @Override
 	public void createPartControl(Composite parent) {
 
@@ -232,6 +188,8 @@ public class OleEditor extends EditorPart {
 
         createClientSite();
         updateDirtyFlag();
+
+		oleActivate();
     }
 
     /**
@@ -257,15 +215,6 @@ public class OleEditor extends EditorPart {
         clientSite.setBackground(JFaceColors.getBannerBackground(clientFrame
                 .getDisplay()));
 
-    }
-
-    private void deactivateClient(IWorkbenchPart part) {
-        //Check the client active flag. Set it to false when we have deactivated
-        //to prevent multiple de-activations.
-        if (part == this && clientActive) {
-            this.clientActive = false;
-            this.oleActivated = false;
-        }
     }
 
     /**
@@ -296,10 +245,6 @@ public class OleEditor extends EditorPart {
             oleTitleImage.dispose();
             oleTitleImage = null;
         }
-
-        if (getSite() != null && getSite().getPage() != null)
-            getSite().getPage().removePartListener(partListener);
-
     }
 
     /**
@@ -442,10 +387,6 @@ public class OleEditor extends EditorPart {
             oleTitleImage = desc.createImage();
             setTitleImage(oleTitleImage);
         }
-
-        // Listen for part activation.
-        site.getPage().addPartListener(partListener);
-
     }
 
     /**
@@ -613,7 +554,8 @@ public class OleEditor extends EditorPart {
 
     @Override
 	public void setFocus() {
-        //Do not take focus
+		if (clientSite != null)
+			clientSite.setFocus();
     }
 
     /**
@@ -625,14 +567,11 @@ public class OleEditor extends EditorPart {
                 || clientFrame.isDisposed())
             return;
 
-        if (!oleActivated) {
-            clientSite.doVerb(OLE.OLEIVERB_SHOW);
-            oleActivated = true;
-            String progId = clientSite.getProgramID();
-            if (progId != null && progId.startsWith("Word.Document")) { //$NON-NLS-1$
-                handleWord();
-            }
-        }
+		clientSite.doVerb(OLE.OLEIVERB_SHOW);
+		String progId = clientSite.getProgramID();
+		if (progId != null && progId.startsWith("Word.Document")) { //$NON-NLS-1$
+			handleWord();
+		}
     }
 
     @Override
