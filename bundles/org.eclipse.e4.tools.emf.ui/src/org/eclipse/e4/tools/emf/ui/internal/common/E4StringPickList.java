@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Steven Spungin <steven@spungin.tv> - initial API and implementation, Ongoing Maintenance
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 466731
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
@@ -27,13 +29,17 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -61,9 +67,18 @@ public class E4StringPickList extends AbstractPickList {
 		tiReplace = new Button(getToolBar(), SWT.PUSH);
 		tiReplace.setText(messages.E4StringPickList_Replace);
 		tiReplace.setImage(editor.createImage(ResourceProvider.IMG_Obj16_world_edit));
+		tiReplace.setFont(getButtonFont());
 
-		text = new Text(getToolBar().getParent(), SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		Composite valueParent = new Composite(getToolBar().getParent(), SWT.BORDER);
+		valueParent.setLayout(new GridLayout(2, false));
+		valueParent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
+		Label l = new Label(valueParent, SWT.NONE);
+		l.setText(messages.E4StringPickList_NewValue);
+		l.setToolTipText(messages.E4StringPickList_ToolTipNewValue);
+		text = new Text(valueParent, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text.setToolTipText(messages.E4StringPickList_ToolTipNewValue);
 
 		tiReplace.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -79,6 +94,15 @@ public class E4StringPickList extends AbstractPickList {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				updateUiState();
+			}
+		});
+
+		text.addFocusListener(new FocusAdapter() {
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				updateUiState();
+
 			}
 		});
 
@@ -153,11 +177,13 @@ public class E4StringPickList extends AbstractPickList {
 	public void updateUiState() {
 		super.updateUiState();
 
-		if (getTextWidget() != null) {
+		if (text != null) {
 			IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 			Object firstViewerElement = sel.getFirstElement();
-			boolean diff = !getTextWidget().getText().equals(firstViewerElement);
+			String txt = text.getText();
+			boolean diff = !txt.equals(firstViewerElement);
 			tiReplace.setEnabled(firstViewerElement != null && !getTextWidget().getText().isEmpty() && diff);
+			tiAdd.setEnabled(txt.length() > 0 && text.isFocusControl());
 		}
 	}
 

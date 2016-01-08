@@ -10,6 +10,7 @@
  *     Marco Descher <marco@descher.at> - Bug 395982, 396975, 426653
  *     Steven Spungin <steven@spungin.tv> - Bug 431735, 430717
  *     Jonas Helming <jhelming@eclipsesource.com - Bug 444340
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 466731
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
@@ -19,6 +20,8 @@ public class Messages {
 	public String XmiTab_TypeTextToSearch;
 	public String ModelEditor_Import3x;
 	public String E4StringPickList_Replace;
+	public String E4StringPickList_NewValue;
+	public String E4StringPickList_ToolTipNewValue;
 	public String MarkDuplicateAttributesHandler_MarkDuplicates;
 	public String MarkDuplicateAttributesHandler_SelectAnAttributeToMarkeDuplicate;
 	public String VCommandEditor_ImportCommands;

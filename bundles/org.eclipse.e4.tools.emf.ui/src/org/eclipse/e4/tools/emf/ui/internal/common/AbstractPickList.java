@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Steven Spungin <steven@spungin.tv> - initial API and implementation
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 466731
  *******************************************************************************/
 
 package org.eclipse.e4.tools.emf.ui.internal.common;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -58,14 +60,14 @@ public abstract class AbstractPickList extends Composite {
 
 	private final Group group;
 	private final Composite toolBar;
-	private final Button tiRemove;
-	private final Button tiUp;
-	private final Button tiDown;
-	private final Button tiAdd;
+	protected final Button tiRemove;
+	protected final Button tiUp;
+	protected final Button tiDown;
+	protected final Button tiAdd;
 	// private final AutoCompleteField autoCompleteField;
 
 	public AbstractPickList(Composite parent, int style, List<PickListFeatures> listFeatures, Messages messages,
-		AbstractComponentEditor componentEditor) {
+			AbstractComponentEditor componentEditor) {
 		super(parent, style);
 
 		// TODO remove dependency to Messages and AbstractComponentEditor. They
@@ -110,6 +112,7 @@ public abstract class AbstractPickList extends Composite {
 		layout.marginWidth = 0;
 		toolBar.setLayout(layout);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		toolBar.setFont(group.getFont());
 
 		picker.addOpenListener(new IOpenListener() {
 
@@ -123,6 +126,7 @@ public abstract class AbstractPickList extends Composite {
 		tiAdd.setText(messages.ModelTooling_Common_AddEllipsis);
 		tiAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiAdd.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_add));
+		tiAdd.setFont(getButtonFont());
 		tiAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -134,6 +138,7 @@ public abstract class AbstractPickList extends Composite {
 		tiRemove.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiRemove.setText(messages.ModelTooling_Common_Remove);
 		tiRemove.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_table_delete));
+		tiRemove.setFont(getButtonFont());
 		tiRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -145,6 +150,7 @@ public abstract class AbstractPickList extends Composite {
 		tiDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiDown.setText(messages.ModelTooling_Common_Down);
 		tiDown.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
+		tiDown.setFont(getButtonFont());
 		tiDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -156,6 +162,7 @@ public abstract class AbstractPickList extends Composite {
 		tiUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		tiUp.setText(messages.ModelTooling_Common_Up);
 		tiUp.setImage(componentEditor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
+		tiUp.setFont(getButtonFont());
 		tiUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -189,6 +196,10 @@ public abstract class AbstractPickList extends Composite {
 			}
 		}
 
+	}
+
+	protected Font getButtonFont() {
+		return group.getFont();
 	}
 
 	protected void addPressed() {
@@ -253,10 +264,11 @@ public abstract class AbstractPickList extends Composite {
 		final IStructuredSelection selection = (IStructuredSelection) getList().getSelection();
 		final boolean selected = selection.size() > 0;
 		final int count = getItemCount();
+		final boolean tableIsFocused = getList().getTable().isFocusControl();
 		if (tiDown.isDisposed() == false) {
-			tiDown.setEnabled(selected && count > 1);
-			tiUp.setEnabled(selected && count > 1);
+			tiDown.setEnabled(selected && count > 1 && tableIsFocused);
+			tiUp.setEnabled(selected && count > 1 && tableIsFocused);
 		}
-		tiRemove.setEnabled(selected);
+		tiRemove.setEnabled(selected && tableIsFocused);
 	}
 }
