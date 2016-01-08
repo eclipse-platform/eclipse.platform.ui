@@ -10,6 +10,7 @@
  *     Kiryl Kazakevich, Intel - bug 88359
  *     Tonny Madsen, RCP Company - bug 201055
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 485313
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -76,7 +77,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				IWorkbenchPreferenceConstants.TOP_LEFT);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
-				true);
+				false);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_OTHER_IN_PERSPECTIVE_MENU,
 				true);
