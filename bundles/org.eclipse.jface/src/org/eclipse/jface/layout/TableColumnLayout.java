@@ -37,6 +37,24 @@ import org.eclipse.swt.widgets.Widget;
 public class TableColumnLayout extends AbstractColumnLayout {
 
 	/**
+	 * Creates a new table column layout.
+	 */
+	public TableColumnLayout() {
+	}
+
+	/**
+	 * Creates a new table column layout.
+	 *
+	 * @param adjustForScrollBar
+	 *            <code>true</code> if the layout should reserve space for the
+	 *            vertical scroll bar
+	 * @since 3.12
+	 */
+	public TableColumnLayout(boolean adjustForScrollBar) {
+		super(adjustForScrollBar);
+	}
+
+	/**
 	 * {@inheritDoc}
 	 *
 	 * @since 3.5

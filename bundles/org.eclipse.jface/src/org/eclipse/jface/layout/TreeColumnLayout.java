@@ -66,6 +66,24 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 
 	private static final TreeLayoutListener listener = new TreeLayoutListener();
 
+	/**
+	 * Creates a new tree column layout.
+	 */
+	public TreeColumnLayout() {
+	}
+
+	/**
+	 * Creates a new tree column layout.
+	 *
+	 * @param adjustForScrollBar
+	 *            <code>true</code> if the layout should reserve space for the
+	 *            vertical scroll bar
+	 * @since 3.12
+	 */
+	public TreeColumnLayout(boolean adjustForScrollBar) {
+		super(adjustForScrollBar);
+	}
+
 	@Override
 	protected void layout(Composite composite, boolean flushCache) {
 		super.layout(composite, flushCache);
