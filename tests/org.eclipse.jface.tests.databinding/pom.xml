@@ -25,7 +25,7 @@
   <properties>
   	<!-- Test not ready for Surefire -->
   	<skipTests>true</skipTests>
-  	<code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
+  	<code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
   </properties>
   
 </project>
