@@ -844,11 +844,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 					StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
 					if (current instanceof ICompletionProposalExtension3 && current instanceof ICompletionProposalExtension7) {
 						if (Helper.okToUse(fProposalShell)) {
-							if (fContentAssistant.getBoldStylerProvider() == null) {
-								fContentAssistant.setBoldStylerProvider(new BoldStylerProvider(fProposalShell.getFont()));
+							BoldStylerProvider boldStylerProvider= fContentAssistant.getBoldStylerProvider();
+							if (boldStylerProvider == null) {
+								boldStylerProvider= new BoldStylerProvider(fProposalShell.getFont());
+								fContentAssistant.setBoldStylerProvider(boldStylerProvider);
 							}
 							styledString= ((ICompletionProposalExtension7) current).emphasizeMatch(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset,
-									fContentAssistant.getBoldStylerProvider());
+									boldStylerProvider);
 						}
 					}
 					displayString= styledString.getString();
