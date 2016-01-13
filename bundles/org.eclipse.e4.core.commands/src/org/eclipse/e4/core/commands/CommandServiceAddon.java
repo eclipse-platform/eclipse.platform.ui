@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 431180
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 431180, 482649
  ******************************************************************************/
 
 package org.eclipse.e4.core.commands;
@@ -36,12 +36,10 @@ public class CommandServiceAddon {
 		CommandManager manager = context.get(CommandManager.class);
 		if (manager == null) {
 			manager = new CommandManager();
-			// setCommandFireEvents(manager, false);
 			context.set(CommandManager.class, manager);
 		}
 
-		CommandServiceImpl service = ContextInjectionFactory
-				.make(CommandServiceImpl.class, context);
+		CommandServiceImpl service = ContextInjectionFactory.make(CommandServiceImpl.class, context);
 		context.set(ECommandService.class, service);
 
 		// handler service
@@ -64,13 +62,7 @@ public class CommandServiceAddon {
 			Field f = CommandManager.class.getDeclaredField("shouldCommandFireEvents"); //$NON-NLS-1$
 			f.setAccessible(true);
 			f.set(manager, Boolean.valueOf(b));
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException| IllegalAccessException  e) {
 			e.printStackTrace();
 		}
 	}
