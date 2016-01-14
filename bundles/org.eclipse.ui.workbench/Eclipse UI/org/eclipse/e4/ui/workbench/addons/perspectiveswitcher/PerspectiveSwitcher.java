@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sopot Cela <sopotcela@gmail.com> - Bug 391961
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810, 485840
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 380233
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 485829
  ******************************************************************************/
@@ -689,8 +689,7 @@ public class PerspectiveSwitcher {
 	}
 
 	private void closePerspective(MPerspective persp) {
-		MWindow win = modelService.getTopLevelWindowFor(persp);
-		WorkbenchPage page = (WorkbenchPage) win.getContext().get(IWorkbenchPage.class);
+		WorkbenchPage page = (WorkbenchPage) window.getContext().get(IWorkbenchPage.class);
 		String perspectiveId = persp.getElementId();
 		IPerspectiveDescriptor desc = getDescriptorFor(perspectiveId);
 		page.closePerspective(desc, perspectiveId, true, true);
