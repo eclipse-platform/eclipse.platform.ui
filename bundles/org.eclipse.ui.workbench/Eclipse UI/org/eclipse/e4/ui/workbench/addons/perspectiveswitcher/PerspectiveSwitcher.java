@@ -823,18 +823,18 @@ public class PerspectiveSwitcher {
 
 	private void changeShowText(boolean showText) {
 		ToolItem[] items = perspSwitcherToolbar.getItems();
-		for (int i = 0; i < items.length; i++) {
-			MPerspective persp = (MPerspective) items[i].getData();
+		for (ToolItem item : items) {
+			MPerspective persp = (MPerspective) item.getData();
 			if (persp != null)
 				if (showText) {
 					if (persp.getLabel() != null)
-						items[i].setText(persp.getLocalizedLabel());
-					items[i].setToolTipText(persp.getLocalizedTooltip());
+						item.setText(persp.getLocalizedLabel());
+					item.setToolTipText(persp.getLocalizedTooltip());
 				} else {
-					Image image = items[i].getImage();
+					Image image = item.getImage();
 					if (image != null) {
-						items[i].setText(""); //$NON-NLS-1$
-						items[i].setToolTipText(persp.getLocalizedLabel());
+						item.setText(""); //$NON-NLS-1$
+						item.setToolTipText(persp.getLocalizedLabel());
 					}
 				}
 		}
@@ -978,10 +978,10 @@ public class PerspectiveSwitcher {
 
 	void disposeTBImages() {
 		ToolItem[] items = perspSwitcherToolbar.getItems();
-		for (int i = 0; i < items.length; i++) {
-			Image image = items[i].getImage();
+		for (ToolItem item : items) {
+			Image image = item.getImage();
 			if (image != null) {
-				items[i].setImage(null);
+				item.setImage(null);
 				image.dispose();
 			}
 		}
