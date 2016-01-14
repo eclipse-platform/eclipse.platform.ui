@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars.Vogel@vogella.com - Bug 454712
+ *     Lars.Vogel@vogella.com - Bug 454712, 485851
  *     dirk.fauth@googlemail.com - Bug 446095
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.addons.minmax;
@@ -928,9 +928,8 @@ public class TrimStack {
 				return;
 			}
 		}
-
 		trimStackTB.pack();
-		trimStackTB.getShell().layout(new Control[] { trimStackTB }, SWT.DEFER);
+		trimStackTB.requestLayout();
 	}
 
 	void restoreStack() {
