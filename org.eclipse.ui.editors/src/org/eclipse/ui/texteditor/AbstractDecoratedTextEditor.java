@@ -1670,7 +1670,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (returnCode == saveAsUTF8ButtonId) {
 			((IStorageDocumentProvider)documentProvider).setEncoding(getEditorInput(), "UTF-8"); //$NON-NLS-1$
-			doSave(getProgressMonitor());
+			IProgressMonitor monitor= getProgressMonitor();
+			try {
+				doSave(monitor);
+			} finally {
+				monitor.done();
+			}
 		} else if (returnCode == selectUnmappableCharButtonId) {
 			CharsetEncoder encoder= charset.newEncoder();
 			IDocument document= getDocumentProvider().getDocument(getEditorInput());

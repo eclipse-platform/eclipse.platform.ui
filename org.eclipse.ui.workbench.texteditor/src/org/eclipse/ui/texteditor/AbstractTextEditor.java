@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4697,9 +4697,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				if (dialog.open() == 0) {
 					IProgressMonitor pm= getProgressMonitor();
-					performSaveAs(pm);
-					if (pm.isCanceled())
-						handleEditorInputChanged();
+					try {
+						performSaveAs(pm);
+						if (pm.isCanceled())
+							handleEditorInputChanged();
+					} finally {
+						pm.done();
+					}
 				} else {
 					close(false);
 				}
@@ -4755,12 +4759,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	@Override
 	public void doSaveAs() {
-		/*
-		 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
-		 * Changed Behavior to make sure that if called inside a regular save (because
-		 * of deletion of input element) there is a way to report back to the caller.
-		 */
-		performSaveAs(getProgressMonitor());
+		IProgressMonitor monitor= getProgressMonitor();
+		try {
+			/*
+			 * 1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+			 * Changed Behavior to make sure that if called inside a regular save (because
+			 * of deletion of input element) there is a way to report back to the caller.
+			 */
+			performSaveAs(monitor);
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**
