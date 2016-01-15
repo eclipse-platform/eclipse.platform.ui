@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,36 +11,26 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllOtherHelpTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllOtherHelpTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllOtherHelpTests() {
-		addTest(LinkUtilTest.suite());
-		addTestSuite(TestEscapeUtils.class);
-		addTestSuite(ContextLinkSorter.class);
-		addTestSuite(UAElementTest.class);
-		addTestSuite(ContextTest.class);
-		addTestSuite(TopicTest.class);
-		addTestSuite(TocObjectTest.class);
-		addTestSuite(DocumentReaderTest.class);
-		addTestSuite(EntityResolutionTest.class);
-		addTestSuite(ResourceTest.class);
-		addTestSuite(ConcurrentTocAccess.class);
-		addTestSuite(XHTMLEntityTest.class);
-		addTestSuite(PathResolutionTest.class);
-		addTestSuite(IndexEntryTest.class);
-		addTestSuite(IndexSeeTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	LinkUtilTest.class,
+	TestEscapeUtils.class,
+	ContextLinkSorter.class,
+	UAElementTest.class,
+	ContextTest.class,
+	TopicTest.class,
+	TocObjectTest.class,
+	DocumentReaderTest.class,
+	EntityResolutionTest.class,
+	ResourceTest.class,
+	ConcurrentTocAccess.class,
+	XHTMLEntityTest.class,
+	PathResolutionTest.class,
+	IndexEntryTest.class,
+	IndexSeeTest.class
+})
+public class AllOtherHelpTests {
 }

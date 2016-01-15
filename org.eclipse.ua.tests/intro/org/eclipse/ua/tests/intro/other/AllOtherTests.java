@@ -10,26 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.intro.other;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests all intro parser functionality (automated).
  */
-public class AllOtherTests extends TestSuite {
-
-	/*
-	 * Returns the test suite.
-	 */
-	public static Test suite() {
-		return new AllOtherTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllOtherTests() {
-		addTest(ReopenStateTest.suite());
-		addTest(NormalizeWhitespaceTest.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ReopenStateTest.class, NormalizeWhitespaceTest.class
+})
+public class AllOtherTests {
 }

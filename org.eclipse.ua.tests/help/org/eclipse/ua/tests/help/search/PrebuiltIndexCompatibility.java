@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.osgi.framework.Bundle;
-
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
@@ -30,17 +24,18 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
-
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
 import org.eclipse.help.internal.search.PluginIndex;
 import org.eclipse.help.internal.search.QueryBuilder;
 import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.osgi.framework.Bundle;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import junit.framework.TestCase;
 
 /**
  * Verify that older versions of the index can be read by this
@@ -55,13 +50,6 @@ import org.eclipse.core.runtime.Path;
  */
 
 public class PrebuiltIndexCompatibility extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(PrebuiltIndexCompatibility.class);
-	}
 
 	/**
 	 * Test index built with Lucene 1.9.1

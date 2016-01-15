@@ -10,25 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.intro.parser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests all intro parser functionality (automated).
  */
-public class AllParserTests extends TestSuite {
-
-	/*
-	 * Returns the test suite.
-	 */
-	public static Test suite() {
-		return new AllParserTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllParserTests() {
-		addTest(ValidTest.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ValidTest.class
+})
+public class AllParserTests {
 }

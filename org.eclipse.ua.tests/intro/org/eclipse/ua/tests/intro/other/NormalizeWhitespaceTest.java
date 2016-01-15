@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,13 @@ package org.eclipse.ua.tests.intro.other;
 
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /*
  * Tests whitespace normalization used by SWT presentation.
  */
 public class NormalizeWhitespaceTest extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(NormalizeWhitespaceTest.class);
-	}
-
 	public void testNullString() {
 		assertNull(StringUtil.normalizeWhiteSpace(null));
 	}

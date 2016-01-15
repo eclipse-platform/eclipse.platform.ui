@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.criteria.CriteriaDefinition;
 import org.eclipse.help.internal.criteria.CriteriaDefinitionAssembler;
@@ -27,15 +23,10 @@ import org.eclipse.help.internal.criteria.CriteriaDefinitionFileParser;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
+import junit.framework.TestCase;
+
 public class ParseCriteriaDefinition extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ParseCriteriaDefinition.class);
-	}
-
 	public void testAssemble() throws Exception {
 		CriteriaDefinitionFileParser parser = new CriteriaDefinitionFileParser();
 		CriteriaDefinitionContribution a = parser.parse(new CriteriaDefinitionFile(UserAssistanceTestPlugin.getPluginId(), "data/help/criteria/criteria_definition/a.xml", "en"));

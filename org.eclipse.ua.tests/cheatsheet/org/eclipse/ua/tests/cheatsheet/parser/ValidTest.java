@@ -13,34 +13,22 @@ package org.eclipse.ua.tests.cheatsheet.parser;
 import java.io.IOException;
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.junit.Assert;
-import org.osgi.framework.Bundle;
-
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ua.tests.cheatsheet.util.CheatSheetModelSerializer;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
-
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
+import org.junit.Assert;
+import org.osgi.framework.Bundle;
+
+import junit.framework.TestCase;
 
 /*
  * Tests the cheat sheets parser on valid cheat sheets.
  */
 public class ValidTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ValidTest.class);
-	}
 	
 	private void parseCheatsheet(String file) throws IOException {
 		Path path = new Path("data/cheatsheet/valid/" + file);

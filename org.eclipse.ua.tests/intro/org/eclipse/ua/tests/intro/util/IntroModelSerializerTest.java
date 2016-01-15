@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,10 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -37,6 +33,8 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
+
+import junit.framework.TestCase;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -56,13 +54,6 @@ import org.eclipse.ui.intro.config.IIntroContentProviderSite;
  * The new files should appear.
  */
 public class IntroModelSerializerTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(IntroModelSerializerTest.class);
-	}
 	
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra

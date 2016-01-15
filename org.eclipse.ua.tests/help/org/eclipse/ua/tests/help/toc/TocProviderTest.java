@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,23 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 
+import junit.framework.TestCase;
+
 public class TocProviderTest extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(TocProviderTest.class);
-	}
-
 	/**
 	 * Verify that the tocProvider extension in this plug-in contributes a TOC which can be linked to an anchor
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,14 @@ package org.eclipse.ua.tests.help.util;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.XHTMLUtil;
+
+import junit.framework.TestCase;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the
@@ -44,13 +42,6 @@ import org.eclipse.ua.tests.util.XHTMLUtil;
  */
 public class ProducerSerializerTest extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ProducerSerializerTest.class);
-	}
-
 	public void testGenerateOutput() throws Exception {
 		IToc[] tocs = HelpSystem.getTocs();
 		for (IToc toc : tocs) {

@@ -17,10 +17,6 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.ICriteria;
 import org.eclipse.help.IToc;
 import org.eclipse.help.IToc2;
@@ -40,15 +36,10 @@ import org.eclipse.ua.tests.help.other.UserTopic2;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
+import junit.framework.TestCase;
+
 public class ParseTocWithCriteria extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ParseTocWithCriteria.class);
-	}
-
 	private IToc2 parseToc(String filename) throws IOException, SAXException,
 			ParserConfigurationException {
 		IToc toc;

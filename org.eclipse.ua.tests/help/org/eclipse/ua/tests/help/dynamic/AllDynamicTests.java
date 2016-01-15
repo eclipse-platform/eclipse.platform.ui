@@ -10,26 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.dynamic;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help dynamic content functionality (automated).
  */
-public class AllDynamicTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllDynamicTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllDynamicTests() {
-		addTest(XMLProcessorTest.suite());
-		addTest(DynamicXHTMLProcessorTest.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	XMLProcessorTest.class,
+	DynamicXHTMLProcessorTest.class
+})
+public class AllDynamicTests {
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,6 @@ package org.eclipse.ua.tests.help.index;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IIndexEntry;
@@ -36,15 +32,10 @@ import org.eclipse.help.internal.index.IndexFileParser;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
+import junit.framework.TestCase;
+
 public class IndexAssemblerTest extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(IndexAssemblerTest.class);
-	}
-
 	public void testAssemble() throws Exception {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution a = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/a.xml", "en"));

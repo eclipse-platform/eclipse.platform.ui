@@ -15,10 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -31,17 +27,12 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
+import junit.framework.TestCase;
+
 /*
  * Tests the intro parser on valid intro content.
  */
 public class ValidTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ValidTest.class);
-	}
 	
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra content

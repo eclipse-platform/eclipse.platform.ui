@@ -11,10 +11,6 @@
 
 package org.eclipse.ua.tests.help.criteria;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.ICriterionDefinition;
 import org.eclipse.help.ICriterionValueDefinition;
 import org.eclipse.help.internal.UAElement;
@@ -24,6 +20,8 @@ import org.eclipse.help.internal.criteria.CriterionValueDefinition;
 import org.eclipse.ua.tests.help.other.UserCriterionDefinition;
 import org.eclipse.ua.tests.help.other.UserCriterionValueDefinition;
 
+import junit.framework.TestCase;
+
 public class CriteriaDefinitionTest extends TestCase {
 
 	private static final String VALUEID1 = "valueid1";
@@ -32,10 +30,6 @@ public class CriteriaDefinitionTest extends TestCase {
 	private static final String VALUENAME2 = "second value";	
 	private static final String CRITERIONID1 = "criterionid1";
 	private static final String CRITERIONNAME1 = "first criterion";
-	
-	public static Test suite() {
-		return new TestSuite(CriteriaDefinitionTest.class);
-	}
 	
 	// Criterion Value
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,7 @@ import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.ui.internal.views.ContextHelpSorter;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class ContextLinkSorter extends TestCase {
 	
@@ -79,10 +77,6 @@ public class ContextLinkSorter extends TestCase {
 			return null;
 		}
 		
-	}
-
-	public static Test suite() {
-		return new TestSuite(ContextLinkSorter.class);
 	}
 
 	public void testSortEmptyArray() {

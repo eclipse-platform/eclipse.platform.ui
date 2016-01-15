@@ -14,10 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.toc.Toc;
@@ -28,14 +24,9 @@ import org.eclipse.help.internal.toc.TocFileParser;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.XMLUtil;
 
+import junit.framework.TestCase;
+
 public class TocAssemblerTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(TocAssemblerTest.class);
-	}
 
 	public void testAssemble() throws Exception {
 		TocFileParser parser = new TocFileParser();

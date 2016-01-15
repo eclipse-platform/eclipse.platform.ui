@@ -11,26 +11,20 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestCompositeParser.class,
+	TestState.class,
+	TestTaskGroups.class,
+	TestPersistence.class,
+	TestMarkupParser.class,
+	TestCheatSheetManagerEvents.class,
+	TestSuccessors.class,
+	TestTaskEvents.class,
+	TestDependency.class
+})
 public class AllCompositeTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.cheatsheet.AllCompositeTests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestCompositeParser.class);
-		suite.addTestSuite(TestState.class);
-		suite.addTestSuite(TestTaskGroups.class);
-		suite.addTestSuite(TestPersistence.class);
-		suite.addTestSuite(TestMarkupParser.class);
-		suite.addTestSuite(TestCheatSheetManagerEvents.class);
-		suite.addTestSuite(TestSuccessors.class);
-		suite.addTestSuite(TestTaskEvents.class);
-		suite.addTestSuite(TestDependency.class);
-		//$JUnit-END$
-		return suite;
-	}
-
 }

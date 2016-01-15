@@ -11,10 +11,6 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.Topic;
@@ -25,6 +21,8 @@ import org.eclipse.help.internal.context.Context;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class ContextTest extends TestCase {
 
@@ -49,10 +47,6 @@ public class ContextTest extends TestCase {
 	private final String TOPIC_FILTER_OUT = TOPIC_HEAD_ECLIPSE + FILTER_OUT + TOPIC_END;
     private final String END_CONTEXT = "</context>";
 
-	public static Test suite() {
-		return new TestSuite(ContextTest.class);
-	}
-	
 	@Override
 	protected void setUp() throws Exception {
 		// Required for isEnabled() to work correctly

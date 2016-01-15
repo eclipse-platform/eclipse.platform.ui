@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,23 +16,17 @@ import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
+import junit.framework.TestCase;
+
 public class DocumentReaderTest extends TestCase {
 	private final static int RUNNING = 0;
 	private final static int SUCCESS = 1;
 	private final static int FAILURE = 2;
-
-	public static Test suite() {
-		return new TestSuite(DocumentReaderTest.class);
-	}
 
 	private void readFile(DocumentReader docReader, String file) throws IOException, SAXException, ParserConfigurationException {
 		 String pluginId = UserAssistanceTestPlugin.getPluginId();

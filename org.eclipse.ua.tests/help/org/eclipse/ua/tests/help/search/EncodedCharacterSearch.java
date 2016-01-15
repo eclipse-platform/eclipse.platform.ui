@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,10 @@
 package org.eclipse.ua.tests.help.search;
 
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 public class EncodedCharacterSearch extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(EncodedCharacterSearch.class);
-	}
 
     public void testIso8859() {
     	SearchTestUtils.searchOneLocale("\u00E1guilaxaxcs", new String[] {"/org.eclipse.ua.tests/data/help/search/testnl8859.htm" }, "en");   	   

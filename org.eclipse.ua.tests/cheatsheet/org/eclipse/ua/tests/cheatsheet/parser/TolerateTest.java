@@ -12,20 +12,15 @@ package org.eclipse.ua.tests.cheatsheet.parser;
 
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.junit.Assert;
-
-import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-
+import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
+import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 /*
  * Tests the cheat sheets parser on tolerable cheat sheets. This means they're not strictly correct,
@@ -33,13 +28,6 @@ import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
  */
 public class TolerateTest extends TestCase {
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(TolerateTest.class);
-	}
-
 	private void parseCheatsheet(String file) {
 		Path path = new Path("data/cheatsheet/valid/tolerate/" + file);
 		URL url = FileLocator.find(UserAssistanceTestPlugin.getDefault().getBundle(), path, null);

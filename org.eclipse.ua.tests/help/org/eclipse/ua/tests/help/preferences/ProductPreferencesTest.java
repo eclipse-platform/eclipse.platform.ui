@@ -16,13 +16,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 /*
  * Tests the products preferences utility
@@ -135,13 +133,6 @@ public class ProductPreferencesTest extends TestCase {
 		// all mixed
 		{ "mixed; space, and  separators", "mixed", "space", "and", "separators" }
 	};
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(ProductPreferencesTest.class);
-	}
 	
 	public void testGetOrderedList() {
 		for (String[] data : GET_ORDERED_LIST_DATA) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,14 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class ContextMergeTest extends TestCase {
 
@@ -35,10 +33,6 @@ public class ContextMergeTest extends TestCase {
 	private final String TOPIC_BUGZILLA = "<topic href=\"http://www.eclipse.org/bugzilla\" label=\"bugzilla\"/>";
 	private final String TOPIC_WITH_ENABLEMENT = TOPIC_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + TOPIC_END;
 	private final String END_CONTEXT = "</context>";
-
-	public static Test suite() {
-		return new TestSuite(ContextMergeTest.class);
-	}
 
 	private Context createContext(final String contextSource) {
 		Context context;

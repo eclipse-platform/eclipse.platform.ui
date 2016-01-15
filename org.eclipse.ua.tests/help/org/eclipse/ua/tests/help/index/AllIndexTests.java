@@ -10,25 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.index;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help keyword index functionality.
  */
-public class AllIndexTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllIndexTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllIndexTests() {
-		addTest(IndexAssemblerTest.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	IndexAssemblerTest.class
+})
+public class AllIndexTests {
 }

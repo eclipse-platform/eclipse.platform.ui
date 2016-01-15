@@ -16,10 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -27,6 +23,8 @@ import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 /*
  * Tests the help data ordering of tocs and hiding tocs, indexes, etc.
@@ -39,13 +37,6 @@ public class HelpDataTest extends TestCase {
 		{ { "data/help/preferences/helpData3.xml" }, { }, { }, { } },
 	};
 	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(HelpDataTest.class);
-	}
-
 	private String baseTocsPreference;
 	private String ignoredTocsPreference;
 	private String ignoredIndexesPreference;

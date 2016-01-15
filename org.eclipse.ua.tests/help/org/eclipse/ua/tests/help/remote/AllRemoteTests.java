@@ -10,39 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help keyword index functionality.
  */
-public class AllRemoteTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllRemoteTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllRemoteTests() {
-		addTestSuite(RemotePreferenceTest.class);	
-		addTestSuite(TocServletTest.class);
-		addTestSuite(SearchServletTest.class);
-		addTestSuite(IndexServletTest.class);
-		addTestSuite(ContentServletTest.class);
-		addTestSuite(ContextServletTest.class);	
-		addTestSuite(LoadTocUsingRemoteHelp.class);
-		addTestSuite(SearchUsingRemoteHelp.class);
-		addTestSuite(LoadIndexUsingRemoteHelp.class);
-		addTest(GetContentUsingRemoteHelp.suite());
-		addTestSuite(GetContextUsingRemoteHelp.class);
-		addTestSuite(TocManagerTest.class);
-		addTestSuite(SearchIndexCreation.class);
-		addTestSuite(ParallelSearchUsingRemote.class);
-		addTestSuite(ParallelSearchServletTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	RemotePreferenceTest.class,	
+	TocServletTest.class,
+	SearchServletTest.class,
+	IndexServletTest.class,
+	ContentServletTest.class,
+	ContextServletTest.class,	
+	LoadTocUsingRemoteHelp.class,
+	SearchUsingRemoteHelp.class,
+	LoadIndexUsingRemoteHelp.class,
+	GetContentUsingRemoteHelp.class,
+	GetContextUsingRemoteHelp.class,
+	TocManagerTest.class,
+	SearchIndexCreation.class,
+	ParallelSearchUsingRemote.class,
+	ParallelSearchServletTest.class
+})
+public class AllRemoteTests {
 }

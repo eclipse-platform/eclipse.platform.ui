@@ -13,16 +13,14 @@ package org.eclipse.ua.tests.help.toc;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+
+import junit.framework.TestCase;
 
 public class EnabledTopicTest extends TestCase {
 	
@@ -122,13 +120,6 @@ public class EnabledTopicTest extends TestCase {
 			all.addAll(topics);
 			return all.toArray(new IUAElement[all.size()]);
 		}	
-	}
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(EnabledTopicTest.class);
 	}
 	
 	public void testEnabledTopic() {

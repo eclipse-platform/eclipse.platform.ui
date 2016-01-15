@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,33 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ua.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ua.tests.browser.AllBrowserTests;
 import org.eclipse.ua.tests.cheatsheet.AllCheatSheetTests;
 import org.eclipse.ua.tests.help.AllHelpTests;
 import org.eclipse.ua.tests.intro.AllIntroTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests all user assistance functionality (automated).
  */
-public class AllTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllTests() {
-		addTest(AllCheatSheetTests.suite());
-		addTest(AllIntroTests.suite());
-		addTest(AllHelpTests.suite());
-		addTest(AllBrowserTests.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({AllCheatSheetTests.class,
+AllIntroTests.class,
+AllHelpTests.class,
+AllBrowserTests.class})
+public class AllTests {
 }

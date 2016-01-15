@@ -11,25 +11,19 @@
 
 package org.eclipse.ua.tests.cheatsheet.other;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Unit tests for cheatsheets which don't fill into any other category
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestStatePersistence.class,
+	TestEscape.class,
+	TestCheatSheetManager.class,
+	TestCheatSheetCollection.class,
+	TestCheatSheetCategories.class
+})
 public class AllOtherCheatSheetTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.cheatsheet.AllOtherCheatSheetTests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestStatePersistence.class);
-		suite.addTestSuite(TestEscape.class);
-		suite.addTestSuite(TestCheatSheetManager.class);
-		suite.addTestSuite(TestCheatSheetCollection.class);
-		suite.addTestSuite(TestCheatSheetCategories.class);
-		//$JUnit-END$
-		return suite;
-	}
-
 }

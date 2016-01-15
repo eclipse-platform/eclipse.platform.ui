@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,13 @@
 
 package org.eclipse.ua.tests.browser.other;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllOtherBrowserTests extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestInput.class
+})
+public class AllOtherBrowserTests {
 
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllOtherBrowserTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllOtherBrowserTests() {
-		addTestSuite(TestInput.class);
-	}
 }

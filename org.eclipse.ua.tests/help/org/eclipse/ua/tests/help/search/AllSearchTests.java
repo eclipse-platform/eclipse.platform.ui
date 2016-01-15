@@ -10,40 +10,30 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.search;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help functionality (automated).
  */
-public class AllSearchTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllSearchTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllSearchTests() {
-		addTest(ExtraDirTest.suite());
-		addTest(BasicTest.suite());
-		addTestSuite(WildcardTest.class);
-		addTestSuite(LocaleTest.class);
-		addTestSuite(AnalyzerTest.class);
-		addTest(SearchCheatsheet.suite());
-		addTest(SearchIntro.suite());
-		addTest(EncodedCharacterSearch.suite());
-		addTest(MetaKeywords.suite());
-		addTest(SearchParticipantTest.suite());
-		addTest(SearchParticipantXMLTest.suite());
-		addTest(SearchRanking.suite());
-		addTestSuite(WorkingSetManagerTest.class);
-		addTestSuite(InfocenterWorkingSetManagerTest.class);
-		addTestSuite(PrebuiltIndexCompatibility.class);
-		addTestSuite(LockTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ExtraDirTest.class,
+	BasicTest.class,
+	WildcardTest.class,
+	LocaleTest.class,
+	AnalyzerTest.class,
+	SearchCheatsheet.class,
+	SearchIntro.class,
+	EncodedCharacterSearch.class,
+	MetaKeywords.class,
+	SearchParticipantTest.class,
+	SearchParticipantXMLTest.class,
+	SearchRanking.class,
+	WorkingSetManagerTest.class,
+	InfocenterWorkingSetManagerTest.class,
+	PrebuiltIndexCompatibility.class,
+	LockTest.class
+})
+public class AllSearchTests {
 }

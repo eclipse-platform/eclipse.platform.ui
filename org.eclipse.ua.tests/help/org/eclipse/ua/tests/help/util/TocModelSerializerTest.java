@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -25,6 +21,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
+
+import junit.framework.TestCase;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -44,13 +42,6 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
  * The new files should appear.
  */
 public class TocModelSerializerTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(TocModelSerializerTest.class);
-	}
 
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra content

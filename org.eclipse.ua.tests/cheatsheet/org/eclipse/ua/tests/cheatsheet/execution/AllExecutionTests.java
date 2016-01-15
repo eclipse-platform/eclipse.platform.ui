@@ -11,23 +11,17 @@
 
 package org.eclipse.ua.tests.cheatsheet.execution;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Unit tests for the classes which execute commands and actions from a cheatsheet
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestVariableSubstitution.class,
+	TestActionExecution.class,
+	TestCommandExecution.class
+})
 public class AllExecutionTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(
-				"org.eclipse.ua.tests.cheatsheet.AllExecutionTests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestVariableSubstitution.class);
-		suite.addTestSuite(TestActionExecution.class);
-		suite.addTestSuite(TestCommandExecution.class);
-		//$JUnit-END$
-		return suite;
-	}
-
 }

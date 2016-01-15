@@ -14,15 +14,9 @@ package org.eclipse.ua.tests.help.other;
 import org.eclipse.help.internal.base.util.LinkUtil;
 import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class LinkUtilTest extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(LinkUtilTest.class);
-	}
 
 	public void testStripParamNull() {
 		assertEquals(null, LinkUtil.stripParams(null));

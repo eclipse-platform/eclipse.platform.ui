@@ -11,10 +11,6 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexEntry2;
 import org.eclipse.help.IIndexSee;
@@ -27,6 +23,8 @@ import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class IndexEntryTest extends TestCase {
 
@@ -66,10 +64,6 @@ public class IndexEntryTest extends TestCase {
 	private final String ENTRY_WITH_CHILD = ENTRY_HEAD_ECLIPSE + ENTRY_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_TOPIC = ENTRY_HEAD_ECLIPSE + TOPIC_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_SEE = ENTRY_HEAD_ECLIPSE + SEE_ALSO_SDK + ENTRY_END;
-	
-	public static Test suite() {
-		return new TestSuite(IndexEntryTest.class);
-	}
 	
 	@Override
 	protected void setUp() throws Exception {

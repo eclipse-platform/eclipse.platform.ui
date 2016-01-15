@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,19 +13,10 @@ package org.eclipse.ua.tests.help.search;
 
 import org.eclipse.help.internal.search.SearchHit;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 
 public class SearchParticipantTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(SearchParticipantTest.class);
-	}
 
 	public void testSearchFirstWordInFirstDoc() {
 		SearchTestUtils.searchAllLocales("jkijkijkk", new String[] { "/org.eclipse.ua.tests/participant1.xml" });

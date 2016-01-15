@@ -18,10 +18,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
@@ -29,15 +25,10 @@ import org.eclipse.ua.tests.util.XMLUtil;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
 
+import junit.framework.TestCase;
+
 public class DynamicXHTMLProcessorTest extends TestCase {
 
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(DynamicXHTMLProcessorTest.class);
-	}
-	
 	@Override
 	protected void setUp() throws Exception {
 		// activate the UI plug-in for UI filtering ability

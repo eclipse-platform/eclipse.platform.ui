@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,11 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
+
+import junit.framework.TestCase;
 
 public class UAElementTest extends TestCase {
 
@@ -28,10 +26,6 @@ public class UAElementTest extends TestCase {
 	private UAElement child3;
 	private UAElement child4;
 	private UAElement grandchild1;
-
-	public static Test suite() {
-		return new TestSuite(UAElementTest.class);
-	}
 
 	public void testSimpleUAElement() {
 		UAElement element = new UAElement("name1");

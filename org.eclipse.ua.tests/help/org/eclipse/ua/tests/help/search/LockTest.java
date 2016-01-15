@@ -13,20 +13,14 @@ package org.eclipse.ua.tests.help.search;
 
 import java.nio.channels.OverlappingFileLockException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.internal.search.SearchIndex;
+
+import junit.framework.TestCase;
 
 /**
  * Test locking of search index
  */
 public class LockTest extends TestCase {
-	
-	public static Test suite() {
-		return new TestSuite(LockTest.class);
-	}
 
 	public void testSingleLock() {
 		SearchIndex index1 = new SearchIndex(null, null, null);

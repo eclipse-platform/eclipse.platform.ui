@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,18 +15,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.junit.Assert;
-
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.ResourceFinder;
-
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
+import org.junit.Assert;
+
+import junit.framework.TestCase;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -46,13 +42,6 @@ import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
  * The new files should appear.
  */
 public class CheatSheetModelSerializerTest extends TestCase {
-	
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(CheatSheetModelSerializerTest.class);
-	}
 	
 	public void testRunSerializer() throws IOException {
 		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid", ".xml", true);

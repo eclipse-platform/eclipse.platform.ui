@@ -10,29 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.browser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ua.tests.browser.external.AllExternalBrowserTests;
 import org.eclipse.ua.tests.browser.other.AllOtherBrowserTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests all cheat sheet functionality (automated).
  */
-public class AllBrowserTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllBrowserTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllBrowserTests() {
-		addTest(AllExternalBrowserTests.suite());
-		addTest(AllOtherBrowserTests.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AllExternalBrowserTests.class,
+	AllOtherBrowserTests.class
+})
+public class AllBrowserTests {
 }

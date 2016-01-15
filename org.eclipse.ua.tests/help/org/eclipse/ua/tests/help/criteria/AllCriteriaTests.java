@@ -10,29 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.criteria;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help keyword index functionality.
  */
-public class AllCriteriaTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllCriteriaTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllCriteriaTests() {
-		addTestSuite(ParseTocWithCriteria.class);
-		addTestSuite(CriteriaUtilitiesTest.class);
-		addTestSuite(CriteriaDefinitionTest.class);
-		addTestSuite(ParseCriteriaDefinition.class);
-		addTestSuite(TestCriteriaProvider.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ParseTocWithCriteria.class,
+	CriteriaUtilitiesTest.class,
+	CriteriaDefinitionTest.class,
+	ParseCriteriaDefinition.class,
+	TestCriteriaProvider.class
+})
+public class AllCriteriaTests {
 }

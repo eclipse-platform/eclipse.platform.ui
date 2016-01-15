@@ -12,10 +12,6 @@ package org.eclipse.ua.tests.help.dynamic;
 
 import java.io.InputStream;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.dynamic.DocumentReader;
@@ -30,15 +26,10 @@ import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.XMLUtil;
 import org.osgi.framework.Bundle;
 
+import junit.framework.TestCase;
+
 public class XMLProcessorTest extends TestCase {
 
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(XMLProcessorTest.class);
-	}
-	
 	@Override
 	protected void setUp() throws Exception {
 		// activate the UI plug-in for UI filtering ability

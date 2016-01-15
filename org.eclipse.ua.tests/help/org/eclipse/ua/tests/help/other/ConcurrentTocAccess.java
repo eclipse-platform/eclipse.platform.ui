@@ -11,15 +11,13 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class ConcurrentTocAccess extends TestCase {
 	
@@ -27,10 +25,6 @@ public class ConcurrentTocAccess extends TestCase {
 	
 	// Set enableTimeout to false for debugging
 	private boolean enableTimeout = true;
-	
-	public static Test suite() {
-		return new TestSuite(ConcurrentTocAccess.class);
-	}
 	
 	private class TocGenerator {
 		private int[] dimensions;

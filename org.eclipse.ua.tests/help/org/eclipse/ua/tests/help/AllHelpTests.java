@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ua.tests.help.criteria.AllCriteriaTests;
 import org.eclipse.ua.tests.help.dynamic.AllDynamicTests;
 import org.eclipse.ua.tests.help.index.AllIndexTests;
@@ -24,33 +21,25 @@ import org.eclipse.ua.tests.help.search.AllSearchTests;
 import org.eclipse.ua.tests.help.toc.AllTocTests;
 import org.eclipse.ua.tests.help.webapp.AllWebappTests;
 import org.eclipse.ua.tests.help.webapp.service.AllWebappServiceTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /*
  * Tests help functionality (automated).
  */
-public class AllHelpTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllHelpTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllHelpTests() {
-		addTest(AllPreferencesTests.suite());
-		addTest(AllCriteriaTests.suite());
-		addTest(AllDynamicTests.suite());
-		addTest(AllSearchTests.suite());
-		addTest(AllTocTests.suite());
-		addTest(AllIndexTests.suite());
-		addTest(AllWebappTests.suite());
-		addTest(AllOtherHelpTests.suite());
-		addTest(AllRemoteTests.suite());
-		addTest(AllScopeTests.suite());
-		addTest(AllWebappServiceTests.suite());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AllPreferencesTests.class,
+	AllCriteriaTests.class,
+	AllDynamicTests.class,
+	AllSearchTests.class,
+	AllTocTests.class,
+	AllIndexTests.class,
+	AllWebappTests.class,
+	AllOtherHelpTests.class,
+	AllRemoteTests.class,
+	AllScopeTests.class,
+	AllWebappServiceTests.class,
+})
+public class AllHelpTests {
 }

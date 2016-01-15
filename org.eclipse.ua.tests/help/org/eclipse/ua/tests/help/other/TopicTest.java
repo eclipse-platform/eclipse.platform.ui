@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,6 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -22,6 +18,8 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class TopicTest extends TestCase {
 
@@ -58,10 +56,6 @@ public class TopicTest extends TestCase {
 	private final String TOPIC_OLD_FILTER_OUT_NEGATED = "<topic filter=\"plugin!=org.eclipse.ua.invalid\" href=\"www.eclipse.org\"" 
 	    + " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_WITH_CHILD = TOPIC_HEAD_ECLIPSE + TOPIC_BUGZILLA + TOPIC_END;
-	
-	public static Test suite() {
-		return new TestSuite(TopicTest.class);
-	}
 	
 	@Override
 	protected void setUp() throws Exception {

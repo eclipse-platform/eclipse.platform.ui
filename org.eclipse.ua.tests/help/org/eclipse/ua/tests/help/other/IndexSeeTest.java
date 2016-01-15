@@ -11,10 +11,6 @@
 
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -23,6 +19,8 @@ import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import junit.framework.TestCase;
 
 public class IndexSeeTest extends TestCase {
 
@@ -43,10 +41,6 @@ public class IndexSeeTest extends TestCase {
     SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
 	private static final String SEE_ECLIPSE_SDK_VIEWS = SEE_HEAD_ECLIPSE + 
     SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
-	
-	public static Test suite() {
-		return new TestSuite(IndexSeeTest.class);
-	}
 	
 	@Override
 	protected void setUp() throws Exception {
