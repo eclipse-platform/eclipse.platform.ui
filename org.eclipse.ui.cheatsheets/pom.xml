@@ -5,7 +5,7 @@
   are made available under the terms of the Eclipse Distribution License v1.0
   which accompanies this distribution, and is available at
   http://www.eclipse.org/org/documents/edl-v10.php
- 
+
   Contributors:
      Igor Fedorenko - initial implementation
      Lars Vogel <Lars.Vogel@vogella.com> - Bug 479209
@@ -21,19 +21,9 @@
   <artifactId>org.eclipse.ui.cheatsheets</artifactId>
   <version>3.4.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-compiler-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <compilerArgs>
-            <arg>-warn:-raw,unchecked</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
- </build> 
+
+  <properties>
+    <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
+  </properties>
+
 </project>
