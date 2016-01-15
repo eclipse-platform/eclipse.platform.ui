@@ -200,7 +200,7 @@ public class AreaRenderer extends SWTPartRenderer {
 
 			bindWidget(areaModel, innerComp);
 			innerComp.setVisible(true);
-			innerComp.getParent().layout(true, true);
+			innerComp.requestLayout();
 		}
 	}
 
