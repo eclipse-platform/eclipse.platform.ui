@@ -36,6 +36,9 @@ import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -53,19 +56,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -256,7 +253,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create table
 		environmentTable = new TableViewer(tableComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = environmentTable.getTable();
-		table.setLayout(new GridLayout());
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
@@ -283,31 +279,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tc1.setText(envTableColumnHeaders[0]);
 		final TableColumn tc2 = new TableColumn(table, SWT.NONE, 1);
 		tc2.setText(envTableColumnHeaders[1]);
-		final Table tref = table;
-		final Composite comp = tableComposite;
-		tableComposite.addControlListener(new ControlAdapter() {
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle area = comp.getClientArea();
-				Point size = tref.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				ScrollBar vBar = tref.getVerticalBar();
-				int width = area.width - tref.computeTrim(0,0,0,0).width - 2;
-				if (size.y > area.height + tref.getHeaderHeight()) {
-					Point vBarSize = vBar.getSize();
-					width -= vBarSize.x;
-				}
-				Point oldSize = tref.getSize();
-				if (oldSize.x > area.width) {
-					tc1.setWidth(width/2-1);
-					tc2.setWidth(width - tc1.getWidth());
-					tref.setSize(area.width, area.height);
-				} else {
-					tref.setSize(area.width, area.height);
-					tc1.setWidth(width/2-1);
-					tc2.setWidth(width - tc1.getWidth());
-				}
-			}
-		});
+		// Create table column layout
+		TableColumnLayout tableColumnLayout = new TableColumnLayout(true);
+		PixelConverter pixelConverter = new PixelConverter(font);
+		tableColumnLayout.setColumnData(tc1, new ColumnWeightData(1, pixelConverter.convertWidthInCharsToPixels(20)));
+		tableColumnLayout.setColumnData(tc2, new ColumnWeightData(2, pixelConverter.convertWidthInCharsToPixels(20)));
+		tableComposite.setLayout(tableColumnLayout);
 	}
 	
 	/**
