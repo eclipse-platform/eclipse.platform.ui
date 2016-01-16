@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,37 +11,28 @@
 
 package org.eclipse.ua.tests.help.remote;
 
-import java.net.URL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
+import java.net.URL;
 
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.server.WebappManager;
-import org.eclipse.test.OrderedTestSuite;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
-public class GetContentUsingRemoteHelp extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class GetContentUsingRemoteHelp {
 	
-
-	public static Test suite() {
-		return new OrderedTestSuite(GetContentUsingRemoteHelp.class, new String[] {
-			"testContentNotFound",
-			"testContentFound",
-			"testContentFoundDe",
-			"testLocalBeatsRemote",
-			"testRemoteHelpPreferredPreference",
-			"testRemoteOrdering",
-			"testRemoteOrderingReversed",
-			"testRemoteUsedIfLocalUnavaliable"
-		});
-	}
-
-
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
         mode = BaseHelpSystem.getMode();
         RemotePreferenceStore.savePreferences();
@@ -51,12 +42,13 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		HelpPlugin.getTocManager().getTocs("en");
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testContentNotFound()  {
 		try {
 			getHelpContent("mock.toc", "/invalid/nosuchfile.html", "en");
@@ -66,6 +58,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		}
 	}
 
+	@Test
 	public void testContentFound() throws Exception  {
         final String path = "/data/help/index/topic1.html";
         String remoteContent = getHelpContent("mock.toc", path, "en");
@@ -74,6 +67,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(expectedContent, remoteContent);
 	}
 
+	@Test
 	public void testContentFoundDe() throws Exception  {
         final String path = "/data/help/index/topic2.html";
         String remoteContent = getHelpContent("mock.toc", path, "de");
@@ -82,6 +76,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(expectedContent, remoteContent);
 	}
 
+	@Test
 	public void testLocalBeatsRemote() throws Exception  {
         final String path = "/doc/help_home.html";
         String plugin = "org.eclipse.help.base";
@@ -90,6 +85,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(localContent, helpContent);
 	}
 	
+	@Test
 	public void testRemoteHelpPreferredPreference() throws Exception  {
 		RemotePreferenceStore.setMockRemotePriority();
 		HelpPlugin.getTocManager().clearCache();
@@ -103,6 +99,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(remoteContent, helpContent);
 	}
 
+	@Test
 	public void testRemoteOrdering() throws Exception {
 		RemotePreferenceStore.setTwoMockRemoteServers();
 		RemotePreferenceStore.setMockRemotePriority();
@@ -126,6 +123,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 
 	}
 	
+	@Test
 	public void testRemoteOrderingReversed() throws Exception {
 		RemotePreferenceStore.setTwoMockRemoteServersReversePriority();
 		RemotePreferenceStore.setMockRemotePriority();
@@ -150,7 +148,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 
 	}
 
-	
+	@Test
 	public void testRemoteUsedIfLocalUnavaliable() throws Exception  {
 		RemotePreferenceStore.setMockRemoteServer();
 		HelpPlugin.getTocManager().clearCache();
@@ -163,7 +161,7 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(expectedContent, remoteContent);
 	}
 	
-	public static String getHelpContent(String plugin, String path, String locale)
+	private static String getHelpContent(String plugin, String path, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/nftopic/" + plugin + path + "?lang=" + locale);
