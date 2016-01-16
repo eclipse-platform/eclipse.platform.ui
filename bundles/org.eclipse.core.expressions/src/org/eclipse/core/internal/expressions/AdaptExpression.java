@@ -70,26 +70,36 @@ public class AdaptExpression extends CompositeExpression {
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		if (fTypeName == null)
 			return EvaluationResult.FALSE;
-		Object var= context.getDefaultVariable();
+		Object var = context.getDefaultVariable();
 		if (var == null) {
 			return EvaluationResult.FALSE;
 		}
-		Object adapted= null;
-		IAdapterManager manager= Platform.getAdapterManager();
+		Object adapted = null;
+		IAdapterManager manager = Platform.getAdapterManager();
 		if (Expressions.isInstanceOf(var, fTypeName)) {
-			adapted= var;
+			adapted = var;
 		} else {
-			if (manager.hasAdapter(var, fTypeName)) {
-				adapted= manager.getAdapter(var, fTypeName);
-			} else {
-				// if the adapter manager doesn't have an adapter contributed,
-				// try to see if the variable itself implements IAdaptable
-				if (var instanceof IAdaptable) {
-					Class<?> typeClazz= Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
-					if (typeClazz == null) {
-						return EvaluationResult.FALSE;
+			// if the adapter manager doesn't have an adapter contributed,
+			// try to see if the variable itself implements IAdaptable
+			if (var instanceof IAdaptable) {
+				Class<?> typeClazz = Expressions.loadClass(var.getClass().getClassLoader(), fTypeName);
+				if (typeClazz != null) {
+					adapted = ((IAdaptable) var).getAdapter(typeClazz);
+				}
+			}
+
+			if (adapted == null) {
+				if (forceLoadEnabled()) {
+					adapted = manager.loadAdapter(var, fTypeName);
+				} else {
+					adapted = manager.getAdapter(var, fTypeName);
+					if (adapted == null) {
+						if (manager.queryAdapter(var, fTypeName) == IAdapterManager.NOT_LOADED) {
+							return EvaluationResult.NOT_LOADED;
+						} else {
+							return EvaluationResult.FALSE;
+						}
 					}
-					adapted= ((IAdaptable)var).getAdapter(typeClazz);
 				}
 				if (adapted == null) {
 					// all attempts failed, return false
@@ -99,14 +109,12 @@ public class AdaptExpression extends CompositeExpression {
 		}
 		// the adapted result is null but hasAdapter returned true check
 		// if the adapter is loaded.
-		if (adapted == null) {
-			if (manager.queryAdapter(var, fTypeName) == IAdapterManager.NOT_LOADED) {
-				return EvaluationResult.NOT_LOADED;
-			} else {
-				return EvaluationResult.FALSE;
-			}
-		}
 		return evaluateAnd(new DefaultVariable(context, adapted));
+	}
+
+	private boolean forceLoadEnabled() {
+		return Platform.getPreferencesService().getBoolean(ExpressionPlugin.getPluginId(), "forceLoadAdapters", true, //$NON-NLS-1$
+				null);
 	}
 
 	@Override
