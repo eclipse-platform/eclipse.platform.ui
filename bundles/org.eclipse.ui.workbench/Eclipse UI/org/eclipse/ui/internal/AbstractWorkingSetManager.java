@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -402,11 +403,13 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 				}
 			}
 		};
-		// Send notifications asynchronously. This method is often called while
-		// in the middle of updating the object's internal state, and a
-		// synchronous call back to the working set manager can corrupt the
-		// internal state of the working set manager.
-		Display.getDefault().asyncExec(notifier);
+		// Notifications are sent on the UI thread.
+		if (Display.getCurrent() != null) {
+			notifier.run();
+		} else {
+			// Use an asyncExec to avoid deadlocks.
+			Display.getDefault().asyncExec(notifier);
+		}
     }
 
     /**

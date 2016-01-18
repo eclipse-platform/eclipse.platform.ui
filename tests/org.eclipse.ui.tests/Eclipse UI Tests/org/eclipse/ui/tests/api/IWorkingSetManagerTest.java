@@ -110,19 +110,16 @@ public class IWorkingSetManagerTest extends UITestCase {
 
         resetChangeData();
         fWorkingSetManager.removeWorkingSet(fWorkingSet);
-		processEvents();
         assertEquals("", fChangeProperty);
 
         resetChangeData();
         fWorkingSetManager.addWorkingSet(fWorkingSet);
-		processEvents();
         assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_ADD, fChangeProperty);
         assertEquals(null, fChangeOldValue);
         assertEquals(fWorkingSet, fChangeNewValue);
 
         resetChangeData();
         fWorkingSetManager.removeWorkingSet(fWorkingSet);
-		processEvents();
         assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE,
                 fChangeProperty);
         assertEquals(fWorkingSet, fChangeOldValue);
@@ -133,13 +130,11 @@ public class IWorkingSetManagerTest extends UITestCase {
 		// This will allow us to test for the name property apart from the label
 		// property
 		fWorkingSet.setLabel(WORKING_SET_NAME_3);
-		processEvents();
 		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE,
 				fChangeProperty);
 		assertEquals(WORKING_SET_NAME_1, fChangeOldValue.getLabel());
 		assertEquals(fWorkingSet, fChangeNewValue);
 		fWorkingSet.setName(WORKING_SET_NAME_2);
-		processEvents();
 		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE,
 				fChangeProperty);
 		assertEquals(WORKING_SET_NAME_1, fChangeOldValue.getName());
@@ -147,7 +142,6 @@ public class IWorkingSetManagerTest extends UITestCase {
 
         resetChangeData();
         fWorkingSet.setElements(new IAdaptable[] {});
-		processEvents();
         assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE,
                 fChangeProperty);
 		assertEquals(1, fChangeOldValue.getElements().length);
@@ -427,7 +421,6 @@ public class IWorkingSetManagerTest extends UITestCase {
 					new IAdaptable[0]);
 			fWorkingSetManager.addWorkingSet(set);
 
-			processEvents();
 			assertTrue("Good listener wasn't invoked", result[0]);
 		} finally {
 			fWorkingSetManager.removePropertyChangeListener(badListener);
