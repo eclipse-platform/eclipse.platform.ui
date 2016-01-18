@@ -47,23 +47,12 @@ public abstract class AbstractPartRenderer {
 
 	public abstract void hookControllerLogic(final MUIElement me);
 
-	public abstract void childRendered(
-			MElementContainer<MUIElement> parentElement, MUIElement element);
+	public abstract void childRendered(MElementContainer<MUIElement> parentElement, MUIElement element);
 
-	public void hideChild(MElementContainer<MUIElement> parentElement,
-			MUIElement child) {
+	public void hideChild(MElementContainer<MUIElement> parentElement, MUIElement child) {
 	}
 
 	protected abstract Object getImage(MUILabel element);
-
-	//
-	// public Object createMenu(Object widgetObject, MMenu menu) {
-	// return null;
-	// }
-	//
-	// public Object createToolBar(Object widgetObject, MToolBar toolBar) {
-	// return null;
-	// }
 
 	/**
 	 * Return a parent context for this part.
@@ -146,10 +135,10 @@ public abstract class AbstractPartRenderer {
 	 * @return Returns the style override bits or -1 if there is no override
 	 */
 	public int getStyleOverride(MUIElement mElement) {
-		String overrideStr = mElement.getPersistedState().get(
-				IPresentationEngine.STYLE_OVERRIDE_KEY);
-		if (overrideStr == null || overrideStr.length() == 0)
+		String overrideStr = mElement.getPersistedState().get(IPresentationEngine.STYLE_OVERRIDE_KEY);
+		if (overrideStr == null || overrideStr.length() == 0) {
 			return -1;
+		}
 
 		int val = -1;
 		val = Integer.parseInt(overrideStr);
