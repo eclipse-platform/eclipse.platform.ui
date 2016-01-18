@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
 
 package org.eclipse.ua.tests.help.criteria;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.help.ICriterionDefinition;
 import org.eclipse.help.ICriterionValueDefinition;
 import org.eclipse.help.internal.UAElement;
@@ -19,27 +23,27 @@ import org.eclipse.help.internal.criteria.CriterionDefinition;
 import org.eclipse.help.internal.criteria.CriterionValueDefinition;
 import org.eclipse.ua.tests.help.other.UserCriterionDefinition;
 import org.eclipse.ua.tests.help.other.UserCriterionValueDefinition;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class CriteriaDefinitionTest extends TestCase {
+public class CriteriaDefinitionTest {
 
 	private static final String VALUEID1 = "valueid1";
 	private static final String VALUENAME1 = "first value";
 	private static final String VALUEID2 = "valueid2";
-	private static final String VALUENAME2 = "second value";	
+	private static final String VALUENAME2 = "second value";
 	private static final String CRITERIONID1 = "criterionid1";
 	private static final String CRITERIONNAME1 = "first criterion";
-	
-	// Criterion Value
 
+	// Criterion Value
+	@Test
 	public void testCriterionValueDefinition() {
 		UserCriterionValueDefinition valueDefinition = new UserCriterionValueDefinition(VALUEID1, VALUENAME1);
 		assertEquals(VALUEID1, valueDefinition.getId());
 		assertEquals(VALUENAME1, valueDefinition.getName());
 		assertEquals(0, valueDefinition.getChildren().length);
 	}
-	
+
+	@Test
 	public void testCopyCriterionValueDefinition() {
 		UserCriterionValueDefinition valueDefinition = new UserCriterionValueDefinition(VALUEID1, VALUENAME1);
 		ICriterionValueDefinition copy = new CriterionValueDefinition(valueDefinition);
@@ -47,7 +51,8 @@ public class CriteriaDefinitionTest extends TestCase {
 		assertEquals(VALUENAME1, copy.getName());
 		assertEquals(0, copy.getChildren().length);
 	}
-	
+
+	@Test
 	public void testFactoryCreateValueDefinition() {
 		UserCriterionValueDefinition valueDefinition = new UserCriterionValueDefinition(VALUEID1, VALUENAME1);
 		UAElement element = UAElementFactory.newElement(valueDefinition);
@@ -58,16 +63,17 @@ public class CriteriaDefinitionTest extends TestCase {
 		assertEquals(VALUENAME1, copy.getName());
 		assertEquals(0, copy.getChildren().length);
 	}
-	
+
 	// Criterion - no children
-	
+	@Test
 	public void testCriterionDefinition() {
 		UserCriterionDefinition definition = new UserCriterionDefinition(CRITERIONID1, CRITERIONNAME1);
 		assertEquals(CRITERIONID1, definition.getId());
 		assertEquals(CRITERIONNAME1, definition.getName());
 		assertEquals(0, definition.getChildren().length);
 	}
-	
+
+	@Test
 	public void testCopyCriterionDefinition() {
 		UserCriterionDefinition definition = new UserCriterionDefinition(CRITERIONID1, CRITERIONNAME1);
 		ICriterionDefinition copy = new CriterionDefinition(definition);
@@ -75,7 +81,8 @@ public class CriteriaDefinitionTest extends TestCase {
 		assertEquals(CRITERIONNAME1, copy.getName());
 		assertEquals(0, copy.getChildren().length);
 	}
-	
+
+	@Test
 	public void testFactoryCreateDefinition() {
 		UserCriterionDefinition definition = new UserCriterionDefinition(CRITERIONID1, CRITERIONNAME1);
 		UAElement element = UAElementFactory.newElement(definition);
@@ -87,19 +94,22 @@ public class CriteriaDefinitionTest extends TestCase {
 		assertEquals(0, copy.getChildren().length);
 	}
 
+	@Test
 	public void testCriterionDefinitionWithValues() {
 		UserCriterionDefinition definition;
 		definition = createDefinitionWithValues();
 		checkDefinitionWithValues(definition);
 	}
 
+	@Test
 	public void testCopyCriterionDefinitionWithValues() {
 		UserCriterionDefinition definition;
 		definition = createDefinitionWithValues();
 		ICriterionDefinition copy = new CriterionDefinition(definition);
 		checkDefinitionWithValues(copy);
 	}
-	
+
+	@Test
 	public void testFactoryCreateCriterionDefinitionWithValues() {
 		UserCriterionDefinition definition;
 		definition = createDefinitionWithValues();
@@ -133,5 +143,5 @@ public class CriteriaDefinitionTest extends TestCase {
 		assertEquals(VALUENAME2, values[1].getName());
 	}
 
-		
+
 }

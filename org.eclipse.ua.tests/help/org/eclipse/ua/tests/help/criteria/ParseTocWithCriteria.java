@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ua.tests.help.criteria;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -34,12 +39,11 @@ import org.eclipse.ua.tests.help.other.UserCriteria;
 import org.eclipse.ua.tests.help.other.UserToc2;
 import org.eclipse.ua.tests.help.other.UserTopic2;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
+public class ParseTocWithCriteria {
 
-public class ParseTocWithCriteria extends TestCase {
-	
 	private IToc2 parseToc(String filename) throws IOException, SAXException,
 			ParserConfigurationException {
 		IToc toc;
@@ -51,6 +55,7 @@ public class ParseTocWithCriteria extends TestCase {
 		return (IToc2) toc;
 	}
 
+	@Test
 	public void testTocWithCriteria() throws Exception {
 		IToc2 toc = parseToc("data/help/criteria/c1.xml");
 		Map<String, Set<String>> criteria = new HashMap<String, Set<String>>();
@@ -68,7 +73,8 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertTrue(platforms.contains("linux"));
 	    assertTrue(platforms.contains("win32"));
 	}
-	
+
+	@Test
 	public void testCopyTocWithCriteria() throws Exception {
 		IToc toc0 = parseToc("data/help/criteria/c1.xml");
 		Toc toc = new Toc(toc0);
@@ -79,7 +85,7 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertNotNull(versions);
 	    assertEquals(2, versions.size());
 	    assertTrue(versions.contains("1.0"));
-	    assertTrue(versions.contains("2.0"));	    
+	    assertTrue(versions.contains("2.0"));
 
 	    Set<String> platforms = criteria.get("platform");
 	    assertNotNull(platforms);
@@ -87,7 +93,8 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertTrue(platforms.contains("linux"));
 	    assertTrue(platforms.contains("win32"));
 	}
-	
+
+	@Test
 	public void testTopicWithCriteria() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
 		ITopic[] topics = toc.getTopics();
@@ -107,7 +114,7 @@ public class ParseTocWithCriteria extends TestCase {
 
 		criteria = new HashMap<String, Set<String>>();
 		assertTrue(topics[1] instanceof ITopic2);
-		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[1]).getCriteria());	   
+		CriteriaUtilities.addCriteriaToMap(criteria, ((ITopic2)topics[1]).getCriteria());
 	    versions = criteria.get("version");
 	    assertNotNull(versions);
 	    assertEquals(1, versions.size());
@@ -115,6 +122,7 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertFalse(versions.contains("1.0"));
 	}
 
+	@Test
 	public void testCriteriaScoping1() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
 		ITopic[] topics = toc.getTopics();
@@ -128,6 +136,7 @@ public class ParseTocWithCriteria extends TestCase {
 		assertFalse(scope.inScope(topics[1]));
 	}
 
+	@Test
 	public void testCriteriaScoping2() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
 		ITopic[] topics = toc.getTopics();
@@ -141,6 +150,7 @@ public class ParseTocWithCriteria extends TestCase {
 		assertFalse(scope.inScope(topics[1]));
 	}
 
+	@Test
 	public void testMultipleCriteriaScoping() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
 		ITopic[] topics = toc.getTopics();
@@ -155,7 +165,8 @@ public class ParseTocWithCriteria extends TestCase {
 		assertTrue(scope.inScope(topics[0]));
 		assertFalse(scope.inScope(topics[1]));
 	}
-	
+
+	@Test
 	public void testMultipleCriteriaOnlyOneSatisfied() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c1.xml");
 		ITopic[] topics = toc.getTopics();
@@ -171,13 +182,14 @@ public class ParseTocWithCriteria extends TestCase {
 		assertFalse(scope.inScope(topics[1]));
 	}
 
+	@Test
 	public void testUserTocWithCriteria() throws Exception {
 		UserToc2 toc = new UserToc2("myToc", null, true);
 		UserCriteria criterion1 = new UserCriteria("version", "1.0", true);
 		UserCriteria criterion2 = new UserCriteria("version", "2.0", true);
 		toc.addCriterion(criterion1);
 		toc.addCriterion(criterion2);
-		
+
 		ICriteria[] criteria = toc.getCriteria();
 	    assertEquals(2, criteria.length);
 	    assertEquals("version", criteria[0].getName());
@@ -185,16 +197,17 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertEquals("version", criteria[1].getName());
 	    assertEquals("2.0", criteria[1].getValue());
 	}
-	
+
+	@Test
 	public void testCopyUserTocWithCriteria() throws Exception {
 		UserToc2 toc = new UserToc2("myToc", null, true);
 		UserCriteria criterion1 = new UserCriteria("version", "1.0", true);
 		UserCriteria criterion2 = new UserCriteria("version", "2.0", true);
 		toc.addCriterion(criterion1);
 		toc.addCriterion(criterion2);
-		
+
 		Toc copy = new Toc(toc);
-		
+
 		ICriteria[] criteria = copy.getCriteria();
 	    assertEquals(2, criteria.length);
 	    assertEquals("version", criteria[0].getName());
@@ -203,15 +216,16 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertEquals("2.0", criteria[1].getValue());
 	}
 
+	@Test
 	public void testUserTopicWithCriteria() throws Exception {
 		UserTopic2 topic = new UserTopic2("myToc", null, true);
 		UserCriteria criterion1 = new UserCriteria("version", "1.0", true);
 		UserCriteria criterion2 = new UserCriteria("version", "2.0", true);
 		topic.addCriterion(criterion1);
 		topic.addCriterion(criterion2);
-		
+
 		Topic copy = new Topic(topic);
-		
+
 		ICriteria[] criteria = copy.getCriteria();
 	    assertEquals(2, criteria.length);
 	    assertEquals("version", criteria[0].getName());
@@ -220,6 +234,7 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertEquals("2.0", criteria[1].getValue());
 	}
 
+	@Test
 	public void testCopyUserTopicWithCriteria() throws Exception {
 		UserTopic2 topic = new UserTopic2("myToc", null, true);
 		UserCriteria criterion1 = new UserCriteria("version", "1.0", true);
@@ -234,15 +249,16 @@ public class ParseTocWithCriteria extends TestCase {
 	    assertEquals("2.0", criteria[1].getValue());
 	}
 
+	@Test
 	public void testMultipleValues() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
-		
+
 		CriterionResource[] linuxResource = new CriterionResource[1];
 		linuxResource[0] = new CriterionResource("platform");
 		linuxResource[0].addCriterionValue("linux");
 		CriteriaHelpScope linuxScope = new CriteriaHelpScope(linuxResource);
 		assertTrue(linuxScope.inScope(toc));
-		
+
 		CriterionResource[] win32Resource = new CriterionResource[1];
 		win32Resource[0] = new CriterionResource("platform");
 		win32Resource[0].addCriterionValue("win32");
@@ -250,59 +266,64 @@ public class ParseTocWithCriteria extends TestCase {
 		assertTrue(win32scope.inScope(toc));
 	}
 
+	@Test
 	public void testValuesOfDifferentCases() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
 		ITopic[] topics = toc.getTopics();
-		
+
 		CriterionResource[] linuxResource = new CriterionResource[1];
 		linuxResource[0] = new CriterionResource("platform");
 		linuxResource[0].addCriterionValue("linux");
 		CriteriaHelpScope linuxScope = new CriteriaHelpScope(linuxResource);
-		assertFalse(linuxScope.inScope(topics[0]));		
+		assertFalse(linuxScope.inScope(topics[0]));
 	}
 
+	@Test
 	public void testValuesWithWhitespace() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
 		ITopic[] topics = toc.getTopics();
-		
+
 		CriterionResource[] win32Resource = new CriterionResource[1];
 		win32Resource[0] = new CriterionResource("platform");
 		win32Resource[0].addCriterionValue("win32");
 		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
-		assertTrue(win32Scope.inScope(topics[1]));		
+		assertTrue(win32Scope.inScope(topics[1]));
 	}
 
+	@Test
 	public void testNoName() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
 		ITopic[] topics = toc.getTopics();
-		
+
 		CriterionResource[] win32Resource = new CriterionResource[1];
 		win32Resource[0] = new CriterionResource("platform");
 		win32Resource[0].addCriterionValue("win32");
 		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
-		assertFalse(win32Scope.inScope(topics[2]));		
+		assertFalse(win32Scope.inScope(topics[2]));
 	}
 
+	@Test
 	public void testNoValue() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
 		ITopic[] topics = toc.getTopics();
-		
+
 		CriterionResource[] win32Resource = new CriterionResource[1];
 		win32Resource[0] = new CriterionResource("platform");
 		win32Resource[0].addCriterionValue("win32");
 		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
-		assertFalse(win32Scope.inScope(topics[3]));		
+		assertFalse(win32Scope.inScope(topics[3]));
 	}
 
+	@Test
 	public void testNoCriteria() throws Exception {
 		IToc toc = parseToc("data/help/criteria/c2.xml");
 		ITopic[] topics = toc.getTopics();
-		
+
 		CriterionResource[] win32Resource = new CriterionResource[1];
 		win32Resource[0] = new CriterionResource("platform");
 		win32Resource[0].addCriterionValue("win32");
 		CriteriaHelpScope win32Scope = new CriteriaHelpScope(win32Resource);
-		assertFalse(win32Scope.inScope(topics[4]));		
+		assertFalse(win32Scope.inScope(topics[4]));
 	}
 
 }
