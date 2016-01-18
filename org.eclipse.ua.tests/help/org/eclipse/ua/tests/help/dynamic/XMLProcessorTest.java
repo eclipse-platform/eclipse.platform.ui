@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,14 +24,14 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.XMLUtil;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 
-import junit.framework.TestCase;
+public class XMLProcessorTest {
 
-public class XMLProcessorTest extends TestCase {
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		// activate the UI plug-in for UI filtering ability
 		HelpUIPlugin.getDefault();
 	}
@@ -50,34 +50,42 @@ public class XMLProcessorTest extends TestCase {
 		XMLUtil.assertXMLEquals("XML content was not processed correctly: " + path, in, in2);
 	}
 
+	@Test
 	public void testExtension() throws Exception {
 		xmlProcess("data/help/dynamic/extension.xml");
 	}
-	
+
+	@Test
 	public void testFilter() throws Exception {
 		xmlProcess("data/help/dynamic/filter.xml");
 	}
-	
+
+	@Test
 	public void testInclude() throws Exception {
 		xmlProcess("data/help/dynamic/include.xml");
 	}
-	
+
+	@Test
 	public void testIndex() throws Exception {
 		xmlProcess("data/help/dynamic/index.xml");
 	}
-	
+
+	@Test
 	public void testSimple() throws Exception {
 		xmlProcess("data/help/dynamic/simple.xml");
 	}
-	
+
+	@Test
 	public void testToc() throws Exception {
 		xmlProcess("data/help/dynamic/toc.xml");
 	}
-	
+
+	@Test
 	public void testXhtml() throws Exception {
 		xmlProcess("data/help/dynamic/xhtml.xml");
 	}
-	
+
+	@Test
 	public void testEntities() throws Exception {
 		xmlProcess("data/help/dynamic/entities.xml");
 	}

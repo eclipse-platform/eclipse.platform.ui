@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.scope;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.help.ui.internal.views.ScopeSet;
 import org.eclipse.help.ui.internal.views.ScopeSetManager;
+import org.junit.Test;
 
-public class ScopeSetManagerTest extends TestCase {
-
+public class ScopeSetManagerTest {
+	@Test
 	public void testAddScope() {
 		String scopeName = "newScope1";
 		ScopeSetManager manager = new ScopeSetManager();
@@ -28,7 +31,8 @@ public class ScopeSetManagerTest extends TestCase {
 		assertNotNull(set);
 		assertEquals(scopeName, set.getName());
 	}
-	
+
+	@Test
 	public void testAddAndRenameScope() {
 		String oldScopeName = "newScope2";
 		String newScopeName = "newScope3";
@@ -44,20 +48,21 @@ public class ScopeSetManagerTest extends TestCase {
 		set = manager.findSet(oldScopeName);
 		assertNull(set);
 	}
-	
+
+	@Test
 	public void testAddAndDeleteScope() {
 		String scopeName = "newScope4";
 		ScopeSetManager manager = new ScopeSetManager();
 		ScopeSet newScope = new ScopeSet(scopeName);
 		manager.add(newScope);
 		manager.save();
-		
+
 		manager = new ScopeSetManager();
 		ScopeSet set = manager.findSet(scopeName);
 		assertNotNull(set);
 		assertEquals(scopeName, set.getName());
 		manager.remove(set);
-		
+
 		manager = new ScopeSetManager();
 		set = manager.findSet(scopeName);
 		assertNull(set);

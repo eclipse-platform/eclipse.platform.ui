@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.scope;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test that leaf topics with no href do not show in the tree
@@ -22,14 +23,16 @@ import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.ua.tests.help.other.UserIndexEntry;
 import org.eclipse.ua.tests.help.other.UserToc;
 import org.eclipse.ua.tests.help.other.UserTopic;
+import org.junit.Test;
 
-public class EmptyLeafRemoval extends TestCase {
-
+public class EmptyLeafRemoval {
+	@Test
 	public void testEmptyLeafTopic() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		assertFalse(ScopeUtils.showInTree(topic, new MockScope('a', false)));
 	}
 
+	@Test
 	public void testEmptyParentOfEmptyLeafTopic() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("ac", null, true);
@@ -37,6 +40,7 @@ public class EmptyLeafRemoval extends TestCase {
 		assertFalse(ScopeUtils.showInTree(topic, new MockScope('a', false)));
 	}
 
+	@Test
 	public void testEmptyParentOfNonEmptyLeafTopic() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("ac", "http://www.eclipse.org", true);
@@ -44,13 +48,15 @@ public class EmptyLeafRemoval extends TestCase {
 		assertTrue(ScopeUtils.showInTree(topic, new MockScope('a', false)));
 	}
 
+	@Test
 	public void testEmptyParentOfNonEmptyLeafTopicHierarchical() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("ac", "http://www.eclipse.org", true);
 		topic.addTopic(child);
 		assertTrue(ScopeUtils.showInTree(topic, new MockScope('a', true)));
 	}
-	
+
+	@Test
 	public void testEmptyGrandParentWithOutOfScopeChildTopicHierarchical() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("c", "http://www.eclipse.org", true);
@@ -59,7 +65,8 @@ public class EmptyLeafRemoval extends TestCase {
 		child.addTopic(grandChild);
 		assertFalse(ScopeUtils.showInTree(topic, new MockScope('a', true)));
 	}
-	
+
+	@Test
 	public void testEmptyGrandparentOfNonEmptyLeafTopicHierarchical() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("ac", null, true);
@@ -69,6 +76,7 @@ public class EmptyLeafRemoval extends TestCase {
 		assertTrue(ScopeUtils.showInTree(topic, new MockScope('a', true)));
 	}
 
+	@Test
 	public void testTocParentOfEmptyLeaf() {
 		UserToc toc = new UserToc("ab", "http://www.eclipse.org", true);
 		UserTopic child = new UserTopic("ac", null, true);
@@ -76,7 +84,8 @@ public class EmptyLeafRemoval extends TestCase {
 		AbstractHelpScope scope = new MockScope('a', false);
 		assertFalse(ScopeUtils.showInTree(toc, scope));
 	}
-	
+
+	@Test
 	public void testTocParentOfNonEmptyLeaf() {
 		UserToc toc = new UserToc("ab", "http://www.eclipse.org", true);
 		UserTopic child = new UserTopic("ac", "http://www.eclipse.org", true);
@@ -85,6 +94,7 @@ public class EmptyLeafRemoval extends TestCase {
 		assertTrue(ScopeUtils.showInTree(toc, scope));
 	}
 
+	@Test
 	public void testEntryParentOfEmptyLeaf() {
 		UserIndexEntry entry = new UserIndexEntry("ab", true);
 		UserTopic child = new UserTopic("ac", null, true);
@@ -93,6 +103,7 @@ public class EmptyLeafRemoval extends TestCase {
 		assertFalse(ScopeUtils.showInTree(entry, scope));
 	}
 
+	@Test
 	public void testEntryParentOfNonEmptyLeaf() {
 		UserIndexEntry entry = new UserIndexEntry("ab", true);
 		UserTopic child = new UserTopic("ac", "http://www.eclipse.org", true);
@@ -100,7 +111,8 @@ public class EmptyLeafRemoval extends TestCase {
 		AbstractHelpScope scope = new MockScope('a', true);
 		assertTrue(ScopeUtils.showInTree(entry, scope));
 	}
-	
+
+	@Test
 	public void testEntryGrandParentOfNonEmptyLeaf() {
 		UserIndexEntry entry = new UserIndexEntry("ab", true);
 		UserIndexEntry child = new UserIndexEntry("ab", true);
@@ -110,5 +122,5 @@ public class EmptyLeafRemoval extends TestCase {
 		AbstractHelpScope scope = new MockScope('a', true);
 		assertTrue(ScopeUtils.showInTree(entry, scope));
 	}
-	
+
 }
