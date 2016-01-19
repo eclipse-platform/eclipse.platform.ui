@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,20 @@
 package org.eclipse.ua.tests.help.search;
 
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.nio.channels.OverlappingFileLockException;
 
 import org.eclipse.help.internal.search.SearchIndex;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test locking of search index
  */
-public class LockTest extends TestCase {
-
+public class LockTest {
+	@Test
 	public void testSingleLock() {
 		SearchIndex index1 = new SearchIndex(null, null, null);
 		try {
@@ -32,7 +35,8 @@ public class LockTest extends TestCase {
 		}
 		index1.releaseLock();
 	}
-	
+
+	@Test
 	public void testCompetingLocks() {
 		SearchIndex index1 = new SearchIndex(null, null, null);
 		try {
@@ -51,8 +55,8 @@ public class LockTest extends TestCase {
 		index1.releaseLock();
 		index2.releaseLock();
 	}
-	
 
+	@Test
 	public void testNonCompetingLocks() {
 		SearchIndex index1 = new SearchIndex(null, null, null);
 		try {
@@ -71,5 +75,5 @@ public class LockTest extends TestCase {
 		}
 		index2.releaseLock();
 	}
-			
+
 }

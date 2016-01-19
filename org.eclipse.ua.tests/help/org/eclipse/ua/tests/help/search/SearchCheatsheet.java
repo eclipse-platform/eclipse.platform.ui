@@ -11,6 +11,9 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -20,11 +23,10 @@ import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class SearchCheatsheet {
 
-public class SearchCheatsheet extends TestCase {
-	
 	public SearchHit[] findHits(String searchWord) {
 		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
 		SearchResults collector = new SearchResults(null, 10, Platform.getNL());
@@ -32,16 +34,19 @@ public class SearchCheatsheet extends TestCase {
 		return collector.getSearchHits();
 	}
 
+	@Test
 	public void testCheatSheetTitleSearch() {
 		SearchHit[] hits = findHits("CSTitle_AhB4U8");
 		checkForCheatSheetMatch(hits);
 	}
 
+	@Test
 	public void testCheatSheetIntroSearch() {
 		SearchHit[] hits = findHits("CSIntro_AhB4U8");
 		checkForCheatSheetMatch(hits);
 	}
-	
+
+	@Test
 	public void testCheatSheetItemSearch() {
 		SearchHit[] hits = findHits("CSItem_AhB4U8");
 		checkForCheatSheetMatch(hits);
@@ -50,21 +55,24 @@ public class SearchCheatsheet extends TestCase {
 		hits = findHits("CSItemCompletion_AhB4U8");
 		checkForCheatSheetMatch(hits);
 	}
-	
+
+	@Test
 	public void testCheatSheetSubitemSearch() {
 		SearchHit[] hits = findHits("SubItem1_AhB4U8");
 		checkForCheatSheetMatch(hits);
 		hits = findHits("SubItem2_AhB4U8");
 		checkForCheatSheetMatch(hits);
 		hits = findHits("ConditionalSubItem_AhB4U8");
-		checkForCheatSheetMatch(hits);	
+		checkForCheatSheetMatch(hits);
 	}
 
+	@Test
 	public void testCompositeTitleSearch() {
 		SearchHit[] hits = findHits("CompositeName_AhB4U8");
 		checkForCompositeMatch(hits);
 	}
 
+	@Test
 	public void testCompositeTaskSearch() {
 		SearchHit[] hits = findHits("TaskName_AhB4U8");
 		checkForCompositeMatch(hits);
@@ -76,7 +84,8 @@ public class SearchCheatsheet extends TestCase {
 		hits = findHits("TaskId_AhB4U8");
 		assertEquals(0, hits.length);
 	}
-	
+
+	@Test
 	public void testCompositeTaskGroupSearch() {
 		SearchHit[] hits = findHits("TaskGroup_AhB4U8");
 		checkForCompositeMatch(hits);
@@ -87,22 +96,22 @@ public class SearchCheatsheet extends TestCase {
 	}
 
 	/*
-	 * Chech that there was one match, the 
+	 * Chech that there was one match, the
 	 */
 	private void checkForCheatSheetMatch(SearchHit[] hits) {
 		assertEquals(1, hits.length);
-		assertEquals("/org.eclipse.ua.tests/data/cheatsheet/search/CSSearchTest.xml", 
+		assertEquals("/org.eclipse.ua.tests/data/cheatsheet/search/CSSearchTest.xml",
 				ignoreQuery(hits[0].getHref()));
 		assertTrue(hits[0].getDescription().startsWith("CSIntro_AhB4U8 This cheat sheet is used to test search."));
 		assertEquals("org.eclipse.ui.cheatsheets/org.eclipse.ua.tests.cheatsheet.searchTest", hits[0].getId());
 		}
-	
+
 	private void checkForCompositeMatch(SearchHit[] hits) {
 		assertEquals(1, hits.length);
-		assertEquals("/org.eclipse.ua.tests/data/cheatsheet/search/CompositeSearchTest.xml", 
+		assertEquals("/org.eclipse.ua.tests/data/cheatsheet/search/CompositeSearchTest.xml",
 				ignoreQuery(hits[0].getHref()));
 		assertTrue(hits[0].getDescription().startsWith("Intro text TaskGroupIntro_AhB4U8"));
-		assertEquals("org.eclipse.ui.cheatsheets/org.eclipse.ua.tests.composite.searchTest", 
+		assertEquals("org.eclipse.ui.cheatsheets/org.eclipse.ua.tests.composite.searchTest",
 				hits[0].getId());
 	}
 
@@ -113,5 +122,5 @@ public class SearchCheatsheet extends TestCase {
 		}
 		return href;
 	}
-	
+
 }

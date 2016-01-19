@@ -12,6 +12,11 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -33,14 +38,13 @@ import org.eclipse.help.internal.search.PluginIndex;
 import org.eclipse.help.internal.search.QueryBuilder;
 import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
-
-import junit.framework.TestCase;
 
 /**
  * Verify that older versions of the index can be read by this
- * version of Eclipse. 
- * 
+ * version of Eclipse.
+ *
  * How to maintain this test - if when upgrading to a new version
  * of Lucene one of the IndexReadable tests fails you need to
  * make the following changes:
@@ -49,53 +53,61 @@ import junit.framework.TestCase;
  * 3. Change the help system to recognize that version of Lucene as being incompatible
  */
 
-public class PrebuiltIndexCompatibility extends TestCase {
+public class PrebuiltIndexCompatibility {
 
 	/**
 	 * Test index built with Lucene 1.9.1
 	 */
+	@Test
 	public void test1_9_1_IndexReadable() throws Exception {
 		checkReadable("data/help/searchindex/index191");
 	}
-	
+
 	/**
 	 * Test index built with Lucene 2.9.1
 	 */
+	@Test
 	public void test2_9_1_IndexReadable() throws Exception {
 		checkReadable("data/help/searchindex/index291");
 	}
-	
+
 	/**
 	 ** Test compatibility of Lucene 1.9.1 index with current Lucene
 	 */
+	@Test
 	public void test1_9_1Compatible()
 	{
 		checkCompatible("data/help/searchindex/index191", true);
 	}
-	
+
 	/**
 	 ** Test compatibility of Lucene 2.9.1 index with current Lucene
 	 */
+	@Test
 	public void test2_9_1Compatible()
 	{
 		checkCompatible("data/help/searchindex/index291", true);
 	}
 
+	@Test
 	public void test1_9_1LuceneCompatible()
 	{
 		checkLuceneCompatible("1.9.1", true);
 	}
 
+	@Test
 	public void test1_4_103NotLuceneCompatible()
 	{
 		checkLuceneCompatible("1.4.103", false);
 	}
 
+	@Test
 	public void test2_9_1LuceneCompatible()
 	{
 		checkLuceneCompatible("2.9.1", true);
 	}
 
+	@Test
 	public void testPluginIndexEqualToItself() {
 		PluginIndex index = createPluginIndex("data/help/searchindex/index191");
 		assertTrue(index.equals(index));
@@ -104,24 +116,27 @@ public class PrebuiltIndexCompatibility extends TestCase {
 	/**
 	 * Verify that if the paths and plugins are the same two PluginIndex objects are equal
 	 */
+	@Test
 	public void testPluginIndexEquality() {
 		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
 		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
 		assertTrue(index1a.equals(index1b));
 	}
-	
+
 	/**
 	 * Verify that if the paths and plugins are the same two PluginIndex objects are equal
 	 */
+	@Test
 	public void testPluginIndexHash() {
 		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
 		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
 		assertEquals(index1a.hashCode(), index1b.hashCode());
 	}
-	
+
 	/**
 	 * Verify that if the paths are different two PluginIndex objects are not equal
 	 */
+	@Test
 	public void testPluginIndexInequality() {
 		PluginIndex index1 = createPluginIndex("data/help/searchindex/index191");
 		PluginIndex index2 = createPluginIndex("data/help/searchindex/index291");
@@ -134,7 +149,7 @@ public class PrebuiltIndexCompatibility extends TestCase {
 	private void checkReadable(String indexPath) throws IOException,
 			CorruptIndexException {
 		Path path = new Path(indexPath);
-		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle(); 
+		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
 		URL url = FileLocator.find(bundle, path, null);
 		URL resolved = FileLocator.resolve(url);
 		if ("file".equals(resolved.getProtocol())) { //$NON-NLS-1$
@@ -161,7 +176,7 @@ public class PrebuiltIndexCompatibility extends TestCase {
 			fail("Cannot resolve to file protocol");
 		}
 	}
-	
+
 	/*
 	 * Tests the isCompatible method in PluginIndex
 	 */
@@ -180,9 +195,9 @@ public class PrebuiltIndexCompatibility extends TestCase {
 		pluginIndex = new PluginIndex("org.eclipse.ua.tests", "data/help/searchindex/" + versionDirectory, index);
 		return pluginIndex;
 	}
-	
+
 	/*
-	 * Tests the isLuceneCompatible method in SearchIndex 
+	 * Tests the isLuceneCompatible method in SearchIndex
 	 */
 	private void checkLuceneCompatible(String version, boolean expected) {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex("en_us".toString());
@@ -191,5 +206,5 @@ public class PrebuiltIndexCompatibility extends TestCase {
 				index);
 		assertEquals(expected, index.isLuceneCompatible(version));
 	}
-	
+
 }

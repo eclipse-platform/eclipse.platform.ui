@@ -1,20 +1,24 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2015 IBM Corporation and others.
+ *  Copyright (c) 2010, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.search;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ITopic;
@@ -27,13 +31,16 @@ import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.internal.workingset.WorkingSetManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WorkingSetManagerTest extends TestCase {
-	
+public class WorkingSetManagerTest {
+
 	private WorkingSet[] workingSets;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		WorkingSetManager manager = new WorkingSetManager();
 		manager.restoreState();
 		workingSets = manager.getWorkingSets();
@@ -43,8 +50,8 @@ public class WorkingSetManagerTest extends TestCase {
 		manager.saveState();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		WorkingSetManager manager = new WorkingSetManager();
 		WorkingSet[] wsetsToRemove = manager.getWorkingSets();
 		for (WorkingSet element : wsetsToRemove) {
@@ -56,6 +63,7 @@ public class WorkingSetManagerTest extends TestCase {
 		manager.saveState();
 	}
 
+	@Test
 	public void testNewWSM() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		assertEquals(0, mgr.getWorkingSets().length);
@@ -64,6 +72,7 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(mgr.hashCode(), mgr2.hashCode());
 	}
 
+	@Test
 	public void testWSMWithToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -78,6 +87,7 @@ public class WorkingSetManagerTest extends TestCase {
 		assertTrue(resources[0].equals(toc));
 	};
 
+	@Test
 	public void testWSMWithTocContainsThatToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -89,7 +99,8 @@ public class WorkingSetManagerTest extends TestCase {
 		WorkingSetScope scope = new WorkingSetScope("test", mgr, "scope");
 		assertTrue(scope.inScope(tocs[0]));
 	};
-	
+
+	@Test
 	public void testWSMWithTocContainsNoOtherToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -104,6 +115,7 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	};
 
+	@Test
 	public void testWSMWithTocContainsThatTocsTopics() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -120,7 +132,8 @@ public class WorkingSetManagerTest extends TestCase {
 		    }
 		}
 	};
-	
+
+	@Test
 	public void testWSMWithTocContainsNoOtherTocsTopics() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -135,7 +148,8 @@ public class WorkingSetManagerTest extends TestCase {
 			assertTrue(scope.inScope(topic));
 		}
 	};
-	
+
+	@Test
 	public void testSaveRestoreWSMWithToc() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test");
@@ -151,7 +165,8 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(1, resources.length);
 		assertTrue(resources[0].equals(toc));
 	};
-	
+
+	@Test
 	public void testSaveRestoreWSMWithAllTocs() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		createWsetWithAllTocs(mgr, "test");
@@ -164,6 +179,7 @@ public class WorkingSetManagerTest extends TestCase {
 		assertEquals(tocs.length, resources.length);
 	}
 
+	@Test
 	public void testTocInScopeWithAllTocs() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		createWsetWithAllTocs(mgr, "test1");
@@ -175,6 +191,7 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testTopLevelTopicsInScopeWithAllTocs() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		createWsetWithAllTocs(mgr, "test1a");
@@ -187,7 +204,8 @@ public class WorkingSetManagerTest extends TestCase {
 			}
 		}
 	}
-	
+
+	@Test
 	public void testSecondLevelTopicsInScopeWithAllTocs() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		createWsetWithAllTocs(mgr, "test1b");
@@ -215,6 +233,7 @@ public class WorkingSetManagerTest extends TestCase {
 		mgr.addWorkingSet(wset);
 	};
 
+	@Test
 	public void testWSMWithTopics() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test2");
@@ -238,6 +257,7 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	};
 
+	@Test
 	public void testSaveRestoreWSMWithTopics() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test2");
@@ -263,6 +283,7 @@ public class WorkingSetManagerTest extends TestCase {
 		}
 	};
 
+	@Test
 	public void testWSMWithMultipleWsets() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset1 = new WorkingSet("test3");
@@ -277,14 +298,15 @@ public class WorkingSetManagerTest extends TestCase {
 		mgr.addWorkingSet(wset2);
 		WorkingSet[] readWsets = mgr.getWorkingSets();
 		assertEquals(2, readWsets.length);
-		AdaptableHelpResource[] resourcesT3 = mgr.getWorkingSet("test3").getElements();		
+		AdaptableHelpResource[] resourcesT3 = mgr.getWorkingSet("test3").getElements();
 		assertEquals(1, resourcesT3.length);
 		assertEquals(topic1, resourcesT3[0]);
-		AdaptableHelpResource[] resourcesT4 = mgr.getWorkingSet("test4").getElements();		
+		AdaptableHelpResource[] resourcesT4 = mgr.getWorkingSet("test4").getElements();
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
 	};
-	
+
+	@Test
 	public void testSaveRestoreWSMWithMultipleWsets() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset1 = new WorkingSet("test3");
@@ -297,19 +319,20 @@ public class WorkingSetManagerTest extends TestCase {
 		wset2.setElements(new AdaptableHelpResource[] { topic3 });
 		mgr.addWorkingSet(wset1);
 		mgr.addWorkingSet(wset2);
-		
+
 		WorkingSetManager mgr2 = new WorkingSetManager();
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
-		
+
 		assertEquals(2, readWsets.length);
-		AdaptableHelpResource[] resourcesT3 = mgr2.getWorkingSet("test3").getElements();		
+		AdaptableHelpResource[] resourcesT3 = mgr2.getWorkingSet("test3").getElements();
 		assertEquals(1, resourcesT3.length);
 		assertEquals(topic1, resourcesT3[0]);
-		AdaptableHelpResource[] resourcesT4 = mgr2.getWorkingSet("test4").getElements();		
+		AdaptableHelpResource[] resourcesT4 = mgr2.getWorkingSet("test4").getElements();
 		assertEquals(1, resourcesT4.length);
 		assertEquals(topic3, resourcesT4[0]);
 	};
 
+	@Test
 	public void testWSMWithCriteria() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test5");
@@ -317,7 +340,7 @@ public class WorkingSetManagerTest extends TestCase {
 		assertNotNull(toc);
 		wset.setElements(new AdaptableHelpResource[] { toc });
 		CriterionResource[] criteria =  { new CriterionResource("version") };
-		criteria[0].addCriterionValue("1.0");	
+		criteria[0].addCriterionValue("1.0");
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
 		WorkingSet[] readWsets = mgr.getWorkingSets();
@@ -325,7 +348,8 @@ public class WorkingSetManagerTest extends TestCase {
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		assertEquals(1, readResources.length);
 	};
-	
+
+	@Test
 	public void testSaveRestoreWSMWithMCriteria() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test6");
@@ -333,19 +357,20 @@ public class WorkingSetManagerTest extends TestCase {
 		assertNotNull(toc);
 		wset.setElements(new AdaptableHelpResource[] { toc });
 		CriterionResource[] criteria =  { new CriterionResource("version") };
-		criteria[0].addCriterionValue("1.0");	
+		criteria[0].addCriterionValue("1.0");
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
 		mgr.saveState();
-		
+
 		WorkingSetManager mgr2 = new WorkingSetManager();
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
-		
+
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		assertEquals(1, readResources.length);
 	};
 
+	@Test
 	public void testWSMWithMultipleCriteria() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test7");
@@ -353,9 +378,9 @@ public class WorkingSetManagerTest extends TestCase {
 		assertNotNull(toc);
 		wset.setElements(new AdaptableHelpResource[] { toc });
 		CriterionResource[] criteria =  { new CriterionResource("version"), new CriterionResource("platform") };
-		criteria[0].addCriterionValue("1.0");	
-		criteria[1].addCriterionValue("linux");	
-		criteria[1].addCriterionValue("MacOS");	
+		criteria[0].addCriterionValue("1.0");
+		criteria[1].addCriterionValue("linux");
+		criteria[1].addCriterionValue("MacOS");
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
 		WorkingSet[] readWsets = mgr.getWorkingSets();
@@ -364,20 +389,21 @@ public class WorkingSetManagerTest extends TestCase {
 		checkResourceWithTwoChildren(readResources);
 	};
 
+	@Test
 	public void testSaveRestoreWSMWithMultipleCriteria() {
 		WorkingSetManager mgr = new WorkingSetManager();
 		WorkingSet wset = new WorkingSet("test8");
 		AdaptableToc toc = mgr.getAdaptableToc("/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertNotNull(toc);
 		wset.setElements(new AdaptableHelpResource[] { toc });
-		CriterionResource[] criteria = createResourceWithTwoCriteria();	
+		CriterionResource[] criteria = createResourceWithTwoCriteria();
 		wset.setCriteria(criteria);
 		mgr.addWorkingSet(wset);
         mgr.saveState();
-		
+
 		WorkingSetManager mgr2 = new WorkingSetManager();
 		WorkingSet[] readWsets = mgr2.getWorkingSets();
-		
+
 		assertEquals(1, readWsets.length);
 		CriterionResource[] readResources = readWsets[0].getCriteria();
 		checkResourceWithTwoChildren(readResources);
@@ -409,7 +435,7 @@ public class WorkingSetManagerTest extends TestCase {
 		criteria[0] = new CriterionResource("version");
 		criteria[0].addCriterionValue("1.0");
 		criteria[1] = new CriterionResource("platform");
-		criteria[1].addCriterionValue("linux");	
+		criteria[1].addCriterionValue("linux");
 		criteria[1].addCriterionValue("MacOS");
 		return criteria;
 	};

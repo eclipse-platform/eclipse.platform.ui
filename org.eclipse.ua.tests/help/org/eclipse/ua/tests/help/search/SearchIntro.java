@@ -11,6 +11,8 @@
 
 package org.eclipse.ua.tests.help.search;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -20,11 +22,10 @@ import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class SearchIntro {
 
-public class SearchIntro extends TestCase {
-	
 	public SearchHit[] findHits(String searchWord) {
 		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
 		SearchResults collector = new SearchResults(null, 10, Platform.getNL());
@@ -32,24 +33,28 @@ public class SearchIntro extends TestCase {
 		return collector.getSearchHits();
 	}
 
+	@Test
 	public void testSearchIntroGroupLabel() {
 		SearchHit[] hits = SearchTestUtils.getSearchHits("ifirifjrnfj", "en");
 		assertEquals(1, hits.length);
 	}
-	
+
+	@Test
 	public void testSearchIntroGroupText() {
 		SearchHit[] hits = SearchTestUtils.getSearchHits("nenfhhdhhed", "en");
 		assertEquals(1, hits.length);
 	}
-	
+
+	@Test
 	public void testSearchIntroLinkLabel() {
 		SearchHit[] hits = SearchTestUtils.getSearchHits("hydefefed", "en");
 		assertEquals(1, hits.length);
 	}
-	
+
+	@Test
 	public void testSearchIntroLinkText() {
 		SearchHit[] hits = SearchTestUtils.getSearchHits("hfuejfujduj", "en");
 		assertEquals(1, hits.length);
 	}
-	
+
 }
