@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Test that dependencies get satisfied when the required tasks are completed
  */
@@ -19,11 +22,10 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetMo
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class TestDependency {
 
-public class TestDependency extends TestCase {
-	
 	private CompositeCheatSheetModel model;
 	private TaskGroup rootTask;
 	private TaskGroup subGroup;
@@ -31,7 +33,7 @@ public class TestDependency extends TestCase {
 	private EditableTask task2;
 	private EditableTask task3;
 	private EditableTask task4;
-	
+
 	/**
 	 * Initialize a composite cheatsheet whose root task is the parent of
 	 * subGroup and task4. subGroup is the parent of task1, task2 and task3
@@ -46,17 +48,18 @@ public class TestDependency extends TestCase {
 		task3 = new EditableTask(model, "task3", "name", "ua.junit");
 		task4 = new EditableTask(model, "task4", "name", "ua.junit");
 		model.setRootTask(rootTask);
-		rootTask.addSubtask(subGroup);	
-		rootTask.addSubtask(task4);	
+		rootTask.addSubtask(subGroup);
+		rootTask.addSubtask(task4);
 		subGroup.addSubtask(task1);
 		subGroup.addSubtask(task2);
 		subGroup.addSubtask(task3);
 	}
-	
+
 	/**
-	 * Create a task that depends on two other tasks. The task is not runnable 
+	 * Create a task that depends on two other tasks. The task is not runnable
 	 * until both of its dependencies have been satisfied.
 	 */
+	@Test
 	public void testDualDependency() {
 		setupModel();
 		task3.addRequiredTask(task1);
@@ -69,10 +72,11 @@ public class TestDependency extends TestCase {
 		task2.complete();
 		assertTrue(task3.requiredTasksCompleted());
 	}
-	
+
 	/**
 	 * Verify that skipping a task satisfies the dependency
 	 */
+	@Test
 	public void testSkippedDependency() {
 		setupModel();
 		task3.addRequiredTask(task1);
@@ -83,10 +87,11 @@ public class TestDependency extends TestCase {
 		task2.setState(ICompositeCheatSheetTask.SKIPPED);
 		assertTrue(task3.requiredTasksCompleted());
 	}
-	
+
 	/**
 	 * Verify that if a task depends on a task group the dependency is satisfied when the group is completed
 	 */
+	@Test
 	public void testGroupDependency() {
 		setupModel();
 		task4.addRequiredTask(subGroup);

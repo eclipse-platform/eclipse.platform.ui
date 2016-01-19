@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,10 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
@@ -20,31 +23,35 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskStateUtilities;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the functions which determine the state of tasks
  */
 
-public class TestState extends TestCase {
-	
+public class TestState {
+
 	private CompositeCheatSheetModel model;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		model = new CompositeCheatSheetModel("name", "description", "explorerId");
 	}
-	
+
 	private void skip(ICompositeCheatSheetTask task) {
 		((AbstractTask)task).setState(ICompositeCheatSheetTask.SKIPPED);
 	}
 
+	@Test
 	public void testNoParent() {
 		EditableTask task = new EditableTask(model, "id", "name", "ua.junit");
 		assertNull(TaskStateUtilities.findSkippedAncestor(task));
 		assertNull(TaskStateUtilities.findCompletedAncestor(task));
 		assertNull(TaskStateUtilities.findBlockedAncestor(task));
 	}
-	
+
+	@Test
 	public void testSelfSkip() {
 		EditableTask task = new EditableTask(model, "id", "name", "ua.junit");
 		skip(task);
@@ -53,6 +60,7 @@ public class TestState extends TestCase {
 		assertNull(TaskStateUtilities.findBlockedAncestor(task));
 	}
 
+	@Test
 	public void testSkippedParent() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SEQUENCE);
 		TaskGroup group = new TaskGroup(model, "group", "gname", ITaskGroup.SEQUENCE);
@@ -64,7 +72,8 @@ public class TestState extends TestCase {
 		assertEquals(group, TaskStateUtilities.findSkippedAncestor(task));
 		assertNull(TaskStateUtilities.findBlockedAncestor(task));
 	}
-	
+
+	@Test
 	public void testSkippedGrandparent() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SEQUENCE);
 		TaskGroup group = new TaskGroup(model, "group", "gname", ITaskGroup.SEQUENCE);
@@ -76,6 +85,7 @@ public class TestState extends TestCase {
 		assertNull(TaskStateUtilities.findBlockedAncestor(task));
 	}
 
+	@Test
 	public void testCompletedGrandparent() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.CHOICE);
 		TaskGroup group = new TaskGroup(model, "group", "gname", ITaskGroup.SEQUENCE);
@@ -95,7 +105,8 @@ public class TestState extends TestCase {
 		assertFalse(TaskStateUtilities.isStartEnabled(task));
 		assertFalse(TaskStateUtilities.isSkipEnabled(task));
 	}
-	
+
+	@Test
 	public void testBlockedGrandparent() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SET);
 		TaskGroup grandparent = new TaskGroup(model, "group1", "gname1", ITaskGroup.SEQUENCE);
@@ -120,7 +131,8 @@ public class TestState extends TestCase {
 		assertTrue(TaskStateUtilities.isSkipEnabled(task));
 		assertFalse(TaskStateUtilities.isStartEnabled(parent));
 	}
-	
+
+	@Test
 	public void testRestartStates() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SET);
 		TaskGroup group = new TaskGroup(model, "group1", "gname", ITaskGroup.SET);
@@ -146,10 +158,11 @@ public class TestState extends TestCase {
 		assertEquals(task4, TaskStateUtilities.getRestartTasks(group)[0]);
 		assertEquals(3, TaskStateUtilities.getRestartTasks(root).length);
 	}
-	
+
 	/**
 	 * Test that resetting a task resets dependents and their children also
 	 */
+	@Test
 	public void testResetDependents() {
 		TaskGroup root = new TaskGroup(model, "root", "rname", ITaskGroup.SET);
 		TaskGroup group = new TaskGroup(model, "group1", "gname", ITaskGroup.SET);

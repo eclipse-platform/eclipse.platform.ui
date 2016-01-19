@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,52 +11,57 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class TestCheatSheetManagerEvents {
 
-public class TestCheatSheetManagerEvents extends TestCase {
-	
 	private CheatSheetElement element;
 	private CheatSheetManager manager;
 	private int handler1Calls;
 	private int handler2Calls;
-	
+
 	private class Handler1 extends CheatSheetListener {
 		@Override
 		public void cheatSheetEvent(ICheatSheetEvent event) {
-			handler1Calls++;		
-		}	
+			handler1Calls++;
+		}
 	}
-	
+
 	private class Handler2 extends CheatSheetListener {
 		@Override
 		public void cheatSheetEvent(ICheatSheetEvent event) {
-			handler2Calls++;		
-		}	
+			handler2Calls++;
+		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		element = new CheatSheetElement("Name");
 		manager = new CheatSheetManager(element);
 		handler1Calls = 0;
 		handler2Calls = 0;
 	}
-	
+
+	@Test
 	public void testNoHandler() {
 		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
 	}
-	
+
+	@Test
 	public void testOneHandler() {
 		manager.addListener(new Handler1());
 		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
 		assertEquals(1, handler1Calls);
 	}
-	
+
+	@Test
 	public void testTwoHandlers() {
 		manager.addListener(new Handler1());
 		manager.addListener(new Handler2());

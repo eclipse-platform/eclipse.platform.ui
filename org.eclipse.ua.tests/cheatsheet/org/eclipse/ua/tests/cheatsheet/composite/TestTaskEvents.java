@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,31 +11,33 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-
-import junit.framework.TestCase;
 
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test for the events that get generated when the state of a task changes.
  * These all use the same model. For reset events we don't count the number of
- * events sent since the algorithm used to determine the impacted tasks will 
- * add tasks to the list if there is uncertainty about whether it has become 
- * unblocked. 
+ * events sent since the algorithm used to determine the impacted tasks will
+ * add tasks to the list if there is uncertainty about whether it has become
+ * unblocked.
  */
 
-public class TestTaskEvents extends TestCase {
-	
+public class TestTaskEvents {
+
 	public class TaskMap {
-		
+
 		private Map<String, TaskCounter> map = new HashMap<String, TaskCounter>();
 		private int eventCount = 0;
 
@@ -48,7 +50,7 @@ public class TestTaskEvents extends TestCase {
 			}
 			eventCount++;
 		}
-		
+
 		public int getEventCount(ICompositeCheatSheetTask task) {
 			final String id = task.getId();
 			if (map.containsKey(id)) {
@@ -57,24 +59,24 @@ public class TestTaskEvents extends TestCase {
 				return 0;
 			}
 		}
-		
+
 		public int getTotalEventCount() {
 			return eventCount ;
 		}
 	}
-	
+
 	public class TaskCounter {
 		private int count = 1;
-		
+
 		public int getCount() {
 			return count;
 		}
-		
+
 		public void incrementCount() {
 			count++;
 		}
 	}
-	
+
 	public class ModelObserver implements Observer {
 		@Override
 		public void update(Observable o, Object arg) {
@@ -97,11 +99,11 @@ public class TestTaskEvents extends TestCase {
 	private static final int IN_PROGRESS = ICompositeCheatSheetTask.IN_PROGRESS;
 	private static final int COMPLETED = ICompositeCheatSheetTask.COMPLETED;
 	private static final int SKIPPED = ICompositeCheatSheetTask.SKIPPED;
-	
+
 	/**
-	 * Initialize a composite cheatsheet with one root taskGroup, two sub groups and 
+	 * Initialize a composite cheatsheet with one root taskGroup, two sub groups and
 	 * three tasks in each group
-	 */	
+	 */
 	protected void createModel(String rootKind, String group1Kind, String group2Kind)  {
 		model = new CompositeCheatSheetModel("name", "description", "explorerId");
 		rootTask = new TaskGroup(model, "root", "name", rootKind);
@@ -114,18 +116,18 @@ public class TestTaskEvents extends TestCase {
 		task2B = new EditableTask(model, "task2B", "name", "kind");
 		task3A = new EditableTask(model, "task3A", "name", "kind");
 		model.setRootTask(rootTask);
-		rootTask.addSubtask(group1);	
-		rootTask.addSubtask(group2);	
-		rootTask.addSubtask(task3A);	
+		rootTask.addSubtask(group1);
+		rootTask.addSubtask(group2);
+		rootTask.addSubtask(task3A);
 		group1.addSubtask(task1A);
 		group1.addSubtask(task1B);
-		group1.addSubtask(task1C);	
+		group1.addSubtask(task1C);
 		group2.addSubtask(task2A);
 		group2.addSubtask(task2B);
 	}
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		resetTaskMap();
 	}
 
@@ -133,6 +135,7 @@ public class TestTaskEvents extends TestCase {
 		taskMap = new TaskMap();
 	}
 
+	@Test
 	public void testStartTask() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -143,6 +146,7 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(3, taskMap.getTotalEventCount());
 	}
 
+	@Test
 	public void testStartTwoTasks() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -154,7 +158,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(4, taskMap.getTotalEventCount());
 	}
-	
+
+	@Test
 	public void testCompleteTaskGroup() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -169,6 +174,7 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(6, taskMap.getTotalEventCount());
 	}
 
+	@Test
 	public void testCompleteTaskWithDependent() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		task1B.addRequiredTask(task1A);
@@ -181,6 +187,7 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(4, taskMap.getTotalEventCount());
 	}
 
+	@Test
 	public void testResetSingleTask() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -191,7 +198,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(task1A));
 		assertEquals(1, taskMap.getTotalEventCount());
 	}
-	
+
+	@Test
 	public void testResetTaskWithDependent() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -203,6 +211,7 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(task1B));
 	}
 
+	@Test
 	public void testResetSingleTaskInCompleteSet() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -216,6 +225,7 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(2, taskMap.getTotalEventCount());
 	}
 
+	@Test
 	public void testResetTwoTasksInCompleteSet() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -229,7 +239,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(3, taskMap.getTotalEventCount());
 	}
-	
+
+	@Test
 	public void testResetAllTasksInCompleteSet() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -244,7 +255,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(1, taskMap.getEventCount(rootTask));
 	}
-	
+
+	@Test
 	public void testResetSingleTaskInCompleteChoice() {
 		createModel(ITaskGroup.SET, ITaskGroup.CHOICE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -257,7 +269,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(1, taskMap.getEventCount(rootTask));
 	}
-	
+
+	@Test
 	public void testResetGroupWithTwoStartedTasks() {
 		createModel(ITaskGroup.SET, ITaskGroup.SEQUENCE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -271,7 +284,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(group1));
 		assertEquals(4, taskMap.getTotalEventCount());
     }
-	
+
+	@Test
 	public void testCompleteChoice() {
 		createModel(ITaskGroup.SET, ITaskGroup.CHOICE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());
@@ -283,7 +297,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(rootTask));
 		assertEquals(5, taskMap.getTotalEventCount());
 	}
-	
+
+	@Test
 	public void testCompleteGroupWithDependentGroup() {
 		createModel(ITaskGroup.SET, ITaskGroup.CHOICE, ITaskGroup.CHOICE);
 		group2.addRequiredTask(group1);
@@ -299,7 +314,8 @@ public class TestTaskEvents extends TestCase {
 		assertEquals(1, taskMap.getEventCount(rootTask));
 		assertEquals(8, taskMap.getTotalEventCount());
 	}
-	
+
+	@Test
 	public void testSkipTaskGroup() {
 		createModel(ITaskGroup.SET, ITaskGroup.CHOICE, ITaskGroup.CHOICE);
 		model.addObserver(new ModelObserver());

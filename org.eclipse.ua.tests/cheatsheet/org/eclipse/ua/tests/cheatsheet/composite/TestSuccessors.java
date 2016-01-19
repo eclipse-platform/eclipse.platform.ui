@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,23 @@
 
 package org.eclipse.ua.tests.cheatsheet.composite;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.SuccesorTaskFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
+import org.junit.Test;
 
 /**
- * Tests the computation of task successors, which will be shown 
+ * Tests the computation of task successors, which will be shown
  * as "Go To" links after a task is complete or for a task group.
  * All tasks use the same base model
  */
 
-public class TestSuccessors extends TestCase {
-	
+public class TestSuccessors {
+
 	private CompositeCheatSheetModel model;
 	private TaskGroup rootTask;
 	private TaskGroup subGroup;
@@ -34,7 +35,7 @@ public class TestSuccessors extends TestCase {
 	private EditableTask task2;
 	private EditableTask task3;
 	private EditableTask task4;
-	
+
 	/**
 	 * Initialize a composite cheatsheet whose root task is the parent of
 	 * subGroup and task4. subGroup is the parent of task1, task2 and task3
@@ -53,13 +54,13 @@ public class TestSuccessors extends TestCase {
 		task3 = new EditableTask(model, "task3", "name", "ua.junit");
 		task4 = new EditableTask(model, "task4", "name", "ua.junit");
 		model.setRootTask(rootTask);
-		rootTask.addSubtask(subGroup);	
-		rootTask.addSubtask(task4);	
+		rootTask.addSubtask(subGroup);
+		rootTask.addSubtask(task4);
 		subGroup.addSubtask(task1);
 		subGroup.addSubtask(task2);
 		subGroup.addSubtask(task3);
 	}
-	
+
 	/*
 	 * Assert that a task has one successor and it matches the expected value
 	 */
@@ -69,19 +70,21 @@ public class TestSuccessors extends TestCase {
 		assertEquals(1, successors.length);
 	    assertEquals(expectedSuccessor, successors[0]);
 	}
-	
+
 	private void assertNoSuccessors(ICompositeCheatSheetTask task) {
 		SuccesorTaskFinder finder = new SuccesorTaskFinder(task);
 		ICompositeCheatSheetTask[] successors = finder.getRecommendedSuccessors();
 		assertEquals(0, successors.length);
-	}	
-	
+	}
+
+	@Test
 	public void testSuccessorsCleanModel() {
 		setupModel(false);
 		assertSingleSuccessor(rootTask, subGroup);
 		assertSingleSuccessor(subGroup, task1);
 	}
 
+	@Test
 	public void testSuccessorsFirstTaskInProgress() {
 		setupModel(false);
 		task1.setState(ICompositeCheatSheetTask.IN_PROGRESS);
@@ -89,6 +92,7 @@ public class TestSuccessors extends TestCase {
 		assertSingleSuccessor(subGroup, task1);
 	}
 
+	@Test
 	public void testSuccessorsFirstTaskSkipped() {
 		setupModel(false);
 		task1.setState(ICompositeCheatSheetTask.SKIPPED);
@@ -97,6 +101,7 @@ public class TestSuccessors extends TestCase {
 		assertSingleSuccessor(task1, task2);
 	}
 
+	@Test
 	public void testSuccessorsFirstTaskCompleted() {
 		setupModel(false);
 		task1.complete();
@@ -105,6 +110,7 @@ public class TestSuccessors extends TestCase {
 		assertSingleSuccessor(task1, task2);
 	}
 
+	@Test
 	public void testSuccessorsWithBackwardDependency() {
 		setupModel(false);
 		task1.addRequiredTask(task3);
@@ -112,8 +118,9 @@ public class TestSuccessors extends TestCase {
 		task2.complete();
 		assertSingleSuccessor(subGroup, task3);
 		assertSingleSuccessor(task2, task3);
-	}	
-	
+	}
+
+	@Test
 	public void testCompleteGroup() {
 		setupModel(false);
 		task1.complete();
@@ -125,8 +132,9 @@ public class TestSuccessors extends TestCase {
 		assertSingleSuccessor(task1, task4);
 		assertSingleSuccessor(task2, task4);
 		assertSingleSuccessor(task3, task4);
-	}	
+	}
 
+	@Test
 	public void testAllTasksComplete() {
 		setupModel(false);
 		task1.complete();
@@ -139,6 +147,7 @@ public class TestSuccessors extends TestCase {
 		assertNoSuccessors(task4);
 	}
 
+	@Test
 	public void testUnstartedChoice() {
 		setupModel(true);
 		SuccesorTaskFinder finder = new SuccesorTaskFinder(subGroup);
@@ -149,7 +158,8 @@ public class TestSuccessors extends TestCase {
 		assertEquals(task2, successors[1]);
 		assertEquals(task3, successors[2]);
 	}
-	
+
+	@Test
 	public void testCompletedChoice() {
 		setupModel(true);
 		task1.complete();
@@ -159,7 +169,8 @@ public class TestSuccessors extends TestCase {
 		assertSingleSuccessor(task2, task4);
 		assertSingleSuccessor(task3, task4);
 	}
-	
+
+	@Test
 	public void testSkippedGroup() {
 		setupModel(false);
 		task1.complete();
