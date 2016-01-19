@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 485227
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
@@ -16,7 +17,22 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.*;
 
-public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager, IRegistryChangeListener {
+public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager {
+	private static class ContentTypeRegistryChangeListener implements IRegistryChangeListener {
+		@Override
+		public void registryChanged(IRegistryChangeEvent event) {
+			// no changes related to the content type registry
+			if (event.getExtensionDeltas(IContentConstants.RUNTIME_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0
+					&& event.getExtensionDeltas(IContentConstants.CONTENT_NAME,
+							ContentTypeBuilder.PT_CONTENTTYPES).length == 0)
+				return;
+			getInstance().invalidate();
+		}
+	}
+
+	private static IRegistryChangeListener runtimeExtensionListener = new ContentTypeRegistryChangeListener();
+	private static IRegistryChangeListener contentExtensionListener = new ContentTypeRegistryChangeListener();
+
 	private static ContentTypeManager instance;
 
 	public static final int BLOCK_SIZE = 0x400;
@@ -46,8 +62,10 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	public static void addRegistryChangeListener(IExtensionRegistry registry) {
 		if (registry == null)
 			return;
-		registry.addRegistryChangeListener(getInstance(), IContentConstants.RUNTIME_NAME);
-		registry.addRegistryChangeListener(getInstance(), IContentConstants.CONTENT_NAME);
+		// Different instances of listener required. See documentation of
+		// IExtensionRegistry.addRegistryChangeListener(IRegistryChangeListener, String).
+		registry.addRegistryChangeListener(runtimeExtensionListener, IContentConstants.RUNTIME_NAME);
+		registry.addRegistryChangeListener(contentExtensionListener, IContentConstants.CONTENT_NAME);
 	}
 
 	/**
@@ -63,7 +81,8 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		if (registry == null)
 			return;
 		getInstance().invalidate();
-		registry.removeRegistryChangeListener(getInstance());
+		registry.removeRegistryChangeListener(runtimeExtensionListener);
+		registry.removeRegistryChangeListener(contentExtensionListener);
 	}
 
 	/**
@@ -149,15 +168,6 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	IEclipsePreferences getPreferences(IScopeContext context) {
 		return context.getNode(CONTENT_TYPE_PREF_NODE);
-	}
-
-	@Override
-	public void registryChanged(IRegistryChangeEvent event) {
-		// no changes related to the content type registry
-		if (event.getExtensionDeltas(IContentConstants.RUNTIME_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0 &&
-			event.getExtensionDeltas(IContentConstants.CONTENT_NAME, ContentTypeBuilder.PT_CONTENTTYPES).length == 0)
-			return;
-		invalidate();
 	}
 
 	/**
