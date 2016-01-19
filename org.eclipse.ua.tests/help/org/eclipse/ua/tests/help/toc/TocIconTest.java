@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,31 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.swt.graphics.Image;
+import org.junit.Test;
 
-public class TocIconTest extends TestCase {
-
+public class TocIconTest {
+	@Test
 	public void testNullId() {
 		assertNull(HelpUIResources.getImageFromId(null, false, false));
 		assertNull(HelpUIResources.getImageFromId(null, true, false));
 		assertNull(HelpUIResources.getImageFromId(null, false, true));
 	}
-	
+
+	@Test
 	public void testBadId() {
 		assertNull(HelpUIResources.getImageFromId("nosuchid", false, false));
 		assertNull(HelpUIResources.getImageFromId("nosuchid", true, false));
 		assertNull(HelpUIResources.getImageFromId("nosuchid", false, true));
 	}
 
+	@Test
 	public void testIconSet() {
 		Image closedImage = HelpUIResources.getImageFromId("org.eclipse.ua.tests.iconSet", false, false);
 		Image openImage = HelpUIResources.getImageFromId("org.eclipse.ua.tests.iconSet", true, false);
@@ -40,7 +46,8 @@ public class TocIconTest extends TestCase {
 		assertFalse(openImage.equals(leafImage));
 		assertFalse(closedImage.equals(leafImage));
 	}
-	
+
+	@Test
 	public void testSingleIcon() {
 		Image closedImage = HelpUIResources.getImageFromId("org.eclipse.ua.tests.openOnly", false, false);
 		Image openImage = HelpUIResources.getImageFromId("org.eclipse.ua.tests.openOnly", true, false);
@@ -52,5 +59,5 @@ public class TocIconTest extends TestCase {
 		assertTrue(openImage.equals(leafImage));
 		assertTrue(closedImage.equals(leafImage));
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,17 +27,16 @@ import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.internal.toc.TocFileParser;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.XMLUtil;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TocAssemblerTest extends TestCase {
-
+public class TocAssemblerTest {
+	@Test
 	public void testAssemble() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
 		TocContribution c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/c.xml", true, "en", null, null));
 		TocContribution result_b_c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_b_c.xml", true, "en", null, null));
-		
+
 		TocAssembler assembler = new TocAssembler();
 		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(b, c));
 		contributions = assembler.assemble(contributions);
@@ -51,24 +54,26 @@ public class TocAssemblerTest extends TestCase {
 		contributions = new ArrayList<TocContribution>(Arrays.asList(a, b, c, d));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
-		
+
 		expected = serialize(result_a_b_c_d);
 		actual = serialize(contributions.get(0));
 		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 	}
-	
+
+	@Test
 	public void testInvalidLinkTo() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution linkTo1 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo1.xml", true, "en", null, null));
 		TocContribution linkTo2 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo2.xml", true, "en", null, null));
 		TocContribution linkTo3 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo3.xml", true, "en", null, null));
-		
+
 		TocAssembler assembler = new TocAssembler();
 		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(linkTo1, linkTo2, linkTo3));
 		contributions = assembler.assemble(contributions);
 		assertEquals(3, contributions.size());
 	}
-	
+
+	@Test
 	public void testHrefMap() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));

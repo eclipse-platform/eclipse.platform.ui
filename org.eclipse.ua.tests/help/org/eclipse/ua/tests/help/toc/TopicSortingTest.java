@@ -1,16 +1,16 @@
 /*******************************************************************************
- *  Copyright (c) 2009 IBM Corporation and others.
+ *  Copyright (c) 2009, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.toc.Toc;
@@ -19,9 +19,10 @@ import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.internal.toc.TocFileParser;
 import org.eclipse.help.internal.toc.TopicSorter;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Test;
 
-public class TopicSortingTest extends TestCase {
-	
+public class TopicSortingTest {
+	@Test
 	public void testSortTocChildren() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution contribution = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/sorted.xml", true, "en", null, null));
@@ -32,8 +33,9 @@ public class TopicSortingTest extends TestCase {
 		assertEquals("A Topic (sorted)", children[0].getLabel());
 		assertEquals("B Topic", children[1].getLabel());
 		assertEquals("C Topic", children[2].getLabel());
-	}	
+	}
 
+	@Test
 	public void testSortNestedTopics() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution contribution = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/sorted.xml", true, "en", null, null));
@@ -47,7 +49,8 @@ public class TopicSortingTest extends TestCase {
 		assertEquals("A Child", childrenOfA[0].getLabel());
 		assertEquals("B Child", childrenOfA[1].getLabel());
 	}
-	
+
+	@Test
 	public void testUnsortedNestedTopics() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution contribution = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/sorted.xml", true, "en", null, null));
@@ -61,5 +64,5 @@ public class TopicSortingTest extends TestCase {
 		assertEquals("B Child of C", childrenOfC[0].getLabel());
 		assertEquals("A Child of C", childrenOfC[1].getLabel());
 	}
-	
+
 }

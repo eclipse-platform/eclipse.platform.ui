@@ -1,14 +1,18 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +23,18 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class EnabledTopicTest {
 
-public class EnabledTopicTest extends TestCase {
-	
 	private class ETopic implements ITopic {
-		
+
 		private String label;
 		private boolean isEnabled;
 		private List<ITopic> children = new ArrayList<ITopic>();
 
 		public ETopic(String label, boolean isEnabled) {
-			this.label = label; 
+			this.label = label;
 			this.isEnabled = isEnabled;
 		}
 
@@ -59,28 +62,28 @@ public class EnabledTopicTest extends TestCase {
 		@Override
 		public String getLabel() {
 			return label;
-		}	
-		
+		}
+
 		public void addSubTopic(ITopic subTopic) {
 			children.add(subTopic);
 		}
 	}
-	
+
 	private class NoHrefTopic extends ETopic {
-		
+
 		public NoHrefTopic(String label) {
 			super(label, true);
 		}
-		
+
 		@Override
 		public String getHref() {
 			return null;
 		}
-		
+
 	}
-	
+
 	private class EIndexEntry extends UAElement implements IIndexEntry  {
-		
+
 		private String keyword;
 		private List<ITopic> topics = new ArrayList<ITopic>();
 		private List<IIndexEntry> subEntries = new ArrayList<IIndexEntry>();
@@ -98,7 +101,7 @@ public class EnabledTopicTest extends TestCase {
 		public void addSubEntry(IIndexEntry entry) {
 			subEntries.add(entry);
 		}
-		
+
 		public void addTopic(ITopic topic) {
 			topics.add(topic);
 		}
@@ -119,19 +122,22 @@ public class EnabledTopicTest extends TestCase {
 			all.addAll(subEntries);
 			all.addAll(topics);
 			return all.toArray(new IUAElement[all.size()]);
-		}	
+		}
 	}
-	
+
+	@Test
 	public void testEnabledTopic() {
 		assertTrue(EnabledTopicUtils.isEnabled(new ETopic("T1", true)));
 		assertFalse(EnabledTopicUtils.isEnabled(new ETopic("T2", false)));
 	}
 
+	@Test
 	public void testEnabledTopicsEmptyArray() throws Exception {
          ITopic[] enabled = EnabledTopicUtils.getEnabled(new ITopic[0]);
          assertTrue(enabled.length == 0);
 	}
-	
+
+	@Test
 	public void testEnabledTopicsAllEnabled() throws Exception {
         ITopic[] topics = new ITopic[2];
         topics[0] = new ETopic("T1", true);
@@ -142,14 +148,16 @@ public class EnabledTopicTest extends TestCase {
         assertTrue(topics[1].getLabel().equals("T2"));
 	}
 
-	public void testEnabledTopicsAllDisabled() throws Exception { 
+	@Test
+	public void testEnabledTopicsAllDisabled() throws Exception {
 		ITopic[] topics = new ITopic[2];
 	    topics[0] = new ETopic("T1", false);
 	    topics[1] = new ETopic("T2", false);
 		ITopic[] enabled = EnabledTopicUtils.getEnabled(topics);
 	    assertTrue(enabled.length == 0);
 	}
-	
+
+	@Test
 	public void testEnabledTopicsMix() throws Exception {
 		ITopic[] topics = new ITopic[4];
         topics[0] = new ETopic("T1", true);
@@ -162,23 +170,27 @@ public class EnabledTopicTest extends TestCase {
         assertEquals("T3", enabled[1].getLabel());
 	}
 
+	@Test
 	public void testNoHref() {
 		ITopic noHref = new NoHrefTopic("N1");
 		assertFalse(EnabledTopicUtils.isEnabled(noHref));
 	}
 
+	@Test
 	public void testNoHrefValidChild() {
 		ETopic noHref = new NoHrefTopic("N1");
 		noHref.addSubTopic(new ETopic("T1", true));
 		assertTrue(EnabledTopicUtils.isEnabled(noHref));
 	}
 
+	@Test
 	public void testNoHrefInvalidChild() {
 		ETopic noHref = new NoHrefTopic("N1");
 		noHref.addSubTopic(new ETopic("T1", false));
 		assertFalse(EnabledTopicUtils.isEnabled(noHref));
 	}
-	
+
+	@Test
 	public void testNoHrefMixedChildren() {
 		ETopic noHref = new NoHrefTopic("N1");
 		noHref.addSubTopic(new ETopic("T1", false));
@@ -186,6 +198,7 @@ public class EnabledTopicTest extends TestCase {
 		assertTrue(EnabledTopicUtils.isEnabled(noHref));
 	}
 
+	@Test
 	public void testNoHrefValidGrandchild() {
 		ETopic noHref = new NoHrefTopic("N1");
 		ETopic subTopic = new NoHrefTopic("N2");
@@ -193,7 +206,8 @@ public class EnabledTopicTest extends TestCase {
 		subTopic.addSubTopic(new ETopic("T2", true));
 		assertTrue(EnabledTopicUtils.isEnabled(noHref));
 	}
-	
+
+	@Test
 	public void testNoHrefInvalidGrandchild() {
 		ETopic noHref = new NoHrefTopic("N1");
 		ETopic subTopic = new NoHrefTopic("N2");
@@ -202,23 +216,27 @@ public class EnabledTopicTest extends TestCase {
 		assertFalse(EnabledTopicUtils.isEnabled(noHref));
 	}
 
+	@Test
 	public void testEmptyIndexEntry() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		assertFalse(EnabledTopicUtils.isEnabled(entry1));
 	}
-	
+
+	@Test
 	public void testEnabledIndexEntry() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		entry1.addTopic(new ETopic("T1", true));
 		assertTrue(EnabledTopicUtils.isEnabled(entry1));
 	}
-	
+
+	@Test
 	public void testDisabledIndexEntry() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		entry1.addTopic(new ETopic("T1", false));
 		assertFalse(EnabledTopicUtils.isEnabled(entry1));
 	}
 
+	@Test
 	public void testMixedIndexEntry() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		entry1.addTopic(new ETopic("T1", true));
@@ -226,6 +244,7 @@ public class EnabledTopicTest extends TestCase {
 		assertTrue(EnabledTopicUtils.isEnabled(entry1));
 	}
 
+	@Test
 	public void testIndexEntryEnabledChild() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -233,7 +252,8 @@ public class EnabledTopicTest extends TestCase {
 		entry1.addSubEntry(entry2);
 		assertTrue(EnabledTopicUtils.isEnabled(entry1));
 	}
-	
+
+	@Test
 	public void testIndexEntryEnabledGrandChild() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -244,6 +264,7 @@ public class EnabledTopicTest extends TestCase {
 		assertTrue(EnabledTopicUtils.isEnabled(entry1));
 	}
 
+	@Test
 	public void testIndexEntryDisabledChild() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -251,7 +272,8 @@ public class EnabledTopicTest extends TestCase {
 		entry1.addSubEntry(entry2);
 		assertFalse(EnabledTopicUtils.isEnabled(entry1));
 	}
-	
+
+	@Test
 	public void testIndexEntryMixedChildren() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -263,12 +285,14 @@ public class EnabledTopicTest extends TestCase {
 		assertTrue(EnabledTopicUtils.isEnabled(entry1));
 	}
 
+	@Test
 	public void testEnabledIndexArrayEmpty() {
 		IIndexEntry[] entries = new EIndexEntry[0];
 		IIndexEntry[] filtered =EnabledTopicUtils.getEnabled(entries);
 		assertEquals(0, filtered.length);
 	}
 
+	@Test
 	public void testEnabledIndexArrayDisabled() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -277,6 +301,7 @@ public class EnabledTopicTest extends TestCase {
 		assertEquals(0, filtered.length);
 	}
 
+	@Test
 	public void testEnabledIndexArrayEnabled() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -288,7 +313,8 @@ public class EnabledTopicTest extends TestCase {
 		assertEquals(filtered[0].getKeyword(), "abc");
 		assertEquals(filtered[1].getKeyword(), "def");
 	}
-	
+
+	@Test
 	public void testEnabledIndexArrayMixed() {
 		EIndexEntry entry1 = new EIndexEntry("abc");
 		EIndexEntry entry2 = new EIndexEntry("def");
@@ -302,5 +328,5 @@ public class EnabledTopicTest extends TestCase {
 		assertEquals(filtered[0].getKeyword(), "def");
 		assertEquals(filtered[1].getKeyword(), "jkl");
 	}
-	
+
 }

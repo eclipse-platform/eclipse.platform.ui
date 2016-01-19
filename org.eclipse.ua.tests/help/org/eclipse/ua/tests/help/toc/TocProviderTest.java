@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.toc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class TocProviderTest {
 
-public class TocProviderTest extends TestCase {
-	
 	/**
 	 * Verify that the tocProvider extension in this plug-in contributes a TOC which can be linked to an anchor
 	 */
+	@Test
 	public void testTocProvider() throws Exception {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs("en");
 		IToc uaToc = null;
@@ -39,7 +42,7 @@ public class TocProviderTest extends TestCase {
 			}
 		}
 		assertEquals(1, generatedParentTopics);
-		
+
 	}
 
 }

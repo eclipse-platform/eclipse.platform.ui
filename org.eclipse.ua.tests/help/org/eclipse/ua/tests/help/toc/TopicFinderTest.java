@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,12 @@
 
 package org.eclipse.ua.tests.help.toc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
@@ -19,31 +25,34 @@ import org.eclipse.help.internal.base.scope.UniversalScope;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.TopicFinder;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class TopicFinderTest {
 
-public class TopicFinderTest extends TestCase{
-	
 	private IToc[] getTocs() {
 		return HelpPlugin.getTocManager().getTocs("en");
 	}
-	
+
+	@Test
 	public void testTocsFound() {
 		assertTrue(getTocs().length != 0);
 	}
-	
+
+	@Test
 	public void testNoTocs() {
 		TopicFinder finder = new TopicFinder("http:", new IToc[0], new UniversalScope());
 		assertEquals(-1, finder.getSelectedToc());
 		assertNull(finder.getTopicPath());
 	}
-	
+
+	@Test
 	public void testNoTopic() {
 		TopicFinder finder = new TopicFinder(null, getTocs(), new UniversalScope());
 		assertEquals(-1, finder.getSelectedToc());
 		assertNull(finder.getTopicPath());
 	}
 
+	@Test
 	public void testTopicInToc() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/manual/filter.xhtml";
 		TopicFinder finder = new TopicFinder(topic, getTocs(), new UniversalScope());
@@ -57,7 +66,8 @@ public class TopicFinderTest extends TestCase{
 		assertEquals("manual", path[0].getLabel());
 		assertEquals("filter", path[1].getLabel());
 	}
-	
+
+	@Test
 	public void testTopicInTocWithAnchor() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/manual/filter.xhtml#ABC";
 		TopicFinder finder = new TopicFinder(topic, getTocs(), new UniversalScope());
@@ -71,7 +81,8 @@ public class TopicFinderTest extends TestCase{
 		assertEquals("manual", path[0].getLabel());
 		assertEquals("filter", path[1].getLabel());
 	}
-	
+
+	@Test
 	public void testTopicInFilteredToc() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html";
 		TopicFinder finder = new TopicFinder(topic, getTocs(), new FilterScope());
@@ -86,14 +97,16 @@ public class TopicFinderTest extends TestCase{
 		assertEquals("The plugin org.eclipse.help is installed", path[1].getLabel());
 		assertEquals("/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html", path[1].getHref());
 	}
-	
+
+	@Test
 	public void testTopicNotInToc() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/manual/filter25.xhtml";
 		TopicFinder finder = new TopicFinder(topic, getTocs(), new UniversalScope());
 		assertEquals(-1, finder.getSelectedToc());
 		assertNull(finder.getTopicPath());
 	}
-	
+
+	@Test
 	public void testLookupFromPath() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html";
 		IToc[] tocs = getTocs();
@@ -109,6 +122,7 @@ public class TopicFinderTest extends TestCase{
 		assertEquals("/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html", topics[1].getHref());
 	}
 
+	@Test
 	public void testTocNavURL() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html";
 		IToc[] tocs = getTocs();
@@ -120,14 +134,17 @@ public class TopicFinderTest extends TestCase{
 		assertEquals(0, finder2.getTopicPath().length);
 	}
 
+	@Test
 	public void testTopic_0_0NavURL() {
 		checkNavTopic(0, 0);
 	}
 
+	@Test
 	public void testTopic_0_1NavURL() {
 		checkNavTopic(0, 1);
 	}
-	
+
+	@Test
 	public void testTopic_1_0NavURL() {
 		checkNavTopic(1, 0);
 	}
@@ -137,7 +154,7 @@ public class TopicFinderTest extends TestCase{
 		IToc[] tocs = getTocs();
 		TopicFinder finder = new TopicFinder(topic, tocs, new UniversalScope());
 		int selectedToc = finder.getSelectedToc();
-		String navPath = "http://127.0.0.1:1936/help/nav/" + selectedToc + 
+		String navPath = "http://127.0.0.1:1936/help/nav/" + selectedToc +
            '_' + index1 + '_' + index2;
 		TopicFinder finder2 = new TopicFinder(navPath, tocs, new UniversalScope());
 		assertEquals(selectedToc, finder2.getSelectedToc());
@@ -149,5 +166,5 @@ public class TopicFinderTest extends TestCase{
 		assertEquals(secondLevelTopics[index2], topicPath[1]);
 		assertEquals("" + index1 + '_' + index2, finder2.getNumericPath());
 	}
-	
+
 }
