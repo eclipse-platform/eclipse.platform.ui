@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,10 +284,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	}
 
 	/** The execution listeners */
-	private final ListenerList fExecutionListeners= new ListenerList(ListenerList.EQUALITY);
+	private final ListenerList<IRefactoringExecutionListener> fExecutionListeners= new ListenerList<>(ListenerList.EQUALITY);
 
 	/** The history listeners */
-	private final ListenerList fHistoryListeners= new ListenerList(ListenerList.EQUALITY);
+	private final ListenerList<IRefactoringHistoryListener> fHistoryListeners= new ListenerList<>(ListenerList.EQUALITY);
 
 	/** The operation listener, or <code>null</code> */
 	private IOperationHistoryListener fOperationListener= null;
@@ -558,9 +558,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	private void fireRefactoringExecutionEvent(final RefactoringDescriptorProxy proxy, final int eventType) {
 		Assert.isNotNull(proxy);
-		final Object[] listeners= fExecutionListeners.getListeners();
-		for (int index= 0; index < listeners.length; index++) {
-			final IRefactoringExecutionListener listener= (IRefactoringExecutionListener) listeners[index];
+		for (final IRefactoringExecutionListener listener : fExecutionListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 
 				@Override
@@ -578,9 +576,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 
 	private void fireRefactoringHistoryEvent(final RefactoringDescriptorProxy proxy, final int eventType) {
 		Assert.isNotNull(proxy);
-		final Object[] listeners= fHistoryListeners.getListeners();
-		for (int index= 0; index < listeners.length; index++) {
-			final IRefactoringHistoryListener listener= (IRefactoringHistoryListener) listeners[index];
+		for (final IRefactoringHistoryListener listener : fHistoryListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 
 				@Override

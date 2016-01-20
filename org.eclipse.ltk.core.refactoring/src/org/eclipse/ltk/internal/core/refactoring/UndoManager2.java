@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class UndoManager2 implements IUndoManager {
 	private boolean fIsOpen;
 	private TriggeredOperations fActiveOperation;
 
-	private ListenerList fListeners;
+	private ListenerList<IUndoManagerListener> fListeners;
 
 	public UndoManager2() {
 		fOperationHistory= OperationHistoryFactory.getOperationHistory();
@@ -119,7 +119,7 @@ public class UndoManager2 implements IUndoManager {
 	@Override
 	public void addListener(IUndoManagerListener listener) {
 		if (fListeners == null) {
-			fListeners= new ListenerList(ListenerList.IDENTITY);
+			fListeners= new ListenerList<>(ListenerList.IDENTITY);
 			fOperationHistoryListener= new OperationHistoryListener();
 			fOperationHistory.addOperationHistoryListener(fOperationHistoryListener);
 		}
@@ -287,9 +287,7 @@ public class UndoManager2 implements IUndoManager {
 	private void fireAboutToPerformChange(final Change change) {
 		if (fListeners == null)
 			return;
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -306,9 +304,7 @@ public class UndoManager2 implements IUndoManager {
 	private void fireChangePerformed(final Change change) {
 		if (fListeners == null)
 			return;
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -325,9 +321,7 @@ public class UndoManager2 implements IUndoManager {
 	private void fireUndoStackChanged() {
 		if (fListeners == null)
 			return;
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -344,9 +338,7 @@ public class UndoManager2 implements IUndoManager {
 	private void fireRedoStackChanged() {
 		if (fListeners == null)
 			return;
-		Object[] listeners= fListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			final IUndoManagerListener listener= (IUndoManagerListener)listeners[i];
+		for (final IUndoManagerListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
