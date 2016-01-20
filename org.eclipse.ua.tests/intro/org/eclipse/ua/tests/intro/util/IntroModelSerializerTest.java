@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -33,8 +33,8 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -42,29 +42,30 @@ import junit.framework.TestCase;
  * the plugin manifest (for this test plugin only), constructs the intro model, then
  * serializes the model to a text file, which is stored in the same directory as the
  * intro xml file, as <original_name>_expected.txt.
- * 
+ *
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
- * 
+ *
  * Usage:
- * 
+ *
  * 1. Run this test as a JUnit plug-in test.
  * 2. Right-click in "Package Explorer -> Refresh".
- * 
+ *
  * The new files should appear.
  */
-public class IntroModelSerializerTest extends TestCase {
-	
+public class IntroModelSerializerTest {
+
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra
 	 * content filtering that is used by this test. See
 	 * UIContentFilterProcessor.
 	 */
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		HelpUIPlugin.getDefault();
 	}
-	
+
+	@Test
 	public void testRunSerializer() throws FileNotFoundException {
 		/*
 		 * Serialize the test intros.
@@ -84,12 +85,12 @@ public class IntroModelSerializerTest extends TestCase {
 				 */
 				IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);
 				IntroModelSerializer serializer = new IntroModelSerializer(model);
-				
+
 				String file = FileUtil.getResultFile(pluginRoot + content);
 				PrintWriter out = new PrintWriter(new FileOutputStream(file));
 				out.print(serializer.toString());
 				out.close();
-				
+
 				/*
 				 * Now do the intro XHTML files. Find all the XHTML files
 				 * referenced from the model.

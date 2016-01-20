@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,12 @@
  *******************************************************************************/
 
 package org.eclipse.ua.tests.intro.anchors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test that the order in which extensions are processed does not matter
@@ -22,7 +28,6 @@ package org.eclipse.ua.tests.intro.anchors;
 
 import java.util.Vector;
 
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -31,40 +36,41 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPage;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
+import org.junit.Test;
 
-public class ExtensionReorderingTest extends TestCase {
-	
+public class ExtensionReorderingTest {
+
 	private IConfigurationElement config;
 	private IConfigurationElement[] introConfigExtensions;
-	
+
 	private class Permutations {
 		private int numContributions;
 		private int[] order;
 		private int cycle = 1;
 		private int count = 0;
-		
+
 		public void testAll(int numContributions) {
 			this.numContributions = numContributions;
 			order = new int[numContributions];
 			tryAll(0);
 		}
-		
+
 		public Permutations(int testCycle) {
 			this.cycle = testCycle;
 		}
-		
+
 		public Permutations() {
-			
+
 		}
-		
+
 		/*
 		 * Recursive test to test all permutations of integers 0-4 with no
-		 * repeats. 
+		 * repeats.
 	     * @param next the next element that has not been filled in yet
 		 */
 		private void tryAll(int next) {
 			for (int value = 0; value < numContributions; value++) {
-				tryValue(next, value);		
+				tryValue(next, value);
 			}
 		}
 
@@ -87,7 +93,7 @@ public class ExtensionReorderingTest extends TestCase {
 				tryAll(next + 1);
 			}
 		}
-		
+
 		private String toString(int[] order) {
 			String result = "";
 			for (int element : order) {
@@ -104,7 +110,7 @@ public class ExtensionReorderingTest extends TestCase {
 				extensions[i] = introConfigExtensions[order[i]];
 			}
 			IntroModelRoot model = new IntroModelRoot(config, extensions);
-			
+
 			try {
 				model.loadModel();
 				assertTrue("Order = " + toString(order), model.hasValidConfig());
@@ -113,7 +119,7 @@ public class ExtensionReorderingTest extends TestCase {
 				e.printStackTrace();
 				fail("Exception thrown when order was " + toString(order));
 			}
-		}	
+		}
 	}
 
 	public void readIntroConfig() {
@@ -129,7 +135,7 @@ public class ExtensionReorderingTest extends TestCase {
             introConfigExtensions = getIntroConfigExtensions(
                 "configId", "org.eclipse.ua.tests.intro.config.anchors");
 	}
-	 
+
 	private IConfigurationElement getConfigurationFromAttribute(
 	            IConfigurationElement[] configElements, String attributeName,
 	            String attributeValue) {
@@ -142,7 +148,7 @@ public class ExtensionReorderingTest extends TestCase {
 	            .validateSingleContribution(filteredConfigElements, attributeName);
 	        return config;
 	}
-	
+
 	protected IConfigurationElement[] getConfigurationsFromAttribute(
             IConfigurationElement[] configElements, String attributeName,
             String attributeValue) {
@@ -164,14 +170,14 @@ public class ExtensionReorderingTest extends TestCase {
 
         return filteredConfigElements;
     }
-	
+
 	protected IConfigurationElement[] getIntroConfigExtensions(
             String attrributeName, String attributeValue) {
 
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
         IConfigurationElement[] configExtensionElements = registry
             .getConfigurationElementsFor("org.eclipse.ui.intro.configExtension");
-  
+
 
         IConfigurationElement[] configExtensions = getConfigurationsFromAttribute(
             configExtensionElements, attrributeName, attributeValue);
@@ -179,6 +185,7 @@ public class ExtensionReorderingTest extends TestCase {
         return configExtensions;
     }
 
+	@Test
 	public void testOrder123456() {
 		readIntroConfig();
 		assertNotNull(config);
@@ -189,7 +196,7 @@ public class ExtensionReorderingTest extends TestCase {
 	}
 
 	private void checkModel(IntroModelRoot model, int elements) {
-		assertTrue(model.hasValidConfig());	
+		assertTrue(model.hasValidConfig());
 		Object[] pages = model.getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE);
 		AbstractIntroPage root = (AbstractIntroPage) model.findChild("root");
 		assertEquals(elements + 2, pages.length);
@@ -235,26 +242,30 @@ public class ExtensionReorderingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAllOrdersOf3Contributions() {
 		new Permutations().testAll(3);
 	}
-	
+
+	@Test
 	public void testAllOrdersOf4Contributions() {
 		new Permutations().testAll(4);
 	}
 
+	@Test
 	public void testAllOrdersOf5Contributions() {
 		readIntroConfig();
 		new Permutations().testAll(5);
-	}	
-	
+	}
+
 	/*
 	 * Testing all permutations is slow and unnecessary, just test every 7th permutation
 	 */
+	@Test
 	public void testManyOrdersOf6Contributions() {
 		readIntroConfig();
 		new Permutations(7).testAll(6);
-	}	
+	}
 
-	
+
 }

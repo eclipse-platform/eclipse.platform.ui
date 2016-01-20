@@ -1,43 +1,35 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.ua.tests.intro.contentdetect;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-
-import org.eclipse.test.OrderedTestSuite;
 import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetectHelper;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
-public class ContentDetectorTest extends TestCase {
-	
-	public static Test suite() {
-		return new OrderedTestSuite(ContentDetectorTest.class, new String[] {
-			"testContributorCount",
-			"testContributorSaveNoNames",
-			"testContributorSaveThreeContributors",
-			"testExtensionMapping",
-			"testExtensionMapSingleton",
-			"testForNewContent",
-			"testNoSavedState",
-			"testStartPage",
-			"testStateChanges"
-		});
-	}
-	
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ContentDetectorTest {
+
+	@Test
 	public void testContributorCount() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		helper.saveExtensionCount(4);
@@ -48,12 +40,14 @@ public class ContentDetectorTest extends TestCase {
 		assertEquals(6, helper.getExtensionCount());
 	}
 
+	@Test
 	public void testContributorSaveNoNames() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		helper.saveContributors(new HashSet<String>());
 		assertTrue(helper.getContributors().size() == 0);
 	}
 
+	@Test
 	public void testContributorSaveThreeContributors() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		HashSet<String> contributors = new HashSet<String>();
@@ -67,7 +61,8 @@ public class ContentDetectorTest extends TestCase {
 		assertTrue(savedContributors.contains("two"));
 		assertTrue(savedContributors.contains("three"));
 	}
-	
+
+	@Test
 	public void testForNewContent() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		HashSet<String> contributors = new HashSet<String>();
@@ -85,11 +80,12 @@ public class ContentDetectorTest extends TestCase {
 		assertTrue(newContributors.contains("three"));
 	}
 
+	@Test
 	public void testNoSavedState() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		helper.deleteStateFiles();
 		assertTrue(helper.getContributors().isEmpty());
-		assertEquals(ContentDetectHelper.NO_STATE, helper.getExtensionCount());	
+		assertEquals(ContentDetectHelper.NO_STATE, helper.getExtensionCount());
 		ContentDetector detector = new ContentDetector();
 		assertFalse(detector.isNewContentAvailable());
 		Set<?> newContent = ContentDetector.getNewContributors();
@@ -97,7 +93,8 @@ public class ContentDetectorTest extends TestCase {
 		String firstContribution = (String) helper.getContributors().iterator().next();
 		assertFalse(ContentDetector.isNew(firstContribution));
 	}
-	
+
+	@Test
 	public void testStateChanges() {
 		ContentDetectHelper helper = new ContentDetectHelper();
 		helper.deleteStateFiles();
@@ -127,13 +124,15 @@ public class ContentDetectorTest extends TestCase {
 		assertTrue(ContentDetector.isNew(firstContribution));
 		assertTrue(ContentDetector.isNew(copyOfFirstContribution));
 	}
-	
+
+	@Test
 	public void testExtensionMapSingleton() {
 		ExtensionMap map1 = ExtensionMap.getInstance();
 		ExtensionMap map2 = ExtensionMap.getInstance();
 		assertEquals(map1, map2);
 	}
-	
+
+	@Test
 	public void testExtensionMapping() {
 		ExtensionMap map = ExtensionMap.getInstance();
 		map.clear();
@@ -146,7 +145,8 @@ public class ContentDetectorTest extends TestCase {
 		map.clear();
 		assertNull(map.getPluginId("anchor1"));
 	}
-	
+
+	@Test
 	public void testStartPage() {
 		ExtensionMap map = ExtensionMap.getInstance();
 		map.setStartPage("tutorials");
