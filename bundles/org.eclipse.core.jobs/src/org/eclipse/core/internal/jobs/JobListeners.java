@@ -35,7 +35,7 @@ class JobListeners {
 	/**
 	 * The global job listeners.
 	 */
-	protected final ListenerList global = new ListenerList(ListenerList.IDENTITY);
+	protected final ListenerList<IJobChangeListener> global = new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * TODO Could use an instance pool to re-use old event objects
@@ -66,30 +66,23 @@ class JobListeners {
 	 */
 	private void doNotify(final IListenerDoit doit, final IJobChangeEvent event) {
 		//notify all global listeners
-		Object[] listeners = global.getListeners();
-		int size = listeners.length;
-		for (int i = 0; i < size; i++) {
+		for (IJobChangeListener listener : global) {
 			try {
-				if (listeners[i] != null)
-					doit.notify((IJobChangeListener) listeners[i], event);
+				doit.notify(listener, event);
 			} catch (Throwable e) {
-				handleException(listeners[i], e);
+				handleException(listener, e);
 			}
 		}
-		//notify all local listeners
-		listeners = ((InternalJob) event.getJob()).getListeners().getListeners();
-		size = listeners.length;
-		for (int i = 0; i < size; i++) {
+		for (IJobChangeListener listener : ((InternalJob) event.getJob()).getListeners()) {
 			try {
-				if (listeners[i] != null)
-					doit.notify((IJobChangeListener) listeners[i], event);
+				doit.notify(listener, event);
 			} catch (Throwable e) {
-				handleException(listeners[i], e);
+				handleException(listener, e);
 			}
 		}
 	}
 
-	private void handleException(Object listener, Throwable e) {
+	private void handleException(IJobChangeListener listener, Throwable e) {
 		//this code is roughly copied from InternalPlatform.run(ISafeRunnable),
 		//but in-lined here for performance reasons
 		if (e instanceof OperationCanceledException)

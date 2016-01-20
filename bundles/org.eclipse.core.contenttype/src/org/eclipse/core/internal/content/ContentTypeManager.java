@@ -32,7 +32,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	 * These listeners are to be informed when
 	 * something in a content type changes.
 	 */
-	protected final ListenerList contentTypeListeners = new ListenerList();
+	protected final ListenerList<IContentTypeChangeListener> contentTypeListeners = new ListenerList<>();
 
 	/**
 	 * Creates and initializes the platform's content type manager. A reference to the
@@ -180,11 +180,9 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	}
 
 	public void fireContentTypeChangeEvent(ContentType type) {
-		Object[] listeners = this.contentTypeListeners.getListeners();
 		IContentType eventObject = new ContentTypeHandler(type, type.getCatalog().getGeneration());
-		for (int i = 0; i < listeners.length; i++) {
+		for (final IContentTypeChangeListener listener : this.contentTypeListeners) {
 			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(eventObject);
-			final IContentTypeChangeListener listener = (IContentTypeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

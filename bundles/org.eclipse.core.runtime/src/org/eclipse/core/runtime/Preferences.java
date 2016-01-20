@@ -290,7 +290,7 @@ public class Preferences {
 	 * These listeners are to be informed when the current value of a property
 	 * changes.
 	 */
-	protected ListenerList listeners = new ListenerList();
+	protected ListenerList<IPropertyChangeListener> listeners = new ListenerList<>();
 
 	/**
 	 * The mapping from property name to
@@ -494,13 +494,11 @@ public class Preferences {
 	protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
 		if (name == null)
 			throw new IllegalArgumentException();
-		Object[] changeListeners = this.listeners.getListeners();
 		// Do we even need to fire an event?
-		if (changeListeners.length == 0)
+		if (this.listeners.size() == 0)
 			return;
 		final PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-		for (int i = 0; i < changeListeners.length; ++i) {
-			final IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
+		for (final IPropertyChangeListener l : this.listeners) {
 			ISafeRunnable job = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

@@ -43,7 +43,7 @@ public class PerformanceStatsProcessor extends Job {
 	/**
 	 * Event listeners.
 	 */
-	private final org.eclipse.core.runtime.ListenerList listeners = new org.eclipse.core.runtime.ListenerList();
+	private final ListenerList<PerformanceListener> listeners = new ListenerList<>();
 
 	private FrameworkLog log;
 
@@ -200,9 +200,7 @@ public class PerformanceStatsProcessor extends Job {
 		}
 
 		//notify performance listeners
-		Object[] toNotify = listeners.getListeners();
-		for (int i = 0; i < toNotify.length; i++) {
-			final PerformanceStats.PerformanceListener listener = ((PerformanceStats.PerformanceListener) toNotify[i]);
+		for (PerformanceListener listener : listeners) {
 			if (events.length > 0)
 				listener.eventsOccurred(events);
 			for (int j = 0; j < failedEvents.length; j++)
