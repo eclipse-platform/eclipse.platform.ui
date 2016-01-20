@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
 
 package org.eclipse.ua.tests.cheatsheet.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests for the saving and restoring of the state of a simple cheat sheet in a memento
  */
@@ -20,22 +24,22 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestStatePersistence extends TestCase {
-	
+public class TestStatePersistence {
+
 	private static final String VALUE2 = "value2";
 	private static final String KEY2 = "key2";
 	private static final String VALUE1 = "value1";
 	private static final String KEY1 = "key1";
 	private static final String TEST_ID = "TestId";
 	private static final String PATH = "ContentPath";
-	
+
 	private class PropertySet {
 	    public String id;
 	    public int currentItem;
@@ -48,17 +52,17 @@ public class TestStatePersistence extends TestCase {
 	    public Hashtable<String, String> subItemSkipped;
 	    public CheatSheetManager manager;
 	}
-	
+
 	private PropertySet propsToSave;
 	private CheatSheetSaveHelper helper = new CheatSheetSaveHelper();
 	private PropertySet restored;
-	
+
 	/*
 	 * Initialize the properties that will be saved. Individual tests will modify
 	 * the properties which apply to a particular test.
 	 */
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		propsToSave = new PropertySet();
 		propsToSave.button = 1;
 		propsToSave.currentItem = 2;
@@ -72,7 +76,7 @@ public class TestStatePersistence extends TestCase {
 		CheatSheetElement csElement = new CheatSheetElement(TEST_ID);
 		propsToSave.manager = new CheatSheetManager(csElement);
 	}
-	
+
 	private void save() {
 		Properties propertiesToSave = new Properties();
 		propertiesToSave.put(IParserTags.ID, propsToSave.id);
@@ -92,7 +96,7 @@ public class TestStatePersistence extends TestCase {
 		}
 		helper.saveState(propertiesToSave, propsToSave.manager);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private PropertySet restore(String id) {
 		PropertySet result = new PropertySet();
@@ -121,19 +125,21 @@ public class TestStatePersistence extends TestCase {
 	 * Test save and restore of id, name
 	 *
 	 */
+	@Test
 	public void testBasicProperties() {
 		save();
 		restore();
 		// Check the restored properties
-		assertEquals(TEST_ID, restored.id);	
+		assertEquals(TEST_ID, restored.id);
 		assertEquals(2, restored.currentItem);
 		assertEquals(1, restored.button);
 		assertEquals(PATH, restored.contentPath);
 	}
-	
+
 	/**
 	 * Test save and restore of CheatSheetManager
 	 */
+	@Test
 	public void testCheatSheetManagerPersistence() {
 		propsToSave.manager.setData(KEY1, VALUE1);
 		propsToSave.manager.setData(KEY2, VALUE2);
@@ -142,10 +148,11 @@ public class TestStatePersistence extends TestCase {
 		assertEquals(VALUE1, restored.manager.getData(KEY1));
 		assertEquals(VALUE2, restored.manager.getData(KEY2));
 	}
-	
+
 	/**
 	 * Test save and restore of completed, expanded, expandRestore
 	 */
+	@Test
 	public void testItemPropertyPersistence() {
 		propsToSave.completed.add("2");
 		propsToSave.completed.add("5");
@@ -168,10 +175,11 @@ public class TestStatePersistence extends TestCase {
 		assertTrue(restored.expandRestore.contains("99"));
 		assertTrue(restored.expandRestore.contains("999"));
 	}
-	
+
 	/**
 	 * Test save and restore of subitem completed and skipped
 	 */
+	@Test
 	public void testSubItemPropertyPersistence() {
 		propsToSave.subItemCompleted.put("1", "3,5");
 		propsToSave.subItemCompleted.put("2", "4,6");

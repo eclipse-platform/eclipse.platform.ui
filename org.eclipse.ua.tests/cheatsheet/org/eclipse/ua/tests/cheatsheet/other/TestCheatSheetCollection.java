@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,18 @@
 
 package org.eclipse.ua.tests.cheatsheet.other;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestCheatSheetCollection extends TestCase {
-	
+public class TestCheatSheetCollection {
+
 	private CheatSheetCollectionElement root;
 	private CheatSheetElement csA;
 	private CheatSheetElement csB;
@@ -27,9 +32,9 @@ public class TestCheatSheetCollection extends TestCase {
 	private CheatSheetCollectionElement c2;
 	private CheatSheetCollectionElement c11;
 	private CheatSheetCollectionElement c12;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		root = new CheatSheetCollectionElement("rootPlugin", "rootId", "rootName", root);
 		csA = new CheatSheetElement("A");
 		csA.setID("idA");
@@ -42,7 +47,7 @@ public class TestCheatSheetCollection extends TestCase {
 		c1 = new CheatSheetCollectionElement("p1", "c1Id", "c1", root);
 		c2 = new CheatSheetCollectionElement("p2", "c2Id", "c2", root);
 		c11 = new CheatSheetCollectionElement("p11", "c11Id", "c11", c1);
-		c12 = new CheatSheetCollectionElement("p12", "c12Id", "c12", c1);		
+		c12 = new CheatSheetCollectionElement("p12", "c12Id", "c12", c1);
 	    root.add(c1);
 	    root.add(csA);
 	    root.add(csB);
@@ -53,6 +58,7 @@ public class TestCheatSheetCollection extends TestCase {
 	    c12.add(cs12A);
 	}
 
+	@Test
 	public void testRoot() {
 		assertEquals(2, root.getChildren().length);
 		assertEquals(2, root.getCheatSheets().length);
@@ -62,6 +68,7 @@ public class TestCheatSheetCollection extends TestCase {
 		assertEquals("rootPlugin", root.getPluginId());
 	}
 
+	@Test
 	public void testTopLevelChildCategories() {
 		Object[] children = root.getChildren();
 		assertEquals(c1, children[0]);
@@ -73,13 +80,15 @@ public class TestCheatSheetCollection extends TestCase {
 		assertEquals(1, c2.getCheatSheets().length);
 		assertFalse(c2.isEmpty());
 	}
-	
+
+	@Test
 	public void testTopLevelCheatsheets() {
 		Object[] cheatsheets = root.getCheatSheets();
 		assertEquals(csA, cheatsheets[0]);
 		assertEquals(csB, cheatsheets[1]);
 	}
-	
+
+	@Test
 	public void testSecondLevelChildCategories() {
 		Object[] children = c1.getChildren();
 		assertEquals(c11, children[0]);
@@ -91,7 +100,8 @@ public class TestCheatSheetCollection extends TestCase {
 		assertEquals(1, c12.getCheatSheets().length);
 		assertFalse(c12.isEmpty());
 	}
-	
+
+	@Test
 	public void testFind() {
 		assertEquals(csA, root.findCheatSheet("idA", true));
 		assertEquals(csA, root.findCheatSheet("idA", false));

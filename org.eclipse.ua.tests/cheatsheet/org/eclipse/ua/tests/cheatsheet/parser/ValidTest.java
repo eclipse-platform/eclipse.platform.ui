@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,22 +21,21 @@ import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.junit.Assert;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
-
-import junit.framework.TestCase;
 
 /*
  * Tests the cheat sheets parser on valid cheat sheets.
  */
-public class ValidTest extends TestCase {
-	
+public class ValidTest {
+
 	private void parseCheatsheet(String file) throws IOException {
 		Path path = new Path("data/cheatsheet/valid/" + file);
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
 		URL url = FileLocator.find(bundle, path, null);
 		CheatSheetParser parser = new CheatSheetParser();
 		CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
-		Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);		
+		Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);
 		String expectedPath = "data/cheatsheet/valid/" + getExpected(file);
 		String expected = FileUtil.getContents(bundle, expectedPath);
 		String actual = CheatSheetModelSerializer.serialize(sheet);
@@ -48,48 +47,59 @@ public class ValidTest extends TestCase {
 		return file.substring(0, suffix) + "_expected.txt";
 	}
 
+	@Test
 	public void testSubItems() throws IOException {
 		parseCheatsheet("TestSubItems.xml");
 	}
 
+	@Test
 	public void testParameters() throws IOException {
 		parseCheatsheet("TestParameters.xml");
 	}
 
+	@Test
 	public void testOpeningURL() throws IOException {
 		parseCheatsheet("TestOpeningURL.xml");
 	}
 
+	@Test
 	public void testDynamicSubitems() throws IOException {
 		parseCheatsheet("TestDynamicSubItems.xml");
 	}
 
+	@Test
 	public void testDescriptionFormatting() throws IOException {
 		parseCheatsheet("TestDescriptionFormatting.xml");
 	}
 
+	@Test
 	public void testCSActions() throws IOException {
 		parseCheatsheet("TestCSActions.xml");
 	}
 
+	@Test
 	public void testContextHelp() throws IOException {
 		parseCheatsheet("TestContext_Help.xml");
 	}
 
+	@Test
 	public void testActions() throws IOException {
 		parseCheatsheet("TestActions.xml");
 	}
 
+	@Test
 	public void testHelloWorldWithSubitems() throws IOException {
 		parseCheatsheet("HelloWorldWithSubitems.xml");
 	}
 
+	@Test
 	public void testHelloWorldWithExtensions() throws IOException {
 		parseCheatsheet("HelloWorldWithExtensions.xml");
 	}
 
+	@Test
 	public void testHelloWorld() throws IOException {
 		parseCheatsheet("HelloWorld.xml");
 	}
-	
+
 }

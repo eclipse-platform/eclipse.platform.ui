@@ -21,8 +21,7 @@ import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.junit.Assert;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -30,19 +29,19 @@ import junit.framework.TestCase;
  * sheet content in the /data/cheatsheet/valid folder, constructs the cheat sheet
  * model, then serializes the model to a text file, which is stored in the same
  * directory as the xml file, as <original_name>_expected.txt.
- * 
+ *
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
- * 
+ *
  * Usage:
- * 
+ *
  * 1. Run the "org.eclipse.ua.tests.cheatsheet.util.CheatSheetModelSerializerTest" eclipse application.
  * 2. Right-click in "Package Explorer -> Refresh".
- * 
+ *
  * The new files should appear.
  */
-public class CheatSheetModelSerializerTest extends TestCase {
-	
+public class CheatSheetModelSerializerTest {
+	@Test
 	public void testRunSerializer() throws IOException {
 		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid", ".xml", true);
 		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
@@ -50,7 +49,7 @@ public class CheatSheetModelSerializerTest extends TestCase {
 			CheatSheetParser parser = new CheatSheetParser();
 			CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
 			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);
-			
+
 			PrintWriter out = new PrintWriter(new FileOutputStream(FileUtil.getResultFile(url.toString().substring("file:/".length()))));
 			out.print(CheatSheetModelSerializer.serialize(sheet));
 			out.close();

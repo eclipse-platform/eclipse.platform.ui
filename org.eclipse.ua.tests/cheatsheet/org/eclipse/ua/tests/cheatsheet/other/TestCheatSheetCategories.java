@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,60 +11,67 @@
 
 package org.eclipse.ua.tests.cheatsheet.other;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
+import org.junit.Test;
 
-public class TestCheatSheetCategories extends TestCase {
+public class TestCheatSheetCategories {
 
 	private static final String TEST_CATEGORY = "org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat";
 
+	@Test
 	public void testForCollection() {
-		CheatSheetCollectionElement cheatSheets = 
+		CheatSheetCollectionElement cheatSheets =
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		Object[] subCategories = cheatSheets.getChildren();
 		for (Object subCategorie : subCategories) {
 			assertTrue(subCategorie instanceof CheatSheetCollectionElement);
 		}
 	}
-	
+
+	@Test
 	public void testFindTestCategory() {
-		CheatSheetCollectionElement cheatSheets = 
+		CheatSheetCollectionElement cheatSheets =
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
 		assertNotNull("Cannot find category org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat",
 					       testCat);
 	}
 
+	@Test
 	public void testFindQualifiedSubcategory() {
-		CheatSheetCollectionElement cheatSheets = 
+		CheatSheetCollectionElement cheatSheets =
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
-		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
+		CheatSheetCollectionElement subCat = findChildCategory(testCat,
 				"org.eclipse.ua.tests.subcategory");
 		assertNotNull(subCat);
 	}
 
+	@Test
 	public void testFindCsInUnqualifiedSubcategory() {
-		CheatSheetCollectionElement cheatSheets = 
+		CheatSheetCollectionElement cheatSheets =
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
-		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
+		CheatSheetCollectionElement subCat = findChildCategory(testCat,
 				"org.eclipse.ua.tests.subcategory");
-		CheatSheetElement unqual = findCheatsheet(subCat, 
+		CheatSheetElement unqual = findCheatsheet(subCat,
 				"org.eclipse.ua.tests.cheatsheet.subcategory.simple");
 		assertNotNull(unqual);
 	}
-	
+
+	@Test
 	public void testFindCsInQualifiedSubcategory() {
-		CheatSheetCollectionElement cheatSheets = 
+		CheatSheetCollectionElement cheatSheets =
 			CheatSheetRegistryReader.getInstance().getCheatSheets();
 		CheatSheetCollectionElement testCat = findChildCategory(cheatSheets, TEST_CATEGORY);
-		CheatSheetCollectionElement subCat = findChildCategory(testCat, 
+		CheatSheetCollectionElement subCat = findChildCategory(testCat,
 				"org.eclipse.ua.tests.subcategory");
-		CheatSheetElement qual = findCheatsheet(subCat, 
+		CheatSheetElement qual = findCheatsheet(subCat,
 				"org.eclipse.ua.tests.cheatsheet.subcategory.qualified");
 		assertNotNull(qual);
 	}

@@ -1,16 +1,21 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 
 package org.eclipse.ua.tests.cheatsheet.parser;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -21,53 +26,57 @@ import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.ParserInput;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class ParseFromString {
 
-public class ParseFromString extends TestCase {
-
-	private static final String VALID_CONTENT = 
+	private static final String VALID_CONTENT =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\" ?> "
 	    + "<cheatsheet title=\"Title\">"
 		+ "<intro><description>Simple test</description></intro>"
 		+ "<item title=\"Item\">"
 		+ "<description>description</description>"
 	    + "</item></cheatsheet>";
-	
+
 	// INVALID_CONTENT has no items
-	private static final String INVALID_CONTENT = 
+	private static final String INVALID_CONTENT =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\" ?> "
 	    + "<cheatsheet title=\"Title\">"
 		+ "<intro><description>Simple test</description></intro>"
 		+ "</cheatsheet>";
 
 	// Test that the default value for getContentXml is null
+	@Test
 	public void testElementXml() {
 		CheatSheetElement element = new CheatSheetElement("name");
 		assertNull(element.getContentXml());
 		element.setContentXml(VALID_CONTENT);
 	}
 
+	@Test
 	public void testDefaultParserInput() {
 		ParserInput input = new ParserInput();
 		assertNull(input.getUrl());
 		assertNull(input.getXml());
 	}
 
+	@Test
 	public void testXmlParserInput() {
 		ParserInput input = new ParserInput(VALID_CONTENT, null);
 		assertNull(input.getUrl());
 		assertEquals(VALID_CONTENT, input.getXml());
 	}
-	
+
+	@Test
 	public void testUrlParserInput() {
-		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(), 
+		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(),
 			       "data/cheatsheet/valid/HelloWorld.xml");
 		ParserInput input = new ParserInput(testURL, UserAssistanceTestPlugin.getPluginId(), null);
 		assertNull(input.getXml());
 		assertTrue(testURL.equals(input.getUrl()));
 	}
 
+	@Test
 	public void testValidCheatsheet() {
 		ParserInput input = new ParserInput(VALID_CONTENT, null);
 		CheatSheetParser parser = new CheatSheetParser();
@@ -75,7 +84,8 @@ public class ParseFromString extends TestCase {
 		assertNotNull(cheatSheet);
 		assertEquals(Status.OK, parser.getStatus().getSeverity());
 	}
-	
+
+	@Test
 	public void testInvalidCheatsheet() {
 		ParserInput input = new ParserInput(INVALID_CONTENT, null);
 		CheatSheetParser parser = new CheatSheetParser();
