@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,8 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
     }
 
 	private final RevisionPainter fPainter;
-	private final ListenerList fListeners= new ListenerList();
+
+	private final ListenerList<ISelectionChangedListener> fListeners= new ListenerList<>();
 
 	/**
 	 * The text viewer once we are installed, <code>null</code> if not installed.
@@ -185,9 +186,9 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
     		ISelection selection= getSelection();
     		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 
-    		Object[] listeners= fListeners.getListeners();
-    		for (int i= 0; i < listeners.length; i++)
-    			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+			for (ISelectionChangedListener listener : fListeners) {
+				listener.selectionChanged(event);
+			}
     	} finally {
     		fIgnoreEvents= false;
     	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -504,7 +504,7 @@ public final class RevisionPainter {
 	 * The list of revision listeners.
 	 * @since 3.3.
 	 */
-	private final ListenerList fRevisionListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<IRevisionListener> fRevisionListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/* The context - column and viewer we are connected to. */
 
@@ -1536,9 +1536,7 @@ public final class RevisionPainter {
 			return;
 
 		RevisionEvent event= new RevisionEvent(fRevisionInfo);
-		Object[] listeners= fRevisionListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			IRevisionListener listener= (IRevisionListener) listeners[i];
+		for (IRevisionListener listener : fRevisionListeners) {
 			listener.revisionInformationChanged(event);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/** Listener for shell activation and deactivation. */
 	private Listener fShellListener;
 	/** All focus listeners registered to this information control. */
-	private final ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
+	private final ListenerList<FocusListener> fFocusListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/** Size constraints, x is the maxWidth and y is the maxHeight, or <code>null</code> if not set. */
 	private Point fSizeConstraints;
@@ -670,9 +670,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 				@Override
 				public void handleEvent(Event event) {
-					Object[] listeners= fFocusListeners.getListeners();
-					for (int i= 0; i < listeners.length; i++) {
-						FocusListener focusListener= (FocusListener)listeners[i];
+					for (FocusListener focusListener : fFocusListeners) {
 						if (event.type == SWT.Activate) {
 							focusListener.focusGained(new FocusEvent(event));
 						} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,8 @@ public final class CompoundEditExitStrategy {
 
 	private final String[] fCommandIds;
 	private final EventListener fEventListener= new EventListener();
-	private final ListenerList fListenerList= new ListenerList(ListenerList.IDENTITY);
+
+	private final ListenerList<ICompoundEditListener> fListenerList= new ListenerList<>(ListenerList.IDENTITY);
 
 	private ITextViewer fViewer;
 	private StyledText fWidgetEventSource;
@@ -207,9 +208,7 @@ public final class CompoundEditExitStrategy {
 
 	private void fireEndCompoundEdit() {
 		disarm();
-		Object[] listeners= fListenerList.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			ICompoundEditListener listener= (ICompoundEditListener) listeners[i];
+		for (ICompoundEditListener listener : fListenerList) {
 			try {
 				listener.endCompoundEdit();
 			} catch (Exception e) {

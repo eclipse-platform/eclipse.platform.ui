@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,7 +159,7 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	 * The listeners to be notified when the input changed.
 	 * @since 3.4
 	 */
-	private ListenerList/*<IInputChangedListener>*/fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<IInputChangedListener> fInputChangeListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * The symbolic name of the font used for size computations, or <code>null</code> to use dialog font.
@@ -319,9 +319,9 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		fCompleted= false;
 		fBrowser.setText(content);
 
-		Object[] listeners= fInputChangeListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IInputChangedListener)listeners[i]).inputChanged(fInput);
+		for (IInputChangedListener listener : fInputChangeListeners) {
+			listener.inputChanged(fInput);
+		}
 	}
 
 	@Override

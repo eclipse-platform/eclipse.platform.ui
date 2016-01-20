@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private boolean fLastEnableState;
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
-	private ListenerList fPageChangeListeners;
+	private ListenerList<IPageChangedListener> fPageChangeListeners;
 
 	private final IWorkbenchWindow fWorkbenchWindow;
 	private final ISelection fCurrentSelection;
@@ -848,7 +848,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	@Override
 	public void addPageChangedListener(IPageChangedListener listener) {
 		if (fPageChangeListeners == null) {
-			fPageChangeListeners= new ListenerList();
+			fPageChangeListeners= new ListenerList<>();
 		}
 		fPageChangeListeners.add(listener);
 	}
@@ -862,9 +862,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (fPageChangeListeners != null && !fPageChangeListeners.isEmpty()) {
 			// Fires the page change event
 			final PageChangedEvent event= new PageChangedEvent(this, getSelectedPage());
-			Object[] listeners= fPageChangeListeners.getListeners();
-			for (int i= 0; i < listeners.length; ++i) {
-				final IPageChangedListener l= (IPageChangedListener) listeners[i];
+			for (IPageChangedListener l : fPageChangeListeners) {
 				SafeRunner.run(new SafeRunnable() {
 					@Override
 					public void run() {

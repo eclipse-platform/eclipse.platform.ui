@@ -982,7 +982,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private ListenerList fCompletionListeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<ICompletionListener> fCompletionListeners= new ListenerList<>(ListenerList.IDENTITY);
 	/**
 	 * The message to display at the bottom of the proposal popup.
 	 *
@@ -2369,9 +2369,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
-			Object[] listeners= fCompletionListeners.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				ICompletionListener listener= (ICompletionListener)listeners[i];
+			for (ICompletionListener listener : fCompletionListeners) {
 				listener.assistSessionStarted(event);
 			}
 		}
@@ -2386,9 +2384,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			Object[] listeners= fCompletionListeners.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				ICompletionListener listener= (ICompletionListener)listeners[i];
+			for (ICompletionListener listener : fCompletionListeners) {
 				if (listener instanceof ICompletionListenerExtension)
 					((ICompletionListenerExtension)listener).assistSessionRestarted(event);
 			}
@@ -2404,9 +2400,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			Object[] listeners= fCompletionListeners.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				ICompletionListener listener= (ICompletionListener)listeners[i];
+			for (ICompletionListener listener : fCompletionListeners) {
 				listener.assistSessionEnded(event);
 			}
 		}
@@ -2498,9 +2492,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	void fireSelectionEvent(ICompletionProposal proposal, boolean smartToggle) {
-		Object[] listeners= fCompletionListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			ICompletionListener listener= (ICompletionListener)listeners[i];
+		for (ICompletionListener listener : fCompletionListeners) {
 			listener.selectionChanged(proposal, smartToggle);
 		}
 	}
@@ -2512,9 +2504,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.8
 	 */
 	void fireAppliedEvent(ICompletionProposal proposal) {
-		Object[] listeners= fCompletionListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			ICompletionListener listener= (ICompletionListener)listeners[i];
+		for (ICompletionListener listener : fCompletionListeners) {
 			if (listener instanceof ICompletionListenerExtension2)
 				((ICompletionListenerExtension2)listener).applied(proposal);
 		}

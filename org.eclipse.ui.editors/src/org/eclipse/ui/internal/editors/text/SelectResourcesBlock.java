@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	private Collection<Object> whiteCheckedTreeItems= new HashSet<>();
 
-	private ListenerList listeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<ICheckStateListener> listeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	private ITreeContentProvider treeContentProvider;
 
@@ -564,9 +564,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @param event the event
 	 */
 	private void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
-		Object[] array= listeners.getListeners();
-		for (int i= 0; i < array.length; i++) {
-			final ICheckStateListener l= (ICheckStateListener) array[i];
+		for (ICheckStateListener l : listeners) {
 			SafeRunner.run(new SafeRunnable() {
 				@Override
 				public void run() {

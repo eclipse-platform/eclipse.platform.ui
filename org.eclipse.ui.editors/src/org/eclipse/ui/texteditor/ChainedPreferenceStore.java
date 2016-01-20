@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	private IPreferenceStore[] fPreferenceStores;
 
 	/** Listeners on this chained preference store. */
-	private ListenerList fClientListeners= new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<IPropertyChangeListener> fClientListeners= new ListenerList<>(ListenerList.IDENTITY);
 
 	/** Listeners on the child preference stores. */
 	private List<PropertyChangeListener> fChildListeners= new ArrayList<>();
@@ -149,9 +149,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 	 * @param event the property change event
 	 */
 	private void firePropertyChangeEvent(PropertyChangeEvent event) {
-		Object[] listeners= fClientListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			 ((IPropertyChangeListener) listeners[i]).propertyChange(event);
+		for (IPropertyChangeListener listener : fClientListeners) {
+			listener.propertyChange(event);
+		}
 	}
 
 	@Override

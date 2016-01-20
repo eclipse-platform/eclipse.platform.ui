@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -735,7 +735,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	private boolean fOverwriting= false;
 
 	/** The registered document listeners. */
-	private ListenerList fDocumentUndoListeners;
+	private ListenerList<IDocumentUndoListener> fDocumentUndoListeners;
 
 	/** The list of clients connected. */
 	private List<Object> fConnected;
@@ -753,7 +753,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		fHistory= OperationHistoryFactory.getOperationHistory();
 		fUndoContext= new ObjectUndoContext(fDocument);
 		fConnected= new ArrayList<>();
-		fDocumentUndoListeners= new ListenerList(ListenerList.IDENTITY);
+		fDocumentUndoListeners= new ListenerList<>(ListenerList.IDENTITY);
 	}
 
 	@Override
@@ -873,9 +873,8 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	void fireDocumentUndo(int offset, String text, String preservedText, Object source, int eventType, boolean isCompound) {
 		eventType= isCompound ? eventType | DocumentUndoEvent.COMPOUND : eventType;
 		DocumentUndoEvent event= new DocumentUndoEvent(fDocument, offset, text, preservedText, eventType, source);
-		Object[] listeners= fDocumentUndoListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			((IDocumentUndoListener)listeners[i]).documentUndoNotification(event);
+		for (IDocumentUndoListener listener : fDocumentUndoListeners) {
+			listener.documentUndoNotification(event);
 		}
 	}
 
