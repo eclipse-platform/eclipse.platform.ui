@@ -34,7 +34,6 @@ public class AllTests extends TestCase {
 		suite.addTest(EclipsePreferencesTest.suite());
 		suite.addTest(PreferencesServiceTest.suite());
 		suite.addTest(IScopeContextTest.suite());
-		suite.addTest(ListenerRegistryTest.suite());
 		suite.addTest(TestBug388004.suite());
 		suite.addTest(TestBug380859.suite());
 		suite.addTest(PreferenceExportTest.suite());
