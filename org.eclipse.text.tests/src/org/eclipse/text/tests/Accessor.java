@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 
 
 /**
@@ -326,6 +327,8 @@ public class Accessor {
 	}
 
 	private void fail(Throwable e) {
-		throw new AssertionError(e.getLocalizedMessage(), e);
+		AssertionFailedException afe= new AssertionFailedException(e.getLocalizedMessage());
+		afe.initCause(e);
+		throw afe;
 	}
 }
