@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		if (userProperties != null) {// create a copy so as to not affect the
 			// configuration with transient
 			// properties
-			userProperties = new HashMap<String, String>(userProperties);
+			userProperties = new HashMap<>(userProperties);
 		}
 		String[] propertyFiles = AntLaunchingUtil.getPropertyFiles(configuration);
 		String[] targets = AntLaunchingUtil.getTargetNames(configuration);
@@ -226,7 +226,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		int requestPort = -1;
 		if (isSeparateJRE && captureOutput) {
 			if (userProperties == null) {
-				userProperties = new HashMap<String, String>();
+				userProperties = new HashMap<>();
 			}
 			port = SocketUtil.findFreePort();
 			userProperties.put(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
@@ -251,7 +251,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	}
 
 	private void runInSameVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, IPath location, String idStamp, AntRunner runner, StringBuffer commandLine) throws CoreException {
-		Map<String, String> attributes = new HashMap<String, String>(2);
+		Map<String, String> attributes = new HashMap<>(2);
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConstants.ID_ANT_PROCESS_TYPE);
 		attributes.put(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
 

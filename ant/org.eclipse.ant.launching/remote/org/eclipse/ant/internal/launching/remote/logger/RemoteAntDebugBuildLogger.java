@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -362,7 +362,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 
 	protected void addBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
-			fBreakpoints = new ArrayList<RemoteAntBreakpoint>();
+			fBreakpoints = new ArrayList<>();
 		}
 		RemoteAntBreakpoint newBreakpoint = new RemoteAntBreakpoint(breakpointRepresentation);
 		if (!fBreakpoints.contains(newBreakpoint)) {

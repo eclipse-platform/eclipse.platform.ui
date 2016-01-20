@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();
 		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
-		List<IRuntimeClasspathEntry> rtes = new ArrayList<IRuntimeClasspathEntry>(antClasspathEntries.length + userEntries.length);
+		List<IRuntimeClasspathEntry> rtes = new ArrayList<>(antClasspathEntries.length + userEntries.length);
 		IAntClasspathEntry entry;
 		for (int i = 0; i < antClasspathEntries.length; i++) {
 			entry = antClasspathEntries[i];
@@ -175,7 +175,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 
 	private void addSWTJars(List<IRuntimeClasspathEntry> rtes) {
 		if (fgSWTEntries == null) {
-			fgSWTEntries = new ArrayList<IRuntimeClasspathEntry>();
+			fgSWTEntries = new ArrayList<>();
 			Bundle bundle = Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
 			BundleWiring wiring = bundle.adapt(BundleWiring.class);
 			List<BundleWire> fragmentWires = wiring == null ? Collections.<BundleWire> emptyList()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/**
 	 * The stackframes associated with this thread
 	 */
-	private List<AntStackFrame> fFrames = new ArrayList<AntStackFrame>(1);
+	private List<AntStackFrame> fFrames = new ArrayList<>(1);
 
 	/**
 	 * The stackframes to be reused on suspension
@@ -303,7 +303,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	private void aboutToResume(int detail, boolean stepping) {
 		fRefreshProperties = true;
-		fOldFrames = new ArrayList<AntStackFrame>(fFrames);
+		fOldFrames = new ArrayList<>(fFrames);
 		fFrames.clear();
 		setPropertiesValid(false);
 		setStepping(stepping);

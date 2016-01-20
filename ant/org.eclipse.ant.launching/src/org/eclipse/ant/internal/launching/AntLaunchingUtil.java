@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,7 +208,7 @@ public final class AntLaunchingUtil {
 		}
 		IRuntimeClasspathEntry[] unresolved = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
 		// don't consider bootpath entries
-		List<IRuntimeClasspathEntry> userEntries = new ArrayList<IRuntimeClasspathEntry>(unresolved.length);
+		List<IRuntimeClasspathEntry> userEntries = new ArrayList<>(unresolved.length);
 		for (int i = 0; i < unresolved.length; i++) {
 			IRuntimeClasspathEntry entry = unresolved[i];
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
@@ -364,7 +364,7 @@ public final class AntLaunchingUtil {
 			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			if (oldAntHome != null) {
 				IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(workingCopy);
-				List<String> mementos = new ArrayList<String>(entries.length);
+				List<String> mementos = new ArrayList<>(entries.length);
 				for (int i = 0; i < entries.length; i++) {
 					IRuntimeClasspathEntry entry = entries[i];
 					if (entry.getType() == IRuntimeClasspathEntry.OTHER) {

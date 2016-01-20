@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class AntClasspathProvider extends StandardClasspathProvider {
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		if (useDefault) {
-			List<IRuntimeClasspathEntry> rtes = new ArrayList<IRuntimeClasspathEntry>(10);
+			List<IRuntimeClasspathEntry> rtes = new ArrayList<>(10);
 			IRuntimeClasspathEntry jreEntry = null;
 			try {
 				jreEntry = JavaRuntime.computeJREEntry(configuration);

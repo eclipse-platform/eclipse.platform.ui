@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class AntLaunch extends Launch {
 
 	public AntLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
-		linkDescriptors = new ArrayList<LinkDescriptor>();
+		linkDescriptors = new ArrayList<>();
 	}
 
 	public void addLinkDescriptor(String line, String fileName, int lineNumber, int offset, int length) {
@@ -44,7 +44,7 @@ public class AntLaunch extends Launch {
 
 	public List<LinkDescriptor> getLinkDescriptors() {
 		synchronized (linkDescriptors) {
-			return new ArrayList<LinkDescriptor>(linkDescriptors);
+			return new ArrayList<>(linkDescriptors);
 		}
 	}
 
