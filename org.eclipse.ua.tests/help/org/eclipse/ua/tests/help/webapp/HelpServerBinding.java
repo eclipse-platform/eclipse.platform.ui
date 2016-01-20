@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,26 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.server.WebappManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test to see if the help server binds to host 127.0.0.1 in Workbench mode
  */
 
-public class HelpServerBinding extends TestCase {
+public class HelpServerBinding {
 
 	private int previousMode;
 	// Tests to access the server using it's IP need to be disabled
@@ -34,19 +38,19 @@ public class HelpServerBinding extends TestCase {
 	// To enable these tests for local testing set testUsingIP to true.
 	private final boolean testUsingIP = false;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		previousMode = BaseHelpSystem.getMode();
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		BaseHelpSystem.setMode(previousMode);
 	}
-	
-	private String getHostIP() throws UnknownHostException {	
+
+	private String getHostIP() throws UnknownHostException {
 	    InetAddress host = InetAddress.getLocalHost();
-	    byte[] ipAddr = host.getAddress(); 
+	    byte[] ipAddr = host.getAddress();
         String result = "" + ipAddr[0];
         for (int i = 1; i < ipAddr.length; i++) {
         	result += '.';
@@ -55,6 +59,7 @@ public class HelpServerBinding extends TestCase {
         return result;
 	}
 
+	@Test
 	public void testInfocenterBinding() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		WebappManager.stop("help");
@@ -63,8 +68,9 @@ public class HelpServerBinding extends TestCase {
 		if (testUsingIP) {
 			assertTrue(canAccessServer(getHostIP()));
 		}
-	}	
+	}
 
+	@Test
 	public void testWorkbenchBinding() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 		WebappManager.stop("help");
@@ -73,8 +79,9 @@ public class HelpServerBinding extends TestCase {
 		if (testUsingIP) {
 		    assertFalse(canAccessServer(getHostIP()));
 		}
-	}	
-	
+	}
+
+	@Test
 	public void testStandaloneBinding() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
 		WebappManager.stop("help");
@@ -83,13 +90,13 @@ public class HelpServerBinding extends TestCase {
 		if (testUsingIP) {
 		    assertTrue(canAccessServer(getHostIP()));
 		}
-	}	
-	
+	}
+
 	private boolean canAccessServer(String host) throws Exception {
 		InputStream input;
 		try {
 			int port = WebappManager.getPort();
-			URL url = new URL("http", host, port, "/help/index.jsp");	
+			URL url = new URL("http", host, port, "/help/index.jsp");
 			URLConnection connection = url.openConnection();
 			setTimeout(connection, 5000);
 			input = connection.getInputStream();
@@ -97,13 +104,13 @@ public class HelpServerBinding extends TestCase {
 			input.close();
 			return firstbyte > 0;
 		} catch (Exception e) {
-			return false;            
+			return false;
 		}
 	}
-	
+
 	private static void setTimeout(URLConnection conn, int milliseconds) {
 		conn.setConnectTimeout(milliseconds);
 		conn.setReadTimeout(milliseconds);
 	}
-		
+
 }

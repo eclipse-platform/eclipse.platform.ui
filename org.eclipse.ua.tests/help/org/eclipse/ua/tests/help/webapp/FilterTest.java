@@ -1,15 +1,18 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.webapp;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,17 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.search.HTMLDocParser;
 import org.eclipse.help.internal.webapp.servlet.FilterHTMLHeadAndBodyOutputStream;
 import org.eclipse.help.internal.webapp.servlet.FilterHTMLHeadOutputStream;
+import org.junit.Test;
 
 /**
  * Test for functions which decode a topic string
  */
 
-public class FilterTest extends TestCase {
+public class FilterTest {
 	private final String HTML40 =  "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">";
 	private final String HEAD1 =  "<HEAD>";
 	private final String HEAD2 = "</HEAD>";
@@ -48,6 +50,7 @@ public class FilterTest extends TestCase {
 	private String CHINESE_CONTENT = "<p>" + (char)24320 + (char)21457 + (char)29932 + "</p>";
 	private String CHINESE_ENTITY_CONTENT = "<p>&#24320;&#21457;&#29932;</p>";
 
+	@Test
 	public void testHeadOutputFilter() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		OutputStream filteredOutput = new FilterHTMLHeadOutputStream(output, CSS2.getBytes());
@@ -67,6 +70,7 @@ public class FilterTest extends TestCase {
 		assertEquals(expected, output.toString());
 	}
 
+	@Test
 	public void testHeadAndBodyOutputFilter() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS2.getBytes(), CONTENT2);
@@ -86,7 +90,8 @@ public class FilterTest extends TestCase {
 		final String expected = HTML40 + HEAD1 + CONTENT_TYPE_ISO_8859_1 + CSS1 + CSS2 + '\n' + HEAD2 + BODY1 + '\n' + CONTENT2 + '\n' + CONTENT1 + BODY2;
 		assertEquals(expected, output.toString());
 	}
-	
+
+	@Test
 	public void testLowerCaseTags() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2);
@@ -103,8 +108,9 @@ public class FilterTest extends TestCase {
 		}
 		final String expected = HTML40 + HEADLC1 + CSS1 + '\n' + HEADLC2 + BODYLC1 + '\n' + CONTENT2 + '\n' + CONTENT1 + BODYLC2;
 		assertEquals(expected, output.toString());
-	}	
-	
+	}
+
+	@Test
 	public void testFilterHeadlessDocument() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2);
@@ -121,6 +127,7 @@ public class FilterTest extends TestCase {
 		assertEquals(expected, output.toString());
 	}
 
+	@Test
 	public void testInsertChineseUtf8() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
@@ -139,6 +146,7 @@ public class FilterTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testInsertChineseISO8859() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
@@ -156,7 +164,8 @@ public class FilterTest extends TestCase {
 			fail("IO Exception");
 		}
 	}
-	
+
+	@Test
 	public void testInsertChineseNoCharsetSpecified() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
@@ -174,14 +183,16 @@ public class FilterTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCharsetUtf8Upper() {
 		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_UTF8UC.getBytes());
 	    assertEquals("UTF-8", HTMLDocParser.getCharsetFromHTML(is));
 	}
-	
+
+	@Test
 	public void testCharsetISO_8859_UCUpper() {
 		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_ISO_8859_1_UC.getBytes());
 	    assertEquals("ISO-8859-1", HTMLDocParser.getCharsetFromHTML(is));
 	}
-	
+
 }

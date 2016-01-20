@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,27 +11,27 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import static org.junit.Assert.fail;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import junit.framework.TestCase;
-
-import org.junit.Assert;
-
 import org.eclipse.help.internal.server.WebappManager;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test to see if the help server is interruptable
  */
 
-public class HelpServerInterrupt extends TestCase {
-	
+public class HelpServerInterrupt {
+
 	private static boolean enableTimeout = true;
 	private int iterations;
-	private int sleepTime = 10; 
+	private int sleepTime = 10;
 	private class ServerStarter extends Thread {
-		
+
 		private Exception exception = null;
 
 		@Override
@@ -48,25 +48,22 @@ public class HelpServerInterrupt extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
+	@Test
 	public void testServerWithoutInterrupt() throws Exception {
 		WebappManager.stop("help");
 		startServerWithoutInterrupt();
 		checkServer();
 		WebappManager.stop("help");
-	}	
-	
+	}
+
+	@Test
 	public void testServerWithInterrupt() throws Exception {
 		WebappManager.stop("help");
 		startServerWithInterrupt();
 		checkServer();
 		WebappManager.stop("help");
-	}	
-	
+	}
+
 	private void startServerWithoutInterrupt() throws Exception {
 		ServerStarter starter = new ServerStarter();
 		starter.start();
@@ -76,15 +73,15 @@ public class HelpServerInterrupt extends TestCase {
 			iterations++;
 			if (enableTimeout && sleepTime * iterations > 10000) {
 				fail("Test did not complete within 10 seconds");
-			}	
-			Thread.sleep(sleepTime);			
+			}
+			Thread.sleep(sleepTime);
         } while (starter.isAlive());
 		Exception exception = starter.getException();
 		if (exception != null) {
 			throw exception;
 		}
 	}
-	
+
 	private void startServerWithInterrupt() throws Exception {
 		ServerStarter starter = new ServerStarter();
 		starter.start();
@@ -95,21 +92,21 @@ public class HelpServerInterrupt extends TestCase {
 			if (enableTimeout && sleepTime * iterations > 10000) {
 				fail("Test did not complete within 10 seconds");
 			}
-			starter.interrupt();			
-			Thread.sleep(sleepTime);			
+			starter.interrupt();
+			Thread.sleep(sleepTime);
         } while (starter.isAlive());
 		Exception exception = starter.getException();
 		if (exception != null) {
 			throw exception;
 		}
 	}
-	
+
 	private void checkServer() throws Exception {
 		InputStream input;
 		long start = System.currentTimeMillis();
 		try {
 			int port = WebappManager.getPort();
-			URL url = new URL("http", "localhost", port, "/help/index.jsp");	
+			URL url = new URL("http", "localhost", port, "/help/index.jsp");
 			URLConnection connection = url.openConnection();
 			setTimeout(connection, 5000);
 			input = connection.getInputStream();
@@ -122,10 +119,10 @@ public class HelpServerInterrupt extends TestCase {
 			throw e;
 		}
 	}
-	
+
 	private static void setTimeout(URLConnection conn, int milliseconds) {
 		conn.setConnectTimeout(milliseconds);
 		conn.setReadTimeout(milliseconds);
 	}
-		
+
 }

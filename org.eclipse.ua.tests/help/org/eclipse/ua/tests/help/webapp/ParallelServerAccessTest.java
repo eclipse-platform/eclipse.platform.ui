@@ -11,13 +11,15 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import static org.junit.Assert.fail;
+
 import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.ua.tests.help.util.LoadServletUtil;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Test the performance of the help server without launching the Help UI
@@ -25,26 +27,22 @@ import junit.framework.TestCase;
  * It is no longer run as part of the UA test suite
  */
 
-public class ParallelServerAccessTest extends TestCase {
+public class ParallelServerAccessTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
 	}
 
+	@Test
 	public void testServletReadInParallel() throws Exception {
 		LoadServletUtil.startServer();
 		int iterations = 1;  // Change this to increase the length of the test
 		for (int i=0; i < iterations; ++i) {
 			accessInParallel(10);
 		}
-	}	
-	
+	}
+
 	private void accessInParallel(int numberOfThreads) throws Exception {
 		ReadThread[] readers = new ReadThread[numberOfThreads];
 		for (int i = 0; i < numberOfThreads; i++) {
@@ -79,11 +77,11 @@ public class ParallelServerAccessTest extends TestCase {
 			}
 		}
 	}
-	
+
 	private class ReadThread extends Thread {
-		
+
 		public Exception exception;
-		
+
 		@Override
 		public void run() {
 			for (int j = 0; j <= 100; j++) {
@@ -94,9 +92,9 @@ public class ParallelServerAccessTest extends TestCase {
 					e.printStackTrace();
 				}
 			}
-		}		
+		}
 	}
-	
+
 	private class UnexpectedValueException extends Exception {
 		private static final long serialVersionUID = 1L;
 		private long expected;
@@ -106,20 +104,20 @@ public class ParallelServerAccessTest extends TestCase {
 			this.expected = expected;
 			this.actual = actual;
 		}
-		
+
 		@Override
 		public String getMessage() {
 			return "Expected: " + expected +" Actual: " + actual;
 		}
 	}
-	
+
 	long readOperations = 0;
-	
+
 	public void readLoadServlet(int paragraphs) throws Exception {
 		int port = WebappManager.getPort();
 		// Use a unique parameter to defeat caching
 		long uniqueId = getReadOperations();
-		URL url = new URL("http", "localhost", port, 
+		URL url = new URL("http", "localhost", port,
 				"/help/loadtest?value=" + uniqueId + "&repeat=" + paragraphs);
 		InputStream input = url.openStream();
 		int nextChar;
@@ -146,5 +144,5 @@ public class ParallelServerAccessTest extends TestCase {
 	private synchronized long getReadOperations() {
 		return ++readOperations;
 	}
-		
+
 }
