@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,16 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			} else {
 				notifyListeners(workbenchPart, (ISelection) selection, listeners);
 			}
+		} else if (client != null) {
+			if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
+				IWorkbenchPart workbenchPart = (IWorkbenchPart) part.getTransientData()
+						.get(E4PartWrapper.E4_WRAPPER_KEY);
+				if (targeted) {
+					notifyListeners(workbenchPart, (ISelection) selection, part.getElementId(), targetedListeners);
+				} else {
+					notifyListeners(workbenchPart, (ISelection) selection, listeners);
+				}
+			}
 		}
 	}
 
@@ -121,6 +131,17 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 						targetedPostSelectionListeners);
 			} else {
 				notifyListeners(workbenchPart, (ISelection) selection, postSelectionListeners);
+			}
+		} else if (client != null) {
+			if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
+				IWorkbenchPart workbenchPart = (IWorkbenchPart) part.getTransientData()
+						.get(E4PartWrapper.E4_WRAPPER_KEY);
+				if (targeted) {
+					notifyListeners(workbenchPart, (ISelection) selection, part.getElementId(),
+							targetedPostSelectionListeners);
+				} else {
+					notifyListeners(workbenchPart, (ISelection) selection, postSelectionListeners);
+				}
 			}
 		}
 	}
