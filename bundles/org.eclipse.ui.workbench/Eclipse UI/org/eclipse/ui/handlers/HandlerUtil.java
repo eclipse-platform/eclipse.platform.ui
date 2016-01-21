@@ -433,7 +433,8 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the current structured selection.
+	 * Return the current structured selection, or <code>StructuredSelection.EMPTY</code>
+	 * if the current selection is not a structured selection or <code>null</code>.
 	 *
 	 * @param event
 	 *            The execution event that contains the application context
@@ -442,7 +443,7 @@ public class HandlerUtil {
 	 * @since 3.108
 	 *
 	 */
-	public IStructuredSelection getCurrentStructuredSelection(ExecutionEvent event) {
+	public static IStructuredSelection getCurrentStructuredSelection(ExecutionEvent event) {
 		ISelection selection = getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection) selection;
