@@ -30,17 +30,17 @@ public class AntTestChecker {
 
 	private int buildsFinishedCount;
 
-	private List<String> messages = new ArrayList<String>();
+	private List<String> messages = new ArrayList<>();
 
-	private List<String> targets = new ArrayList<String>();
+	private List<String> targets = new ArrayList<>();
 
-	private List<String> tasks = new ArrayList<String>();
+	private List<String> tasks = new ArrayList<>();
 
-	private List<String> projects = new ArrayList<String>();
+	private List<String> projects = new ArrayList<>();
 
 	private Hashtable<String, Object> userProperties;
 
-	private List<String> nameOfListeners = new ArrayList<String>();
+	private List<String> nameOfListeners = new ArrayList<>();
 
 	private AntTestChecker() {
 	}
@@ -180,12 +180,12 @@ public class AntTestChecker {
 		targetsFinishedCount = 0;
 		buildsStartedCount = 0;
 		buildsFinishedCount = 0;
-		messages = new ArrayList<String>();
-		tasks = new ArrayList<String>();
-		targets = new ArrayList<String>();
-		projects = new ArrayList<String>();
+		messages = new ArrayList<>();
+		tasks = new ArrayList<>();
+		targets = new ArrayList<>();
+		projects = new ArrayList<>();
 		userProperties = null;
-		nameOfListeners = new ArrayList<String>();
+		nameOfListeners = new ArrayList<>();
 	}
 
 	/**
