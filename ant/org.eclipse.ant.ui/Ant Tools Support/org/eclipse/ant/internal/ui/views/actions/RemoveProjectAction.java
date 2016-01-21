@@ -46,7 +46,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
 		Iterator<?> iter = selection.iterator();
 		Object element;
-		List<AntProjectNode> projectNodes = new ArrayList<AntProjectNode>();
+		List<AntProjectNode> projectNodes = new ArrayList<>();
 		while (iter.hasNext()) {
 			element = iter.next();
 			if (element instanceof AntProjectNode) {

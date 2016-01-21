@@ -69,7 +69,7 @@ public class AntTasksPage extends AntPage {
 
 	private AddCustomDialog getCustomDialog(String title, String helpContext) {
 		Iterator<Object> tasks = getContents(true).iterator();
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		while (tasks.hasNext()) {
 			Task task = (Task) tasks.next();
 			names.add(task.getTaskName());

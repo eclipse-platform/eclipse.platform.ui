@@ -185,7 +185,7 @@ public class AntTaskNode extends AntElementNode {
 		if (textToSearch == null || textToSearch.length() == 0 || identifier.length() == 0) {
 			return null;
 		}
-		List<Integer> results = new ArrayList<Integer>();
+		List<Integer> results = new ArrayList<>();
 		RuntimeConfigurable wrapper = getTask().getRuntimeConfigurableWrapper();
 		Map<String, Object> attributeMap = wrapper.getAttributeMap();
 		Set<String> keys = attributeMap.keySet();

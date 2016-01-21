@@ -94,7 +94,7 @@ public class BuildFileCreator {
 	private String projectRoot;
 	private Map<String, String> variable2valueMap;
 	private Shell shell;
-	private Set<String> visited = new TreeSet<String>(); // record used subclasspaths
+	private Set<String> visited = new TreeSet<>(); // record used subclasspaths
 	private Node classpathNode;
 
 	/**
@@ -110,7 +110,7 @@ public class BuildFileCreator {
 		this.project = project;
 		this.projectName = project.getProject().getName();
 		this.projectRoot = ExportUtil.getProjectRoot(project);
-		this.variable2valueMap = new LinkedHashMap<String, String>();
+		this.variable2valueMap = new LinkedHashMap<>();
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		this.doc = dbf.newDocumentBuilder().newDocument();
 		this.shell = shell;
@@ -128,7 +128,7 @@ public class BuildFileCreator {
 	 *             thrown when user cancels task
 	 */
 	public static List<String> createBuildFiles(Set<IJavaProject> projects, Shell shell, IProgressMonitor pm) throws JavaModelException, ParserConfigurationException, TransformerConfigurationException, TransformerException, IOException, CoreException, InterruptedException {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		try {
 			createBuildFilesLoop(projects, shell, pm, res);
 		}
@@ -143,7 +143,7 @@ public class BuildFileCreator {
 	private static void createBuildFilesLoop(Set<IJavaProject> projects, Shell shell, IProgressMonitor pm, List<String> res) throws CoreException, ParserConfigurationException, JavaModelException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException {
 
 		// determine files to create/change
-		List<IFile> files = new ArrayList<IFile>();
+		List<IFile> files = new ArrayList<>();
 		for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
 			IJavaProject currentProject = iter.next();
 			IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
@@ -216,7 +216,7 @@ public class BuildFileCreator {
 		boolean lines = JavaCore.GENERATE.equals(project.getOption(JavaCore.COMPILER_LINE_NUMBER_ATTR, true));
 		boolean vars = JavaCore.GENERATE.equals(project.getOption(JavaCore.COMPILER_LOCAL_VARIABLE_ATTR, true));
 
-		List<String> debuglevel = new ArrayList<String>();
+		List<String> debuglevel = new ArrayList<>();
 		if (source) {
 			debuglevel.add("source"); //$NON-NLS-1$
 		}
@@ -520,7 +520,7 @@ public class BuildFileCreator {
 		// Check filter for copying resources
 		String filter = project.getOption(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, true);
 		StringTokenizer tokenizer = new StringTokenizer(filter, ","); //$NON-NLS-1$
-		ArrayList<String> filters = new ArrayList<String>();
+		ArrayList<String> filters = new ArrayList<>();
 		while (tokenizer.hasMoreTokens()) {
 			filters.add(tokenizer.nextToken());
 		}
@@ -687,9 +687,9 @@ public class BuildFileCreator {
 		// Side effect: Eclipse inclusion and exclusion filters apply to the specified source directory.
 		// Ant inclusion and exclusion filters apply to all source directories.
 		// This may lead to unexpected behavior.
-		HashMap<String, List<String>> class2sources = new HashMap<String, List<String>>();
-		HashMap<String, List<String>> class2includes = new HashMap<String, List<String>>();
-		HashMap<String, List<String>> class2excludes = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> class2sources = new HashMap<>();
+		HashMap<String, List<String>> class2includes = new HashMap<>();
+		HashMap<String, List<String>> class2excludes = new HashMap<>();
 		for (int i = 0; i < srcDirs.size(); i++) {
 			String srcDir = srcDirs.get(i);
 			if (!EclipseClasspath.isReference(srcDir)) {
@@ -700,9 +700,9 @@ public class BuildFileCreator {
 				List<String> list2 = class2includes.get(classDir);
 				List<String> list3 = class2excludes.get(classDir);
 				if (list == null) {
-					list = new ArrayList<String>();
-					list2 = new ArrayList<String>();
-					list3 = new ArrayList<String>();
+					list = new ArrayList<>();
+					list2 = new ArrayList<>();
+					list3 = new ArrayList<>();
 					class2sources.put(classDir, list);
 					class2includes.put(classDir, list2);
 					class2excludes.put(classDir, list3);
@@ -781,7 +781,7 @@ public class BuildFileCreator {
 	 * Create target build-refprojects which compiles projects which reference current project.
 	 */
 	private void createBuildRef() throws JavaModelException {
-		Set<IJavaProject> refProjects = new TreeSet<IJavaProject>(ExportUtil.getJavaProjectComparator());
+		Set<IJavaProject> refProjects = new TreeSet<>(ExportUtil.getJavaProjectComparator());
 		IJavaProject[] projects = project.getJavaModel().getJavaProjects();
 		for (int i = 0; i < projects.length; i++) {
 			List<IJavaProject> subProjects = ExportUtil.getClasspathProjects(projects[i]);
@@ -1117,7 +1117,7 @@ public class BuildFileCreator {
 			// Case 2: Run all tests in project, package or source folder
 			String container = conf.getAttribute("org.eclipse.jdt.junit.CONTAINER" /* JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR */, IAntCoreConstants.EMPTY_STRING); //$NON-NLS-1$
 			IType[] types = ExportUtil.findTestsInContainer(container);
-			Set<IType> sortedTypes = new TreeSet<IType>(ExportUtil.getITypeComparator());
+			Set<IType> sortedTypes = new TreeSet<>(ExportUtil.getITypeComparator());
 			sortedTypes.addAll(Arrays.asList(types));
 			for (Iterator<IType> iter = sortedTypes.iterator(); iter.hasNext();) {
 				IType type = iter.next();

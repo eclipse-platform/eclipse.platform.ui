@@ -66,7 +66,7 @@ public class Model implements IModel {
 			throw new IllegalStateException(AntDTDSchemaMessages.Model_model_may_not_be_changed);
 
 		if (fContentsList == null)
-			fContentsList = new LinkedList<IModel>();
+			fContentsList = new LinkedList<>();
 
 		fContentsList.add(model);
 	}
@@ -106,12 +106,12 @@ public class Model implements IModel {
 		copy.fMixed = fMixed;
 		copy.fLeaf = fLeaf;
 		if (fContents != null) {
-			copy.fContentsList = new LinkedList<IModel>();
+			copy.fContentsList = new LinkedList<>();
 			for (int i = 0; i < fContents.length; i++) {
 				copy.fContentsList.add(fContents[i]);
 			}
 		} else if (fContentsList != null) {
-			copy.fContentsList = new LinkedList<IModel>();
+			copy.fContentsList = new LinkedList<>();
 			Iterator<IModel> it = fContentsList.iterator();
 			while (it.hasNext()) {
 				copy.fContentsList.add(it.next());

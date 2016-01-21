@@ -82,12 +82,12 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	private void addChild(MinimizedFileSystemElement child) {
 		if (child.isDirectory()) {
 			if (folders == null) {
-				folders = new ArrayList<MinimizedFileSystemElement>(1);
+				folders = new ArrayList<>(1);
 			}
 			folders.add(child);
 		} else {
 			if (files == null) {
-				files = new ArrayList<MinimizedFileSystemElement>(1);
+				files = new ArrayList<>(1);
 			}
 			files.add(child);
 		}
@@ -151,7 +151,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 
 		List<Object> children = provider.getChildren(fileSystemObject);
 		if (children == null) {
-			children = new ArrayList<Object>(1);
+			children = new ArrayList<>(1);
 		}
 		Iterator<Object> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {

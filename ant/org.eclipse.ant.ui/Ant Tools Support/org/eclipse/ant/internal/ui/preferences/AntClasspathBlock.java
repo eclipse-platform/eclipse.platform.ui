@@ -140,7 +140,7 @@ public class AntClasspathBlock {
 	 * @return targets for an action
 	 */
 	private List<IAntClasspathEntry> getOrderedSelection(IClasspathEntry parent) {
-		List<IAntClasspathEntry> targets = new ArrayList<IAntClasspathEntry>();
+		List<IAntClasspathEntry> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection) treeViewer.getSelection()).toList();
 		IAntClasspathEntry[] entries = parent.getEntries();
 		for (int i = 0; i < entries.length; i++) {
@@ -154,7 +154,7 @@ public class AntClasspathBlock {
 
 	private void handleMoveDown() {
 		List<IAntClasspathEntry> targets = getOrderedSelection(currentParent);
-		List<IAntClasspathEntry> list = new ArrayList<IAntClasspathEntry>(Arrays.asList(currentParent.getEntries()));
+		List<IAntClasspathEntry> list = new ArrayList<>(Arrays.asList(currentParent.getEntries()));
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
@@ -183,7 +183,7 @@ public class AntClasspathBlock {
 		List<IAntClasspathEntry> targets = getOrderedSelection(currentParent);
 		int top = 0;
 		int index = 0;
-		List<IAntClasspathEntry> list = new ArrayList<IAntClasspathEntry>(Arrays.asList(currentParent.getEntries()));
+		List<IAntClasspathEntry> list = new ArrayList<>(Arrays.asList(currentParent.getEntries()));
 		Iterator<IAntClasspathEntry> entries = targets.iterator();
 		while (entries.hasNext()) {
 			IAntClasspathEntry target = entries.next();
@@ -269,7 +269,7 @@ public class AntClasspathBlock {
 	}
 
 	private void addJars() {
-		List<IAntClasspathEntry> allEntries = new ArrayList<IAntClasspathEntry>();
+		List<IAntClasspathEntry> allEntries = new ArrayList<>();
 		if (currentParent != null) {
 			allEntries.addAll(Arrays.asList(currentParent.getEntries()));
 		} else {
@@ -279,7 +279,7 @@ public class AntClasspathBlock {
 			}
 		}
 
-		List<IPath> selectedPaths = new ArrayList<IPath>(allEntries.size());
+		List<IPath> selectedPaths = new ArrayList<>(allEntries.size());
 		Iterator<IAntClasspathEntry> iterator = allEntries.iterator();
 		while (iterator.hasNext()) {
 			IAntClasspathEntry entry = iterator.next();
@@ -568,7 +568,7 @@ public class AntClasspathBlock {
 		if (classpathEntries == null) {
 			return Collections.EMPTY_LIST;
 		}
-		List<String> found = new ArrayList<String>(2);
+		List<String> found = new ArrayList<>(2);
 		for (int i = 0; i < classpathEntries.length; i++) {
 			String file;
 			Object entry = classpathEntries[i];

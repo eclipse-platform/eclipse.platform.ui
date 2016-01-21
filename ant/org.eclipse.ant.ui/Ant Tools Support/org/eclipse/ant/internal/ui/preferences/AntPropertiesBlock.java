@@ -173,7 +173,7 @@ public class AntPropertiesBlock {
 		String filterMessage = AntPreferencesMessages.AntPropertiesFileSelectionDialog_14;
 
 		Object[] existingFiles = getPropertyFiles();
-		List<IFile> propFiles = new ArrayList<IFile>(existingFiles.length);
+		List<IFile> propFiles = new ArrayList<>(existingFiles.length);
 		for (int j = 0; j < existingFiles.length; j++) {
 			String file = (String) existingFiles[j];
 			try {

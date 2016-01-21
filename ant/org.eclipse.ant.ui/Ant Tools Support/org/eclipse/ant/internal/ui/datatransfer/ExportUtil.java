@@ -219,7 +219,7 @@ public class ExportUtil {
 	 * @return set of IJavaProject objects
 	 */
 	public static List<IJavaProject> getClasspathProjects(IJavaProject project) throws JavaModelException {
-		List<IJavaProject> projects = new ArrayList<IJavaProject>();
+		List<IJavaProject> projects = new ArrayList<>();
 		IClasspathEntry entries[] = project.getRawClasspath();
 		addClasspathProjects(projects, entries);
 		return sortProjectsUsingBuildOrder(projects);
@@ -246,7 +246,7 @@ public class ExportUtil {
 	 * @return set of IJavaProject objects
 	 */
 	public static List<IJavaProject> getClasspathProjectsRecursive(IJavaProject project) throws JavaModelException {
-		LinkedList<IJavaProject> result = new LinkedList<IJavaProject>();
+		LinkedList<IJavaProject> result = new LinkedList<>();
 		getClasspathProjectsRecursive(project, result);
 		return sortProjectsUsingBuildOrder(result);
 	}
@@ -273,7 +273,7 @@ public class ExportUtil {
 		if (javaProjects.isEmpty()) {
 			return javaProjects;
 		}
-		List<IJavaProject> result = new ArrayList<IJavaProject>(javaProjects.size());
+		List<IJavaProject> result = new ArrayList<>(javaProjects.size());
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String[] buildOrder = workspace.getDescription().getBuildOrder();
 		if (buildOrder == null) {// default build order
@@ -534,7 +534,7 @@ public class ExportUtil {
 	 * @return new list without duplicates
 	 */
 	public static List<String> removeDuplicates(List<String> l) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (Iterator<String> iter = l.iterator(); iter.hasNext();) {
 			String element = iter.next();
 			if (!res.contains(element)) {
@@ -594,7 +594,7 @@ public class ExportUtil {
 	 *             thrown if project is under version control, but not connected
 	 */
 	public static Set<IFile> validateEdit(Shell shell, List<IFile> files) throws CoreException {
-		Set<IFile> confirmedFiles = new TreeSet<IFile>(getIFileComparator());
+		Set<IFile> confirmedFiles = new TreeSet<>(getIFileComparator());
 		if (files.size() == 0) {
 			return confirmedFiles;
 		}

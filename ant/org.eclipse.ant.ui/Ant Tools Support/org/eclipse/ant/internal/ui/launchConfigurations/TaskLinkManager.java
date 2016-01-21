@@ -39,7 +39,7 @@ import org.eclipse.ui.console.IHyperlink;
  */
 public class TaskLinkManager {
 
-	private static Map<String, IFile> fFileNameToIFile = new HashMap<String, IFile>();
+	private static Map<String, IFile> fFileNameToIFile = new HashMap<>();
 
 	/**
 	 * Not to be called.

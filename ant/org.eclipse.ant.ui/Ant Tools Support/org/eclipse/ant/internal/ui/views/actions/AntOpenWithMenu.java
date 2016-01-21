@@ -50,7 +50,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	private IEditorRegistry fRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 	private static final String SYSTEM_EDITOR_ID = PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
-	private static Map<ImageDescriptor, Image> imageCache = new Hashtable<ImageDescriptor, Image>(11);
+	private static Map<ImageDescriptor, Image> imageCache = new Hashtable<>(11);
 
 	private AntElementNode fNode;
 
@@ -207,7 +207,7 @@ public class AntOpenWithMenu extends ContributionItem {
 
 		boolean defaultFound = false;
 		boolean antFound = false;
-		List<String> alreadyAddedEditors = new ArrayList<String>(editors.length);
+		List<String> alreadyAddedEditors = new ArrayList<>(editors.length);
 		for (int i = 0; i < editors.length; i++) {
 			IEditorDescriptor editor = editors[i];
 			if (alreadyAddedEditors.contains(editor.getId())) {

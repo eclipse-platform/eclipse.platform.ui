@@ -173,7 +173,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	}
 
 	protected List<IAntClasspathEntry> getLibraryEntries() {
-		List<IAntClasspathEntry> urls = new ArrayList<IAntClasspathEntry>();
+		List<IAntClasspathEntry> urls = new ArrayList<>();
 		urls.addAll(Arrays.asList(classpathPage.getAntHomeEntries()));
 		urls.addAll(Arrays.asList(classpathPage.getAdditionalEntries()));
 		urls.addAll(Arrays.asList(classpathPage.getContributedEntries()));

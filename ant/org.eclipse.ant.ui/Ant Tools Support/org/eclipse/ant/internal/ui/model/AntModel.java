@@ -106,11 +106,11 @@ public class AntModel implements IAntModel {
 	 * <P>
 	 * On top of the stack is the innermost element.
 	 */
-	private Stack<AntElementNode> fStillOpenElements = new Stack<AntElementNode>();
+	private Stack<AntElementNode> fStillOpenElements = new Stack<>();
 
-	private Map<Task, AntTaskNode> fTaskToNode = new HashMap<Task, AntTaskNode>();
+	private Map<Task, AntTaskNode> fTaskToNode = new HashMap<>();
 
-	private List<AntTaskNode> fTaskNodes = new ArrayList<AntTaskNode>();
+	private List<AntTaskNode> fTaskNodes = new ArrayList<>();
 
 	private final Object fDirtyLock = new Object();
 	private boolean fIsDirty = true;
@@ -124,7 +124,7 @@ public class AntModel implements IAntModel {
 
 	private IDocumentListener fListener;
 	private AntEditorMarkerUpdater fMarkerUpdater = null;
-	private List<AntElementNode> fNonStructuralNodes = new ArrayList<AntElementNode>(1);
+	private List<AntElementNode> fNonStructuralNodes = new ArrayList<>(1);
 
 	private IPreferenceChangeListener fCoreListener = new IPreferenceChangeListener() {
 		@Override
@@ -319,18 +319,18 @@ public class AntModel implements IAntModel {
 
 	private void reset() {
 		fCurrentTargetNode = null;
-		fStillOpenElements = new Stack<AntElementNode>();
-		fTaskToNode = new HashMap<Task, AntTaskNode>();
-		fTaskNodes = new ArrayList<AntTaskNode>();
+		fStillOpenElements = new Stack<>();
+		fTaskToNode = new HashMap<>();
+		fTaskNodes = new ArrayList<>();
 		fNodeBeingResolved = null;
 		fNodeBeingResolvedIndex = -1;
 		fLastNode = null;
 		fCurrentNodeIdentifiers = null;
 		fNamespacePrefixMappings = null;
 
-		fNonStructuralNodes = new ArrayList<AntElementNode>(1);
+		fNonStructuralNodes = new ArrayList<>(1);
 		if (fDefinersToText != null) {
-			fPreviousDefinersToText = new HashMap<String, String>(fDefinersToText);
+			fPreviousDefinersToText = new HashMap<>(fDefinersToText);
 			fDefinersToText = null;
 		}
 	}
@@ -414,8 +414,8 @@ public class AntModel implements IAntModel {
 
 	private void prepareForFullIncremental() {
 		fProjectNode.reset();
-		fTaskToNode = new HashMap<Task, AntTaskNode>();
-		fTaskNodes = new ArrayList<AntTaskNode>();
+		fTaskToNode = new HashMap<>();
+		fTaskNodes = new ArrayList<>();
 	}
 
 	private void initializeProject(Project project, ClassLoader loader) {
@@ -557,7 +557,7 @@ public class AntModel implements IAntModel {
 	}
 
 	private void resolveBuildfile() {
-		Collection<AntTaskNode> nodeCopy = new ArrayList<AntTaskNode>(fTaskNodes);
+		Collection<AntTaskNode> nodeCopy = new ArrayList<>(fTaskNodes);
 		Iterator<AntTaskNode> iter = nodeCopy.iterator();
 		while (iter.hasNext()) {
 			AntTaskNode node = iter.next();
@@ -895,7 +895,7 @@ public class AntModel implements IAntModel {
 	@Override
 	public void addEntity(String entityName, String entityPath) {
 		if (fEntityNameToPath == null) {
-			fEntityNameToPath = new HashMap<String, String>();
+			fEntityNameToPath = new HashMap<>();
 		}
 		fEntityNameToPath.put(entityName, entityPath);
 	}
@@ -1815,8 +1815,8 @@ public class AntModel implements IAntModel {
 	@Override
 	public void setDefiningTaskNodeText(AntDefiningTaskNode node) {
 		if (fDefinersToText == null) {
-			fDefinersToText = new HashMap<String, String>();
-			fCurrentNodeIdentifiers = new HashMap<String, String>();
+			fDefinersToText = new HashMap<>();
+			fCurrentNodeIdentifiers = new HashMap<>();
 		}
 
 		String nodeIdentifier = node.getIdentifier();
@@ -1855,8 +1855,8 @@ public class AntModel implements IAntModel {
 
 	protected void addDefinedTasks(List<String> newTasks, AntDefiningTaskNode node) {
 		if (fTaskNameToDefiningNode == null) {
-			fTaskNameToDefiningNode = new HashMap<String, AntDefiningTaskNode>();
-			fDefinerNodeIdentifierToDefinedTasks = new HashMap<String, List<String>>();
+			fTaskNameToDefiningNode = new HashMap<>();
+			fDefinerNodeIdentifierToDefinedTasks = new HashMap<>();
 		}
 
 		String identifier = node.getIdentifier();
@@ -1939,7 +1939,7 @@ public class AntModel implements IAntModel {
 	@Override
 	public void addPrefixMapping(String prefix, String uri) {
 		if (fNamespacePrefixMappings == null) {
-			fNamespacePrefixMappings = new HashMap<String, String>();
+			fNamespacePrefixMappings = new HashMap<>();
 		}
 		fNamespacePrefixMappings.put(prefix, uri);
 	}

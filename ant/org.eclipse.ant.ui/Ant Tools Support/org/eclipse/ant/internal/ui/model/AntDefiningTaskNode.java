@@ -88,11 +88,11 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			try {
 				ComponentHelper helper = ComponentHelper.getComponentHelper(getProjectNode().getProject());
 				((AntModel) getAntModel()).removeDefinerTasks(getIdentifier(), helper.getAntTypeTable());
-				Hashtable<String, AntTypeDefinition> old = new Hashtable<String, AntTypeDefinition>(helper.getAntTypeTable());
+				Hashtable<String, AntTypeDefinition> old = new Hashtable<>(helper.getAntTypeTable());
 				getTask().maybeConfigure();
 				getTask().execute();
 				Iterator<String> newNames = helper.getAntTypeTable().keySet().iterator();
-				List<String> defined = new ArrayList<String>();
+				List<String> defined = new ArrayList<>();
 				while (newNames.hasNext()) {
 					String name = newNames.next();
 					if (old.get(name) == null) {

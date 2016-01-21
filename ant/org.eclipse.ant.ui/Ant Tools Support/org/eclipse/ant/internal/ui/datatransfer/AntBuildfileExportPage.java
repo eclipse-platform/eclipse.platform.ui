@@ -63,7 +63,7 @@ import com.ibm.icu.text.MessageFormat;
 public class AntBuildfileExportPage extends WizardPage {
 
 	private CheckboxTableViewer fTableViewer;
-	private List<IJavaProject> fSelectedJavaProjects = new ArrayList<IJavaProject>();
+	private List<IJavaProject> fSelectedJavaProjects = new ArrayList<>();
 	private Button compatibilityCheckbox;
 	private Button compilerCheckbox;
 	private Text buildfilenameText;
@@ -252,8 +252,8 @@ public class AntBuildfileExportPage extends WizardPage {
 			complete = false;
 		}
 		try {
-			List<String> projectsWithErrors = new ArrayList<String>();
-			List<String> projectsWithWarnings = new ArrayList<String>();
+			List<String> projectsWithErrors = new ArrayList<>();
+			List<String> projectsWithWarnings = new ArrayList<>();
 			findCyclicProjects(getProjects(false), projectsWithErrors, projectsWithWarnings);
 			if (projectsWithErrors.size() > 0) {
 				String message = DataTransferMessages.AntBuildfileExportPage_cycle_error_in_projects;
@@ -311,7 +311,7 @@ public class AntBuildfileExportPage extends WizardPage {
 	 */
 	public boolean generateBuildfiles() {
 		setErrorMessage(null);
-		final List<String> projectNames = new ArrayList<String>();
+		final List<String> projectNames = new ArrayList<>();
 		final Set<IJavaProject> projects;
 		try {
 			projects = getProjects(true);
@@ -385,7 +385,7 @@ public class AntBuildfileExportPage extends WizardPage {
 	 */
 	private Set<IJavaProject> getProjects(boolean displayConfirmation) throws JavaModelException {
 		// collect all projects to create buildfiles for
-		Set<IJavaProject> projects = new TreeSet<IJavaProject>(ExportUtil.getJavaProjectComparator());
+		Set<IJavaProject> projects = new TreeSet<>(ExportUtil.getJavaProjectComparator());
 		Iterator<IJavaProject> javaProjects = fSelectedJavaProjects.iterator();
 		while (javaProjects.hasNext()) {
 			IJavaProject javaProject = javaProjects.next();
@@ -399,7 +399,7 @@ public class AntBuildfileExportPage extends WizardPage {
 			String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE
 					+ ExportUtil.toString(confirmOverwrite, ExportUtil.NEWLINE);
 			if (!MessageDialog.openQuestion(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message)) {
-				return new TreeSet<IJavaProject>(ExportUtil.getJavaProjectComparator());
+				return new TreeSet<>(ExportUtil.getJavaProjectComparator());
 			}
 		}
 		return projects;
@@ -439,7 +439,7 @@ public class AntBuildfileExportPage extends WizardPage {
 	 * @return set of project names
 	 */
 	private List<String> getConfirmOverwriteSet(Set<IJavaProject> javaProjects) {
-		List<String> result = new ArrayList<String>(javaProjects.size());
+		List<String> result = new ArrayList<>(javaProjects.size());
 		for (IJavaProject project : javaProjects) {
 			String projectRoot = ExportUtil.getProjectRoot(project);
 			if (ExportUtil.existsUserFile(projectRoot + buildfilenameText.getText())) {

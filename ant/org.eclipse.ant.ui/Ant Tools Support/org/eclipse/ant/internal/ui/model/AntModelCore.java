@@ -41,7 +41,7 @@ public class AntModelCore implements IBreakpointsListener {
 		return inst;
 	}
 
-	private List<IAntModelListener> fModelChangeListeners = new ArrayList<IAntModelListener>();
+	private List<IAntModelListener> fModelChangeListeners = new ArrayList<>();
 
 	private AntModelCore() {
 	}
@@ -61,7 +61,7 @@ public class AntModelCore implements IBreakpointsListener {
 	public void notifyAntModelListeners(AntModelChangeEvent event) {
 		Iterator<IAntModelListener> i;
 		synchronized (fModelChangeListeners) {
-			i = new ArrayList<IAntModelListener>(fModelChangeListeners).iterator();
+			i = new ArrayList<>(fModelChangeListeners).iterator();
 		}
 		while (i.hasNext()) {
 			i.next().antModelChanged(event);

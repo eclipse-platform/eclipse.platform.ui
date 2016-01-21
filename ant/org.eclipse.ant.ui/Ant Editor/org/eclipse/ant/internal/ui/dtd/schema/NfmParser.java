@@ -49,12 +49,12 @@ public class NfmParser {
 
 		// Make list of dfms in graph
 
-		ArrayList<Dfm> dfms = new ArrayList<Dfm>();
+		ArrayList<Dfm> dfms = new ArrayList<>();
 		collect(dfm, dfms);
 
 		// Detect accept conflicts
 
-		HashMap<Dfm, Dfm> duplicates = new HashMap<Dfm, Dfm>();
+		HashMap<Dfm, Dfm> duplicates = new HashMap<>();
 		detect(dfms, duplicates);
 
 		// Replace duplicate dfms in graph

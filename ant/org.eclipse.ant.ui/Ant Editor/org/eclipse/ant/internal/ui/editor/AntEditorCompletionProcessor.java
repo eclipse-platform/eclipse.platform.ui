@@ -283,7 +283,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			matchingTemplateProposals = determineTemplateProposalsForContext(documentOffset);
 		} else {
 			ICompletionProposal[] templateProposals = determineTemplateProposalsForContext(documentOffset);
-			List<ICompletionProposal> templateProposalList = new ArrayList<ICompletionProposal>(templateProposals.length);
+			List<ICompletionProposal> templateProposalList = new ArrayList<>(templateProposals.length);
 			for (int i = 0; i < templateProposals.length; i++) {
 				if (templateProposals[i].getDisplayString().toLowerCase().startsWith(prefix)) {
 					templateProposalList.add(templateProposals[i]);
@@ -327,7 +327,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			templates = getTemplates(contextTypeId);
 		}
 
-		List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> matches = new ArrayList<>();
 		for (int i = 0; i < templates.length; i++) {
 			Template template = templates[i];
 			try {
@@ -511,7 +511,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 
 	private ICompletionProposal[] getDefaultValueProposals(String prefix) {
 		Map<String, Target> targets = getTargets();
-		List<AntCompletionProposal> defaultProposals = new ArrayList<AntCompletionProposal>(targets.size());
+		List<AntCompletionProposal> defaultProposals = new ArrayList<>(targets.size());
 		Iterator<Target> itr = targets.values().iterator();
 		Target target;
 		String targetName;
@@ -545,7 +545,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			id = ((AntTaskNode) node).getId();
 		}
 		Set<String> refIds = references.keySet();
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>(refIds.size());
+		List<ICompletionProposal> proposals = new ArrayList<>(refIds.size());
 		String refId;
 		ICompletionProposal proposal;
 		int prefixLength = prefix.length();
@@ -576,7 +576,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	}
 
 	private ICompletionProposal[] getExtensionOfValueProposals(String prefix) {
-		List<ICompletionProposal> extensions = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> extensions = new ArrayList<>();
 		Map<String, Target> targets = getTargets();
 		Set<String> targetNames = targets.keySet();
 		for (String targetName : targetNames) {
@@ -605,7 +605,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 
 		Map<String, Target> targets = getTargets();
 		Set<String> targetNames = targets.keySet();
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>(targets.size() - 2); // current target and implicit target
+		List<ICompletionProposal> proposals = new ArrayList<>(targets.size() - 2); // current target and implicit target
 		for (String targetName : targetNames) {
 			if (targetName.equals(currentTargetName)) {
 				continue;
@@ -639,7 +639,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	}
 
 	private ICompletionProposal[] getDependsValueProposals(IDocument document, String prefix) {
-		List<String> possibleDependencies = new ArrayList<String>();
+		List<String> possibleDependencies = new ArrayList<>();
 		String currentTargetName = getEnclosingTargetName(document, lineNumber, columnNumber);
 		if (currentTargetName == null) {
 			return NO_PROPOSALS;
@@ -663,7 +663,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				possibleDependencies.remove(dependencies.nextElement());
 			}
 		}
-		ArrayList<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>(possibleDependencies.size());
+		ArrayList<ICompletionProposal> proposals = new ArrayList<>(possibleDependencies.size());
 		for (String targetName : possibleDependencies) {
 			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
 			proposals.add(proposal);
@@ -680,7 +680,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 *            prefix, that all proposals should start with. The prefix may be an empty string.
 	 */
 	protected ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		IElement element = getDtd().getElement(taskName);
 		if (element != null) {
 			Iterator<String> keys = element.getAttributes().keySet().iterator();
@@ -892,7 +892,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 *            the prefix that all proposals should start with. The prefix may be an empty string.
 	 */
 	private ICompletionProposal[] getAttributeValueProposals(String taskName, String attributeName, String prefix) {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		IElement taskElement = getDtd().getElement(taskName);
 		if (taskElement != null) {
 			IAttribute attribute = taskElement.getAttributes().get(attributeName);
@@ -987,8 +987,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 * Note that the completion mode must be property mode, otherwise it is not safe to call this method.
 	 */
 	protected ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int aCursorPosition) {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
-		Map<String, ICompletionProposal> displayStringToProposals = new HashMap<String, ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
+		Map<String, ICompletionProposal> displayStringToProposals = new HashMap<>();
 		Map<String, Object> properties = findPropertiesFromDocument();
 
 		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
@@ -1054,7 +1054,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 *            the prefix that all proposals should start with. The prefix may be an empty string.
 	 */
 	protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>(250);
+		List<ICompletionProposal> proposals = new ArrayList<>(250);
 		ICompletionProposal proposal;
 		if (areTasksOrTypesValidChildren(parentName)) {
 			// use the definitions in the project as that includes more than what is defined in the DTD

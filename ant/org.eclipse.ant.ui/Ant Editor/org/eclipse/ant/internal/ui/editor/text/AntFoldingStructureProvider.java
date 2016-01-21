@@ -39,7 +39,7 @@ public class AntFoldingStructureProvider {
 	/**
 	 * A mapping of the foldable position to the <code>AntElementNode<code> that represent that region
 	 */
-	private Map<Position, IAntElement> fPositionToElement = new HashMap<Position, IAntElement>();
+	private Map<Position, IAntElement> fPositionToElement = new HashMap<>();
 
 	public AntFoldingStructureProvider(AntEditor editor) {
 		fEditor = editor;
@@ -48,7 +48,7 @@ public class AntFoldingStructureProvider {
 	private void updateFoldingRegions(ProjectionAnnotationModel model, Set<Position> currentRegions) {
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
-		Map<Annotation, Position> additionsMap = new HashMap<Annotation, Position>();
+		Map<Annotation, Position> additionsMap = new HashMap<>();
 		for (Iterator<Position> iter = currentRegions.iterator(); iter.hasNext();) {
 			Position position = iter.next();
 			IAntElement node = fPositionToElement.get(position);
@@ -61,7 +61,7 @@ public class AntFoldingStructureProvider {
 	}
 
 	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set<Position> additions) {
-		List<Annotation> deletions = new ArrayList<Annotation>();
+		List<Annotation> deletions = new ArrayList<>();
 		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
 			Object annotation = iter.next();
 			if (annotation instanceof ProjectionAnnotation) {
@@ -78,15 +78,15 @@ public class AntFoldingStructureProvider {
 	}
 
 	public void updateFoldingRegions(AntModel antModel) {
-		fPositionToElement = new HashMap<Position, IAntElement>();
+		fPositionToElement = new HashMap<>();
 		try {
 			ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 			if (model == null) {
 				return;
 			}
 
-			Set<Position> currentRegions = new HashSet<Position>();
-			List<IAntElement> root = new ArrayList<IAntElement>();
+			Set<Position> currentRegions = new HashSet<>();
+			List<IAntElement> root = new ArrayList<>();
 			AntProjectNode node = antModel.getProjectNode();
 			if (node != null && node.getOffset() != -1) {
 				root.add(node);

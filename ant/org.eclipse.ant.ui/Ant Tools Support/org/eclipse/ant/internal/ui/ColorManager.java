@@ -35,7 +35,7 @@ public class ColorManager implements ISharedTextColors {
 		return fgColorManager;
 	}
 
-	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<>(10);
 
 	@Override
 	public Color getColor(RGB rgb) {

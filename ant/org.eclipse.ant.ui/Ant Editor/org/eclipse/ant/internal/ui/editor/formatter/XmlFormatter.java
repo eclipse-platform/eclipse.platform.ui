@@ -202,7 +202,7 @@ public class XmlFormatter {
 	}
 
 	private static int[] variablesToOffsets(TemplateVariable[] variables, int start) {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		for (int i = 0; i != variables.length; i++) {
 			int[] offsets = variables[i].getOffsets();
 			for (int j = 0; j != offsets.length; j++) {

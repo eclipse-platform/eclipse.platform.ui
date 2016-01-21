@@ -235,7 +235,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	private IAntClasspathEntry[] getUserEntries() {
-		List<IAntClasspathEntry> userEntries = new ArrayList<IAntClasspathEntry>(fChildEntries.size());
+		List<IAntClasspathEntry> userEntries = new ArrayList<>(fChildEntries.size());
 		for (IAntClasspathEntry element : fChildEntries) {
 			if (element instanceof GlobalClasspathEntries) {
 				continue;

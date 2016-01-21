@@ -195,11 +195,11 @@ public final class AntUtil {
 
 	private static Map<String, String> getAllProperties(ILaunchConfiguration config) throws CoreException {
 		String allArgs = config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		if (allArgs != null) {
 			String[] arguments = ExternalToolsUtil.parseStringIntoList(allArgs);
 			// filter arguments to avoid resolving variables that will prompt the user
-			List<String> filtered = new ArrayList<String>();
+			List<String> filtered = new ArrayList<>();
 			Pattern pattern = Pattern.compile("\\$\\{.*_prompt.*\\}"); //$NON-NLS-1$
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 			for (int i = 0; i < arguments.length; i++) {
@@ -229,7 +229,7 @@ public final class AntUtil {
 		if (project == null || !project.hasChildren()) {
 			return null;
 		}
-		List<IAntElement> targets = new ArrayList<IAntElement>();
+		List<IAntElement> targets = new ArrayList<>();
 		for (IAntElement node : project.getChildNodes()) {
 			if (node instanceof AntTargetNode) {
 				targets.add(node);

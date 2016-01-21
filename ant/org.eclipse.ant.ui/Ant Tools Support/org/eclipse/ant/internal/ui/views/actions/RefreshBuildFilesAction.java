@@ -100,7 +100,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 	 */
 	private Set<AntProjectNode> getSelectedProjects() {
 		IStructuredSelection selection = (IStructuredSelection) fView.getViewer().getSelection();
-		HashSet<AntProjectNode> set = new HashSet<AntProjectNode>();
+		HashSet<AntProjectNode> set = new HashSet<>();
 		Iterator<?> iter = selection.iterator();
 		Object data;
 		while (iter.hasNext()) {

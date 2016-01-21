@@ -92,7 +92,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 			AntProjectNode projectNode = fAntModel == null ? null : fAntModel.getProjectNode();
 			if (fAntModel != null && projectNode != null) {
 				setProjectName(); // page will be validated on setting the project name
-				List<AntTaskNode> javacNodes = new ArrayList<AntTaskNode>();
+				List<AntTaskNode> javacNodes = new ArrayList<>();
 				getJavacNodes(javacNodes, projectNode);
 				fTableViewer.setInput(javacNodes.toArray());
 				if (!javacNodes.isEmpty()) {
@@ -463,7 +463,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	}
 
 	private List<?> resolveJavacTasks(List<?> javacNodes) {
-		List<Object> resolvedJavacTasks = new ArrayList<Object>(javacNodes.size());
+		List<Object> resolvedJavacTasks = new ArrayList<>(javacNodes.size());
 		Iterator<?> nodes = javacNodes.iterator();
 		while (nodes.hasNext()) {
 			AntTaskNode taskNode = (AntTaskNode) nodes.next();

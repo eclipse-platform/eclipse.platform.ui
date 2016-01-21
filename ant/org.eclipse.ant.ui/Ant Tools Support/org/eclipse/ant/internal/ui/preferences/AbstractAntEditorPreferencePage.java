@@ -51,7 +51,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	protected List<IStatus> fStatusList;
 	private boolean fInitialized = false;
 
-	private Map<Button, String> fCheckBoxes = new HashMap<Button, String>();
+	private Map<Button, String> fCheckBoxes = new HashMap<>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -65,7 +65,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		}
 	};
 
-	private Map<Text, String> fTextFields = new HashMap<Text, String>();
+	private Map<Text, String> fTextFields = new HashMap<>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -76,7 +76,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		}
 	};
 
-	private Map<Text, String[]> fNumberFields = new HashMap<Text, String[]>();
+	private Map<Text, String[]> fNumberFields = new HashMap<>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -270,7 +270,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 
 		List<IStatus> statusList = getStatusList();
 		if (statusList != null) {
-			List<IStatus> temp = new ArrayList<IStatus>(statusList.size() + 1);
+			List<IStatus> temp = new ArrayList<>(statusList.size() + 1);
 			temp.add(status);
 			temp.addAll(statusList);
 			status = getMostSevere(temp);

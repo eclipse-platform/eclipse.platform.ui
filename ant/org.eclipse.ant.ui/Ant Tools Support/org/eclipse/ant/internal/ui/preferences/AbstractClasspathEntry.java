@@ -18,7 +18,7 @@ import org.eclipse.ant.core.IAntClasspathEntry;
 
 public abstract class AbstractClasspathEntry implements IClasspathEntry {
 
-	protected List<IAntClasspathEntry> fChildEntries = new ArrayList<IAntClasspathEntry>();
+	protected List<IAntClasspathEntry> fChildEntries = new ArrayList<>();
 	protected IClasspathEntry fParent = null;
 
 	/*

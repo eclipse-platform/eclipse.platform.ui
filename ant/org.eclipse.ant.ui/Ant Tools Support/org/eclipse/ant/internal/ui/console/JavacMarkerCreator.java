@@ -38,8 +38,8 @@ public class JavacMarkerCreator {
 
 	private final TextConsole fConsole;
 	private IProcess fProcess;
-	private static List<IFile> fgFilesToBeCleaned = new ArrayList<IFile>();
-	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo = new HashMap<IFile, List<MarkerInfo>>();
+	private static List<IFile> fgFilesToBeCleaned = new ArrayList<>();
+	private Map<IFile, List<MarkerInfo>> fFileToMarkerInfo = new HashMap<>();
 	private final boolean fUseCustomMessage;
 
 	private class MarkerInfo {
@@ -99,7 +99,7 @@ public class JavacMarkerCreator {
 		info.setType(type);
 		List<MarkerInfo> infos = fFileToMarkerInfo.get(file);
 		if (infos == null) {
-			infos = new ArrayList<MarkerInfo>();
+			infos = new ArrayList<>();
 			fFileToMarkerInfo.put(file, infos);
 		}
 		infos.add(info);
@@ -113,7 +113,7 @@ public class JavacMarkerCreator {
 				try {
 					for (MarkerInfo info : infos) {
 						IMarker marker = file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
-						Map<String, Object> attributes = new HashMap<String, Object>(3);
+						Map<String, Object> attributes = new HashMap<>(3);
 						attributes.put(IMarker.LINE_NUMBER, new Integer(info.fLineNumber));
 						String message = getMessage(info);
 						attributes.put(IMarker.MESSAGE, message);

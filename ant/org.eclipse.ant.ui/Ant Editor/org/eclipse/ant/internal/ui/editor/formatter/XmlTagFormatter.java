@@ -55,7 +55,7 @@ public class XmlTagFormatter {
 
 	protected static class Tag {
 
-		private List<AttributePair> fAttributes = new ArrayList<AttributePair>();
+		private List<AttributePair> fAttributes = new ArrayList<>();
 
 		private boolean fClosed;
 
@@ -274,7 +274,7 @@ public class XmlTagFormatter {
 				}
 			}
 
-			List<AttributePair> attributePairs = new ArrayList<AttributePair>();
+			List<AttributePair> attributePairs = new ArrayList<>();
 
 			CharacterIterator iter = new StringCharacterIterator(elementText.substring(getElementName(elementText).length() + 2));
 

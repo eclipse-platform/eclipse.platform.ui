@@ -36,7 +36,7 @@ public class SchemaFactory implements DeclHandler {
 	private Element fElement;
 
 	private Schema fSchema;
-	private static HashSet<String> fTypes = new HashSet<String>();
+	private static HashSet<String> fTypes = new HashSet<>();
 	private Exception fErrorException;
 	static {
 		fTypes.add("CDATA"); //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class SchemaFactory implements DeclHandler {
 
 	private String[] parseValues(String type, char separator) {
 		int start = 0, pos, len = type.length();
-		LinkedList<String> values = new LinkedList<String>();
+		LinkedList<String> values = new LinkedList<>();
 		while (start < len) {
 			pos = type.indexOf(separator, start);
 			if (pos < 0)

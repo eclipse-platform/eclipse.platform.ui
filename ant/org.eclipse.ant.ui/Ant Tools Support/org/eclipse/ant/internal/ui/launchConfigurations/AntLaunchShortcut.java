@@ -207,7 +207,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		if (type != null) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-				ArrayList<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
+				ArrayList<ILaunchConfiguration> list = new ArrayList<>();
 				IPath location = null;
 				for (int i = 0; i < configs.length; i++) {
 					if (configs[i].exists()) {
@@ -422,7 +422,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	 * @return list of launch configurations
 	 */
 	public static List<ILaunchConfiguration> findExistingLaunchConfigurations(IFile file) {
-		List<ILaunchConfiguration> validConfigs = new ArrayList<ILaunchConfiguration>();
+		List<ILaunchConfiguration> validConfigs = new ArrayList<>();
 		if (file != null) {
 			IPath filePath = file.getLocation();
 			if (filePath != null) {

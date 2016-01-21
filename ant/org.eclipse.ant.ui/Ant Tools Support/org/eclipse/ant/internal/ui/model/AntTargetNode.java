@@ -206,7 +206,7 @@ public class AntTargetNode extends AntElementNode {
 		if (textToSearch == null || textToSearch.length() == 0 || identifier.length() == 0) {
 			return null;
 		}
-		List<Integer> results = new ArrayList<Integer>();
+		List<Integer> results = new ArrayList<>();
 		if (getTargetName().equals(identifier)) {
 			int nameOffset = textToSearch.indexOf(IAntCoreConstants.NAME);
 			nameOffset = textToSearch.indexOf(identifier, nameOffset);

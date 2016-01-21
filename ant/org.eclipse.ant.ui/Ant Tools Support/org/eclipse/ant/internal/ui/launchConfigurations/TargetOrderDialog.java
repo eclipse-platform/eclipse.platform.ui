@@ -127,7 +127,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		if (targets.isEmpty()) {
 			return;
 		}
-		List<AntTargetNode> list = new ArrayList<AntTargetNode>(Arrays.asList(fTargets));
+		List<AntTargetNode> list = new ArrayList<>(Arrays.asList(fTargets));
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
@@ -151,7 +151,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		}
 		int top = 0;
 		int index = 0;
-		List<AntTargetNode> list = new ArrayList<AntTargetNode>(Arrays.asList(fTargets));
+		List<AntTargetNode> list = new ArrayList<>(Arrays.asList(fTargets));
 		Iterator<AntTargetNode> entries = targets.iterator();
 		while (entries.hasNext()) {
 			AntTargetNode target = entries.next();
@@ -183,7 +183,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	 * @return targets for an action
 	 */
 	private List<AntTargetNode> getOrderedSelection() {
-		List<AntTargetNode> targets = new ArrayList<AntTargetNode>();
+		List<AntTargetNode> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection) fViewer.getSelection()).toList();
 		for (int i = 0; i < fTargets.length; i++) {
 			AntTargetNode target = fTargets[i];

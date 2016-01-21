@@ -65,9 +65,9 @@ public class OccurrencesFinder {
 		if (occurrencesIdentifier == null) {
 			return null;
 		}
-		List<IAntElement> nodes = new ArrayList<IAntElement>(1);
+		List<IAntElement> nodes = new ArrayList<>(1);
 		nodes.add(fAntModel.getProjectNode());
-		List<IAntElement> usages = new ArrayList<IAntElement>();
+		List<IAntElement> usages = new ArrayList<>();
 		usages.add(node);
 		scanNodesForOccurrences(nodes, usages, occurrencesIdentifier);
 		String identifier;
@@ -81,7 +81,7 @@ public class OccurrencesFinder {
 		if (length == 0) {
 			return null;
 		}
-		List<Position> positions = new ArrayList<Position>(usages.size());
+		List<Position> positions = new ArrayList<>(usages.size());
 		for (IAntElement currentNode : usages) {
 			List<Integer> offsets = currentNode.computeIdentifierOffsets(identifier);
 			if (offsets != null) {

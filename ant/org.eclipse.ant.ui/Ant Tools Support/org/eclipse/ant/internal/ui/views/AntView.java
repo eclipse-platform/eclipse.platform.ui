@@ -95,7 +95,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * 
 	 * @since 3.5.00
 	 */
-	private List<AntProjectNode> fInput = new ArrayList<AntProjectNode>();
+	private List<AntProjectNode> fInput = new ArrayList<>();
 	private boolean filterInternalTargets = false;
 	private InternalTargetFilter fInternalTargetFilter = null;
 
@@ -257,7 +257,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
-		updateProjectActions = new ArrayList<IUpdate>(5);
+		updateProjectActions = new ArrayList<>(5);
 
 		addBuildFileAction = new AddBuildFilesAction(this);
 

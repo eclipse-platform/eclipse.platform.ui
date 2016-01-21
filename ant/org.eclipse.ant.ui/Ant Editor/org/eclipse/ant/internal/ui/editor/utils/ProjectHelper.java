@@ -93,7 +93,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		private UnknownElement task = null;
 		private Task currentTask = null;
 
-		private Map<String, String> fNormalizedFileNames = new HashMap<String, String>();
+		private Map<String, String> fNormalizedFileNames = new HashMap<>();
 
 		/*
 		 * (non-Javadoc)

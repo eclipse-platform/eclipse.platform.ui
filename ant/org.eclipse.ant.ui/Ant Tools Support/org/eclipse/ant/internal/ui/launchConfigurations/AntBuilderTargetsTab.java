@@ -56,7 +56,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 	private Text fAutoBuildTargetText;
 	private Text fDuringCleanTargetText;
 
-	private Map<String, String> fAttributeToTargets = new HashMap<String, String>();
+	private Map<String, String> fAttributeToTargets = new HashMap<>();
 
 	private static final String NOT_ENABLED = AntLaunchConfigurationMessages.AntBuilderTargetsTab_0;
 	private static final String DEFAULT_TARGET_SELECTED = AntLaunchConfigurationMessages.AntBuilderTargetsTab_10;

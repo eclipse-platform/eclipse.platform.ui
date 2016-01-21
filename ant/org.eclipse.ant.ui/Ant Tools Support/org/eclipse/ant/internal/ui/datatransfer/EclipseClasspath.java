@@ -45,18 +45,18 @@ import org.w3c.dom.Element;
  */
 public class EclipseClasspath {
 
-	protected List<String> srcDirs = new ArrayList<String>();
-	protected List<String> classDirs = new ArrayList<String>();
-	protected List<List<String>> inclusionLists = new ArrayList<List<String>>();
-	protected List<List<String>> exclusionLists = new ArrayList<List<String>>();
+	protected List<String> srcDirs = new ArrayList<>();
+	protected List<String> classDirs = new ArrayList<>();
+	protected List<List<String>> inclusionLists = new ArrayList<>();
+	protected List<List<String>> exclusionLists = new ArrayList<>();
 
-	protected Map<String, String> variable2valueMap = new LinkedHashMap<String, String>();
-	protected List<String> rawClassPathEntries = new ArrayList<String>();
-	protected List<String> rawClassPathEntriesAbsolute = new ArrayList<String>();
+	protected Map<String, String> variable2valueMap = new LinkedHashMap<>();
+	protected List<String> rawClassPathEntries = new ArrayList<>();
+	protected List<String> rawClassPathEntriesAbsolute = new ArrayList<>();
 
 	private IJavaProject project;
 
-	private static Map<String, IClasspathContainer> userLibraryCache = new HashMap<String, IClasspathContainer>();
+	private static Map<String, IClasspathContainer> userLibraryCache = new HashMap<>();
 
 	/**
 	 * Initialize object with classpath of given project.
@@ -83,7 +83,7 @@ public class EclipseClasspath {
 		IRuntimeClasspathEntry[] runtimeEntries;
 		// see AbstractJavaLaunchConfigurationDelegate
 		runtimeEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(conf);
-		List<IClasspathEntry> classpathEntries = new ArrayList<IClasspathEntry>(runtimeEntries.length);
+		List<IClasspathEntry> classpathEntries = new ArrayList<>(runtimeEntries.length);
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			IRuntimeClasspathEntry entry = runtimeEntries[i];
 			if (bootstrap && (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) || !bootstrap
@@ -142,7 +142,7 @@ public class EclipseClasspath {
 			rawClassPathEntries.add(classDir);
 			rawClassPathEntriesAbsolute.add(classDirAbsolute);
 			IPath[] inclusions = entry.getInclusionPatterns();
-			List<String> inclusionList = new ArrayList<String>();
+			List<String> inclusionList = new ArrayList<>();
 			for (int j = 0; j < inclusions.length; j++) {
 				if (inclusions[j] != null) {
 					inclusionList.add(ExportUtil.removeProjectRoot(inclusions[j].toString(), project.getProject()));
@@ -150,7 +150,7 @@ public class EclipseClasspath {
 			}
 			inclusionLists.add(inclusionList);
 			IPath[] exclusions = entry.getExclusionPatterns();
-			List<String> exclusionList = new ArrayList<String>();
+			List<String> exclusionList = new ArrayList<>();
 			for (int j = 0; j < exclusions.length; j++) {
 				if (exclusions[j] != null) {
 					exclusionList.add(ExportUtil.removeProjectRoot(exclusions[j].toString(), project.getProject()));

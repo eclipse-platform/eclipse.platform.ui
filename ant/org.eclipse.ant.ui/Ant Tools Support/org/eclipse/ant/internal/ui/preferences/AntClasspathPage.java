@@ -124,10 +124,10 @@ public class AntClasspathPage implements IAntBlockContainer {
 		}
 		catch (MalformedURLException e) {
 			AntUIPlugin.log(e);
-			return new ArrayList<IAntClasspathEntry>(0);
+			return new ArrayList<>(0);
 		}
 
-		List<IAntClasspathEntry> entries = new ArrayList<IAntClasspathEntry>(urls.length);
+		List<IAntClasspathEntry> entries = new ArrayList<>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
 			entries.add(entry);

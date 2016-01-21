@@ -78,7 +78,7 @@ public class TaskDescriptionProvider {
 
 		void addChild(String name, ProposalNode node) {
 			if (nodes == null) {
-				nodes = new HashMap<String, ProposalNode>(9);
+				nodes = new HashMap<>(9);
 			}
 			nodes.put(name, node);
 		}
@@ -134,7 +134,7 @@ public class TaskDescriptionProvider {
 	 * Parses the task description XML file and stores the information.
 	 */
 	protected void initialize() {
-		taskNodes = new HashMap<String, ProposalNode>();
+		taskNodes = new HashMap<>();
 		Document doc = parseFile(TASKS_DESCRIPTION_XML_FILE_NAME);
 		Node root = doc.getDocumentElement();
 		NodeList tasks = root.getChildNodes();

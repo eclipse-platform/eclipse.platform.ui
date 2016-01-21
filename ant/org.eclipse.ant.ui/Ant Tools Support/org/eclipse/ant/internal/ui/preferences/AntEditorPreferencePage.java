@@ -252,7 +252,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private Button fItalicCheckBox;
 
 	private TableViewer fHighlightingColorListViewer;
-	private final List<HighlightingColorListItem> fHighlightingColorList = new ArrayList<HighlightingColorListItem>(5);
+	private final List<HighlightingColorListItem> fHighlightingColorList = new ArrayList<>(5);
 
 	private SourceViewer fPreviewViewer;
 	private AntPreviewerUpdater fPreviewerUpdater;
@@ -286,7 +286,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				{ AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_tags_4, IAntEditorColorConstants.TAG_COLOR, null },
 				{ AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_comments_5, IAntEditorColorConstants.XML_COMMENT_COLOR, null },
 				{ AntPreferencesMessages.AntEditorPreferencePage_26, IAntEditorColorConstants.XML_DTD_COLOR, null } };
-		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
@@ -597,8 +597,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	}
 
 	private Composite createProblemsTabContent(TabFolder folder) {
-		fComboBoxes = new ArrayList<Combo>();
-		fProblemLabels = new ArrayList<Label>();
+		fComboBoxes = new ArrayList<>();
+		fProblemLabels = new ArrayList<>();
 		initializeWorkingValues();
 
 		String[] errorWarningIgnoreLabels = new String[] { AntPreferencesMessages.AntEditorPreferencePage_11,
@@ -655,7 +655,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	}
 
 	private void initializeWorkingValues() {
-		fWorkingValues = new HashMap<String, String>(fProblemPreferenceKeys.length);
+		fWorkingValues = new HashMap<>(fProblemPreferenceKeys.length);
 		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
 			String key = fProblemPreferenceKeys[i];
 			fWorkingValues.put(key, getPreferenceStore().getString(key));
@@ -663,7 +663,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	}
 
 	private void restoreWorkingValuesToDefaults() {
-		fWorkingValues = new HashMap<String, String>(fProblemPreferenceKeys.length);
+		fWorkingValues = new HashMap<>(fProblemPreferenceKeys.length);
 		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
 			String key = fProblemPreferenceKeys[i];
 			fWorkingValues.put(key, getPreferenceStore().getDefaultString(key));

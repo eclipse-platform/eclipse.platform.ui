@@ -53,7 +53,7 @@ public class Factory {
 			// a free object only causes memory allocation
 			// when the list has been previously collected.
 			head = new Head();
-			free = new SoftReference<Head>(head);
+			free = new SoftReference<>(head);
 		}
 		return head;
 	}
@@ -62,5 +62,5 @@ public class Factory {
 		public FactoryObject next;
 	}
 
-	private SoftReference<Head> free = new SoftReference<Head>(new Head());
+	private SoftReference<Head> free = new SoftReference<>(new Head());
 }

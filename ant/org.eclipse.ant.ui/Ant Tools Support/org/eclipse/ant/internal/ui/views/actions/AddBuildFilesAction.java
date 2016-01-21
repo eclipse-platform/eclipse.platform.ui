@@ -95,7 +95,7 @@ public class AddBuildFilesAction extends Action {
 
 	private List<IFile> getBuildFiles() {
 		AntProjectNode[] existingProjects = view.getProjects();
-		List<IFile> buildFiles = new ArrayList<IFile>(existingProjects.length);
+		List<IFile> buildFiles = new ArrayList<>(existingProjects.length);
 		for (int j = 0; j < existingProjects.length; j++) {
 			AntProjectNode existingProject = existingProjects[j];
 			buildFiles.add(AntUtil.getFile(existingProject.getBuildFileName()));

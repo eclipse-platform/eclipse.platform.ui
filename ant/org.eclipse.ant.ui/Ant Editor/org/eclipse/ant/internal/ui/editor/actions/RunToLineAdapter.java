@@ -92,7 +92,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	}
 
 	private Map<String, Object> getRunToLineAttributes() {
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(IMarker.TRANSIENT, Boolean.TRUE);
 		attributes.put(IAntDebugConstants.ANT_RUN_TO_LINE, Boolean.TRUE);
 		return attributes;

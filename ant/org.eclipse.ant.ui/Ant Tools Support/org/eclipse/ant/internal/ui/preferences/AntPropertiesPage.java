@@ -159,7 +159,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 
 	protected List<Property> getProperties() {
 		Object[] allProperties = antPropertiesBlock.getProperties();
-		List<Property> properties = new ArrayList<Property>(allProperties.length);
+		List<Property> properties = new ArrayList<>(allProperties.length);
 		for (int i = 0; i < allProperties.length; i++) {
 			Property property = (Property) allProperties[i];
 			if (!property.isDefault()) {

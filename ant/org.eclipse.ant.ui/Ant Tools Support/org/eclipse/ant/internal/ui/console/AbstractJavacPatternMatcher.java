@@ -37,8 +37,8 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 
 	protected TextConsole fConsole;
 	private static Pattern fgLineNumberPattern = Pattern.compile("\\d+"); //$NON-NLS-1$
-	private static List<AbstractJavacPatternMatcher> fgPatternMatchers = new ArrayList<AbstractJavacPatternMatcher>();
-	private Map<String, IFile> fFileNameToIFile = new HashMap<String, IFile>();
+	private static List<AbstractJavacPatternMatcher> fgPatternMatchers = new ArrayList<>();
+	private Map<String, IFile> fFileNameToIFile = new HashMap<>();
 
 	private JavacMarkerCreator fMarkerCreator;
 	protected static final Integer fgWarningType = new Integer(IMarker.SEVERITY_WARNING);

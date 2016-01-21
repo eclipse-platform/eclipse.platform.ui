@@ -209,7 +209,7 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		childElement.setParent(this);
 		synchronized (this) {
 			if (fChildNodes == null) {
-				fChildNodes = new ArrayList<IAntElement>();
+				fChildNodes = new ArrayList<>();
 			}
 			fChildNodes.add(childElement);
 			childElement.setIndex(fChildNodes.size() - 1);

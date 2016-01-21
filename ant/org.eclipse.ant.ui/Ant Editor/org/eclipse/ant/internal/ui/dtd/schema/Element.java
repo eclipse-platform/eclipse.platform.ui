@@ -24,7 +24,7 @@ public class Element extends Atom implements IElement {
 	private boolean fUndefined = true;
 	private boolean fText;
 	private IModel fModel;
-	private Map<String, IAttribute> fMap = new HashMap<String, IAttribute>(4);
+	private Map<String, IAttribute> fMap = new HashMap<>(4);
 	private Dfm fElementDfm;
 
 	/**

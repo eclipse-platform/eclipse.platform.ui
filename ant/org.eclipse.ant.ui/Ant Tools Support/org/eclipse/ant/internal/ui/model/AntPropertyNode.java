@@ -138,7 +138,7 @@ public class AntPropertyNode extends AntTaskNode {
 	 */
 	public void addProperty(String propertyName, String value) {
 		if (fProperties == null) {
-			fProperties = new HashMap<String, String>(1);
+			fProperties = new HashMap<>(1);
 		}
 		fProperties.put(propertyName, value);
 	}
@@ -236,7 +236,7 @@ public class AntPropertyNode extends AntTaskNode {
 		if (textToSearch == null || textToSearch.length() == 0 || identifier.length() == 0) {
 			return null;
 		}
-		List<Integer> results = new ArrayList<Integer>();
+		List<Integer> results = new ArrayList<>();
 		if (fBaseLabel != null) {
 			if (fBaseLabel.equals(identifier)) {
 				int nameOffset = textToSearch.indexOf(IAntCoreConstants.NAME);

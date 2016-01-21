@@ -188,7 +188,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		Object[] items = fAntPropertiesBlock.getProperties();
 		Map<String, String> properties = null;
 		if (items.length > 0) {
-			properties = new HashMap<String, String>(items.length);
+			properties = new HashMap<>(items.length);
 			for (int i = 0; i < items.length; i++) {
 				Property property = (Property) items[i];
 				properties.put(property.getName(), property.getValue(false));

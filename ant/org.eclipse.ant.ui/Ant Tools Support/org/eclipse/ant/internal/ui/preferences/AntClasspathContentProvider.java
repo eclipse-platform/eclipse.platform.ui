@@ -176,7 +176,7 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 			return ((ClasspathModel) parentElement).getEntries();
 		}
 		if (parentElement == null) {
-			List<Object> all = new ArrayList<Object>();
+			List<Object> all = new ArrayList<>();
 			Object[] topEntries = model.getEntries();
 			for (int i = 0; i < topEntries.length; i++) {
 				Object object = topEntries[i];

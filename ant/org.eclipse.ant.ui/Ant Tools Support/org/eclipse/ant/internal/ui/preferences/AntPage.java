@@ -194,7 +194,7 @@ public abstract class AntPage {
 				}
 			}
 		});
-		ArrayList<ColumnSorter> sorters = new ArrayList<ColumnSorter>(fTableColumnHeaders.length);
+		ArrayList<ColumnSorter> sorters = new ArrayList<>(fTableColumnHeaders.length);
 		for (int i = 0; i < fTableColumnHeaders.length; i++) {
 			tableLayout.addColumnData(fTableColumnLayouts[i]);
 			TableColumn column = new TableColumn(table, SWT.NONE, i);
@@ -323,7 +323,7 @@ public abstract class AntPage {
 		List<IAntClasspathEntry> entries = getPreferencePage().getLibraryEntries();
 
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
-		List<Object> contents = new ArrayList<Object>(elements.length);
+		List<Object> contents = new ArrayList<>(elements.length);
 		Object element;
 		AntObject antObject;
 		for (int i = 0; i < elements.length; i++) {

@@ -30,9 +30,9 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
 	private final FormattingPreferences prefs;
 
 	/** Documents to be formatted by this strategy */
-	private final LinkedList<IDocument> fDocuments = new LinkedList<IDocument>();
+	private final LinkedList<IDocument> fDocuments = new LinkedList<>();
 	/** Partitions to be formatted by this strategy */
-	private final LinkedList<TypedPosition> fPartitions = new LinkedList<TypedPosition>();
+	private final LinkedList<TypedPosition> fPartitions = new LinkedList<>();
 
 	public XmlElementFormattingStrategy() {
 		this.prefs = new FormattingPreferences();

@@ -75,7 +75,7 @@ public class FileFilter extends ViewerFilter {
 		BusyIndicator.showWhile(AntUIPlugin.getStandardDisplay(), new Runnable() {
 			@Override
 			public void run() {
-				fFiles = new HashSet<IResource>();
+				fFiles = new HashSet<>();
 				traverse(ResourcesPlugin.getWorkspace().getRoot(), fFiles);
 			}
 		});

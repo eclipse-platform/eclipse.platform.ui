@@ -31,8 +31,8 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 public class AntAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
 
-	private List<XMLProblemAnnotation> fGeneratedAnnotations = new ArrayList<XMLProblemAnnotation>();
-	private List<IProblem> fCollectedProblems = new ArrayList<IProblem>();
+	private List<XMLProblemAnnotation> fGeneratedAnnotations = new ArrayList<>();
+	private List<IProblem> fCollectedProblems = new ArrayList<>();
 
 	public AntAnnotationModel(IFile file) {
 		super(file);

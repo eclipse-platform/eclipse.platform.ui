@@ -639,7 +639,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fInitializing = true;
 		fLaunchConfiguration = configuration;
-		fOrderedTargets = new ArrayList<AntTargetNode>();
+		fOrderedTargets = new ArrayList<>();
 		setErrorMessage(null);
 		setMessage(null);
 		setDirty(true);

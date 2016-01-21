@@ -20,7 +20,7 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 
 public class NotifyingReconciler extends MonoReconciler {
 
-	private ArrayList<IReconcilingParticipant> fReconcilingParticipants = new ArrayList<IReconcilingParticipant>();
+	private ArrayList<IReconcilingParticipant> fReconcilingParticipants = new ArrayList<>();
 
 	/**
 	 * Constructor for NotifyingReconciler.
@@ -49,7 +49,7 @@ public class NotifyingReconciler extends MonoReconciler {
 	}
 
 	protected void notifyReconcilingParticipants() {
-		Iterator<IReconcilingParticipant> i = new ArrayList<IReconcilingParticipant>(fReconcilingParticipants).iterator();
+		Iterator<IReconcilingParticipant> i = new ArrayList<>(fReconcilingParticipants).iterator();
 		while (i.hasNext()) {
 			i.next().reconciled();
 		}

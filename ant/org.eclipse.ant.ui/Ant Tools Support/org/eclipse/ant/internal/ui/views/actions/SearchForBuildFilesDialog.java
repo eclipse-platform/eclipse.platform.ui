@@ -57,7 +57,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * List of <code>IFile</code> objects that were found
 	 */
-	private List<IResource> results = new ArrayList<IResource>();
+	private List<IResource> results = new ArrayList<>();
 	/**
 	 * List of <code>IResource</code> objects in which to search.
 	 * 
@@ -305,7 +305,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			return;
 		}
 		IAdaptable[] elements = set.getElements();
-		searchScopes = new ArrayList<IResource>();
+		searchScopes = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			// Try to get an IResource object from each element
 			IResource resource = null;
@@ -356,7 +356,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, includeErrorResultButton.getSelection());
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
 		settings.put(IAntUIPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
-		results = new ArrayList<IResource>(); // Clear previous results
+		results = new ArrayList<>(); // Clear previous results
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor();
 		if (searchScopes == null || searchScopes.isEmpty()) {
 			try {

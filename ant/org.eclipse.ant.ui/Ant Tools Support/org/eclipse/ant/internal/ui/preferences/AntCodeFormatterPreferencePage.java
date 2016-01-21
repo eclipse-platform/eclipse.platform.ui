@@ -45,7 +45,7 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 
 	@Override
 	protected OverlayPreferenceStore createOverlayStore() {
-		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_WRAP_LONG));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.FORMATTER_ALIGN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.FORMATTER_MAX_LINE_LENGTH));

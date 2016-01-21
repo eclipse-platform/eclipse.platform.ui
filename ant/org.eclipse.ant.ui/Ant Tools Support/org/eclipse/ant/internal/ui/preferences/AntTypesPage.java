@@ -109,7 +109,7 @@ public class AntTypesPage extends AntPage {
 
 	private AddCustomDialog getCustomDialog(String title, String helpContext) {
 		Iterator<Object> types = getContents(true).iterator();
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		while (types.hasNext()) {
 			Type aTask = (Type) types.next();
 			names.add(aTask.getTypeName());

@@ -117,7 +117,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 * Create a change for each launch configuration from the given list which needs to be updated for this IProject rename.
 	 */
 	private static List<Change> createChangesForProjectRename(ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		for (int i = 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String launchConfigurationProjectName = launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
@@ -138,7 +138,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 * Create a change for each launch configuration from the given list which needs to be updated for this buildfile rename.
 	 */
 	private static List<Change> createChangesForBuildfileRename(IFile buildfile, ILaunchConfiguration[] configs, String projectName, String newBuildfileName) throws CoreException {
-		List<Change> changes = new ArrayList<Change>();
+		List<Change> changes = new ArrayList<>();
 		for (int i = 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
 			String launchConfigurationProjectName = launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);

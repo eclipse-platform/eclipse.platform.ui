@@ -24,7 +24,7 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrategy {
 
 	/** Documents to be formatted by this strategy */
-	private final LinkedList<IDocument> fDocuments = new LinkedList<IDocument>();
+	private final LinkedList<IDocument> fDocuments = new LinkedList<>();
 
 	/** access to the preferences store * */
 	private FormattingPreferences prefs;
