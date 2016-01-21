@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2016 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -83,7 +83,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private IAntModelListener fListener;
 	private IAntModel fModel;
 	private AntModelCore fCore;
-	private ListenerList fPostSelectionChangedListeners = new ListenerList();
+	private ListenerList<ISelectionChangedListener> fPostSelectionChangedListeners = new ListenerList<>();
 	private boolean fIsModelEmpty = true;
 	private boolean fFilterInternalTargets;
 	private boolean fFilterImportedElements;
@@ -427,9 +427,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
 
 		// fire the event
-		Object[] listeners = fPostSelectionChangedListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+		for (ISelectionChangedListener iSelectionChangedListener : fPostSelectionChangedListeners) {
+			iSelectionChangedListener.selectionChanged(event);
 		}
 	}
 
