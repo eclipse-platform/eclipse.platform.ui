@@ -184,8 +184,8 @@ public class BrowserDescriptorDialog extends Dialog {
 	protected void okPressed() {
 		// do simple field validation to at least ensure target directory entered is valid pathname
 		try {
-		File file = new File(browser.getLocation());
-			if(!file.isFile() && !Util.isMac()){
+			File file = new File(browser.getLocation());
+			if (!(file.isFile() || (Util.isMac() && ExternalBrowserInstance.isMacAppBundle(file)))) {
 				WebBrowserUtil.openError(Messages.locationInvalid);
 				return;
 			}

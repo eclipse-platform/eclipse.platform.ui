@@ -129,13 +129,20 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 	 * @return true if the location appears to be a Mac Application bundle
 	 *         (.app)
 	 */
-	private boolean isMacAppBundle(String location) {
+	public static boolean isMacAppBundle(String location) {
+		return isMacAppBundle(new File(location));
+	}
+
+	/**
+	 * @return true if the location appears to be a Mac Application bundle
+	 *         (.app)
+	 */
+	public static boolean isMacAppBundle(File location) {
 		// A very quick heuristic based on Apple's Bundle Programming Guide
 		// https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFBundles/BundleTypes/BundleTypes.html#//apple_ref/doc/uid/10000123i-CH101-SW19
-		File bundleLoc = new File(location);
-		File macosDir = new File(new File(bundleLoc, "Contents"), "MacOS"); //$NON-NLS-1$ //$NON-NLS-2$
-		File plist = new File(new File(bundleLoc, "Contents"), "Info.plist"); //$NON-NLS-1$ //$NON-NLS-2$
-		return bundleLoc.isDirectory() && macosDir.isDirectory() && plist.isFile();
+		File macosDir = new File(new File(location, "Contents"), "MacOS"); //$NON-NLS-1$ //$NON-NLS-2$
+		File plist = new File(new File(location, "Contents"), "Info.plist"); //$NON-NLS-1$ //$NON-NLS-2$
+		return location.isDirectory() && macosDir.isDirectory() && plist.isFile();
 	}
 
 	private String join (String delim, String ... data) {
