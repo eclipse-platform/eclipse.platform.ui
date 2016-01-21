@@ -44,6 +44,14 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		String location = browser.getLocation();
 		cmdOptions.add(location);
 		String parameters = browser.getParameters();
+
+		/**
+		 * If true, then report non-zero exit values. Primarily useful when
+		 * using a launcher, like OS X's open(1), as some browsers (like IE)
+		 * routinely return non-zero values (bug 475775).
+		 */
+		final boolean reportNonZeroExitValue[] = new boolean[] { false };
+
 		Trace
 		.trace(
 				Trace.FINEST,
@@ -75,6 +83,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 				if (params.length > 0) {
 					cmdOptions.add("--args");//$NON-NLS-1$
 				}
+				reportNonZeroExitValue[0] = true;
 			}
 
 			for (String param : params) {
@@ -90,29 +99,30 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 			Thread errConsumer = new StreamConsumer(process.getErrorStream());
 			errConsumer.setName("External browser  error reader"); //$NON-NLS-1$
 			errConsumer.start();
+
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					try {
+						process.waitFor();
+						if (reportNonZeroExitValue[0] && process.exitValue() != 0) {
+							Trace.trace(Trace.SEVERE,
+									"External browser returned non-zero status: " + process.exitValue()); //$NON-NLS-1$
+							WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
+						}
+						DefaultBrowserSupport.getInstance().removeBrowser(ExternalBrowserInstance.this);
+					} catch (Exception e) {
+						// ignore
+					}
+				}
+			};
+			thread.setDaemon(true);
+			thread.start();
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not launch external browser", e); //$NON-NLS-1$
 			WebBrowserUtil.openError(NLS.bind(
 					Messages.errorCouldNotLaunchWebBrowser, urlText));
 		}
-		Thread thread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					process.waitFor();
-					if (process.exitValue() != 0) {
-						Trace.trace(Trace.SEVERE, "Could not launch external browser"); //$NON-NLS-1$
-						WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
-					}
-					DefaultBrowserSupport.getInstance().removeBrowser(
-							ExternalBrowserInstance.this);
-				} catch (Exception e) {
-					// ignore
-				}
-			}
-		};
-		thread.setDaemon(true);
-		thread.start();
 	}
 
 	/**
