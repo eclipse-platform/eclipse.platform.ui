@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Lars Vogel <Lars.Vogel@vogella.com> - Bug 431862
  * Christian Georgi (SAP SE)           - bug 432480, bug 458811
  * Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 485201
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -32,6 +33,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkbenchAdvisor_preHistoryCompaction;
 	public static String IDEWorkbenchAdvisor_postHistoryCompaction;
 
+	public static String IDE_noFileEditorSelectedUserCanceled;
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
 
