@@ -142,7 +142,7 @@ public class InternalProject extends Project {
 	 * Initialize the mapping of data type name to data type classname
 	 */
 	private void initializeTypes() {
-		typeNameToClass = new Hashtable<String, Class<?>>(18);
+		typeNameToClass = new Hashtable<>(18);
 		try (InputStream in = Project.class.getResourceAsStream("/org/apache/tools/ant/types/defaults.properties")) { //$NON-NLS-1$
 			if (in == null) {
 				return;

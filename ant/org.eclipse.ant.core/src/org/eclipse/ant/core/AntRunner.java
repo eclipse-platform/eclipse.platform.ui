@@ -114,7 +114,7 @@ public class AntRunner implements IApplication {
 	private String[] getArray(String args) {
 		StringBuffer sb = new StringBuffer();
 		boolean waitingForQuote = false;
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
 			String token = tokens.nextToken();
 			if (waitingForQuote) {
@@ -183,7 +183,7 @@ public class AntRunner implements IApplication {
 			return;
 		}
 		if (buildListeners == null) {
-			buildListeners = new ArrayList<String>(5);
+			buildListeners = new ArrayList<>(5);
 		}
 		buildListeners.add(className);
 	}
@@ -211,7 +211,7 @@ public class AntRunner implements IApplication {
 	 */
 	public void addUserProperties(Map<String, String> properties) {
 		if (userProperties == null) {
-			userProperties = new HashMap<String, String>(properties);
+			userProperties = new HashMap<>(properties);
 		} else {
 			userProperties.putAll(properties);
 		}
@@ -522,7 +522,7 @@ public class AntRunner implements IApplication {
 			return AntCorePlugin.getPlugin().getNewClassLoader();
 		}
 		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-		ArrayList<URL> fullClasspath = new ArrayList<URL>();
+		ArrayList<URL> fullClasspath = new ArrayList<>();
 		fullClasspath.addAll(Arrays.asList(customClasspath));
 		fullClasspath.addAll(Arrays.asList(preferences.getExtraClasspathURLs()));
 		return new AntClassLoader(fullClasspath.toArray(new URL[fullClasspath.size()]), preferences.getPluginClassLoaders());

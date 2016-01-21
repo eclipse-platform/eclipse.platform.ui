@@ -128,7 +128,7 @@ public class AntClassLoader extends URLClassLoader {
 		if (fContextClassloader != null) {
 			Thread.currentThread().setContextClassLoader(fContextClassloader);
 		}
-		ArrayList<URL> all = new ArrayList<URL>();
+		ArrayList<URL> all = new ArrayList<>();
 		try {
 			if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX) || name.startsWith(ANT_URL_PREFIX, 1))) {
 				if (fPluginLoaders != null) {

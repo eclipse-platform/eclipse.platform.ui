@@ -128,7 +128,7 @@ public class InternalAntRunner {
 
 	private boolean executed = false;
 
-	private ArrayList<String> propertyFiles = new ArrayList<String>();
+	private ArrayList<String> propertyFiles = new ArrayList<>();
 
 	private URL[] customClasspath = null;
 
@@ -165,14 +165,14 @@ public class InternalAntRunner {
 	 */
 	public void addBuildListeners(List<String> classNames) {
 		if (buildListeners == null) {
-			buildListeners = new ArrayList<String>(classNames.size());
+			buildListeners = new ArrayList<>(classNames.size());
 		}
 		buildListeners.addAll(classNames);
 	}
 
 	protected void addBuildListener(String clazz) {
 		if (buildListeners == null) {
-			buildListeners = new ArrayList<String>();
+			buildListeners = new ArrayList<>();
 		}
 		buildListeners.add(clazz);
 	}
@@ -195,7 +195,7 @@ public class InternalAntRunner {
 	 */
 	public void addUserProperties(Map<String, String> properties) {
 		if (userProperties == null) {
-			userProperties = new HashMap<String, String>(properties);
+			userProperties = new HashMap<>(properties);
 		} else {
 			userProperties.putAll(properties);
 		}
@@ -424,7 +424,7 @@ public class InternalAntRunner {
 			parseBuildFile(antProject);
 			defaultTarget = antProject.getDefaultTarget();
 			Hashtable<String, Target> projectTargets = antProject.getTargets();
-			ArrayList<TargetInfo> infos = new ArrayList<TargetInfo>();
+			ArrayList<TargetInfo> infos = new ArrayList<>();
 			ProjectInfo pinfo = new ProjectInfo(antProject.getName(), antProject.getDescription());
 			boolean defaultFound = false;
 			for (Target target : projectTargets.values()) {
@@ -436,7 +436,7 @@ public class InternalAntRunner {
 				if (target.getName().equals(defaultTarget)) {
 					defaultFound = true;
 				}
-				ArrayList<String> dependencies = new ArrayList<String>();
+				ArrayList<String> dependencies = new ArrayList<>();
 				Enumeration<String> enumeration = target.getDependencies();
 				while (enumeration.hasMoreElements()) {
 					dependencies.add(enumeration.nextElement());
@@ -480,7 +480,7 @@ public class InternalAntRunner {
 			}
 			parseBuildFile(antProject);
 			Hashtable<String, Target> projectTargets = antProject.getTargets();
-			ArrayList<String> names = new ArrayList<String>();
+			ArrayList<String> names = new ArrayList<>();
 			for (Target target : projectTargets.values()) {
 				String name = target.getName();
 				if (name.length() == 0) {
@@ -545,7 +545,7 @@ public class InternalAntRunner {
 		}
 		Vector<String> chosenTargets = targets;
 		if (chosenTargets == null || chosenTargets.isEmpty()) {
-			chosenTargets = new Vector<String>(1);
+			chosenTargets = new Vector<>(1);
 			String defltTarget = project.getDefaultTarget();
 			if (defltTarget != null) {
 				chosenTargets.add(defltTarget);
@@ -693,7 +693,7 @@ public class InternalAntRunner {
 			System.setSecurityManager(new AntSecurityManager(originalSM, Thread.currentThread()));
 
 			if (targets == null) {
-				targets = new Vector<String>(1);
+				targets = new Vector<>(1);
 			}
 			String dtarget = currentProject.getDefaultTarget();
 			if (targets.isEmpty() && dtarget != null) {
@@ -974,7 +974,7 @@ public class InternalAntRunner {
 	 *            The targets to execute for the build
 	 */
 	public void setExecutionTargets(String[] executionTargets) {
-		targets = new Vector<String>(executionTargets.length);
+		targets = new Vector<>(executionTargets.length);
 		for (int i = 0; i < executionTargets.length; i++) {
 			targets.add(executionTargets[i]);
 		}
@@ -1031,7 +1031,7 @@ public class InternalAntRunner {
 				throw new BuildException(InternalAntMessages.InternalAntRunner_specify_a_classname_using_the_listener_argument);
 			}
 			if (buildListeners == null) {
-				buildListeners = new ArrayList<String>(1);
+				buildListeners = new ArrayList<>(1);
 			}
 			buildListeners.add(arg);
 			arg = AntCoreUtil.getArgument(commands, "-listener"); //$NON-NLS-1$
@@ -1281,7 +1281,7 @@ public class InternalAntRunner {
 	 */
 	protected void processTargets(List<String> commands) {
 		if (targets == null) {
-			targets = new Vector<String>(commands.size());
+			targets = new Vector<>(commands.size());
 		}
 		for (Iterator<String> iter = commands.iterator(); iter.hasNext();) {
 			targets.add(iter.next());
@@ -1340,7 +1340,7 @@ public class InternalAntRunner {
 				fEarlyErrorMessage = InternalAntMessages.InternalAntRunner_Specifying_property_files_is_a_Ant_1_5_feature;
 			} else {
 				if (propertyFiles == null) {
-					propertyFiles = new ArrayList<String>(globalPropertyFiles.length);
+					propertyFiles = new ArrayList<>(globalPropertyFiles.length);
 				}
 				propertyFiles.addAll(Arrays.asList(globalPropertyFiles));
 			}
@@ -1363,7 +1363,7 @@ public class InternalAntRunner {
 	 */
 	protected void processMinusDProperties(List<String> commands) {
 		if (!commands.isEmpty() && userProperties == null) {
-			userProperties = new HashMap<String, String>();
+			userProperties = new HashMap<>();
 		}
 		AntCoreUtil.processMinusDProperties(commands, userProperties);
 	}
@@ -1416,7 +1416,7 @@ public class InternalAntRunner {
 	 */
 	protected void loadPropertyFiles() {
 		if (userProperties == null) {
-			userProperties = new HashMap<String, String>();
+			userProperties = new HashMap<>();
 		}
 		try {
 			List<Properties> allProperties = AntCoreUtil.loadPropertyFiles(propertyFiles, currentProject.getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$

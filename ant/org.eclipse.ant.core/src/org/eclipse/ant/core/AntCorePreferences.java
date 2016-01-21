@@ -214,7 +214,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	protected AntCorePreferences(List<IConfigurationElement> defaultTasks, List<IConfigurationElement> defaultExtraClasspath, List<IConfigurationElement> defaultTypes, List<IConfigurationElement> defaultProperties, boolean headless) {
 		runningHeadless = headless;
 		initializePluginClassLoaders();
-		extraClasspathURLs = new ArrayList<AntClasspathEntry>(20);
+		extraClasspathURLs = new ArrayList<>(20);
 		this.defaultTasks = computeDefaultTasks(defaultTasks);
 		this.defaultTypes = computeDefaultTypes(defaultTypes);
 		computeDefaultExtraClasspathEntries(defaultExtraClasspath);
@@ -342,7 +342,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Migrates the persisted URL entries restored from a workspace older than 3.0
 	 */
 	private IAntClasspathEntry[] migrateURLEntries(String[] urlEntries) {
-		List<AntClasspathEntry> result = new ArrayList<AntClasspathEntry>(urlEntries.length);
+		List<AntClasspathEntry> result = new ArrayList<>(urlEntries.length);
 		for (int i = 0; i < urlEntries.length; i++) {
 			URL url;
 			try {
@@ -400,7 +400,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected Task[] extractTasks(Preferences prefs, String[] tasks) {
-		List<Task> result = new ArrayList<Task>(tasks.length);
+		List<Task> result = new ArrayList<>(tasks.length);
 		for (int i = 0; i < tasks.length; i++) {
 			String taskName = tasks[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
@@ -422,7 +422,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected Type[] extractTypes(Preferences prefs, String[] types) {
-		List<Type> result = new ArrayList<Type>(types.length);
+		List<Type> result = new ArrayList<>(types.length);
 		for (int i = 0; i < types.length; i++) {
 			String typeName = types[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
@@ -475,7 +475,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	@Deprecated
 	public URL[] getDefaultAntURLs() {
 		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
-		List<URL> result = new ArrayList<URL>(3);
+		List<URL> result = new ArrayList<>(3);
 		for (int i = 0; i < entries.length; i++) {
 			IAntClasspathEntry entry = entries[i];
 			result.add(entry.getEntryURL());
@@ -494,10 +494,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	public synchronized IAntClasspathEntry[] getDefaultAntHomeEntries() {
 		if (defaultAntHomeEntries == null) {
-			ServiceTracker<?, ?> tracker = new ServiceTracker<Object, Object>(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
+			ServiceTracker<?, ?> tracker = new ServiceTracker<>(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
 			tracker.open();
 			try {
-				List<AntClasspathEntry> result = new ArrayList<AntClasspathEntry>(29);
+				List<AntClasspathEntry> result = new ArrayList<>(29);
 				PackageAdmin packageAdmin = (PackageAdmin) tracker.getService();
 				if (packageAdmin != null) {
 					ExportedPackage[] packages = packageAdmin.getExportedPackages("org.apache.tools.ant"); //$NON-NLS-1$
@@ -555,7 +555,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	Bundle findHighestAntVersion(ExportedPackage[] packages) {
 		Bundle bundle = null;
-		HashSet<Bundle> bundles = new HashSet<Bundle>();
+		HashSet<Bundle> bundles = new HashSet<>();
 		for (int i = 0; i < packages.length; i++) {
 			bundle = packages[i].getExportingBundle();
 			if (bundle == null) {
@@ -616,7 +616,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the list of {@link Task}s
 	 */
 	protected List<Task> computeDefaultTasks(List<IConfigurationElement> tasks) {
-		List<Task> result = new ArrayList<Task>(tasks.size());
+		List<Task> result = new ArrayList<>(tasks.size());
 		for (Iterator<IConfigurationElement> iterator = tasks.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
@@ -660,7 +660,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the list of {@link Type}s
 	 */
 	protected List<Type> computeDefaultTypes(List<IConfigurationElement> types) {
-		List<Type> result = new ArrayList<Type>(types.size());
+		List<Type> result = new ArrayList<>(types.size());
 		for (Iterator<IConfigurationElement> iterator = types.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
@@ -819,7 +819,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	private void computeDefaultProperties(List<IConfigurationElement> properties) {
-		defaultProperties = new ArrayList<Property>(properties.size());
+		defaultProperties = new ArrayList<>(properties.size());
 		for (Iterator<IConfigurationElement> iterator = properties.iterator(); iterator.hasNext();) {
 			IConfigurationElement element = iterator.next();
 			if (!relevantRunningHeadless(element)) {
@@ -970,7 +970,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return null;
 		}
 
-		List<IAntClasspathEntry> entries = new ArrayList<IAntClasspathEntry>(urls.length);
+		List<IAntClasspathEntry> entries = new ArrayList<>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
 			entries.add(entry);
@@ -1069,7 +1069,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	public URL[] getRemoteExtraClasspathURLs() {
-		List<URL> urls = new ArrayList<URL>(extraClasspathURLs.size());
+		List<URL> urls = new ArrayList<>(extraClasspathURLs.size());
 
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
 			IAntClasspathEntry entry = extraClasspathURLs.get(i);
@@ -1086,7 +1086,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the entire runtime classpath of URLs
 	 */
 	public URL[] getURLs() {
-		List<URL> result = new ArrayList<URL>(60);
+		List<URL> result = new ArrayList<>(60);
 		if (antHomeEntries != null) {
 			addEntryURLs(result, antHomeEntries);
 		}
@@ -1118,8 +1118,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	protected ClassLoader[] getPluginClassLoaders() {
 		if (orderedPluginClassLoaders == null) {
 			Iterator<WrappedClassLoader> classLoaders = pluginClassLoaders.iterator();
-			Map<String, WrappedClassLoader> idToLoader = new HashMap<String, WrappedClassLoader>(pluginClassLoaders.size());
-			List<BundleRevision> bundles = new ArrayList<BundleRevision>(pluginClassLoaders.size());
+			Map<String, WrappedClassLoader> idToLoader = new HashMap<>(pluginClassLoaders.size());
+			List<BundleRevision> bundles = new ArrayList<>(pluginClassLoaders.size());
 			while (classLoaders.hasNext()) {
 				WrappedClassLoader loader = classLoaders.next();
 				idToLoader.put(loader.bundle.getSymbolicName(), loader);
@@ -1129,7 +1129,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 				}
 			}
 			List<BundleRevision> sorted = computePrerequisiteOrder(bundles);
-			List<WrappedClassLoader> loaders = new ArrayList<WrappedClassLoader>(sorted.size());
+			List<WrappedClassLoader> loaders = new ArrayList<>(sorted.size());
 			for (BundleRevision revision : sorted) {
 				String id = revision.getSymbolicName();
 				loaders.add(idToLoader.get(id));
@@ -1143,8 +1143,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private List<BundleRevision> computePrerequisiteOrder(List<BundleRevision> plugins) {
-		List<Relation> prereqs = new ArrayList<Relation>(plugins.size());
-		List<BundleRevision> fragments = new ArrayList<BundleRevision>();
+		List<Relation> prereqs = new ArrayList<>(plugins.size());
+		List<BundleRevision> fragments = new ArrayList<>();
 
 		// create a collection of directed edges from plugin to prereq
 		for (BundleRevision current : plugins) {
@@ -1222,7 +1222,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		BundleWiring wiring = root.getWiring();
 		List<BundleWire> requiredWires = wiring == null ? Collections.<BundleWire> emptyList() : wiring.getRequiredWires(namespace);
-		ArrayList<BundleRevision> requirementProviders = new ArrayList<BundleRevision>(requiredWires.size());
+		ArrayList<BundleRevision> requirementProviders = new ArrayList<>(requiredWires.size());
 		for (BundleWire requiredWire : requiredWires) {
 			BundleRevision provider = requiredWire.getProvider();
 			if (!provider.equals(root) && !requirementProviders.contains(provider)) {
@@ -1255,7 +1255,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	private List<BundleRevision> computeNodeOrder(List<Relation> edges) {
 		Map<BundleRevision, Integer> counts = computeCounts(edges);
-		List<BundleRevision> nodes = new ArrayList<BundleRevision>(counts.size());
+		List<BundleRevision> nodes = new ArrayList<>(counts.size());
 		while (!counts.isEmpty()) {
 			List<BundleRevision> roots = findRootNodes(counts);
 			if (roots.isEmpty()) {
@@ -1274,7 +1274,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private Map<BundleRevision, Integer> computeCounts(List<Relation> mappings) {
-		Map<BundleRevision, Integer> counts = new HashMap<BundleRevision, Integer>(5);
+		Map<BundleRevision, Integer> counts = new HashMap<>(5);
 		for (int i = 0; i < mappings.size(); i++) {
 			BundleRevision from = mappings.get(i).from;
 			Integer fromCount = counts.get(from);
@@ -1295,7 +1295,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private List<BundleRevision> findRootNodes(Map<BundleRevision, Integer> counts) {
-		List<BundleRevision> result = new ArrayList<BundleRevision>(5);
+		List<BundleRevision> result = new ArrayList<>(5);
 		for (Iterator<BundleRevision> i = counts.keySet().iterator(); i.hasNext();) {
 			BundleRevision node = i.next();
 			int count = counts.get(node).intValue();
@@ -1307,7 +1307,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	private void initializePluginClassLoaders() {
-		pluginClassLoaders = new ArrayList<WrappedClassLoader>(10);
+		pluginClassLoaders = new ArrayList<>(10);
 		// ant.core should always be present
 		pluginClassLoaders.add(getClassLoader(AntCorePlugin.getPlugin().getBundle()));
 	}
@@ -1318,7 +1318,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the list of default and custom tasks.
 	 */
 	public List<Task> getTasks() {
-		List<Task> result = new ArrayList<Task>(10);
+		List<Task> result = new ArrayList<>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
 		}
@@ -1334,7 +1334,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the list of default and custom tasks.
 	 */
 	public List<Task> getRemoteTasks() {
-		List<Task> result = new ArrayList<Task>(10);
+		List<Task> result = new ArrayList<>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			Iterator<Task> iter = defaultTasks.iterator();
 			while (iter.hasNext()) {
@@ -1384,7 +1384,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	public List<Property> getProperties() {
-		List<Property> result = new ArrayList<Property>(10);
+		List<Property> result = new ArrayList<>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			result.addAll(defaultProperties);
 		}
@@ -1401,7 +1401,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	public List<Property> getRemoteAntProperties() {
-		List<Property> result = new ArrayList<Property>(10);
+		List<Property> result = new ArrayList<>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			Iterator<Property> iter = defaultProperties.iterator();
 			while (iter.hasNext()) {
@@ -1429,7 +1429,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (!performStringSubstition || customPropertyFiles == null || customPropertyFiles.length == 0) {
 			return customPropertyFiles;
 		}
-		List<String> files = new ArrayList<String>(customPropertyFiles.length);
+		List<String> files = new ArrayList<>(customPropertyFiles.length);
 		for (int i = 0; i < customPropertyFiles.length; i++) {
 			String filename = customPropertyFiles[i];
 			try {
@@ -1555,7 +1555,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return all of the defined types
 	 */
 	public List<Type> getTypes() {
-		List<Type> result = new ArrayList<Type>(10);
+		List<Type> result = new ArrayList<>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
 		}
@@ -1571,7 +1571,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return the list of default and custom types.
 	 */
 	public List<Type> getRemoteTypes() {
-		List<Type> result = new ArrayList<Type>(10);
+		List<Type> result = new ArrayList<>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			Iterator<Type> iter = defaultTypes.iterator();
 			while (iter.hasNext()) {
@@ -1593,7 +1593,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return all of the default types
 	 */
 	public List<Type> getDefaultTypes() {
-		List<Type> result = new ArrayList<Type>(10);
+		List<Type> result = new ArrayList<>(10);
 		if (defaultTypes != null && !defaultTypes.isEmpty()) {
 			result.addAll(defaultTypes);
 		}
@@ -1606,7 +1606,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @return all of the default tasks
 	 */
 	public List<Task> getDefaultTasks() {
-		List<Task> result = new ArrayList<Task>(10);
+		List<Task> result = new ArrayList<>(10);
 		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
 		}
@@ -1620,7 +1620,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	public List<Property> getDefaultProperties() {
-		List<Property> result = new ArrayList<Property>(10);
+		List<Property> result = new ArrayList<>(10);
 		if (defaultProperties != null && !defaultProperties.isEmpty()) {
 			result.addAll(defaultProperties);
 		}
@@ -1635,7 +1635,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		if (list == null || list.trim().equals(IAntCoreConstants.EMPTY_STRING)) {
 			return new String[0];
 		}
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			if (!token.equals(IAntCoreConstants.EMPTY_STRING)) {
@@ -1744,7 +1744,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		IAntClasspathEntry toolsJarEntry = getToolsJarEntry();
 		List<IAntClasspathEntry> userLibs = getUserLibraries();
 		if (userLibs == null) {
-			userLibs = new ArrayList<IAntClasspathEntry>();
+			userLibs = new ArrayList<>();
 		}
 		if (toolsJarEntry != null) {
 			userLibs.add(toolsJarEntry);
@@ -1886,7 +1886,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * @since 3.0
 	 */
 	public URL[] getRemoteAntURLs() {
-		List<URL> result = new ArrayList<URL>(40);
+		List<URL> result = new ArrayList<>(40);
 		if (antHomeEntries != null) {
 			for (int i = 0; i < antHomeEntries.length; i++) {
 				IAntClasspathEntry entry = antHomeEntries[i];

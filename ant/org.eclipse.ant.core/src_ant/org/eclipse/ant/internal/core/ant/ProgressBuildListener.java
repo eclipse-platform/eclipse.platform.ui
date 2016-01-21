@@ -90,7 +90,7 @@ public class ProgressBuildListener implements BuildListener {
 	}
 
 	public ProgressBuildListener(Project project, List<String> targetNames, IProgressMonitor monitor) {
-		projects = new HashMap<Project, ProjectMonitors>();
+		projects = new HashMap<>();
 		mainProject = project;
 		ProjectMonitors monitors = new ProjectMonitors();
 		IProgressMonitor localmonitor = monitor;
@@ -99,7 +99,7 @@ public class ProgressBuildListener implements BuildListener {
 		}
 		monitors.setMainMonitor(localmonitor);
 		projects.put(mainProject, monitors);
-		ArrayList<Target> targets = new ArrayList<Target>(targetNames.size());
+		ArrayList<Target> targets = new ArrayList<>(targetNames.size());
 		for (String targetName : targetNames) {
 			Target target = mainProject.getTargets().get(targetName);
 			if (target != null) {
@@ -205,7 +205,7 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = new ProjectMonitors();
 		// remember the target so we can remove this monitors object later
 		monitors.setMainTarget(target);
-		ArrayList<Target> targets = new ArrayList<Target>(1);
+		ArrayList<Target> targets = new ArrayList<>(1);
 		targets.add(target);
 		int work = computeWork(targets);
 		ProjectMonitors parentMonitors = null;
