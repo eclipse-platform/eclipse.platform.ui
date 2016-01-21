@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,21 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class XHTMLEntityTest extends TestCase {
+public class XHTMLEntityTest {
 	private final String XHTML1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
 	"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
 	"<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n" +
@@ -31,7 +33,7 @@ public class XHTMLEntityTest extends TestCase {
 	private final String XHTML2 = "</body></html>";
 
 	public void checkResolution(String text, int expected) throws Exception {
-		DocumentBuilder documentBuilder;	
+		DocumentBuilder documentBuilder;
 		documentBuilder = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
 		documentBuilder.setEntityResolver(new LocalEntityResolver());
@@ -47,38 +49,47 @@ public class XHTMLEntityTest extends TestCase {
 		assertEquals(expected, value.charAt(0));
 	}
 
+	@Test
 	public void testResolveAmpersand() throws Exception {
 		checkResolution("&amp;", 38);
 	}
 
+	@Test
 	public void testResolveNonBlockingSpace() throws Exception {
 		checkResolution("&nbsp;", 160);
 	}
 
+	@Test
 	public void testResolveGt() throws Exception {
 		checkResolution("&gt;", 62);
 	}
 
+	@Test
 	public void testResolveLeftArrow() throws Exception {
 		checkResolution("&larr;", 8592);
 	}
 
+	@Test
 	public void testResolveaacute() throws Exception {
 		checkResolution("&aacute;", 225);
 	}
 
+	@Test
 	public void testResolveCopy() throws Exception {
 		checkResolution("&copy;", 169);
 	}
-	
+
+	@Test
 	public void testResolveTilde() throws Exception {
 		checkResolution("&tilde;", 732);
 	}
 
+	@Test
 	public void testResolveAacute() throws Exception {
 		checkResolution("&Aacute;", 193);
 	}
-		
+
+	@Test
 	public void testResolveAlpha() throws Exception {
 		checkResolution("&Alpha;", 913);
 	}

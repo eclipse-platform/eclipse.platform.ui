@@ -11,16 +11,19 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import junit.framework.TestCase;
-
-public class ContextMergeTest extends TestCase {
+public class ContextMergeTest {
 
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement><with variable=\"platform\">" +
     "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
@@ -46,16 +49,17 @@ public class ContextMergeTest extends TestCase {
 		context = new Context((Element) doc.getFirstChild());
 		return context;
 	}
-	
+
+	@Test
 	public void testContextMerge() {
 		final String contextSource1 = CONTEXT_HEAD +
 		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +	
-		   TOPIC_WITH_ENABLEMENT +	
+		   TOPIC_ECLIPSE +
+		   TOPIC_WITH_ENABLEMENT +
 	       END_CONTEXT;
 		final String contextSource2 = CONTEXT_HEAD +
 		   CONTEXT_DESCRIPTION +
-		   TOPIC_BUGZILLA +	
+		   TOPIC_BUGZILLA +
 	       END_CONTEXT;
 		Context context1;
 		Context context2;
@@ -75,5 +79,5 @@ public class ContextMergeTest extends TestCase {
 		IUAElement[] topicChildren = topic.getChildren();
 		assertEquals(1, topicChildren.length);
 	}
-		
+
 }

@@ -4,12 +4,14 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.ua.tests.help.other;
+
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,11 +21,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
-
-public class DocumentReaderTest extends TestCase {
+public class DocumentReaderTest {
 	private final static int RUNNING = 0;
 	private final static int SUCCESS = 1;
 	private final static int FAILURE = 2;
@@ -35,6 +36,7 @@ public class DocumentReaderTest extends TestCase {
 		 docReader.read(in);
 	}
 
+	@Test
 	public void testDocumentReader() throws IOException, SAXException, ParserConfigurationException {
         DocumentReader docReader = new DocumentReader();
 		ResourceReader[] resReaders = new ResourceReader[3];
@@ -50,7 +52,7 @@ public class DocumentReaderTest extends TestCase {
 				try {
 					Thread.sleep(100);
 					count++;
-				} catch (InterruptedException e) { 
+				} catch (InterruptedException e) {
 				}
 			}
 		}
@@ -58,9 +60,9 @@ public class DocumentReaderTest extends TestCase {
 		assertTrue(resReaders[1].status == SUCCESS);
 		assertTrue(resReaders[2].status == SUCCESS);
 	}
-	
+
 	private class ResourceReader extends Thread {
-		
+
 		private DocumentReader reader;
 		private String file;
 		ResourceReader(DocumentReader reader, String file) {
@@ -68,7 +70,7 @@ public class DocumentReaderTest extends TestCase {
 			this.file = file;
 		}
 		public int status = RUNNING;
-		
+
 		@Override
 		public void run() {
 			try {

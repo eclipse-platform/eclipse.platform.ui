@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,21 +11,23 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import junit.framework.TestCase;
+public class ConcurrentTocAccess {
 
-public class ConcurrentTocAccess extends TestCase {
-	
 	private boolean checkAttributes = true;
-	
+
 	// Set enableTimeout to false for debugging
 	private boolean enableTimeout = true;
-	
+
 	private class TocGenerator {
 		private int[] dimensions;
 		private StringBuffer result;
@@ -53,7 +55,7 @@ public class ConcurrentTocAccess extends TestCase {
 			}
 		}
 	}
-	
+
 	/*
 	 * Class which visits every topic in a TOC
 	 */
@@ -65,7 +67,7 @@ public class ConcurrentTocAccess extends TestCase {
 		TocVisitor(Toc toc) {
 			this.toc = toc;
 		}
-		
+
 		@Override
 		public void run() {
             try {
@@ -130,7 +132,7 @@ public class ConcurrentTocAccess extends TestCase {
 			assertEquals(expectedLeafCount, visitors[i].getLeafCount());
 		}
 	}
-	
+
 	// Visit every child of a TOC and count the number of leaf topics
 	private int traverseToc(Toc toc) {
 		int leafNodes = 0;
@@ -149,7 +151,7 @@ public class ConcurrentTocAccess extends TestCase {
 		return expectedLeaves;
 	}
 
-	private int traverseTopic(ITopic topic, int index) {	
+	private int traverseTopic(ITopic topic, int index) {
 		if (checkAttributes) {
 			String expectedLabel = "topicLabel" + index;
 			String expectedHref = "page" + index + ".html";
@@ -187,35 +189,41 @@ public class ConcurrentTocAccess extends TestCase {
 		toc = new Toc(tocElement);
 		return toc;
 	}
-	
+
+	@Test
 	public void testFlatTocSize5() throws Exception {
 		int[] dimensions = {5};
 		accessInParallel(dimensions, 2);
 	}
 
+	@Test
 	public void testFlatTocSize1000() throws Exception {
 		int[] dimensions = {1000};
 		accessInParallel(dimensions, 2);
 	}
 
+	@Test
 	public void testFlatTocSize10000() throws Exception {
 		int[] dimensions = {10000};
 		accessInParallel(dimensions, 2);
 	}
 
+	@Test
 	public void testTwoLevelToc() throws Exception {
 		int[] dimensions = {50, 50};
 		accessInParallel(dimensions, 2);
 	}
-	
+
+	@Test
 	public void testDeepToc() throws Exception {
 		int[] dimensions = {2,2,2,2,2,2,2,2,2,2,2};
 		accessInParallel(dimensions, 2);
 	}
-	
+
+	@Test
 	public void testFlatTocManyThreads() throws Exception {
 		int[] dimensions = {100};
 		accessInParallel(dimensions, 100);
-	}	
-		
+	}
+
 }

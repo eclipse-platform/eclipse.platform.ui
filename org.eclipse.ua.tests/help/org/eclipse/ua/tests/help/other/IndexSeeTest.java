@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,23 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import junit.framework.TestCase;
-
-public class IndexSeeTest extends TestCase {
+public class IndexSeeTest {
 
 	private static final String AGUILA = "\u00E1guila"; // 00E1 is an accented letter 'a'
 	private static final String ECLIPSE = "eclipse";
@@ -35,15 +40,15 @@ public class IndexSeeTest extends TestCase {
 	private static final String SUBPATH_SDK = "<subpath keyword=\"sdk\">";
 	private static final String SUBPATH_VIEWS = "<subpath keyword=\"views\">";
 	private static final String SUBPATH_END = "</subpath>";
-	private static final String SEE_ECLIPSE_SDK = SEE_HEAD_ECLIPSE + 
+	private static final String SEE_ECLIPSE_SDK = SEE_HEAD_ECLIPSE +
     SUBPATH_SDK + SUBPATH_END + SEE_END;
-	private static final String SEE_ECLIPSE_VIEWS = SEE_HEAD_ECLIPSE + 
+	private static final String SEE_ECLIPSE_VIEWS = SEE_HEAD_ECLIPSE +
     SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
-	private static final String SEE_ECLIPSE_SDK_VIEWS = SEE_HEAD_ECLIPSE + 
+	private static final String SEE_ECLIPSE_SDK_VIEWS = SEE_HEAD_ECLIPSE +
     SUBPATH_SDK + SUBPATH_END + SUBPATH_VIEWS + SUBPATH_END + SEE_END;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}
 
@@ -59,7 +64,7 @@ public class IndexSeeTest extends TestCase {
 		element = new IndexSee((Element) doc.getFirstChild());
 		return element;
 	}
-	
+
 	private IndexSee createSimpleSee(final String keyword) {
 		IndexSee element;
 		Document doc;
@@ -73,8 +78,8 @@ public class IndexSeeTest extends TestCase {
 		element = new IndexSee((Element) doc.getFirstChild());
 		return element;
 	}
-	
 
+	@Test
 	public void testSimpleIndexSee() {
 		IndexSee see;
 		see = createSee(SEE_ECLIPSE);
@@ -82,6 +87,7 @@ public class IndexSeeTest extends TestCase {
 
 	}
 
+	@Test
 	public void testCopySimpleIndexSee() {
 		IndexSee see1;
 		see1 = createSee(SEE_ECLIPSE);
@@ -89,12 +95,13 @@ public class IndexSeeTest extends TestCase {
 		assertEquals(ECLIPSE, see1.getKeyword());
         assertEquals(0, see1.getSubpathElements().length);
 		assertEquals(ECLIPSE, see1.getKeyword());
-		
+
 		assertEquals(ECLIPSE, see2.getKeyword());
         assertEquals(0, see2.getSubpathElements().length);
 		assertEquals(ECLIPSE, see2.getKeyword());
 	}
 
+	@Test
 	public void testCopyIndexSeeWithSubpath() {
 		IndexSee see1;
 		see1 = createSee(SEE_ECLIPSE_SDK);
@@ -103,13 +110,14 @@ public class IndexSeeTest extends TestCase {
 		assertEquals(1, see1.getSubpathElements().length);
 		assertEquals(ECLIPSE, see1.getKeyword());
 		assertEquals(SDK, see1.getSubpathElements()[0].getKeyword());
-		
+
 		assertEquals(1, see2.getSubpathElements().length);
 		assertEquals(ECLIPSE, see2.getKeyword());
 		assertEquals(SDK, see2.getSubpathElements()[0].getKeyword());
-		
+
 	}
-	
+
+	@Test
 	public void testCopyIndexSeeWithLongerSubpath() {
 		IndexSee see1;
 		see1 = createSee(SEE_ECLIPSE_SDK_VIEWS);
@@ -119,13 +127,14 @@ public class IndexSeeTest extends TestCase {
 		assertEquals(ECLIPSE, see1.getKeyword());
 		assertEquals(SDK, see1.getSubpathElements()[0].getKeyword());
 		assertEquals(VIEWS, see1.getSubpathElements()[1].getKeyword());
-		
+
 		assertEquals(2, see2.getSubpathElements().length);
 		assertEquals(ECLIPSE, see2.getKeyword());
 		assertEquals(SDK, see2.getSubpathElements()[0].getKeyword());
-		assertEquals(VIEWS, see2.getSubpathElements()[1].getKeyword());	
+		assertEquals(VIEWS, see2.getSubpathElements()[1].getKeyword());
 	}
 
+	@Test
 	public void testCompareSimpleSame() {
 		IndexSee see1 = createSee(SEE_ECLIPSE);
 		IndexSee see2 = createSee(SEE_ECLIPSE);
@@ -135,6 +144,7 @@ public class IndexSeeTest extends TestCase {
 		assertEquals(see1.hashCode(), see2.hashCode());
 	}
 
+	@Test
 	public void testCompareSimpleDifferent() {
 		IndexSee see1 = createSee(SEE_ECLIPSE);
 		IndexSee see2 = createSee(SEE_SDK);
@@ -143,6 +153,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) > 0);
 	}
 
+	@Test
 	public void testCompareCompoundSame() {
 		IndexSee see1 = createSee(SEE_ECLIPSE_SDK);
 		IndexSee see2 = createSee(SEE_ECLIPSE_SDK);
@@ -152,6 +163,7 @@ public class IndexSeeTest extends TestCase {
 		assertEquals(see1.hashCode(), see2.hashCode());
 	}
 
+	@Test
 	public void testCompareCompoundDifferent() {
 		IndexSee see1 = createSee(SEE_ECLIPSE_SDK);
 		IndexSee see2 = createSee(SEE_ECLIPSE_VIEWS);
@@ -159,7 +171,8 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see1.compareTo(see2) < 0);
 		assertTrue(see2.compareTo(see1) > 0);
 	}
-	
+
+	@Test
 	public void testCompareCompoundDifferentLengths() {
 		IndexSee see1 = createSee(SEE_ECLIPSE_SDK);
 		IndexSee see2 = createSee(SEE_ECLIPSE_SDK_VIEWS);
@@ -168,6 +181,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) > 0);
 	}
 
+	@Test
 	public void testCompare_AAA_abacus() {
 		IndexSee see1 = createSimpleSee("AAA");
 		IndexSee see2 = createSimpleSee("abacus");
@@ -176,6 +190,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) > 0);
 	}
 
+	@Test
 	public void testCompare_abacus_ABC() {
 		IndexSee see1 = createSimpleSee("abacus");
 		IndexSee see2 = createSimpleSee(AGUILA);
@@ -184,6 +199,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) > 0);
 	}
 
+	@Test
 	public void testCompare_ABC_aguila() {
 		IndexSee see1 = createSimpleSee("ABC");
 		IndexSee see2 = createSimpleSee(AGUILA);
@@ -192,6 +208,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) > 0);
 	}
 
+	@Test
 	public void testCompare_aguila_axe() {
 		IndexSee see1 = createSimpleSee(AGUILA);
 		IndexSee see2 = createSimpleSee("axe");
@@ -199,7 +216,8 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see1.compareTo(see2) < 0);
 		assertTrue(see2.compareTo(see1) > 0);
 	}
-	
+
+	@Test
 	public void testCompare_to_underscore() {
 		IndexSee see1 = createSimpleSee("abc");
 		IndexSee see2 = createSimpleSee("_xyz");
@@ -208,6 +226,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(see2.compareTo(see1) < 0);
 	}
 
+	@Test
 	public void testUserSee() {
 	     UserIndexSee u1;
 	     u1 = createUserSee();
@@ -215,6 +234,7 @@ public class IndexSeeTest extends TestCase {
 	     checkCreatedSee(see);
 	}
 
+	@Test
 	public void testCopyUserSee() {
 	     UserIndexSee u1;
 	     u1 = createUserSee();
@@ -223,7 +243,8 @@ public class IndexSeeTest extends TestCase {
 	     checkCreatedSee(see);
 	     checkCreatedSee(see2);
 	}
-	
+
+	@Test
 	public void testCreateTwiceUserSee() {
 	     UserIndexSee u1;
 	     u1 = createUserSee();
@@ -233,6 +254,7 @@ public class IndexSeeTest extends TestCase {
 	     checkCreatedSee(see2);
 	}
 
+	@Test
 	public void testSeeAlsoWithSiblingTopic() {
 		UserIndexEntry entry = new UserIndexEntry("test", true);
 		UserTopic topic = new UserTopic("label", "href.html", true);
@@ -244,6 +266,7 @@ public class IndexSeeTest extends TestCase {
 		assertTrue(((IndexSee)sees[0]).isSeeAlso());
 	}
 
+	@Test
 	public void testSeeAlsoWithSiblingEntry() {
 		UserIndexEntry entry = new UserIndexEntry("test", true);
 		UserIndexEntry subEntry = new UserIndexEntry("case", true);
@@ -256,7 +279,8 @@ public class IndexSeeTest extends TestCase {
 		IIndexSee[] sees = indexEntry.getSees();
 		assertTrue(((IndexSee)sees[0]).isSeeAlso());
 	}
-	
+
+	@Test
 	public void testSiblingSeesNotSeeAlso() {
 		UserIndexEntry entry = new UserIndexEntry("test", true);
 		UserIndexSee see1 = new UserIndexSee("check", true);

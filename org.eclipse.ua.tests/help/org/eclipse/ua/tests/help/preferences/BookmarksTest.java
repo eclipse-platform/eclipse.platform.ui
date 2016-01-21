@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,24 @@
 
 package org.eclipse.ua.tests.help.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Observable;
 import java.util.Observer;
-
-import junit.framework.TestCase;
 
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.BookmarkManager;
 import org.eclipse.help.internal.base.BookmarkManager.BookmarkEvent;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /*
  * Test the BookmarkManager
  */
-public class BookmarksTest extends TestCase {
+public class BookmarksTest {
 
 	private static final String ECLIPSE = "eclipse";
 	private static final String HTTP_ECLIPSE = "http://www.eclipse.org";
@@ -33,7 +38,7 @@ public class BookmarksTest extends TestCase {
 	private static final String HTTP_BUGZILLA = "https://bugs.eclipse.org/bugs/";
 
 	private class BookmarkObserver implements Observer {
-		
+
 		public Object o;
 		public Object arg;
 		public int eventCount = 0;
@@ -44,30 +49,31 @@ public class BookmarksTest extends TestCase {
 			this.o = o;
 			this.arg = arg;
 		}
-		
+
 		public BookmarkManager.BookmarkEvent getEvent() {
 			return (BookmarkEvent) arg;
 		}
-		
+
 	}
-	
+
 	private BookmarkManager manager;
 	private BookmarkObserver observer;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		manager = new BookmarkManager();
 		manager.removeAllBookmarks();
 		observer = new BookmarkObserver();
 		manager.addObserver(observer);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		manager = null;
 		observer = null;
 	}
-	
+
+	@Test
 	public void testRemoveAll() {
 		manager.removeAllBookmarks();
 		assertEquals(1, observer.eventCount);
@@ -78,7 +84,8 @@ public class BookmarksTest extends TestCase {
 		assertEquals(0, bookmarks.length);
 		assertEquals(1, observer.eventCount);
 	}
-	
+
+	@Test
 	public void testAddBookmarks() {
 		manager.addBookmark(HTTP_ECLIPSE, ECLIPSE);
 		assertEquals(1, observer.eventCount);
@@ -98,7 +105,8 @@ public class BookmarksTest extends TestCase {
 		assertEquals(2, observer.eventCount);
 		assertEquals(manager, observer.o);
 	}
-	
+
+	@Test
 	public void testRemoveBookmarks() {
 		manager.addBookmark(HTTP_ECLIPSE, ECLIPSE);
 		assertEquals(1, observer.eventCount);
@@ -122,7 +130,4 @@ public class BookmarksTest extends TestCase {
 		assertEquals(HTTP_BUGZILLA, event.getBookmark().getHref());
 		assertEquals(1, manager.getBookmarks().length);
 	}
-	
-	
-
 }

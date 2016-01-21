@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the expected
@@ -30,35 +30,36 @@ import junit.framework.TestCase;
  * the plugin manifest (for this test plugin only), constructs the model, then
  * serializes the model to a text file, which is stored in the same directory as the
  * TOC xml file, as <original_name>_expected.txt.
- * 
+ *
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
- * 
+ *
  * Usage:
- * 
+ *
  * 1. Run this test as a JUnit plug-in test.
  * 2. Right-click in "Package Explorer -> Refresh".
- * 
+ *
  * The new files should appear.
  */
-public class TocModelSerializerTest extends TestCase {
+public class TocModelSerializerTest {
 
 	/*
 	 * Ensure that org.eclipse.help.ui is started. It contributes extra content
 	 * filtering that is used by this test. See UIContentFilterProcessor.
 	 */
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		HelpUIPlugin.getDefault();
 	}
-	
+
+	@Test
 	public void testRunSerializer() throws IOException {
 		/*
 		Collection tocFiles = getTocFiles();
 		TocBuilder builder = new TocBuilder();
 		builder.build(tocFiles);
 		Collection builtTocs = builder.getBuiltTocs();
-		
+
 		Iterator iter = builtTocs.iterator();
 		while (iter.hasNext()) {
 			Toc toc = (Toc)iter.next();
@@ -67,15 +68,15 @@ public class TocModelSerializerTest extends TestCase {
 			String pluginRoot = UserAssistanceTestPlugin.getDefault().getBundle().getLocation().substring("update@".length());
 			String relativePath = file.getHref();
 			String absolutePath = pluginRoot + relativePath;
-			String resultFile = FileUtil.getResultFile(absolutePath); 
-			
+			String resultFile = FileUtil.getResultFile(absolutePath);
+
 			PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
 			out.print(TocModelSerializer.serialize(toc));
 			out.close();
 		}
 		*/
 	}
-	
+
 	/**
 	 * Find all the TOC files to use for this test.
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.other;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.toc.Toc;
+import org.junit.Test;
 
-public class TocObjectTest extends TestCase {
-	
+public class TocObjectTest {
+
 	private static final String TITLE_1 = "Toc Title";
 	private static final String TOPIC_LABEL_1 = "Topic Label1";
 	private static final String TOPIC_LABEL_2 = "Topic Label2";
@@ -26,7 +29,8 @@ public class TocObjectTest extends TestCase {
 	private static final String ANCHOR2 = "#A2";
 	private static final String PATH = "/org.eclipse.ua.tests/file.html";
 
-	public void testLookupUnanchoredHref() {	
+	@Test
+	public void testLookupUnanchoredHref() {
 	    UserToc	utoc = new UserToc(TITLE_1, null, true);
 	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH, true);
 	    utoc.addTopic(utopic);
@@ -36,7 +40,8 @@ public class TocObjectTest extends TestCase {
 		assertEquals(topic.getHref(), PATH);
 	}
 
-	public void testLookupAnchoredHrefByAnchor() {	
+	@Test
+	public void testLookupAnchoredHrefByAnchor() {
 	    UserToc	utoc = new UserToc(TITLE_1, null, true);
 	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
 	    utoc.addTopic(utopic);
@@ -45,8 +50,9 @@ public class TocObjectTest extends TestCase {
 		assertNotNull(topic);
 		assertEquals(topic.getHref(), PATH + ANCHOR1);
 	}
-	
-	public void testLookupAnchoredHref() {	
+
+	@Test
+	public void testLookupAnchoredHref() {
 	    UserToc	utoc = new UserToc(TITLE_1, null, true);
 	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
 	    utoc.addTopic(utopic);
@@ -54,9 +60,10 @@ public class TocObjectTest extends TestCase {
 		ITopic topic = toc.getTopic(PATH);
 		assertNotNull(topic);
 		assertEquals(topic.getLabel(), TOPIC_LABEL_1);
-	}	
-	
-	public void testUnanchoredFoundFirst() {	
+	}
+
+	@Test
+	public void testUnanchoredFoundFirst() {
 	    UserToc	utoc = new UserToc(TITLE_1, null, true);
 	    UserTopic	utopic = new UserTopic(TOPIC_LABEL_1, PATH + ANCHOR1, true);
 	    utoc.addTopic(utopic);
@@ -69,7 +76,8 @@ public class TocObjectTest extends TestCase {
 		assertNotNull(topic);
 		assertEquals(topic.getLabel(), TOPIC_LABEL_2);
 	}
-	
+
+	@Test
 	public void testGetTopicNull() {
 		UserToc	utoc = new UserToc(TITLE_1, null, true);
 		Toc toc = new Toc(utoc);
@@ -77,5 +85,5 @@ public class TocObjectTest extends TestCase {
 		assertTrue(emptyTopic.getChildren().length == 0);
 		assertTrue(emptyTopic.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
 }

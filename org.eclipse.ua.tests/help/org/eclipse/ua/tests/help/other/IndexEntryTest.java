@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,11 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IIndexEntry2;
 import org.eclipse.help.IIndexSee;
@@ -21,16 +26,16 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import junit.framework.TestCase;
-
-public class IndexEntryTest extends TestCase {
+public class IndexEntryTest {
 
 	private static final String ECLIPSE = "eclipse";
 	private static final String BUGZILLA = "bugzilla";
-	private static final String BUGZILLA_HREF = "https://bugs.eclipse.org/bugs/";	
+	private static final String BUGZILLA_HREF = "https://bugs.eclipse.org/bugs/";
 	private static final String INVALID_INSTALLED = "<with variable=\"platform\">" +
 	"<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.invalid\"/></with>";
 	private static final String CS_INSTALLED = "<with variable=\"platform\">" +
@@ -47,26 +52,26 @@ public class IndexEntryTest extends TestCase {
 	private final String ENTRY_BUGZILLA = "<entry keyword=\"bugzilla\"/>";
 	private final String TOPIC_BUGZILLA = "<topic href=\"https://bugs.eclipse.org/bugs/\" label=\"bugzilla\"/>";
 	private final String SEE_ALSO_SDK = "<see keyword=\"sdk\"/>";
-	
+
 	private final String ENTRY_WITH_ENABLEMENT = ENTRY_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + ENTRY_END;
 	private final String ENTRY_NOT_ENABLED = ENTRY_HEAD_ECLIPSE + ENABLEMENT_INVALID + ENTRY_END;
 	private final String ENTRY_FILTER_IN = ENTRY_HEAD_ECLIPSE + FILTER_IN + ENTRY_END;
 	private final String ENTRY_FILTER_OUT = ENTRY_HEAD_ECLIPSE + FILTER_OUT + ENTRY_END;
 	private final String ENTRY_FILTER_MIXED = ENTRY_HEAD_ECLIPSE + FILTER_IN + FILTER_OUT + ENTRY_END;
-	private final String ENTRY_OLD_FILTER = "<entry filter=\"plugin=org.eclipse.ua.tests\" " 
+	private final String ENTRY_OLD_FILTER = "<entry filter=\"plugin=org.eclipse.ua.tests\" "
 	    + " keyword=\"Transformations and transformation configurations\"/>";
-	private final String ENTRY_OLD_FILTER_DISABLED = "<entry filter=\"plugin=org.eclipse.ua.invalid\" " 
+	private final String ENTRY_OLD_FILTER_DISABLED = "<entry filter=\"plugin=org.eclipse.ua.invalid\" "
 	    + " keyword=\"Transformations and transformation configurations\"/>";
-	private final String ENTRY_OLD_FILTER_IN__NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.tests\" " 
+	private final String ENTRY_OLD_FILTER_IN__NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.tests\" "
 	    + " keyword=\"Transformations and transformation configurations\"/>";
-	private final String ENTRY_OLD_FILTER_OUT_NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.invalid\" " 
+	private final String ENTRY_OLD_FILTER_OUT_NEGATED = "<entry filter=\"plugin!=org.eclipse.ua.invalid\" "
 	    + " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_WITH_CHILD = ENTRY_HEAD_ECLIPSE + ENTRY_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_TOPIC = ENTRY_HEAD_ECLIPSE + TOPIC_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_SEE = ENTRY_HEAD_ECLIPSE + SEE_ALSO_SDK + ENTRY_END;
-	
-	@Override
-	protected void setUp() throws Exception {
+
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 	}
 
@@ -83,6 +88,7 @@ public class IndexEntryTest extends TestCase {
 		return element;
 	}
 
+	@Test
 	public void testSimpleIndexEntry() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_ECLIPSE);
@@ -92,6 +98,7 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(0, entry.getSees().length);
 	}
 
+	@Test
 	public void testCopySimpleIndexEntry() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_ECLIPSE);
@@ -100,6 +107,7 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(ECLIPSE, entry2.getKeyword());
 	}
 
+	@Test
 	public void testCopyIndexEntryWithChild() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_WITH_CHILD);
@@ -108,13 +116,14 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(1, entry1.getSubentries().length);
 		IndexEntry child1 = (IndexEntry)entry1.getSubentries()[0];
 		assertEquals(BUGZILLA, child1.getKeyword());
-		
+
 		assertEquals(1, entry2.getSubentries().length);
 		IndexEntry child2 = (IndexEntry)entry2.getSubentries()[0];
 		assertEquals(BUGZILLA, child2.getKeyword());
 		assertEquals(1, entry2.getSubentries().length);
 	}
 
+	@Test
 	public void testCopyIndexEntryWithTopic() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_WITH_TOPIC);
@@ -132,7 +141,8 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(BUGZILLA, child2.getLabel());
 		assertEquals(BUGZILLA_HREF, child2.getHref());
 	}
-	
+
+	@Test
 	public void testCopyIndexEntryWithSee() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_WITH_SEE);
@@ -149,18 +159,21 @@ public class IndexEntryTest extends TestCase {
 		assertEquals("sdk", child2.getKeyword());
 	}
 
+	@Test
 	public void testEnabledIndexEntry() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_WITH_ENABLEMENT);
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testDisabledIndexEntry() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_NOT_ENABLED);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testCopyDisabledIndexEntry() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_NOT_ENABLED);
@@ -170,33 +183,37 @@ public class IndexEntryTest extends TestCase {
 		assertFalse(entry2.isEnabled(HelpEvaluationContext.getContext()));
 		assertFalse(entry3.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testCompoundEnablement() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_HEAD_ECLIPSE + "<enablement>"
-				+ CS_INSTALLED 
-				+ INVALID_INSTALLED 
+				+ CS_INSTALLED
+				+ INVALID_INSTALLED
 				+ "</enablement>" + ENTRY_END);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
-		entry = createEntry(ENTRY_HEAD_ECLIPSE + "<enablement><and>" 
-				+ INVALID_INSTALLED 
-				+ CS_INSTALLED 
+		entry = createEntry(ENTRY_HEAD_ECLIPSE + "<enablement><and>"
+				+ INVALID_INSTALLED
+				+ CS_INSTALLED
 				+ "</and></enablement>" + ENTRY_END);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testOldStyleEnablement() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_OLD_FILTER);
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testOldStyleDisabled() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_OLD_FILTER_DISABLED);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testOldStyleNegated() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_OLD_FILTER_IN__NEGATED);
@@ -204,7 +221,8 @@ public class IndexEntryTest extends TestCase {
 		entry = createEntry(ENTRY_OLD_FILTER_OUT_NEGATED);
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testCopyOldStyleDisabled() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_OLD_FILTER_DISABLED);
@@ -215,24 +233,28 @@ public class IndexEntryTest extends TestCase {
 		assertFalse(entry3.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testFilterIn() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_FILTER_IN);
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testFilterOut() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_FILTER_OUT);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testFilterMixed() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_FILTER_MIXED);
 		assertFalse(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
+	@Test
 	public void testNegatedFilters() {
 		IndexEntry entry;
 		entry = createEntry(ENTRY_HEAD_ECLIPSE + NEGATED_FILTER_IN + ENTRY_END);
@@ -241,6 +263,7 @@ public class IndexEntryTest extends TestCase {
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testCopyFilterOut() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_FILTER_OUT);
@@ -251,6 +274,7 @@ public class IndexEntryTest extends TestCase {
 		assertFalse(entry3.isEnabled(HelpEvaluationContext.getContext()));
 	}
 
+	@Test
 	public void testUserEntry() {
 		UserIndexEntry u1 = createUserEntry();
 		checkEntryChildEnablement(u1);
@@ -259,7 +283,7 @@ public class IndexEntryTest extends TestCase {
 		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
 		checkCreatedEntry(entry);
 	}
-	
+
 	/*
 	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
 	public void testUserEntryChildEnablement() {
@@ -270,7 +294,7 @@ public class IndexEntryTest extends TestCase {
 		checkEntryChildEnablement(entry);
 	}
 	*/
-	
+	@Test
 	public void testCopyUserEntry() {
 		UserIndexEntry u1 = createUserEntry();
 		IndexEntry entry1 = new IndexEntry(u1);
@@ -298,7 +322,7 @@ public class IndexEntryTest extends TestCase {
 	    assertEquals("href3", topics[2].getHref());
 	    assertEquals("beans", sees[0].getKeyword());
 	}
-	
+
 	private void checkEntryChildEnablement(IIndexEntry2 entry) {
 		IIndexEntry[] subentries = entry.getSubentries();
 		ITopic[] topics = entry.getTopics();
@@ -331,5 +355,5 @@ public class IndexEntryTest extends TestCase {
 		u1.addSee(s1);
 		return u1;
 	}
-		
+
 }

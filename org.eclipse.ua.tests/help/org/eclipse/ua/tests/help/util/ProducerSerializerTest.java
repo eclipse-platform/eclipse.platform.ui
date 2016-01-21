@@ -19,8 +19,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.XHTMLUtil;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /*
  * A utility for regenerating the _expected.txt files that contain the
@@ -29,19 +28,19 @@ import junit.framework.TestCase;
  * through the dynamic content producer, then stores the result in a
  * text file, which is stored in the same directory as the original
  * xhtml file, as <original_name>_expected.txt.
- * 
+ *
  * These files are used by the JUnit tests to compare the result with the expected
  * result.
- * 
+ *
  * Usage:
- * 
+ *
  * 1. Run this test as a JUnit plug-in test.
  * 2. Right-click in "Package Explorer -> Refresh".
- * 
+ *
  * The new files should appear.
  */
-public class ProducerSerializerTest extends TestCase {
-	
+public class ProducerSerializerTest {
+	@Test
 	public void testGenerateOutput() throws Exception {
 		IToc[] tocs = HelpSystem.getTocs();
 		for (IToc toc : tocs) {
@@ -55,7 +54,7 @@ public class ProducerSerializerTest extends TestCase {
 					String relativePath = href.substring(href.indexOf('/', 1));
 					String absolutePath = pluginRoot + relativePath;
 					String resultFile = FileUtil.getResultFile(absolutePath);
-					
+
 					PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
 					String output = FileUtil.readString(HelpSystem.getHelpContent(href));
 					output = XHTMLUtil.removeEnvironmentSpecificContent(output);

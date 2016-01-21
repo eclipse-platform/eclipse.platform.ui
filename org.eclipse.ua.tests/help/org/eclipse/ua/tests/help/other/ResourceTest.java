@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,29 +11,35 @@
 
 package org.eclipse.ua.tests.help.other;
 
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ResourceTest extends TestCase {
-
+public class ResourceTest {
+	@Test
 	public void testHelpUIResources() throws IllegalArgumentException, IllegalAccessException {
 		checkFields(org.eclipse.help.ui.internal.Messages.class);
 	}
 
+	@Test
 	public void testHelpBaseResources() throws IllegalArgumentException, IllegalAccessException {
 		checkFields(org.eclipse.help.internal.base.HelpBaseResources.class);
 	}
 
+	@Test
 	public void testCheatsheetResources() throws IllegalArgumentException, IllegalAccessException {
 		checkFields(org.eclipse.ui.internal.cheatsheets.Messages.class);
 	}
 
+	@Test
 	public void testIntroResources() throws IllegalArgumentException, IllegalAccessException {
 		checkFields(org.eclipse.ui.internal.intro.impl.Messages.class);
 	}
-	
+
+	@Test
 	public void testUniversalIntroResources() throws IllegalArgumentException, IllegalAccessException {
 		checkFields(org.eclipse.ui.internal.intro.universal.Messages.class);
 	}
@@ -43,13 +49,13 @@ public class ResourceTest extends TestCase {
 		for (Field field : fields) {
 			int modifiers = field.getModifiers();
 			if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
-				Object value = field.get(null); 
+				Object value = field.get(null);
 				if (value instanceof String) {
 					String stringValue = (String)value;
 					if (stringValue.startsWith("NLS missing message")) {
 						fail("Missing resource for " + field.getName());
 					}
-				}             
+				}
 			}
 		}
 	}
