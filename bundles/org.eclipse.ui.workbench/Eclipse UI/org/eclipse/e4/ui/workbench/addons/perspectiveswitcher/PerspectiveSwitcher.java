@@ -10,6 +10,7 @@
  *     Sopot Cela <sopotcela@gmail.com> - Bug 391961
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440810
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 380233
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 485829
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
@@ -609,7 +610,7 @@ public class PerspectiveSwitcher {
 		return psItem;
 	}
 
-	// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
+	// FIXME see https://bugs.eclipse.org/bugs/show_bug.cgi?id=385547
 	private IPerspectiveDescriptor getDescriptorFor(String id) {
 		IPerspectiveRegistry perspectiveRegistry = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry();
