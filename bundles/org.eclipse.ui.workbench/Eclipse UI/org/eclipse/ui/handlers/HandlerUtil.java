@@ -36,6 +36,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  *
  * @since 3.3
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class HandlerUtil {
 	private static void noVariableFound(ExecutionEvent event, String name)

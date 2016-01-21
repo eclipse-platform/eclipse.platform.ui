@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/handlers/HandlerUtil.java" type="org.eclipse.ui.handlers.HandlerUtil">
+        <filter comment="Made documented restrictions official" id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.handlers.HandlerUtil"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
