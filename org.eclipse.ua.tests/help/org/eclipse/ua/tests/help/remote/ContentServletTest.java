@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,68 +10,72 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ContentServletTest extends TestCase {
-	
+public class ContentServletTest {
+
 	private static final String UA_TESTS = "org.eclipse.ua.tests";
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testSimpleContent() throws Exception {
 		final String path = "/data/help/index/topic1.html";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
-		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
 	    assertEquals(remoteContent, localContent);
 	}
 
+	@Test
 	public void testFilteredContent() throws Exception {
 		final String path = "/data/help/manual/filter.xhtml";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
-		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
 	    assertEquals(remoteContent, localContent);
 	}
 
+	@Test
 	public void testContentInEnLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
-		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
 	    assertEquals(remoteContent, localContent);
 	}
-	
+
+	@Test
 	public void testContentInDeLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
 		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "de");
-		String enLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
-		String deLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, "/nl/de" + path);	   
+		String enLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);
+		String deLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, "/nl/de" + path);
 	    assertEquals(remoteContent, deLocalContent);
 	    assertFalse(remoteContent.equals(enLocalContent));
 	}
-	
+
+	@Test(expected = IOException.class)
 	public void testRemoteContentNotFound() throws Exception {
-		try {
-			RemoteTestUtils.getRemoteContent(UA_TESTS, "/no/such/path.html", "en");
-			fail("No exception thrown");
-		} catch (IOException e) {
-			// Exception caught as expected
-		}	
+		RemoteTestUtils.getRemoteContent(UA_TESTS, "/no/such/path.html", "en");
 	}
 
-	
-	
+
+
 }

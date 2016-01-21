@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,42 +14,44 @@ package org.eclipse.ua.tests.help.remote;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.ua.tests.help.search.SearchTestUtils;
 import org.eclipse.ua.tests.help.util.ParallelTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public class ParallelSearchUsingRemote {
 
-public class ParallelSearchUsingRemote extends TestCase {
-	
 	private class Searcher implements ParallelTestSupport.ITestCase {
-	
+
 	private int count = 0;
 		@Override
 		public String runTest() throws Exception {
 			count++;
 			return SearchTestUtils.searchForExpectedResults
 					(searchWords[count%3], expectedResults[count%3], "en");
-		}	
+		}
 	}
-	
+
 	private int mode;
 	private String[] searchWords = new String[] {"endfdsadsads", "dedfdsadsads", "jehcyqpfjs" };
-	private String[][] expectedResults = new String[][] { 
+	private String[][] expectedResults = new String[][] {
 			new String[] { "http://www.eclipse.org" },
 			new String[0],
 			new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml" }
-	}; 
+	};
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testSearchOnOneThreadWithRemote() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();
@@ -57,6 +59,7 @@ public class ParallelSearchUsingRemote extends TestCase {
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
 
+	@Test
 	public void testSearchInParallelWithRemote() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setMockRemoteServer();

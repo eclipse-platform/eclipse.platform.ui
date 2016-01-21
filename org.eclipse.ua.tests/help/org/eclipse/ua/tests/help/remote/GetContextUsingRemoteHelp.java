@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,32 +11,38 @@
 
 package org.eclipse.ua.tests.help.remote;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContext3;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class GetContextUsingRemoteHelp extends TestCase {
-	
+public class GetContextUsingRemoteHelp {
+
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 		RemotePreferenceStore.setMockRemoteServer();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testContextDefaultLocale() throws Exception {
 		IContext context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.test_one", "en");
 		assertNotNull(context);
@@ -50,7 +56,8 @@ public class GetContextUsingRemoteHelp extends TestCase {
 		context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.test_one", "en");
         assertNull(context);
 	}
-	
+
+	@Test
 	public void testLocalContextBeatsRemote() throws Exception {
 		IContext context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.test_cheatsheets", "en");
 		assertNotNull(context);
@@ -59,12 +66,14 @@ public class GetContextUsingRemoteHelp extends TestCase {
 		String topicLabel = relatedTopics[0].getLabel();
 		assertEquals("abcdefg", topicLabel);
 	}
-	
+
+	@Test
 	public void testContextDeLocale() throws Exception {
 		IContext context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.test_one", "de");
 		assertEquals("context_one_de", ((IContext3)context).getTitle());
 	}
-	
+
+	@Test
 	public void testContextNotFound() throws Exception {
 		IContext context = HelpPlugin.getContextManager().getContext("org.eclipse.ua.tests.no_such_ctx", "en");
         assertNull(context);

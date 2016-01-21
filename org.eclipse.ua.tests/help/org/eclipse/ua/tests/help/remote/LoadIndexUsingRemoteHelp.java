@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,37 @@
 
 package org.eclipse.ua.tests.help.remote;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class LoadIndexUsingRemoteHelp extends TestCase {
-	
+public class LoadIndexUsingRemoteHelp {
+
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
         mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testIndexContribution() throws Exception {
 		String locale = "en";
 		HelpPlugin.getIndexManager().clearCache();
@@ -50,7 +54,8 @@ public class LoadIndexUsingRemoteHelp extends TestCase {
 		assertEquals(1, matchingEntries(index, "entry1_" + locale).length);
 		assertEquals(1, matchingEntries(index, "entry2_" + locale).length);
 	}
-	
+
+	@Test
 	public void testIndexWithTwoRemoteServers() throws Exception {
 		String locale = "en";
 		HelpPlugin.getIndexManager().clearCache();

@@ -11,7 +11,7 @@
 
 package org.eclipse.ua.tests.help.remote;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -19,29 +19,33 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteIC;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class RemotePreferenceTest extends TestCase {
+public class RemotePreferenceTest {
 
 	public static void setPreference(String name, String value) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(name, value);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
         RemotePreferenceStore.savePreferences();
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 	}
-	
+
 	private void setToDefault(String preference) {
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.remove(preference);
 	}
-	
+
+	@Test
 	public void testDefaults() {
 		setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME);
 		setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
@@ -51,13 +55,14 @@ public class RemotePreferenceTest extends TestCase {
 		setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
 		setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
-		assertEquals(0, handler.getTotalRemoteInfocenters());	
+		assertEquals(0, handler.getTotalRemoteInfocenters());
 		assertEquals(0, handler.getEnabledEntries().length);
 	}
 
 	/*
 	 * Test the default settings from Eclipse 3.3
 	 */
+	@Test
 	public void test33Defaults() {
 		setPreference("remoteHelpOn", "false");
 		setPreference("remoteHelpHost", "");
@@ -71,10 +76,11 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(0, handler.getTotalRemoteInfocenters());
 		assertEquals(0, handler.getEnabledEntries().length);
 	}
-	
+
 	/*
 	 * Test settings which worked in Eclipse 3.3 to read a remote infocenter
 	 */
+	@Test
 	public void test33Remote() {
 		setPreference("remoteHelpOn", "true");
 		setPreference("remoteHelpHost", "localhost");
@@ -88,7 +94,8 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(1, handler.getTotalRemoteInfocenters());
 		assertEquals(1, handler.getEnabledEntries().length);
 	}
-	
+
+	@Test
 	public void testZeroRemoteInfocenters() {
 		setPreference("remoteHelpOn", "true");
 		setPreference("remoteHelpHost", "");
@@ -105,7 +112,8 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(0, handler.getEnabledEntries().length);
 		assertEquals(0, handler.getPathEntries().length);
 	}
-	
+
+	@Test
 	public void testOneRemoteInfocenter() {
 		setPreference("remoteHelpOn", "true");
 		setPreference("remoteHelpHost", "localhost");
@@ -126,7 +134,8 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(1, handler.getPathEntries().length);
 		assertEquals("/help", handler.getPathEntries()[0].toLowerCase());
 	}
-	
+
+	@Test
 	public void testTwoRemoteInfocenters() {
 		setPreference("remoteHelpHost", "localhost,www.eclipse.org");
 		setPreference("remoteHelpPath", "/help,/eclipse/help");
@@ -151,6 +160,7 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals("/eclipse/help", handler.getPathEntries()[1].toLowerCase());
 	}
 
+	@Test
 	public void testOnePathTwoOfEverythingElse() {
 		setPreference("remoteHelpOn", "true");
 		setPreference("remoteHelpHost", "localhost");
@@ -171,7 +181,8 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(1, handler.getPathEntries().length);
 		assertEquals("/help", handler.getPathEntries()[0].toLowerCase());
 	}
-	
+
+	@Test
 	public void testPathOnly() {
 		setPreference("remoteHelpOn", "true");
 		setPreference("remoteHelpHost", "localhost");
@@ -193,6 +204,7 @@ public class RemotePreferenceTest extends TestCase {
 		//assertEquals("/help", handler.getPathEntries()[0].toLowerCase());
 	}
 
+	@Test
 	public void testWriteNoRemote() {
 		PreferenceFileHandler.commitRemoteICs(new RemoteIC[0]);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
@@ -203,6 +215,7 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(0, handler.getPathEntries().length);
 	}
 
+	@Test
 	public void testWriteOneRemote() {
 		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "http","8080")};
 		PreferenceFileHandler.commitRemoteICs(ic);
@@ -217,7 +230,8 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals(1, handler.getPathEntries().length);
 		assertEquals("/help", handler.getPathEntries()[0].toLowerCase());
 	}
-	
+
+	@Test
 	public void testWriteTwoRemote() {
 		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "http", "8080"),
 				new RemoteIC(false, "remote", "remotehost", "/help2", "http", "8081")};
@@ -237,5 +251,5 @@ public class RemotePreferenceTest extends TestCase {
 		assertEquals("/help", handler.getPathEntries()[0].toLowerCase());
 		assertEquals("/help2", handler.getPathEntries()[1].toLowerCase());
 	}
-		
+
 }

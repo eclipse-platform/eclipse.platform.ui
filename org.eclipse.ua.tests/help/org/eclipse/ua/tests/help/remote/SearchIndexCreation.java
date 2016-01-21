@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,10 @@
 
 package org.eclipse.ua.tests.help.remote;
 
-import java.net.URL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.help.internal.HelpPlugin;
@@ -21,14 +22,17 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
 import org.eclipse.help.internal.search.SearchIndex;
 import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SearchIndexCreation extends TestCase {
-	
+public class SearchIndexCreation {
+
 	private int mode;
 	private AnalyzerDescriptor analyzerDesc;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
         mode = BaseHelpSystem.getMode();
         RemotePreferenceStore.savePreferences();
@@ -38,13 +42,14 @@ public class SearchIndexCreation extends TestCase {
 		HelpPlugin.getTocManager().getTocs("en");
 		analyzerDesc = new AnalyzerDescriptor("en-us");
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testSearchIndexMakesNoRemoteCalls() throws Throwable {
 		int initialCallCount = MockContentServlet.getCallcount();
 		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
@@ -57,7 +62,8 @@ public class SearchIndexCreation extends TestCase {
 		int finalCallCount = MockContentServlet.getCallcount();
 		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
 	}
-	
+
+	@Test
 	public void testSearchIndexMakesNoRemoteCalls2() throws Throwable {
 		int initialCallCount = MockContentServlet.getCallcount();
 		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
@@ -70,7 +76,8 @@ public class SearchIndexCreation extends TestCase {
 		int finalCallCount = MockContentServlet.getCallcount();
 		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
 	}
-	
+
+	@Test
 	public void testSearchIndexMakesNoRemoteCallsRemotePriority() throws Throwable {
 		RemotePreferenceStore.setMockRemotePriority();
 		int initialCallCount = MockContentServlet.getCallcount();

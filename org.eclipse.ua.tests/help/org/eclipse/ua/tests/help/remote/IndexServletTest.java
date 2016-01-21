@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,90 +21,104 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.internal.server.WebappManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-public class IndexServletTest extends TestCase {
-	
+public class IndexServletTest {
+
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testIndexServletContainsSimpleWord() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "xyz");
 	    assertEquals(1, UARoot.length);
 	}
-	
+
+	@Test
 	public void testIndexServletContainsWordWithAccent() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "\u00E1mbito");
 	    assertEquals(1, UARoot.length);
 	}
 
+	@Test
 	public void testIndexServletContainsWordWithGt() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "character >");
 	    assertEquals(1, UARoot.length);
 	}
 
+	@Test
 	public void testIndexServletContainsWordWithLt() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "character <");
 	    assertEquals(1, UARoot.length);
 	}
+
+	@Test
 	public void testIndexServletContainsWordWithAmp() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "character &");
 	    assertEquals(1, UARoot.length);
 	}
+
+	@Test
 	public void testIndexServletContainsWordWithQuot() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "character \"");
 	    assertEquals(1, UARoot.length);
 	}
+
+	@Test
 	public void testIndexServletContainsWordWithApostrophe() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "character '");
 	    assertEquals(1, UARoot.length);
 	}
 
+	@Test
 	public void testDeWordNotInEnIndex() throws Exception {
 		Node root = getIndexContributions("en");
 		Element[] UARoot = findEntryInAllContributions(root, "munich");
 	    assertEquals(0, UARoot.length);
 	}
-	
+
+	@Test
 	public void testWordInDeIndex() throws Exception {
 		Node root = getIndexContributions("de");
 		Element[] UARoot = findEntryInAllContributions(root, "munich");
 	    assertEquals(1, UARoot.length);
 	}
-	
+
+	@Test
 	public void testWordNotInDeIndex() throws Exception {
 		Node root = getIndexContributions("de");
 		Element[] UARoot = findEntryInAllContributions(root, "xyz");
 	    assertEquals(0, UARoot.length);
 	}
-	
+
 	private Element[] findEntryInAllContributions(Node parent, String keyword) {
 		NodeList contributions = parent.getChildNodes();
 		List<Node> results = new ArrayList<Node>();
@@ -116,8 +132,8 @@ public class IndexServletTest extends TestCase {
 			}
 		}
 		return results.toArray(new Element[results.size()]);
-	} 
-	
+	}
+
 	private void findEntryInIndexContribution(Element parent, String keyword,
 			List<Node> results) {
 		NodeList indexes = parent.getChildNodes();
@@ -163,5 +179,5 @@ public class IndexServletTest extends TestCase {
 		assertEquals("indexContributions", root.getNodeName());
 		return root;
 	}
-	
+
 }

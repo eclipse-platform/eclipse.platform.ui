@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.index;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,27 +34,27 @@ import org.eclipse.help.internal.index.IndexFile;
 import org.eclipse.help.internal.index.IndexFileParser;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class IndexAssemblerTest extends TestCase {
-	
+public class IndexAssemblerTest {
+	@Test
 	public void testAssemble() throws Exception {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution a = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/a.xml", "en"));
 		IndexContribution b = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/b.xml", "en"));
 		IndexContribution c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/c.xml", "en"));
 		IndexContribution result_a_b_c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/result_a_b_c.xml", "en"));
-		
+
 		IndexAssembler assembler = new IndexAssembler();
 		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(a, b, c));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());
-		
+
 		String expected = serialize((UAElement)result_a_b_c.getIndex());
 		String actual = serialize(assembled);
 		assertEquals(trimWhiteSpace(expected), trimWhiteSpace(actual));
 	}
-	
+
+	@Test
 	public void testAssembleWithSeeAlso() throws Exception {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/d.xml", "en"));
@@ -78,10 +81,11 @@ public class IndexAssemblerTest extends TestCase {
 	    assertEquals(1, heliosSees.length);
 	    assertEquals("eclipse", heliosSees[0].getKeyword());
 	}
-	
+
+	@Test
 	public void testTitle() throws Exception{
 		IndexFileParser parser = new IndexFileParser();
-		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/hasTitle.xml", "en"));	
+		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/hasTitle.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
 		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(contrib));
 		Index index = assembler.assemble(contributions, Platform.getNL());
@@ -94,9 +98,9 @@ public class IndexAssemblerTest extends TestCase {
 	    assertEquals("topic1", topics[1].getLabel());
 	    assertEquals("topic2", topics[2].getLabel());
 	}
-	
+
 	// Replaces white space between ">" and "<" by a single newline
-	
+
 	private String trimWhiteSpace(String input) {
 		StringBuffer result = new StringBuffer();
 		boolean betweenElements = false;
@@ -108,7 +112,7 @@ public class IndexAssemblerTest extends TestCase {
 					if (next == '<') {
 						betweenElements = false;
 					}
-				}			
+				}
 			} else {
 				result.append(next);
 				if (next == '>') {

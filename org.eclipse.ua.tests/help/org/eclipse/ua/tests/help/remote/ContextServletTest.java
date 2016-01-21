@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Snehasish Paul <snehpaul@in.ibm.com> - Eclipse help public API services
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,11 +25,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.internal.server.WebappManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,42 +38,40 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ContextServletTest extends TestCase {
-	
+public class ContextServletTest {
+
 	private int mode;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
 		mode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 	}
-	
-	@Override
-	protected void tearDown() throws Exception {
+
+	@After
+	public void tearDown() throws Exception {
 		BaseHelpSystem.setMode(mode);
 	}
 
+	@Test
 	public void testRemoteContextFound() throws Exception {
 		Element[] topics = getContextsFromServlet("org.eclipse.ua.tests.test_cheatsheets");
 		assertEquals(1, topics.length);
-		assertEquals("abcdefg", topics[0].getAttribute("label")); 
+		assertEquals("abcdefg", topics[0].getAttribute("label"));
 	}
-	
+
+	@Test
 	public void testRemoteContextFoundDe() throws Exception {
 		Element[] topics = getContextsUsingLocale
 		    ("org.eclipse.ua.tests.test_cheatsheets", "de");
 		assertEquals(1, topics.length);
-		assertEquals("German Context", topics[0].getAttribute("label")); 
+		assertEquals("German Context", topics[0].getAttribute("label"));
 	}
-	
+
+	@Test(expected = IOException.class)
 	public void testRemoteContextNotFound() throws Exception {
-		try {
-			getContextsFromServlet("org.eclipse.ua.tests.no_such_context");
-			fail("No exception thrown");
-		} catch (IOException e) {
-            // IO exception caught as expected
-		}
+		getContextsFromServlet("org.eclipse.ua.tests.no_such_context");
 	}
 
 	protected Element[] getContextsFromServlet(String phrase)
@@ -79,7 +80,7 @@ public class ContextServletTest extends TestCase {
 		URL url = new URL("http", "localhost", port, "/help/context?id=" + URLEncoder.encode(phrase, "UTF-8"));
 		return makeServletCall(url);
 	}
-	
+
 	protected Element[] getContextsUsingLocale(String phrase, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
@@ -110,5 +111,5 @@ public class ContextServletTest extends TestCase {
 		}
 		return topics.toArray(new Element[topics.size()]);
 	}
-	
+
 }
