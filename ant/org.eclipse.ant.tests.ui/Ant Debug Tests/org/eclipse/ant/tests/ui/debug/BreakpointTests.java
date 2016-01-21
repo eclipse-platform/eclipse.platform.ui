@@ -45,7 +45,7 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	private void deferredBreakpoints(boolean sepVM) throws Exception, CoreException, DebugException {
 		String fileName = "breakpoints"; //$NON-NLS-1$
 		IFile file = getIFile(fileName + ".xml"); //$NON-NLS-1$
-		List<AntLineBreakpoint> bps = new ArrayList<AntLineBreakpoint>();
+		List<AntLineBreakpoint> bps = new ArrayList<>();
 		bps.add(createLineBreakpoint(5, file));
 		bps.add(createLineBreakpoint(14, file));
 		AntThread thread = null;

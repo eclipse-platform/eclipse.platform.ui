@@ -137,7 +137,7 @@ public class BuildTests extends AbstractAntUIBuildTest {
 		ILaunchConfiguration config = getLaunchConfiguration("74840"); //$NON-NLS-1$
 		assertNotNull("Could not locate launch configuration for " + "74840", config); //$NON-NLS-1$ //$NON-NLS-2$
 		ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
-		Map<String, String> properties = new HashMap<String, String>(1);
+		Map<String, String> properties = new HashMap<>(1);
 		properties.put("platform.location", "${workspace_loc}"); //$NON-NLS-1$ //$NON-NLS-2$
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);

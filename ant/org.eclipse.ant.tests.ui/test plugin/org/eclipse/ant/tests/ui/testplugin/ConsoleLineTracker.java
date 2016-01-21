@@ -25,7 +25,7 @@ import org.eclipse.jface.text.IRegion;
 public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 
 	private static IConsole console;
-	private static List<IRegion> lines = new ArrayList<IRegion>();
+	private static List<IRegion> lines = new ArrayList<>();
 
 	private static boolean consoleClosed = true;
 
@@ -44,7 +44,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	public void init(IConsole c) {
 		synchronized (lines) {
 			ConsoleLineTracker.console = c;
-			lines = new ArrayList<IRegion>();
+			lines = new ArrayList<>();
 			consoleClosed = false;
 		}
 	}
@@ -75,7 +75,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	}
 
 	public static List<String> getAllMessages() {
-		List<String> all = new ArrayList<String>(lines.size());
+		List<String> all = new ArrayList<>(lines.size());
 		for (int i = 0; i < lines.size(); i++) {
 			IRegion lineRegion = lines.get(i);
 			try {

@@ -122,7 +122,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return a map of 2.0 arguments for an Ant buildfile.
 	 */
 	protected Map<String, String> get20AntArgumentMap() {
-		HashMap<String, String> arguments = new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.ant"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "ant tool"); //$NON-NLS-1$
@@ -142,7 +142,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return a map of 2.0 arguments for a program
 	 */
 	protected Map<String, String> get20ProgramArgumentMap() {
-		HashMap<String, String> arguments = new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.program"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "program tool"); //$NON-NLS-1$
@@ -162,7 +162,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return a map of 2.1 arguments for an Ant buildfile
 	 */
 	protected Map<String, String> get21AntArgumentMap() {
-		HashMap<String, String> arguments = new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_NAME, "ant config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, ExternalToolMigration.TOOL_TYPE_ANT_BUILD);
@@ -187,7 +187,7 @@ public abstract class AbstractExternalToolTest extends AbstractAntUITest {
 	 * @return a map of 2.1 arguments for a program
 	 */
 	protected Map<String, String> get21ProgramArgumentMap() {
-		HashMap<String, String> arguments = new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<>();
 		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_NAME, "program config"); //$NON-NLS-1$
 		arguments.put(ExternalToolMigration.TAG_TYPE, IExternalToolConstants.TOOL_TYPE_PROGRAM);

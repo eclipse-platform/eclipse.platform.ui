@@ -58,7 +58,7 @@ public class AntUtilTests extends AbstractAntUITest {
 		File buildFile = getBuildFile(buildFileName + ".xml"); //$NON-NLS-1$
 		String arguments = "-DimportFileName=toBeImported.xml"; //$NON-NLS-1$
 		// arguments should win
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("importFileName", "notToBeImported.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		String propertyFiles = null;
 		AntTargetNode[] targets = AntUtil.getTargets(buildFile.getAbsolutePath(), getLaunchConfiguration(buildFileName, arguments, properties, propertyFiles));
@@ -71,7 +71,7 @@ public class AntUtilTests extends AbstractAntUITest {
 		String buildFileName = "importRequiringUserProp"; //$NON-NLS-1$
 		File buildFile = getBuildFile(buildFileName + ".xml"); //$NON-NLS-1$
 		String arguments = null;
-		Map<String, String> properties = new HashMap<String, String>();
+		Map<String, String> properties = new HashMap<>();
 		properties.put("importFileName", "toBeImported.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		String propertyFiles = null;
 		AntTargetNode[] targets = AntUtil.getTargets(buildFile.getAbsolutePath(), getLaunchConfiguration(buildFileName, arguments, properties, propertyFiles));

@@ -91,9 +91,9 @@ public class dumper {
 	 *            to dump
 	 */
 	private static void dumpDfm(IDfm dfm) {
-		HashMap<IDfm, Integer> map = new HashMap<IDfm, Integer>();
+		HashMap<IDfm, Integer> map = new HashMap<>();
 		dumpDfm(dfm, map, 0);
-		LinkedList<State> list = new LinkedList<State>();
+		LinkedList<State> list = new LinkedList<>();
 		Iterator<Entry<IDfm, Integer>> it = map.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<IDfm, Integer> entry = it.next();
