@@ -61,5 +61,7 @@
     <module>org.eclipse.ui.cheatsheets</module>
     <module>org.eclipse.ui.intro</module>
     <module>org.eclipse.ui.intro.universal</module>
+    <module>org.eclipse.ui.intro.quicklinks</module>
+    <module>org.eclipse.ui.intro.quicklinks.examples</module>
   </modules>
 </project>
