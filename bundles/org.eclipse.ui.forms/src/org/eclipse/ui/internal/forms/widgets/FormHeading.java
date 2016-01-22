@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -362,7 +362,7 @@ public class FormHeading extends Canvas {
 		private CLabel messageLabel;
 		private IMessage[] messages;
 		private Hyperlink messageHyperlink;
-		private ListenerList listeners;
+		private ListenerList<IHyperlinkListener> listeners;
 		private Color fg;
 		private int fontHeight = -1;
 		private int fontBaselineHeight = -1;
@@ -474,7 +474,7 @@ public class FormHeading extends Canvas {
 
 		public void addMessageHyperlinkListener(IHyperlinkListener listener) {
 			if (listeners == null)
-				listeners = new ListenerList();
+				listeners = new ListenerList<>();
 			listeners.add(listener);
 			ensureControlExists();
 			if (messageHyperlink != null)
@@ -506,10 +506,9 @@ public class FormHeading extends Canvas {
 					messageHyperlink.setBackground(getBackground());
 					messageHyperlink.setText(message);
 					messageHyperlink.setHref(messages);
-					Object[] llist = listeners.getListeners();
-					for (Object element : llist)
+					for (IHyperlinkListener element : listeners)
 						messageHyperlink
-								.addHyperlinkListener((IHyperlinkListener) element);
+								.addHyperlinkListener(element);
 					if (messageToolTipManager != null)
 						messageToolTipManager.createToolTip(messageHyperlink, false);
 				} else if (!messageHyperlink.getVisible()) {

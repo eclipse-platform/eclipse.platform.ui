@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -223,7 +223,7 @@ public class ExpandableComposite extends Canvas {
 
 	private Control client;
 
-	private ListenerList listeners = new ListenerList();
+	private ListenerList<IExpansionListener> listeners = new ListenerList<>();
 
 	private Color titleBarForeground;
 
@@ -1082,9 +1082,7 @@ public class ExpandableComposite extends Canvas {
 		if (size == 0)
 			return;
 		ExpansionEvent e = new ExpansionEvent(this, state);
-		Object [] listenerList = listeners.getListeners();
-		for (int i = 0; i < size; i++) {
-			IExpansionListener listener = (IExpansionListener) listenerList[i];
+		for (IExpansionListener listener : listeners) {
 			if (before)
 				listener.expansionStateChanging(e);
 			else
