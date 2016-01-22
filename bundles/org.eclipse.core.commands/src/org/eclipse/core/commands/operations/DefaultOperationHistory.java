@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationApprover}s
 	 */
-	ListenerList approvers = new ListenerList(ListenerList.IDENTITY);
+	ListenerList<IOperationApprover> approvers = new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * a map of undo limits per context
@@ -124,7 +124,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationHistoryListener}s
 	 */
-	ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+	ListenerList<IOperationHistoryListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	/**
 	 * the list of operations available for redo, LIFO
@@ -724,10 +724,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getRedoApproval(IUndoableOperation operation, IAdaptable info) {
 
-		final Object[] approverArray = approvers.getListeners();
-
-		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = (IOperationApprover) approverArray[i];
+		for (IOperationApprover approver : approvers) {
 			IStatus approval = approver.proceedRedoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -768,10 +765,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getUndoApproval(IUndoableOperation operation, IAdaptable info) {
 
-		final Object[] approverArray = approvers.getListeners();
-
-		for (int i = 0; i < approverArray.length; i++) {
-			IOperationApprover approver = (IOperationApprover) approverArray[i];
+		for (IOperationApprover approver : approvers) {
 			IStatus approval = approver.proceedUndoing(operation, this, info);
 			if (!approval.isOK()) {
 				if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -814,11 +808,9 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	 */
 	private IStatus getExecuteApproval(IUndoableOperation operation, IAdaptable info) {
 
-		final Object[] approverArray = approvers.getListeners();
-
-		for (int i = 0; i < approverArray.length; i++) {
-			if (approverArray[i] instanceof IOperationApprover2) {
-				IOperationApprover2 approver = (IOperationApprover2) approverArray[i];
+		for (IOperationApprover tmp : approvers) {
+			if (tmp instanceof IOperationApprover2) {
+				IOperationApprover2 approver = (IOperationApprover2) tmp;
 				IStatus approval = approver.proceedExecuting(operation, this, info);
 				if (!approval.isOK()) {
 					if (DEBUG_OPERATION_HISTORY_APPROVAL) {
@@ -863,9 +855,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				}
 			});
 		}
-		final Object[] listenerArray = listeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			final IOperationHistoryListener listener = (IOperationHistoryListener) listenerArray[i];
+		for (final IOperationHistoryListener listener : listeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

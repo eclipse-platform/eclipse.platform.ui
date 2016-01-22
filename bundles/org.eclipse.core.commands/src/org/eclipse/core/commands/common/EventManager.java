@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public abstract class EventManager {
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient ListenerList listenerList = null;
+	private transient ListenerList<Object> listenerList = null;
 
 	/**
 	 * Adds a listener to this manager that will be notified when this manager's
@@ -48,7 +48,7 @@ public abstract class EventManager {
 	 */
 	protected synchronized final void addListenerObject(final Object listener) {
 		if (listenerList == null) {
-			listenerList = new ListenerList(ListenerList.IDENTITY);
+			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		listenerList.add(listener);
@@ -70,7 +70,7 @@ public abstract class EventManager {
 	 *         <code>null</code>
 	 */
 	protected final Object[] getListeners() {
-		final ListenerList list = listenerList;
+		final ListenerList<Object> list = listenerList;
 		if (list == null) {
 			return EMPTY_ARRAY;
 		}

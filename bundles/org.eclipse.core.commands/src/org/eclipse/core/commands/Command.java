@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	 * A collection of objects listening to the execution of this command. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient ListenerList executionListeners;
+	private transient ListenerList<IExecutionListener> executionListeners;
 
 	boolean shouldFireEvents = true;
 
@@ -166,7 +166,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners == null) {
-			executionListeners = new ListenerList(ListenerList.IDENTITY);
+			executionListeners = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		executionListeners.add(executionListener);
@@ -556,9 +556,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final Object object = listeners[i];
+			for (final IExecutionListener object : executionListeners) {
 				if (object instanceof IExecutionListenerWithChecks) {
 					final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
 					listener.notDefined(getId(), e);
@@ -584,9 +582,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final Object object = listeners[i];
+			for (final IExecutionListener object : executionListeners) {
 				if (object instanceof IExecutionListenerWithChecks) {
 					final IExecutionListenerWithChecks listener = (IExecutionListenerWithChecks) object;
 					listener.notEnabled(getId(), e);
@@ -611,9 +607,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IExecutionListener listener = (IExecutionListener) listeners[i];
+			for (final IExecutionListener listener : executionListeners) {
 				listener.notHandled(getId(), e);
 			}
 		}
@@ -636,9 +630,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IExecutionListener listener = (IExecutionListener) listeners[i];
+			for (final IExecutionListener listener : executionListeners) {
 				listener.postExecuteFailure(getId(), e);
 			}
 		}
@@ -660,9 +652,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IExecutionListener listener = (IExecutionListener) listeners[i];
+			for (final IExecutionListener listener : executionListeners) {
 				listener.postExecuteSuccess(getId(), returnValue);
 			}
 		}
@@ -683,9 +673,7 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 		}
 
 		if (executionListeners != null) {
-			final Object[] listeners = executionListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IExecutionListener listener = (IExecutionListener) listeners[i];
+			for (final IExecutionListener listener : executionListeners) {
 				listener.preExecute(getId(), event);
 			}
 		}
