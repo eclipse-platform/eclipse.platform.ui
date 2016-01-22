@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -358,12 +358,12 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * The collection of debug event listeners.
 	 */
-	private ListenerList fEventListeners = new ListenerList();
+	private ListenerList<IDebugEventSetListener> fEventListeners = new ListenerList<>();
 
 	/**
 	 * Event filters, or <code>null</code> if none.
 	 */
-	private ListenerList fEventFilters = new ListenerList();
+	private ListenerList<IDebugEventFilter> fEventFilters = new ListenerList<>();
 
 	/**
 	 * Whether this plug-in is in the process of shutting
@@ -920,16 +920,6 @@ public class DebugPlugin extends Plugin {
 		fShuttingDown = value;
 	}
 
-	/**
-	 * Returns the collection of debug event listeners registered
-	 * with this plug-in.
-	 *
-	 * @return list of registered debug event listeners, instances
-	 *  of <code>IDebugEventSetListeners</code>
-	 */
-	private Object[] getEventListeners() {
-		return fEventListeners.getListeners();
-	}
 
 	/**
 	 * Adds the given debug event filter to the registered
@@ -1173,27 +1163,25 @@ public class DebugPlugin extends Plugin {
 		 */
 		void dispatch(DebugEvent[] events) {
 			fEvents = events;
-			Object[] filters = fEventFilters.getListeners();
-			if (filters.length > 0) {
+			if (!fEventFilters.isEmpty()) {
 				fMode = NOTIFY_FILTERS;
-				for (int i = 0; i < filters.length; i++) {
-					fFilter = (IDebugEventFilter)filters[i];
-                    SafeRunner.run(this);
-					if (fEvents == null || fEvents.length == 0) {
-						return;
-					}
+			}
+			for (IDebugEventFilter iDebugEventFilter : fEventFilters) {
+				fFilter = iDebugEventFilter;
+				SafeRunner.run(this);
+				if (fEvents == null || fEvents.length == 0) {
+					return;
 				}
 			}
 
 			fMode = NOTIFY_EVENTS;
-			Object[] listeners= getEventListeners();
 			if (DebugOptions.DEBUG_EVENTS) {
 				for (int i = 0; i < fEvents.length; i++) {
 					DebugOptions.trace(fEvents[i].toString());
 				}
 			}
-			for (int i= 0; i < listeners.length; i++) {
-				fListener = (IDebugEventSetListener)listeners[i];
+			for (IDebugEventSetListener iDebugEventSetListener : fEventListeners) {
+				fListener = iDebugEventSetListener;
                 SafeRunner.run(this);
 			}
 			fEvents = null;

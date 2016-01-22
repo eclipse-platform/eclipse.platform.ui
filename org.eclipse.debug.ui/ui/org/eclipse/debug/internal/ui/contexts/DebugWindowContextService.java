@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,9 +46,9 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public class DebugWindowContextService implements IDebugContextService, IPartListener2, IDebugContextListener {
 	
-	private Map<String, ListenerList> fListenersByPartId = new HashMap<String, ListenerList>();
+	private Map<String, ListenerList<IDebugContextListener>> fListenersByPartId = new HashMap<>();
 	private Map<String, IDebugContextProvider> fProvidersByPartId = new HashMap<String, IDebugContextProvider>();
-	private Map<String, ListenerList> fPostListenersByPartId = new HashMap<String, ListenerList>();
+	private Map<String, ListenerList<IDebugContextListener>> fPostListenersByPartId = new HashMap<>();
 	
 	private IWorkbenchWindow fWindow;
 	private List<IDebugContextProvider> fProviders = new ArrayList<IDebugContextProvider>();
@@ -146,9 +146,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	
 	@Override
 	public void addPostDebugContextListener(IDebugContextListener listener, String partId) {
-		ListenerList list = fPostListenersByPartId.get(partId);
+		ListenerList<IDebugContextListener> list = fPostListenersByPartId.get(partId);
 		if (list == null) {
-			list = new ListenerList();
+			list = new ListenerList<>();
 			fPostListenersByPartId.put(partId, list);
 		}
 		list.add(listener);	
@@ -161,7 +161,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	
 	@Override
 	public void removePostDebugContextListener(IDebugContextListener listener, String partId) {
-		ListenerList list = fPostListenersByPartId.get(partId);
+		ListenerList<IDebugContextListener> list = fPostListenersByPartId.get(partId);
 		if (list != null) {
 			list.remove(listener);
 		}
@@ -244,8 +244,8 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         String id = null; 
         if (part != null) { 
             id = getCombinedPartId(part); 
-            ListenerList listenerList = fListenersByPartId.get(id); 
-            return listenerList != null ? listenerList.getListeners() : new Object[0]; 
+			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(id);
+			return listenerList != null ? listenerList.getListeners() : new Object[0];
         } else { 
 			List<Object> retVal = new ArrayList<Object>();
             retVal.addAll(Arrays.asList(fListenersByPartId.get(null).getListeners()) ); 
@@ -277,11 +277,11 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		String id = null; 
         if (part != null) { 
             id = getCombinedPartId(part); 
-            ListenerList listenerList = fPostListenersByPartId.get(id); 
+            ListenerList<IDebugContextListener> listenerList = fPostListenersByPartId.get(id); 
             return listenerList != null ? listenerList.getListeners() : new Object[0]; 
         } else { 
 			List<Object> retVal = new ArrayList<Object>();
-            ListenerList postListenersList = fPostListenersByPartId.get(null); 
+            ListenerList<IDebugContextListener> postListenersList = fPostListenersByPartId.get(null); 
             if (postListenersList != null) { 
                 retVal.addAll( Arrays.asList(postListenersList.getListeners()) ); 
             } 
@@ -307,9 +307,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	 */
 	@Override
 	public synchronized void addDebugContextListener(IDebugContextListener listener, String partId) {
-		ListenerList list = fListenersByPartId.get(partId);
+		ListenerList<IDebugContextListener> list = fListenersByPartId.get(partId);
 		if (list == null) {
-			list = new ListenerList();
+			list = new ListenerList<>();
 			fListenersByPartId.put(partId, list);
 		}
 		list.add(listener);
@@ -320,7 +320,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 	 */
 	@Override
 	public void removeDebugContextListener(IDebugContextListener listener, String partId) {
-		ListenerList list = fListenersByPartId.get(partId);
+		ListenerList<IDebugContextListener> list = fListenersByPartId.get(partId);
 		if (list != null) {
 			list.remove(listener);
 			if (list.size() == 0) {

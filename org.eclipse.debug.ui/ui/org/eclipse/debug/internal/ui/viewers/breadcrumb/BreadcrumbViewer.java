@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	private final int fStyle;
 	private final Composite fContainer;
 	private final ArrayList<BreadcrumbItem> fBreadcrumbItems;
-	private final ListenerList fMenuListeners;
+	private final ListenerList<MenuDetectListener> fMenuListeners;
 
 	private Image fGradientBackground;
 	private BreadcrumbItem fSelectedItem;
@@ -94,7 +94,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	public BreadcrumbViewer(Composite parent, int style) {
 	    fStyle = style;
 		fBreadcrumbItems = new ArrayList<BreadcrumbItem>();
-		fMenuListeners= new ListenerList();
+		fMenuListeners= new ListenerList<>();
 
 		fContainer= new Composite(parent, SWT.NONE);
 		GridData layoutData= new GridData(SWT.FILL, SWT.TOP, true, false);
@@ -543,9 +543,8 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	 * @param event the event issued the menu detection
 	 */
 	void fireMenuDetect(MenuDetectEvent event) {
-		Object[] listeners= fMenuListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			((MenuDetectListener)listeners[i]).menuDetected(event);
+		for (MenuDetectListener menuDetectListener : fMenuListeners) {
+			menuDetectListener.menuDetected(event);
 		}
 	}
 

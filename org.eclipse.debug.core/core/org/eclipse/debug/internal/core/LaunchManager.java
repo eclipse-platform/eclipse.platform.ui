@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,12 +202,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		public void notify(ILaunchConfiguration configuration, int update) {
 			fConfiguration = configuration;
 			fType = update;
-			if (fLaunchConfigurationListeners.size() > 0) {
-				Object[] listeners = fLaunchConfigurationListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					fListener = (ILaunchConfigurationListener)listeners[i];
-                    SafeRunner.run(this);
-				}
+			for (ILaunchConfigurationListener iLaunchConfigurationListener : fLaunchConfigurationListeners) {
+				fListener = iLaunchConfigurationListener;
+				SafeRunner.run(this);
 			}
 			fConfiguration = null;
 			fListener = null;
@@ -264,9 +261,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fNotifierLaunches = launches;
 			fType = update;
 			fRegistered = null;
-			Object[] copiedListeners= fLaunchesListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (ILaunchesListener)copiedListeners[i];
+			for (ILaunchesListener iLaunchesListener : fLaunchesListeners) {
+				fListener = iLaunchesListener;
                 SafeRunner.run(this);
 			}
 			fNotifierLaunches = null;
@@ -432,9 +428,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		public void notify(ILaunch launch, int update) {
 			fLaunch = launch;
 			fType = update;
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (ILaunchListener)copiedListeners[i];
+			for (ILaunchListener iLaunchListener : fListeners) {
+				fListener = iLaunchListener;
                 SafeRunner.run(this);
 			}
 			fLaunch = null;
@@ -635,13 +630,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Collection of listeners
 	 */
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<ILaunchListener> fListeners = new ListenerList<>();
 
 	/**
 	 * Collection of "plural" listeners.
 	 * @since 2.1
 	 */
-	private ListenerList fLaunchesListeners = new ListenerList();
+	private ListenerList<ILaunchesListener> fLaunchesListeners = new ListenerList<>();
 
 	/**
 	 * Visitor used to process resource deltas,
@@ -666,7 +661,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Launch configuration listeners
 	 */
-	private ListenerList fLaunchConfigurationListeners = new ListenerList();
+	private ListenerList<ILaunchConfigurationListener> fLaunchConfigurationListeners = new ListenerList<>();
 
 	/**
 	 * Table of source locator extensions. Keys
@@ -2365,9 +2360,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Clears launch configuration types.
 	 */
 	public void shutdown() {
-		fListeners = new ListenerList();
-        fLaunchesListeners = new ListenerList();
-        fLaunchConfigurationListeners = new ListenerList();
+		fListeners = new ListenerList<>();
+		fLaunchesListeners = new ListenerList<>();
+		fLaunchConfigurationListeners = new ListenerList<>();
 		ILaunch[] launches = getLaunches();
 		ILaunch launch = null;
 		for (int i= 0; i < launches.length; i++) {

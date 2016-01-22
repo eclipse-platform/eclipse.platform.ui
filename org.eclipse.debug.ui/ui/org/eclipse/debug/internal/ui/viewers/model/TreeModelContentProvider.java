@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,12 +102,12 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
     /**
      * Model listeners
      */
-    private ListenerList fModelListeners = new ListenerList();
+	private ListenerList<IModelChangedListener> fModelListeners = new ListenerList<>();
 
     /**
      * Viewer update listeners
      */
-    private ListenerList fUpdateListeners = new ListenerList();
+	private ListenerList<IViewerUpdateListener> fUpdateListeners = new ListenerList<>();
 
     /**
      * Flag indicating whether we are currently in a model sequence.
@@ -427,10 +427,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
             trigger(null);
             
             // Call model listeners after updating the viewer model.
-            Object[] listeners = fModelListeners.getListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                ((IModelChangedListener) listeners[i]).modelChanged(delta, proxy);
-            }
+			for (IModelChangedListener iModelChangedListener : fModelListeners) {
+				iModelChangedListener.modelChanged(delta, proxy);
+			}
         }
     }
     
@@ -731,9 +730,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
      */
     private void notifyUpdate(final int type, final IViewerUpdate update) {
         if (!fUpdateListeners.isEmpty()) {
-            Object[] listeners = fUpdateListeners.getListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                final IViewerUpdateListener listener = (IViewerUpdateListener) listeners[i];
+			for (IViewerUpdateListener iViewerUpdateListener : fUpdateListeners) {
+				final IViewerUpdateListener listener = iViewerUpdateListener;
                 SafeRunner.run(new ISafeRunnable() {
                     @Override
 					public void run() throws Exception {

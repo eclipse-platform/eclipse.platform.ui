@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.console.ConsoleMessages;
 public abstract class AbstractConsole implements IConsole {
 
 	// property listeners
-	private ListenerList fListeners;
+	private ListenerList<IPropertyChangeListener> fListeners;
 
 	/**
 	 * Console name
@@ -106,9 +106,8 @@ public abstract class AbstractConsole implements IConsole {
 				return;
 			}
 			fEvent = event;
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IPropertyChangeListener)copiedListeners[i];
+			for (IPropertyChangeListener iPropertyChangeListener : fListeners) {
+				fListener = iPropertyChangeListener;
                 SafeRunner.run(this);
 			}
 			fListener = null;
@@ -202,7 +201,7 @@ public abstract class AbstractConsole implements IConsole {
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList();
+			fListeners = new ListenerList<>();
 		}
 		fListeners.add(listener);
 	}

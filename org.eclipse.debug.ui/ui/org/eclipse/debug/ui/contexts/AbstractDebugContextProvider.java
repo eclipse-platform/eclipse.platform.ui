@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/**
 	 * Event listeners
 	 */
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IDebugContextListener> fListeners = new ListenerList<>();
 	
 	/**
 	 * Part or <code>null</code>
@@ -74,10 +74,9 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	 * @param event debug context event
 	 */
 	protected void fire(final DebugContextEvent event) {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-            SafeRunner.run(new ISafeRunnable() {
+		for (IDebugContextListener iDebugContextListener : fListeners) {
+			final IDebugContextListener listener = iDebugContextListener;
+			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
 					listener.debugContextChanged(event);

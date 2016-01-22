@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
  */
 public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetListener {
 
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<ISuspendTriggerListener> fListeners = new ListenerList<>();
 	private SuspendTriggerAdapterFactory fFactory = null;
 	private ILaunch fLaunch = null;
 	
@@ -116,11 +116,10 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 				context = source;
 			}
 			final Object temp = context;
-            ListenerList list = fListeners;
+			ListenerList<ISuspendTriggerListener> list = fListeners;
             if (list != null) {
-                Object[] listeners = list.getListeners();
-        		for (int i = 0; i < listeners.length; i++) {
-        			final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
+				for (ISuspendTriggerListener iSuspendTriggerListener : list) {
+					final ISuspendTriggerListener listener = iSuspendTriggerListener;
         			SafeRunner.run(new ISafeRunnable() {
         				@Override
 						public void run() throws Exception {

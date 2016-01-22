@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,15 +43,15 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	private ArrayList<Object> fTopIndexQueue = new ArrayList<Object>();
 
 	private boolean fPendingResizeColumns;
-	private ListenerList fVirtualContentListeners;
+	private ListenerList<IVirtualContentListener> fVirtualContentListeners;
 	private SelectionListener fScrollSelectionListener;
-	private ListenerList fPresentationErrorListeners;
+	private ListenerList<IPresentationErrorListener> fPresentationErrorListeners;
 	private Object fTopIndexKey;
 
 	public AsyncVirtualContentTableViewer(Composite parent, int style) {
 		super(parent, style);
-		fVirtualContentListeners = new ListenerList();
-		fPresentationErrorListeners = new ListenerList();
+		fVirtualContentListeners = new ListenerList<>();
+		fPresentationErrorListeners = new ListenerList<>();
 		initScrollBarListener();
 	}
 
@@ -228,10 +228,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 
 	protected void notifyListenersAtBufferStart() {
 		int topIdx = getTable().getTopIndex();
-		Object[] listeners = fVirtualContentListeners.getListeners();
-
-		for (int i = 0; i < listeners.length; i++) {
-			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
+		for (IVirtualContentListener iVirtualContentListener : fVirtualContentListeners) {
+			final IVirtualContentListener listener = iVirtualContentListener;
 			if (topIdx < listener.getThreshold(IVirtualContentListener.BUFFER_START)) {
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
@@ -249,14 +247,13 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	}
 
 	protected void notifyListenersAtBufferEnd() {
-		Object[] listeners = fVirtualContentListeners.getListeners();
 		int topIdx = getTable().getTopIndex();
 		int bottomIdx = topIdx + getNumberOfVisibleLines();
 		int elementsCnt = getVirtualContentModel().getElements().length;
 		int numLinesLeft = elementsCnt - bottomIdx;
 
-		for (int i = 0; i < listeners.length; i++) {
-			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
+		for (IVirtualContentListener iVirtualContentListener : fVirtualContentListeners) {
+			final IVirtualContentListener listener = iVirtualContentListener;
 			if (numLinesLeft <= listener.getThreshold(IVirtualContentListener.BUFFER_END)) {
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
@@ -332,12 +329,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	}
 
 	private void notifyPresentationError(final IStatusMonitor monitor, final IStatus status) {
-		Object[] listeners = fPresentationErrorListeners.getListeners();
-
-		for (int i = 0; i < listeners.length; i++) {
-
-			if (listeners[i] instanceof IPresentationErrorListener) {
-				final IPresentationErrorListener listener = (IPresentationErrorListener) listeners[i];
+		for (IPresentationErrorListener iPresentationErrorListener : fPresentationErrorListeners) {
+			final IPresentationErrorListener listener = iPresentationErrorListener;
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
@@ -349,7 +342,6 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 						DebugUIPlugin.log(exception);
 					}
 				});
-			}
 		}
 	}
 

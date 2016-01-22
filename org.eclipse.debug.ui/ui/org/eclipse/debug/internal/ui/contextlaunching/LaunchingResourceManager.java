@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 *The set of label update listeners
 	 */
-	private ListenerList fLabelListeners = new ListenerList(); 
+	private ListenerList<ILaunchLabelChangedListener> fLabelListeners = new ListenerList<>();
 	
 	/**
 	 * The map of ToolBars that have mouse tracker listeners associated with them:
@@ -228,13 +228,13 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		ILaunchGroup group = null;
 		ILaunchConfiguration config = null;
 		String label = null;
-		Object[] listeners = fLabelListeners.getListeners();
+
 		SelectedResourceManager srm = SelectedResourceManager.getDefault();
 		IStructuredSelection selection = srm.getCurrentSelection();
 		List<LaunchShortcutExtension> shortcuts = null;
 		IResource resource = srm.getSelectedResource();
-		for(int i = 0; i < listeners.length; i++) {
-			group = ((ILaunchLabelChangedListener)listeners[i]).getLaunchGroup();
+		for (ILaunchLabelChangedListener iLaunchLabelChangedListener : fLabelListeners) {
+			group = iLaunchLabelChangedListener.getLaunchGroup();
 			if(group != null) {
 				if(isContextLaunchEnabled(group.getIdentifier())) {
 					shortcuts = getShortcutsForSelection(selection, group.getMode());
@@ -260,9 +260,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * Notifies all registered listeners that the known labels have changed
 	 */
 	protected void notifyLabelChanged() {
-		Object[] listeners = fLabelListeners.getListeners();
-		for(int i = 0; i < listeners.length; i++) {
-			((ILaunchLabelChangedListener)listeners[i]).labelChanged();
+		for (ILaunchLabelChangedListener iLaunchLabelChangedListener : fLabelListeners) {
+			iLaunchLabelChangedListener.labelChanged();
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 public abstract class AbstractMemoryRenderingBindingsProvider implements IMemoryRenderingBindingsProvider {
     	
 	// list of binding listeners
-	private ListenerList fListeners;
+	private ListenerList<IMemoryRenderingBindingsListener> fListeners;
         
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#addListener(org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener)
@@ -34,7 +34,7 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 	@Override
 	public void addListener(IMemoryRenderingBindingsListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList();
+			fListeners = new ListenerList<>();
 		}
 		fListeners.add(listener);
 	}
@@ -56,22 +56,20 @@ public abstract class AbstractMemoryRenderingBindingsProvider implements IMemory
 			return;
 		}
 		
-		Object[] listeners = fListeners.getListeners();
-		
-		for (int i=0; i<listeners.length; i++) {
-			if (listeners[i] instanceof IMemoryRenderingBindingsListener) {
-				final IMemoryRenderingBindingsListener listener = (IMemoryRenderingBindingsListener)listeners[i];
-				ISafeRunnable runnable = new ISafeRunnable () {
-					@Override
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-					@Override
-					public void run() throws Exception {
-						listener.memoryRenderingBindingsChanged();
-					}};
-				SafeRunner.run(runnable);
-			}
+		for (IMemoryRenderingBindingsListener iMemoryRenderingBindingsListener : fListeners) {
+			final IMemoryRenderingBindingsListener listener = iMemoryRenderingBindingsListener;
+			ISafeRunnable runnable = new ISafeRunnable() {
+				@Override
+				public void handleException(Throwable exception) {
+					DebugUIPlugin.log(exception);
+				}
+
+				@Override
+				public void run() throws Exception {
+					listener.memoryRenderingBindingsChanged();
+				}
+			};
+			SafeRunner.run(runnable);
 		}
 	}
 }

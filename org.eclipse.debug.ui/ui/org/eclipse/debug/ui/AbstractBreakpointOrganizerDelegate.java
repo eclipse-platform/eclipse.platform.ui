@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpointOrganizerDelegate {
     
     // property change listeners
-    private ListenerList fListeners = new ListenerList();
+	private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#addBreakpoint(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable)
@@ -77,7 +77,7 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
      */
     @Override
 	public void dispose() {
-        fListeners = new ListenerList();
+		fListeners = new ListenerList<>();
     }
     
     /* (non-Javadoc)
@@ -106,9 +106,8 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
             return;
         }
         final PropertyChangeEvent event = new PropertyChangeEvent(this, P_CATEGORY_CHANGED, category, null);
-        Object[] listeners = fListeners.getListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+		for (IPropertyChangeListener iPropertyChangeListener : fListeners) {
+			final IPropertyChangeListener listener = iPropertyChangeListener;
             ISafeRunnable runnable = new ISafeRunnable() {
                 @Override
 				public void handleException(Throwable exception) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,7 +447,7 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
     /**
      * List of listeners to changes in the preferred toggle targets list.
      */
-    private ListenerList fChangedListners = new ListenerList();
+	private ListenerList<IToggleBreakpointsTargetManagerListener> fChangedListners = new ListenerList<>();
 
     /**
      * Initializes the collection of known factories from extension point contributions.
@@ -722,9 +722,8 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
      * Notifies the change listeners that the preferred targets changed.
      */
     private void firePreferredTargetsChanged() {
-        Object[] listeners = fChangedListners.getListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            ((IToggleBreakpointsTargetManagerListener)listeners[i]).preferredTargetsChanged();
+		for (IToggleBreakpointsTargetManagerListener iToggleBreakpointsTargetManagerListener : fChangedListners) {
+			iToggleBreakpointsTargetManagerListener.preferredTargetsChanged();
         }
     }
     

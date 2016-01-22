@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	/**
 	 * Label listeners
 	 */
-	private ListenerList fLabelListeners = new ListenerList();
+	private ListenerList<ILabelUpdateListener> fLabelListeners = new ListenerList<>();
 	
 	/**
 	 * Updates waiting to be sent to the label provider.  The map contains
@@ -478,9 +478,8 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 	
 	private void notifyUpdate(final int type, final ILabelUpdate update) {
 		if (!fLabelListeners.isEmpty()) {
-			Object[] listeners = fLabelListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final ILabelUpdateListener listener = (ILabelUpdateListener) listeners[i];
+			for (ILabelUpdateListener iLabelUpdateListener : fLabelListeners) {
+				final ILabelUpdateListener listener = iLabelUpdateListener;
 				SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * A collection of listeners
 	 */
-	private ListenerList fListeners= new ListenerList();
+	private ListenerList<IStreamListener> fListeners = new ListenerList<>();
 
 	/**
 	 * Whether content is being buffered
@@ -105,7 +105,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				thread.join();
 			} catch (InterruptedException ie) {
 			}
-			fListeners = new ListenerList();
+			fListeners = new ListenerList<>();
 		}
 	}
 
@@ -272,10 +272,9 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 				return;
 			}
 			fText = text;
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IStreamListener) copiedListeners[i];
-                SafeRunner.run(this);
+			for (IStreamListener iStreamListener : fListeners) {
+				fListener = iStreamListener;
+				SafeRunner.run(this);
 			}
 			fListener = null;
 			fText = null;

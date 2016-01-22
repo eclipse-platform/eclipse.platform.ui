@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	/**
 	 * Map of consoles to array of page participants
 	 */
-	private Map<IConsole, ListenerList> fConsoleToPageParticipants;
+	private Map<IConsole, ListenerList<IConsolePageParticipant>> fConsoleToPageParticipants;
 
 	/**
 	 * Map of parts to consoles
@@ -195,11 +195,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	private void activateParticipants(IConsole console) {
 		// activate
 		if (console != null && fActive) {
-			final ListenerList listeners = getParticipants(console);
+			final ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
 			if (listeners != null) {
-				Object[] participants = listeners.getListeners();
-			    for (int i = 0; i < participants.length; i++) {
-			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+					final IConsolePageParticipant participant = iConsolePageParticipant;
 			    	SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
@@ -259,11 +258,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    IConsole console = fPartToConsole.get(part);
 
 		// dispose page participants
-		ListenerList listeners = fConsoleToPageParticipants.remove(console);
+		ListenerList<IConsolePageParticipant> listeners = fConsoleToPageParticipants.remove(console);
 		if (listeners != null) {
-			Object[] participants = listeners.getListeners();
-			for (int i = 0; i < participants.length; i++) {
-	            final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+			for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+				final IConsolePageParticipant participant = iConsolePageParticipant;
 	            SafeRunner.run(new ISafeRunnable() {
 					@Override
 					public void run() throws Exception {
@@ -300,7 +298,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @param console the console
 	 * @return registered page participants or <code>null</code>
 	 */
-	private ListenerList getParticipants(IConsole console) {
+	private ListenerList<IConsolePageParticipant> getParticipants(IConsole console) {
 	    return fConsoleToPageParticipants.get(console);
 	}
 
@@ -315,14 +313,13 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 
 		// initialize page participants
 		IConsolePageParticipant[] consoleParticipants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
-		final ListenerList participants = new ListenerList();
+		final ListenerList<IConsolePageParticipant> participants = new ListenerList<>();
 		for (int i = 0; i < consoleParticipants.length; i++) {
 			participants.add(consoleParticipants[i]);
 		}
 		fConsoleToPageParticipants.put(console, participants);
-		Object[] listeners = participants.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-            final IConsolePageParticipant participant = (IConsolePageParticipant) listeners[i];
+		for (IConsolePageParticipant iConsolePageParticipant : participants) {
+			final IConsolePageParticipant participant = iConsolePageParticipant;
             SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -443,7 +440,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		super();
 		fConsoleToPart = new HashMap<IConsole, ConsoleWorkbenchPart>();
 		fPartToConsole = new HashMap<ConsoleWorkbenchPart, IConsole>();
-		fConsoleToPageParticipants = new HashMap<IConsole, ListenerList>();
+		fConsoleToPageParticipants = new HashMap<IConsole, ListenerList<IConsolePageParticipant>>();
 
 		ConsoleManager consoleManager = (ConsoleManager) ConsolePlugin.getDefault().getConsoleManager();
 		consoleManager.registerConsoleView(this);
@@ -635,12 +632,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         if (adpater == null) {
             IConsole console = getConsole();
             if (console != null) {
-                ListenerList listeners = getParticipants(console);
+				ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
                 // an adapter can be asked for before the console participants are created
                 if (listeners != null) {
-                	Object[] participants = listeners.getListeners();
-                    for (int i = 0; i < participants.length; i++) {
-                        IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+					for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+						IConsolePageParticipant participant = iConsolePageParticipant;
                         adpater = participant.getAdapter(key);
                         if (adpater != null) {
 							return (T) adpater;
@@ -717,11 +713,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	private void deactivateParticipants(IConsole console) {
 		// deactivate
 	    if (console != null) {
-			final ListenerList listeners = getParticipants(console);
+			final ListenerList<IConsolePageParticipant> listeners = getParticipants(console);
 			if (listeners != null) {
-				Object[] participants = listeners.getListeners();
-			    for (int i = 0; i < participants.length; i++) {
-			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+				for (IConsolePageParticipant iConsolePageParticipant : listeners) {
+					final IConsolePageParticipant participant = iConsolePageParticipant;
 			    	SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {

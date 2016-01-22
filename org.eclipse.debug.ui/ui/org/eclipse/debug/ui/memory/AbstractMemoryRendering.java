@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 
 	private IMemoryBlock fMemoryBlock;
 	private IMemoryRenderingContainer fContainer;
-	private ListenerList fPropertyListeners;
+	private ListenerList<IPropertyChangeListener> fPropertyListeners;
 	private boolean fVisible = true;
 	private MenuManager fPopupMenuMgr;
 	private String fRenderingId;
@@ -218,7 +218,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 				
 		if (fPropertyListeners == null)
-			fPropertyListeners = new ListenerList();
+			fPropertyListeners = new ListenerList<>();
 		
 		fPropertyListeners.add(listener);
 	}
@@ -390,12 +390,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	{
 		if (fPropertyListeners == null)
 			return;
-		
-		Object[] listeners = fPropertyListeners.getListeners();
-		
-		for (int i=0; i<listeners.length; i++)
-		{	
-			PropertyChangeNotifier notifier = new PropertyChangeNotifier((IPropertyChangeListener)listeners[i], event);
+
+		for (IPropertyChangeListener iPropertyChangeListener : fPropertyListeners) {
+			PropertyChangeNotifier notifier = new PropertyChangeNotifier(iPropertyChangeListener, event);
 			SafeRunner.run(notifier);
 		}
 	}

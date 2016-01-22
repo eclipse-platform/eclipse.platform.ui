@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,12 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	/**
 	 * List of expression listeners
 	 */
-	private ListenerList fListeners = null;
+	private ListenerList<IExpressionListener> fListeners = null;
 
 	/**
 	 * List of expressions listeners (plural)
 	 */
-	private ListenerList fExpressionsListeners = null;
+	private ListenerList<IExpressionsListener> fExpressionsListeners = null;
 
 	/**
 	 * Mapping of debug model identifiers (String) to
@@ -467,7 +467,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	@Override
 	public void addExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
-			fListeners = new ListenerList();
+			fListeners = new ListenerList<>();
 		}
 		fListeners.add(listener);
 	}
@@ -540,7 +540,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	@Override
 	public void addExpressionListener(IExpressionsListener listener) {
 		if (fExpressionsListeners == null) {
-			fExpressionsListeners = new ListenerList();
+			fExpressionsListeners = new ListenerList<>();
 		}
 		fExpressionsListeners.add(listener);
 	}
@@ -609,9 +609,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		public void notify(IExpression[] expressions, int update) {
 			if (fListeners != null) {
 				fType = update;
-				Object[] copiedListeners= fListeners.getListeners();
-				for (int i= 0; i < copiedListeners.length; i++) {
-					fListener = (IExpressionListener)copiedListeners[i];
+				for (IExpressionListener iExpressionListener : fListeners) {
+					fListener = iExpressionListener;
 					for (int j = 0; j < expressions.length; j++) {
 						fExpression = expressions[j];
                         SafeRunner.run(this);
@@ -697,9 +696,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				fNotifierExpressions = expressions;
 				fType = update;
 				fIndex = index;
-				Object[] copiedListeners = fExpressionsListeners.getListeners();
-				for (int i= 0; i < copiedListeners.length; i++) {
-					fListener = (IExpressionsListener)copiedListeners[i];
+				for (IExpressionsListener iExpressionsListener : fExpressionsListeners) {
+					fListener = iExpressionsListener;
                     SafeRunner.run(this);
 				}
 			}

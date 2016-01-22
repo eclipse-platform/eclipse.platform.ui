@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -151,7 +151,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Forwards all selection changed events of the active selection provider.
 	 */
 	private static class SelectionProviderWrapper implements ISelectionProvider {
-		private final ListenerList fListenerList = new ListenerList(ListenerList.IDENTITY);
+		private final ListenerList<ISelectionChangedListener> fListenerList = new ListenerList<>(ListenerList.IDENTITY);
 		private final ISelectionChangedListener fListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -184,10 +184,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 
 		private void fireSelectionChanged(SelectionChangedEvent event) {
-			Object[] listeners = fListenerList.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				ISelectionChangedListener listener = (ISelectionChangedListener) listeners[i];
-				listener.selectionChanged(event);
+			for (ISelectionChangedListener iSelectionChangedListener : fListenerList) {
+				iSelectionChangedListener.selectionChanged(event);
 			}
 		}
 

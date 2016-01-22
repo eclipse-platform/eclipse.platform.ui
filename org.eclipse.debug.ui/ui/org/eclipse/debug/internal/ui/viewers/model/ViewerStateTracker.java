@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Wind River Systems and others.
+ * Copyright (c) 2011, 2016 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,7 +164,7 @@ class ViewerStateTracker {
     /**
      * State update listeners
      */
-    private ListenerList fStateUpdateListeners = new ListenerList();
+	private ListenerList<IStateUpdateListener> fStateUpdateListeners = new ListenerList<>();
     
     /**
      * Postpone restoring REVEAL element until the current updates are complete.
@@ -1547,9 +1547,8 @@ class ViewerStateTracker {
 
     void notifyStateUpdate(final Object input, final int type, final IViewerUpdate update) {
         if (!fStateUpdateListeners.isEmpty()) {
-            Object[] listeners = fStateUpdateListeners.getListeners();
-            for (int i = 0; i < listeners.length; i++) {
-                final IStateUpdateListener listener = (IStateUpdateListener) listeners[i];
+			for (IStateUpdateListener iStateUpdateListener : fStateUpdateListeners) {
+				final IStateUpdateListener listener = iStateUpdateListener;
                 SafeRunner.run(new ISafeRunnable() {
                     @Override
 					public void run() throws Exception {

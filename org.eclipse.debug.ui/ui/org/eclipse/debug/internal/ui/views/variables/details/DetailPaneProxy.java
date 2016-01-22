@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class DetailPaneProxy implements ISaveablePart {
 	/**
 	 * Property listeners
 	 */
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IPropertyListener> fListeners = new ListenerList<>();
 	
 	/**
 	 * Constructor that sets up the detail pane for a view.  Note that no default pane
@@ -135,9 +135,8 @@ public class DetailPaneProxy implements ISaveablePart {
 	 * Fires dirty property change.
 	 */
 	private void fireDirty() {
-		Object[] listeners = fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyListener)listeners[i]).propertyChanged(this, PROP_DIRTY);
+		for (IPropertyListener iPropertyListener : fListeners) {
+			iPropertyListener.propertyChanged(this, PROP_DIRTY);
 		}
 	}
 	
@@ -216,9 +215,8 @@ public class DetailPaneProxy implements ISaveablePart {
 				fCurrentPane.init(workbenchPartSite);
 				IDetailPane3 saveable = getSaveable();
 				if (saveable != null) {
-					Object[] listeners = fListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						saveable.addPropertyListener((IPropertyListener) listeners[i]);
+					for (IPropertyListener iPropertyListener : fListeners) {
+						saveable.addPropertyListener(iPropertyListener);
 					}
 				}
 				fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());

@@ -76,7 +76,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	/**
 	 * Variable listeners
 	 */
-	private ListenerList fListeners;
+	private ListenerList<IValueVariableListener> fListeners;
 
 	// notifications
 	private static final int ADDED = 0;
@@ -157,9 +157,12 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		public void notify(IValueVariable[] variables, int update) {
 			fVariables = variables;
 			fType = update;
-			Object[] copiedListeners= fListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IValueVariableListener)copiedListeners[i];
+			/*
+			 * Object[] copiedListeners= fListeners.getListeners(); for (int i=
+			 * 0; i < copiedListeners.length; i++) {
+			 */
+			for (IValueVariableListener iValueVariableListener : fListeners) {
+				fListener = iValueVariableListener;
 				SafeRunner.run(this);
 			}
 			fVariables = null;
@@ -194,7 +197,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 * Constructs a new string variable manager.
 	 */
 	private StringVariableManager() {
-		fListeners = new ListenerList();
+		fListeners = new ListenerList<IValueVariableListener>();
 	}
 
 	/**

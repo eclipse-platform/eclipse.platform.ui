@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,11 +41,11 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 	private Job fInstallJob;
 	
 	
-	private ListenerList fListeners = new ListenerList();
+	private ListenerList<IModelChangedListener> fListeners = new ListenerList<>();
 	
-	protected Object[] getListeners() {
+	protected ListenerList<IModelChangedListener> getListeners() {
 		synchronized (fListeners) {
-			return fListeners.getListeners();
+			return fListeners;
 		}
 	}
 
@@ -80,9 +80,8 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 	    }
 	    
 		final IModelDelta root = getRootDelta(delta);
-		Object[] listeners = getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			final IModelChangedListener listener = (IModelChangedListener) listeners[i];
+		for (IModelChangedListener iModelChangedListener : getListeners()) {
+			final IModelChangedListener listener = iModelChangedListener;
 			ISafeRunnable safeRunnable = new ISafeRunnable() {
 				@Override
 				public void handleException(Throwable exception) {

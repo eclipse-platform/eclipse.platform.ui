@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * Temp holding for listeners - we do not add to presentation until
 	 * it needs to be instantiated.
 	 */
-	protected ListenerList fListeners= new ListenerList();	
+	protected ListenerList<ILabelProviderListener> fListeners = new ListenerList<>();
 	
 	/**
 	 * Non-null when nested inside a delegating model presentation
@@ -294,7 +294,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		if (fPresentation != null) {
 			getPresentation().removeListener(listener);
 		}
-		ListenerList listeners = fListeners;
+		ListenerList<ILabelProviderListener> listeners = fListeners;
 		if (listeners != null) {
 		    listeners.remove(listener);
 		}
@@ -315,9 +315,8 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 					IDebugModelPresentation tempPresentation= (IDebugModelPresentation) DebugUIPlugin.createExtension(fConfig, "class"); //$NON-NLS-1$
 					// configure it
 					if (fListeners != null) {
-						Object[] list = fListeners.getListeners();
-						for (int i= 0; i < list.length; i++) {
-						    tempPresentation.addListener((ILabelProviderListener)list[i]);
+						for (ILabelProviderListener iLabelProviderListener : fListeners) {
+							tempPresentation.addListener(iLabelProviderListener);
 						}
 					}
 					for (Entry<String, Object> entry : fAttributes.entrySet()) {

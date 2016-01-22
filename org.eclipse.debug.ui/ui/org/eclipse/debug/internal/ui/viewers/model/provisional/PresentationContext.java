@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class PresentationContext implements IPresentationContext {
     private static final String PERSISTABLE = "PERSISTABLE";  //$NON-NLS-1$
     
     final private String fId;
-    final private ListenerList fListeners = new ListenerList();
+	final private ListenerList<IPropertyChangeListener> fListeners = new ListenerList<>();
 	final private Map<String, Object> fProperties = new HashMap<String, Object>();
     private IWorkbenchWindow fWindow;
     private IWorkbenchPart fPart;
@@ -113,9 +113,8 @@ public class PresentationContext implements IPresentationContext {
 	protected void firePropertyChange(String property, Object oldValue, Object newValue) {
 		if (!fListeners.isEmpty()) {
 			final PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
-			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+			for (IPropertyChangeListener iPropertyChangeListener : fListeners) {
+				final IPropertyChangeListener listener = iPropertyChangeListener;
 				SafeRunner.run(new SafeRunnable() {
 					@Override
 					public void run() throws Exception {

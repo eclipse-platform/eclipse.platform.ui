@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -131,12 +131,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Collection of breakpoint listeners.
 	 */
-	private ListenerList fBreakpointListeners= new ListenerList();
+	private ListenerList<IBreakpointListener> fBreakpointListeners= new ListenerList<>();
 
 	/**
 	 * Collection of (plural) breakpoint listeners.
 	 */
-	private ListenerList fBreakpointsListeners= new ListenerList();
+	private ListenerList<IBreakpointsListener> fBreakpointsListeners= new ListenerList<>();
 
 	/**
 	 * Singleton resource delta visitor which handles marker
@@ -148,7 +148,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Collection of breakpoint manager listeners which are
 	 * notified when this manager's state changes.
 	 */
-	private ListenerList fBreakpointManagerListeners= new ListenerList();
+	private ListenerList<IBreakpointManagerListener> fBreakpointManagerListeners= new ListenerList<>();
 
 	/**
 	 * Listens to POST_CHANGE notifications of breakpoint markers to detect when
@@ -1061,9 +1061,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		public void notify(IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
 			fType = update;
-			Object[] copiedListeners= fBreakpointListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IBreakpointListener)copiedListeners[i];
+			for (IBreakpointListener iBreakpointListener : fBreakpointListeners) {
+				fListener = iBreakpointListener;
 				for (int j = 0; j < breakpoints.length; j++) {
 					fBreakpoint = breakpoints[j];
 					fDelta = deltas[j];
@@ -1131,10 +1130,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fType = update;
 			fNotifierBreakpoints = breakpoints;
 			fDeltas = deltas;
-			Object[] copiedListeners = fBreakpointsListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IBreakpointsListener)copiedListeners[i];
-                SafeRunner.run(this);
+			for (IBreakpointsListener iBreakpointsListener : fBreakpointsListeners) {
+				fListener = iBreakpointsListener;
+				SafeRunner.run(this);
 			}
 			fDeltas = null;
 			fNotifierBreakpoints = null;
@@ -1227,9 +1225,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		public void notify(boolean enabled) {
 			fManagerEnabled= enabled;
-			Object[] copiedListeners = fBreakpointManagerListeners.getListeners();
-			for (int i= 0; i < copiedListeners.length; i++) {
-				fListener = (IBreakpointManagerListener)copiedListeners[i];
+			for (IBreakpointManagerListener iBreakpointManagerListener : fBreakpointManagerListeners) {
+				fListener = iBreakpointManagerListener;
                 SafeRunner.run(this);
 			}
 			fListener = null;
