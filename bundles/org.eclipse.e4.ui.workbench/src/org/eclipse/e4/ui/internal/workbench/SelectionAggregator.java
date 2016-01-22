@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,10 +43,10 @@ public class SelectionAggregator {
 	static final String OUT_SELECTION = "org.eclipse.ui.output.selection"; //$NON-NLS-1$
 	static final String OUT_POST_SELECTION = "org.eclipse.ui.output.postSelection"; //$NON-NLS-1$
 
-	private ListenerList genericListeners = new ListenerList();
-	private ListenerList genericPostListeners = new ListenerList();
-	private Map<String, ListenerList> targetedListeners = new HashMap<>();
-	private Map<String, ListenerList> targetedPostListeners = new HashMap<>();
+	private ListenerList<ISelectionListener> genericListeners = new ListenerList<>();
+	private ListenerList<ISelectionListener> genericPostListeners = new ListenerList<>();
+	private Map<String, ListenerList<ISelectionListener>> targetedListeners = new HashMap<>();
+	private Map<String, ListenerList<ISelectionListener>> targetedPostListeners = new HashMap<>();
 	private Set<IEclipseContext> tracked = new HashSet<>();
 
 	private EventHandler eventHandler = new EventHandler() {
@@ -119,8 +119,7 @@ public class SelectionAggregator {
 	}
 
 	private void notifyListeners(final MPart part, final Object selection) {
-		for (Object listener : genericListeners.getListeners()) {
-			final ISelectionListener myListener = (ISelectionListener) listener;
+		for (final ISelectionListener myListener : genericListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -139,10 +138,10 @@ public class SelectionAggregator {
 	private void notifyTargetedListeners(final MPart part, final Object selection) {
 		String id = part.getElementId();
 		if (id != null) {
-			ListenerList listenerList = targetedListeners.get(id);
+			ListenerList<ISelectionListener> listenerList = targetedListeners.get(id);
 			if (listenerList != null) {
-				for (Object listener : listenerList.getListeners()) {
-					final ISelectionListener myListener = (ISelectionListener) listener;
+				for (final ISelectionListener listener : listenerList) {
+					final ISelectionListener myListener = listener;
 					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
@@ -160,8 +159,7 @@ public class SelectionAggregator {
 	}
 
 	private void notifyPostListeners(final MPart part, final Object selection) {
-		for (Object listener : genericPostListeners.getListeners()) {
-			final ISelectionListener myListener = (ISelectionListener) listener;
+		for (final ISelectionListener myListener : genericPostListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -180,10 +178,9 @@ public class SelectionAggregator {
 	private void notifyTargetedPostListeners(final MPart part, final Object selection) {
 		String id = part.getElementId();
 		if (id != null) {
-			ListenerList listenerList = targetedPostListeners.get(id);
+			ListenerList<ISelectionListener> listenerList = targetedPostListeners.get(id);
 			if (listenerList != null) {
-				for (Object listener : listenerList.getListeners()) {
-					final ISelectionListener myListener = (ISelectionListener) listener;
+				for (final ISelectionListener myListener : listenerList) {
 					SafeRunner.run(new ISafeRunnable() {
 						@Override
 						public void run() throws Exception {
@@ -324,9 +321,9 @@ public class SelectionAggregator {
 	}
 
 	public void addSelectionListener(String partId, ISelectionListener listener) {
-		ListenerList listeners = targetedListeners.get(partId);
+		ListenerList<ISelectionListener> listeners = targetedListeners.get(partId);
 		if (listeners == null) {
-			listeners = new ListenerList();
+			listeners = new ListenerList<>();
 			targetedListeners.put(partId, listeners);
 		}
 		listeners.add(listener);
@@ -337,9 +334,9 @@ public class SelectionAggregator {
 	}
 
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
-		ListenerList listeners = targetedPostListeners.get(partId);
+		ListenerList<ISelectionListener> listeners = targetedPostListeners.get(partId);
 		if (listeners == null) {
-			listeners = new ListenerList();
+			listeners = new ListenerList<>();
 			targetedPostListeners.put(partId, listeners);
 		}
 		listeners.add(listener);
@@ -352,7 +349,7 @@ public class SelectionAggregator {
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
 		if (context != null) {
-			ListenerList listeners = targetedListeners.get(partId);
+			ListenerList<ISelectionListener> listeners = targetedListeners.get(partId);
 			if (listeners != null) {
 				listeners.remove(listener);
 			}
@@ -362,7 +359,7 @@ public class SelectionAggregator {
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
 		if (context != null) {
-			ListenerList listeners = targetedPostListeners.get(partId);
+			ListenerList<ISelectionListener> listeners = targetedPostListeners.get(partId);
 			if (listeners != null) {
 				listeners.remove(listener);
 			}
