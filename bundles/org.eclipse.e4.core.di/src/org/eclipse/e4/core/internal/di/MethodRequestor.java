@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,18 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class MethodRequestor extends Requestor<Method> {
-
 	/**
 	 * The parameters annotation cache.  Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
 	 */
 	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<Method, Annotation[][]>();
 
+	private boolean wasAccessible;
+
 	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);
+		if (!(wasAccessible = location.isAccessible())) {
+			location.setAccessible(true);
+		}
 	}
 
 	@Override
@@ -42,10 +46,8 @@ public class MethodRequestor extends Requestor<Method> {
 		if (userObject == null)
 			return null;
 		Object result = null;
-		boolean wasAccessible = true;
 		if (!location.isAccessible()) {
 			location.setAccessible(true);
-			wasAccessible = false;
 		}
 		boolean pausedRecording = false;
 		if ((primarySupplier != null)) {
@@ -65,8 +67,6 @@ public class MethodRequestor extends Requestor<Method> {
 			}
 			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
-			if (!wasAccessible)
-				location.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecording();
 			clearResolvedArgs();
@@ -96,6 +96,14 @@ public class MethodRequestor extends Requestor<Method> {
 			annotationCache.put(location, result);
 		}
 		return result;
+	}
+
+	@Override
+	public void disposed(PrimaryObjectSupplier objectSupplier) {
+		super.disposed(objectSupplier);
+		if (!wasAccessible && location.isAccessible()) {
+			location.setAccessible(false);
+		}
 	}
 
 	@Override

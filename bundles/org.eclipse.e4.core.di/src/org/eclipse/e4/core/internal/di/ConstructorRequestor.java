@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,18 +20,20 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class ConstructorRequestor extends Requestor<Constructor<?>> {
+	private boolean wasAccessible;
 
 	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier) {
 		super(constructor, injector, primarySupplier, tempSupplier, null, false /* do not track */);
+		if (!(wasAccessible = location.isAccessible())) {
+			location.setAccessible(true);
+		}
 	}
 
 	@Override
 	public Object execute() throws InjectionException {
 		Object result = null;
-		boolean wasAccessible = true;
 		if (!location.isAccessible()) {
 			location.setAccessible(true);
-			wasAccessible = false;
 		}
 		boolean pausedRecording = false;
 		if ((primarySupplier != null)) {
@@ -53,8 +55,6 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 			}
 			throw new InjectionException((originalException != null) ? originalException : e);
 		} finally {
-			if (!wasAccessible)
-				location.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecording();
 			clearResolvedArgs();
@@ -86,6 +86,14 @@ public class ConstructorRequestor extends Requestor<Constructor<?>> {
 	@Override
 	public Class<?> getRequestingObjectClass() {
 		return location.getDeclaringClass();
+	}
+
+	@Override
+	public void disposed(PrimaryObjectSupplier objectSupplier) {
+		super.disposed(objectSupplier);
+		if (!wasAccessible && location.isAccessible()) {
+			location.setAccessible(false);
+		}
 	}
 
 	@Override
