@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.ListenerList;
  */
 /* package */class ChangeManager {
 
-	ListenerList[] listenerLists = null;
+	ListenerList<IObservablesListener>[] listenerLists = null;
 	Object listenerTypes[] = null;
 	private final Realm realm;
 
@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.ListenerList;
 	 * @param listenerType
 	 * @param listener
 	 */
+	@SuppressWarnings("unchecked")
 	protected void addListener(Object listenerType,
 			IObservablesListener listener) {
 		int listenerTypeIndex = findListenerTypeIndex(listenerType);
@@ -60,7 +61,7 @@ import org.eclipse.core.runtime.ListenerList;
 						listenerLists = new ListenerList[length + 1], 0, length);
 			}
 			listenerTypes[length] = listenerType;
-			listenerLists[length] = new ListenerList();
+			listenerLists[length] = new ListenerList<>();
 			listenerTypeIndex = length;
 		}
 		boolean hadListeners = hasListeners();
@@ -112,10 +113,8 @@ import org.eclipse.core.runtime.ListenerList;
 		Object listenerType = event.getListenerType();
 		int listenerTypeIndex = findListenerTypeIndex(listenerType);
 		if (listenerTypeIndex != -1) {
-			Object[] listeners = listenerLists[listenerTypeIndex]
-					.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				event.dispatch((IObservablesListener) listeners[i]);
+			for (IObservablesListener listener : listenerLists[listenerTypeIndex]) {
+				event.dispatch(listener);
 			}
 		}
 	}
