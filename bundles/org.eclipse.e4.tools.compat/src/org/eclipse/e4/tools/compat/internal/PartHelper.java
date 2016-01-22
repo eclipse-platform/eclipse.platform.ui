@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class PartHelper {
 			// Hack to get the MPart-Context
 			try {
 				final Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass( //$NON-NLS-1$
-					"org.eclipse.e4.ui.model.application.ui.basic.MPart"); //$NON-NLS-1$
+						"org.eclipse.e4.ui.model.application.ui.basic.MPart"); //$NON-NLS-1$
 				final Object instance = site.getService(clazz);
 				final Method m = clazz.getMethod("getContext", new Class[0]); //$NON-NLS-1$
 				IEclipseContext ctx = (IEclipseContext) m.invoke(instance);
@@ -85,21 +85,21 @@ public class PartHelper {
 	static class SelectionProviderImpl implements ISelectionProvider {
 		private ISelection currentSelection = StructuredSelection.EMPTY;
 
-		private final ListenerList listeners = new ListenerList();
+		private final ListenerList<ISelectionChangedListener> listeners = new ListenerList<>();
 
 		@Override
 		public void setSelection(ISelection selection) {
 			currentSelection = selection;
 			final SelectionChangedEvent evt = new SelectionChangedEvent(this, selection);
 
-			for (final Object l : listeners.getListeners()) {
-				((ISelectionChangedListener) l).selectionChanged(evt);
+			for (final ISelectionChangedListener l : listeners) {
+				l.selectionChanged(evt);
 			}
 		}
 
 		@Override
 		public void removeSelectionChangedListener(
-			ISelectionChangedListener listener) {
+				ISelectionChangedListener listener) {
 			listeners.remove(listener);
 		}
 
@@ -115,11 +115,11 @@ public class PartHelper {
 	}
 
 	public static void disposeContextIfE3(IEclipseContext parentContext,
-		IEclipseContext context) {
+			IEclipseContext context) {
 		// Check if running in 3.x, otherwise there was no dedicated context
 		// created
 		if (parentContext
-			.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) == null) {
+				.get(ORG_ECLIPSE_E4_UI_WORKBENCH_I_PRESENTATION_ENGINE) == null) {
 			context.dispose();
 			context = null;
 		}
