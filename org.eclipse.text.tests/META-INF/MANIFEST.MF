@@ -16,3 +16,5 @@ Require-Bundle:
  org.junit;bundle-version="3.8.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
+Import-Package: com.ibm.icu.text,
+ com.ibm.icu.util

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeremie Bresson <jbr@bsiag.com> - Allow to specify format for date variable - https://bugs.eclipse.org/75981
  *******************************************************************************/
 
 package org.eclipse.text.tests.templates;
@@ -26,6 +27,7 @@ public class TemplatesTestSuite {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.jface.text.templates"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTest(TemplateTranslatorTest.suite());
+		suite.addTest(GlobalTemplateVariablesDateTest.suite());
 		//$JUnit-END$
 
 		return suite;
