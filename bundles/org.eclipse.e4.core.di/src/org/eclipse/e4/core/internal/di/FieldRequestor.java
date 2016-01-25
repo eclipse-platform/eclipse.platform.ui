@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,13 +17,9 @@ import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 
 public class FieldRequestor extends Requestor<Field> {
-	private boolean wasAccessible;
 
 	public FieldRequestor(Field field, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(field, injector, primarySupplier, tempSupplier, requestingObject, track);
-		if (!(wasAccessible = location.isAccessible())) {
-			location.setAccessible(true);
-		}
 	}
 
 	@Override
@@ -45,23 +41,20 @@ public class FieldRequestor extends Requestor<Field> {
 		Object userObject = getRequestingObject();
 		if (userObject == null)
 			return false;
+		boolean wasAccessible = true;
 		if (!field.isAccessible()) {
 			field.setAccessible(true);
+			wasAccessible = false;
 		}
 		try {
 			field.set(userObject, value);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new InjectionException(e);
+		} finally {
+			if (!wasAccessible)
+				field.setAccessible(false);
 		}
 		return true;
-	}
-
-	@Override
-	public void disposed(PrimaryObjectSupplier objectSupplier) {
-		super.disposed(objectSupplier);
-		if (!wasAccessible && location.isAccessible()) {
-			location.setAccessible(false);
-		}
 	}
 
 	@Override
