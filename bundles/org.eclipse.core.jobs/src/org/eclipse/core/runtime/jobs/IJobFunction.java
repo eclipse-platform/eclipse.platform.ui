@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.*;
  * @see Job#create(String, IJobFunction)
  * @since 3.6
  */
-@FunctionalInterface
 public interface IJobFunction {
 	/**
 	 * Executes this job. Returns the result of the execution.
