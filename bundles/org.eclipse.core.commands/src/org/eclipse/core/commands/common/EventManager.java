@@ -22,6 +22,10 @@ import org.eclipse.core.runtime.ListenerList;
  * <p>
  * Clients may extend.
  * </p>
+ * <p>
+ * <b>Warning:</b> Do not use this class! Use {@link ListenerList} directly. See
+ * <a href="https://bugs.eclipse.org/486067">bug 486067</a>.
+ * </p>
  *
  * @since 3.2
  */
@@ -65,6 +69,9 @@ public abstract class EventManager {
 
 	/**
 	 * Returns the listeners attached to this event manager.
+	 * <p>
+	 * Note: Callers of this method <b>must not</b> modify the returned array.
+	 * </p>
 	 *
 	 * @return The listeners currently attached; may be empty, but never
 	 *         <code>null</code>
