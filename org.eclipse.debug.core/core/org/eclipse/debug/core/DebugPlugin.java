@@ -1165,12 +1165,12 @@ public class DebugPlugin extends Plugin {
 			fEvents = events;
 			if (!fEventFilters.isEmpty()) {
 				fMode = NOTIFY_FILTERS;
-			}
-			for (IDebugEventFilter iDebugEventFilter : fEventFilters) {
-				fFilter = iDebugEventFilter;
-				SafeRunner.run(this);
-				if (fEvents == null || fEvents.length == 0) {
-					return;
+				for (IDebugEventFilter iDebugEventFilter : fEventFilters) {
+					fFilter = iDebugEventFilter;
+					SafeRunner.run(this);
+					if (fEvents == null || fEvents.length == 0) {
+						return;
+					}
 				}
 			}
 

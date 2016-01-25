@@ -157,10 +157,6 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		public void notify(IValueVariable[] variables, int update) {
 			fVariables = variables;
 			fType = update;
-			/*
-			 * Object[] copiedListeners= fListeners.getListeners(); for (int i=
-			 * 0; i < copiedListeners.length; i++) {
-			 */
 			for (IValueVariableListener iValueVariableListener : fListeners) {
 				fListener = iValueVariableListener;
 				SafeRunner.run(this);
