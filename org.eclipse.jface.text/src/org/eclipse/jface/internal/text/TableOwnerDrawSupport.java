@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,10 @@ public class TableOwnerDrawSupport implements Listener {
 
 	private static final String STYLED_RANGES_KEY= "styled_ranges"; //$NON-NLS-1$
 
-	private TextLayout fLayout;
+	// shared text layout
+	private TextLayout fSharedLayout;
+
+	private int fDeltaOfLastMeasure;
 
 	public static void install(Table table) {
 		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table);
@@ -66,14 +69,15 @@ public class TableOwnerDrawSupport implements Listener {
 
 	private TableOwnerDrawSupport(Table table) {
 		int orientation= table.getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
-		fLayout= new TextLayout(table.getDisplay());
-		fLayout.setOrientation(orientation);
+		fSharedLayout= new TextLayout(table.getDisplay());
+		fSharedLayout.setOrientation(orientation);
 	}
 
 	@Override
 	public void handleEvent(Event event) {
 		switch (event.type) {
 			case SWT.MeasureItem:
+				measureItem(event);
 				break;
 			case SWT.EraseItem:
 				event.detail &= ~SWT.FOREGROUND;
@@ -84,7 +88,44 @@ public class TableOwnerDrawSupport implements Listener {
 			case SWT.Dispose:
 				widgetDisposed();
 				break;
+		}
+	}
+
+	/**
+	 * Handles the measure event.
+	 * 
+	 * @param event the measure event
+	 */
+	private void measureItem(Event event) {
+		boolean isSelected= (event.detail & SWT.SELECTED) != 0;
+		fDeltaOfLastMeasure= updateTextLayout((TableItem) event.item, event.index, isSelected);
+		event.width+= fDeltaOfLastMeasure;
+	}
+
+	private int updateTextLayout(TableItem item, int index, boolean isSelected) {
+		fSharedLayout.setFont(item.getFont(index));
+
+		// XXX: needed to clear the style info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=226090
+		fSharedLayout.setText(""); //$NON-NLS-1$
+
+		fSharedLayout.setText(item.getText(index));
+
+		int originalTextWidth= fSharedLayout.getBounds().width; // text width without any styles
+
+		StyleRange[] ranges= getStyledRanges(item, index);
+		if (ranges != null) {
+			for (int i= 0; i < ranges.length; i++) {
+				StyleRange curr= ranges[i];
+				if (isSelected) {
+					curr= (StyleRange) curr.clone();
+					curr.foreground= null;
+					curr.background= null;
+				}
+				fSharedLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
 			}
+		}
+
+		return fSharedLayout.getBounds().width - originalTextWidth;
 	}
 
 	/**
@@ -120,37 +161,18 @@ public class TableOwnerDrawSupport implements Listener {
 			gc.drawImage(image, x, y);
 		}
 
-		fLayout.setFont(item.getFont(index));
-
-		// XXX: needed to clear the style info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=226090
-		fLayout.setText(""); //$NON-NLS-1$
-
-		fLayout.setText(item.getText(index));
-
-		StyleRange[] ranges= getStyledRanges(item, index);
-		if (ranges != null) {
-			for (int i= 0; i < ranges.length; i++) {
-				StyleRange curr= ranges[i];
-				if (isSelected) {
-					curr= (StyleRange) curr.clone();
-					curr.foreground= null;
-					curr.background= null;
-				}
-				fLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
-			}
-		}
-
+		// fSharedLayout already configured in measureItem(Event)
 		Rectangle textBounds=item.getTextBounds(index);
 		if (textBounds != null) {
-			Rectangle layoutBounds=fLayout.getBounds();
+			Rectangle layoutBounds=fSharedLayout.getBounds();
 			int x=textBounds.x;
 			int y=textBounds.y + Math.max(0, (textBounds.height - layoutBounds.height) / 2);
-			fLayout.draw(gc, x, y);
+			fSharedLayout.draw(gc, x, y);
 		}
 
 		if ((event.detail & SWT.FOCUSED) != 0) {
 			Rectangle focusBounds=item.getBounds();
-			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width, focusBounds.height);
+			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width + fDeltaOfLastMeasure, focusBounds.height);
 		}
 
 		if (!isSelected) {
@@ -160,7 +182,7 @@ public class TableOwnerDrawSupport implements Listener {
 	}
 
 	private void widgetDisposed() {
-		fLayout.dispose();
+		fSharedLayout.dispose();
 	}
 }
 
