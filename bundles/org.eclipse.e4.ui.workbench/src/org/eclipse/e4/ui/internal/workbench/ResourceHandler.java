@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     		Fix for Bug 2369 [Workbench] Would like to be able to save workspace without exiting
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Terry Parker <tparker@google.com> - Bug 416673
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 393171
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -20,13 +21,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -43,9 +42,6 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.IWorkbench;
-import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
-import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
-import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -55,7 +51,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
-import org.w3c.dom.Document;
 
 /**
  * This class is responsible to load and save the model
@@ -85,7 +80,6 @@ public class ResourceHandler implements IModelResourceHandler {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 *
 	 */
-	final private boolean deltaRestore;
 	final private boolean saveAndRestore;
 	final private boolean clearPersistedState;
 
@@ -94,15 +88,12 @@ public class ResourceHandler implements IModelResourceHandler {
 	 *
 	 * @param saveAndRestore
 	 * @param clearPersistedState
-	 * @param deltaRestore
 	 */
 	@Inject
 	public ResourceHandler(@Named(IWorkbench.PERSIST_STATE) boolean saveAndRestore,
-			@Named(IWorkbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
-			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
+			@Named(IWorkbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState) {
 		this.saveAndRestore = saveAndRestore;
 		this.clearPersistedState = clearPersistedState;
-		this.deltaRestore = deltaRestore;
 	}
 
 	@PostConstruct
@@ -151,59 +142,6 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	@Override
 	public Resource loadMostRecentModel() {
-		// This is temporary code to migrate existing delta files into full models
-		if (deltaRestore && saveAndRestore && !clearPersistedState) {
-			File baseLocation = getBaseLocation();
-			File deltaFile = new File(baseLocation, "deltas.xml"); //$NON-NLS-1$
-
-			if (deltaFile.exists()) {
-				MApplication appElement = null;
-				try {
-					// create new resource in case code below fails somewhere
-					File workbenchData = getWorkbenchSaveLocation();
-					URI restoreLocationNew = URI.createFileURI(workbenchData.getAbsolutePath());
-					resource = resourceSetImpl.createResource(restoreLocationNew);
-
-					Resource oldResource = loadResource(applicationDefinitionInstance);
-					appElement = (MApplication) oldResource.getContents().get(0);
-
-					context.set(MApplication.class, appElement);
-					ModelAssembler contribProcessor = ContextInjectionFactory.make(
-							ModelAssembler.class, context);
-					contribProcessor.processModel(true);
-
-					File deltaOldFile = new File(baseLocation, "deltas_42M7migration.xml"); //$NON-NLS-1$
-					deltaFile.renameTo(deltaOldFile);
-					URI restoreLocation = URI.createFileURI(deltaOldFile.getAbsolutePath());
-
-					File file = new File(restoreLocation.toFileString());
-
-					if (file.exists()) {
-						Document document = DocumentBuilderFactory.newInstance()
-								.newDocumentBuilder().parse(file);
-						IModelReconcilingService modelReconcilingService = new ModelReconcilingService();
-						ModelReconciler modelReconciler = modelReconcilingService
-								.createModelReconciler();
-						document.normalizeDocument();
-						Collection<ModelDelta> deltas = modelReconciler.constructDeltas(oldResource
-								.getContents().get(0), document);
-						modelReconcilingService.applyDeltas(deltas);
-					}
-				} catch (Exception e) {
-					if (logger != null) {
-						logger.error(e);
-					}
-				}
-				if (appElement != null) {
-					resource.getContents().add((EObject) appElement);
-					if (!hasTopLevelWindows(resource) && logger != null) {
-						logger.error("No top-level windows seen when migrating from existing delta files"); //$NON-NLS-1$
-					}
-				}
-				return resource;
-			}
-		}
-
 		File workbenchData = null;
 		URI restoreLocation = null;
 
