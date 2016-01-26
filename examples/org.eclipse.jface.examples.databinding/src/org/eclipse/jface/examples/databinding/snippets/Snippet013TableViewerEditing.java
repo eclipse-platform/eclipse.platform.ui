@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 The Pampered Chef, Inc. and others.
+ * Copyright (c) 2006, 2016 The Pampered Chef, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,33 +68,26 @@ public class Snippet013TableViewerEditing {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -135,6 +128,12 @@ public class Snippet013TableViewerEditing {
 			people.add(new Person("Christophe Cornu"));
 			people.add(new Person("Lynne Kues"));
 			people.add(new Person("Silenio Quarti"));
+			people.add(new Person("Boris Bokowski"));
+			people.add(new Person("Matthew Hall"));
+			people.add(new Person("Thomas Schindl"));
+			people.add(new Person("Lars Vogel"));
+			people.add(new Person("Simon Scholz"));
+			people.add(new Person("Stefan Xenos"));
 		}
 
 		public List getPeople() {
@@ -149,8 +148,8 @@ public class Snippet013TableViewerEditing {
 	 *
 	 * @since 3.3
 	 */
-	private static class InlineEditingSupport extends
-			ObservableValueEditingSupport {
+	private static class InlineEditingSupport extends ObservableValueEditingSupport {
+
 		private CellEditor cellEditor;
 
 		/**
@@ -158,7 +157,6 @@ public class Snippet013TableViewerEditing {
 		 * @param dbc
 		 */
 		public InlineEditingSupport(ColumnViewer viewer, DataBindingContext dbc) {
-
 			super(viewer, dbc);
 			cellEditor = new TextCellEditor((Composite) viewer.getControl());
 		}
@@ -169,15 +167,12 @@ public class Snippet013TableViewerEditing {
 		}
 
 		@Override
-		protected IObservableValue doCreateCellEditorObservable(
-				CellEditor cellEditor) {
-
+		protected IObservableValue doCreateCellEditorObservable(CellEditor cellEditor) {
 			return WidgetProperties.text(SWT.Modify).observe(cellEditor.getControl());
 		}
 
 		@Override
-		protected IObservableValue doCreateElementObservable(Object element,
-				ViewerCell cell) {
+		protected IObservableValue doCreateElementObservable(Object element, ViewerCell cell) {
 			return BeanProperties.value(element.getClass(), "name").observe(element);
 		}
 	}
@@ -204,13 +199,13 @@ public class Snippet013TableViewerEditing {
 			// Set up data binding. In an RCP application, the threading
 			// Realm
 			// will be set for you automatically by the Workbench. In an SWT
-			// application, you can do this once, wrpping your binding
+			// application, you can do this once, wrapping your binding
 			// method call.
 			DataBindingContext bindingContext = new DataBindingContext();
 			bindGUI(bindingContext);
 
 			// Open and return the Shell
-			shell.setSize(100, 300);
+			shell.setSize(400, 600);
 			shell.open();
 			return shell;
 		}
@@ -218,20 +213,16 @@ public class Snippet013TableViewerEditing {
 		protected void bindGUI(DataBindingContext bindingContext) {
 			// Since we're using a JFace Viewer, we do first wrap our Table...
 			TableViewer peopleViewer = new TableViewer(committers);
-			TableViewerColumn column = new TableViewerColumn(peopleViewer,
-					SWT.NONE);
-			column.setEditingSupport(new InlineEditingSupport(peopleViewer,
-					bindingContext));
+			TableViewerColumn column = new TableViewerColumn(peopleViewer, SWT.NONE);
+			column.setEditingSupport(new InlineEditingSupport(peopleViewer, bindingContext));
 			column.getColumn().setWidth(100);
 
 			// Bind viewer to model
-			ViewerSupport.bind(peopleViewer, new WritableList(viewModel
-					.getPeople(), Person.class), BeanProperties.value(
-					Person.class, "name"));
+			ViewerSupport.bind(peopleViewer, new WritableList(viewModel.getPeople(), Person.class),
+					BeanProperties.value(Person.class, "name"));
 
 			// bind selectedCommitter label to the name of the current selection
-			IObservableValue selection = ViewersObservables
-					.observeSingleSelection(peopleViewer);
+			IObservableValue selection = ViewersObservables.observeSingleSelection(peopleViewer);
 			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitter),
 					BeanProperties.value((Class) selection.getValueType(), "name", String.class)
 					.observeDetail(selection));

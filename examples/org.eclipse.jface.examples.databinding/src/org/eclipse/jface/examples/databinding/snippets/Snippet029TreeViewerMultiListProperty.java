@@ -83,8 +83,7 @@ public class Snippet029TreeViewerMultiListProperty {
 		gridLayout.numColumns = 4;
 		shell.setLayout(new FillLayout());
 
-		viewer = new TreeViewer(shell, SWT.FULL_SELECTION | SWT.MULTI
-				| SWT.BORDER);
+		viewer = new TreeViewer(shell, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 
 		bindUI();
 	}
@@ -98,26 +97,20 @@ public class Snippet029TreeViewerMultiListProperty {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
