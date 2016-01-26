@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,8 +111,7 @@ public final class PlatformUI {
 	 * @since 3.0
 	 */
     public static boolean isWorkbenchRunning() {
-        return Workbench.getInstance() != null
-                && Workbench.getInstance().isRunning();
+		return Workbench.getInstance() != null && Workbench.getInstance().isRunning();
     }
 
     /**
@@ -145,8 +144,7 @@ public final class PlatformUI {
      * because of an emergency; other values reserved for future use
      * @since 3.0
      */
-    public static int createAndRunWorkbench(Display display,
-            WorkbenchAdvisor advisor) {
+	public static int createAndRunWorkbench(Display display, WorkbenchAdvisor advisor) {
         return Workbench.createAndRunWorkbench(display, advisor);
     }
 
