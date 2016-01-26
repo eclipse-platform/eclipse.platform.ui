@@ -203,11 +203,8 @@ public class ResourceHandler implements IModelResourceHandler {
 							+ "Continuing execution, but the missing windows may cause other initialization failures."); //$NON-NLS-1$
 		}
 
-		if (!clearPersistedState) {
-			CommandLineOptionModelProcessor processor = ContextInjectionFactory.make(
-					CommandLineOptionModelProcessor.class, context);
-			processor.process();
-		}
+		CommandLineOptionModelProcessor processor = ContextInjectionFactory.make(CommandLineOptionModelProcessor.class, context);
+		processor.process();
 
 		return resource;
 	}
