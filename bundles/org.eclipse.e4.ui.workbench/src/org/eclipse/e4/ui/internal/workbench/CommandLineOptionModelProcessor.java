@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486583
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -20,6 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 
 /**
+ * Activates the perspectives specified via the content key
+ * <code>E4Workbench.FORCED_PERSPECTIVE_ID</code>.
+ *
+ * Might evaluate more keys in the future
  *
  */
 public class CommandLineOptionModelProcessor {
