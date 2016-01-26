@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Tom Schindl and others.
+ * Copyright (c) 2006, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486603
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -21,11 +22,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A simple TreeViewer to demonstrate usage of an ILazyContentProvider.
+ * A simple TreeViewer example to demonstrate usage of an ILazyContentProvider.
+ * Please note that you need to call viewer.setUseHasLoop(true) to enable the
+ * lazy lookup in the content provider
  *
  */
 public class Snippet047VirtualLazyTreeViewer {
+
 	private class MyContentProvider implements ILazyTreeContentProvider {
+
 		private TreeViewer viewer;
 		private IntermediateNode[] elements;
 
@@ -119,13 +124,13 @@ public class Snippet047VirtualLazyTreeViewer {
 	}
 
 	public Snippet047VirtualLazyTreeViewer(Shell shell) {
-		final TreeViewer v = new TreeViewer(shell, SWT.VIRTUAL | SWT.BORDER);
-		v.setLabelProvider(new LabelProvider());
-		v.setContentProvider(new MyContentProvider(v));
-		v.setUseHashlookup(true);
+		final TreeViewer viewer = new TreeViewer(shell, SWT.VIRTUAL | SWT.BORDER);
+		viewer.setLabelProvider(new LabelProvider());
+		viewer.setContentProvider(new MyContentProvider(viewer));
+		viewer.setUseHashlookup(true);
 		IntermediateNode[] model = createModel();
-		v.setInput(model);
-		v.getTree().setItemCount(model.length);
+		viewer.setInput(model);
+		viewer.getTree().setItemCount(model.length);
 
 	}
 
