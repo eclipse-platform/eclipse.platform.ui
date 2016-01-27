@@ -7,12 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 485201
  *******************************************************************************/
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -47,11 +45,7 @@ public abstract class OpenAndLinkWithEditorHelper {
 		@Override
 		public final void open(OpenEvent event) {
 			lastOpenSelection = event.getSelection();
-			try {
-				OpenAndLinkWithEditorHelper.this.open(lastOpenSelection, OpenStrategy.activateOnOpen());
-			} catch (OperationCanceledException e) {
-				// ignore: user cancel, see bug 485201.
-			}
+			OpenAndLinkWithEditorHelper.this.open(lastOpenSelection, OpenStrategy.activateOnOpen());
 		}
 
 		/*

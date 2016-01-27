@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -343,6 +344,7 @@ public class OpenWithMenu extends ContributionItem {
 		menuItem.setSelection(markAsSelected);
         menuItem.setText(IDEWorkbenchMessages.DefaultEditorDescription_name);
 
+
         Listener listener = event -> {
 		    switch (event.type) {
 		    case SWT.Selection:
@@ -354,6 +356,8 @@ public class OpenWithMenu extends ContributionItem {
 		                DialogUtil.openError(page.getWorkbenchWindow()
 		                        .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,
 		                        e.getMessage(), e);
+					} catch (OperationCanceledException ex) {
+
 		            }
 		        }
 		        break;
