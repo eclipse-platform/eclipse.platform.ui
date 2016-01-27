@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -698,6 +698,48 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			}
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle01"}, listener);
 		assertNull("4.0", manager.getContentType("org.eclipse.bundle01.missing"));
+		// ensure the content type instances are all different
+		text[3] = manager.getContentType(IContentTypeManager.CT_TEXT);
+		assertNotNull("5.0", text[3]);
+		text[3] = ((ContentTypeHandler) text[3]).getTarget();
+		assertEquals("5.1", text[0], text[3]);
+		assertEquals("5.2", text[2], text[3]);
+		assertTrue("5.3", text[0] != text[3]);
+		assertTrue("5.4", text[2] != text[3]);
+	}
+
+	/**
+	 * Similar to testDynamicChanges, but using the org.eclipse.core.contenttype.contentTypes extension point.
+	 */
+	public void testDynamicChangesNewExtension() {
+		final IContentType[] text = new IContentType[4];
+		final IContentTypeManager manager = Platform.getContentTypeManager();
+		text[0] = manager.getContentType(IContentTypeManager.CT_TEXT);
+		assertNotNull("1.0", text[0]);
+		text[1] = manager.getContentType(IContentTypeManager.CT_TEXT);
+		assertNotNull("1.1", text[1]);
+		text[0] = ((ContentTypeHandler) text[0]).getTarget();
+		text[1] = ((ContentTypeHandler) text[1]).getTarget();
+		assertEquals("2.0", text[0], text[1]);
+		assertTrue("2.1", text[0] == text[1]);
+		//	make arbitrary dynamic changes to the contentTypes extension point
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(IContentConstants.CONTENT_NAME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		BundleTestingHelper.runWithBundles("3", new Runnable() {
+			@Override
+			public void run() {
+				IContentType contentType = manager.getContentType("org.eclipse.bug485227.bug485227_contentType");
+				assertNotNull("3.1 Contributed content type not found", contentType);
+				// ensure the content type instances are different
+				text[2] = manager.getContentType(IContentTypeManager.CT_TEXT);
+				assertNotNull("3.2 Text content type not modified", text[2]);
+				text[2] = ((ContentTypeHandler) text[2]).getTarget();
+				assertEquals("3.3", text[0], text[2]);
+				assertTrue("3.4", text[0] != text[2]);
+				assertEquals("3.5 default extension not associated", contentType, manager.findContentTypeFor("file.bug485227"));
+				assertEquals("3.6 additional extension not associated", contentType, manager.findContentTypeFor("file.bug485227_2"));
+			}
+		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bug485227"}, listener);
+		assertNull("4.0 Content type not cleared after bundle uninstall", manager.getContentType("org.eclipse.bug485227.bug485227_contentType"));
 		// ensure the content type instances are all different
 		text[3] = manager.getContentType(IContentTypeManager.CT_TEXT);
 		assertNotNull("5.0", text[3]);
