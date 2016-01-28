@@ -2408,16 +2408,19 @@
       <strategy
             class="org.eclipse.ui.internal.ide.SystemEditorOrTextEditorStrategy"
             id="org.eclipse.ui.ide.systemEditorThenTextEditor"
+            interactive="false"
             label="%systemEditorThenTextEditor">
       </strategy>
       <strategy
             class="org.eclipse.ui.internal.ide.TextEditorStrategy"
             id="org.eclipse.ui.ide.textEditor"
+            interactive="false"
             label="%textEditor">
       </strategy>
       <strategy
             class="org.eclipse.ui.internal.ide.AskUserViaPopupUnassociatedEditorStrategy"
             id="org.eclipse.ui.ide.askUserForUnassociatedEditor"
+            interactive="true"
             label="%askUserViaPopup">
       </strategy>
    </extension>

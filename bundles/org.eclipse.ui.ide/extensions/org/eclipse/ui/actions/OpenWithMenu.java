@@ -351,7 +351,7 @@ public class OpenWithMenu extends ContributionItem {
 		        if (menuItem.getSelection()) {
 		            IDE.setDefaultEditor(file, null);
 		            try {
-		                openEditor(IDE.getEditorDescriptor(file), false);
+						openEditor(IDE.getEditorDescriptor(file, true, true), false);
 		            } catch (PartInitException e) {
 		                DialogUtil.openError(page.getWorkbenchWindow()
 		                        .getShell(), IDEWorkbenchMessages.OpenWithMenu_dialogTitle,

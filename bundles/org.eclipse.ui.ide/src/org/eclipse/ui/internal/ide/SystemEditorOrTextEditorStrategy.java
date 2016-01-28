@@ -15,8 +15,19 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
 
 /**
- * @since 3.12
+ * Strategy for unassociated file types:
+ * <ol>
+ * <li>The operating system is consulted to determine if an in-place component
+ * editor is available (e.g. OLE editor on Win32 platforms).</li>
+ * <li>The operating system is consulted to determine if an external editor is
+ * available.</li>
+ * <li>The workbench editor registry is consulted to determine if the default
+ * text editor is available.</li></li>
+ * </ol>
+ * This is the default strategy, as it mimics the legacy behavior of IDE before
+ * {@link IUnassociatedEditorStrategy} got introduced.
  *
+ * @since 3.12
  */
 public final class SystemEditorOrTextEditorStrategy implements IUnassociatedEditorStrategy {
 	static final String EXTENSION_ID = "org.eclipse.ui.ide.systemEditorThenTextEditor"; //$NON-NLS-1$
