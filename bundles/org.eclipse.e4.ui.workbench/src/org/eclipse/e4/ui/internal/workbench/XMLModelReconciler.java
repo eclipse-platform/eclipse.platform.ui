@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -927,7 +927,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	private String getEntryElementName(EObject object, Entry<?, ?> entry) {
 		if (object instanceof MContext) {
 			for (Entry<String, String> property : ((MContext) object).getProperties().entrySet()) {
-				if (property == entry) {
+				if (property.equals(entry)) {
 					return CONTEXT_PROPERTIES_ATTNAME;
 				}
 			}
@@ -936,7 +936,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MContribution) {
 			for (Entry<String, String> state : ((MContribution) object).getPersistedState()
 					.entrySet()) {
-				if (state == entry) {
+				if (state.equals(entry)) {
 					return APPLICATIONELEMENT_PERSISTEDSTATE_ATTNAME;
 				}
 			}

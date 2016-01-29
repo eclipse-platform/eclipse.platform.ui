@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
+import java.util.Objects;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -41,6 +42,8 @@ public abstract class ModelReconcilerContributionTest extends
 		part.getPersistedState().put("testing", userChange);
 
 		Object state = reconciler.serialize();
+		assertEquals(!Objects.equals(applicationState, userChange),
+				serializedStateHasChanges(state));
 
 		application = createApplication();
 		window = application.getChildren().get(0);
@@ -48,6 +51,7 @@ public abstract class ModelReconcilerContributionTest extends
 		part.getPersistedState().put("testing", newApplicationState);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
+		assertEquals(Objects.equals(applicationState, userChange) ? 0 : 1, deltas.size());
 
 		assertEquals(newApplicationState, part.getPersistedState().get(
 				"testing"));
@@ -72,6 +76,14 @@ public abstract class ModelReconcilerContributionTest extends
 			}
 		}
 	}
+
+	/**
+	 * @param state
+	 * @return true if the state object, returned from
+	 *         {@link ModelReconciler#serialize()} when recording changes,
+	 *         actually has changes recorded.
+	 */
+	protected abstract boolean serializedStateHasChanges(Object state);
 
 	public void testContribution_PersistedState_NullNullNull() {
 		testContribution_PersistedState(null, null, null);
