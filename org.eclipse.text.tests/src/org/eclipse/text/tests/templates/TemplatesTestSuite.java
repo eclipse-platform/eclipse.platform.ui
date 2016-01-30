@@ -8,28 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jeremie Bresson <jbr@bsiag.com> - Allow to specify format for date variable - https://bugs.eclipse.org/75981
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486889
  *******************************************************************************/
 
 package org.eclipse.text.tests.templates;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Test Suite for org.eclipse.text.
+ * Test Suite for the org.eclipse.text plug-in
  *
- * @since 3.3
  */
+@RunWith(Suite.class)
+@SuiteClasses({ 
+	TemplateTranslatorTest.class, 
+	GlobalTemplateVariablesDateTest.class})
 public class TemplatesTestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.jface.text.templates"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTest(TemplateTranslatorTest.suite());
-		suite.addTest(GlobalTemplateVariablesDateTest.suite());
-		//$JUnit-END$
-
-		return suite;
-	}
+	// intentionally empty
 }

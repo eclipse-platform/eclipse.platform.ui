@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486889
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.text.tests.link.LinkTestSuite;
 import org.eclipse.text.tests.templates.TemplatesTestSuite;
+
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**
@@ -45,7 +47,7 @@ public class EclipseTextTestSuite {
 		suite.addTest(TextUtilitiesTest.suite());
 		suite.addTest(AnnotationModelStressTest.suite());
 		suite.addTest(AnnotationModelExtension2Test.suite());
-		suite.addTest(TemplatesTestSuite.suite());
+		suite.addTest(new JUnit4TestAdapter(TemplatesTestSuite.class));
 		//$JUnit-END$
 
 		return suite;

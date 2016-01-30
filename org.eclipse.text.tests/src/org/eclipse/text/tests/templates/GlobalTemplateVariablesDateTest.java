@@ -7,12 +7,19 @@
  *
  * Contributors:
  *     BSI Business Systems Integration AG - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486889
  *******************************************************************************/
 package org.eclipse.text.tests.templates;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.ULocale;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
@@ -22,14 +29,7 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 import org.eclipse.jface.text.templates.TemplateVariable;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class GlobalTemplateVariablesDateTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(GlobalTemplateVariablesDateTest.class);
-	}
+public class GlobalTemplateVariablesDateTest  {
 
 	private TemplateTranslator fTranslator;
 
@@ -37,9 +37,8 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 
 	private TemplateContextType fType;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp()  {
 		fTranslator= new TemplateTranslator();
 
 		fType= new TemplateContextType();
@@ -47,7 +46,8 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 
 		fContext= new DocumentTemplateContext(fType, new Document(), 0, 0);
 	}
-
+	
+	@Test
 	public void testWithoutParameter() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${date}!");
 		fType.resolve(buffer, fContext);
@@ -58,7 +58,8 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 		expected.append("!");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
-
+	
+	@Test
 	public void testOneParameter() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("This format ${d:date('dd MMM YYYY')} and not ${p:date('YYYY-MM-dd')}");
 		fType.resolve(buffer, fContext);
@@ -71,6 +72,7 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
+	@Test
 	public void testSimpleLocale() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("From ${d:date('dd MMM YYYY', 'fr')} to ${d}");
 		fType.resolve(buffer, fContext);
@@ -83,6 +85,7 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
+	@Test
 	public void testComplexLocale() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("France ${d:date('EEEE dd MMMM YYYY', 'fr_FR')} and Germany ${p:date('EEEE dd. MMMM YYYY', 'de_DE')}");
 		fType.resolve(buffer, fContext);
@@ -95,6 +98,7 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
+	@Test
 	public void testInvalidDateFormat() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${d:date('invalid')}!");
 		fType.resolve(buffer, fContext);
@@ -106,6 +110,7 @@ public class GlobalTemplateVariablesDateTest extends TestCase {
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
+	@Test
 	public void testInvalidLocale() throws Exception {
 		TemplateBuffer buffer= fTranslator.translate("Today is ${d:date('YYYY-MM-dd', 'this_invalid_locale')}!");
 		fType.resolve(buffer, fContext);
