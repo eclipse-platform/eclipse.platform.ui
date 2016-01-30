@@ -11,6 +11,7 @@
  *     Helena Halperin - Bug 298747
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 378485, 460555, 463262
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 486859
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -328,10 +329,8 @@ public class EditorSelectionDialog extends Dialog {
 				rememberTypeButton.addListener(SWT.Selection, listener);
 				data = new GridData();
 				data.horizontalSpan = 2;
-				data.horizontalIndent = 15;
 				rememberTypeButton.setLayoutData(data);
 				rememberTypeButton.setFont(font);
-				rememberTypeButton.setEnabled(false);
 			}
 		}
 
@@ -626,23 +625,28 @@ public class EditorSelectionDialog extends Dialog {
 		settings.put(STORE_ID_DESCR, selectedEditor.getId());
 		String editorId = selectedEditor.getId();
 		settings.put(STORE_ID_DESCR, editorId);
-		if (rememberEditorButton == null || !rememberEditorButton.getSelection()) {
-			return;
-		}
+		boolean associateEditor = false;
 		EditorRegistry reg = (EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry();
-		if (rememberTypeButton == null || !rememberTypeButton.getSelection()) {
+		// remember editor for specific file
+		if (rememberEditorButton != null && rememberEditorButton.getSelection()) {
 			updateFileMappings(reg, true);
 			reg.setDefaultEditor(fileName, selectedEditor);
-		} else {
+			associateEditor = true;
+		}
+		// remember editor for given extension type
+		if (rememberTypeButton != null && rememberTypeButton.getSelection()) {
 			updateFileMappings(reg, false);
 			reg.setDefaultEditor("*." + getFileType(), selectedEditor); //$NON-NLS-1$
+			associateEditor = true;
 		}
-		// bug 468906: always re-set editor mappings: this is needed to rebuild
-		// internal editors map after setting the default editor
-		List<IFileEditorMapping> newMappings = new ArrayList<>();
-		newMappings.addAll(Arrays.asList(reg.getFileEditorMappings()));
-		reg.setFileEditorMappings(newMappings.toArray(new FileEditorMapping[newMappings.size()]));
-		reg.saveAssociations();
+		if (associateEditor) {
+			// bug 468906: always re-set editor mappings: this is needed to
+			// rebuild internal editors map after setting the default editor
+			List<IFileEditorMapping> newMappings = new ArrayList<>();
+			newMappings.addAll(Arrays.asList(reg.getFileEditorMappings()));
+			reg.setFileEditorMappings(newMappings.toArray(new FileEditorMapping[newMappings.size()]));
+			reg.saveAssociations();
+		}
 	}
 
 	/**
@@ -720,9 +724,6 @@ public class EditorSelectionDialog extends Dialog {
 	protected void updateEnableState() {
 		boolean enableExternal = externalButton.getSelection();
 		browseExternalEditorsButton.setEnabled(enableExternal);
-		if (rememberEditorButton != null && rememberTypeButton != null) {
-			rememberTypeButton.setEnabled(rememberEditorButton.getSelection());
-		}
 		updateOkButton();
 	}
 
@@ -772,6 +773,16 @@ public class EditorSelectionDialog extends Dialog {
 				} else {
 					selectedEditor = null;
 					okButton.setEnabled(false);
+				}
+			}
+			// 486859 both checked: checking one box unchecks the other
+			if (rememberEditorButton != null && rememberTypeButton != null && rememberEditorButton.getSelection()
+					&& rememberTypeButton.getSelection()) {
+				if (event.widget == rememberEditorButton) {
+					rememberTypeButton.setSelection(false);
+				}
+				if (event.widget == rememberTypeButton) {
+					rememberEditorButton.setSelection(false);
 				}
 			}
 			updateEnableState();
