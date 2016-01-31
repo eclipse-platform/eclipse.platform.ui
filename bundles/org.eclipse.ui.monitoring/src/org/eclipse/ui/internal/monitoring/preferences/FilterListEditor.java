@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2016 Google Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class FilterListEditor extends ListEditor {
 		StringBuilder mergedItems = new StringBuilder();
 
 		for (String item : items) {
-			item.trim();
+			item = item.trim();
 			if (mergedItems.length() != 0) {
 				mergedItems.append(',');
 			}
