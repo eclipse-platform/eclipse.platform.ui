@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel (Lars.Vogel@vogella.com) - Bug 416082,  472654, 395825
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411, 486876
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 463962
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
@@ -643,13 +643,16 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	@Override
-	public void switchPerspective(String perspectiveId) {
+	public java.util.Optional<MPerspective> switchPerspective(String perspectiveId) {
 		List<MPerspective> result = modelService.findElements(getWindow(), perspectiveId, MPerspective.class, null);
 		if (!result.isEmpty()) {
-			switchPerspective(result.get(0));
-			return;
+			MPerspective perspective = result.get(0);
+			switchPerspective(perspective);
+			return java.util.Optional.of(perspective);
 		}
 		logger.error("Perspective with ID " + perspectiveId + " not found in the current window."); //$NON-NLS-1$ //$NON-NLS-2$
+
+		return java.util.Optional.empty();
 	}
 
 	@Override
