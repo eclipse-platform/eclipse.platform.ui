@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487191
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -358,7 +361,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 	private void configureHistoryLink() {
 		int historyLimit= SearchPreferencePage.getHistoryLimit();
-		fLink.setText(Messages.format(SearchMessages.SearchHistorySelectionDialog_configure_link_label, new Integer(historyLimit)));
+		fLink.setText(MessageFormat.format(SearchMessages.SearchHistorySelectionDialog_configure_link_label, new Integer(historyLimit)));
 	}
 
 	protected final void validateDialogState() {
