@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jeremie Bresson <jbr@bsiag.com> - Allow to specify format for date variable - https://bugs.eclipse.org/75981
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486889
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486889, 486903
  *******************************************************************************/
 
 package org.eclipse.text.tests.templates;
@@ -22,8 +22,9 @@ import org.junit.runners.Suite.SuiteClasses;
  *
  */
 @RunWith(Suite.class)
-@SuiteClasses({ 
-	TemplateTranslatorTest.class, 
+@SuiteClasses({
+	TemplateTranslatorTest.class,
+	TemplateVariablesWordSelectionTest.class,
 	GlobalTemplateVariablesDateTest.class})
 public class TemplatesTestSuite {
 	// intentionally empty

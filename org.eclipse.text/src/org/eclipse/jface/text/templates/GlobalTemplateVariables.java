@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids: sdavids@gmx.de - see bug 25376
  *     Jeremie Bresson <jbr@bsiag.com> - Allow to specify format for date variable - https://bugs.eclipse.org/75981
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486903
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
@@ -71,6 +72,30 @@ public class GlobalTemplateVariables {
 				return ""; //$NON-NLS-1$
 			return selection;
 		}
+
+		@Override
+		public void resolve(TemplateVariable variable, TemplateContext context) {
+			List<String> params= variable.getVariableType().getParams();
+			if (params.size() >= 1 && params.get(0) != null) {
+				resolveWithParams(variable, context, params);
+			} else {
+				// No parameter, use default:
+				super.resolve(variable, context);
+			}
+		}
+
+		private void resolveWithParams(TemplateVariable variable, TemplateContext context, List<String> params) {
+			String selection= context.getVariable(SELECTION);
+			if (selection != null) {
+				variable.setValue(selection);
+			} else {
+				String defaultValue= params.get(0);
+				variable.setValue(defaultValue);
+			}
+			variable.setUnambiguous(true);
+			variable.setResolved(true);
+		}
+
 	}
 
 	/**
