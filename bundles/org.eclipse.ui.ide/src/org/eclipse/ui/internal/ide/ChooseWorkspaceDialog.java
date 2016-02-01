@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bugs 411578, 486842
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -349,13 +349,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 					removeWorkspaceFromLauncher(recentWorkspace);
 				}
 			});
-
-			link.addListener(SWT.MouseDown, event -> {
-				if (event.button == 3) {
-					menu.setVisible(true);
-				}
-			});
-
+			link.setMenu(menu);
 		}
 	}
 
