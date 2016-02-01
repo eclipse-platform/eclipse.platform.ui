@@ -14,7 +14,6 @@
 package org.eclipse.debug.internal.ui.contexts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -224,9 +223,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
         }
     }
 
-	protected void notify(final DebugContextEvent event, Object[] listeners) {
-		for (int i = 0; i < listeners.length; i++) {
-			final IDebugContextListener listener = (IDebugContextListener) listeners[i];
+	protected void notify(final DebugContextEvent event, ListenerList<IDebugContextListener> listeners) {
+		for (IDebugContextListener iDebugContextListener : listeners) {
+			final IDebugContextListener listener = iDebugContextListener;
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -240,15 +239,14 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 		}
 	}
 	
-	protected Object[] getListeners(IWorkbenchPart part) {
+	protected ListenerList<IDebugContextListener> getListeners(IWorkbenchPart part) {
         String id = null; 
         if (part != null) { 
             id = getCombinedPartId(part); 
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(id);
-			return listenerList != null ? listenerList.getListeners() : new Object[0];
+			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
         } else { 
-			List<Object> retVal = new ArrayList<Object>();
-            retVal.addAll(Arrays.asList(fListenersByPartId.get(null).getListeners()) ); 
+			ListenerList<IDebugContextListener> retVal = fListenersByPartId.get(null);
 			outer: for (Iterator<String> itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) {
                 String listenerPartId = itr.next(); 
                 for (int i = 0; i < fProviders.size(); i++) { 
@@ -260,47 +258,49 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
                     } 
                 }
                 
-				List<Object> toAdd = Arrays.asList(fListenersByPartId.get(listenerPartId).getListeners());
-				for (Iterator<Object> addItr = toAdd.iterator(); addItr.hasNext();) {
-                	Object element = addItr.next();
-                	if (!retVal.contains(element)) {
-						retVal.add(element);
+				for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
+					inner: for (IDebugContextListener addedListener : retVal) {
+						if (iDebugContextListener.equals(addedListener)){
+							continue inner;
+						}
 					}
-                	
-                } 
-            } 
-            return retVal.toArray(); 
+					retVal.add(iDebugContextListener);
+				}
+			}
+			return retVal;
         } 
 	}
-	
-	protected Object[] getPostListeners(IWorkbenchPart part) {
-		String id = null; 
-        if (part != null) { 
-            id = getCombinedPartId(part); 
-            ListenerList<IDebugContextListener> listenerList = fPostListenersByPartId.get(id); 
-            return listenerList != null ? listenerList.getListeners() : new Object[0]; 
-        } else { 
-			List<Object> retVal = new ArrayList<Object>();
-            ListenerList<IDebugContextListener> postListenersList = fPostListenersByPartId.get(null); 
-            if (postListenersList != null) { 
-                retVal.addAll( Arrays.asList(postListenersList.getListeners()) ); 
-            } 
-            
+
+	protected ListenerList<IDebugContextListener> getPostListeners(IWorkbenchPart part) {
+		String id = null;
+		if (part != null) {
+			id = getCombinedPartId(part);
+			ListenerList<IDebugContextListener> listenerList = fPostListenersByPartId.get(id);
+			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
+		} else {
+			ListenerList<IDebugContextListener> retVal = fPostListenersByPartId.get(null);
+
 			outer: for (Iterator<String> itr = fPostListenersByPartId.keySet().iterator(); itr.hasNext();) {
-                String listenerPartId = itr.next(); 
-                for (int i = 0; i < fProviders.size(); i++) { 
-                    String providerPartId = getCombinedPartId(fProviders.get(i).getPart());
-                    if ((listenerPartId == null && providerPartId == null) || 
-                        (listenerPartId != null && listenerPartId.equals(providerPartId)))  
-                    { 
-                        continue outer; 
-                    } 
-                } 
-                retVal.addAll( Arrays.asList(fPostListenersByPartId.get(listenerPartId).getListeners()) ); 
-            } 
-            return retVal.toArray(); 
-        } 
-	}	
+				String listenerPartId = itr.next();
+				for (int i = 0; i < fProviders.size(); i++) {
+					String providerPartId = getCombinedPartId(fProviders.get(i).getPart());
+					if ((listenerPartId == null && providerPartId == null) || (listenerPartId != null && listenerPartId.equals(providerPartId))) {
+						continue outer;
+					}
+				}
+				inner: for (IDebugContextListener iDebugContextListener : fPostListenersByPartId.get(listenerPartId)) {
+					for (IDebugContextListener addedListener : retVal) {
+						if (iDebugContextListener.equals(addedListener)) {
+							continue inner;
+						}
+					}
+					retVal.add(iDebugContextListener);
+				}
+			}
+			return retVal;
+		}
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextService#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, java.lang.String)
