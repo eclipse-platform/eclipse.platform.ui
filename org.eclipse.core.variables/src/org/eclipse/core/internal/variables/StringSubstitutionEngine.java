@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,13 +85,13 @@ public class StringSubstitutionEngine {
 	 */
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
-		List<HashSet<String>> resolvedVariableSets = new ArrayList<HashSet<String>>();
+		List<HashSet<String>> resolvedVariableSets = new ArrayList<>();
 		while (fSubs) {
 			HashSet<String> resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);
 			for(int i=resolvedVariableSets.size()-1; i>=0; i--) {
 				HashSet<String> prevSet = resolvedVariableSets.get(i);
 				if (prevSet.equals(resolved)) {
-					HashSet<String> conflictingSet = new HashSet<String>();
+					HashSet<String> conflictingSet = new HashSet<>();
 					for (; i<resolvedVariableSets.size(); i++) {
 						conflictingSet.addAll(resolvedVariableSets.get(i));
 					}
@@ -135,10 +135,10 @@ public class StringSubstitutionEngine {
 	 */
 	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuffer(expression.length());
-		fStack = new Stack<VariableReference>();
+		fStack = new Stack<>();
 		fSubs = false;
 
-		HashSet<String> resolvedVariables = new HashSet<String>();
+		HashSet<String> resolvedVariables = new HashSet<>();
 
 		int pos = 0;
 		int state = SCAN_FOR_START;

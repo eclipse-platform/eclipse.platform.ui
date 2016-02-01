@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,7 +193,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	 * Constructs a new string variable manager.
 	 */
 	private StringVariableManager() {
-		fListeners = new ListenerList<IValueVariableListener>();
+		fListeners = new ListenerList<>();
 	}
 
 	/**
@@ -202,8 +202,8 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	private synchronized void initialize() {
 		if (fDynamicVariables == null) {
 			fInternalChange = true;
-			fDynamicVariables = new HashMap<String, IDynamicVariable>(5);
-			fValueVariables = new HashMap<String, IStringVariable>(5);
+			fDynamicVariables = new HashMap<>(5);
+			fValueVariables = new HashMap<>(5);
 			loadContributedValueVariables();
 			loadPersistedValueVariables();
 			loadDynamicVariables();
@@ -325,7 +325,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	@Override
 	public synchronized IStringVariable[] getVariables() {
 		initialize();
-		List<IStringVariable> list = new ArrayList<IStringVariable>(fDynamicVariables.size() + fValueVariables.size());
+		List<IStringVariable> list = new ArrayList<>(fDynamicVariables.size() + fValueVariables.size());
 		list.addAll(fDynamicVariables.values());
 		list.addAll(fValueVariables.values());
 		return list.toArray(new IStringVariable[list.size()]);
@@ -405,7 +405,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 	@Override
 	public synchronized void removeVariables(IValueVariable[] variables) {
 		initialize();
-		List<IValueVariable> removed = new ArrayList<IValueVariable>(variables.length);
+		List<IValueVariable> removed = new ArrayList<>(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (fValueVariables.remove(variable.getName()) != null) {
