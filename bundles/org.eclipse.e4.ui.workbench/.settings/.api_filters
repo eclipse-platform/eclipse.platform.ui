@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.workbench" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="All classes deleted hat the &quot;No reference flag&quot; Javadoc set" id="923795461">
+            <message_arguments>
+                <message_argument value="1.4.0"/>
+                <message_argument value="1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/modeling/EModelService.java" type="org.eclipse.e4.ui.workbench.modeling.EModelService">
         <filter comment="Type parameter was missing; binary compatibilty is preserved due to type erasure" id="420679712">
             <message_arguments>
