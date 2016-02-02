@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
- *     Mickael Istria (Red Hat Inc.) - Bug 488938
+ *     Mickael Istria (Red Hat Inc.) - Bug 488938, 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -23,9 +23,9 @@ import org.eclipse.osgi.util.NLS;
 public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 
 	// well known Integer values
-	protected static final Integer INTEGER_ONE = new Integer(1);
-	protected static final Integer INTEGER_TWO = new Integer(2);
-	protected static final Integer INTEGER_ZERO = new Integer(0);
+	protected static final Integer INTEGER_ONE = 1;
+	protected static final Integer INTEGER_TWO = 2;
+	protected static final Integer INTEGER_ZERO = 0;
 
 	//
 	protected static final long UNDEFINED_ID = -1;

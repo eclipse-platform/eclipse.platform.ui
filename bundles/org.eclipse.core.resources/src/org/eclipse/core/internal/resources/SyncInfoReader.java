@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -46,7 +47,7 @@ public class SyncInfoReader {
 			case 3 :
 				return new SyncInfoReader_3(workspace, synchronizer);
 			default :
-				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
+				throw new IOException(NLS.bind(Messages.resources_format, formatVersion));
 		}
 	}
 

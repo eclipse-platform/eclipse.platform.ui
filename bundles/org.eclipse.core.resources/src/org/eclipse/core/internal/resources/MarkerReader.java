@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -40,7 +41,7 @@ public class MarkerReader {
 			case 3 :
 				return new MarkerReader_3(workspace);
 			default :
-				throw new IOException(NLS.bind(Messages.resources_format, new Integer(formatVersion)));
+				throw new IOException(NLS.bind(Messages.resources_format, formatVersion));
 		}
 	}
 

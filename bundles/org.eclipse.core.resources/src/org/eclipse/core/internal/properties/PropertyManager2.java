@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.properties;
 
@@ -164,7 +165,7 @@ public class PropertyManager2 implements IPropertyManager {
 		resource.checkAccessible(flags);
 		// enforce the limit stated by the spec
 		if (value != null && value.length() > MAX_VALUE_SIZE) {
-			String message = NLS.bind(Messages.properties_valueTooLong, new Object[] {name.getQualifier(), name.getLocalName(), new Integer(MAX_VALUE_SIZE).toString()});
+			String message = NLS.bind(Messages.properties_valueTooLong, new Object[] {name.getQualifier(), name.getLocalName(), Integer.toString(MAX_VALUE_SIZE)});
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
 		}
 		if (name.getQualifier() == null) {

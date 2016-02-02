@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -104,10 +105,10 @@ public class MarkerReader_2 extends MarkerReader {
 			Object value = null;
 			switch (type) {
 				case ATTRIBUTE_INTEGER :
-					value = new Integer(input.readInt());
+					value = input.readInt();
 					break;
 				case ATTRIBUTE_BOOLEAN :
-					value = input.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
+					value = input.readBoolean();
 					break;
 				case ATTRIBUTE_STRING :
 					value = input.readUTF();

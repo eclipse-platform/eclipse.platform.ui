@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Broadcom Corporation - ongoing development
  *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -41,8 +42,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		public synchronized Object put(Object key, Object value) {
 			Object prev = super.put(key, value);
 			if (prev != null && ROOT_SEQUENCE_NUMBER_KEY.equals(key)) {
-				int prevSeqNum = new Integer((String) prev).intValue();
-				int currSeqNum = new Integer((String) value).intValue();
+				int prevSeqNum = Integer.parseInt((String) prev);
+				int currSeqNum = Integer.parseInt((String) value);
 				if (prevSeqNum > currSeqNum) {
 					//revert last put operation
 					super.put(key, prev);
@@ -420,7 +421,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected long getDeltaExpiration(String pluginId) {
 		String result = masterTable.getProperty(DELTA_EXPIRATION_PREFIX + pluginId);
-		return (result == null) ? System.currentTimeMillis() : new Long(result).longValue();
+		return (result == null) ? System.currentTimeMillis() : Long.parseLong(result);
 	}
 
 	protected Properties getMasterTable() {
@@ -429,7 +430,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	public int getSaveNumber(String pluginId) {
 		String value = masterTable.getProperty(SAVE_NUMBER_PREFIX + pluginId);
-		return (value == null) ? 0 : new Integer(value).intValue();
+		return (value == null) ? 0 : Integer.parseInt(value);
 	}
 
 	protected String[] getSaveParticipantPluginIds() {
@@ -1428,7 +1429,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	protected void setSaveNumber(String pluginId, int number) {
-		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, new Integer(number).toString());
+		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, Integer.toString(number));
 	}
 
 	@Override
@@ -1545,7 +1546,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				indices = new ArrayList<>(10);
 				table.put(trees[i], indices);
 			}
-			indices.add(new Integer(i));
+			indices.add(i);
 		}
 
 		/* find the oldest tree (a descendent of all other trees) */
@@ -1612,8 +1613,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				String stringValue = previousMasterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY);
 				// if there was a full save, then there must be a non-null entry for root
 				if (stringValue != null) {
-					int valueInFile = new Integer(stringValue).intValue();
-					int valueInMemory = new Integer(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY)).intValue();
+					int valueInFile = Integer.parseInt(stringValue);
+					int valueInMemory = Integer.parseInt(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY));
 					// new master table must provide greater or equal sequence number for root
 					// throw exception if new value is lower than previous one - we cannot allow to desynchronize master table on disk
 					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

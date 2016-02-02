@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2016 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -286,7 +287,7 @@ public class PathVariableUtil {
 
 						try {
 							if (variable.length() > 0) {
-								String prefix = new String();
+								String prefix = ""; //$NON-NLS-1$
 								if (hasVariableWithMacroSyntax) {
 									int indexOfVariable = components[j].indexOf(variable) - "${".length(); //$NON-NLS-1$
 									prefix = components[j].substring(0, indexOfVariable);
@@ -309,7 +310,7 @@ public class PathVariableUtil {
 										if (!manager.isDefined(intermediateVariable))
 											manager.setURIValue(intermediateVariable, URIUtil.toURI(intermediateValue));
 										variable = intermediateVariable;
-										prefix = new String();
+										prefix = ""; //$NON-NLS-1$
 									}
 								}
 								String newVariable = variable;

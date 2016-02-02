@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -54,7 +55,7 @@ public abstract class WorkspaceTreeReader {
 				return w;
 			default :
 				// Unknown tree version - fail to read the tree
-				String msg = NLS.bind(Messages.resources_format, new Integer(version));
+				String msg = NLS.bind(Messages.resources_format, version);
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
 	}

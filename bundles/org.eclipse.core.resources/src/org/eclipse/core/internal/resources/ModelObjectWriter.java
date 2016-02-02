@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -94,7 +95,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	protected void write(IResourceFilterDescription description, XMLWriter writer) {
 		writer.startTag(FILTER, null);
 		if (description != null) {
-			writer.printSimpleTag(ID, new Long(((FilterDescription) description).getId()));
+			writer.printSimpleTag(ID, ((FilterDescription) description).getId());
 			writer.printSimpleTag(NAME, description.getResource().getProjectRelativePath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
 			if (description.getFileInfoMatcherDescription() != null) {
@@ -291,11 +292,11 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		if (description != null) {
 			writer.printSimpleTag(NAME, description.getName());
 			writer.printSimpleTag(AUTOBUILD, description.isAutoBuilding() ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.printSimpleTag(SNAPSHOT_INTERVAL, new Long(description.getSnapshotInterval()));
+			writer.printSimpleTag(SNAPSHOT_INTERVAL, description.getSnapshotInterval());
 			writer.printSimpleTag(APPLY_FILE_STATE_POLICY, description.isApplyFileStatePolicy() ? "1" : "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.printSimpleTag(FILE_STATE_LONGEVITY, new Long(description.getFileStateLongevity()));
-			writer.printSimpleTag(MAX_FILE_STATE_SIZE, new Long(description.getMaxFileStateSize()));
-			writer.printSimpleTag(MAX_FILE_STATES, new Integer(description.getMaxFileStates()));
+			writer.printSimpleTag(FILE_STATE_LONGEVITY, description.getFileStateLongevity());
+			writer.printSimpleTag(MAX_FILE_STATE_SIZE, description.getMaxFileStateSize());
+			writer.printSimpleTag(MAX_FILE_STATES, description.getMaxFileStates());
 			String[] order = description.getBuildOrder(false);
 			if (order != null)
 				write(BUILD_ORDER, PROJECT, order, writer);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Broadcom Corporation - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -368,8 +369,8 @@ class ComputeProjectOrder {
 			final int NEXT_ADJACENT = 3;
 			final int AFTER_NEXTED_DFS_VISIT = 4;
 			// use precomputed objects to avoid garbage
-			final Integer NEXT_VERTEX_OBJECT = new Integer(NEXT_VERTEX);
-			final Integer AFTER_NEXTED_DFS_VISIT_OBJECT = new Integer(AFTER_NEXTED_DFS_VISIT);
+			final Integer NEXT_VERTEX_OBJECT = NEXT_VERTEX;
+			final Integer AFTER_NEXTED_DFS_VISIT_OBJECT = AFTER_NEXTED_DFS_VISIT;
 			// initialize
 			// all vertex.color initially Vertex.WHITE;
 			// all vertex.predecessor initially null;

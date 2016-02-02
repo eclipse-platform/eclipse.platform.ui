@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Mickael Istria (Red Hat Inc.) - Bug 488938
+ *     Mickael Istria (Red Hat Inc.) - Bug 488938, 488937
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -150,7 +150,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		// Seed the secure randomizer with some oft-varying inputs
 		int thread = Thread.currentThread().hashCode();
 		long time = System.currentTimeMillis();
-		int objectId = System.identityHashCode(new String());
+		int objectId = System.identityHashCode(""); //$NON-NLS-1$
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(byteOut);
 		byte[] ipAddress = getIPAddress();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -552,7 +553,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			} else {
 				// if the project is null, that means that we're loading a project description to retrieve
 				// some meta data only.
-				String key = new String(); // an empty key;
+				String key = ""; // an empty key; //$NON-NLS-1$
 				HashMap<String, LinkedList<FilterDescription>> map = ((HashMap<String, LinkedList<FilterDescription>>) objectStack.peek());
 				LinkedList<FilterDescription> list = map.get(key);
 				if (list == null) {
@@ -679,12 +680,12 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endFilterId(String elementName) {
 		if (elementName.equals(ID)) {
-			Long newId = new Long(charBuffer.toString());
+			Long newId = Long.parseLong(charBuffer.toString());
 			// objectStack has a FilterDescription on it. Set the name
 			// on this FilterDescription.
 			long oldId = ((FilterDescription) objectStack.peek()).getId();
 			if (oldId != 0) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterName, new Long(oldId), newId));
+				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldId, newId));
 			} else {
 				((FilterDescription) objectStack.peek()).setId(newId.longValue());
 			}
@@ -1019,8 +1020,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				if (elementName.equals(DICTIONARY)) {
 					state = S_DICTIONARY;
 					// Push 2 strings for the key/value pair to be read
-					objectStack.push(new String()); // key
-					objectStack.push(new String()); // value
+					objectStack.push(""); // key //$NON-NLS-1$
+					objectStack.push(""); // value //$NON-NLS-1$
 				}
 				break;
 			case S_DICTIONARY :

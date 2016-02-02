@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
@@ -196,7 +197,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		private void openHandleOn(String path, boolean subtree) {
 			setHandleValue(createHandleValue(path, subtree, Win32Natives.FILE_NOTIFY_CHANGE_FILE_NAME | Win32Natives.FILE_NOTIFY_CHANGE_DIR_NAME | Win32Natives.FILE_NOTIFY_CHANGE_LAST_WRITE | Win32Natives.FILE_NOTIFY_CHANGE_SIZE));
 			if (isOpen()) {
-				fHandleValueToHandle.put(new Long(getHandleValue()), this);
+				fHandleValueToHandle.put(getHandleValue(), this);
 				setHandleValueArrays(createHandleArrays());
 			} else {
 				close();
@@ -492,7 +493,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		synchronized (this) {
 			for (Iterator<Handle> i = handles.iterator(); i.hasNext();) {
 				Handle handle = i.next();
-				fHandleValueToHandle.remove(new Long(handle.getHandleValue()));
+				fHandleValueToHandle.remove(handle.getHandleValue());
 				handle.destroy();
 			}
 			setHandleValueArrays(createHandleArrays());
@@ -595,7 +596,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		// a change occurred
 		// WaitForMultipleObjects returns WAIT_OBJECT_0 + index
 		index -= Win32Natives.WAIT_OBJECT_0;
-		Handle handle = fHandleValueToHandle.get(new Long(handleValues[index]));
+		Handle handle = fHandleValueToHandle.get(handleValues[index]);
 		if (handle != null)
 			handle.handleNotification();
 	}

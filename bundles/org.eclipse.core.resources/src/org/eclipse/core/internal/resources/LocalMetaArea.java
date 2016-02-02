@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Broadcom Corporation - ongoing development
  *     Sergey Prigogin (Google) - [437005] Out-of-date .snap file prevents Eclipse from running
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
+ *     Mickael Istria (Red Hat Inc.) - Bug 488937
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -235,10 +236,10 @@ public class LocalMetaArea implements ICoreConstants {
 		if (sequenceNumber == null)
 			sequenceNumber = "0"; //$NON-NLS-1$
 		if (updateSequenceNumber) {
-			int n = new Integer(sequenceNumber).intValue() + 1;
+			int n = Integer.parseInt(sequenceNumber) + 1;
 			n = n < 0 ? 1 : n;
-			sequenceNumber = new Integer(n).toString();
-			getWorkspace().getSaveManager().getMasterTable().setProperty(key.toString(), new Integer(sequenceNumber).toString());
+			sequenceNumber = Integer.toString(n);
+			getWorkspace().getSaveManager().getMasterTable().setProperty(key.toString(), sequenceNumber);
 		}
 		return locationFor(target).append(sequenceNumber + F_TREE);
 	}
