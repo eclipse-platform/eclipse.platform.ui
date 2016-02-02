@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
+ *     Mickael Istria (Red Hat Inc.) - Bug 488938
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
@@ -520,10 +521,11 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		if (markerDeltas == null || markerDeltas.isEmpty())
 			return;
 		buffer.append('[');
-		for (Iterator<IPath> e = markerDeltas.keySet().iterator(); e.hasNext();) {
-			IPath key = e.next();
+		for (Entry<IPath, MarkerSet> entry : markerDeltas.entrySet()) {
+			IPath key = entry.getKey();
 			if (getResource().getFullPath().equals(key)) {
-				IMarkerSetElement[] deltas = markerDeltas.get(key).elements();
+				MarkerSet set = entry.getValue();
+				IMarkerSetElement[] deltas = set.elements();
 				boolean addComma = false;
 				for (int i = 0; i < deltas.length; i++) {
 					IMarkerDelta delta = (IMarkerDelta) deltas[i];

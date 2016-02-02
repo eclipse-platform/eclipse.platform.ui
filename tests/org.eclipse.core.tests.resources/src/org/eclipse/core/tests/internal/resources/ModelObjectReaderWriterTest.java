@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - Bug 459343
+ *     Mickael Istria (Red Hat Inc.) - Bug 488938
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
@@ -169,8 +171,9 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			Map<String, String> args2 = commands2[i].getArguments();
 			assertEquals(errorTag + ".2." + (i + 1) + "0", args.size(), args2.size());
 			int x = 1;
-			for (String key : args.keySet()) {
-				String value = args.get(key);
+			for (Entry<String, String> entry : args.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
 				String value2 = args2.get(key);
 				if (value == null)
 					assertNull(errorTag + ".2." + (i + 1) + x, value2);
@@ -188,8 +191,9 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		}
 		assertEquals(errorTag + ".4.01", links.size(), links2.size());
 		int x = 1;
-		for (IPath key : links.keySet()) {
-			LinkDescription value = links.get(key);
+		for (Entry<IPath, LinkDescription> entry : links.entrySet()) {
+			IPath key = entry.getKey();
+			LinkDescription value = entry.getValue();
 			LinkDescription value2 = links2.get(key);
 			assertTrue(errorTag + ".4." + x, value.getProjectRelativePath().equals(value2.getProjectRelativePath()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
