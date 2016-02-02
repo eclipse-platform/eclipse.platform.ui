@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *     Andrey Loskutov <loskutov@gmx.de> - generified interface, bug 461762
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 
 package org.eclipse.ui.views.bookmarkexplorer;
@@ -479,8 +480,7 @@ public class BookmarkNavigator extends ViewPart {
             IMemento markerMems[] = selectionMem.getChildren(TAG_MARKER);
             for (int i = 0; i < markerMems.length; i++) {
                 try {
-                    long id = new Long(markerMems[i].getString(TAG_ID))
-                            .longValue();
+                    long id = Long.parseLong(markerMems[i].getString(TAG_ID));
                     IResource resource = root.findMember(markerMems[i]
                             .getString(TAG_RESOURCE));
                     if (resource != null) {
@@ -502,7 +502,7 @@ public class BookmarkNavigator extends ViewPart {
             try {
                 String posStr = memento.getString(TAG_VERTICAL_POSITION);
                 int position;
-                position = new Integer(posStr).intValue();
+                position = Integer.parseInt(posStr);
                 bar.setSelection(position);
             } catch (NumberFormatException e) {
             }
@@ -512,7 +512,7 @@ public class BookmarkNavigator extends ViewPart {
             try {
                 String posStr = memento.getString(TAG_HORIZONTAL_POSITION);
                 int position;
-                position = new Integer(posStr).intValue();
+                position = Integer.parseInt(posStr);
                 bar.setSelection(position);
             } catch (NumberFormatException e) {
             }

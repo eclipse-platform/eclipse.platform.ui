@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  ******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -275,7 +276,7 @@ class Markers {
 				MarkerEntry entry = iterator.next();
 				entries[i++] = entry;
 			}
-			result.put(key, new Integer(i - 1));
+			result.put(key, i - 1);
 		}
 		return result;
 	}
@@ -322,7 +323,7 @@ class Markers {
 				ints[3]++;
 			}
 		}
-		return new Integer[] { new Integer(ints[2]), new Integer(ints[1]), new Integer(ints[0]), new Integer(ints[3]) };
+		return new Integer[] { ints[2], ints[1], ints[0], ints[3] };
 	}
 
 	/**

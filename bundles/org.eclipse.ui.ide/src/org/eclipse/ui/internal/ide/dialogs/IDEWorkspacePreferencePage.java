@@ -1,18 +1,19 @@
  /****************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
- *     Markus Schorn (Wind River Systems) -  bug 284447
- *     James Blackburn (Broadcom Corp.)   -  bug 340978
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 458832
- *     Christian Georgi (SAP SE)          -  bug 458811
- *******************************************************************************/
+* Copyright (c) 2000, 2016 IBM Corporation and others.
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+*     IBM Corporation - initial API and implementation
+*     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
+*     Markus Schorn (Wind River Systems) -  bug 284447
+*     James Blackburn (Broadcom Corp.)   -  bug 340978
+*     Lars Vogel <Lars.Vogel@vogella.com> - Bug 458832
+*     Christian Georgi (SAP SE)          -  bug 458811
+*     Mickael Istria (Red Hat Inc.) - Bug 486901
+*******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Collections;
@@ -526,16 +527,13 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
         // core's pref. ours is not up-to-date anyway if someone changes this
         // interval directly thru core api.
         long oldSaveInterval = description.getSnapshotInterval() / 60000;
-        long newSaveInterval = new Long(saveInterval.getStringValue())
-                .longValue();
+        long newSaveInterval = Long.parseLong(saveInterval.getStringValue());
         if (oldSaveInterval != newSaveInterval) {
             try {
                 description.setSnapshotInterval(newSaveInterval * 60000);
                 ResourcesPlugin.getWorkspace().setDescription(description);
-                store.firePropertyChangeEvent(
-                        IDEInternalPreferences.SAVE_INTERVAL, new Integer(
-                                (int) oldSaveInterval), new Integer(
-                                (int) newSaveInterval));
+                store.firePropertyChangeEvent(IDEInternalPreferences.SAVE_INTERVAL, (int) oldSaveInterval,
+                    (int) newSaveInterval);
             } catch (CoreException e) {
                 IDEWorkbenchPlugin.log(
                         "Error changing save interval preference", e //$NON-NLS-1$

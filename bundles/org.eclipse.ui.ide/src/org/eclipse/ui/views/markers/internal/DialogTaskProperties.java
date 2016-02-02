@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - bug 77332 - [Markers] Add task dialog improvements
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers.internal;
@@ -93,8 +94,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 			public void widgetSelected(SelectionEvent e) {
                 if (getMarker() == null) {
 					Map<String, Object> initialAttributes = getInitialAttributes();
-                    initialAttributes.put(IMarker.PRIORITY, new Integer(
-                            getPriorityFromDialog()));
+					initialAttributes.put(IMarker.PRIORITY, getPriorityFromDialog());
                 }
                 markDirty();
             }
@@ -155,7 +155,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	protected void updateDialogForNewMarker() {
 		Map<String, Object> initialAttributes = getInitialAttributes();
         int priority = getPriority();
-        initialAttributes.put(IMarker.PRIORITY, new Integer(priority));
+        initialAttributes.put(IMarker.PRIORITY, priority);
         if (priority == IMarker.PRIORITY_HIGH) {
             priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
         } else if (priority == IMarker.PRIORITY_LOW) {
@@ -173,7 +173,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	protected void updateDialogFromMarker() {
 		Map<String, Object> initialAttributes = getInitialAttributes();
         int priority = getPriority();
-        initialAttributes.put(IMarker.PRIORITY, new Integer(priority));
+        initialAttributes.put(IMarker.PRIORITY, priority);
         if (priority == IMarker.PRIORITY_HIGH) {
             priorityCombo.select(priorityCombo.indexOf(PRIORITY_HIGH));
         } else if (priority == IMarker.PRIORITY_LOW) {
@@ -202,7 +202,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
     @Override
 	protected Map<String, Object> getMarkerAttributes() {
 		Map<String, Object> attrs = super.getMarkerAttributes();
-        attrs.put(IMarker.PRIORITY, new Integer(getPriorityFromDialog()));
+        attrs.put(IMarker.PRIORITY, getPriorityFromDialog());
         attrs.put(IMarker.DONE, completedCheckbox.getSelection() ? Boolean.TRUE : Boolean.FALSE);
         Object userEditable = attrs.get(IMarker.USER_EDITABLE);
         if (userEditable == null || !(userEditable instanceof Boolean)) {

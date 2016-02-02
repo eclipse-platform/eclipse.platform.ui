@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -198,7 +199,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
         button.setLayoutData(buttonData);
 
-        button.setData(new Integer(id));
+        button.setData(id);
         button.setText(label);
 
         if (defaultButton) {

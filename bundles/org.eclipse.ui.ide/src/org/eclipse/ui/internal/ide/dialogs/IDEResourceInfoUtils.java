@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     David Black - bug 198091
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
-import com.ibm.icu.text.NumberFormat;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -36,6 +34,10 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * Utility class supporting common information required from resources.
@@ -340,8 +342,7 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (info.exists()) {
-			return NLS.bind(BYTES_LABEL, NumberFormat.getInstance().format(
-					new Long(info.getLength())));
+			return NLS.bind(BYTES_LABEL, NumberFormat.getInstance().format(info.getLength()));
 		}
 
 		return NOT_EXIST_TEXT;

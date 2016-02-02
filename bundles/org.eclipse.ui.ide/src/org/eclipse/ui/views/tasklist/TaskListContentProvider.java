@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 
 package org.eclipse.ui.views.tasklist;
@@ -97,8 +98,8 @@ class TaskListContentProvider implements IStructuredContentProvider,
             return ""; //$NON-NLS-1$
         }
 
-        return NLS.bind(TaskListMessages.TaskList_statusSummaryVisible,new Integer(sum(visibleMarkerCounts)),
-		getStatusSummaryBreakdown(visibleMarkerCounts));
+        return NLS.bind(TaskListMessages.TaskList_statusSummaryVisible, sum(visibleMarkerCounts),
+        getStatusSummaryBreakdown(visibleMarkerCounts));
     }
 
     /**
@@ -109,7 +110,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
      */
     public String getStatusSummarySelected(IStructuredSelection selection) {
         int[] selectedMarkerCounts = getMarkerCounts(selection.toList());
-        return NLS.bind(TaskListMessages.TaskList_statusSummarySelected, new Integer(sum(selectedMarkerCounts)),
+        return NLS.bind(TaskListMessages.TaskList_statusSummarySelected, sum(selectedMarkerCounts),
 		getStatusSummaryBreakdown(selectedMarkerCounts) );
     }
 
@@ -120,11 +121,7 @@ class TaskListContentProvider implements IStructuredContentProvider,
     private String getStatusSummaryBreakdown(int[] counts) {
         return NLS.bind(
 				TaskListMessages.TaskList_statusSummaryBreakdown,
-				new Object []{
-						new Integer(counts[TASKS]),
-						new Integer(counts[ERRORS]),
-						new Integer(counts[WARNINGS]),
-						new Integer(counts[INFOS])});
+				new Object[] { counts[TASKS], counts[ERRORS], counts[WARNINGS], counts[INFOS] });
     }
 
     /**
@@ -140,10 +137,9 @@ class TaskListContentProvider implements IStructuredContentProvider,
         TasksFilter filter = taskList.getFilter();
 
         if (filter.isShowingAll()) {
-            return NLS.bind(TaskListMessages.TaskList_titleSummaryUnfiltered, new Integer(visibleMarkerCount));
+            return NLS.bind(TaskListMessages.TaskList_titleSummaryUnfiltered, visibleMarkerCount);
         }
-		return NLS.bind(TaskListMessages.TaskList_titleSummaryFiltered, new Integer(visibleMarkerCount),
-				new Integer(getTotalMarkerCount()));
+		return NLS.bind(TaskListMessages.TaskList_titleSummaryFiltered, visibleMarkerCount, getTotalMarkerCount());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
@@ -303,7 +304,7 @@ public class ImportTypeDialog extends TrayDialog {
 			copyButton.setText(hasFlag(IMPORT_FILES_ONLY) ? IDEWorkbenchMessages.ImportTypeDialog_copyFiles: IDEWorkbenchMessages.ImportTypeDialog_copyFilesAndDirectories);
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			copyButton.setLayoutData(gridData);
-			copyButton.setData(new Integer(IMPORT_COPY));
+			copyButton.setData(IMPORT_COPY);
 			copyButton.addSelectionListener(listener);
 			copyButton.setFont(parent.getFont());
 		}
@@ -313,7 +314,7 @@ public class ImportTypeDialog extends TrayDialog {
 			moveButton.setText(hasFlag(IMPORT_FILES_ONLY) ? IDEWorkbenchMessages.ImportTypeDialog_moveFiles:IDEWorkbenchMessages.ImportTypeDialog_moveFilesAndDirectories);
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			moveButton.setLayoutData(gridData);
-			moveButton.setData(new Integer(IMPORT_MOVE));
+			moveButton.setData(IMPORT_MOVE);
 			moveButton.addSelectionListener(listener);
 			moveButton.setFont(parent.getFont());
 		}
@@ -323,7 +324,7 @@ public class ImportTypeDialog extends TrayDialog {
 			linkButton.setText(hasFlag(IMPORT_FILES_ONLY) ? IDEWorkbenchMessages.ImportTypeDialog_linkFiles:IDEWorkbenchMessages.ImportTypeDialog_createLinks);
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			linkButton.setLayoutData(gridData);
-			linkButton.setData(new Integer(IMPORT_LINK));
+			linkButton.setData(IMPORT_LINK);
 			linkButton.addSelectionListener(listener);
 			linkButton.setFont(parent.getFont());
 		}
@@ -333,7 +334,7 @@ public class ImportTypeDialog extends TrayDialog {
 			shadowCopyButton.setText(IDEWorkbenchMessages.ImportTypeDialog_recreateFilesAndDirectories);
 			gridData = new GridData(GridData.FILL_HORIZONTAL);
 			shadowCopyButton.setLayoutData(gridData);
-			shadowCopyButton.setData(new Integer(IMPORT_VIRTUAL_FOLDERS_AND_LINKS));
+			shadowCopyButton.setData(IMPORT_VIRTUAL_FOLDERS_AND_LINKS);
 			shadowCopyButton.addSelectionListener(listener);
 			shadowCopyButton.setFont(parent.getFont());
 		}

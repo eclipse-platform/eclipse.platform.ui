@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 
 package org.eclipse.ui.views.tasklist;
@@ -416,7 +417,7 @@ class MarkerUtil implements IMarkerConstants {
         }
         if (IMarker.PRIORITY == key) {
             // this property is used only by cell editor, where order is High, Normal, Low
-            return new Integer(IMarker.PRIORITY_HIGH - getPriority(marker));
+			return IMarker.PRIORITY_HIGH - getPriority(marker);
         }
         if (IMarker.DONE == key) {
             return isComplete(marker) ? Boolean.TRUE : Boolean.FALSE;

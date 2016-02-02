@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2016 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] initial API and implementation
  *     IBM Corporation - ongoing implementation
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
@@ -124,7 +125,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 	 */
 	public static class Argument {
 		public String key = KEY_NAME;
-		public String pattern = new String();
+		public String pattern = ""; //$NON-NLS-1$
 		public String operator = OPERATOR_EQUALS;
 		public boolean caseSensitive = false;
 		public boolean regularExpression = false;
@@ -275,7 +276,7 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 
 		public boolean match(IContainer parent, IFileInfo fileInfo) {
 			if (type.equals(String.class)) {
-				String value = new String();
+				String value = ""; //$NON-NLS-1$
 				if (argument.key.equals(KEY_NAME))
 					value = fileInfo.getName();
 				if (argument.key.equals(KEY_PROPJECT_RELATIVE_PATH))

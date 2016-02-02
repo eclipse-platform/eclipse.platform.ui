@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Red Hat, Inc - Was ZipFileStructureProvider, performed changes from
  *     IImportStructureProvider to ILeveledImportStructureProvider
+ *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -129,7 +130,7 @@ public class ZipLeveledStructureProvider implements
 	 * Strip the leading directories from the path
 	 */
 	private String stripPath(String path) {
-		String pathOrig = new String(path);
+		String pathOrig = path;
 		for (int i = 0; i < stripLevel; i++) {
 			int firstSep = path.indexOf('/');
 			// If the first character was a separator we must strip to the next

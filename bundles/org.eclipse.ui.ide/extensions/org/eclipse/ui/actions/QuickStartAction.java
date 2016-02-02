@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,24 +7,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mickael Istria (Red Hat Inc.) - [486901] Avoid blocking URL.equals
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -127,7 +125,7 @@ public class QuickStartAction extends Action implements
                 .getFeatureInfos();
         for (int i = 0; i < features.length; i++) {
             URL url = features[i].getWelcomePageURL();
-            if (url != null && !url.equals(productUrl)) {
+            if (url != null && (productUrl == null || !url.toString().equals(productUrl.toString()))) {
 				welcomeFeatures.add(features[i]);
 			}
         }
