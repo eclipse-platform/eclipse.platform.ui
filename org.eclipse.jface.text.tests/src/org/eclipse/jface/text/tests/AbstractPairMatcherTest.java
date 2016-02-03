@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -29,16 +37,14 @@ import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
 
-import junit.framework.TestCase;
-
 /**
  * Generic test of simple character pair matchers
  *
  * @since 3.3
  */
-public abstract class AbstractPairMatcherTest extends TestCase {
+public abstract class AbstractPairMatcherTest {
 
-	private final boolean fCaretEitherSideOfBracket;
+	private boolean fCaretEitherSideOfBracket;
 
 	public AbstractPairMatcherTest(boolean caretEitherSideOfBracket) {
 		fCaretEitherSideOfBracket= caretEitherSideOfBracket;
@@ -66,6 +72,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	/* --- T e s t s --- */
 
 	/** Tests that the test case reader works */
+	@Test
 	public void testTestCaseReader() {
 		performReaderTest("%( )#", 0, 3, "( )");
 		performReaderTest("#%", 0, 0, "");
@@ -76,6 +83,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testSimpleMatchSameMatcher() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "#(   )%");
@@ -108,6 +116,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testSimpleMatchDifferentMatchers() throws BadLocationException {
 		performMatch("()[]{}", "#(   )%");
 		performMatch("()[]{}", "#[   ]%");
@@ -126,6 +135,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testCloseMatches() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(%)#");
@@ -153,6 +163,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testIncompleteMatch() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(% ");
@@ -166,6 +177,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(% |a a| )#");
@@ -203,6 +215,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testTightPartitioned() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "(|b)%b|");
@@ -221,6 +234,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	}
 
 	/** Test that nesting works properly */
+	@Test
 	public void testNesting() {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, " ( #( ( ( ) ) ( ) )% ) ");
@@ -257,6 +271,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 	 * 
 	 * * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testBoundaries() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		final StringDocument doc= new StringDocument("abcdefghijkl");
@@ -266,6 +281,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
+	@Test
 	public void testBug156426() {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}<>");
 		performMatch(matcher, " #( a < b )% ");
@@ -275,6 +291,7 @@ public abstract class AbstractPairMatcherTest extends TestCase {
 		matcher.dispose();
 	}
 
+	@Test
 	public void testBug377417() {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "#( %  )%#");

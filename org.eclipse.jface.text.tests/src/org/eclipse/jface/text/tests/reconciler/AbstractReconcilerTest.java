@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.reconciler;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -40,7 +47,7 @@ import org.eclipse.jface.text.tests.TestTextViewer;
  *
  * @since 3.1
  */
-public class AbstractReconcilerTest extends TestCase {
+public class AbstractReconcilerTest {
 
 	/**
 	 * Modified barrier: there are two threads: the main (testing) thread
@@ -135,8 +142,8 @@ public class AbstractReconcilerTest extends TestCase {
 	private IProgressMonitor fProgressMonitor;
 
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		fBarrier= new Barrier();
 		fCallLog= Collections.synchronizedList(new ArrayList<String>());
 		fReconciler= new AbstractReconciler() {
@@ -181,13 +188,13 @@ public class AbstractReconcilerTest extends TestCase {
 		fAccessor= new Accessor(object, object.getClass());
 	}
 
-
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fBarrier.shutdown();
 		fReconciler.uninstall();
 	}
 
+	@Test
 	public void testInitialReconcile() throws InterruptedException {
 		// initially the reconciler is neither active nor dirty
 		// XXX shouldn't it be dirty?
@@ -212,7 +219,8 @@ public class AbstractReconcilerTest extends TestCase {
 		assertFalse(isActive());
 		assertFalse(isDirty());
 	}
-
+	
+	@Test
 	public void testDirtyingWhenClean() throws BadLocationException, InterruptedException {
 		installDocument();
 
@@ -237,7 +245,7 @@ public class AbstractReconcilerTest extends TestCase {
 		fDocument.replace(0,0,"bar");
 	}
 
-
+	@Test
 	public void testDirtyingWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
 
@@ -266,6 +274,7 @@ public class AbstractReconcilerTest extends TestCase {
 		assertFalse(isDirty());
 	}
 
+	@Test
 	public void testCancellingWhenClean() throws InterruptedException, BadLocationException {
 		installDocument();
 
@@ -284,6 +293,7 @@ public class AbstractReconcilerTest extends TestCase {
 //		assertFalse(isDirty()); // fails
 	}
 
+	@Test
 	public void testCancellingWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
 
@@ -300,6 +310,7 @@ public class AbstractReconcilerTest extends TestCase {
 //		assertFalse(isDirty());
 	}
 
+	@Test
 	public void testReplacingDocumentWhenClean() throws InterruptedException {
 		installDocument();
 
@@ -318,6 +329,7 @@ public class AbstractReconcilerTest extends TestCase {
 		assertFalse(isDirty());
 	}
 
+	@Test
 	public void testReplacingDocumentWhenRunning() throws InterruptedException, BadLocationException {
 		installDocument();
 

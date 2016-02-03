@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.rules;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -30,7 +33,7 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * @since 3.0
  */
-public class FastPartitionerTest extends TestCase {
+public class FastPartitionerTest {
 
 	protected static final String COMMENT= "comment";
 	protected static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
@@ -38,7 +41,7 @@ public class FastPartitionerTest extends TestCase {
 	private IDocument fDoc;
 	private IDocumentPartitioner fPartitioner;
 
-	@Override
+	@Before
 	public void setUp() {
 		fDoc= new Document();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -58,6 +61,7 @@ public class FastPartitionerTest extends TestCase {
 		return new FastPartitioner(scanner, new String[] { DEFAULT, COMMENT });
 	}
 
+	@Test
 	public void testGetPartition() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -65,13 +69,15 @@ public class FastPartitionerTest extends TestCase {
 		assertGetPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetPartitionEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
 		int[] offsets= new int[] { 13, 26, 26, 39 };
 		assertGetPartition_InterleavingPartitions(offsets);
 	}
-
+	
+	@Test
 	public void testGetPartitionEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -79,6 +85,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetPartitionEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -86,6 +93,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetContentType() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -93,6 +101,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetContentTypeEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -100,6 +109,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetContentTypeEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -107,6 +117,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetContentTypeEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -114,6 +125,7 @@ public class FastPartitionerTest extends TestCase {
 		assertGetContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioning() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -121,6 +133,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioningEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -128,6 +141,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioningEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -135,6 +149,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioningEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -142,6 +157,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeBeforeBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -149,6 +165,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(12, 38, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeOnBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -156,6 +173,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(13, 39, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeOnBoundaries2() {
 		fDoc.set("/* comment *//* comment *//* comment */");
 
@@ -163,6 +181,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -170,6 +189,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(14, 40, offsets, COMMENT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeInBoundaries1() {
 		fDoc.set("/* comment */");
 
@@ -177,6 +197,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeInBoundaries2() {
 		fDoc.set("docu     ment");
 
@@ -184,6 +205,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testPR101014() throws BadLocationException {
 		fDoc.set(
 				"package pr101014;\n" +
@@ -200,6 +222,7 @@ public class FastPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testPR130900() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -219,6 +242,7 @@ public class FastPartitionerTest extends TestCase {
 
     }
 
+	@Test
 	public void testBug368219_1() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -237,6 +261,7 @@ public class FastPartitionerTest extends TestCase {
 
 	}
 
+	@Test
 	public void testBug368219_2() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -255,6 +280,7 @@ public class FastPartitionerTest extends TestCase {
 
 	}
 
+	@Test
 	public void testBug409538_1() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -273,6 +299,7 @@ public class FastPartitionerTest extends TestCase {
 
 	}
 
+	@Test
 	public void testBug409538_2() throws Exception {
 		fPartitioner.disconnect();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {

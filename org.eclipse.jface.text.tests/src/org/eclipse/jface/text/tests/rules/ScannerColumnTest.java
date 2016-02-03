@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.rules;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -21,32 +25,36 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 /**
  * @since 3.4
  */
-public class ScannerColumnTest extends TestCase {
+public class ScannerColumnTest {
 
 	private IDocument fDocument;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fDocument= new Document("scanner test");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		fDocument= null;
 	}
 
+	@Test
 	public void testRuleBasedScannerColumnRead() {
 		_testScannerColumnRead(new RuleBasedScanner());
 	}
 
+	@Test
 	public void testRuleBasedScannerColumnUnread() {
 		_testScannerColumnUnread(new RuleBasedScanner());
 	}
 
+	@Test
 	public void testBufferedRuleBasedScannerColumnRead() {
 		_testScannerColumnRead(new BufferedRuleBasedScanner(100));
 	}
 
+	@Test
 	public void testBufferedRuleBasedScannerColumnUnread() {
 		_testScannerColumnUnread(new BufferedRuleBasedScanner(100));
 	}

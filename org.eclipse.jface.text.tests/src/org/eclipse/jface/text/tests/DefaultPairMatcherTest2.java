@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import org.junit.Test;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 
 /**
  * Tests for the default pair matcher.
@@ -24,16 +22,12 @@ import junit.framework.TestSuite;
  */
 public class DefaultPairMatcherTest2 extends AbstractPairMatcherTest {
 
-
 	public DefaultPairMatcherTest2() {
 		super(true);
 	}
 
-	public static Test suite() {
-		return new TestSuite(DefaultPairMatcherTest2.class);
-	}
-
 	/** Tests that the test case reader works */
+	@Test
 	public void testTestCaseReader1() {
 		performReaderTest("#( )%", 3, 0, "( )");
 		performReaderTest("( )%", 3, -1, "( )");
@@ -44,6 +38,7 @@ public class DefaultPairMatcherTest2 extends AbstractPairMatcherTest {
 	 * 
 	 * @throws BadLocationException test failure
 	 */
+	@Test
 	public void testSimpleMatchSameMatcher1() throws BadLocationException {
 		final ICharacterPairMatcher matcher= createMatcher("()[]{}");
 		performMatch(matcher, "#(   %)");

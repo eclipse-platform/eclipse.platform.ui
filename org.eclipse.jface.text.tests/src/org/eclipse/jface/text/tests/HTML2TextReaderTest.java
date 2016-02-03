@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -19,6 +22,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Test;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
@@ -26,24 +31,12 @@ import org.eclipse.jface.internal.text.html.HTML2TextReader;
 
 import org.eclipse.jface.text.TextPresentation;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-
-public class HTML2TextReaderTest extends TestCase {
+public class HTML2TextReaderTest {
 
 	private static final boolean DEBUG= false;
 
 	private static final String LD= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	public HTML2TextReaderTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(HTML2TextReaderTest.class);
-	}
 
 	/**
 	 * @param input input
@@ -117,61 +110,71 @@ public class HTML2TextReaderTest extends TestCase {
 		
 	}
 
+	@Test
 	public void test0() throws IOException{
 		String string= "<code>3<5<code>";
 		String expected= "3<5";
 		verify(string, expected, 0);
 	}
-
+	
+	@Test
 	public void test1() throws IOException{
 		String string= "<dl><dt>@author</dt><dd>Foo Bar</dd></dl>";
 		String expected= LD+ "@author"+LD+"\tFoo Bar"+LD;
 		verify(string, expected, 1);
 	}
-
+	
+	@Test
 	public void test2() throws IOException{
 		String string= "<code>3>5<code>";
 		String expected= "3>5";
 		verify(string, expected, 0);
 	}
 
+	@Test
 	public void test3() throws IOException{
 		String string= "<a href= \"<p>this is only a string - not a tag<p>\">text</a>";
 		String expected= "text";
 		verify(string, expected, 0);
 	}
 
+	@Test
 	public void test4() throws IOException{
 		String string= 	"<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>void p.Bb.fes()</h5><p><dl><dt>Parameters:</dt><dd><b>i</b> fred or <code>null</code></dd></dl></font></body></html>";
 		String expected= "void p.Bb.fes()"+ LD + LD + LD+ "Parameters:"+ LD + "\ti fred or null"+LD;
 		verify(string, expected, 3);
 	}
-
+	
+	@Test
 	public void test5() throws IOException{
 		String string= "<code>1<2<3<4</code>";
 		String expected= "1<2<3<4";
 		verify(string, expected, 0);
 	}
 
+	@Test
 	public void test6() throws IOException{
 		//test for bug 19070
 		String string= "<p>Something.<p>Something more.";
 		String expected= LD + "Something." + LD + "Something more.";
 		verify(string, expected, 0);
 	}
-
+	
+	@Test
 	public void testEntity1() throws IOException {
 		String string= "&amp;";
 		String expected= "&";
 		verify(string, expected, 0);
 	}
 
+	@Test
 	public void testEntity2() throws IOException {
 		String string= "&unknown;";
 		String expected= "&unknown;";
 		verify(string, expected, 0);
 	}
-
+	
+	@Test
 	public void testBug367378() throws IOException {
 		verify("<head>", "", 0);
 		verify("<head>some styles</html>", "", 0);
@@ -184,72 +187,84 @@ public class HTML2TextReaderTest extends TestCase {
 		assertTrue(Arrays.equals(new char[20], cb));
 	}
 
+	@Test
 	public void testComments() throws Exception {
 		String string= "<!-- begin-user-doc -->no comment<!-- end-user-doc -->";
 		String expected= "no comment";
 		verify(string, expected, 0);
 	}
-
+	
+	@Test
 	public void testStyles1() throws IOException {
 		String string= "<b>Hello World</b>";
 		String expected= "Hello World";
 		verify(string, expected, 1);
 	}
 
+	@Test
 	public void testStyles2() throws IOException {
 		String string= "<del>Hello World</del>";
 		String expected= "Hello World";
 		verify(string, expected, 1);
 	}
 
+	@Test
 	public void testStyles3() throws IOException {
 		String string= "<b><del>Hello World</del></b>";
 		String expected= "Hello World";
 		verify(string, expected, 1);
 	}
 
+	@Test
 	public void testStyles4() throws IOException {
 		String string= "<del><b>Hello World</b></del>";
 		String expected= "Hello World";
 		verify(string, expected, 1);
 	}
 
+	@Test
 	public void testStyles5() throws IOException {
 		String string= "<b>This <del> is a </del> test</b>";
 		String expected= "This is a test";
 		verify(string, expected, 3);
 	}
 
+	@Test
 	public void testStyles6() throws IOException {
 		String string= "<del>This <b> is a </b> test</del>";
 		String expected= "This is a test";
 		verify(string, expected, 3);
 	}
 
+	@Test
 	public void testStyles7() throws IOException {
 		String string= "<b>This<del>is a</del>test</b>";
 		String expected= "Thisis atest";
 		verify(string, expected, 3);
 	}
 
+	@Test
 	public void testStyles8() throws IOException {
 		String string= "<del>This<b>is a</b>test</del>";
 		String expected= "Thisis atest";
 		verify(string, expected, 3);
 	}
 
+	@Test
 	public void testStyles9() throws IOException {
 		String string= "<b>This <del>is <b>yet</b> another</del> test</b>";
 		String expected= "This is yet another test";
 		verify(string, expected, 3);
 	}
 
+	@Test
 	public void testStyles10() throws IOException {
 		String string= "<del>This <b>is <del>yet</del> another </b>test</del>";
 		String expected= "This is yet another test";
 		verify(string, expected, 3);
 	}
 	
+	@Test
 	public void testStylesWithPre() throws IOException {
 		String string= "I am <b>bold</b>." + LD + "<p>" + LD + "<pre>One" + LD + LD + "<b>T</b>hree.</pre>" + LD + "<p>" + LD + "<b>Author:</b> me.";
 		String expected= "I am bold. " + LD + "One" + LD + LD + "Three. " + LD + "Author: me.";

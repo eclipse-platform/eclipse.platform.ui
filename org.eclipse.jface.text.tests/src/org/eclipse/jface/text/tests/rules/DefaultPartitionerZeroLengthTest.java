@@ -11,7 +11,10 @@
 
 package org.eclipse.jface.text.tests.rules;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -28,7 +31,7 @@ import org.eclipse.jface.text.rules.Token;
 /**
  * @since 3.0
  */
-public class DefaultPartitionerZeroLengthTest extends TestCase {
+public class DefaultPartitionerZeroLengthTest {
 
 	private static final String COMMENT= "comment";
 	private static final String DEFAULT= IDocument.DEFAULT_CONTENT_TYPE;
@@ -36,7 +39,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 	private IDocument fDoc;
 	private FastPartitioner fPartitioner;
 
-	@Override
+	@Before
 	public void setUp() {
 		fDoc= new Document();
 		IPartitionTokenScanner scanner= new RuleBasedPartitionScanner() {
@@ -52,6 +55,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		fPartitioner.connect(fDoc);
 	}
 
+	@Test
 	public void testGetZeroLengthPartition() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -59,6 +63,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthPartitionEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -66,6 +71,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthPartitionEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -73,6 +79,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthPartitionEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -80,6 +87,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthPartition_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthContentType() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -87,6 +95,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthContentTypeEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -94,6 +103,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthContentTypeEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -101,6 +111,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testGetZeroLengthContentTypeEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -108,6 +119,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertGetZeroLengthContentType_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputeZeroLengthPartitioning() {
 		fDoc.set("docu     ment/* comment */docu     ment");
 
@@ -115,6 +127,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputeZeroLengthPartitioningEmptyMiddle() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -122,6 +135,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputeZeroLengthPartitioningEmptyStart() {
 		fDoc.set("/* comment */docu     ment");
 
@@ -129,6 +143,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputeZeroLengthPartitioningEmptyEnd() {
 		fDoc.set("docu     ment/* comment */");
 
@@ -136,6 +151,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(offsets);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeBeforeBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -143,6 +159,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(12, 38, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeOnBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -150,6 +167,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(13, 39, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeOnBoundaries2() {
 		fDoc.set("/* comment *//* comment *//* comment */");
 
@@ -157,6 +175,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -164,6 +183,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(14, 40, offsets, COMMENT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeInBoundaries1() {
 		fDoc.set("/* comment */");
 
@@ -171,6 +191,7 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
 	}
 
+	@Test
 	public void testComputePartitioningSubrangeInBoundaries2() {
 		fDoc.set("docu     ment");
 

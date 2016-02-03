@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -20,11 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class TextPresentationTest extends TestCase {
+public class TextPresentationTest {
 
 	private static final int NORMAL= SWT.NORMAL;
 	private static final int BOLD= SWT.BOLD;
@@ -34,12 +36,8 @@ public class TextPresentationTest extends TestCase {
 	private StyleRange[] fAllRanges;
 	private StyleRange[] fNonDefaultRanges;
 
-	public static Test suite() {
-		return new TestSuite(TextPresentationTest.class);
-	}
-
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		setUpStyleRanges();
 		setUpTextPresentation();
 	}
@@ -113,15 +111,18 @@ public class TextPresentationTest extends TestCase {
 		assertTrue(!e.hasNext());
 	}
 
+	@Test
 	public void testUnclippedRegions() {
 		checkRegions(fAllRanges, fNonDefaultRanges);
 	}
-
+	
+	@Test
 	public void testClippedRegions1() {
 		fTextPresentation.setResultWindow(new Region(0, 140));
 		checkRegions(fAllRanges, fNonDefaultRanges);
 	}
 
+	@Test
 	public void testClippedRegions2() {
 
 		fTextPresentation.setResultWindow(new Region(30, 70));
@@ -144,6 +145,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at start of first existing range.
 	 */
+	@Test
 	public void testMergeStyleRange1() {
 		StyleRange range= createStyleRange(0, 2, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -172,6 +174,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at end of last existing range.
 	 */
+	@Test
 	public void testMergeStyleRange2() {
 		StyleRange range= createStyleRange(138, 140, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -200,6 +203,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at start of existing default range.
 	 */
+	@Test
 	public void testMergeStyleRange3() {
 		StyleRange range= createStyleRange(20, 22, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -228,6 +232,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range within existing default range.
 	 */
+	@Test
 	public void testMergeStyleRange4() {
 		StyleRange range= createStyleRange(22, 24, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -257,6 +262,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at end of existing default range.
 	 */
+	@Test
 	public void testMergeStyleRange5() {
 		StyleRange range= createStyleRange(45, 47, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -285,6 +291,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at start of existing non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange6() {
 		StyleRange range= createStyleRange(47, 49, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -313,6 +320,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range within existing non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange7() {
 		StyleRange range= createStyleRange(49, 51, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -343,6 +351,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range at end of existing non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange8() {
 		StyleRange range= createStyleRange(52, 54, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -371,6 +380,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range from existing default to non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange9() {
 		StyleRange range= createStyleRange(45, 49, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -401,6 +411,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range from existing non-default to default range.
 	 */
+	@Test
 	public void testMergeStyleRange10() {
 		StyleRange range= createStyleRange(52, 56, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -431,6 +442,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range from existing default over non-default to default range.
 	 */
+	@Test
 	public void testMergeStyleRange11() {
 		StyleRange range= createStyleRange(45, 56, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -461,6 +473,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range from existing non-default over default to non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange12() {
 		StyleRange range= createStyleRange(52, 98, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -492,6 +505,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range over existing default range.
 	 */
+	@Test
 	public void testMergeStyleRange13() {
 		StyleRange range= createStyleRange(20, 47, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -519,6 +533,7 @@ public class TextPresentationTest extends TestCase {
 	/**
 	 * Merge range over existing non-default range.
 	 */
+	@Test
 	public void testMergeStyleRange14() {
 		StyleRange range= createStyleRange(47, 54, 1, -1, NORMAL);
 		fTextPresentation.mergeStyleRange(range);
@@ -542,6 +557,7 @@ public class TextPresentationTest extends TestCase {
 		checkRegions(expectedAllRanges, expectedNonDefaultRanges);
 	}
 
+	@Test
 	public void testMergeStyleRanges1() {
 		StyleRange[] ranges= new StyleRange[] {
 				createStyleRange(0, 2, 1, -1, NORMAL), // at start of first existing
@@ -593,33 +609,4 @@ public class TextPresentationTest extends TestCase {
 		checkRegions(expectedAllRanges, expectedNonDefaultRanges);
 	}
 
-// Template
-//
-//	public void testMergeStyleRange0() {
-////		StyleRange range= createStyleRange(0, 2, 1, -1, NORMAL);
-////		fTextPresentation.mergeStyleRange(range);
-//
-////		StyleRange[] ranges= new StyleRange[] {
-////				createStyleRange(0, 2, 1, -1, NORMAL),
-////		};
-////		fTextPresentation.mergeStyleRanges(ranges);
-//
-//		StyleRange[] expectedAllRanges= new StyleRange[] {
-//				createStyleRange(  0,   4, NORMAL),
-//				createStyleRange(  4,  20, BOLD),
-//				createStyleRange( 20,  47, NORMAL),
-//				createStyleRange( 47,  54, BOLD),
-//				createStyleRange( 54,  96, NORMAL),
-//				createStyleRange( 96, 102, BOLD),
-//				createStyleRange(102, 140, NORMAL),
-//		};
-//
-//		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
-//				createStyleRange(  4,  20, BOLD),
-//				createStyleRange( 47,  54, BOLD),
-//				createStyleRange( 96, 102, BOLD),
-//		};
-//
-//		checkRegions(expectedAllRanges, expectedNonDefaultRanges);
-//	}
 }

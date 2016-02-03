@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -23,11 +24,9 @@ import org.eclipse.jface.text.TextViewer;
 /**
  * Basic tests for TextViewer.
  */
-public class TextViewerTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(TextViewerTest.class);
-	}
-
+public class TextViewerTest {
+	
+	@Test
 	public void testSetRedraw_Bug441827() throws Exception {
 		Shell shell= new Shell();
 		try {

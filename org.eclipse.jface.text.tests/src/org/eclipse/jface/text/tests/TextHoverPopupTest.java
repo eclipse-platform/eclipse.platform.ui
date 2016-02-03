@@ -10,30 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.Test;
 
-public class TextHoverPopupTest extends TestCase {
-
-
-	public TextHoverPopupTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() {
-	}
-
-	public static Test suite() {
-		return new TestSuite(TextHoverPopupTest.class);
-	}
-
-	@Override
-	protected void tearDown() {
-	}
-
+public class TextHoverPopupTest {
 
 	protected int search(int[] array, int x) {
 		int low= 0;
@@ -53,6 +34,7 @@ public class TextHoverPopupTest extends TestCase {
 		return high;
 	}
 
+	@Test
 	public void testSearch() {
 		int[] values= { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 		for (int i= 0; i < 10; i++) {

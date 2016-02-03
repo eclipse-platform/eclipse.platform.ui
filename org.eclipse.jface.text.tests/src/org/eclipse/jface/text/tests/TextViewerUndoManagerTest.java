@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
@@ -38,17 +40,6 @@ import org.eclipse.jface.text.TextViewerUndoManager;
  * @since 3.2
  */
 public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
-
-	public static Test suite() {
-		return new TestSuite(TextViewerUndoManagerTest.class);
-	}
-
-	/*
-	 * @see TestCase#TestCase(String)
-	 */
-	public TextViewerUndoManagerTest(final String name) {
-		super(name);
-	}
 
 	@Override
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
@@ -105,15 +96,18 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 
 		undoManager.disconnect(newContext);
 	}
-
+	
+	@Test
 	public void testTransferNonUndoableNonTextOp() throws Exception {
 		internalTestTransferNonTextOp(false);
 	}
-
+	
+	@Test
 	public void testTransferUndoableNonTextOp() throws Exception {
 		internalTestTransferNonTextOp(true);
 	}
-
+	
+	@Test
 	public void testCanUndo() throws Exception {
 		IDocument doc= new Document();
 		final DocumentUndoManager undoManager= new DocumentUndoManager(doc);

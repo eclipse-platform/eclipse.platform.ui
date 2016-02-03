@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.rules;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 
@@ -28,7 +31,7 @@ import org.eclipse.jface.text.rules.WordRule;
 /**
  * @since 3.3
  */
-public class WordRuleTest extends TestCase {
+public class WordRuleTest {
 
 
 	private static class SimpleWordDetector implements IWordDetector {
@@ -47,6 +50,7 @@ public class WordRuleTest extends TestCase {
 	/*
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=163116
 	 */
+	@Test
 	public void testBug163116() throws Exception {
 		IWordDetector detector= new IWordDetector() {
 
@@ -80,6 +84,7 @@ public class WordRuleTest extends TestCase {
 	/*
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=144355
 	 */
+	@Test
 	public void testBug144355() throws Exception {
 		IWordDetector detector= new SimpleWordDetector();
 
@@ -139,6 +144,7 @@ public class WordRuleTest extends TestCase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
+	@Test
 	public void testBug175712_1() throws Exception {
 		IRule[] rules= new IRule[2];
 
@@ -175,6 +181,7 @@ public class WordRuleTest extends TestCase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
+	@Test
 	public void testBug175712_2() throws Exception {
 		IRule[] rules= new IRule[2];
 
