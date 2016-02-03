@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -45,13 +48,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  *
  * @since 3.1
  */
-public class GotoLineTest extends TestCase {
+public class GotoLineTest {
 
 	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
-
-	public static Test suite() {
-		return new TestSuite(GotoLineTest.class);
-	}
 
 	private IFile fFile;
 
@@ -59,26 +58,29 @@ public class GotoLineTest extends TestCase {
 		return ORIGINAL_CONTENT;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IFolder folder= ResourceHelper.createFolder("GoToLineTestProject/goToLineTests/");
 		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
 	}
-
+	
+	@Test
 	public void testGoToFirstLine() {
 		goToLine(0, 0);
 	}
-
+	
+	@Test
 	public void testGoToLastLine() {
 		goToLine(2, 2);
 	}
-
+	
+	@Test
 	public void testGoToInvalidLine() {
 		goToLine(1, 1);
 		goToLine(-1, 1);

@@ -19,8 +19,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.eclipse.test.OrderedTestSuite;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 
@@ -41,14 +39,11 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import junit.extensions.TestSetup;
-import junit.framework.TestCase;
-
 /**
  * @since 3.11
  *
  */
-public class ZoomTest extends TestCase {
+public class ZoomTest {
 
 	private static IProject project;
 	private static IFile file;
@@ -71,10 +66,8 @@ public class ZoomTest extends TestCase {
 		project.delete(true, new NullProgressMonitor());
 	}
 
-	@Override
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
 		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro != null) {
 			PlatformUI.getWorkbench().getIntroManager().closeIntro(intro);
@@ -108,17 +101,6 @@ public class ZoomTest extends TestCase {
 			}
 			Assert.assertEquals(this.initialFontSize, text.getFont().getFontData()[0].getHeight());
 		}
-	}
-
-	public static junit.framework.Test suite() {
-		return new TestSetup(new OrderedTestSuite(ZoomTest.class)) {
-			protected void setUp() throws Exception {
-				ZoomTest.setUpBeforeClass();
-			}
-			protected void tearDown() throws Exception {
-				ZoomTest.tearDownAfterClass();
-			}
-		};
 	}
 
 }

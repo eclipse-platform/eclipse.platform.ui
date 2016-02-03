@@ -11,26 +11,24 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Test Suite for org.eclipse.ui.editors.
  *
  * @since 3.0
  */
-public class EditorsTestSuite extends TestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.editors"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTest(ChainedPreferenceStoreTest.suite());
-		suite.addTest(EncodingChangeTests.suite());
-		suite.addTest(GotoLineTest.suite());
-		suite.addTest(SegmentedModeTest.suite());
-		suite.addTest(MarkerAnnotationOrderTest.suite());
-		suite.addTest(ZoomTest.suite());
-		//$JUnit-END$
-		return suite;
-	}
+@RunWith(Suite.class)
+@SuiteClasses({
+	ChainedPreferenceStoreTest.class,
+	EncodingChangeTests.class,
+	GotoLineTest.class,
+	SegmentedModeTest.class,
+	MarkerAnnotationOrderTest.class,
+	ZoomTest.class
+})
+public class EditorsTestSuite {
+	//intentionally left blank
 }
