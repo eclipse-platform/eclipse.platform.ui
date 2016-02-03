@@ -12,6 +12,7 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 
+import org.junit.After;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.core.runtime.IPath;
@@ -35,7 +36,8 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	private File fExternalFile;
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		FileTool.delete(fExternalFile);
 		FileTool.delete(fExternalFile.getParentFile());
 		super.tearDown();

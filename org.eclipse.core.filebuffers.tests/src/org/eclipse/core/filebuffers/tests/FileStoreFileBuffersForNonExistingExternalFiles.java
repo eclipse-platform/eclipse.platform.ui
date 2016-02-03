@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.After;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -28,7 +32,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class FileStoreFileBuffersForNonExistingExternalFiles extends FileStoreFileBufferFunctions {
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		FileTool.delete(getPath());
 		super.tearDown();
 	}

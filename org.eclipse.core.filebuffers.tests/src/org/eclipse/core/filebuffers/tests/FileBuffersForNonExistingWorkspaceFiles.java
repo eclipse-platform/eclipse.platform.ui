@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Test;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -31,7 +38,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions {
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
@@ -42,7 +50,8 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		IPath filePath= folder.getLocation().append("NonExistingWorkspaceFile");
 		return filePath.makeAbsolute();
 	}
-
+	
+	@Test
 	public void testBug118199() throws Exception {
 		IFile file= getProject().getWorkspace().getRoot().getFile(getPath());
 		assertFalse(file.exists());
@@ -57,6 +66,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		assertFalse(file.exists());
 	}
 
+	@Test
 	public void testBug118199_fixed() throws Exception {
 		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(getPath());
 		IPath path= file.getFullPath();

@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 
@@ -29,7 +35,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctions {
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		getProject().close(null);
 	}
@@ -43,7 +50,8 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		FileTool.delete(getPath());
 		super.tearDown();
 	}
@@ -84,16 +92,19 @@ public class FileBuffersForNonAccessibleWorkspaceFiles extends FileBufferFunctio
 	}
 
 	@Override
+	@Test
 	public void test7() throws Exception {
 		// disable because it might create a file outside the closed project
 	}
 
 	@Override
+	@Test
 	public void test11_1() throws Exception {
 		// disable because it might create a file outside the closed project
 	}
 
 	@Override
+	@Test
 	public void test17_3() throws Exception {
 		// disable because it might create a file outside the closed project
 	}

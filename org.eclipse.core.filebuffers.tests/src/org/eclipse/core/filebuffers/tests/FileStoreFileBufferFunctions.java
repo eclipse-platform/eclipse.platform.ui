@@ -10,8 +10,18 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -31,12 +41,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import junit.framework.TestCase;
 
 /**
  * FileBufferFunctions
  */
-public abstract class FileStoreFileBufferFunctions extends TestCase {
+public abstract class FileStoreFileBufferFunctions {
 
 	private IProject fProject;
 	protected ITextFileBufferManager fManager;
@@ -57,9 +66,8 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 	protected abstract Class<IAnnotationModel> getAnnotationModelClass() throws Exception;
 
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fManager= FileBuffers.getTextFileBufferManager();
 		fProject= ResourceHelper.createProject("project");
 		fFileStore= EFS.getLocalFileSystem().getStore(createPath(fProject));
@@ -71,8 +79,8 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		return fProject;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 		assertTrue(buffer == null);
 		ResourceHelper.deleteProject("project");
@@ -85,6 +93,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Tests getLocation.
 	 */
+	@Test
 	public void test1() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -99,6 +108,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Tests isSynchronized.
 	 */
+	@Test
 	public void test2() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -120,6 +130,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Tests isDirty.
 	 */
+	@Test
 	public void test3() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -137,6 +148,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Tests isShared.
 	 */
+	@Test
 	public void test4() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -162,6 +174,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Tests getModificationStamp.
 	 */
+	@Test
 	public void test5() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -182,6 +195,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test revert.
 	 */
+	@Test
 	public void test6() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -211,6 +225,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test commit.
 	 */
+	@Test
 	public void test7() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -255,6 +270,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test validateState.
 	 */
+	@Test
 	public void test8_1() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -271,6 +287,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test validateState.
 	 */
+	@Test
 	public void test8_2() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -289,6 +306,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test resetStateValidation.
 	 */
+	@Test
 	public void test9_1() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -307,6 +325,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test resetStateValidation.
 	 */
+	@Test
 	public void test9_2() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -327,6 +346,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#bufferCreated and IFileBufferListener#bufferDisposed
 	 */
+	@Test
 	public void test10() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -373,6 +393,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#dirtyStateChanged
 	 */
+	@Test
 	public void test11_1() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -424,6 +445,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#dirtyStateChanged
 	 */
+	@Test
 	public void test11_2() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -474,6 +496,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
 	 */
+	@Test
 	public void test12_1() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -525,6 +548,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#bufferContentAboutToBeReplaced/replaced
 	 */
+	@Test
 	public void test12_2() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -574,6 +598,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
+	@Test
 	public void test13_1() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -619,6 +644,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
+	@Test
 	public void test13_2() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -665,6 +691,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
+	@Test
 	public void test13_3() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -711,6 +738,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateValidationChanged
 	 */
+	@Test
 	public void test13_4() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -759,6 +787,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#underlyingFileDeleted
 	 */
+	@Test
 	public void test14() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -799,6 +828,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#underlyingFileMoved
 	 */
+	@Test
 	public void test15() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -843,6 +873,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for external changes
 	 */
+	@Test
 	public void test16_1() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -883,6 +914,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for external changes
 	 */
+	@Test
 	public void test16_2() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -923,6 +955,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for external changes
 	 */
+	@Test
 	public void test16_3() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -963,6 +996,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for internal changes
 	 */
+	@Test
 	public void test17_1() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -1004,6 +1038,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for internal changes
 	 */
+	@Test
 	public void test17_2() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -1046,6 +1081,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test IFileBufferListener#stateChanging for internal changes
 	 */
+	@Test
 	public void test17_3() throws Exception {
 		class Listener extends FileBufferListener {
 
@@ -1089,6 +1125,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	 * Test annotation model existence.
 	 * ATTENTION: This test is only effective in a workspace that contains the "org.eclipse.ui.editors" bundle.
 	 */
+	@Test
 	public void test18() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -1109,6 +1146,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	/*
 	 * Test notification in case of failing listener.
 	 */
+	@Test
 	public void test19() throws Exception {
 
 		class NotifiedListener extends FileBufferListener {
@@ -1179,6 +1217,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		assertEquals(2, notifyCounter2.notifyCount);
 	}
 
+	@Test
 	public void testGetBufferForDocument() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {
@@ -1192,6 +1231,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetFileStoreFileBuffers() throws Exception {
 		fManager.connectFileStore(fFileStore, null);
 		try {

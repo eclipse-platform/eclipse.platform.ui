@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+
 import org.eclipse.core.internal.filebuffers.ResourceTextFileBufferManager;
 
 import org.eclipse.core.runtime.Path;
@@ -25,8 +29,8 @@ import org.eclipse.core.filebuffers.LocationKind;
  */
 public class ResourceTextFileManagerDocCreationTests extends AbstractFileBufferDocCreationTests {
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fManager= new ResourceTextFileBufferManager();
 	}
 

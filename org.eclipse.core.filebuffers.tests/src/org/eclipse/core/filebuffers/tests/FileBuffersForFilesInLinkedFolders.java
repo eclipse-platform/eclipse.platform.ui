@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.junit.After;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.core.filesystem.EFS;
@@ -42,7 +46,8 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	private File fExternalFile;
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		FileTool.delete(getPath());
 		File file= fExternalFile;
 		FileTool.delete(file); // externalResources/linkedFolderTarget/FileInLinkedFolder

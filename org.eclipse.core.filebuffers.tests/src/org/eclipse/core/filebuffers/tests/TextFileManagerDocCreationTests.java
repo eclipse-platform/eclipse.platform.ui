@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import org.junit.Before;
+
 import org.eclipse.core.internal.filebuffers.TextFileBufferManager;
 
 import org.eclipse.core.filebuffers.LocationKind;
@@ -20,8 +22,8 @@ import org.eclipse.core.filebuffers.LocationKind;
  */
 public class TextFileManagerDocCreationTests extends AbstractFileBufferDocCreationTests {
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fManager= new TextFileBufferManager();
 	}
 
