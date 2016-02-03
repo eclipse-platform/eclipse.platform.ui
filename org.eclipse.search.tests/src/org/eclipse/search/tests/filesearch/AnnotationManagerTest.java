@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Iterator;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -39,35 +46,14 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class AnnotationManagerTest extends TestCase {
+public class AnnotationManagerTest {
 	private FileSearchQuery fQuery1;
 	private FileSearchQuery fQuery2;
 
 	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
-	public AnnotationManagerTest(String name) {
-		super(name);
-	}
-		
-	public static Test allTests() {
-		return setUpTest(new TestSuite(AnnotationManagerTest.class));
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-	
-	public static Test setUpTest(Test test) {
-		return new JUnitSourceSetup(test);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() {
 		SearchTestPlugin.ensureWelcomePageClosed();
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		String[] fileNamePattern= { "*.java" };
@@ -76,17 +62,17 @@ public class AnnotationManagerTest extends TestCase {
 		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fQuery1= null;
 		fQuery2= null;
 		
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
 
-		super.tearDown();
 	}
-	
+
+	@Test
 	public void testAddAnnotation() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
@@ -118,6 +104,7 @@ public class AnnotationManagerTest extends TestCase {
 		}
 	}
 	
+	@Test
 	public void testBogusAnnotation() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
@@ -126,6 +113,7 @@ public class AnnotationManagerTest extends TestCase {
 		result.addMatch(new FileMatch(file));
 	}
 	
+	@Test
 	public void testRemoveQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
@@ -151,7 +139,7 @@ public class AnnotationManagerTest extends TestCase {
 		}
 	}
 
-	
+	@Test
 	public void testReplaceQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
@@ -178,7 +166,8 @@ public class AnnotationManagerTest extends TestCase {
 			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
-
+	
+	@Test
 	public void testSwitchQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();

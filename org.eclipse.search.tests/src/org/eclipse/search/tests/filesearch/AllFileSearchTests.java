@@ -10,27 +10,46 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-public class AllFileSearchTests extends TestSuite {
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 
-	public static Test suite() {
-		return new AllFileSearchTests();
+import org.eclipse.search.tests.ResourceHelper;
+
+@RunWith(Suite.class)
+@SuiteClasses({
+	AnnotationManagerTest.class,
+	FileSearchTests.class,
+	LineAnnotationManagerTest.class,
+	PositionTrackerTest.class,
+	ResultUpdaterTest.class,
+	SearchResultPageTest.class,
+	SortingTest.class
+})
+public class AllFileSearchTests {
+	
+	public static final String STANDARD_PROJECT_NAME= "JUnitSource";
+
+	private static IProject fProject;
+
+	@BeforeClass
+	public static void globalSetUp() throws Exception {
+		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(STANDARD_PROJECT_NAME);
+		if (!project.exists()) { // allow nesting of JUnitSetups
+			fProject= ResourceHelper.createJUnitSourceProject(STANDARD_PROJECT_NAME);
+		}
 	}
-
-	public AllFileSearchTests() {
-		
-		TestSuite suite= new TestSuite();
-		suite.addTest(AnnotationManagerTest.allTests());
-		suite.addTest(FileSearchTests.allTests());
-		suite.addTest(LineAnnotationManagerTest.allTests());
-		suite.addTest(PositionTrackerTest.allTests());
-		suite.addTest(ResultUpdaterTest.allTests());
-		suite.addTest(SearchResultPageTest.allTests());
-		suite.addTest(SortingTest.allTests());
-		
-		addTest(new JUnitSourceSetup(suite));
+	
+	@AfterClass
+	public static void globalTearDown() throws Exception {
+		if (fProject != null) { // delete only by the setup who created the project
+			ResourceHelper.deleteProject(STANDARD_PROJECT_NAME);
+			fProject= null;
+		}
 	}
-
 }

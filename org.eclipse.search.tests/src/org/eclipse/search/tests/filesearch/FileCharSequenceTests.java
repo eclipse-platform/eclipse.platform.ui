@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.IOException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,39 +28,23 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.search.internal.core.text.FileCharSequenceProvider;
 import org.eclipse.search.tests.ResourceHelper;
 
-public class FileCharSequenceTests extends TestCase {
+public class FileCharSequenceTests {
 
 	private final String TEST_CONTENT= "ABCDEFGHIJKLMNOPQRSTUVWXYZÜöäüèéùabcdefghijklmnopqrstuvwxyz1234567890@\'\"\n$¢"; //€
 	
 	private IProject fProject;
 	
-	public FileCharSequenceTests(String name) {
-		super(name);
-	}
-	
-	public static Test allTests() {
-		return setUpTest(new TestSuite(FileCharSequenceTests.class));
-	}
-	
-	public static Test setUpTest(Test test) {
-		return new JUnitSourceSetup(test);
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fProject= ResourceHelper.createProject("my-project"); //$NON-NLS-1$
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject("my-project"); //$NON-NLS-1$
 	}
 	
-	
+	@Test
 	public void testFileCharSequence() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < 500; i++) {
@@ -66,7 +53,8 @@ public class FileCharSequenceTests extends TestCase {
 		String encoding= "ISO-8859-1";
 		testForEncoding(buf, encoding);
 	}
-	
+
+	@Test
 	public void testFileCharSequence2() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < 2000; i++) {
@@ -75,7 +63,8 @@ public class FileCharSequenceTests extends TestCase {
 		String encoding= "UTF-8";
 		testForEncoding(buf, encoding);
 	}
-	
+
+	@Test
 	public void testFileCharSequence3() throws Exception {
 		StringBuffer buf= new StringBuffer();
 		for (int i= 0; i < FileCharSequenceProvider.BUFFER_SIZE * 2; i++) {
@@ -124,17 +113,17 @@ public class FileCharSequenceTests extends TestCase {
 	
 	private void assertEquals(String desc, CharSequence actual, CharSequence expected) {
 		for (int i= 0; i < expected.length(); i++) {
-			assertEquals(desc + " - forward " + i, expected.charAt(i), actual.charAt(i));
+			Assert.assertEquals(desc + " - forward " + i, expected.charAt(i), actual.charAt(i));
 		}
-		assertEquals(desc + " - length", expected.length(), actual.length());
+		Assert.assertEquals(desc + " - length", expected.length(), actual.length());
 		for (int i= expected.length() - 1; i >= 0; i--) {
-			assertEquals(desc + " - backward " + i, expected.charAt(i), actual.charAt(i));
+			Assert.assertEquals(desc + " - backward " + i, expected.charAt(i), actual.charAt(i));
 		}
 		for (int i= 0; i < expected.length(); i+= 567) {
-			assertEquals(desc + " - forward - steps" + i, expected.charAt(i), actual.charAt(i));
+			Assert.assertEquals(desc + " - forward - steps" + i, expected.charAt(i), actual.charAt(i));
 		}
 		for (int i= 0; i < expected.length(); i+= FileCharSequenceProvider.BUFFER_SIZE) {
-			assertEquals(desc + " - forward - buffersize" + i, expected.charAt(i), actual.charAt(i));
+			Assert.assertEquals(desc + " - forward - buffersize" + i, expected.charAt(i), actual.charAt(i));
 		}
 		
 		assertOutOfBound(desc + "access at length", actual, expected.length());

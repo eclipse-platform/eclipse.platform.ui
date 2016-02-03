@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -38,34 +44,13 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.EditorAnnotationManager;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class LineAnnotationManagerTest extends TestCase {
+public class LineAnnotationManagerTest {
 
 	private LineBasedFileSearch fLineQuery;
 	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
-	public LineAnnotationManagerTest(String name) {
-		super(name);
-	}
-		
-	public static Test allTests() {
-		return setUpTest(new TestSuite(LineAnnotationManagerTest.class));
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-	
-	public static Test setUpTest(Test test) {
-		return new JUnitSourceSetup(test);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		
 		String[] fileNamePatterns= { "*.java" };
@@ -74,15 +59,15 @@ public class LineAnnotationManagerTest extends TestCase {
 		fLineQuery= new LineBasedFileSearch(scope, false, true, "Test");
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fLineQuery= null;
 		
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLLIGHTER_ANY);
-		super.tearDown();
 	}
-		
+	
+	@Test		
 	public void testLineBasedQuery() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fLineQuery);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fLineQuery.getSearchResult();

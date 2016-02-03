@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -18,7 +21,9 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 
-public class QueryManagerTest extends TestCase {
+public class QueryManagerTest {
+	
+	@Test
 	public void testRemoveQuery() {
 		ISearchQuery query= new NullQuery();
 		InternalSearchUI.getInstance().addQuery(query);
@@ -30,6 +35,7 @@ public class QueryManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAddQuery() {
 		ISearchQuery query= new NullQuery();
 		InternalSearchUI.getInstance().addQuery(query);
@@ -41,6 +47,7 @@ public class QueryManagerTest extends TestCase {
 		assertTrue(false);
 	}
 
+	@Test
 	public void testQueryListener() {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };

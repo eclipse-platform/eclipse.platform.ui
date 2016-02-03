@@ -10,27 +10,16 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import junit.framework.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 import junit.framework.TestSuite;
 
+@RunWith(Suite.class)
+@SuiteClasses({QueryManagerTest.class,
+	TestSearchResult.class,
+	LineConversionTest.class})
 public class AllSearchModelTests extends TestSuite {
-
-	/*
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new AllSearchModelTests();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public AllSearchModelTests() {
-		addTest(new TestSuite(QueryManagerTest.class));
-		addTest(new TestSuite(TestSearchResult.class));
-		addTest(new TestSuite(QueryManagerTest.class));
-		addTest(new TestSuite(LineConversionTest.class));
-	}
-
+	//intentionally left empty
 }

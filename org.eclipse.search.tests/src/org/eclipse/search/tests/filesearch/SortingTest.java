@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
@@ -19,39 +24,18 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class SortingTest extends TestCase {
+public class SortingTest {
 	FileSearchQuery fQuery1;
 
-	public SortingTest(String name) {
-		super(name);
-	}
-	
-	public static Test setUpTest(Test test) {
-		return new JUnitSourceSetup(test);
-	}
-		
-	public static Test allTests() {
-		return setUpTest(new TestSuite(SortingTest.class));
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUp() throws Exception {
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
 	
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
+	@Test
 	public void testSorted() throws Exception {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);

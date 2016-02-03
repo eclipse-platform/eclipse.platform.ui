@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.search.tests.filesearch;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -26,32 +28,15 @@ import org.eclipse.search.internal.ui.text.FileSearchQuery;
 
 import org.eclipse.search.tests.ResourceHelper;
 
-public class ResultUpdaterTest extends TestCase {
+public class ResultUpdaterTest {
 	private FileSearchQuery fQuery1;
 	
 	private IProject fProject;
 	
 	private static final String PROJECT_TO_MODIFY= "ModifiableProject";
 
-	public ResultUpdaterTest(String name) {
-		super(name);
-	}
-		
-	public static Test allTests() {
-		return setUpTest(new TestSuite(ResultUpdaterTest.class));
-	}
-	
-	public static Test setUpTest(Test test) {
-		return test;
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		// create a own project to make modifications
 		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
 		
@@ -61,11 +46,12 @@ public class ResultUpdaterTest extends TestCase {
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		ResourceHelper.deleteProject(PROJECT_TO_MODIFY);
 	}
 	
+	@Test
 	public void testRemoveFile() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
@@ -77,6 +63,7 @@ public class ResultUpdaterTest extends TestCase {
 		assertEquals(0, result.getMatchCount(elements[0]));
 	}
 	
+	@Test
 	public void testRemoveProject() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();

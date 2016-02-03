@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import junit.framework.TestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -19,8 +24,9 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 
-public class TestSearchResult extends TestCase {
+public class TestSearchResult {
 	
+	@Test
 	public void testAddMatch() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -37,6 +43,7 @@ public class TestSearchResult extends TestCase {
 		assertEquals(result.getMatchCount(), 2);
 	}
 
+	@Test
 	public void testAddMatchDifferentStart() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -56,6 +63,7 @@ public class TestSearchResult extends TestCase {
 		assertTrue("matches[2]", matches[2] == match1);
 	}
 
+	@Test
 	public void testAddMatchDifferentStartInOrder() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -75,6 +83,7 @@ public class TestSearchResult extends TestCase {
 		assertTrue("matches[2]", matches[2] == match3);
 	}
 
+	@Test
 	public void testAddMatchDifferentLength() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -91,6 +100,7 @@ public class TestSearchResult extends TestCase {
 		assertTrue("matches[1]", matches[1] == match1);
 	}
 	
+	@Test
 	public void testAddMatchOrderPreserving() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -107,8 +117,7 @@ public class TestSearchResult extends TestCase {
 		assertTrue("matches[1]", matches[1] == match2);
 	}
 
-
-	
+	@Test
 	public void testAddMatches() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -123,6 +132,7 @@ public class TestSearchResult extends TestCase {
 		assertEquals(result.getMatchCount(), 2);
 	}
 
+	@Test
 	public void testRemoveMatch() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -142,6 +152,7 @@ public class TestSearchResult extends TestCase {
 		
 	}
 	
+	@Test
 	public void testRemoveMatches() {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
@@ -158,6 +169,7 @@ public class TestSearchResult extends TestCase {
 		
 	}
 
+	@Test
 	public void testMatchEvent() {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };
@@ -201,6 +213,7 @@ public class TestSearchResult extends TestCase {
 		assertFalse(wasRemoved[0]);
 	}
 	
+	@Test
 	public void testBatchedMatchEvent() {
 		final boolean [] wasAdded= { false };
 		final boolean [] wasRemoved= { false };

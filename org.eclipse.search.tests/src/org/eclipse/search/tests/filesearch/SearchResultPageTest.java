@@ -11,9 +11,11 @@
 
 package org.eclipse.search.tests.filesearch;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -37,29 +39,11 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 
-public class SearchResultPageTest extends TestCase {
+public class SearchResultPageTest {
 	FileSearchQuery fQuery1;
 
-	public SearchResultPageTest(String name) {
-		super(name);
-	}
-
-	public static Test allTests() {
-		return setUpTest(new TestSuite(SearchResultPageTest.class));
-	}
-	
-	
-	public static Test setUpTest(Test test) {
-		return new JUnitSourceSetup(test);
-	}
-	
-	public static Test suite() {
-		return allTests();
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		SearchTestPlugin.ensureWelcomePageClosed();
 		String[] fileNamePatterns= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePatterns, false);
@@ -67,7 +51,9 @@ public class SearchResultPageTest extends TestCase {
 		fQuery1= new FileSearchQuery("Test", false, true, scope);
 	}
 
-	public void atestBasicDisplay() throws Exception {
+	@Test
+	@Ignore
+	public void testBasicDisplay() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
@@ -90,7 +76,10 @@ public class SearchResultPageTest extends TestCase {
 		}
 	}
 
-	public void atestRemoveTreeMatches() throws Exception {
+	
+	@Test
+	@Ignore
+	public void testRemoveTreeMatches() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
@@ -135,6 +124,7 @@ public class SearchResultPageTest extends TestCase {
 			assertTrue(item.getText().indexOf(String.valueOf(itemCount)) >= 0);
 	}
 	
+	@Test
 	public void testTableNavigation() {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();
