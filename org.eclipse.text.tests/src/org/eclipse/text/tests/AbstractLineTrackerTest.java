@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ILineTracker;
@@ -21,13 +21,9 @@ import org.eclipse.jface.text.ITextStore;
  *
  * @since 3.2
  */
-public abstract class AbstractLineTrackerTest extends TestCase {
+public abstract class AbstractLineTrackerTest {
 	protected ITextStore fText;
 	protected ILineTracker  fTracker;
-
-	protected AbstractLineTrackerTest(String name) {
-		super(name);
-	}
 
 	protected final void checkLines(int[] lines) throws BadLocationException {
 		assertEquals("number of lines", lines.length, fTracker.getNumberOfLines());

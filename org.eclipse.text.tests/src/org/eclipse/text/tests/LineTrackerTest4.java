@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.ConfigurableLineTracker;
 import org.eclipse.jface.text.GapTextStore;
@@ -19,23 +22,16 @@ import org.eclipse.jface.text.IRegion;
 
 public class LineTrackerTest4 extends AbstractLineTrackerTest {
 
-	public static Test suite() {
-		return new TestSuite(LineTrackerTest4.class);
-	}
 
-	public LineTrackerTest4(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		fText= new GapTextStore();
 		fTracker= new ConfigurableLineTracker(new String[] { "\r\n" });
 		set("x\r\nx\r\nx\r\nx\r\nx\r\n");
 	}
 
-	@Override
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		fTracker= null;
 		fText= null;
 	}
@@ -48,6 +44,7 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		return offset;
 	}
 
+	@Test
 	public void testEditScript1() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -66,7 +63,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		replace(5, 0, "x");
 		checkLines(new int[] { 3, 1 });
 	}
-
+	
+	@Test
 	public void testEmptyLines() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -82,7 +80,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 			assertTrue("invalid line number " + no + " for position " + i + " should be " + l, l == no);
 		}
 	}
-
+	
+	@Test
 	public void testInsert1() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -98,7 +97,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		replace(17, 0, "y");
 		checkLines(new int[] { 1, 5, 2, 1, 1, 1, 1, 0 });
 	}
-
+	
+	@Test
 	public void testInsert2() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -108,7 +108,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		replace(11, 0, "y\r\ny\r\ny");
 		checkLines(new int[] { 1, 5, 2, 1, 1, 1, 1, 0 });
 	}
-
+	
+	@Test
 	public void testLinesNumbers() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -124,7 +125,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 			offset+= (i + 2);
 		}
 	}
-
+	
+	@Test
 	public void testOffsets() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -156,7 +158,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		int length= fTracker.getLineLength(lastLine);
 		assertTrue("invalid last line end offset " + (offset + length - 1), 0 == length);
 	}
-
+	
+	@Test
 	public void testRemove() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -172,14 +175,16 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		replace(0, 4, null);
 		checkLines(new int[] { 0 });
 	}
-
+	
+	@Test
 	public void testReplace() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
 		replace(0, fText.getLength(), "\tx\r\n\tx\r\n\tx\r\n\tx\r\n\tx\r\n");
 		checkLines(new int[] { 2, 2, 2, 2, 2, 0 });
 	}
-
+	
+	@Test
 	public void testShiftLeft() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 
@@ -194,7 +199,8 @@ public class LineTrackerTest4 extends AbstractLineTrackerTest {
 		String txt= fText.get(0, fText.getLength());
 		assertEquals("invalid text", "x\r\nx\r\nx\r\nx\r\nx\r\n", txt);
 	}
-
+	
+	@Test
 	public void testShiftRight() throws Exception {
 		checkLines(new int[] { 1, 1, 1, 1, 1, 0 });
 

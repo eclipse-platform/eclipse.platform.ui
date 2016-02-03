@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -25,7 +30,7 @@ import org.eclipse.jface.text.projection.Segment;
 /**
  * @since 3.0
  */
-public class ProjectionMappingTest extends TestCase {
+public class ProjectionMappingTest {
 
 	private IDocument fMasterDocument;
 	private IDocument fSlaveDocument;
@@ -33,10 +38,6 @@ public class ProjectionMappingTest extends TestCase {
 	private String fSegmentsCategory;
 	private ProjectionMapping fProjectionMapping;
 
-
-	public ProjectionMappingTest(String name) {
-		super(name);
-	}
 
 	private String getOriginalMasterContent() {
 		return
@@ -103,8 +104,8 @@ public class ProjectionMappingTest extends TestCase {
 		addProjection(70, 30, 10);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fMasterDocument= new Document();
 		fSlaveDocument= new Document();
 		fFragmentsCategory= "_fragments" + fSlaveDocument.hashCode();
@@ -115,8 +116,8 @@ public class ProjectionMappingTest extends TestCase {
 	}
 
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		fMasterDocument= null;
 		fSlaveDocument= null;
 		fFragmentsCategory= null;
@@ -124,6 +125,7 @@ public class ProjectionMappingTest extends TestCase {
 		fProjectionMapping= null;
 	}
 
+	@Test
 	public void test1() {
 		// test getCoverage
 
@@ -133,6 +135,7 @@ public class ProjectionMappingTest extends TestCase {
 		assertTrue(coverage.getLength() == 60);
 	}
 
+	@Test
 	public void test2() {
 		// test toOriginOffset
 
@@ -154,7 +157,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
-
+	@Test
 	public void test3a() {
 		// test toOriginRegion
 		// image region inside segment
@@ -170,6 +173,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test3b() {
 		// test toOriginRegion
 		// image region is segment
@@ -185,6 +189,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test3c() {
 		// test toOriginRegion
 		// image region overlapping segments
@@ -199,6 +204,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test3d() {
 		// test toOriginRegion
 		// test null projection
@@ -223,6 +229,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test3e() {
 		// test toOriginRegion
 		// identical projection
@@ -242,6 +249,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test3f() {
 		// test toOriginRegion
 		// test empty slave document
@@ -258,6 +266,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test4() {
 		// test toOriginLines
 
@@ -276,6 +285,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test5a() {
 		// test toOriginLine
 		// test projection with no wrapped line
@@ -292,6 +302,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test5b() {
 		// test toOriginLine
 		// test line wrapping projection
@@ -307,6 +318,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test6() {
 		// test toImageOffset
 
@@ -371,6 +383,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test7() {
 		// test toExactImageRegion
 
@@ -399,6 +412,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test8() {
 		// test toImageRegion
 
@@ -427,6 +441,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test8b() {
 		// test toImageRegion
 
@@ -481,6 +496,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test9a() {
 		// test toImageLine
 		// test standard line wrapping projection
@@ -502,6 +518,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test9b() {
 		// test toImageLine
 		// test non-line wrapping, well distributed projection of empty lines
@@ -536,6 +553,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test10a() {
 		// test toClosestImageLine
 		// test standard line wrapping projection
@@ -557,6 +575,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test10b() {
 		// test toClosestImageLine
 		// test empty projection
@@ -568,6 +587,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test10c() {
 		// test toClosestImageLine
 		// test non-line wrapping, well distributed projection of empty lines
@@ -609,6 +629,7 @@ public class ProjectionMappingTest extends TestCase {
 			assertEquals(expected[i], actual[i]);
 	}
 
+	@Test
 	public void test11a() {
 		// test toExactOriginRegions
 		// test the whole slave document
@@ -627,6 +648,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11b() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment
@@ -644,6 +666,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11c() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the beginning of a segment
@@ -661,6 +684,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11d() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the end of a segment
@@ -678,6 +702,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11e() {
 		// test toExactOriginRegions
 		// test a complete segment
@@ -695,6 +720,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11f() {
 		// test toExactOriginRegions
 		// test zero-length regions
@@ -725,6 +751,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11g() {
 		// test toExactOriginRegions
 		// test a region starting in the middle of a segment and ending in the middle of another fragment
@@ -743,6 +770,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11h() {
 		// test toExactOriginRegions
 		// test a region completely comprised by a segment at the end of a segment, not the first segment
@@ -760,6 +788,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test11i() {
 		// test toExactOriginRegions
 		// test a single region in the identical projection
@@ -778,6 +807,7 @@ public class ProjectionMappingTest extends TestCase {
 
 	}
 
+	@Test
 	public void test12a() {
 		// test toExactImageRegions
 		// test the whole master document
@@ -796,6 +826,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12b() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment
@@ -813,6 +844,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12c() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the beginning of a fragment
@@ -830,6 +862,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12d() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the end of a fragment
@@ -847,6 +880,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12e() {
 		// test toExactImageRegions
 		// test a complete fragment
@@ -864,6 +898,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12f() {
 		// test toExactImageRegions
 		// test zero-length regions
@@ -894,6 +929,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12g() {
 		// test toExactImageRegions
 		// test a region starting in the middle of a fragment and ending in the middle of another fragment
@@ -912,6 +948,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12h() {
 		// test toExactImageRegions
 		// test a region completely comprised by a fragment at the end of a fragment, not the first fragment
@@ -929,6 +966,7 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test12i() {
 		// test toExactImageRegions
 		// test a single region in the identical projection
@@ -947,12 +985,14 @@ public class ProjectionMappingTest extends TestCase {
 
 	}
 
+	@Test
 	public void test13a() {
 		// test getImageLength
 		// empty projection
 		assertEquals(0, fProjectionMapping.getImageLength());
 	}
 
+	@Test
 	public void test13b() {
 		// test getImageLength
 		// identical projection
@@ -960,6 +1000,7 @@ public class ProjectionMappingTest extends TestCase {
 		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
 
+	@Test
 	public void test13c() {
 		// test getImageLength
 		// standard projection
@@ -967,6 +1008,7 @@ public class ProjectionMappingTest extends TestCase {
 		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
 
+	@Test
 	public void test13d() {
 		// test getImageLength
 		// line wrapping projection

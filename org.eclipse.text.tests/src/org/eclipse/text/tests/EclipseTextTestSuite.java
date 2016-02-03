@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
 import org.eclipse.text.tests.link.LinkTestSuite;
 import org.eclipse.text.tests.templates.TemplatesTestSuite;
-
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 
 /**
@@ -24,32 +24,27 @@ import junit.framework.TestSuite;
  *
  * @since 3.0
  */
+@RunWith(Suite.class)
+@SuiteClasses({
+	LineTrackerTest4.class,
+	DocumentExtensionTest.class,
+	LineTrackerTest3.class,
+	DocumentTest.class,
+	FindReplaceDocumentAdapterTest.class,
+	PositionUpdatingCornerCasesTest.class,
+	ExclusivePositionUpdaterTest.class,
+	TextEditTests.class,
+	GapTextTest.class,
+	GapTextStoreTest.class,
+	ChildDocumentTest.class,
+	ProjectionTestSuite.class,
+	LinkTestSuite.class,
+	CopyOnWriteTextStoreTest.class,
+	TextUtilitiesTest.class,
+	AnnotationModelStressTest.class,
+	AnnotationModelExtension2Test.class,
+	TemplatesTestSuite.class
+})
 public class EclipseTextTestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.text"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTest(LineTrackerTest4.suite());
-		suite.addTest(DocumentExtensionTest.suite());
-		suite.addTest(LineTrackerTest3.suite());
-		suite.addTest(DocumentTest.suite());
-		suite.addTest(FindReplaceDocumentAdapterTest.suite());
-		suite.addTest(PositionUpdatingCornerCasesTest.suite());
-		suite.addTest(ExclusivePositionUpdaterTest.suite());
-		suite.addTest(TextEditTests.suite());
-		suite.addTest(GapTextTest.suite());
-		suite.addTest(AdaptiveGapTextTest.suite());
-		suite.addTest(GapTextStoreTest.suite());
-		suite.addTest(ChildDocumentTest.suite());
-		suite.addTest(ProjectionTestSuite.suite());
-		suite.addTest(LinkTestSuite.suite());
-		suite.addTest(CopyOnWriteTextStoreTest.suite());
-		suite.addTest(TextUtilitiesTest.suite());
-		suite.addTest(AnnotationModelStressTest.suite());
-		suite.addTest(AnnotationModelExtension2Test.suite());
-		suite.addTest(new JUnit4TestAdapter(TemplatesTestSuite.class));
-		//$JUnit-END$
-
-		return suite;
-	}
+	//intentionally left blank
 }

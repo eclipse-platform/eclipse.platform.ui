@@ -11,9 +11,11 @@
 
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.CopyOnWriteTextStore;
 import org.eclipse.jface.text.GapTextStore;
@@ -24,7 +26,7 @@ import org.eclipse.jface.text.ITextStore;
  *
  * @since 3.2
  */
-public class CopyOnWriteTextStoreTest extends TestCase {
+public class CopyOnWriteTextStoreTest {
 
 	private static class COWTextStore extends CopyOnWriteTextStore {
 		COWTextStore() {
@@ -42,28 +44,19 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 
 	private COWTextStore fText;
 
-
-	public CopyOnWriteTextStoreTest(String name) {
-		super(name);
-	}
-
-
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		fText= new COWTextStore();
 		fText.set(INITIAL_CONTENT);
 	}
 
-	public static Test suite() {
-		return new TestSuite(CopyOnWriteTextStoreTest.class);
-	}
-
-	@Override
-	protected void tearDown () {
+	@After
+	public void tearDown () {
 		fText= null;
 	}
-
+	
+	@Test
 	public void testInitialContent() {
 
 		assertEquals(INITIAL_CONTENT, fText.get());
@@ -77,14 +70,16 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		assertTrue(failed);
 
 	}
-
+	
+	@Test
 	public void testFirstModification() {
 
 		checkReplace(1, 1, "y");
 		assertEquals(GapTextStore.class, fText.getStore().getClass());
 
 	}
-
+	
+	@Test
 	public void testSet() {
 
 		fText.replace(1, 1, "y");
@@ -99,7 +94,8 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		}
 		assertTrue(failed);
 	}
-
+	
+	@Test
 	public void testInsert1() {
 
 		for (int i= 1; i < 5; i++) {
@@ -107,7 +103,8 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testInsert2() {
 
 		for (int i= 1; i < 5; i++) {
@@ -115,7 +112,8 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testDelete1() {
 
 		for (int i= 1; i < 5; i++) {
@@ -123,7 +121,8 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testDelete2() {
 
 		for (int i= 1; i < 5; i++) {
@@ -131,7 +130,8 @@ public class CopyOnWriteTextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testAppend() {
 
 		for (int i= 1; i < 5; i++) {

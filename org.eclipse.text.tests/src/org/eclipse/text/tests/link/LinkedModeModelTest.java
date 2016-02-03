@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests.link;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -25,15 +32,14 @@ import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 
-import junit.framework.TestCase;
 
-
-public class LinkedModeModelTest extends TestCase {
+public class LinkedModeModelTest {
 
 	private List<LinkedPosition> fPositions= new LinkedList<>();
 
 	private List<IDocument[]> fDocumentMap= new ArrayList<>();
-
+	
+	@Test
 	public void testUpdate() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -50,7 +56,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertEquals(group1, "GRETCHEN");
 		assertUnchanged(group1);
 	}
-
+	
+	@Test
 	public void testUpdateUnequalContent() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 		
@@ -69,6 +76,7 @@ public class LinkedModeModelTest extends TestCase {
 		assertUnchanged(group1);
 	}
 	
+	@Test
 	public void testUpdateTwoGroups() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -93,7 +101,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertEquals(group2, "FAUST");
 		assertUnchanged(group1, group2);
 	}
-
+	
+	@Test
 	public void testUpdateMultipleGroups() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -120,7 +129,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertEquals(group2, "AUGE");
 		assertUnchanged(group1, group2);
 	}
-
+	
+	@Test
 	public void testUpdateMultiDocument() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 		IDocument doc2= new Document(GARTEN2);
@@ -151,7 +161,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertUnchanged(group1, group2);
 
 	}
-
+	
+	@Test
 	public void testAddCompatibleGroups() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -172,7 +183,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertUnchanged(group1, group2);
 
 	}
-
+	
+	@Test
 	public void testAddIncompatibleGroups() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -192,7 +204,8 @@ public class LinkedModeModelTest extends TestCase {
 		}
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testAddNullGroup() throws BadLocationException {
 		LinkedModeModel env= new LinkedModeModel();
 		try {
@@ -203,7 +216,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testAddGroupWhenSealed() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -224,7 +238,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testDoubleInstall() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -244,7 +259,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testEmptyInstall() throws BadLocationException {
 		LinkedModeModel env= new LinkedModeModel();
 
@@ -256,7 +272,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testNestedUpdate() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -295,7 +312,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertEquals(group2, "FAUST");
 		assertUnchanged(group1, group2);
 	}
-
+	
+	@Test
 	public void testNestedForceInstall() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -340,7 +358,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertEquals(group1_2, "INE");
 	}
-
+	
+	@Test
 	public void testNestedTryInstall() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -383,7 +402,8 @@ public class LinkedModeModelTest extends TestCase {
 		assertEquals(group1, "MARGARINE");
 		assertUnchanged(group1, group2);
 	}
-
+	
+	@Test
 	public void testOutsideUpdate() throws BadLocationException {
 		IDocument doc1= new Document(GARTEN1);
 
@@ -406,11 +426,12 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertEquals(group1, "MARGARETE");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGARETE:\n" +
+		Assert.assertEquals("	MARGARETE:\n" +
 				"	Verbrich mir, Heinrich!", doc1.get(0, 36));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
-
+	
+	@Test
 	public void testOverlappingUpdate() throws BadLocationException {
 		// a change partially touches a linked position, but also "in-between" text
 		IDocument doc1= new Document(GARTEN1);
@@ -434,11 +455,12 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertEquals(group1, "MARGARINE-PLANTA");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGARINE-PLANTA" +
+		Assert.assertEquals("	MARGARINE-PLANTA" +
 				"Versprich mir, Heinrich!", doc1.get(0, 41));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
-
+	
+	@Test
 	public void testOverlappingDelete() throws BadLocationException {
 		// a change partially touches a linked position, but also "in-between" text
 		IDocument doc1= new Document(GARTEN1);
@@ -462,11 +484,12 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertEquals(group1, "MARGAR");
 		assertFalse(isExit[0]);
-		assertEquals("	MARGAR" +
+		Assert.assertEquals("	MARGAR" +
 				"Versprich mir, Heinrich!", doc1.get(0, 31));
 //		assertUnchanged(group1); // would fail, since it was changed outside
 	}
-
+	
+	@Test
 	public void testIllegalChange1() throws BadLocationException {
 		// linked mode does not exit if the documents change outside the linked
 		// positions, but it does exit if a change invalidates the constraints
@@ -494,7 +517,8 @@ public class LinkedModeModelTest extends TestCase {
 
 		assertTrue(isExit[0]);
 	}
-
+	
+	@Test
 	public void testIllegalChange2() throws BadLocationException {
 		// linked mode does not exit if the documents change outside the linked
 		// positions, but it does exit if a change invalidates the constraints
@@ -532,7 +556,7 @@ public class LinkedModeModelTest extends TestCase {
 		for (int i= 0; i < positions.length; i++) {
 			LinkedPosition pos= positions[i];
 			if (!pos.isDeleted())
-				assertEquals(expected, pos.getContent());
+				Assert.assertEquals(expected, pos.getContent());
 		}
 	}
 
@@ -550,7 +574,7 @@ public class LinkedModeModelTest extends TestCase {
 		Arrays.sort(act, new PositionComparator());
 		Arrays.sort(exp, new PositionComparator());
 
-		assertEquals(exp.length, act.length);
+		Assert.assertEquals(exp.length, act.length);
 
 		LinkedPosition e_prev= null, a_prev= null;
 		for (int i= 0; i <= exp.length; i++) {
@@ -560,10 +584,10 @@ public class LinkedModeModelTest extends TestCase {
 			IDocument e_doc= e_prev != null ? e_prev.getDocument() : e_next.getDocument();
 			if (e_next != null && e_next.getDocument() != e_doc) {
 				// split at document boundaries
-				assertEquals(getContentBetweenPositions(e_prev, null), getContentBetweenPositions(a_prev, null));
-				assertEquals(getContentBetweenPositions(null, e_next), getContentBetweenPositions(null, a_next));
+				Assert.assertEquals(getContentBetweenPositions(e_prev, null), getContentBetweenPositions(a_prev, null));
+				Assert.assertEquals(getContentBetweenPositions(null, e_next), getContentBetweenPositions(null, a_next));
 			} else {
-				assertEquals(getContentBetweenPositions(e_prev, e_next), getContentBetweenPositions(a_prev, a_next));
+				Assert.assertEquals(getContentBetweenPositions(e_prev, e_next), getContentBetweenPositions(a_prev, a_next));
 			}
 
 			e_prev= e_next;
@@ -589,8 +613,8 @@ public class LinkedModeModelTest extends TestCase {
 	}
 
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fPositions.clear();
 		fDocumentMap.clear();
 	}

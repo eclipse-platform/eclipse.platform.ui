@@ -12,15 +12,17 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.PatternSyntaxException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -33,20 +35,14 @@ import org.eclipse.jface.text.Region;
  *
  * @since 3.1
  */
-public class FindReplaceDocumentAdapterTest extends TestCase {
+public class FindReplaceDocumentAdapterTest {
 
 	private static final boolean BUG_392594= true;
 	
 	private Document fDocument;
 
-
-	public FindReplaceDocumentAdapterTest(String name) {
-		super(name);
-	}
-
-
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		fDocument= new Document();
 
@@ -68,15 +64,12 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		fDocument.set(text);
 	}
 
-	public static Test suite() {
-		return new TestSuite(FindReplaceDocumentAdapterTest.class);
-	}
-
-	@Override
-	protected void tearDown () {
+	@After
+	public void tearDown () {
 		fDocument= null;
 	}
-
+	
+	@org.junit.Test
 	public void testFind() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -98,7 +91,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testFindCaretInMiddleOfWord() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -115,7 +109,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testFindCaretAtWordStart() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -128,7 +123,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testFindCaretAtEndStart() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -144,7 +140,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 
 	/**
 	 * Test case for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=74993
-	 */
+	 */	
+	@Test
 	public void testBug74993() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -158,7 +155,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 
 	/**
 	 * Test case for: https://bugs.eclipse.org/386751
-	 */
+	 */	
+	@Test
 	public void testBug386751() {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -168,7 +166,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testUTF8Pattern() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -190,7 +189,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testReplace() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -234,7 +234,9 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
+	@Ignore
 	public void _testRegexReplace() throws Exception {
 		fDocument.set(
 				"UnixWindowsMacInferred\n" +
@@ -250,7 +252,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		String text= "Unix\nWindows\r\nMac\rInferred\n\n\\, \u00F6, \u00F6, \t, \n, \r, \f, \u0007, \u001B, \u0006";
 		assertEquals(text, fDocument.get());
 	}
-
+	
+	@Test
 	public void testRegexReplace2() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 
@@ -270,7 +273,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		regexReplace("foo", "$010", findReplaceDocumentAdapter);
 		assertEquals("foo10", fDocument.get());
 	}
-
+	
+	@Test
 	public void testRegexReplace3() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 
@@ -285,7 +289,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 
 	/*
 	 * @since 3.4
-	 */
+	 */	
+	@Test
 	public void testRegexRetainCase() throws Exception {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 
@@ -340,7 +345,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		IRegion r= findReplaceDocumentAdapter.replace(replace, true);
 		assertNotNull(r);
 	}
-
+	
+	@Test
 	public void testRegexFindLinebreak() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "Unix\nWindows\r\nMac\rEnd";
@@ -362,7 +368,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		region= adapter.find(r + 1, "\\R", true, false, false, true);
 		assertNull(region);
 	}
-
+	
+	@Test
 	public void testRegexFindLinebreak2_fail() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "Unix\n[\\R]\\R\r\n";
@@ -383,7 +390,9 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		}
 		fail();
 	}
-
+	
+	@Test
+	@Ignore
 	public void _testRegexFindLinebreak2() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "+[\\R]\\R\r\n";
@@ -400,7 +409,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		adapter.replace("Win\\1$1", true);
 		assertEquals("+Win\r\n\r\n", fDocument.get());
 	}
-
+	
+	@Test
 	public void testRegexFindLinebreak3() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "One\r\nTwo\r\n\r\nEnd";
@@ -417,7 +427,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		region= adapter.find(0, "[a-zA-Z]+\\R{2}", true, false, false, true);
 		assertEquals(new Region(two, end - two), region);
 	}
-
+	
+	@Test
 	public void testRegexFindLinebreakIllegal() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		fDocument.set("\n");
@@ -444,7 +455,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		}
 		assertNull(region);
 	}
-
+	
+	@Test
 	public void testIllegalState() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
@@ -464,7 +476,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			Assert.assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testRegexFindStackOverflow_fail() throws Exception {
 		// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=102699
 		

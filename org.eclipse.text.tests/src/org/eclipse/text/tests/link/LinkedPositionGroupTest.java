@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests.link;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -20,33 +25,38 @@ import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 
-public class LinkedPositionGroupTest extends TestCase {
-
+public class LinkedPositionGroupTest {
+	
+	@Test
 	public void testIsEmpty() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		assertTrue(group.isEmpty());
 	}
-
+	
+	@Test
 	public void testIsNotEmtpy() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
 		assertFalse(group.isEmpty());
 	}
-
+	
+	@Test
 	public void testGetPositions() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
 		group.addPosition(new LinkedPosition(new Document(), 0, 0));
 		assertEquals(2, group.getPositions().length);
 	}
-
+	
+	@Test
 	public void testAddPosition() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		LinkedPosition p= new LinkedPosition(new Document(), 0, 0);
 		group.addPosition(p);
 		assertSame(p, group.getPositions()[0]);
 	}
-
+	
+	@Test
 	public void testAddIllegalState() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		LinkedModeModel env= new LinkedModeModel();
@@ -61,7 +71,8 @@ public class LinkedPositionGroupTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testAddBadLocation() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		IDocument doc= new Document(GARTEN);
@@ -74,7 +85,8 @@ public class LinkedPositionGroupTest extends TestCase {
 
 		assertFalse(true);
 	}
-
+	
+	@Test
 	public void testAddEqualContent() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		IDocument doc= new Document(GARTEN);
@@ -85,7 +97,8 @@ public class LinkedPositionGroupTest extends TestCase {
 			assertFalse(true);
 		}
 	}
-
+	
+	@Test
 	public void testAddNotEqualContent() {
 		LinkedPositionGroup group= new LinkedPositionGroup();
 		IDocument doc= new Document(GARTEN);

@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ConfigurableLineTracker;
@@ -23,13 +29,13 @@ import org.eclipse.jface.text.ITextStore;
  *
  * @since 3.3
  */
-public abstract class TextStoreTest extends TestCase {
+public abstract class TextStoreTest {
 
 	private ITextStore fTextStore;
 	private ILineTracker fTracker;
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		fTextStore= createTextStore();
 		fTracker= createTracker();
@@ -52,12 +58,13 @@ public abstract class TextStoreTest extends TestCase {
 
 	abstract protected ITextStore createTextStore();
 
-	@Override
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		fTextStore= null;
 		fTracker= null;
 	}
-
+	
+	@Test
 	public void testGet1() throws Exception {
 		set("xxxxx");
 
@@ -70,7 +77,8 @@ public abstract class TextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testGet2() throws Exception {
 		set("xxxxx");
 
@@ -83,6 +91,8 @@ public abstract class TextStoreTest extends TestCase {
 		}
 
 	}
+	
+	@Test
 	public void testEditScript1() throws Exception {
 		replace(0, fTextStore.getLength(), "x");
 		assertTextStoreContents("x");
@@ -111,7 +121,8 @@ public abstract class TextStoreTest extends TestCase {
 		} catch (IndexOutOfBoundsException e) {
 		}
 	}
-
+	
+	@Test
 	public void testEmptyLines() throws Exception {
 
 		replace(0, 10, null);
@@ -120,7 +131,8 @@ public abstract class TextStoreTest extends TestCase {
 		replace(0, 0, "\n\n\n\n\n");
 		assertTextStoreContents("\n\n\n\n\n");
 	}
-
+	
+	@Test
 	public void testInsert1() throws Exception {
 
 		replace(3, 0, "yyyy");
@@ -138,7 +150,8 @@ public abstract class TextStoreTest extends TestCase {
 		replace(11, 5, "y\nxyz");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\nxyz\nx\n");
 	}
-
+	
+	@Test
 	public void testInsert2() throws Exception {
 		replace(3, 0, "yyyy");
 		assertTextStoreContents("x\nxyyyy\nx\nx\nx\n");
@@ -146,7 +159,8 @@ public abstract class TextStoreTest extends TestCase {
 		replace(9, 0, "y\ny\ny");
 		assertTextStoreContents("x\nxyyyy\nxy\ny\ny\nx\nx\n");
 	}
-
+	
+	@Test
 	public void testLinesNumbers() throws Exception {
 		replace(0, 10, "\na\nbb\nccc\ndddd\neeeee\n");
 		assertTextStoreContents("\na\nbb\nccc\ndddd\neeeee\n");
@@ -160,7 +174,8 @@ public abstract class TextStoreTest extends TestCase {
 			offset+= (i + 1);
 		}
 	}
-
+	
+	@Test
 	public void testOffsets() throws Exception {
 		for (int i= 0; i < 5; i++) {
 			IRegion line= fTracker.getLineInformation(i);
@@ -181,7 +196,8 @@ public abstract class TextStoreTest extends TestCase {
 			assertTrue("invalid line number " + line + " for position " + i + " should be " + l, l == line);
 		}
 	}
-
+	
+	@Test
 	public void testRemove() throws Exception {
 		replace(3, 1, null);
 		assertTextStoreContents("x\nxx\nx\nx\n");
@@ -195,12 +211,14 @@ public abstract class TextStoreTest extends TestCase {
 		replace(0, 3, null);
 		assertTextStoreContents("");
 	}
-
+	
+	@Test
 	public void testReplace() throws Exception {
 		replace(0, fTextStore.getLength(), "\tx\n\tx\n\tx\n\tx\n\tx\n");
 		assertTextStoreContents("\tx\n\tx\n\tx\n\tx\n\tx\n");
 	}
-
+	
+	@Test
 	public void testReplace2() throws Exception {
 		replace(0, fTextStore.getLength(), "x");
 		assertTextStoreContents("x");
@@ -208,12 +226,14 @@ public abstract class TextStoreTest extends TestCase {
 		replace(0, fTextStore.getLength(), "x\nx\nx\n");
 		assertTextStoreContents("x\nx\nx\n");
 	}
-
+	
+	@Test
 	public void testReplace3() throws Exception {
 		replace(1, 1, "\n");
 		assertTextStoreContents("x\nx\nx\nx\nx\n");
 	}
-
+	
+	@Test
 	public void testReplace4() throws Exception {
 		int lines= fTracker.getNumberOfLines();
 		IRegion previous= fTracker.getLineInformation(0);
@@ -225,7 +245,8 @@ public abstract class TextStoreTest extends TestCase {
 			previous= fTracker.getLineInformation(i);
 		}
 	}
-
+	
+	@Test
 	public void testShiftLeft() throws Exception {
 		replace(0, fTextStore.getLength(), "\tx\n\tx\n\tx\n\tx\n\tx\n");
 		assertTextStoreContents("\tx\n\tx\n\tx\n\tx\n\tx\n");
@@ -237,7 +258,8 @@ public abstract class TextStoreTest extends TestCase {
 
 		assertTextStoreContents("x\nx\nx\nx\nx\n");
 	}
-
+	
+	@Test
 	public void testShiftRight() throws Exception {
 		for (int i= 0; i < 5; i++) {
 			int pos= fTracker.getLineOffset(i);
@@ -246,7 +268,8 @@ public abstract class TextStoreTest extends TestCase {
 
 		assertTextStoreContents("\tx\n\tx\n\tx\n\tx\n\tx\n");
 	}
-
+	
+	@Test
 	public void testDeleteEmptyLine() throws Exception {
 		set("x\nx\n\nx\n\n");
 		assertTextStoreContents("x\nx\n\nx\n\n");
@@ -268,7 +291,8 @@ public abstract class TextStoreTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testDeleteLines() throws Exception {
 		String content= "";
 		for (int i= 0; i < 50; i++) {
@@ -301,7 +325,8 @@ public abstract class TextStoreTest extends TestCase {
 			}
 		}
 	}
-
+	
+	@Test
 	public void testDeleteLines2() throws Exception {
 		String content= "";
 		for (int i= 0; i < 50; i++) {
@@ -334,7 +359,8 @@ public abstract class TextStoreTest extends TestCase {
 			}
 		}
 	}
-
+	
+	@Test
 	public void testSet() throws Exception {
 		String content= "";
 		for (int i= 0; i < 35; i++) {
@@ -350,7 +376,8 @@ public abstract class TextStoreTest extends TestCase {
 			content+= "\n";
 		}
 	}
-
+	
+	@Test
 	public void testFunnyLastLineCompatibility() throws Exception {
 		/* empty last line */
 		set("x\n");

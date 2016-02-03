@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -24,17 +30,12 @@ import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-
 /**
  * Tests the {@link org.eclipse.jface.text.source.IAnnotationModelExtension2}.
  *
  * @since 3.4
  */
-public class AnnotationModelExtension2Test extends TestCase {
+public class AnnotationModelExtension2Test {
 
 	public class OldAnnotationModel implements IAnnotationModel {
 
@@ -98,12 +99,8 @@ public class AnnotationModelExtension2Test extends TestCase {
 	private Annotation fAfterIn;
 	private Annotation fAfterOut;
 
-	public static Test suite() {
-		return new TestSuite(AnnotationModelExtension2Test.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() {
 		fDocument= new Document("How much wood\nwould a woodchuck chuck\nif a woodchuck\ncould chuck wood?\n42");
 
 		fAnnotationModel= new AnnotationModel();
@@ -129,8 +126,8 @@ public class AnnotationModelExtension2Test extends TestCase {
 		fAnnotationModel.connect(fDocument);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() {
 		fAnnotationModel.disconnect(fDocument);
 	}
 
@@ -252,22 +249,26 @@ public class AnnotationModelExtension2Test extends TestCase {
 		}
 		return null;
 	}
-
+	
+	@Test
 	public void testInside() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn };
 		assertPermutations(false, false, expected);
 	}
-
+	
+	@Test
 	public void testAhead() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fBefore, fBeforeIn };
 		assertPermutations(true, false, expected);
 	}
-
+	
+	@Test
 	public void testBehind() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fAfter, fAfterIn };
 		assertPermutations(false, true, expected);
 	}
-
+	
+	@Test
 	public void testAheadBehind() throws Exception {
 		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fInsideOut, fAfter, fAfterIn, fBefore, fBeforeIn };
 		assertPermutations(true, true, expected);

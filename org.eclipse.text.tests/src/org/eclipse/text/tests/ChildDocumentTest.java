@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -24,16 +27,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
-public class ChildDocumentTest extends TestCase {
+public class ChildDocumentTest {
 
 	private IDocument fDocument;
 	private Document fParent;
 	private ChildDocumentManager fManager;
-
-
-	public ChildDocumentTest(String name) {
-		super(name);
-	}
 
 
 	protected void checkPositions(Position[] positions) {
@@ -90,8 +88,8 @@ public class ChildDocumentTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		fParent= new Document();
 
@@ -136,15 +134,12 @@ public class ChildDocumentTest extends TestCase {
 		}
 	}
 
-	public static Test suite() {
-		return new TestSuite(ChildDocumentTest.class);
-	}
-
-	@Override
-	protected void tearDown () {
+	@After
+	public void tearDown () {
 		fDocument= null;
 	}
-
+	
+	@Test
 	public void testDelete1() {
 
 		try {
@@ -167,7 +162,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testEditScript1() {
 
 		//	1. step
@@ -203,7 +199,8 @@ public class ChildDocumentTest extends TestCase {
 		checkPositions(positions);
 
 	}
-
+	
+	@Test
 	public void testFindPositions() {
 
 		try {
@@ -243,7 +240,8 @@ public class ChildDocumentTest extends TestCase {
 		checkPositions(positions);
 
 	}
-
+	
+	@Test
 	public void testInsert1() {
 
 		try {
@@ -266,7 +264,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testInsert2() {
 
 		try {
@@ -289,7 +288,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testInsert3() {
 
 		try {
@@ -312,7 +312,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testInsert4() {
 
 		try {
@@ -337,7 +338,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace1() {
 
 		try {
@@ -360,7 +362,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace2() {
 
 		try {
@@ -383,7 +386,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace3() {
 
 		Position[] actual= new Position[] {
@@ -411,7 +415,8 @@ public class ChildDocumentTest extends TestCase {
 	 *
 	 * [formatting] IllegalArgumentException when formatting comment code snippet in segmented mode
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=51594
-	 */
+	 */	
+	@Test
 	public void testReplace4() {
 		try {
 			int start= fParent.getLineOffset(5);
@@ -424,7 +429,8 @@ public class ChildDocumentTest extends TestCase {
 			assertTrue("BadLocationException thrown", false);
 		}
 	}
-
+	
+	@Test
 	public void testAppend() {
 
 		Position[] actual= new Position[] {
@@ -449,7 +455,7 @@ public class ChildDocumentTest extends TestCase {
 		checkPositions(expected, actual);
 	}
 
-
+	@Test
 	public void testShiftLeft() {
 
 		try {
@@ -473,7 +479,8 @@ public class ChildDocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testShiftRight() {
 
 		try {

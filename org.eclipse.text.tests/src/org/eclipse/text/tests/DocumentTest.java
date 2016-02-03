@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -21,15 +24,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 
-public class DocumentTest extends TestCase {
+public class DocumentTest {
 
 	private Document fDocument;
-
-
-	public DocumentTest(String name) {
-		super(name);
-	}
-
 
 	protected void checkPositions(Position[] expected) {
 
@@ -54,8 +51,8 @@ public class DocumentTest extends TestCase {
 
 	}
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		fDocument= new Document();
 
@@ -90,22 +87,19 @@ public class DocumentTest extends TestCase {
 		}
 	}
 
-	public static Test suite() {
-		return new TestSuite(DocumentTest.class);
-	}
-
-	@Override
-	protected void tearDown () {
+	@After
+	public void tearDown () {
 		fDocument= null;
 	}
-
-
+	
+	@Test
 	public void testEmptyDocument() {
 		IDocument document= new Document();
 		int lines= document.getNumberOfLines();
 		assertEquals(1, lines);
 	}
 	
+	@Test
 	public void testDelete1() {
 
 		try {
@@ -129,6 +123,7 @@ public class DocumentTest extends TestCase {
 		checkPositions(positions);
 	}
 
+	@Test
 	public void testEditScript1() {
 
 		//	1. step
@@ -165,6 +160,7 @@ public class DocumentTest extends TestCase {
 
 	}
 
+	@Test
 	public void testFindPositions() {
 
 		try {
@@ -205,6 +201,7 @@ public class DocumentTest extends TestCase {
 
 	}
 
+	@Test
 	public void testInsert1() {
 
 		try {
@@ -228,6 +225,7 @@ public class DocumentTest extends TestCase {
 		checkPositions(positions);
 	}
 
+	@Test
 	public void testInsert2() {
 
 		try {
@@ -250,7 +248,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testInsert3() {
 
 		try {
@@ -273,7 +272,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testInsert4() {
 
 		try {
@@ -298,7 +298,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace1() {
 
 		try {
@@ -321,7 +322,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace2() {
 
 		try {
@@ -344,7 +346,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testReplace3() {
 
 		Position[] actual= new Position[] {
@@ -366,7 +369,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(expected, actual);
 	}
-
+	
+	@Test
 	public void testReplace4() {
 
 		try {
@@ -389,7 +393,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testAppend() {
 
 		Position[] actual= new Position[] {
@@ -414,7 +419,7 @@ public class DocumentTest extends TestCase {
 		checkPositions(expected, actual);
 	}
 
-
+	@Test
 	public void testShiftLeft() {
 
 		try {
@@ -438,7 +443,8 @@ public class DocumentTest extends TestCase {
 
 		checkPositions(positions);
 	}
-
+	
+	@Test
 	public void testShiftRight() {
 
 		try {

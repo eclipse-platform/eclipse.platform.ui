@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.jface.text.ITextStore;
 
 public class GapTextStoreTest extends TextStoreTest {
-
-	public static Test suite() {
-		return new TestSuite(GapTextStoreTest.class);
-	}
 
 	@Override
 	protected ITextStore createTextStore() {

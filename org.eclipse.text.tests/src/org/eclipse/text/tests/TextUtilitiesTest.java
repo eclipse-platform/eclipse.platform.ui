@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -31,11 +30,7 @@ import org.eclipse.jface.text.TextUtilities;
 /**
  * A test case for text utilities.
  */
-public class TextUtilitiesTest extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(TextUtilitiesTest.class);
-	}
+public class TextUtilitiesTest {
 
 	/**
 	 * A document which is a copy of another document.
@@ -144,10 +139,6 @@ public class TextUtilitiesTest extends TestCase {
 	 * 
 	 * @param name the name
 	 */
-	public TextUtilitiesTest(String name) {
-		super(name);
-	}
-
 	private static DocumentEvent createRandomEvent(IDocument document, int maxLength, char character) {
 
 		int index0= (int) (Math.random() * (maxLength + 1));
@@ -163,7 +154,8 @@ public class TextUtilitiesTest extends TestCase {
 
 		return new DocumentEvent(document, offset, length, buffer.toString());
 	}
-
+	
+	@Test
 	public void testMergeEvents1() {
 		IDocument reference= new Document();
 		LazilyMirroredDocument testee= new LazilyMirroredDocument(reference);
@@ -180,7 +172,8 @@ public class TextUtilitiesTest extends TestCase {
 			Assert.fail("bad location exception");
 		}
 	}
-
+	
+	@Test
 	public void testMergeEvents() {
 		IDocument reference= new Document();
 		LazilyMirroredDocument testee= new LazilyMirroredDocument(reference);
@@ -232,7 +225,8 @@ public class TextUtilitiesTest extends TestCase {
 			Assert.fail("bad location exception");
 		}
 	}
-
+	
+	@Test
 	public void testMergeEvents2() {
 		IDocument reference= new Document();
 		LazilyMirroredDocument2 testee= new LazilyMirroredDocument2(reference);
@@ -281,7 +275,8 @@ public class TextUtilitiesTest extends TestCase {
 	private static void check(IDocument reference, IDocument testee) {
 		Assert.assertEquals(reference.get(), testee.get());
 	}
-
+	
+	@Test
 	public void testIndexOf() {
 		int[] result;
 		result= TextUtilities.indexOf(new String[] {"a", "ab", "abc"}, "xxxxxxxxxx", 0);

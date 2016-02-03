@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
@@ -21,12 +23,8 @@ import org.eclipse.jface.text.Position;
 
 
 
-public class PositionUpdatingCornerCasesTest extends TestCase {
+public class PositionUpdatingCornerCasesTest {
 	private Document fDocument;
-
-	public PositionUpdatingCornerCasesTest(String name) {
-		super(name);
-	}
 
 	protected void checkPositions(Position[] expected) throws BadPositionCategoryException {
 		Position[] actual= fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
@@ -41,15 +39,12 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 		return "[" + p.getOffset() + "," + p.getLength() + "]";
 	}
 
-	public static Test suite() {
-		return new TestSuite(PositionUpdatingCornerCasesTest.class);
-	}
-
-	@Override
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		fDocument= null;
 	}
 
+	@Test
 	public void testInsert() throws Exception {
 		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
 		fDocument.addPosition(new Position(0, 0));
@@ -69,6 +64,7 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 		checkPositions(positions);
 	}
 	
+	@Test
 	public void testInsert2() throws Exception {
 		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
 		fDocument.addPosition(new Position(0, 0));

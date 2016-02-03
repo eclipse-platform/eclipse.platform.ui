@@ -10,9 +10,17 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
@@ -20,15 +28,10 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-
 /**
  * @since 3.4
  */
-public class AnnotationModelStressTest extends TestCase {
+public class AnnotationModelStressTest {
 
 	private static final String RANDOM_CONTENT= "UENTXRXNMRXSTNVZFACSMTQYVGOLEPGRXRH\n" +
 			"BCQCYH\n" +
@@ -1210,12 +1213,8 @@ public class AnnotationModelStressTest extends TestCase {
 	private AnnotationModel fInnerModel1;
 	private AnnotationModel fInnerModel2;
 
-	public static Test suite() {
-		return new TestSuite(AnnotationModelStressTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fDocument= new Document(RANDOM_CONTENT);
 
 		fAnnotationModel= new AnnotationModel();
@@ -1229,8 +1228,8 @@ public class AnnotationModelStressTest extends TestCase {
 		fAnnotationModel.connect(fDocument);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fAnnotationModel.disconnect(fDocument);
 		
 		fDocument= null;
@@ -1346,7 +1345,8 @@ public class AnnotationModelStressTest extends TestCase {
 
 		return result;
 	}
-
+	
+	@Test
 	public void testStressTestPlainOld() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
@@ -1376,7 +1376,8 @@ public class AnnotationModelStressTest extends TestCase {
 			assertExist(added);
 		}
 	}
-
+	
+	@Test
 	public void testStressTestPlainNew() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
@@ -1406,7 +1407,8 @@ public class AnnotationModelStressTest extends TestCase {
 			assertExistNew(added);
 		}
 	}
-
+	
+	@Test
 	public void testStressTestMoveOld() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;
@@ -1440,7 +1442,8 @@ public class AnnotationModelStressTest extends TestCase {
 			assertExist(added);
 		}
 	}
-
+	
+	@Test
 	public void testStressTestMoveNew() throws Exception {
 		ArrayList<AnnotationData> added= new ArrayList<>();
 		int i= 0;

@@ -11,10 +11,19 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -29,7 +38,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.projection.Fragment;
 import org.eclipse.jface.text.projection.Segment;
 
-public class ProjectionDocumentTest extends TestCase {
+public class ProjectionDocumentTest {
 
 	static private class ProjectionDocument extends org.eclipse.jface.text.projection.ProjectionDocument {
 
@@ -81,10 +90,6 @@ public class ProjectionDocumentTest extends TestCase {
 	private ISlaveDocumentManager fSlaveDocumentManager;
 
 
-	public ProjectionDocumentTest(String name) {
-		super(name);
-	}
-
 	private String getOriginalMasterContents() {
 		return LINES ?
 			"1111111111111111111\n" +
@@ -108,16 +113,16 @@ public class ProjectionDocumentTest extends TestCase {
 			"99999999999999999999";
 	}
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		fMasterDocument= new Document();
 		fMasterDocument.set(getOriginalMasterContents());
 		fSlaveDocumentManager= new ProjectionDocumentManager();
 		fSlaveDocument= (ProjectionDocument) fSlaveDocumentManager.createSlaveDocument(fMasterDocument);
 	}
 
-	@Override
-	protected void tearDown () {
+	@After
+	public void tearDown () {
 		fSlaveDocumentManager.freeSlaveDocument(fSlaveDocument);
 		fSlaveDocument= null;
 		fSlaveDocumentManager= null;
@@ -247,7 +252,7 @@ public class ProjectionDocumentTest extends TestCase {
 		for (int i= 0; i < expected.length; i++) {
 			Segment segment= (Segment) segmentation[i];
 			Fragment actual= segment.fragment;
-			assertEquals(print(actual) + " != " + print(expected[i]), expected[i], actual);
+			Assert.assertEquals(print(actual) + " != " + print(expected[i]), expected[i], actual);
 		}
 
 	}
@@ -258,15 +263,15 @@ public class ProjectionDocumentTest extends TestCase {
 
 		int textLines= textTracker.getNumberOfLines();
 		int trackerLines= document.getNumberOfLines();
-		assertEquals(trackerLines, textLines);
+		Assert.assertEquals(trackerLines, textLines);
 
 		for (int i= 0; i < trackerLines; i++) {
 			try {
 				IRegion trackerLine= document.getLineInformation(i);
 				IRegion textLine= textTracker.getLineInformation(i);
 
-				assertEquals(trackerLine.getOffset(), textLine.getOffset());
-				assertEquals(trackerLine.getLength(), textLine.getLength());
+				Assert.assertEquals(trackerLine.getOffset(), textLine.getOffset());
+				Assert.assertEquals(trackerLine.getLength(), textLine.getLength());
 
 			} catch (BadLocationException e) {
 				assertTrue(false);
@@ -277,7 +282,7 @@ public class ProjectionDocumentTest extends TestCase {
 	private void assertContents(String expected, IDocument document) {
 		assertWellFormedSegmentation();
 		assertWellFormedFragmentation();
-		assertEquals(expected, document.get());
+		Assert.assertEquals(expected, document.get());
 		assertLineInformationConsistency(document);
 	}
 
@@ -289,12 +294,14 @@ public class ProjectionDocumentTest extends TestCase {
 		assertContents(expected, fMasterDocument);
 	}
 
+	@Test
 	public void test1() {
 		// test identical projection
 		createIdenticalProjection();
 		assertSlaveContents(fMasterDocument.get());
 	}
 
+	@Test
 	public void test2() {
 		// test complete replace the master document in case of identical projection
 		createIdenticalProjection();
@@ -306,12 +313,14 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(fMasterDocument.get());
 	}
 
+	@Test
 	public void test3() {
 		// test standard projection, i.e. all odd digits
 		createProjectionA();
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test4() {
 		// test modifying the unprojected regions of the master document
 		createProjectionA();
@@ -326,6 +335,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test5() {
 		// test modifying the projected regions of the master document
 		createProjectionA();
@@ -348,6 +358,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test6() {
 		// test replacing the contents of the projected regions of the master document
 		createProjectionA();
@@ -364,6 +375,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents("~~~~~");
 	}
 
+	@Test
 	public void test7() {
 		// test replacing the contents of the master document
 		createProjectionA();
@@ -379,6 +391,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test8_1() {
 		// test corner case manipulation of the projected regions of the master document
 		// insert at the beginning of the document
@@ -393,6 +406,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents("~" + getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test8_2() {
 		// test corner case manipulation of the projected regions of the master document
 		// delete at the beginning of the document
@@ -407,6 +421,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents().substring(1));
 	}
 
+	@Test
 	public void test8_3() {
 		// test corner case manipulation of the projected regions of the master document
 		// replace at the beginning of the document
@@ -421,6 +436,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents("~" + getProjectionASlaveContents().substring(1));
 	}
 
+	@Test
 	public void test8_4() {
 		// test corner case manipulation of the projected regions of the master document
 		// insert at the end of the document
@@ -435,6 +451,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents() + "~");
 	}
 
+	@Test
 	public void test8_5() {
 		// test corner case manipulation of the projected regions of the master document
 		// delete at the end of the document
@@ -450,6 +467,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(text.substring(0, text.length()-1));
 	}
 
+	@Test
 	public void test8_6() {
 		// test corner case manipulation of the projected regions of the master document
 		// replace at the end of the document
@@ -465,6 +483,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(text.substring(0, text.length()-1) + "~");
 	}
 
+	@Test
 	public void test8_7() {
 		// test corner case manipulation of the projected regions of the master document
 		// insert at the beginning of a projected region of the master document
@@ -481,6 +500,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test8_8() {
 		// test corner case manipulation of the projected regions of the master document
 		// delete at the beginning of a projected region of the master document
@@ -497,6 +517,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test8_9() {
 		// test corner case manipulation of the projected regions of the master document
 		// replace at the beginning of a projected region of the master document
@@ -513,6 +534,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test8_10() {
 		// test corner case manipulation of the projected regions of the master document
 		// insert at the end of a projected region of the master document
@@ -521,6 +543,7 @@ public class ProjectionDocumentTest extends TestCase {
 		test9_1();
 	}
 
+	@Test
 	public void test8_11() {
 		// test corner case manipulation of the projected regions of the master document
 		// delete at the end of a projected region of the master document
@@ -538,6 +561,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test8_12() {
 		// test corner case manipulation of the projected regions of the master document
 		// replace at the end of a projected region of the master document
@@ -555,6 +579,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test9_1() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// insert at the beginning of an unprojected region
@@ -570,6 +595,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test9_2() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// delete at the beginning of an unprojected region
@@ -585,6 +611,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test9_3() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// replace at the beginning of an unprojected region
@@ -600,6 +627,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test9_4() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// insert at the end of an unprojected region
@@ -608,6 +636,7 @@ public class ProjectionDocumentTest extends TestCase {
 		test8_7();
 	}
 
+	@Test
 	public void test9_5() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// delete at the end of an unprojected region
@@ -623,6 +652,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test9_6() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// replace at the end of an unprojected region
@@ -638,6 +668,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test9_7() {
 		// test corner case manipulation of the unprojected regions of the master document
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=51594
@@ -647,9 +678,9 @@ public class ProjectionDocumentTest extends TestCase {
 
 		try {
 			int startOffset= fMasterDocument.getLineOffset(4);
-			assertEquals(80, startOffset);
+			Assert.assertEquals(80, startOffset);
 			int endOffset= fMasterDocument.getLineOffset(7);
-			assertEquals(140, endOffset);
+			Assert.assertEquals(140, endOffset);
 			fSlaveDocument.addMasterDocumentRange(startOffset, endOffset - startOffset);
 
 			assertSlaveContents(getOriginalMasterContents().substring(80, 140));
@@ -661,6 +692,7 @@ public class ProjectionDocumentTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test10_1() {
 		// test manipulations overlapping projected and unprojected regions of the master document
 		// delete range overlapping from a projected into an unprojected region
@@ -677,6 +709,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test10_2() {
 		// test manipulations overlapping projected and unprojected regions of the master document
 		// replace range overlapping from a projected into an unprojected region
@@ -703,6 +736,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test10_3() {
 		// test manipulations overlapping projected and unprojected regions of the master document
 		// delete range overlapping from an unprojected into a projected region
@@ -719,6 +753,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test10_4() {
 		// test manipulations overlapping projected and unprojected regions of the master document
 		// replace range overlapping from an unprojected into a projected region
@@ -745,6 +780,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test11() {
 		// test deleting an unprojected region of the master document
 
@@ -766,6 +802,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(getProjectionASlaveContents());
 	}
 
+	@Test
 	public void test12() {
 		// test deleting a projected region of the master document
 
@@ -785,6 +822,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test13() {
 		// test complete replace of the contents of the slave document in identical projection
 
@@ -800,6 +838,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents("~~~~~");
 	}
 
+	@Test
 	public void test14_1() {
 		// test complete replace of the contents of the slave document in standard projection A
 
@@ -813,6 +852,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents("~~~~~");
 	}
 
+	@Test
 	public void test14_2() {
 		// test complete replace of the contents of the slave document in standard projection B
 
@@ -828,6 +868,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test15() {
 		// test modifying the segments of the slave document
 
@@ -859,6 +900,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test16() {
 		// test replacing the contents of the segments of the slave document
 
@@ -883,6 +925,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_1() {
 		// test corner case manipulation of the segments of the slave document
 		// insert at the beginning of a segment of the slave document
@@ -903,6 +946,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_2() {
 		// test corner case manipulation of the segments of the slave document
 		// delete at the beginning of a segment of the slave document
@@ -923,6 +967,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_3() {
 		// test corner case manipulation of the segments of the slave document
 		// replace at the beginning of a segment of the slave document
@@ -943,6 +988,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_4() {
 		// test corner case manipulation of the segments of the slave document
 		// insert at the end of a segment of the slave document
@@ -951,6 +997,7 @@ public class ProjectionDocumentTest extends TestCase {
 		test17_1();
 	}
 
+	@Test
 	public void test17_5() {
 		// test corner case manipulation of the segments of the slave document
 		// delete at the end of a segment of the slave document
@@ -971,6 +1018,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_6() {
 		// test corner case manipulation of the segments of the slave document
 		// replace at the end of a segment of the slave document
@@ -991,6 +1039,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test17_7() {
 		// test corner case manipulation of the segments of the slave document
 		// insert at the end of last segment of the slave document - bug 301023
@@ -1014,6 +1063,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test18_1() {
 		// test manipulations overlapping multiple segments of the slave document
 		// delete range overlapping two neighboring segments
@@ -1043,6 +1093,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test18_2() {
 		// test manipulations overlapping multiple segments of the slave document
 		// replace range overlapping two neighboring segments
@@ -1072,6 +1123,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void test19() {
 		// test deleting the contents of a segment of the slave document
 
@@ -1100,6 +1152,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test20_1() {
 		// test adding a range to the slave document at the beginning of a segment gap
 
@@ -1126,6 +1179,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_2() {
 		// test adding a range to the slave document at the end of a segment gap
 
@@ -1152,6 +1206,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_3() {
 		// test adding a range to the slave document that is in the middle of a segment gap
 
@@ -1179,6 +1234,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_4() {
 		// test adding a range to the slave document that is a segment gap
 
@@ -1204,6 +1260,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_5() {
 		// test adding a range to the slave document beginning in a segment gap and ending in a segment
 
@@ -1230,6 +1287,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_6() {
 		// test adding a range to the slave document beginning in a segment and ending in a segment gap
 
@@ -1256,6 +1314,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_7() {
 		// test adding a range to the slave document beginning in a segment and ending in a segment
 
@@ -1281,6 +1340,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test20_8() {
 		// test adding a range to the slave document beginning in a segment gap and ending in a segment gap
 
@@ -1309,6 +1369,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_1() {
 		// test removing a range from the slave document at the beginning of a segment
 
@@ -1334,6 +1395,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_2() {
 		// test removing a range from the slave document at the end of a segment
 
@@ -1359,6 +1421,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_3() {
 		// test removing a range from the slave document that is in the middle of a segment
 
@@ -1385,6 +1448,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_4() {
 		// test removing a range from the slave document that is a segment
 
@@ -1409,6 +1473,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_5() {
 		// test removing a range from the slave document beginning in a segment and ending in a segment gap
 
@@ -1434,6 +1499,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_6() {
 		// test removing a range from the slave document beginning in a segment gap and ending in a segment
 
@@ -1459,6 +1525,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_7() {
 		// test removing a range from the slave document beginning in a segment gap and ending in a segment gap
 
@@ -1483,6 +1550,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_8() {
 		// test removing a range from the slave document beginning in a segment and ending in a segment
 
@@ -1508,6 +1576,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_9() {
 		// test removing a range from the slave document using identical projection
 
@@ -1530,6 +1599,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveContents(buffer.toString());
 	}
 
+	@Test
 	public void test21_a() {
 		// test removing a range from the slave document using identical projection
 		// the removed range includes the end of the master document - see bug 301023
@@ -1555,12 +1625,12 @@ public class ProjectionDocumentTest extends TestCase {
 
 	private void assertEquals(DocumentEvent expected, DocumentEvent received) {
 		assertSame(expected.getDocument(), received.getDocument());
-		assertEquals(expected.getOffset(), received.getOffset());
-		assertEquals(expected.getLength(), received.getLength());
+		Assert.assertEquals(expected.getOffset(), received.getOffset());
+		Assert.assertEquals(expected.getLength(), received.getLength());
 		if (expected.getText() == null || expected.getText().length() == 0)
 			assertTrue(received.getText() == null || received.getText().length() == 0);
 		else
-			assertEquals(expected.getText(), received.getText());
+			Assert.assertEquals(expected.getText(), received.getText());
 	}
 
 	private void assertSlaveEvents(DocumentEvent[] expected, DocumentEvent[] received) {
@@ -1573,6 +1643,7 @@ public class ProjectionDocumentTest extends TestCase {
 			assertEquals(received[i], expected[i]);
 	}
 
+	@Test
 	public void test22() {
 		// test document events sent out by the slave document when adding segments
 
@@ -1603,6 +1674,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveEvents(expected, actual);
 	}
 
+	@Test
 	public void test23() {
 		// test document events sent out by the slave document when removing segments
 
@@ -1632,6 +1704,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertSlaveEvents(expected, actual);
 	}
 
+	@Test
 	public void test24_1() {
 		// test auto expand mode when manipulating the master document
 		// master event completely left of slave document
@@ -1656,6 +1729,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_2() {
 		// test auto expand mode when manipulating the master document
 		// master event completely right of slave document
@@ -1680,6 +1754,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_3() {
 		// test auto expand mode when manipulating the master document
 		// master event completely left of fragment
@@ -1704,6 +1779,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_4() {
 		// test auto expand mode when manipulating the master document
 		// master event completely right of fragment
@@ -1729,6 +1805,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_5() {
 		// test auto expand mode when manipulating the master document
 		// master event starts left of fragment and ends inside of a fragment
@@ -1752,6 +1829,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_6() {
 		// test auto expand mode when manipulating the master document
 		// master event starts inside of a fragment and ends right of a fragment
@@ -1775,6 +1853,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_7() {
 		// test auto expand mode when manipulating the master document
 		// master event starts left of a fragment and ends right of a fragment
@@ -1798,6 +1877,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test24_8() {
 		// test auto expand mode when manipulating the master document
 		// complete replace of master document
@@ -1818,6 +1898,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test25() {
 		// test auto expand mode when manipulating the slave document
 
@@ -1834,6 +1915,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected, false);
 	}
 
+	@Test
 	public void test26() {
 		// test multiple slave documents for the same master document
 
@@ -1851,6 +1933,7 @@ public class ProjectionDocumentTest extends TestCase {
 		fSlaveDocumentManager.freeSlaveDocument(slave2);
 	}
 
+	@Test
 	public void test27() {
 		// test changing the projection until identical projection is reached
 
@@ -1916,6 +1999,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test28_1() {
 		// delete slave content and check fragmentation, need to keep a single fragment as anchor
 		createProjectionB();
@@ -1935,6 +2019,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertFragmentation(expected);
 	}
 
+	@Test
 	public void test28_2() {
 		// test step wise version of the complete replace
 		// delete whole content of slave, followed by inserting text
@@ -1963,6 +2048,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertMasterContents(buffer.toString());
 	}
 
+	@Test
 	public void _test29() {
 		// test computation of unprojected  master regions
 
@@ -2027,12 +2113,11 @@ public class ProjectionDocumentTest extends TestCase {
 
 		if (actual == null) {
 			assertNull(expected);
-			return;
 		}
 
 		assertTrue("invalid number of regions", expected.length == actual.length);
 		for (int i= 0; i < expected.length; i++)
-			assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
+			Assert.assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
 	}
 
 	private void assertUnprojectedMasterRegions(IRegion[] expected, int offsetInMaster, int lengthInMaster) {
@@ -2045,6 +2130,7 @@ public class ProjectionDocumentTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test29_1() {
 		// test computation of unprojected  master regions
 		// spanning no fragment
@@ -2056,6 +2142,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 45, 10);
 	}
 
+	@Test
 	public void test29_2() {
 		// test computation of unprojected  master regions
 		// spanning no fragment
@@ -2067,6 +2154,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 45, 15);
 	}
 
+	@Test
 	public void test29_3() {
 		// test computation of unprojected  master regions
 		// spanning no fragment
@@ -2078,6 +2166,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 80, 15);
 	}
 
+	@Test
 	public void test29_4() {
 		// test computation of unprojected  master regions
 		// spanning no fragment
@@ -2089,6 +2178,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 85, 10);
 	}
 
+	@Test
 	public void test29_5() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2100,6 +2190,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 20);
 	}
 
+	@Test
 	public void test29_6() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2108,6 +2199,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(new IRegion[] {}, 60, 10);
 	}
 
+	@Test
 	public void test29_7() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2116,6 +2208,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(new IRegion[] {}, 65, 10);
 	}
 
+	@Test
 	public void test29_8() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2124,6 +2217,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(new IRegion[] {}, 65, 15);
 	}
 
+	@Test
 	public void test29_9() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2135,6 +2229,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 20);
 	}
 
+	@Test
 	public void test29_10() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2143,6 +2238,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(new IRegion[] {}, 60, 20);
 	}
 
+	@Test
 	public void test29_11() {
 		// test computation of unprojected  master regions
 		// spanning one fragment
@@ -2155,6 +2251,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 40);
 	}
 
+	@Test
 	public void test29_12() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2169,6 +2266,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 80);
 	}
 
+	@Test
 	public void test29_13() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2183,6 +2281,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 90);
 	}
 
+	@Test
 	public void test29_14() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2196,6 +2295,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 60);
 	}
 
+	@Test
 	public void test29_15() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2210,6 +2310,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 110);
 	}
 
+	@Test
 	public void test29_16() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2224,6 +2325,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 80);
 	}
 
+	@Test
 	public void test29_17() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2237,6 +2339,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 60, 70);
 	}
 
+	@Test
 	public void test29_18() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2250,6 +2353,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 60, 80);
 	}
 
+	@Test
 	public void test29_19() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2262,6 +2366,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 60, 50);
 	}
 
+	@Test
 	public void test29_20() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2275,6 +2380,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 60, 100);
 	}
 
+	@Test
 	public void test29_21() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2288,6 +2394,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 60, 70);
 	}
 
+	@Test
 	public void test29_22() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2301,6 +2408,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 60);
 	}
 
+	@Test
 	public void test29_23() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2314,6 +2422,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 70);
 	}
 
+	@Test
 	public void test29_24() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2326,6 +2435,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 40);
 	}
 
+	@Test
 	public void test29_25() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2339,6 +2449,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 90);
 	}
 
+	@Test
 	public void test29_26() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2352,6 +2463,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 70, 60);
 	}
 
+	@Test
 	public void test29_27() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2366,6 +2478,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 40, 90);
 	}
 
+	@Test
 	public void test29_28() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2380,6 +2493,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 40, 100);
 	}
 
+	@Test
 	public void test29_29() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2393,6 +2507,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 40, 70);
 	}
 
+	@Test
 	public void test29_30() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2407,6 +2522,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 40, 120);
 	}
 
+	@Test
 	public void test29_31() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2421,6 +2537,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 40, 90);
 	}
 
+	@Test
 	public void test29_32() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2435,6 +2552,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 80);
 	}
 
+	@Test
 	public void test29_33() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2449,6 +2567,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 90);
 	}
 
+	@Test
 	public void test29_34() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2462,6 +2581,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 60);
 	}
 
+	@Test
 	public void test29_35() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2476,6 +2596,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 110);
 	}
 
+	@Test
 	public void test29_36() {
 		// test computation of unprojected  master regions
 		// spanning multiple fragments
@@ -2490,6 +2611,7 @@ public class ProjectionDocumentTest extends TestCase {
 		assertUnprojectedMasterRegions(expected, 50, 80);
 	}
 
+	@Test
 	public void test29_37() {
 		// test computation of unprojected  master regions
 
@@ -2509,6 +2631,7 @@ public class ProjectionDocumentTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test29_38() {
 		// test computation of unprojected  master regions
 		createProjectionA();

@@ -11,22 +11,18 @@
 
 package org.eclipse.text.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 
 /**
  *
  * @since 3.0
  */
+@RunWith(Suite.class)
+@SuiteClasses({ProjectionDocumentTest.class,
+	ProjectionMappingTest.class})
 public class ProjectionTestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.text - projection"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTestSuite(ProjectionDocumentTest.class);
-		suite.addTestSuite(ProjectionMappingTest.class);
-		//$JUnit-END$
-		return suite;
-	}
+	//intentionally left blank
 }

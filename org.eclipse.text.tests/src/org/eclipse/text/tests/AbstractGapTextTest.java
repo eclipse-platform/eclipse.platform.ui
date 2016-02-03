@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.text.GapTextStore;
 
@@ -19,7 +20,7 @@ import org.eclipse.jface.text.GapTextStore;
  *
  * @since 3.3
  */
-public class AbstractGapTextTest extends TestCase {
+public class AbstractGapTextTest {
 	protected static class GapText extends GapTextStore {
 
 		/**

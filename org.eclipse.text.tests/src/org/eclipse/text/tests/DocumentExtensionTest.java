@@ -11,8 +11,12 @@
 package org.eclipse.text.tests;
 
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -23,13 +27,7 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-
-
-public class DocumentExtensionTest extends TestCase {
+public class DocumentExtensionTest {
 
 
 	static class Listener implements IDocumentListener {
@@ -151,16 +149,7 @@ public class DocumentExtensionTest extends TestCase {
 
 	}
 
-
-	public DocumentExtensionTest(String name) {
-		super(name);
-	}
-
-
-	public static Test suite() {
-		return new TestSuite(DocumentExtensionTest.class);
-	}
-
+	@Test
 	public void testAppend() {
 		Listener listener= new Listener() {
 			@Override
@@ -190,7 +179,8 @@ public class DocumentExtensionTest extends TestCase {
 
 		assertTrue("axbxcx".equals(document.get()));
 	}
-
+	
+	@Test
 	public void testRemove() {
 		Listener listener= new Listener() {
 			@Override
@@ -220,7 +210,8 @@ public class DocumentExtensionTest extends TestCase {
 
 		assertTrue("yyy".equals(document.get()));
 	}
-
+	
+	@Test
 	public void testRepeatedAppend() {
 		Listener listener= new Listener() {
 			@Override
@@ -325,11 +316,13 @@ public class DocumentExtensionTest extends TestCase {
 			assertTrue(false);
 		}
 	}
-
+	
+	@Test
 	public void testChildDocumentPP() {
 		internalTestChildDocument(true, true, 1);
 	}
-
+	
+	@Test
 	public void testChildDocumentCC() {
 		try {
 			internalTestChildDocument(false, false, 1);
@@ -337,11 +330,13 @@ public class DocumentExtensionTest extends TestCase {
 		}
 
 	}
-
+	
+	@Test
 	public void testChildDocumentRepeatedPP() {
 		internalTestChildDocument(true, true, 5);
 	}
-
+	
+	@Test
 	public void testChildDocumentRepeatedCC() {
 		try {
 			internalTestChildDocument(false, false, 5);
@@ -352,6 +347,7 @@ public class DocumentExtensionTest extends TestCase {
 	/**
 	 * Tests that this is not supported.
 	 */
+	@Test
 	public void testChildDocumentPC() {
 		try {
 			internalTestChildDocument(true, false, 1);
@@ -359,14 +355,16 @@ public class DocumentExtensionTest extends TestCase {
 		} catch (UnsupportedOperationException x) {
 		}
 	}
-
+	
+	@Test
 	public void testChildDocumentCP() {
 		internalTestChildDocument(false, true, 1);
 	}
 
 	/**
 	 * Tests that this is not supported.
-	 */
+	 */	
+	@Test
 	public void testChildDocumentRepeatedPC() {
 		try {
 			internalTestChildDocument(true, false, 5);
@@ -374,7 +372,8 @@ public class DocumentExtensionTest extends TestCase {
 		} catch (UnsupportedOperationException x) {
 		}
 	}
-
+	
+	@Test
 	public void testChildDocumentRepeatedCP() {
 		internalTestChildDocument(false, true, 5);
 	}
