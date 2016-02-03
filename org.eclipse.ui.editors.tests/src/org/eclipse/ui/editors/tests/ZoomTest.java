@@ -81,6 +81,13 @@ public class ZoomTest {
 		// make sure we start from a clean state
 		initialFontSize = text.getFont().getFontData()[0].getHeight();
 	}
+	
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		editor.close(false);
+		editor= null;
+	}
 
 	@Test
 	public void testZoomCommand() throws Exception {
