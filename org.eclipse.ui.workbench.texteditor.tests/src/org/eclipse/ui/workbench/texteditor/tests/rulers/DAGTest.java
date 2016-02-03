@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.rulers;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 import org.eclipse.ui.internal.texteditor.rulers.DAG;
 
 /**
  * @since 3.3
  */
-public class DAGTest extends TestCase {
+public class DAGTest {
 	private static final Object A= "A";
 	private static final Object B= "B";
 	private static final Object C= "C";
@@ -37,12 +39,14 @@ public class DAGTest extends TestCase {
 
 	private DAG<Object> fDag= new DAG<>();
 
+	@Test
 	public void testEmpty() throws Exception {
 		assertTrue(fDag.getChildren(new Object()).isEmpty());
 		assertTrue(fDag.getSources().isEmpty());
 		assertTrue(fDag.getSinks().isEmpty());
 	}
-
+	
+	@Test
 	public void testIllegal() throws Exception {
 		assertFalse(fDag.addEdge(A, A));
 		try {
@@ -66,7 +70,8 @@ public class DAGTest extends TestCase {
 		} catch (RuntimeException x) {
 		}
 	}
-
+	
+	@Test
 	public void testDag() throws Exception {
 		assertTrue(fDag.addEdge(A, B));
 		assertEquals(AS, fDag.getSources());

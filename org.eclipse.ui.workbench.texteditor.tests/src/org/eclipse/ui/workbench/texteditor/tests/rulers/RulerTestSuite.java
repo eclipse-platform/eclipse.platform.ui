@@ -10,20 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.rulers;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 
 /**
  * @since 3.0
  */
+@RunWith(Suite.class)
+@SuiteClasses(DAGTest.class)
 public class RulerTestSuite {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite("Test for org.eclipse.ui.internal.texteditor.rulers");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(DAGTest.class);
-		//$JUnit-END$
-		return suite;
-	}
+	//intentionally left blank
 }

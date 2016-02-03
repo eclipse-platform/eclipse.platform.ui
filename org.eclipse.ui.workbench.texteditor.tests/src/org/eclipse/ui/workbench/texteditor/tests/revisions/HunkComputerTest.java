@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import org.eclipse.jface.internal.text.revisions.Hunk;
 import org.eclipse.jface.internal.text.revisions.HunkComputer;
@@ -26,10 +26,7 @@ import org.eclipse.jface.text.source.ILineDiffer;
  *
  * @since 3.3
  */
-public class HunkComputerTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(HunkComputerTest.class);
-	}
+public class HunkComputerTest {
 
 	private static final int A= ILineDiffInfo.ADDED;
 	private static final int C= ILineDiffInfo.CHANGED;
@@ -94,6 +91,7 @@ public class HunkComputerTest extends TestCase {
 	private int[] fRemovedBelow;
 
 
+	@Test
 	public void testNoDiff() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {};
@@ -101,6 +99,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testShiftOne() throws Exception {
 		int[] diffInfo= new int[] {C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 0, 1};
@@ -108,6 +107,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveFirstLine() throws Exception {
 		int[] diffInfo= new int[] {U, 1, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, -1, 0};
@@ -115,6 +115,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveSecondLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 1, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, -1, 0};
@@ -122,6 +123,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testAddFirstLine() throws Exception {
 		int[] diffInfo= new int[] {A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 1, 0};
@@ -129,6 +131,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testAddSecondLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, 1, 0};
@@ -136,6 +139,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testAddThirdLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, A, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {2, 1, 0};
@@ -143,6 +147,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveFirstRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 2, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, -2, 0};
@@ -150,6 +155,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testReplaceFirstRegion() throws Exception {
 		int[] diffInfo= new int[] {C, 0, C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {0, 0, 2};
@@ -157,6 +163,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveOverlappingRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 2, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, -2, 0};
@@ -164,6 +171,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testReplaceOverlappingRegion() throws Exception {
 		int[] diffInfo= new int[] {U, 0, C, 0, C, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {1, 0, 2};
@@ -171,6 +179,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 2, };
 		int[] expected= {8, -2, 0};
@@ -178,6 +187,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testReplaceInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, C, 0, C, 0, U, 0, };
 		int[] expected= {8, 0, 2};
@@ -185,6 +195,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testAddInnerLines() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, A, 0, A, 0, U, 0, U, 0, U, 0, };
 		int[] expected= {8, +2, 0};
@@ -192,6 +203,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testRemoveLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0};
 		fRemovedBelow= new int[10];
@@ -201,6 +213,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testReplaceLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, C, 0, };
 		int[] expected= {10, 0, 1};
@@ -208,6 +221,7 @@ public class HunkComputerTest extends TestCase {
 		assertHunks(diffInfo, expected);
 	}
 
+	@Test
 	public void testAddLastLine() throws Exception {
 		int[] diffInfo= new int[] {U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, U, 0, A, 0, };
 		int[] expected= {12, 1, 0};

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 import org.eclipse.ui.workbench.texteditor.tests.revisions.ChangeRegionTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.HunkComputerTest;
@@ -24,20 +25,16 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
  *
  * @since 3.0
  */
-public class WorkbenchTextEditorTestSuite extends TestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.workbench.texteditor"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTest(FindReplaceDialogTest.suite());
-        suite.addTest(HippieCompletionTest.suite());
-        suite.addTest(RangeTest.suite());
-        suite.addTest(ChangeRegionTest.suite());
-        suite.addTest(RulerTestSuite.suite());
-        suite.addTest(HunkComputerTest.suite());
-        suite.addTest(ScreenshotTest.suite());
-
-		//$JUnit-END$
-		return suite;
-	}
+@RunWith(Suite.class)
+@SuiteClasses({
+	FindReplaceDialogTest.class,
+	HippieCompletionTest.class,
+	RangeTest.class,
+	ChangeRegionTest.class,
+	RulerTestSuite.class,
+	HunkComputerTest.class,
+	ScreenshotTest.class
+})
+public class WorkbenchTextEditorTestSuite {
+	//intentionally left blank
 }

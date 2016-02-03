@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests.revisions;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 import org.eclipse.jface.internal.text.revisions.LineIndexOutOfBoundsException;
 import org.eclipse.jface.internal.text.revisions.Range;
 
 import org.eclipse.jface.text.source.LineRange;
 
-public class RangeTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(RangeTest.class);
-	}
+public class RangeTest {
 
+	@Test
 	public void testLegalOperations() {
 		Range r= Range.createRelative(0, 1);
 		assertEquals(0, r.start());
@@ -111,6 +111,7 @@ public class RangeTest extends TestCase {
 		assertConsistency(r);
 	}
 
+	@Test
 	public void testSplit() throws Exception {
 		Range r= Range.createRelative(12, 18);
 		Range second= r.split(8);
@@ -123,6 +124,7 @@ public class RangeTest extends TestCase {
 		assertConsistency(second);
 	}
 
+	@Test
 	public void testIllegalOperations() throws Exception {
 
 		try {
@@ -346,6 +348,7 @@ public class RangeTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testIllegalSplit() throws Exception {
 		Range r= Range.createRelative(12, 18);
 
