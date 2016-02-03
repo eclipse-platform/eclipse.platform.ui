@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests.reconciler;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
+import java.util.Objects;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -43,6 +44,8 @@ public abstract class ModelReconcilerContributionTest extends
 		part.getPersistedState().put("testing", userChange);
 
 		Object state = reconciler.serialize();
+		assertEquals(!Objects.equals(applicationState, userChange),
+				serializedStateHasChanges(state));
 
 		application = createApplication();
 		window = application.getChildren().get(0);
@@ -50,6 +53,7 @@ public abstract class ModelReconcilerContributionTest extends
 		part.getPersistedState().put("testing", newApplicationState);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
+		assertEquals(Objects.equals(applicationState, userChange) ? 0 : 1, deltas.size());
 
 		assertEquals(newApplicationState, part.getPersistedState().get(
 				"testing"));
@@ -74,6 +78,14 @@ public abstract class ModelReconcilerContributionTest extends
 			}
 		}
 	}
+
+	/**
+	 * @param state
+	 * @return true if the state object, returned from
+	 *         {@link ModelReconciler#serialize()} when recording changes,
+	 *         actually has changes recorded.
+	 */
+	protected abstract boolean serializedStateHasChanges(Object state);
 
 	@Test
 	public void testContribution_PersistedState_NullNullNull() {
