@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,8 +117,7 @@ public interface ISelectionService {
      * @since 2.0
      * @see #removePostSelectionListener(String, ISelectionListener)
      */
-    public void addPostSelectionListener(String partId,
-            ISelectionListener listener);
+	public void addPostSelectionListener(String partId, ISelectionListener listener);
 
     /**
      * Returns the current selection in the active part.  If the selection in the
@@ -156,8 +155,7 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @since 2.0
      */
-    public void removeSelectionListener(String partId,
-            ISelectionListener listener);
+	public void removeSelectionListener(String partId, ISelectionListener listener);
 
     /**
      * Removes the given post selection listener.
@@ -175,6 +173,5 @@ public interface ISelectionService {
      * @param listener a selection listener
      * @since 2.0
      */
-    public void removePostSelectionListener(String partId,
-            ISelectionListener listener);
+	public void removePostSelectionListener(String partId, ISelectionListener listener);
 }
