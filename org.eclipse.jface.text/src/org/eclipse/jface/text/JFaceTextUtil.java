@@ -126,12 +126,6 @@ public final class JFaceTextUtil {
 		int top= widget.getTopIndex();
 		int pixels= widget.getLinePixel(top);
 
-		// FIXME remove when https://bugs.eclipse.org/bugs/show_bug.cgi?id=123770 is fixed
-		if (pixels == -widget.getLineHeight(widget.getOffsetAtLine(top))) {
-			top++;
-			pixels= 0;
-		}
-
 		if (pixels > 0)
 			top--;
 
@@ -393,7 +387,7 @@ public final class JFaceTextUtil {
 	 * Returns <code>true</code> if the text covered by <code>selection</code> does not contain any
 	 * characters in the given viewer. Note the difference to {@link ITextSelection#isEmpty()},
 	 * which returns <code>true</code> only for invalid selections.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param selection the selection
 	 * @return <code>true</code> if <code>selection</code> does not contain any text,
@@ -407,7 +401,7 @@ public final class JFaceTextUtil {
 
 	/**
 	 * Returns the text regions covered by the given selection in the given viewer.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @param selection the selection
 	 * @return the text regions corresponding to <code>selection</code>
@@ -420,7 +414,7 @@ public final class JFaceTextUtil {
 
 	/**
 	 * Returns the offset in the given viewer that corresponds to the current cursor location.
-	 * 
+	 *
 	 * @param viewer the viewer
 	 * @return the offset for the current cursor location or -1 if not available
 	 * @since 3.5
