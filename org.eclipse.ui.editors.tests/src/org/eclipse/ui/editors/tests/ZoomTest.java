@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.tests;
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -82,9 +83,8 @@ public class ZoomTest {
 		initialFontSize = text.getFont().getFontData()[0].getHeight();
 	}
 	
-	@Override
+	@After
 	public void tearDown() throws Exception {
-		super.tearDown();
 		editor.close(false);
 		editor= null;
 	}
