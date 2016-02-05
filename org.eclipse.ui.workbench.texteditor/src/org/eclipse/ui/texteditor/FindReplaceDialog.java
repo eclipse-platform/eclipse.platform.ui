@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     SAP SE, christian.georgi@sap.com - Bug 487357: Make find dialog content scrollable
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -19,6 +20,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -400,19 +404,35 @@ class FindReplaceDialog extends Dialog {
 
 	@Override
 	protected Control createContents(Composite parent) {
-
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		layout.makeColumnsEqualWidth= true;
 		panel.setLayout(layout);
-		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		setGridData(panel, SWT.FILL, true, SWT.FILL, true);
 
-		Composite inputPanel= createInputPanel(panel);
+		ScrolledComposite scrolled= new ScrolledComposite(panel, SWT.H_SCROLL | SWT.V_SCROLL);
+		setGridData(scrolled, SWT.FILL, true, SWT.FILL, true);
+
+		Composite mainArea = new Composite(scrolled, SWT.NONE);
+		setGridData(mainArea, SWT.FILL, true, SWT.FILL, true);
+		mainArea.setLayout(new GridLayout(1, true));
+
+		Composite inputPanel= createInputPanel(mainArea);
 		setGridData(inputPanel, SWT.FILL, true, SWT.TOP, false);
 
-		Composite configPanel= createConfigPanel(panel);
+		Composite configPanel= createConfigPanel(mainArea);
 		setGridData(configPanel, SWT.FILL, true, SWT.TOP, true);
+
+		scrolled.setContent(mainArea);
+		scrolled.setExpandHorizontal(true);
+		scrolled.setExpandVertical(true);
+		scrolled.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				scrolled.setMinSize(mainArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+		});
 
 		Composite buttonPanelB= createButtonSection(panel);
 		setGridData(buttonPanelB, SWT.RIGHT, true, SWT.BOTTOM, false);
@@ -970,15 +990,6 @@ class FindReplaceDialog extends Dialog {
 		if (okToUse(getShell()))
 			return getShell().getBounds();
 		return fDialogPositionInit;
-	}
-
-	@Override
-	protected Point getInitialSize() {
-		Point initialSize= super.getInitialSize();
-		Point minSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		if (initialSize.x < minSize.x)
-			return minSize;
-		return initialSize;
 	}
 
 	/**
