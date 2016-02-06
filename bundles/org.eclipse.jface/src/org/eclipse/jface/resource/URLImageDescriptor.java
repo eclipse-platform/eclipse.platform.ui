@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 483465
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -102,24 +103,17 @@ class URLImageDescriptor extends ImageDescriptor {
 
 	private static ImageData getImageData(URL url) {
 		ImageData result = null;
-		InputStream in = getStream(url);
-		if (in != null) {
-			try {
+		try (InputStream in = getStream(url)) {
+			if (in != null) {
 				result = new ImageData(in);
-			} catch (SWTException e) {
-				if (e.code != SWT.ERROR_INVALID_IMAGE) {
-					throw e;
-					// fall through otherwise
-				}
-			} finally {
-				try {
-					in.close();
-				} catch (IOException e) {
-					Policy.getLog().log(
-							new Status(IStatus.ERROR, Policy.JFACE, e
-									.getLocalizedMessage(), e));
-				}
 			}
+		} catch (SWTException e) {
+			if (e.code != SWT.ERROR_INVALID_IMAGE) {
+				throw e;
+				// fall through otherwise
+			}
+		} catch (IOException e) {
+			Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
 		}
 		return result;
 	}
