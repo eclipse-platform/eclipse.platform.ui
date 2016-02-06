@@ -15,6 +15,7 @@
  *     Snjezana Peco <snjeza.peco@gmail.com> - Bug 405542
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
  *     Mickael Istria (Red Hat Inc.) - Bug 469918
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487297
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -2829,8 +2830,8 @@ UIEvents.Context.TOPIC_CONTEXT,
 
 					// if the plugin is not in the set of disabled plugins, then
 					// execute the code to start it
-					if (!disabledPlugins.contains(extension.getNamespace())) {
-						monitor.subTask(extension.getNamespace());
+					if (!disabledPlugins.contains(extension.getNamespaceIdentifier())) {
+						monitor.subTask(extension.getNamespaceIdentifier());
 						SafeRunner.run(new EarlyStartupRunnable(extension));
 					}
 					monitor.worked(1);
@@ -3414,7 +3415,7 @@ UIEvents.Context.TOPIC_CONTEXT,
 				// if the plugin is not in the set of disabled plugins,
 				// then
 				// execute the code to start it
-				if (disabledPlugins.indexOf(extension.getNamespace()) == -1) {
+				if (disabledPlugins.indexOf(extension.getNamespaceIdentifier()) == -1) {
 					SafeRunner.run(new EarlyStartupRunnable(extension));
 				}
 			}
