@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 442285
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 442285, 487348
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -372,6 +372,43 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		// Extract the data bits
 		MPart part = (MPart) objElement;
 
+		updatePartTab(event, part);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicClosablePartChanged(@UIEventTopic(UIEvents.Part.TOPIC_CLOSEABLE) Event event) {
+		updateClosableTab(event);
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicClosablePlaceholderChanged(
+			@UIEventTopic(UIEvents.Placeholder.TOPIC_CLOSEABLE) Event event) {
+		updateClosableTab(event);
+	}
+
+	private void updateClosableTab(Event event) {
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+
+		MPart part = null;
+		if (element instanceof MPart) {
+			part = (MPart) element;
+		} else if (element instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) element).getRef();
+			if (ref instanceof MPart) {
+				part = (MPart) ref;
+			}
+		}
+
+		if (part == null) {
+			return;
+		}
+
+		updatePartTab(event, part);
+	}
+
+	private void updatePartTab(Event event, MPart part) {
 		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
 		Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
 
@@ -550,6 +587,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			} else if (hasAsterisk) {
 				cti.setText(text.substring(1));
 			}
+		} else if (UIEvents.Part.CLOSEABLE.equals(attName)) {
+			Boolean closeableState = (Boolean) newValue;
+			cti.setShowClose(closeableState.booleanValue());
 		}
 	}
 
