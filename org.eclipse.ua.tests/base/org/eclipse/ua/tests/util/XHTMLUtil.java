@@ -14,7 +14,7 @@ package org.eclipse.ua.tests.util;
  * A utility class for working with XHTML.
  */
 public class XHTMLUtil {
-	
+
 	/*
 	 * Some of the XHTML content is environment-specific. This means it changes
 	 * depending on the test machine, location on filesystem, etc. This content
@@ -27,7 +27,7 @@ public class XHTMLUtil {
 		 * the closing part "/>". The Sun 1.5 JDK's XML DOM serializer will
 		 * always remove it, and 1.4 will always add it, so need to pick one
 		 * and adapt all documents to it.
-		 * 
+		 *
 		 * For example:
 		 * <myElement myAttribute="myValue" />
 		 * becomes:

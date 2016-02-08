@@ -36,7 +36,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 	private AbstractTocProvider[] tocProviders;
 	private AbstractIndexProvider[] indexProviders;
 	private AnalyzerDescriptor analyzerDesc;
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -58,7 +58,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		indexManager.clearCache();
 		analyzerDesc = new AnalyzerDescriptor("en-us");
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -73,7 +73,7 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		tocProviders = null;
 		indexProviders = null;
 	}
-	
+
 	public void testCreateHtmlSearchIndex() throws Exception {
 		tagAsGlobalSummary("Create HTML Search Index", Dimension.ELAPSED_PROCESS);
 
@@ -81,14 +81,14 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 		for (int i=0;i<3;++i) {
 			buildIndex();
 		}
-		
+
 		// run the tests
 		for (int i=0;i<100;++i) {
 			startMeasuring();
 			buildIndex();
 			stopMeasuring();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -164,17 +164,17 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_GettingStarted.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_Reference.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_Tasks.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.pde.doc.user/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.pde.doc.user/topics_Reference.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Guide.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Porting.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Questions.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Reference.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Samples.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/topics_Concepts.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/topics_GettingStarted.xml", false, nl, null, null),

@@ -18,11 +18,11 @@ import org.eclipse.ua.tests.help.other.UserToc;
 import org.eclipse.ua.tests.help.other.UserTopic;
 
 public class UaTestTocProvider extends AbstractTocProvider {
-	
+
 	UserToc toc;
 	TocContribution contribution;
 	private ITocContribution[] contributions;
-	
+
 	private class TocContribution implements ITocContribution {
 
 		@Override
@@ -64,15 +64,15 @@ public class UaTestTocProvider extends AbstractTocProvider {
 		public boolean isPrimary() {
 			return false;
 		}
-		
+
 	};
 
 	public UaTestTocProvider() {
 		toc = new UserToc("Generated Toc", null, true);
-		UserTopic parentTopic = new UserTopic("Generated Parent", 
+		UserTopic parentTopic = new UserTopic("Generated Parent",
 				"generated/Generated+Parent/Parent+page+with+searchable+word+egrology+.html", true);
 		for (int i = 1; i <= 4; i++) {
-			UserTopic childTopic = new UserTopic("Generated Child " + i, 
+			UserTopic childTopic = new UserTopic("Generated Child " + i,
 					"generated/Generated+Child" + i +
 					"/Child+topic+" + i + ".html", true);
 			parentTopic.addTopic(childTopic);
@@ -84,7 +84,7 @@ public class UaTestTocProvider extends AbstractTocProvider {
 
 	@Override
 	public ITocContribution[] getTocContributions(String locale) {
-		return contributions; 
+		return contributions;
 	}
 
 }

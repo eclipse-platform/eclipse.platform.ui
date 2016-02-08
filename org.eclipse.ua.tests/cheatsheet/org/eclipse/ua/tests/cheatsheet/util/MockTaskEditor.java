@@ -21,11 +21,11 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 // Task Editor used in the persistence tests
 
 public class MockTaskEditor extends TaskEditor {
-	
+
 	public static final String NO_MEMENTO = "No Memento";
-	
+
 	private String value;
-	
+
 	private static final String KEY = "key";
 
 	@Override
@@ -42,7 +42,7 @@ public class MockTaskEditor extends TaskEditor {
 			setValue(memento.getString(KEY));
 	    }
 	}
-	
+
 	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(KEY, getValue());

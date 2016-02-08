@@ -32,7 +32,7 @@ public class ActionWithParameters extends Action implements ICheatSheetAction {
 	public void run() {
 		Assert.fail("Should not call this version of run");
 	}
-	
+
 	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
 		ActionEnvironment.setParams(params);

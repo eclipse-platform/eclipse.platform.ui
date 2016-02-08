@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.cheatsheets.data.SubItem;
  * Serializes cheat sheets as XML.
  */
 public class CheatSheetModelSerializer {
- 
+
 	/*
 	 * Serializes the given cheat sheet model as XML.
 	 */
@@ -47,7 +47,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given Item with the specified indentation.
 	 */
@@ -69,8 +69,8 @@ public class CheatSheetModelSerializer {
 			buf.append(indent + "</item>\n");
 		}
 		return buf.toString();
-	}	
-	
+	}
+
 	/*
 	 * Serializes the given Action with the specified indentation.
 	 */
@@ -90,7 +90,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given String with the specified indentation.
 	 */
@@ -106,7 +106,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given AbstractItemExtensionElement with the specified indentation.
 	 */
@@ -117,7 +117,7 @@ public class CheatSheetModelSerializer {
 		buf.append(indent + "</itemExtension>\n");
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given PerformWhen with the specified indentation.
 	 */
@@ -134,7 +134,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given AbstractSubItem with the specified indentation.
 	 */
@@ -174,7 +174,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given array with the specified indentation.
 	 */
@@ -223,7 +223,7 @@ public class CheatSheetModelSerializer {
 		}
 		return buf.toString();
 	}
-	
+
 	/*
 	 * Serializes the given List with the specified indentation.
 	 */

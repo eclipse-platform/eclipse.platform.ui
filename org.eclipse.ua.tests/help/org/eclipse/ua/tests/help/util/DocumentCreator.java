@@ -22,9 +22,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DocumentCreator {
-	
+
 	public static Document createDocument(String input) throws SAXException, IOException {
-		StringReader reader = new StringReader(input); 
+		StringReader reader = new StringReader(input);
 		InputSource source = new InputSource(reader);
 
 	    DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin()

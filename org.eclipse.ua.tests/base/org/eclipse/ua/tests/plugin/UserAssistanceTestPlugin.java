@@ -15,7 +15,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class UserAssistanceTestPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static UserAssistanceTestPlugin plugin;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -23,14 +23,14 @@ public class UserAssistanceTestPlugin extends AbstractUIPlugin {
 		super();
 		plugin = this;
 	}
-	
+
 	/**
 	 * Returns the shared instance.
 	 */
 	public static UserAssistanceTestPlugin getDefault() {
 		return plugin;
 	}
-	
+
 	/**
 	 * @return the id of this plugin
 	 */

@@ -19,17 +19,17 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 public class JettyTestServer extends JettyHelpServer {
-	
+
 	@Override
 	protected String getOtherInfo() {
 		return "org.eclipse.ua.tests";
 	}
-	
+
 	@Override
 	protected int getPortParameter() {
 		return AUTO_SELECT_JETTY_PORT;
 	}
-	
+
 	/*
 	 * Ensures that the bundle with the specified name and the highest available
 	 * version is started and reads the port number

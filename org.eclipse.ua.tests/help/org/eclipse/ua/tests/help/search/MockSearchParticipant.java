@@ -25,7 +25,7 @@ public class MockSearchParticipant extends SearchParticipant {
 
 	private static final String DOC_1 = "/org.eclipse.ua.tests/participant1.xml";
 	private static final String DOC_2 = "/org.eclipse.ua.tests/participant2.xml";
-	
+
 	@Override
 	public Set<String> getAllDocuments(String locale) {
 		HashSet<String> set = new HashSet<String>();
@@ -42,8 +42,8 @@ public class MockSearchParticipant extends SearchParticipant {
 		String summary = isDoc1? "Summary1" : "Summary2";
 		String contents = isDoc1? "jkijkijkk frgeded" : "olhoykk lgktihku";
 		doc.setTitle(title);
-        doc.setSummary(summary); 
-		doc.addContents(contents); 
+        doc.setSummary(summary);
+		doc.addContents(contents);
 		return Status.OK_STATUS;
 	}
 

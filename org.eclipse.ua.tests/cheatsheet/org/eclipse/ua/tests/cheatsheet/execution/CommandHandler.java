@@ -23,44 +23,44 @@ import org.eclipse.core.commands.ExecutionException;
  * and remembers the parameters from the last invocation
  */
 public class CommandHandler extends AbstractHandler {
-    
+
 	public static final String RESULT_TO_STRING = "RESULT_TO_STRING";
-	
+
 	private static Map<String, String> params;
 	private static int timesCompleted;
 	private static boolean throwException;
-	
+
 	public static void reset() {
 		params = null;
 		timesCompleted = 0;
 		throwException = false;
 	}
-	
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		if (throwException) {
 			throw new RuntimeException();
 		}
 		// Copy all the parameters
 		params = new HashMap<String, String>();
 		params.putAll(event.getParameters());
-		
+
 		timesCompleted++;
-		
+
 		return RESULT_TO_STRING;
 	}
-	
+
 	public static Map<String, String> getParams() {
 		return params;
 	}
-	
+
 	public static int getTimesCompleted() {
 		return timesCompleted;
 	}
-	
+
 	public static void setThrowException(boolean doThrowException) {
 		throwException = doThrowException;
 	}
-	
+
 }

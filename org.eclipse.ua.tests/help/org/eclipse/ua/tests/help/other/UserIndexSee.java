@@ -20,7 +20,7 @@ import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.IUAElement;
 
 public class UserIndexSee implements IIndexSee {
-	
+
 	private List<IIndexSubpath> children = new ArrayList<IIndexSubpath>();
 	private boolean isEnabled;
 	private String keyword;
@@ -34,11 +34,11 @@ public class UserIndexSee implements IIndexSee {
 	public boolean isEnabled(IEvaluationContext context) {
 		return isEnabled;
 	}
-	
+
 	public void addSubpath(IIndexSubpath child) {
 		children.add(child);
 	}
-	
+
 	public UserIndexSee(String keyword, boolean isEnabled) {
 		this.keyword = keyword;
 		this.isEnabled = isEnabled;

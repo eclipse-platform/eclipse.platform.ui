@@ -40,7 +40,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 	private AbstractTocProvider[] tocProviders;
 	private AbstractIndexProvider[] indexProviders;
 	private Shell shell;
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -61,7 +61,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		indexManager.setIndexProviders(new AbstractIndexProvider[0]);
 		indexManager.clearCache();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -73,7 +73,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		indexManager.setIndexProviders(indexProviders);
 		indexManager.clearCache();
 	}
-	
+
 	public void testOpenHelp() throws Exception {
 		tagAsGlobalSummary("Open help", Dimension.ELAPSED_PROCESS);
 
@@ -82,7 +82,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 			openHelp();
 			closeHelp();
 		}
-		
+
 		// run the tests
 		for (int i=0;i<50;++i) {
 			startMeasuring();
@@ -90,15 +90,15 @@ public class OpenHelpTest extends PerformanceTestCase {
 			stopMeasuring();
 			closeHelp();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	private void openHelp() throws Exception {
 		// start the webapp
 		BaseHelpSystem.ensureWebappRunning();
-		
+
 		// open a browser
 		Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		shell = new Shell(parent);
@@ -106,7 +106,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		shell.setSize(parent.getSize());
 		Browser browser = new Browser(shell, SWT.NONE);
 		shell.open();
-		
+
 		// open help url
 		final boolean[] done = new boolean[] { false };
 		final String url = "http://" + WebappManager.getHost() + ":" + WebappManager.getPort() + "/help/index.jsp";
@@ -119,7 +119,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 			}
 		});
 		browser.setUrl(url);
-		
+
 		// wait until the browser finishes loading
 		Display display = Display.getDefault();
 		while (!done[0]) {
@@ -129,14 +129,14 @@ public class OpenHelpTest extends PerformanceTestCase {
 		}
 		flush();
 	}
-	
+
 	private void closeHelp() throws Exception {
 		if (shell != null) {
 			shell.dispose();
 			shell = null;
 		}
 	}
-	
+
 	private static void flush() {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch()) {
@@ -161,17 +161,17 @@ public class OpenHelpTest extends PerformanceTestCase {
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_GettingStarted.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_Reference.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.jdt.doc.user/topics_Tasks.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.pde.doc.user/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.pde.doc.user/topics_Reference.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Guide.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Porting.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Questions.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Reference.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.isv/topics_Samples.xml", false, nl, null, null),
-				
+
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/toc.xml", true, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/topics_Concepts.xml", false, nl, null, null),
 				new TocFile(id, "data/help/performance/org.eclipse.platform.doc.user/topics_GettingStarted.xml", false, nl, null, null),

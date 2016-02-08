@@ -20,7 +20,7 @@ public class UserCriteriaDefinitionContribution implements ICriteriaDefinitionCo
 	private ICriteriaDefinition criteriaDefinition;
 	private String id;
 	private String locale;
-	
+
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}

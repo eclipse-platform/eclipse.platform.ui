@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ public class AllPerformanceTests extends TestSuite {
 	public AllPerformanceTests() {
 		addTest(AllCheatSheetPerformanceTests.suite());
         addTest(AllHelpPerformanceTests.suite());
-		
+
 		/*
 		 * Disabled due to inability to backport test to 3.2. Internal
 		 * test hooks were added in 3.2.2 code base but do not exist in 3.2

@@ -18,17 +18,17 @@ import org.eclipse.core.runtime.CoreException;
  */
 
 public class TestServerManager {
-	
+
 	private static JettyTestServer[] server = new JettyTestServer[2];
 	private static boolean serverRunning[] = new boolean[] { false, false };
-	
+
 	private static JettyTestServer getHelpServer(int index) {
 		if (server[index] == null) {
 			server[index] = new JettyTestServer();
 		}
 		return server[index];
 	}
-	
+
 	public static void start(String webappName, int index) throws Exception {
 		if (!serverRunning[index]) {
 			getHelpServer(index).start(webappName);
@@ -42,7 +42,7 @@ public class TestServerManager {
 		    serverRunning[index] = false;
 		}
 	}
-	
+
 	public static int getPort(int index) {
 		return getHelpServer(index).getPort();
 	}

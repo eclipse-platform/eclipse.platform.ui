@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,17 +26,17 @@ public class TestFrame extends AbstractFrame {
 	public String getURL() {
 		return "/titlesearch/jsp/advanced/testFrame.jsp";
 	}
-	
+
 	@Override
 	public int getLocation() {
 		return AbstractFrame.BELOW_CONTENT;
 	}
-	
+
 	@Override
 	public String getSize() {
 		return "24";
 	}
-	
+
 	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean

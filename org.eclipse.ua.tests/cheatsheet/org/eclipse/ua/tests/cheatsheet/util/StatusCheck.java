@@ -28,7 +28,7 @@ public class StatusCheck {
 					+ status.getMessage() + "'");
 		}
 	}
-	
+
 	public static void assertMultiStatusContains(IStatus status, String text) {
 		Assert.assertTrue(status instanceof MultiStatus);
 		IStatus[] children = status.getChildren();

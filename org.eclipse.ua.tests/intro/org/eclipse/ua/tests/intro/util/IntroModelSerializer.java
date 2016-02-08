@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -63,7 +63,7 @@ public class IntroModelSerializer {
         }
         return url;
     }
-    
+
     private void printModelRootInfo(IntroModelRoot model, StringBuffer text) {
         text.append("Intro Model Content:"); //$NON-NLS-1$
         text.append("\n======================"); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class IntroModelSerializer {
             sorted[i] = filterURL(sorted[i]) + " from " + bundle.getSymbolicName(); //$NON-NLS-1$
         }
         Arrays.sort(sorted);
-        
+
         for (String element : sorted) {
             text.append(element + "\n\t\t"); //$NON-NLS-1$
         }
@@ -267,7 +267,7 @@ public class IntroModelSerializer {
 
     /**
      * Appends a given page's categories to the Text buffer.
-     * 
+     *
      * @param text
      */
     private void printPages(IntroPage[] pages, StringBuffer text) {

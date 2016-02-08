@@ -15,7 +15,7 @@ import org.eclipse.help.ICriteria;
 import org.eclipse.help.IUAElement;
 
 public class UserCriteria implements ICriteria {
-	
+
 	private String name;
 	private String value;
 	private boolean enabled;

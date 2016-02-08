@@ -48,7 +48,7 @@ public class MockContentServlet extends HttpServlet {
 		}
 		callcount++;
 	}
-	
+
 	public static int getCallcount() {
 		return callcount;
 	}

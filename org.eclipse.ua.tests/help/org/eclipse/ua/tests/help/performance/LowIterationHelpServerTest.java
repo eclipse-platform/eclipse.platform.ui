@@ -23,7 +23,7 @@ import org.eclipse.ua.tests.help.util.LoadServletUtil;
  */
 
 public class LowIterationHelpServerTest extends PerformanceTestCase {
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -35,12 +35,12 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
 	}
-	
+
 	public void testServletRead20x() throws Exception {
 		tagAsSummary("Servlet Read", Dimension.ELAPSED_PROCESS);
 		LoadServletUtil.startServer();
@@ -49,8 +49,8 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 			boolean warmup = i < 2;
 			if (!warmup) {
 			    startMeasuring();
-			} 
-			
+			}
+
 			for (int j = 0; j <= 20; j++) {
 				LoadServletUtil.readLoadServlet(200);
 			}
@@ -59,14 +59,14 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 			    stopMeasuring();
 		    }
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
-	}	
+	}
 
 	public void testStartServer() throws Exception {
 		tagAsSummary("Start Server", Dimension.ELAPSED_PROCESS);
-		
+
 		// run the tests
 		for (int i=0; i < 25; ++i) {
 			boolean warmup = i < 2;
@@ -74,16 +74,16 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 			if (!warmup) {
 			    startMeasuring();
 			}
-	
+
 			LoadServletUtil.startServer();
-			
+
 			if (!warmup) {
 			    stopMeasuring();
 		    }
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-		
+
 }

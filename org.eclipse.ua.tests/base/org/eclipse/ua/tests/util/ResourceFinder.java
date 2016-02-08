@@ -34,7 +34,7 @@ public class ResourceFinder {
 	public static URL findFile(Plugin plugin, String path) {
 		return FileLocator.find(plugin.getBundle(),  new Path(path), null);
 	}
-	
+
 	/*
 	 * Finds and returns URLs to all files in the plugin directory under the given
 	 * folder with the given suffix. Can also recursively traverse all subfolders.
@@ -52,11 +52,11 @@ public class ResourceFinder {
 			path = new Path(Platform.getInstallLocation().getURL().toString().substring("file:".length()) + path);
 			file = path.toFile();
 		}
-		
+
 		File[] files = path.toFile().listFiles();
 		return findFiles(files, suffix, recursive);
 	}
-	
+
 	/*
 	 * Finds and returns URLs to all files in the given list that have the given suffix, and
 	 * recursively traverses subdirectories if requested.
@@ -82,10 +82,10 @@ public class ResourceFinder {
 				}
 			}
 		}
-		
+
 		URL[] array = new URL[list.size()];
 		list.toArray(array);
 		return array;
 	}
-	
+
 }

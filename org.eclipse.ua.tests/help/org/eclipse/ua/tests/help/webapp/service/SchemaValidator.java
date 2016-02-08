@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class SchemaValidator {
 				schema = factory.newSchema(new URL(schemaFile));
 			else
 				schema = factory.newSchema(new File(schemaFile));
-			
+
 			Validator validator = schema.newValidator();
 			Source source = new StreamSource(uri);
 			try {
@@ -44,10 +44,10 @@ public class SchemaValidator {
 		} catch(Exception e) {
 			msg = "Exception e: " + e; //$NON-NLS-1$
 		}
-		
+
 		return msg;
 	}
-	
+
 	public static String testJSONSchema(String uri, String schemaFile) {
 		// TODO: Not yet implemented
 		return ""; //$NON-NLS-1$

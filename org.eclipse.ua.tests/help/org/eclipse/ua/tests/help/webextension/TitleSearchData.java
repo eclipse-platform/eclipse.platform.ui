@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -55,7 +55,7 @@ private void searchTopic(ITopic topic) {
 		&& topic.getHref() != null) {
 		SearchResult result = new SearchResult();
 		result.title = topic.getLabel();
-		result.href = "../../../topic" + topic.getHref();		
+		result.href = "../../../topic" + topic.getHref();
 		results.add(result);
 	}
 	ITopic[] topics = topic.getSubtopics();

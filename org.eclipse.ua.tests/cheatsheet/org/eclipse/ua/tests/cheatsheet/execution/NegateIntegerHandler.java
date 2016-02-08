@@ -21,7 +21,7 @@ public class NegateIntegerHandler extends AbstractHandler {
 
 		Integer val = (Integer)event.getObjectParameterForExecution("number");
 		return new Integer(-val.intValue());
-		
+
 	}
-	
+
 }

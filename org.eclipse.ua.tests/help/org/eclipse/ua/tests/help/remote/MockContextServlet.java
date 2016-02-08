@@ -29,10 +29,10 @@ public class MockContextServlet extends ContextServlet {
 			UserContext context = new UserContext(title, "Decriptiion for " + title);
 			UserTopic topic = new UserTopic(title, "topic.html", true);
 			context.addTopic(topic);
-			return context;	
+			return context;
 		}
 		return null;
 	}
-	
+
 
 }

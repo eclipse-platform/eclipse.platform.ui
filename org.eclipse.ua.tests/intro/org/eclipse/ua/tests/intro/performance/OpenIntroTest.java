@@ -32,7 +32,7 @@ public class OpenIntroTest extends PerformanceTestCase {
 	public static Test suite() {
 		return new TestSuite(OpenIntroTest.class);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
 	 */
@@ -44,7 +44,7 @@ public class OpenIntroTest extends PerformanceTestCase {
         System.setProperty("org.eclipse.ua.tests.property.isTesting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         ExtensionPointManager.getInst().setExtensionFilter(UserAssistanceTestPlugin.getPluginId());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
 	 */
@@ -65,7 +65,7 @@ public class OpenIntroTest extends PerformanceTestCase {
 			openIntro();
 			closeIntro();
 		}
-		
+
 		// run the tests
 		for (int i=0;i<50;++i) {
 			startMeasuring();
@@ -73,11 +73,11 @@ public class OpenIntroTest extends PerformanceTestCase {
 			stopMeasuring();
 			closeIntro();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
+
 	public static void closeIntro() throws Exception {
 		IIntroManager manager = PlatformUI.getWorkbench().getIntroManager();
 		IIntroPart part = manager.getIntro();
@@ -101,7 +101,7 @@ public class OpenIntroTest extends PerformanceTestCase {
 		}
 		flush();
 	}
-	
+
 	private static void flush() {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch()) {

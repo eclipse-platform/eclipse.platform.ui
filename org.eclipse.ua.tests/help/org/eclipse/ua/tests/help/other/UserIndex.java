@@ -24,10 +24,10 @@ import org.eclipse.help.IUAElement;
  */
 
 public class UserIndex implements IIndex {
-	
+
 	private List<IIndexEntry> entries = new ArrayList<IIndexEntry>();
 	private boolean enabled;
-	
+
 	public UserIndex(boolean enabled) {
 		this.enabled = true;
 	}
@@ -36,7 +36,7 @@ public class UserIndex implements IIndex {
 	public IUAElement[] getChildren() {
 		return getEntries();
 	}
-	
+
 	public void addEntry(IIndexEntry child) {
 		entries.add(child);
 	}

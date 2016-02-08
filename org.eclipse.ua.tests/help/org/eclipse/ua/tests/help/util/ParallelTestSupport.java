@@ -15,17 +15,17 @@ import org.junit.Assert;
 
 
 public class ParallelTestSupport {
-	
+
 	public interface ITestCase {
 		/**
 		 * Runs a test case one time
-		 * @return null if the test passes, otherwise a string representing 
+		 * @return null if the test passes, otherwise a string representing
 		 * the reason for the failure
-		 * @throws Exception 
+		 * @throws Exception
 		 */
 		public String runTest() throws Exception;
 	}
-	
+
 	public static void testSingleCase(ITestCase testCase, int repetitions) {
 		String result = null;
 		for (int i = 0; i < repetitions && result == null; i++) {
@@ -39,7 +39,7 @@ public class ParallelTestSupport {
 			}
 		}
 	}
-	
+
 	public static void testInParallel(ITestCase[] testCases, int repetitions) {
 		int numberOfThreads = testCases.length;
 		TestThread[] testThreads = new TestThread[numberOfThreads];
@@ -68,7 +68,7 @@ public class ParallelTestSupport {
 			}
 		}
 	}
-	
+
 	private static class TestThread extends Thread {
 
 		private int index;
@@ -80,9 +80,9 @@ public class ParallelTestSupport {
 			this.testCase = testCase;
 			this.repetitions = repetitions;
 		}
-		
+
         public String failureReason = null;
-		
+
 		@Override
 		public void run() {
 			for (int j = 0; j <= repetitions; j++) {
@@ -97,7 +97,7 @@ public class ParallelTestSupport {
 					return;
 				}
 			}
-		}		
+		}
 	}
-	
+
 }

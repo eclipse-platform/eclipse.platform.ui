@@ -51,6 +51,6 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 			criteria.add( new UserCriteria(CONTAINS_LETTER, "c", true) );
 		}
 		return criteria.toArray(new UserCriteria[criteria.size()]);
-	}	
+	}
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 
 public class OpenCheatSheetTest extends PerformanceTestCase {
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -37,7 +37,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 		super.setUp();
 		OpenIntroTest.closeIntro();
 	}
-	
+
 	public void testOpenSimpleCheatSheet() throws Exception {
 		tagAsSummary("Open simple cheat sheet", Dimension.ELAPSED_PROCESS);
 
@@ -46,7 +46,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 			closeCheatSheet();
 			openSimpleCheatSheet();
 		}
-		
+
 		// run the tests
 		for (int i=0;i<50;++i) {
 			closeCheatSheet();
@@ -54,7 +54,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 			openSimpleCheatSheet();
 			stopMeasuring();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -67,7 +67,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 			closeCheatSheet();
 			openCompositeCheatSheet();
 		}
-		
+
 		// run the tests
 		for (int i=0;i<50;++i) {
 			closeCheatSheet();
@@ -75,7 +75,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 			openCompositeCheatSheet();
 			stopMeasuring();
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -98,7 +98,7 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 		page.hideView(view);
 		flush();
 	}
-	
+
 	private static void flush() {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch()) {

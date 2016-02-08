@@ -36,9 +36,9 @@ public class AllHelpPerformanceTests extends TestSuite {
 
 		/*
 		 * Disabled due to inability to get reliable results. Browser/SWT
-		 * changes in timing of listener events no longer consistent in 3.3. 
+		 * changes in timing of listener events no longer consistent in 3.3.
 		 */
-		
+
 		//addTest(OpenHelpTest.suite());
 		addTest(TocAssemblePerformanceTest.suite());
 		addTest(IndexAssemblePerformanceTest.suite());

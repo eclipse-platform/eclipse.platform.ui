@@ -50,7 +50,7 @@ public class SampleCriteriaDefinitionProvider extends
 	private ICriteriaDefinitionContribution[] getSpanishCriteriaDefinitionContributions() {
 		UserCriteriaDefinition criteriaDefinition = new UserCriteriaDefinition();
 		UserCriterionDefinition criterionDefinition = new UserCriterionDefinition(
-				SampleCriteriaProvider.CONTAINS_LETTER, 
+				SampleCriteriaProvider.CONTAINS_LETTER,
 				"Letras en titulo");
 		UserCriteriaDefinitionContribution contribution = new UserCriteriaDefinitionContribution();
 		criteriaDefinition.addDefinition(criterionDefinition);

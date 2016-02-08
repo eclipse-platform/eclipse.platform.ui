@@ -41,14 +41,14 @@ import javax.servlet.http.Part;
  */
 
 public class MockServletRequest implements HttpServletRequest {
-	
+
 	private Locale locale;
 	private Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 	private Cookie[] cookies = new Cookie[0];
 	private String pathInfo = null;
 
 	public MockServletRequest() {
-		
+
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class MockServletRequest implements HttpServletRequest {
 	public Cookie[] getCookies() {
 		return cookies;
 	}
-	
+
 	public  void setCookies(Cookie[] cookies) {
 		this.cookies = cookies;
 	}
@@ -111,7 +111,7 @@ public class MockServletRequest implements HttpServletRequest {
 	public String getPathInfo() {
 		return pathInfo;
 	}
-	
+
 	public void setPathInfo(String info) {
 		this.pathInfo = info;
 	}
@@ -263,7 +263,7 @@ public class MockServletRequest implements HttpServletRequest {
 	public Locale getLocale() {
 		return locale;
 	}
-	
+
 	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
@@ -436,13 +436,13 @@ public class MockServletRequest implements HttpServletRequest {
 	@Override
 	public void login(String username, String password) throws ServletException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void logout() throws ServletException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

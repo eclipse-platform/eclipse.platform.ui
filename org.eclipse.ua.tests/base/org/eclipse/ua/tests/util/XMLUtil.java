@@ -35,7 +35,7 @@ import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
  * A utility class for working with XML.
  */
 public class XMLUtil extends Assert {
-	
+
 	public static void assertXMLEquals(String msg, String s1, String s2) throws Exception {
 		InputStream in1 = new ByteArrayInputStream(s1.getBytes("UTF-8"));
 		InputStream in2 = new ByteArrayInputStream(s2.getBytes("UTF-8"));
@@ -47,7 +47,7 @@ public class XMLUtil extends Assert {
 		String s2 = process(in2);
 		assertEquals(msg, s1, s2);
 	}
-	
+
 	public static void assertParseableXML(String s)  {
 		try {
 			InputStream in1 = new ByteArrayInputStream(s.getBytes("UTF-8"));
@@ -56,7 +56,7 @@ public class XMLUtil extends Assert {
 			fail("Unable to parse source: " + s);
 		}
 	}
-	
+
 	private static String process(InputStream in) throws Exception {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = factory.newSAXParser();
@@ -64,12 +64,12 @@ public class XMLUtil extends Assert {
 		parser.parse(in, handler);
 		return handler.toString();
 	}
-	
+
 	private static class Handler extends DefaultHandler {
-		
+
 		private StringBuffer buf = new StringBuffer();
 		private EntityResolver entityResolver = new LocalEntityResolver();
-		
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
@@ -77,7 +77,7 @@ public class XMLUtil extends Assert {
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			buf.append('<');
 			buf.append(qName);
-			
+
 			List<String> list = new ArrayList<String>();
 			for (int i=0;i<attributes.getLength();++i) {
 				list.add(attributes.getQName(i));
@@ -95,7 +95,7 @@ public class XMLUtil extends Assert {
 			}
 			buf.append('>');
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 		 */
@@ -105,8 +105,8 @@ public class XMLUtil extends Assert {
 			buf.append('/');
 			buf.append(qName);
 			buf.append('>');
-		}		
-		
+		}
+
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
@@ -114,11 +114,11 @@ public class XMLUtil extends Assert {
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			buf.append(ch, start, length);
 		}
-		
+
 		/*
 		 * Note: throws clause does not declare IOException due to a bug in
 		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
-		 * 
+		 *
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		@Override

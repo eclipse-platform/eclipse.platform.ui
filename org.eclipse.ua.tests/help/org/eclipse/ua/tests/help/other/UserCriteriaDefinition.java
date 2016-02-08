@@ -22,7 +22,7 @@ import org.eclipse.help.IUAElement;
 public class UserCriteriaDefinition implements ICriteriaDefinition {
 
 	private List<ICriterionDefinition> children = new ArrayList<ICriterionDefinition>();
-	
+
 	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
@@ -32,7 +32,7 @@ public class UserCriteriaDefinition implements ICriteriaDefinition {
 	public ICriterionDefinition[] getCriterionDefinitions() {
 		return children.toArray(new ICriterionDefinition[0]);
 	}
-	
+
 	public void addDefinition(ICriterionDefinition definition) {
 		children.add(definition);
 	}

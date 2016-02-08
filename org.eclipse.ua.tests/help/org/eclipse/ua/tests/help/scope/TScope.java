@@ -12,7 +12,7 @@
 package org.eclipse.ua.tests.help.scope;
 
 public class TScope extends MockScope {
-	
+
 	public TScope() {
 		super('t', true);
 	}

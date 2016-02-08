@@ -20,11 +20,11 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 
 public class MockScope extends AbstractHelpScope {
-	
+
 	// Used for testing of scope based classes and utilities
-	// Elements are in scope if they contain the letter specified 
+	// Elements are in scope if they contain the letter specified
 	// in the constructor
-	
+
 	private char letter;
 	private boolean isHierarchical;
 
@@ -57,11 +57,11 @@ public class MockScope extends AbstractHelpScope {
 	public String getName(Locale locale) {
 		return null;
 	}
-	
+
 	private boolean testForInScope(String label) {
 		return label.indexOf(letter) >= 0;
 	}
-	
+
 	@Override
 	public boolean isHierarchicalScope() {
 		return isHierarchical;

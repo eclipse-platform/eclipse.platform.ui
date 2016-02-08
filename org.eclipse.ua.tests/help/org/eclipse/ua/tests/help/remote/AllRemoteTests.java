@@ -18,12 +18,12 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	RemotePreferenceTest.class,	
+	RemotePreferenceTest.class,
 	TocServletTest.class,
 	SearchServletTest.class,
 	IndexServletTest.class,
 	ContentServletTest.class,
-	ContextServletTest.class,	
+	ContextServletTest.class,
 	LoadTocUsingRemoteHelp.class,
 	SearchUsingRemoteHelp.class,
 	LoadIndexUsingRemoteHelp.class,

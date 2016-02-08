@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 public class TestTaskEditor extends TaskEditor {
 
 	private Composite control;
-	
+
 	@Override
 	public void createControl(Composite parent, FormToolkit toolkit) {
 		control = new Composite(parent, SWT.NULL);

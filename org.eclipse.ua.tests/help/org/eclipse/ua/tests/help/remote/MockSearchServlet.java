@@ -27,18 +27,18 @@ import org.eclipse.help.internal.webapp.servlet.SearchServlet;
 public class MockSearchServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -5115067950875335923L;
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String phrase = req.getParameter("phrase"); 
+		String phrase = req.getParameter("phrase");
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		List<SearchHit> results = new ArrayList<SearchHit>();
 		if (isSearchHit(phrase, locale)) {
-			SearchHit hit = new SearchHit("http://www.eclipse.org", 
-					"Hit from Mock Servlet", 
+			SearchHit hit = new SearchHit("http://www.eclipse.org",
+					"Hit from Mock Servlet",
 					"This is the description of a hit from the mock servlet",
 					0, null, null, null, false);
 			results.add(hit);
@@ -52,7 +52,7 @@ public class MockSearchServlet extends HttpServlet {
 			return "dedfdsadsads".equals(phrase);
 		} else {
 			return "endfdsadsads".equals(phrase);
-		}		
-	}			
+		}
+	}
 
 }

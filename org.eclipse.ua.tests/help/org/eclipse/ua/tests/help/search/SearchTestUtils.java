@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class SearchTestUtils {
 
 	public static void searchAllLocales(String searchWord, String[] hrefs) {
-		searchOneLocale(searchWord, hrefs, "en");	
+		searchOneLocale(searchWord, hrefs, "en");
 		searchOneLocale(searchWord, hrefs, "de");
 	}
 
@@ -48,9 +48,9 @@ public class SearchTestUtils {
 	public static String searchForExpectedResults(String searchWord,
 			String[] hrefs, String nl) {
 		final Set<String> hrefsToFind = new HashSet<String>();
-		final Set<String> unexpectedHrefs = new HashSet<String>();		
+		final Set<String> unexpectedHrefs = new HashSet<String>();
 		hrefsToFind.addAll(Arrays.asList(hrefs));
-		
+
 		SearchHit[] hits;
 		hits = getSearchHits(searchWord, nl);
 		for (SearchHit hit : hits) {
@@ -67,7 +67,7 @@ public class SearchTestUtils {
 				unexpectedHrefs.add(href);
 			}
 		}
-		
+
 		if (!hrefsToFind.isEmpty() || !unexpectedHrefs.isEmpty()) {
 			StringBuffer buf = new StringBuffer();
 			buf.append("While searching for: " + searchWord + ",\n");

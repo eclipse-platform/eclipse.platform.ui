@@ -19,12 +19,12 @@ public class UserCriterionValueDefinition implements ICriterionValueDefinition {
 
 	private String id;
 	private String name;
-	
+
 	public UserCriterionValueDefinition(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
+
 	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;

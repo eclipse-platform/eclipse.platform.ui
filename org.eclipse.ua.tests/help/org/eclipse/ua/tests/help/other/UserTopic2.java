@@ -19,7 +19,7 @@ import org.eclipse.help.ITopic2;
 import org.eclipse.help.IUAElement;
 
 public class UserTopic2 extends UserTopic implements ITopic2 {
-	
+
 	private List<ICriteria> criteria = new ArrayList<ICriteria>();
 
 	@Override
@@ -31,11 +31,11 @@ public class UserTopic2 extends UserTopic implements ITopic2 {
 		System.arraycopy(criteriaElements, 0, result, topics.length, criteriaElements.length);
 		return result;
 	}
-	
+
 	public UserTopic2(String label, String href, boolean isEnabled) {
 		super(label, href, isEnabled);
 	}
-	
+
 	public void addCriterion(ICriteria child) {
 		criteria.add(child);
 	}

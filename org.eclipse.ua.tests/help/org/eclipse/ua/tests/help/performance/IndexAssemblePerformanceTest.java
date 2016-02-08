@@ -32,7 +32,7 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
 public class IndexAssemblePerformanceTest extends PerformanceTestCase {
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -44,24 +44,24 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	public void testIndexAssemble() throws Exception {
 		tagAsSummary("Assemble Index", Dimension.ELAPSED_PROCESS);
-	
+
 		// run the tests
 		for (int i=0; i < 10; ++i) {
 			boolean warmup = i == 0;
 			if (!warmup) {
 			    startMeasuring();
 			}
-			
+
 			assembleIndex();
 
 			if (!warmup) {
 			    stopMeasuring();
 		    }
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -74,8 +74,8 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		IndexContribution c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/performance/index/index3.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
 		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(a, b, c));
-		Index assembled = assembler.assemble(contributions, Platform.getNL());	
+		Index assembled = assembler.assemble(contributions, Platform.getNL());
 		assertEquals(100, assembled.getChildren().length);
 	}
-	
+
 }

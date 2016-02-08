@@ -35,7 +35,7 @@ public class UserToc2 extends UserToc implements IToc2 {
 		System.arraycopy(criteriaElements, 0, result, topics.length, criteriaElements.length);
 		return result;
 	}
-	
+
 	public void addCriterion(ICriteria child) {
 		criteria.add(child);
 	}

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -46,18 +46,18 @@ public class TitleSearchView extends AbstractView {
 	public String getURL() {
 		return "/titlesearch/jsp/advanced/";
 	}
-	
+
 	@Override
 	public String getBasicURL() {
 		return "/titlesearch/jsp/basic/";
 	}
-	
+
 	@Override
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean
 		    (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
-	
+
 	@Override
 	public boolean isVisibleBasic() {
 		return Platform.getPreferencesService().getBoolean

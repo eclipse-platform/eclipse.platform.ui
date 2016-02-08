@@ -17,13 +17,13 @@ import org.eclipse.help.IUAElement;
 
 
 public class UserIndexSubpath implements IIndexSubpath {
-	
+
 	private String keyword;
-	
+
 	public UserIndexSubpath(String keyword) {
 		this.keyword = keyword;
 	}
-	
+
 
 	@Override
 	public String getKeyword() {

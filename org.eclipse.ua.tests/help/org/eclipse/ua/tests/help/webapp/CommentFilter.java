@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,9 +27,9 @@ public class CommentFilter implements IFilter {
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		return new OutFilter(out);
 	}
-	
+
 	private class OutFilter extends OutputStream {
-		
+
 		private OutputStream out;
 		private boolean preambleWritten = false;
 
@@ -44,9 +44,9 @@ public class CommentFilter implements IFilter {
 				String comment = "<!-- pre " + getCommentText() + " -->";
 				out.write(comment.getBytes());
 			}
-			out.write(b);			
+			out.write(b);
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			String comment = "<!-- post " + getCommentText() + " -->";
@@ -54,11 +54,11 @@ public class CommentFilter implements IFilter {
 			out.close();
 			super.close();
 		}
-		
+
 	}
-	
+
 	protected String getCommentText() {
 		return "comment";
-	}	
+	}
 
 }

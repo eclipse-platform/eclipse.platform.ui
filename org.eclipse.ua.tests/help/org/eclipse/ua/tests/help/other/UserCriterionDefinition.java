@@ -24,12 +24,12 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 	private String id;
 	private String name;
 	private List<ICriterionValueDefinition> children = new ArrayList<ICriterionValueDefinition>();
-	
+
 	public UserCriterionDefinition(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
+
 	@Override
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
@@ -62,7 +62,7 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 	public ICriterionValueDefinition[] getCriterionValueDefinitions() {
 		return children.toArray(new ICriterionValueDefinition[0]);
 	}
-	
+
 	public void addValue(ICriterionValueDefinition value) {
 		children.add(value);
 	}

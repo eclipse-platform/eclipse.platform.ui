@@ -21,7 +21,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 
 	public static final String DOC_1 = "/org.eclipse.ua.tests/data/help/search/participant_xml_1.xml";
 	public static final String DOC_2 = "/org.eclipse.ua.tests/data/help/search/participant_xml_2.xml";
-	
+
 	@Override
 	public Set<String> getAllDocuments(String locale) {
 		HashSet<String> set = new HashSet<String>();
@@ -29,7 +29,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 		set.add(DOC_2);
 		return set;
 	}
-	
+
 	@Override
 	public Set<String> getContributingPlugins() {
 		Set<String> result = new HashSet<String>();
@@ -41,7 +41,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 	protected void handleStartElement(String name, Attributes attributes,
 			IParsedXMLContent data) {
 		if ("participant".equalsIgnoreCase(name)) {
-			data.setTitle(attributes.getValue("title"));			
+			data.setTitle(attributes.getValue("title"));
 		}
 		String summary = attributes.getValue("summary");
 		if (summary != null) {
@@ -60,7 +60,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 			data.addText(text);
 		}
 	}
-	
+
 	@Override
 	public boolean open(String id) {
 		System.out.println("Open " + id);

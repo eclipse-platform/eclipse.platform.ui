@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 
 public class UserToc implements IToc {
-	
+
 	private List<ITopic> children = new ArrayList<ITopic>();
 	private boolean isEnabled;
 	private String href;
 	private String label;
-	
+
 	public UserToc(String label, String href, boolean isEnabled) {
 		this.label = label;
 		this.href = href;

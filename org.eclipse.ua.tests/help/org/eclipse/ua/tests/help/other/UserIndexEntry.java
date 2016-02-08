@@ -26,9 +26,9 @@ import org.eclipse.help.IUAElement;
  */
 
 public class UserIndexEntry implements IIndexEntry2 {
-	
-	private List<IIndexEntry> subentries = new ArrayList<IIndexEntry>();	
-	private List<IIndexSee> sees = new ArrayList<IIndexSee>();	
+
+	private List<IIndexEntry> subentries = new ArrayList<IIndexEntry>();
+	private List<IIndexSee> sees = new ArrayList<IIndexSee>();
 	private List<ITopic> topics = new ArrayList<ITopic>();
 	private boolean isEnabled;
 	private String keyword;
@@ -53,15 +53,15 @@ public class UserIndexEntry implements IIndexEntry2 {
 	public void addSee(IIndexSee child) {
 		sees.add(child);
 	}
-	
+
 	public void addEntry(IIndexEntry child) {
 		subentries.add(child);
 	}
-	
+
 	public void addTopic(ITopic child) {
 		topics.add(child);
 	}
-	
+
 	public UserIndexEntry(String keyword, boolean isEnabled) {
 		this.keyword = keyword;
 		this.isEnabled = isEnabled;

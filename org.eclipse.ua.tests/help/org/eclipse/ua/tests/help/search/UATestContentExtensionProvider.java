@@ -18,35 +18,35 @@ import org.eclipse.help.IUAElement;
 
 public class UATestContentExtensionProvider extends
 		AbstractContentExtensionProvider {
-	
+
 	private IContentExtension extension;
 
 	public UATestContentExtensionProvider() {
 		// TODO Auto-generated constructor stub
 		extension = new IContentExtension() {
-			
+
 			@Override
 			public boolean isEnabled(IEvaluationContext context) {
 				// TODO Auto-generated method stub
 				return true;
 			}
-			
+
 			@Override
 			public IUAElement[] getChildren() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public int getType() {
 				return REPLACEMENT;
 			}
-			
+
 			@Override
 			public String getPath() {
 				return "org.eclipse.ua.tests/data/help/search/test6.xhtml#test6_paragraph_to_replace2";
 			}
-			
+
 			@Override
 			public String getContent() {
 				return "/org.eclipse.ua.tests/data/help/search/testProvider.xhtml";

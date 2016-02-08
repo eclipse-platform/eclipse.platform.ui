@@ -28,7 +28,7 @@ public class UserContext implements IContext3 {
 	private String title;
 	private String text;
 	private List<ITopic> children = new ArrayList<ITopic>();
-	
+
 	public UserContext(String title, String text) {
 		this.title = title;
 		this.text = text;
@@ -63,10 +63,10 @@ public class UserContext implements IContext3 {
 	public String getText() {
 		return text;
 	}
-	
+
 	public void addTopic(ITopic child) {
 		children.add(child);
 	}
-	
-	
+
+
 }

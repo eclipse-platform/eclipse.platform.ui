@@ -42,7 +42,7 @@ public class FileUtil {
 	public static String getContents(String absolutePath) throws IOException {
 		return readString(new FileInputStream(absolutePath));
 	}
-	
+
 	/**
 	 * Generates a filename with path to the result file that will be generated
 	 * for the intro xml referred to by the string.

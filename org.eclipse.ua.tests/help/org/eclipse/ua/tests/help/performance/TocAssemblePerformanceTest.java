@@ -31,7 +31,7 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
 public class TocAssemblePerformanceTest extends PerformanceTestCase {
-	
+
 	/*
 	 * Returns an instance of this Test.
 	 */
@@ -43,12 +43,12 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	private TocContribution parse(TocFileParser parser, String tocFile)
 			throws IOException, SAXException, ParserConfigurationException {
 		return parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), tocFile, true, "en", null, null));
 	}
-	
+
 	public void assembleToc() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		List<TocContribution> contributions = new ArrayList<TocContribution>();
@@ -59,14 +59,14 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/topics_Reference.xml"));
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/topics_Samples.xml"));
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/topics_Samples.xml"));
-		TocAssembler assembler = new TocAssembler();	
+		TocAssembler assembler = new TocAssembler();
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		TocContribution toc = contributions.get(0);
 		assertEquals(101, countTopics(toc.getToc().getTopics()));
 	}
 
-	
+
 	private int countTopics(ITopic[] topics) {
 		int result = topics.length;
 		for (ITopic topic : topics) {
@@ -77,7 +77,7 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 
 	public void testTocAssemble() throws Exception {
 		tagAsSummary("Assemble TOC", Dimension.ELAPSED_PROCESS);
-		
+
 		// run the tests
 		for (int i=0; i < 100; ++i) {
 			boolean warmup = i < 2;
@@ -91,10 +91,10 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 			    stopMeasuring();
 		    }
 		}
-		
+
 		commitMeasurements();
 		assertPerformance();
 	}
-	
-	
+
+
 }

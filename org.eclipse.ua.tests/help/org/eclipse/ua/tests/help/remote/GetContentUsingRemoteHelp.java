@@ -28,7 +28,7 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GetContentUsingRemoteHelp {
-	
+
 	private int mode;
 
 	@Before
@@ -41,7 +41,7 @@ public class GetContentUsingRemoteHelp {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		HelpPlugin.getTocManager().getTocs("en");
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		RemotePreferenceStore.restorePreferences();
@@ -84,7 +84,7 @@ public class GetContentUsingRemoteHelp {
 		String localContent = RemoteTestUtils.getLocalContent(plugin, path);
 		assertEquals(localContent, helpContent);
 	}
-	
+
 	@Test
 	public void testRemoteHelpPreferredPreference() throws Exception  {
 		RemotePreferenceStore.setMockRemotePriority();
@@ -109,12 +109,12 @@ public class GetContentUsingRemoteHelp {
 		 final String path = "/doc/help_home.html";
 	     String plugin = "org.eclipse.help.base";
 		 String helpContent = GetContentUsingRemoteHelp.getHelpContent(plugin, path, "en");
-		 
+
 		 //Get remote content from first one in prefs
 
 		 int port0 = TestServerManager.getPort(0);
 		 String remoteContent0 = RemoteTestUtils.createMockContent(plugin, path, "en", port0);
-		 
+
 		 int port1 = TestServerManager.getPort(1);
 		 String remoteContent1 = RemoteTestUtils.createMockContent(plugin, path, "en", port1);
 
@@ -122,7 +122,7 @@ public class GetContentUsingRemoteHelp {
 		 assertFalse(remoteContent1.equals(helpContent));
 
 	}
-	
+
 	@Test
 	public void testRemoteOrderingReversed() throws Exception {
 		RemotePreferenceStore.setTwoMockRemoteServersReversePriority();
@@ -133,16 +133,16 @@ public class GetContentUsingRemoteHelp {
 		 final String path = "/doc/help_home.html";
 	     String plugin = "org.eclipse.help.base";
 		 String helpContent = GetContentUsingRemoteHelp.getHelpContent(plugin, path, "en");
-		 
+
 		 //Get remote content from second in prefs
 
 		 int port0 = TestServerManager.getPort(0);
 		 String remoteContent0 = RemoteTestUtils.createMockContent(plugin, path, "en", port0);
-		 
+
 		 int port1 = TestServerManager.getPort(1);
 		 String remoteContent1 = RemoteTestUtils.createMockContent(plugin, path, "en", port1);
-		 
-		 
+
+
 		 assertEquals(remoteContent1, helpContent);
 		 assertFalse(remoteContent0.equals(helpContent));
 
@@ -155,12 +155,12 @@ public class GetContentUsingRemoteHelp {
 		HelpPlugin.getTocManager().getTocs("en");
 		final String path = "/data/help/nonlocal.html";
         String plugin = "org.eclipse.help.base";
-		String remoteContent = getHelpContent(plugin, path, "en");		
+		String remoteContent = getHelpContent(plugin, path, "en");
 		int port = TestServerManager.getPort(0);
 		String expectedContent = RemoteTestUtils.createMockContent(plugin, path, "en", port);
 		assertEquals(expectedContent, remoteContent);
 	}
-	
+
 	private static String getHelpContent(String plugin, String path, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
