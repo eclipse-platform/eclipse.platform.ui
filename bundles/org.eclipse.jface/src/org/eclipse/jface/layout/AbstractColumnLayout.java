@@ -146,7 +146,7 @@ public abstract class AbstractColumnLayout extends Layout {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
 			}
 		}
-		result.x = Math.min(width, result.x);
+		result.x = width;
 
 		return result;
 	}
