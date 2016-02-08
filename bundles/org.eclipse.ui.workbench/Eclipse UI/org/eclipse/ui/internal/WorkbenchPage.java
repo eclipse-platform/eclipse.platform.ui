@@ -385,7 +385,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 				ViewReference viewReference = getViewReference(part);
 				if (viewReference != null) {
-					E4PartWrapper legacyPart = new E4PartWrapper(part);
+					E4PartWrapper legacyPart = E4PartWrapper.getE4PartWrapper(part);
 					try {
 						viewReference.initialize(legacyPart);
 					} catch (PartInitException e) {
@@ -4950,6 +4950,33 @@ public class WorkbenchPage implements IWorkbenchPage {
 				});
 			}
 		}
+		else if (client != null) {
+			if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
+				IWorkbenchPart workbenchPart = (IWorkbenchPart) part.getTransientData()
+						.get(E4PartWrapper.E4_WRAPPER_KEY);
+				final IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+				if (partReference != null) {
+					for (final Object listener : partListenerList.getListeners()) {
+						SafeRunner.run(new SafeRunnable() {
+							@Override
+							public void run() throws Exception {
+								((IPartListener) listener).partActivated(workbenchPart);
+							}
+						});
+					}
+
+					for (final Object listener : partListener2List.getListeners()) {
+						SafeRunner.run(new SafeRunnable() {
+							@Override
+							public void run() throws Exception {
+								((IPartListener2) listener).partActivated(partReference);
+							}
+						});
+					}
+				}
+			}
+		}
 	}
 
 	private void firePartDeactivated(MPart part) {
@@ -4974,6 +5001,32 @@ public class WorkbenchPage implements IWorkbenchPage {
 						((IPartListener2) listener).partDeactivated(partReference);
 					}
 				});
+			}
+		} else if (client != null) {
+			if (part.getTransientData().get(E4PartWrapper.E4_WRAPPER_KEY) instanceof E4PartWrapper) {
+				IWorkbenchPart workbenchPart = (IWorkbenchPart) part.getTransientData()
+						.get(E4PartWrapper.E4_WRAPPER_KEY);
+				final IWorkbenchPartReference partReference = getReference(workbenchPart);
+
+				if (partReference != null) {
+					for (final Object listener : partListenerList.getListeners()) {
+						SafeRunner.run(new SafeRunnable() {
+							@Override
+							public void run() throws Exception {
+								((IPartListener) listener).partDeactivated(workbenchPart);
+							}
+						});
+					}
+
+					for (final Object listener : partListener2List.getListeners()) {
+						SafeRunner.run(new SafeRunnable() {
+							@Override
+							public void run() throws Exception {
+								((IPartListener2) listener).partDeactivated(partReference);
+							}
+						});
+					}
+				}
 			}
 		}
 	}
