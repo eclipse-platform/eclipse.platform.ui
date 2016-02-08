@@ -48,7 +48,7 @@ public class MozillaFactory extends BrowserFactory {
 		}
 	}*/
 
-	/**
+	/*
 	 * On some OSes 0 is always returned by "which" command it is necessary to
 	 * examine ouput to find out failure.
 	 *
@@ -81,7 +81,9 @@ public class MozillaFactory extends BrowserFactory {
 	@Override
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		// Create single browser for all clients
-		if (browserInstance == null || !browserInstance.getExecutable().equals(location)) {
+		if (browserInstance == null
+				|| !browserInstance.getExecutable().equals(location)
+				|| !browserInstance.getParameters().equals(parameters)) {
 			browserInstance = new MozillaBrowser(id, location, parameters);
 		}
 		return browserInstance;
