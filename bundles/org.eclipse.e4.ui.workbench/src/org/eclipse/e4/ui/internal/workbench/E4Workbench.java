@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.ServiceRegistration;
@@ -181,6 +182,9 @@ public class E4Workbench implements IWorkbench {
 
 	@Override
 	public boolean close() {
+		// Fire an E4 lifecycle notification
+		UIEvents.publishEvent(UIEvents.UILifeCycle.APP_SHUTDOWN_STARTED, appModel);
+
 		if (renderer != null) {
 			renderer.stop();
 		}
