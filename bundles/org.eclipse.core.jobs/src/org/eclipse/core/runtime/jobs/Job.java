@@ -160,8 +160,6 @@ public abstract class Job extends InternalJob implements IAdaptable {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					return function.run(monitor);
-				} catch (OperationCanceledException e) {
-					return Status.CANCEL_STATUS;
 				} finally {
 					monitor.done();
 				}
@@ -187,9 +185,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 				try {
 					runnable.run(monitor);
 				} catch (CoreException e) {
-					return e.getStatus();
-				} catch (OperationCanceledException e) {
-					return Status.CANCEL_STATUS;
+					IStatus st = e.getStatus();
+					return new Status(st.getSeverity(), st.getPlugin(), st.getCode(), st.getMessage(), e);
 				} finally {
 					monitor.done();
 				}
