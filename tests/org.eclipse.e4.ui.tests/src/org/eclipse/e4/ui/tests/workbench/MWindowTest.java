@@ -13,13 +13,16 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -63,6 +66,18 @@ public class MWindowTest {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG, PartRenderingEngine.engineURI);
+		appContext.set(UISynchronize.class, new UISynchronize() {
+			@Override
+			public void syncExec(Runnable runnable) {
+				runnable.run();
+			}
+
+			@Override
+			public void asyncExec(final Runnable runnable) {
+				runnable.run();
+			}
+		});
+		ContextInjectionFactory.setDefault(appContext);
 		ems = appContext.get(EModelService.class);
 	}
 
@@ -72,6 +87,7 @@ public class MWindowTest {
 			wb.close();
 		}
 		appContext.dispose();
+		ContextInjectionFactory.setDefault(null);
 	}
 
 	@Test
@@ -91,6 +107,7 @@ public class MWindowTest {
 		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		assertEquals("MyWindow", ((Shell) topWidget).getText());
+		// XXX Use of ACTIVE_SHELL fails when running standalone
 		assertEquals(topWidget, appContext.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
@@ -426,6 +443,55 @@ public class MWindowTest {
 
 		assertEquals(shell.getBounds().height, window.getHeight());
 		assertEquals(300, shell.getBounds().height);
+	}
+
+	@Test
+	public void testDetachedWindow() {
+		final MWindow window = ems.createModelElement(MWindow.class);
+		window.setLabel("MyWindow");
+		final MWindow detachedWindow = ems.createModelElement(MWindow.class);
+		detachedWindow.setLabel("DetachedWindow");
+		window.getWindows().add(detachedWindow);
+
+		MApplication application = ems.createModelElement(MApplication.class);
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class, application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertTrue(window.getWidget() instanceof Shell);
+		assertTrue(detachedWindow.getWidget() instanceof Shell);
+		Shell topShell = (Shell) window.getWidget();
+		Shell detachedShell = (Shell) detachedWindow.getWidget();
+		assertEquals(window, ems.getContainer(detachedWindow));
+		assertNull("Should have no shell image", topShell.getImage());
+		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+
+		// now set icon on top-level window; detached window should inherit it
+		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png");
+		while (topShell.getDisplay().readAndDispatch()) {
+		}
+		assertNotNull("Should have shell image", topShell.getImage());
+		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+
+		// change top-level icon; detached window should inherit it
+		window.setIconURI(null);
+		while (topShell.getDisplay().readAndDispatch()) {
+		}
+		assertNull("Should have no shell image", topShell.getImage());
+		assertEquals("Detached should have same image", topShell.getImage(), detachedShell.getImage());
+
+		// turn detached into top-level window; inherited icon should be removed
+		window.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png");
+		application.getChildren().add(detachedWindow);
+		while (topShell.getDisplay().readAndDispatch()) {
+		}
+		assertTrue(window.getWindows().isEmpty());
+		assertNotEquals(window, ems.getContainer(detachedWindow));
+		assertNotNull(topShell.getImage());
+		assertNull(detachedShell.getImage());
 	}
 
 	private MPart getContributedPart(MWindow window) {
