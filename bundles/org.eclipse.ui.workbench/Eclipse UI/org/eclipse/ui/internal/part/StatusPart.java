@@ -47,7 +47,7 @@ public class StatusPart {
     private Button detailsButton;
     private Composite detailsArea;
     private Control details = null;
-    private IStatus reason;
+	private IStatus reason;
 
     public StatusPart(final Composite parent, IStatus reason_) {
     	Color bgColor= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -59,7 +59,7 @@ public class StatusPart {
         this.reason = reason_;
         GridLayout layout = new GridLayout();
 
-        layout.numColumns = 3;
+		layout.numColumns = 3;
 
         int spacing = 8;
         int margins = 8;
@@ -77,16 +77,14 @@ public class StatusPart {
         if (image != null) {
             image.setBackground(bgColor);
             imageLabel.setImage(image);
-            imageLabel.setLayoutData(new GridData(
-                    GridData.HORIZONTAL_ALIGN_CENTER
-                            | GridData.VERTICAL_ALIGN_BEGINNING));
+			GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING);
+			imageLabel.setLayoutData(gridData);
         }
 
         Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
         text.setBackground(bgColor);
         text.setForeground(fgColor);
 
-        //text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.setText(reason.getMessage());
 
@@ -163,8 +161,7 @@ public class StatusPart {
             Text detailsText = new Text(detailsArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
                     | SWT.MULTI | SWT.READ_ONLY | SWT.LEFT_TO_RIGHT);
             detailsText.setText(getDetails(reason));
-            detailsText.setBackground(detailsText.getDisplay().getSystemColor(
-                    SWT.COLOR_LIST_BACKGROUND));
+			detailsText.setBackground(detailsText.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
             details = detailsText;
             detailsArea.layout(true);
         } else {
@@ -191,8 +188,7 @@ public class StatusPart {
     }
 
     private void createShowLogButton(Composite parent){
-		IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry()
-				.find(LOG_VIEW_ID);
+		IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry().find(LOG_VIEW_ID);
 		if (descriptor == null) {
 			return;
 		}
@@ -201,11 +197,9 @@ public class StatusPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getActivePage().showView(LOG_VIEW_ID);
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LOG_VIEW_ID);
 				} catch (CoreException ce) {
-					StatusManager.getManager().handle(ce,
-							WorkbenchPlugin.PI_WORKBENCH);
+					StatusManager.getManager().handle(ce, WorkbenchPlugin.PI_WORKBENCH);
 				}
 			}
 		});
