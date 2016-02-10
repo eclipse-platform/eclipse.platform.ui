@@ -11,8 +11,7 @@
 package org.eclipse.core.resources.ant;
 
 import java.io.File;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 import org.apache.tools.ant.types.Path;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -52,6 +51,11 @@ public class ConvertPath extends Task {
 	private String pathID = null;
 
 	/**
+	 * If false, note errors to the output, but keep going.
+	 */
+	private boolean failOnError = true;
+
+	/**
 	 * Constructs a new <code>ConvertPath</code> instance.
 	 */
 	public ConvertPath() {
@@ -79,8 +83,13 @@ public class ConvertPath extends Task {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
 		} else {
 			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
-			if (resource == null)
-				throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
+			if (resource == null) {
+				String message = Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString()); //$NON-NLS-1$
+				if (failOnError)
+					throw new BuildException(message);
+				log(message, Project.MSG_ERR);
+				return;
+			}
 		}
 		if (property != null)
 			getProject().setUserProperty(property, resource.getFullPath().toString());
@@ -103,10 +112,14 @@ public class ConvertPath extends Task {
 				resource = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		}
 
-		if (resource.getLocation() == null)
+		if (resource.getLocation() == null) {
 			// can occur if the first segment is not a project
-			throw new BuildException(Policy.bind("exception.pathNotValid", path.toString())); //$NON-NLS-1$
-
+			String message = Policy.bind("exception.pathNotValid", path.toString()); //$NON-NLS-1$
+			if (failOnError)
+				throw new BuildException(message);
+			log(message, Project.MSG_ERR);
+			return;
+		}
 		if (property != null)
 			getProject().setUserProperty(property, resource.getLocation().toOSString());
 		if (pathID != null) {
@@ -154,6 +167,22 @@ public class ConvertPath extends Task {
 	 */
 	public void setPathId(String value) {
 		pathID = value;
+	}
+
+	/**
+	 * Sets whether the build should fail for unknown workspace pathes.
+	 * If false, note errors to the output, but keep going.
+	 * <p>
+	 * This affects how non-existing workspace resources are handled. If true, a non-existing path
+	 * will cause the build to fail. If false, the result property and/or path will remain unset
+	 * and the error will be logged to the output.
+	 * <p>
+	 * Defaults to true
+	 *
+	 * @param value the failure policy
+	 */
+	public void setFailOnError(boolean value) {
+		failOnError = value;
 	}
 
 	/**
