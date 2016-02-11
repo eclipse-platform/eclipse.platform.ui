@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,88 +8,63 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google) - [458005] Provide a mechanism for disabling file system natives so that Java 7 filesystem.java7 classes can be tested
+ *								  [472554] Merge contents of o.e.c.filesystem.java7 plugin into o.e.c.filesystem
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
-import java.lang.reflect.InvocationTargetException;
+import java.nio.file.FileSystems;
+import java.util.Set;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.provider.FileInfo;
+import org.eclipse.core.internal.filesystem.local.nio.*;
 import org.eclipse.core.internal.filesystem.local.unix.UnixFileHandler;
 import org.eclipse.core.internal.filesystem.local.unix.UnixFileNatives;
 
 /**
  * Dispatches methods backed by native code to the appropriate platform specific 
  * implementation depending on a library provided by a fragment. Failing this it tries
- * to use Java 7 NIO/2 API's (if they are available).
+ * to use Java 7 NIO/2 API's.
  * <p>
  * Use of native libraries can be disabled by adding -Declipse.filesystem.useNatives=false to VM
  * arguments.
  */
 public class LocalFileNativesManager {
-	private static final NativeHandler DEFAULT = new NativeHandler() {
-		@Override
-		public boolean putFileInfo(String fileName, IFileInfo info, int options) {
-			return false;
-		}
-
-		@Override
-		public int getSupportedAttributes() {
-			return 0;
-		}
-
-		@Override
-		public FileInfo fetchFileInfo(String fileName) {
-			return new FileInfo();
-		}
-	};
-
-	private static NativeHandler DELEGATE = DEFAULT;
+	private static NativeHandler HANDLER;
+	private static boolean USING_NATIVES;
 
 	static {
 		boolean nativesAllowed = Boolean.valueOf(System.getProperty("eclipse.filesystem.useNatives", "true")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
 		if (nativesAllowed && UnixFileNatives.isUsingNatives()) {
-			DELEGATE = new UnixFileHandler();
+			HANDLER = new UnixFileHandler();
+			USING_NATIVES = true;
 		} else if (nativesAllowed && LocalFileNatives.isUsingNatives()) {
-			DELEGATE = new LocalFileHandler();
+			HANDLER = new LocalFileHandler();
+			USING_NATIVES = true;
 		} else {
-			try {
-				Class<?> c = LocalFileNativesManager.class.getClassLoader().loadClass("org.eclipse.core.internal.filesystem.java7.HandlerFactory"); //$NON-NLS-1$
-				DELEGATE = (NativeHandler) c.getMethod("getHandler").invoke(null); //$NON-NLS-1$
-			} catch (ClassNotFoundException e) {
-				// Class was missing?
-				// Leave the delegate as default
-			} catch (LinkageError e) {
-				// Maybe the bundle was somehow loaded, the class was there but the bytecodes were the wrong version?
-				// Leave the delegate as default
-			} catch (IllegalAccessException e) {
-				// We could not instantiate the object because we have no access
-				// Leave delegate as default
-			} catch (ClassCastException e) {
-				// The handler does not inherit from the correct class
-				// Leave delegate as default
-			} catch (InvocationTargetException e) {
-				// Exception was thrown from the getHandler method
-				// Leave delegate as default
-			} catch (NoSuchMethodException e) {
-				// The getHandler method was not found
-				// Leave delegate as default
+			Set<String> views = FileSystems.getDefault().supportedFileAttributeViews();
+			if (views.contains("posix")) { //$NON-NLS-1$
+				HANDLER = new PosixHandler();
+			} else if (views.contains("dos")) { //$NON-NLS-1$
+				HANDLER = new DosHandler();
+			} else {
+				HANDLER = new DefaultHandler();
 			}
 		}
 	}
 
 	public static int getSupportedAttributes() {
-		return DELEGATE.getSupportedAttributes();
+		return HANDLER.getSupportedAttributes();
 	}
 
 	public static FileInfo fetchFileInfo(String fileName) {
-		return DELEGATE.fetchFileInfo(fileName);
+		return HANDLER.fetchFileInfo(fileName);
 	}
 
 	public static boolean putFileInfo(String fileName, IFileInfo info, int options) {
-		return DELEGATE.putFileInfo(fileName, info, options);
+		return HANDLER.putFileInfo(fileName, info, options);
 	}
 
 	public static boolean isUsingNatives() {
-		return DELEGATE != DEFAULT;
+		return USING_NATIVES;
 	}
 }
