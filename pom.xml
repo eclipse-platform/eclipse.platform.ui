@@ -54,7 +54,6 @@
   <modules>
     <module>bundles/org.eclipse.core.filesystem</module>
     <module>bundles/org.eclipse.core.filesystem.hpux.ia64</module>
-    <module>bundles/org.eclipse.core.filesystem.java7</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc64</module>
     <module>bundles/org.eclipse.core.filesystem.linux.ppc64le</module>
