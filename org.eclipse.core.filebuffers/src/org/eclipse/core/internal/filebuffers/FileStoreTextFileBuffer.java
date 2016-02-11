@@ -67,6 +67,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
+			// do nothing
 		}
 
 		@Override
@@ -182,8 +183,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	}
 
 	private void setFileContents(InputStream stream, IProgressMonitor monitor) throws CoreException {
-		OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
-		try {
+		try(OutputStream out= fFileStore.openOutputStream(EFS.NONE, null)) {
 			byte[] buffer= new byte[8192];
 			while (true) {
 				int bytesRead= -1;
@@ -204,11 +204,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			try {
 				stream.close();
 			} catch (IOException e) {
-			} finally {
-				try {
-					out.close();
-				} catch (IOException e) {
-				}
+				// ignore
 			}
 		}
 	}
@@ -283,34 +279,24 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	@Override
 	public IContentType getContentType () throws CoreException {
-		InputStream stream= null;
 		try {
 			if (isDirty()) {
-				Reader reader= new DocumentReader(getDocument());
-				try {
+				try(Reader reader= new DocumentReader(getDocument())) {
 					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), NO_PROPERTIES);
 					if (desc != null && desc.getContentType() != null)
 						return desc.getContentType();
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException ex) {
-					}
 				}
 			}
-			stream= fFileStore.openInputStream(EFS.NONE, null);
-			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), NO_PROPERTIES);
-			if (desc != null && desc.getContentType() != null)
-				return desc.getContentType();
-			return null;
+
+			try(InputStream stream= fFileStore.openInputStream(EFS.NONE, null)) {
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFileStore.getName(), NO_PROPERTIES);
+				if (desc != null && desc.getContentType() != null)
+					return desc.getContentType();
+				return null;
+			}
+			
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.FileBuffer_error_queryContentDescription, fFileStore.toString()), x));
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException x) {
-			}
 		}
 	}
 
@@ -357,9 +343,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		fHasBOM= false;
 		fIsCacheUpdated= true;
 
-		InputStream stream= null;
-		try {
-			stream= getFileContents(fFileStore);
+		try(InputStream stream= getFileContents(fFileStore)) {
 			if (stream == null)
 				return;
 
@@ -374,13 +358,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			// do nothing
 		} catch (IOException e) {
 			// do nothing
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException ex) {
-				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.JavaTextFileBuffer_error_closeStream, ex));
-			}
 		}
 
 		// Use global default
@@ -464,8 +441,8 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 		} else {
 			fFileStore.getParent().mkdir(EFS.NONE, null);
-			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
-			try {
+
+			try(OutputStream out= fFileStore.openOutputStream(EFS.NONE, null)) {
 				/*
 				 * XXX:
 				 * This is a workaround for a corresponding bug in Java readers and writer,
@@ -480,11 +457,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			} catch (IOException x) {
 				IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
 				throw new CoreException(s);
-			} finally {
-				try {
-					out.close();
-				} catch (IOException x) {
-				}
 			}
 
 			// set synchronization stamp to know whether the file synchronizer must become active
@@ -503,8 +475,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			return fExplicitEncoding;
 
 		// Probe content
-		Reader reader= new DocumentReader(fDocument);
-		try {
+		try(Reader reader= new DocumentReader(fDocument)) {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), options);
 			if (description != null) {
@@ -514,11 +485,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			}
 		} catch (IOException ex) {
 			// Try next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException x) {
-			}
 		}
 
 		// Use file's encoding if the file has a BOM

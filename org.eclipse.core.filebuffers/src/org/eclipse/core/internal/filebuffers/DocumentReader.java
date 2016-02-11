@@ -121,7 +121,7 @@ class DocumentReader extends Reader {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		synchronized (this) {
 			fCharSequence= null;
 		}

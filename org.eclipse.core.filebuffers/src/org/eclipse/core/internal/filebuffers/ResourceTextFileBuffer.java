@@ -63,6 +63,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
+			// do nothing
 		}
 
 		@Override
@@ -199,18 +200,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public IContentType getContentType() throws CoreException {
 		try {
 			if (isDirty()) {
-				Reader reader= null;
-				try {
-					reader= new DocumentReader(getDocument());
+				try(Reader reader = new DocumentReader(getDocument())) {
 					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), NO_PROPERTIES);
 					if (desc != null && desc.getContentType() != null)
 						return desc.getContentType();
-				} finally {
-					try {
-						if (reader != null)
-							reader.close();
-					} catch (IOException x) {
-					}
 				}
 			}
 			IContentDescription desc= fFile.getContentDescription();
@@ -406,8 +399,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return fExplicitEncoding;
 
 		// Probe content
-		Reader reader= new DocumentReader(fDocument);
-		try {
+
+		try(Reader reader= new DocumentReader(fDocument)) {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
 			if (description != null) {
@@ -417,11 +410,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 		} catch (IOException ex) {
 			// try next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException x) {
-			}
 		}
 
 		// Use file's encoding if the file has a BOM

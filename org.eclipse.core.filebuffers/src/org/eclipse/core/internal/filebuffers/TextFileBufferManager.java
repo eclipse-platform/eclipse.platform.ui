@@ -265,9 +265,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IFileInfo fileInfo= fileStore.fetchInfo();
 		if (fileInfo.exists()) {
-			InputStream is= null;
-			try {
-				is= fileStore.openInputStream(EFS.NONE, null);
+
+			try(InputStream is= fileStore.openInputStream(EFS.NONE, null)) {
 				IContentDescription description= manager.getDescriptionFor(is, fileStore.getName(), IContentDescription.ALL);
 				if (description != null) {
 					IContentType type= description.getContentType();
@@ -278,14 +277,6 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				// ignore: API specification tells return true if content type can't be determined
 			} catch (IOException ex) {
 				// ignore: API specification tells return true if content type can't be determined
-			} finally {
-				if (is != null ) {
-					try {
-						is.close();
-					} catch (IOException e) {
-						// ignore: API specification tells to return true if content type can't be determined
-					}
-				}
 			}
 
 			return !strict;

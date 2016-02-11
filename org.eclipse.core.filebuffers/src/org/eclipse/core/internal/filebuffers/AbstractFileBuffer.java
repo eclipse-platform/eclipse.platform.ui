@@ -67,6 +67,7 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 	 * @since 3.1
 	 */
 	protected void dispose() {
+		// do nothing
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		 * that a element change failed message is sent out to the element state
 		 * listeners in case an exception occurred.
 		 */
-		private class SafeFileChange implements Runnable {
+		private abstract class SafeFileChange implements Runnable {
 
 			/**
 			 * Creates a new safe runnable for the given file.
@@ -62,8 +62,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			 *
 			 * @exception Exception in case of error
 			 */
-			protected void execute() throws Exception {
-			}
+			protected abstract void execute() throws Exception;
 
 			/**
 			 * Does everything necessary prior to execution.
@@ -439,6 +438,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		try {
 			fFile.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (OperationCanceledException x) {
+			// Ignore
 		} catch (CoreException x) {
 			handleCoreException(x);
 		}
