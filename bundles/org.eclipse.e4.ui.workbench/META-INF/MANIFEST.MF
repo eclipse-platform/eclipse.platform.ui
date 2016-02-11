@@ -42,5 +42,5 @@ Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml,
  OSGI-INF/localechangeservice.xml
 Import-Package: com.ibm.icu.text;version="3.8.1",
- javax.annotation;version="1.0.0",
+ javax.annotation,
  javax.inject;version="1.0.0"
