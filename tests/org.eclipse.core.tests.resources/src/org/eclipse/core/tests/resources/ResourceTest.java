@@ -12,6 +12,8 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.filesystem.*;
@@ -675,22 +677,32 @@ public abstract class ResourceTest extends CoreTest {
 	 * the cached value in the Workspace. 
 	 */
 	public void touchInFilesystem(IResource resource) {
-		java.io.File osFile = resource.getLocation().toFile();
 		// Ensure the resource exists in the filesystem
-		if (!osFile.exists())
+		IPath location = resource.getLocation();
+		if (!location.toFile().exists())
 			ensureExistsInFileSystem(resource);
 		// Manually check that the core.resource time-stamp is out-of-sync
 		// with the java.io.File last modified. #isSynchronized() will schedule
 		// out-of-sync resources for refresh, so we don't use that here.
-		for (int count = 0; count < 30 && osFile.lastModified() == resource.getLocalTimeStamp(); count++) {
+		for (int count = 0; count < 30 && getLastModifiedTime(location) == resource.getLocalTimeStamp(); count++) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// ignore
 			}
-			resource.getLocation().toFile().setLastModified(System.currentTimeMillis());
+			FileTime now = FileTime.fromMillis(System.currentTimeMillis());
+			try {
+				Files.setLastModifiedTime(location.toFile().toPath(), now);
+			} catch (IOException e) {
+				fail("#touchInFilesystem(IResource)", e);
+			}
 		}
-		assertTrue("File not out of sync: " + resource.getLocation().toOSString(), osFile.lastModified() != resource.getLocalTimeStamp());
+		assertTrue("File not out of sync: " + location.toOSString(), getLastModifiedTime(location) != resource.getLocalTimeStamp());
+	}
+
+	private long getLastModifiedTime(IPath fileLocation) {
+		IFileInfo fileInfo = EFS.getLocalFileSystem().getStore(fileLocation).fetchInfo();
+		return fileInfo.getLastModified();
 	}
 
 	private boolean existsInFileSystem(IResource resource) {
