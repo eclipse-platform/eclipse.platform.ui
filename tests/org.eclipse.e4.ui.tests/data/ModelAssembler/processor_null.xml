@@ -1,0 +1,10 @@
+<plugin>
+	<extension
+		id="id1"
+		point="org.eclipse.e4.workbench.model">
+		<processor
+			apply="always"
+			beforefragment="true">
+		</processor>
+	</extension>
+</plugin>

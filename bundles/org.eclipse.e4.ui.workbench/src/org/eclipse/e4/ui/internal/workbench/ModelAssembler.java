@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 BestSolution.at and others.
+ * Copyright (c) 2010, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430075, 430080, 431464, 433336, 472654
  *     René Brandstetter - Bug 419749
  *     Brian de Alwis (MTI) - Bug 433053
+ *     Alexandra Buzila - Refactoring
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -49,7 +50,9 @@ import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
- *
+ * The ModelAssembler is responsible for adding {@link MModelFragment fragments}
+ * and {@link MApplicationElement} imports to the application model and running
+ * pre- and post-processors on the model.
  */
 public class ModelAssembler {
 	@Inject
@@ -66,12 +69,21 @@ public class ModelAssembler {
 
 	final private static String extensionPointID = "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
 
-	//	private static final String ALWAYS = "always"; //$NON-NLS-1$
+	// private static final String ALWAYS = "always"; //$NON-NLS-1$
 	private static final String INITIAL = "initial"; //$NON-NLS-1$
 	private static final String NOTEXISTS = "notexists"; //$NON-NLS-1$
 
 	/**
-	 * Process the model
+	 * Processes the model. This will run pre-processors, process the fragments,
+	 * run post-processors and resolve imports, in this order. <br>
+	 * The <strong>org.eclipse.e4.workbench.model</strong> extension point will
+	 * be used to retrieve the contributed fragments (with imports) and
+	 * processors.<br>
+	 * Extension points will be sorted based on the dependencies of their
+	 * contributors.
+	 *
+	 * @param initial
+	 *            <code>true</code> if running from a non-persisted state
 	 */
 	public void processModel(boolean initial) {
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
@@ -85,32 +97,75 @@ public class ModelAssembler {
 		processFragments(extensions, imports, addedElements, initial);
 		// run processors which are marked to run after fragments
 		runProcessors(extensions, initial, true);
-
 		resolveImports(imports, addedElements);
 	}
 
 	/**
+	 * Adds the {@link MApplicationElement model elements} contributed by the
+	 * {@link IExtension extensions} to the {@link MApplication application
+	 * model}.
+	 *
 	 * @param extensions
+	 *            the list of {@link IExtension} extension elements
 	 * @param imports
+	 *            list that will be populated in place with the
+	 *            {@link MApplicationElement MApplicationElements} imported by
+	 *            the fragments
 	 * @param addedElements
+	 *            list that will be populated in place with the
+	 *            {@link MApplicationElement MApplicationElements} contributed
+	 *            by the fragments to the application model
+	 * @param initial
+	 *            <code>true</code> if running from a non-persisted state
 	 */
 	private void processFragments(IExtension[] extensions, List<MApplicationElement> imports,
 			List<MApplicationElement> addedElements, boolean initial) {
-
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
-				if ("fragment".equals(ce.getName())) { //$NON-NLS-1$
-					if (initial || !INITIAL.equals(ce.getAttribute("apply"))) { //$NON-NLS-1$
-						processFragment(ce, imports, addedElements, initial);
-					}
+				if ("fragment".equals(ce.getName()) && (initial || !INITIAL.equals(ce.getAttribute("apply")))) { //$NON-NLS-1$ //$NON-NLS-2$
+					boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
+					processFragmentConfigurationElement(ce, checkExist, imports, addedElements);
 				}
 			}
 		}
 	}
 
-	private void processFragment(IConfigurationElement ce, List<MApplicationElement> imports,
-			List<MApplicationElement> addedElements, boolean initial) {
+	private void processFragmentConfigurationElement(IConfigurationElement ce, boolean checkExist,
+			List<MApplicationElement> imports,
+			List<MApplicationElement> addedElements) {
+		MModelFragments fragmentsContainer = getFragmentsContainer(ce);
+		if (fragmentsContainer == null) {
+			return;
+		}
+		String contributorURI = URIHelper.constructPlatformURI(ce.getContributor());
+		boolean evalImports = false;
+		for (MModelFragment fragment : fragmentsContainer.getFragments()) {
+			Diagnostic validationResult = Diagnostician.INSTANCE.validate((EObject) fragment);
+			int severity = validationResult.getSeverity();
+			if (severity == Diagnostic.ERROR) {
+				logger.error("Fragment from \"" + "uri.toString()" + "\" of \"" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ ce.getContributor().getName() + "\" could not be validated and was not merged \"{0}\"", //$NON-NLS-1$
+						fragment.toString());
+
+				continue;
+			}
+
+			List<MApplicationElement> merged = processModelFragment(fragment, contributorURI, checkExist);
+			if (merged.size() > 0) {
+				evalImports = true;
+				addedElements.addAll(merged);
+			} else {
+				logger.debug("Nothing to merge for fragment \"{0}\" of \"{1}\"", ce.getAttribute("uri"), //$NON-NLS-1$ //$NON-NLS-2$
+						ce.getContributor().getName());
+			}
+		}
+		if (evalImports) {
+			imports.addAll(fragmentsContainer.getImports());
+		}
+	}
+
+	private MModelFragments getFragmentsContainer(IConfigurationElement ce) {
 		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
 		ResourceSet resourceSet = applicationResource.getResourceSet();
 		IContributor contributor = ce.getContributor();
@@ -118,7 +173,7 @@ public class ModelAssembler {
 		String bundleName = contributor.getName();
 		if (attrURI == null) {
 			logger.warn("Unable to find location for the model extension \"{0}\"", bundleName); //$NON-NLS-1$
-			return;
+			return null;
 		}
 
 		URI uri;
@@ -132,96 +187,99 @@ public class ModelAssembler {
 			}
 		} catch (RuntimeException e) {
 			logger.warn(e, "Invalid location \"" + attrURI + "\" of model extension \"" + bundleName + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return;
+			return null;
 		}
 
-		String contributorURI = URIHelper.constructPlatformURI(contributor);
 		Resource resource;
 		try {
 			resource = resourceSet.getResource(uri, true);
 		} catch (RuntimeException e) {
-			logger.warn(e, "Unable to read model extension from \"" + uri.toString() +"\" of \"" + bundleName + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return;
+			logger.warn(e, "Unable to read model extension from \"" + uri.toString() + "\" of \"" + bundleName + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return null;
 		}
 
 		EList<?> contents = resource.getContents();
 		if (contents.isEmpty()) {
-			return;
+			return null;
 		}
 
 		Object extensionRoot = contents.get(0);
 
 		if (!(extensionRoot instanceof MModelFragments)) {
 			logger.warn("Unable to create model extension \"{0}\"", bundleName); //$NON-NLS-1$
-			return;
+			return null;
 		}
-		boolean checkExist = !initial && NOTEXISTS.equals(ce.getAttribute("apply")); //$NON-NLS-1$
-
-		MModelFragments fragmentsContainer = (MModelFragments) extensionRoot;
-		List<MModelFragment> fragments = fragmentsContainer.getFragments();
-		boolean evalImports = false;
-		for (MModelFragment fragment : fragments) {
-			Diagnostic validationResult = Diagnostician.INSTANCE.validate((EObject) fragment);
-			int severity = validationResult.getSeverity();
-			if (severity == Diagnostic.ERROR) {
-				logger.error("Fragment from \"" + uri.toString() + "\" of \"" + bundleName // $NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$
-																							// //$NON-NLS-2$
-						+ "\" could not be validated and will not be merged \"{0}\"", fragment); // $NON-NLS-1$ //$NON-NLS-1$
-				continue;
-			}
-			List<MApplicationElement> elements = fragment.getElements();
-			if (elements.size() == 0) {
-				continue;
-			}
-
-			for (MApplicationElement el : elements) {
-				EObject o = (EObject) el;
-
-				E4XMIResource r = (E4XMIResource) o.eResource();
-
-				if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
-					continue;
-				}
-
-				applicationResource.setID(o, r.getID(o));
-
-				if (contributorURI != null)
-					el.setContributorURI(contributorURI);
-
-				// Remember IDs of subitems
-				TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
-				while (treeIt.hasNext()) {
-					EObject eObj = treeIt.next();
-					r = (E4XMIResource) eObj.eResource();
-					if (contributorURI != null && (eObj instanceof MApplicationElement))
-						((MApplicationElement) eObj).setContributorURI(contributorURI);
-					applicationResource.setID(eObj, r.getInternalId(eObj));
-				}
-			}
-
-			List<MApplicationElement> merged = fragment.merge(application);
-
-			if (merged.size() > 0) {
-				evalImports = true;
-				addedElements.addAll(merged);
-			} else {
-				logger.debug("Nothing to merge for \"{0}\"", uri); //$NON-NLS-1$
-			}
-		}
-
-		if (evalImports) {
-			List<MApplicationElement> localImports = fragmentsContainer.getImports();
-			if (localImports != null) {
-				imports.addAll(localImports);
-			}
-		}
+		return (MModelFragments) extensionRoot;
 	}
 
 	/**
-	 * @param extensions
-	 * @param afterFragments
+	 * Contributes the given {@link MModelFragment} to the application model.
+	 *
+	 * @param fragment
+	 *            the fragment to add to the application model
+	 * @param contributorURI
+	 *            the URI of the element that contributes this fragment
+	 * @param checkExist
+	 *            specifies whether we should check that the application model
+	 *            doesn't already contain the elements contributed by the
+	 *            fragment before merging them
+	 * @return a list of the {@link MApplicationElement} elements that were
+	 *         merged into the application model by the fragment
 	 */
-	private void runProcessors(IExtension[] extensions, boolean initial, boolean afterFragments) {
+	public List<MApplicationElement> processModelFragment(MModelFragment fragment, String contributorURI,
+			boolean checkExist) {
+
+		E4XMIResource applicationResource = (E4XMIResource) ((EObject) application).eResource();
+
+		List<MApplicationElement> elements = fragment.getElements();
+		if (elements.size() == 0) {
+			return new ArrayList<>();
+		}
+
+		for (MApplicationElement el : elements) {
+			EObject o = (EObject) el;
+
+			E4XMIResource r = (E4XMIResource) o.eResource();
+
+			if (checkExist && applicationResource.getIDToEObjectMap().containsKey(r.getID(o))) {
+				continue;
+			}
+
+			applicationResource.setID(o, r.getID(o));
+
+			if (contributorURI != null)
+				el.setContributorURI(contributorURI);
+
+			// Remember IDs of subitems
+			TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
+			while (treeIt.hasNext()) {
+				EObject eObj = treeIt.next();
+				r = (E4XMIResource) eObj.eResource();
+				if (contributorURI != null && (eObj instanceof MApplicationElement))
+					((MApplicationElement) eObj).setContributorURI(contributorURI);
+				applicationResource.setID(eObj, r.getInternalId(eObj));
+			}
+		}
+
+		return fragment.merge(application);
+	}
+
+	/**
+	 * Executes the processors as declared in provided {@link IExtension
+	 * extensions} array.
+	 *
+	 * @param extensions
+	 *            the array of {@link IExtension} extensions containing the
+	 *            processors
+	 * @param initial
+	 *            <code>true</code> if the application is running from a
+	 *            non-persisted state
+	 * @param afterFragments
+	 *            <code>true</code> if the processors that should be run before
+	 *            model fragments are merged are to be executed,
+	 *            <code>false</code> otherwise
+	 */
+	public void runProcessors(IExtension[] extensions, boolean initial, boolean afterFragments) {
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
@@ -260,11 +318,11 @@ public class ModelAssembler {
 		}
 
 		try {
-			Object o = factory
-					.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-							context, localContext);
+			Object o = factory.create("bundleclass://" + ce.getContributor().getName() + "/" + ce.getAttribute("class"), //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					context, localContext);
 			if (o == null) {
-				logger.warn("Unable to create processor " + ce.getAttribute("class") + " from " + ce.getContributor().getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				logger.warn("Unable to create processor " + ce.getAttribute("class") + " from " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						+ ce.getContributor().getName());
 			} else {
 				ContextInjectionFactory.invoke(o, Execute.class, context, localContext);
 			}
@@ -273,19 +331,27 @@ public class ModelAssembler {
 		}
 	}
 
-	private void resolveImports(List<MApplicationElement> imports,
-			List<MApplicationElement> addedElements) {
+	/**
+	 * Resolves the given list of imports used by the specified
+	 * <code>addedElements</code> in the application model.
+	 *
+	 * @param imports
+	 *            the list of elements that were imported by fragments and
+	 *            should be resolved in the application model
+	 * @param addedElements
+	 *            the list of elements contributed by the fragments to the
+	 *            application model
+	 */
+	public void resolveImports(List<MApplicationElement> imports, List<MApplicationElement> addedElements) {
 		if (imports.isEmpty())
 			return;
 		// now that we have all components loaded, resolve imports
 		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<>();
 		for (MApplicationElement importedElement : imports) {
-			MApplicationElement realElement = ModelUtils.findElementById(application,
-					importedElement.getElementId());
+			MApplicationElement realElement = ModelUtils.findElementById(application, importedElement.getElementId());
 			if (realElement == null) {
 				logger.warn("Could not resolve an import element for '" + realElement + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
 			importMaps.put(importedElement, realElement);
 		}
 

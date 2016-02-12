@@ -1,0 +1,22 @@
+<plugin>
+	<extension
+		id="id1"
+		point="org.eclipse.e4.workbench.model">
+		<processor
+			apply="initial"
+			beforefragment="true"
+			class="org.eclipse.e4.ui.tests.workbench.SimplePreProcessor">
+			<element
+				id="org.eclipse.e4.ui.tests.modelassembler.app">
+			</element>
+		</processor>
+		<processor
+			apply="initial"
+			beforefragment="false"
+			class="org.eclipse.e4.ui.tests.workbench.SimplePostProcessor">
+			<element
+				id="org.eclipse.e4.ui.tests.modelassembler.app">
+			</element>
+		</processor>
+	</extension>
+</plugin>
