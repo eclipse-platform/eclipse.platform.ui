@@ -82,6 +82,8 @@ public class DynamicXHTMLFilter implements IFilter {
 					boolean filter = ProductPreferences.useEnablementFilters();
 					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, filter);
 					transferContent(in2, out);
+					in2.close();
+					out.close();
 				}
 				catch (Throwable t) {
 					PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, CHARSET_UTF8));
