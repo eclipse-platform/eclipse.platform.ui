@@ -44,6 +44,7 @@ import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
  * @param quickSearchType	- (optional) specifies <code>QuickSearchTopic</code> for topic
  * 							  quick search
  * @param scope			- (optional) specifies search scope values
+ * @param noCategory	- (optional) if true, do not categorize by help topic
  * @param workingSet	- (optional) specifies the working set for scoped search
  * @param maxHits		- (optional) specifies the number of hits to return, default value is 500
  * @param fieldSearch	- (optional) specifies if field only search should be performed;
