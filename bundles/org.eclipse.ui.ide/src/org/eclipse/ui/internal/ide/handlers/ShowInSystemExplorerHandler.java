@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474273
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 487772
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.handlers;
@@ -46,7 +47,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	/**
 	 * Command id
 	 */
-	public static final String ID = "org.eclipse.ui.showIn.systemExplorer"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.ui.ide.showInSystemExplorer"; //$NON-NLS-1$
 
 	private static final String VARIABLE_RESOURCE = "${selected_resource_loc}"; //$NON-NLS-1$
 	private static final String VARIABLE_RESOURCE_URI = "${selected_resource_uri}"; //$NON-NLS-1$
