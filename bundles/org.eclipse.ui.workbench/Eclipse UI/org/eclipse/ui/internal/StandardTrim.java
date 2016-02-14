@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 471310
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -20,9 +21,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TaskBar;
+import org.eclipse.swt.widgets.TaskItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.ProgressRegion;
+import org.eclipse.ui.internal.progress.TaskBarProgressManager;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -64,6 +68,29 @@ public class StandardTrim {
 		child.set(MToolControl.class, toolControl);
 		child.set(Composite.class, parent);
 		ContextInjectionFactory.make(ProgressRegion.class, child);
+
+		if (parent.getDisplay() != null && parent.getDisplay().getSystemTaskBar() != null) {
+			// only create the TaskBarProgressManager if there is a TaskBar that
+			// the progress can be displayed on
+			TaskItem taskItem = null;
+			TaskBar systemTaskBar = parent.getDisplay().getSystemTaskBar();
+			taskItem = systemTaskBar.getItem(parent.getShell());
+			if (taskItem == null) {
+				// try to get the application TaskItem
+				taskItem = systemTaskBar.getItem(null);
+			}
+
+			if (taskItem != null) {
+				// If there is a TaskItem, see if there is
+				// TaskBarProgressManager already associated with it to make
+				// sure that we don't duplicate the progress information
+				String taskBarProgressManagerKey = TaskBarProgressManager.class.getName() + ".instance"; //$NON-NLS-1$
+				Object data = taskItem.getData(taskBarProgressManagerKey);
+				if (data == null || !(data instanceof TaskBarProgressManager)) {
+					taskItem.setData(taskBarProgressManagerKey, new TaskBarProgressManager(taskItem));
+				}
+			}
+		}
 	}
 
 	/**
