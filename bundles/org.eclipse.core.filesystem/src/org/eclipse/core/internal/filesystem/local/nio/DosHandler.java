@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris McGee (IBM) - Bug 380325 - Release filesystem fragment providing Java 7 NIO2 support
- *     Sergey Prigogin (Google) - ongoing 
+ *     Sergey Prigogin (Google) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local.nio;
 
