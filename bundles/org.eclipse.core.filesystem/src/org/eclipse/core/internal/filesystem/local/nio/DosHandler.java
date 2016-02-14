@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris McGee (IBM) - Bug 380325 - Release filesystem fragment providing Java 7 NIO2 support
+ *     Sergey Prigogin (Google) - ongoing 
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local.nio;
 
-import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.*;
 import java.nio.file.attribute.DosFileAttributeView;
 import java.nio.file.attribute.DosFileAttributes;
@@ -31,31 +33,14 @@ public class DosHandler extends NativeHandler {
 
 	@Override
 	public FileInfo fetchFileInfo(String fileName) {
-		Path path = Paths.get(fileName);
-		boolean exists = Files.exists(path, LinkOption.NOFOLLOW_LINKS);
-
 		FileInfo info = new FileInfo();
-		info.setExists(exists);
-
-		// Even if it doesn't exist then check for symbolic link information.
-		boolean isSymbolicLink = Files.isSymbolicLink(path);
-		if (isSymbolicLink) {
-			info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
-			try {
-				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
-			} catch (IOException e) {
-				// Leave the target alone.
-				info.setError(IFileInfo.IO_ERROR);
-			}
-		}
-
-		// See bug 431983.
-		if (!exists)
-			return info;
 
 		try {
+			Path path = Paths.get(fileName);
+
 			// Use canonical file to get the correct case of filename. See bug 431983.
-			String canonicalName = new File(fileName).getCanonicalFile().getName();
+			Path fileNamePath = path.toRealPath(LinkOption.NOFOLLOW_LINKS).getFileName();
+			String canonicalName = fileNamePath == null ? "" : fileNamePath.toString(); //$NON-NLS-1$
 			info.setName(canonicalName);
 
 			// To be consistent with the native implementation we do not follow a symbolic link
@@ -63,19 +48,37 @@ public class DosHandler extends NativeHandler {
 			// about the symbolic link itself whether it exists or not.
 			DosFileAttributes attrs = Files.readAttributes(path, DosFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
 
+			info.setExists(true);
 			info.setLastModified(attrs.lastModifiedTime().toMillis());
 			info.setLength(attrs.size());
-			// Follow symbolic links because symbolic link targeting a directory is considered a directory.
-			info.setDirectory(Files.isDirectory(path));
-
 			info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, attrs.isArchive());
 			info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, attrs.isReadOnly());
 			info.setAttribute(EFS.ATTRIBUTE_HIDDEN, attrs.isHidden());
+			if (attrs.isSymbolicLink()) {
+				info.setDirectory(isDirectoryLink(attrs));
+				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
+			} else {
+				info.setDirectory(attrs.isDirectory());
+			}
+		} catch (NoSuchFileException e) {
+			// A non-existing file is not considered an error.
 		} catch (IOException e) {
 			// Leave alone and continue.
 			info.setError(IFileInfo.IO_ERROR);
 		}
 		return info;
+	}
+
+	private boolean isDirectoryLink(DosFileAttributes attrs) {
+		// Use reflection to call package protected WindowsFileAttributes.isDirectoryLink() method.
+		try {
+			Method method = attrs.getClass().getDeclaredMethod("isDirectoryLink"); //$NON-NLS-1$
+			method.setAccessible(true);
+			return (Boolean) method.invoke(attrs);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			return false;
+		}
 	}
 
 	@Override
