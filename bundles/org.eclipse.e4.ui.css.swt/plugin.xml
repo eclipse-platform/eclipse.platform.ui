@@ -445,7 +445,10 @@
             composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectHotTabsColorBackgroundHandler">
          <property-name
-               name="unselected-hot-tab-color-background">
+               name="swt-unselected-hot-tab-color-background">
+         </property-name>
+         <property-name
+               name="unselected-hot-tab-color-background" deprecated="renamed as swt-unselected-hot-tab-color-background">
          </property-name>
       </handler>
       <handler
