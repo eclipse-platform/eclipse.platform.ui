@@ -16,6 +16,8 @@ package org.eclipse.core.internal.filesystem.local;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
@@ -208,13 +210,14 @@ public class LocalFile extends FileStore {
 	 * to optimize java.io.File object creation.
 	 */
 	private boolean internalDelete(File target, String pathToDelete, MultiStatus status, IProgressMonitor monitor) {
-		//first try to delete - this should succeed for files and symbolic links to directories
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		if (target.delete() || !target.exists())
+		try {
+			// First try to delete - this should succeed for files and symbolic links to directories.
+			Files.deleteIfExists(target.toPath());
 			return true;
-		if (target.isDirectory()) {
+		} catch (DirectoryNotEmptyException e) {
 			monitor.subTask(NLS.bind(Messages.deleting, target));
 			String[] list = target.list();
 			if (list == null)
@@ -225,35 +228,40 @@ public class LocalFile extends FileStore {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				//optimized creation of child path object
-				StringBuffer childBuffer = new StringBuffer(parentLength + list[i].length() + 1);
+				// Optimized creation of child path object
+				StringBuilder childBuffer = new StringBuilder(parentLength + list[i].length() + 1);
 				childBuffer.append(pathToDelete);
 				childBuffer.append(File.separatorChar);
 				childBuffer.append(list[i]);
 				String childName = childBuffer.toString();
-				// try best effort on all children so put logical OR at end
+				// Try best effort on all children so put logical OR at end.
 				failedRecursive = !internalDelete(new java.io.File(childName), childName, status, monitor) || failedRecursive;
 				monitor.worked(1);
 			}
 			try {
-				// don't try to delete the root if one of the children failed
-				if (!failedRecursive && target.delete())
+				// Don't try to delete the root if one of the children failed.
+				if (!failedRecursive && Files.deleteIfExists(target.toPath()))
 					return true;
-			} catch (Exception e) {
-				// we caught a runtime exception so log it
+			} catch (Exception e1) {
+				// We caught a runtime exception so log it.
 				String message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-				status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, e));
+				status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, e1));
 				return false;
 			}
+			// If we got this far, we failed.
+			String message = null;
+			if (fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
+				message = NLS.bind(Messages.couldnotDeleteReadOnly, target.getAbsolutePath());
+			} else {
+				message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
+			}
+			status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null));
+			return false;
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
+			status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, e));
+			return false;
 		}
-		//if we got this far, we failed
-		String message = null;
-		if (fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY))
-			message = NLS.bind(Messages.couldnotDeleteReadOnly, target.getAbsolutePath());
-		else
-			message = NLS.bind(Messages.couldnotDelete, target.getAbsolutePath());
-		status.add(new Status(IStatus.ERROR, Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null));
-		return false;
 	}
 
 	@Override
