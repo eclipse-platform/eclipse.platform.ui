@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bugs 411578, 486842
+ *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bugs 411578, 486842, 487673
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -320,7 +320,14 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		panel.setLayout(layout);
 		recentWorkspacesComposites = new HashMap<>(launchData.getRecentWorkspaces().length);
 		Map<String, String> uniqueWorkspaceNames = createUniqueWorkspaceNameMap();
-		for (Entry<String, String> uniqueWorkspaceEntry : uniqueWorkspaceNames.entrySet()) {
+
+		List<String> recentWorkspacesList = Arrays.asList(launchData.getRecentWorkspaces()).stream()
+				.filter(s -> s != null && !s.isEmpty()).collect(Collectors.toList());
+		List<Entry<String, String>> sortedList = uniqueWorkspaceNames.entrySet().stream().sorted((e1, e2) -> Integer
+				.compare(recentWorkspacesList.indexOf(e1.getValue()), recentWorkspacesList.indexOf(e2.getValue())))
+				.collect(Collectors.toList());
+
+		for (Entry<String, String> uniqueWorkspaceEntry : sortedList) {
 			final String recentWorkspace = uniqueWorkspaceEntry.getValue();
 
 			Composite recentWorkspacePanel = new Composite(panel, SWT.NONE);
