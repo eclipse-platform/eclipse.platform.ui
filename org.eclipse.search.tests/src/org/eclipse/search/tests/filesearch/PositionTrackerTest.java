@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.eclipse.core.resources.IFile;
@@ -41,6 +42,9 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 public class PositionTrackerTest {
 	FileSearchQuery fQuery1;
+
+	@ClassRule
+	public static JUnitSourceSetup junitSource= new JUnitSourceSetup();
 
 	@Before
 	public void setUp() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.eclipse.core.runtime.CoreException;
@@ -28,7 +29,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -109,6 +109,9 @@ public class FileSearchTests {
 		}
 
 	}
+
+	@ClassRule
+	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
 	private IProject fProject;
 	
@@ -226,7 +229,7 @@ public class FileSearchTests {
 
 	private void testWildCards3(TestResultCollector collector) throws Exception {
 		
-		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(AllFileSearchTests.STANDARD_PROJECT_NAME);
+		IProject project= fgJUnitSource.getStandardProject();
 		IFile openFile1= (IFile) project.findMember("junit/framework/TestCase.java");
 		IFile openFile2= (IFile) project.findMember("junit/extensions/ExceptionTestCase.java");
 		IFile openFile3= (IFile) project.findMember("junit/framework/Assert.java");

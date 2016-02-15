@@ -26,25 +26,25 @@ import org.eclipse.text.tests.templates.TemplatesTestSuite;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	LineTrackerTest4.class,
-	DocumentExtensionTest.class,
-	LineTrackerTest3.class,
-	DocumentTest.class,
-	FindReplaceDocumentAdapterTest.class,
-	PositionUpdatingCornerCasesTest.class,
-	ExclusivePositionUpdaterTest.class,
-	TextEditTests.class,
-	GapTextTest.class,
-	GapTextStoreTest.class,
-	ChildDocumentTest.class,
-	ProjectionTestSuite.class,
-	LinkTestSuite.class,
-	CopyOnWriteTextStoreTest.class,
-	TextUtilitiesTest.class,
-	AnnotationModelStressTest.class,
-	AnnotationModelExtension2Test.class,
-	TemplatesTestSuite.class
+		LineTrackerTest4.class,
+		DocumentExtensionTest.class,
+		LineTrackerTest3.class,
+		DocumentTest.class,
+		FindReplaceDocumentAdapterTest.class,
+		PositionUpdatingCornerCasesTest.class,
+		ExclusivePositionUpdaterTest.class,
+		TextEditTests.class,
+		GapTextTest.class,
+		GapTextStoreTest.class,
+		ChildDocumentTest.class,
+		ProjectionTestSuite.class,
+		LinkTestSuite.class,
+		CopyOnWriteTextStoreTest.class,
+		TextUtilitiesTest.class,
+		AnnotationModelStressTest.class,
+		AnnotationModelExtension2Test.class,
+		TemplatesTestSuite.class
 })
 public class EclipseTextTestSuite {
-	//intentionally left blank
+	// see @SuiteClasses
 }

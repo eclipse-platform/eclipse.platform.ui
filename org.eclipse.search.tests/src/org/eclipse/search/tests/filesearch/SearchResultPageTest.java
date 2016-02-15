@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 
 package org.eclipse.search.tests.filesearch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -41,6 +43,9 @@ import org.eclipse.search.ui.text.Match;
 
 public class SearchResultPageTest {
 	FileSearchQuery fQuery1;
+
+	@ClassRule
+	public static JUnitSourceSetup fgJUnitSource= new JUnitSourceSetup();
 
 	@Before
 	public void setUp() throws Exception {
@@ -78,7 +83,7 @@ public class SearchResultPageTest {
 
 	
 	@Test
-	@Ignore
+	@Ignore // checkElementDisplay(..) misses cases where one line contains multiple matches
 	public void testRemoveTreeMatches() throws Exception {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		ISearchResultViewPart view= NewSearchUI.getSearchResultView();

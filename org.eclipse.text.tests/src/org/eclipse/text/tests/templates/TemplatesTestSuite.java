@@ -23,9 +23,10 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	TemplateTranslatorTest.class,
-	TemplateVariablesWordSelectionTest.class,
-	GlobalTemplateVariablesDateTest.class})
+		TemplateTranslatorTest.class,
+		TemplateVariablesWordSelectionTest.class,
+		GlobalTemplateVariablesDateTest.class
+})
 public class TemplatesTestSuite {
-	// intentionally empty
+	// see @SuiteClasses
 }

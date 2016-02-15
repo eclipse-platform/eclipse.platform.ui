@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,21 +29,23 @@ import org.eclipse.jface.text.tests.rules.WordRuleTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	HTML2TextReaderTest.class,
-	TextHoverPopupTest.class,
-	TextPresentationTest.class,
-	DefaultUndoManagerTest.class,
-	TextViewerTest.class,
-	TextViewerUndoManagerTest.class,
-	DefaultPairMatcherTest.class,
-	DefaultPairMatcherTest2.class,
-	AbstractReconcilerTest.class,
-	DefaultPartitionerTest.class,
-	DefaultPartitionerZeroLengthTest.class,
-	FastPartitionerTest.class,
-	ScannerColumnTest.class,
-	WordRuleTest.class
+		HTML2TextReaderTest.class,
+		TextHoverPopupTest.class,
+		TextPresentationTest.class,
+		DefaultUndoManagerTest.class,
+		TextViewerTest.class,
+		TextViewerUndoManagerTest.class,
+		DefaultPairMatcherTest.class,
+		DefaultPairMatcherTest2.class,
+
+		AbstractReconcilerTest.class,
+
+		DefaultPartitionerTest.class,
+		DefaultPartitionerZeroLengthTest.class,
+		FastPartitionerTest.class,
+		ScannerColumnTest.class,
+		WordRuleTest.class
 })
 public class JFaceTextTestSuite {
-//	intentionally left empty
+	// see @SuiteClasses
 }

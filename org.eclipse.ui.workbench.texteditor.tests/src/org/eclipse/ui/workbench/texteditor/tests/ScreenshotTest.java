@@ -13,7 +13,9 @@ package org.eclipse.ui.workbench.texteditor.tests;
 import java.io.File;
 import java.io.PrintStream;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -34,9 +36,12 @@ import org.eclipse.ui.PlatformUI;
 
 public class ScreenshotTest {
 
+	@Rule
+	public TestName testName = new TestName();
+
 	@Test
 	public void testScreenshot() throws Exception {
-		takeScreenshot(ScreenshotTest.class, ScreenshotTest.class.getSimpleName(), System.out);
+		takeScreenshot(ScreenshotTest.class, testName.getMethodName(), System.out);
 	}
 
 	@Test
@@ -65,7 +70,7 @@ public class ScreenshotTest {
         System.out.println("* CTRL up " + display.post(event));
         
         runEventQueue();
-        takeScreenshot(ScreenshotTest.class, ScreenshotTest.class.getSimpleName() + 2, System.out);
+        takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
         
         event.type= SWT.KeyDown;
         event.character= SWT.ESC;
@@ -75,7 +80,7 @@ public class ScreenshotTest {
         System.out.println("* ESC up " + display.post(event));
         
         runEventQueue();
-        takeScreenshot(ScreenshotTest.class, ScreenshotTest.class.getSimpleName() + 3, System.out);
+        takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
 	}
 	
 	/**

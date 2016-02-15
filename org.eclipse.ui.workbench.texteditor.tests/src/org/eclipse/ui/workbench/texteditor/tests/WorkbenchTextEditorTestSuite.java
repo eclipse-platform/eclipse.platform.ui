@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,14 +27,14 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	FindReplaceDialogTest.class,
-	HippieCompletionTest.class,
-	RangeTest.class,
-	ChangeRegionTest.class,
-	RulerTestSuite.class,
-	HunkComputerTest.class,
-	ScreenshotTest.class
+		FindReplaceDialogTest.class,
+		HippieCompletionTest.class,
+		RangeTest.class,
+		ChangeRegionTest.class,
+		RulerTestSuite.class,
+		HunkComputerTest.class,
+		ScreenshotTest.class
 })
 public class WorkbenchTextEditorTestSuite {
-	//intentionally left blank
+	// see @SuiteClasses
 }

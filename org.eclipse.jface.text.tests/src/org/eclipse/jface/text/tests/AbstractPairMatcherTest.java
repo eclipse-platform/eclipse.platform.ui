@@ -44,7 +44,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcherExtension;
  */
 public abstract class AbstractPairMatcherTest {
 
-	private boolean fCaretEitherSideOfBracket;
+	private final boolean fCaretEitherSideOfBracket;
 
 	public AbstractPairMatcherTest(boolean caretEitherSideOfBracket) {
 		fCaretEitherSideOfBracket= caretEitherSideOfBracket;

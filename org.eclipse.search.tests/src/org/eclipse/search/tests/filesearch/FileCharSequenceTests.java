@@ -128,8 +128,8 @@ public class FileCharSequenceTests {
 		
 		assertOutOfBound(desc + "access at length", actual, expected.length());
 		assertOutOfBound(desc + "access at -1", actual, -1);
-		
-		assertEquals(desc + " - length", actual.toString(), expected.toString());
+
+		Assert.assertEquals(desc + " - length", actual.toString(), expected.toString());
 	}
 	
 	

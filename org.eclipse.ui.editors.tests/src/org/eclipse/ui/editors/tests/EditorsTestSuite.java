@@ -22,13 +22,13 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	ChainedPreferenceStoreTest.class,
-	EncodingChangeTests.class,
-	GotoLineTest.class,
-	SegmentedModeTest.class,
-	MarkerAnnotationOrderTest.class,
-	ZoomTest.class
+		ChainedPreferenceStoreTest.class,
+		EncodingChangeTests.class,
+		GotoLineTest.class,
+		SegmentedModeTest.class,
+		MarkerAnnotationOrderTest.class,
+		ZoomTest.class
 })
 public class EditorsTestSuite {
-	//intentionally left blank
+	// see @SuiteClasses
 }
