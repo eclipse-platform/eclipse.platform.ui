@@ -4393,5 +4393,18 @@
             id="org.eclipse.ui.tests.editorAssociationOverride1">
       </editorAssociationOverride>
    </extension>
+   <extension
+         id="DynamicToolbarContributionTest"
+         point="org.eclipse.ui.menus">
+   <menuContribution
+       locationURI="toolbar:org.eclipse.ui.trim.status">
+              <toolbar id="org.eclipse.ui.trim.status">
+              <dynamic
+              class="org.eclipse.ui.tests.menus.DynamicToolbarTest$MyStatusBar"
+                id="org.eclipse.ui.tests.dynamicToolbarContribution">
+              </dynamic>
+              </toolbar>
+   </menuContribution>
+   </extension>
    
 </plugin>

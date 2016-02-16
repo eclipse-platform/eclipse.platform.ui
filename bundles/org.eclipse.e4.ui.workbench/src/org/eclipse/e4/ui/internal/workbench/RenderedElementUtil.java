@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2014, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Axel Richard <axel.richard@obeo.fr> - Bug 392457
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -17,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 
 /**
  * Utility class that encapsulates the representation of 'rendered' menu and tool bar elements in
@@ -64,6 +66,19 @@ public class RenderedElementUtil {
 	 */
 	public static MToolBar createRenderedToolBar() {
 		final MToolBar object = MMenuFactory.INSTANCE.createToolBar();
+		object.getTags().add(RENDERED_TAG);
+		return object;
+	}
+
+	/**
+	 * Create a 'rendered' tool bar element instance
+	 *
+	 * @return the new instance
+	 *
+	 * @since 1.4
+	 */
+	public static MToolControl createRenderedToolBarElement() {
+		final MToolControl object = MMenuFactory.INSTANCE.createToolControl();
 		object.getTags().add(RENDERED_TAG);
 		return object;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 221662 [Contributions] Extension point org.eclipse.ui.menus: sub menu contribution does not have icon even if specified
  *     Christian Walther (Indel AG) - Bug 398631: Use correct menu item icon from commandImages
  *     Christian Walther (Indel AG) - Bug 384056: Use disabled icon from extension definition
+ *     Axel Richard <axel.richard@obeo.fr> - Bug 392457
  *******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -414,17 +415,32 @@ public class MenuAdditionCacheEntry {
 
 		IConfigurationElement[] items = toolbar.getChildren();
 		for (int i = 0; i < items.length; i++) {
-			String itemType = items[i].getName();
+			final IConfigurationElement item = items[i];
+			String itemType = item.getName();
 
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
-				MToolBarElement element = createToolBarCommandAddition(items[i]);
+				MToolBarElement element = createToolBarCommandAddition(item);
 				toolBarContribution.getChildren().add(element);
-
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
-				MToolBarElement element = createToolBarSeparatorAddition(items[i]);
+				MToolBarElement element = createToolBarSeparatorAddition(item);
 				toolBarContribution.getChildren().add(element);
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
-				MToolBarElement element = createToolControlAddition(items[i]);
+				MToolBarElement element = createToolControlAddition(item);
+				toolBarContribution.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
+				ContextFunction generator = new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context, String contextKey) {
+						ServiceLocator sl = new ServiceLocator();
+						sl.setContext(context);
+						DynamicToolBarContributionItem dynamicItem = new DynamicToolBarContributionItem(
+								MenuHelper.getId(item), sl, item);
+						return dynamicItem;
+					}
+				};
+
+				MToolBarElement element = createToolDynamicAddition(item);
+				RenderedElementUtil.setContributionManager(element, generator);
 				toolBarContribution.getChildren().add(element);
 			}
 		}
@@ -434,6 +450,17 @@ public class MenuAdditionCacheEntry {
 		} else {
 			contributions.add(toolBarContribution);
 		}
+	}
+
+	private MToolBarElement createToolDynamicAddition(IConfigurationElement element) {
+		String id = MenuHelper.getId(element);
+		MToolControl control = RenderedElementUtil.createRenderedToolBarElement();
+		control.setElementId(id);
+		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
+		ControlContributionRegistry.add(id, element);
+		control.setVisibleWhen(MenuHelper.getVisibleWhen(element));
+		createIdentifierTracker(control);
+		return control;
 	}
 
 	private MToolBarElement createToolControlAddition(IConfigurationElement element) {
