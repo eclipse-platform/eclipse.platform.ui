@@ -188,7 +188,7 @@ public final class ParameterizedCommand implements Comparable {
 			// This is it, so just return the current parameterizations.
 			for (int i = 0; i < parameterizationCount; i++) {
 				final Parameterization parameterization = (Parameterization) parameterizations.get(i);
-				final List<Parameterization> combination = new ArrayList<Parameterization>(1);
+				final List<Parameterization> combination = new ArrayList<>(1);
 				combination.add(parameterization);
 				parameterizations.set(i, combination);
 			}
@@ -204,7 +204,7 @@ public final class ParameterizedCommand implements Comparable {
 			// This is it, so just return the current parameterizations.
 			for (int i = 0; i < parameterizationCount; i++) {
 				final Parameterization parameterization = (Parameterization) parameterizations.get(i);
-				final List<Parameterization> combination = new ArrayList<Parameterization>(1);
+				final List<Parameterization> combination = new ArrayList<>(1);
 				combination.add(parameterization);
 				parameterizations.set(i, combination);
 			}
@@ -299,7 +299,7 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		try {
-			ArrayList<Parameterization> parms = new ArrayList<Parameterization>();
+			ArrayList<Parameterization> parms = new ArrayList<>();
 			Iterator<?> i = parameters.keySet().iterator();
 
 			// iterate over given parameters
@@ -594,7 +594,7 @@ public final class ParameterizedCommand implements Comparable {
 			return Collections.EMPTY_MAP;
 		}
 
-		final Map<String, String> parameterMap = new HashMap<String, String>();
+		final Map<String, String> parameterMap = new HashMap<>();
 		for (int i = 0; i < parameterizations.length; i++) {
 			final Parameterization parameterization = parameterizations[i];
 			parameterMap.put(parameterization.getParameter().getId(), parameterization.getValue());
