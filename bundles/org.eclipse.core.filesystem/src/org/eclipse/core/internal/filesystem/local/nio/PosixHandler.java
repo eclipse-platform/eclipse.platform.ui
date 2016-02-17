@@ -4,11 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris McGee (IBM) - Bug 380325 - Release filesystem fragment providing Java 7 NIO2 support
- *     Sergey Prigogin (Google) - Bug 458006 - Fix tests that fail on Mac when filesystem.java7 is used
+ *     Sergey Prigogin (Google) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local.nio;
 
@@ -36,38 +36,26 @@ public class PosixHandler extends NativeHandler {
 	@Override
 	public FileInfo fetchFileInfo(String fileName) {
 		Path path = Paths.get(fileName);
-		boolean exists = Files.exists(path);
-
 		FileInfo info = new FileInfo();
-		info.setExists(exists);
-
-		// Even if it doesn't exist then check for symbolic link information.
-		boolean isSymbolicLink = Files.isSymbolicLink(path);
-		if (isSymbolicLink) {
-			info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
-			try {
-				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
-			} catch (IOException e) {
-				// Leave the target alone.
-				info.setError(IFileInfo.IO_ERROR);
-			}
-		}
 
 		// Fill in the name of the file.
 		// If the file system is case insensitive, we don't know the real name of the file.
 		// Since obtaining the real name in such situation is pretty expensive, we use the name
 		// passed as a parameter, which may differ by case from the real name of the file
 		// if the file system is case insensitive.
-		info.setName(path.toFile().getName());
-
-		// If the destination of the link doesn't exist then we do not provide any more information
-		// about the link itself. This is consistent with the existing native implementation.
-		if (!exists)
-			return info;
+		Path fileNamePath = path.getFileName();
+		info.setName(fileNamePath == null ? "" : fileNamePath.toString()); //$NON-NLS-1$
 
 		try {
-			PosixFileAttributes attrs = Files.readAttributes(path, PosixFileAttributes.class);
+			PosixFileAttributes attrs = Files.readAttributes(path, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
 
+			if (attrs.isSymbolicLink()) {
+				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, Files.readSymbolicLink(path).toString());
+				attrs = Files.readAttributes(path, PosixFileAttributes.class);
+			}
+
+			info.setExists(true);
 			info.setLastModified(attrs.lastModifiedTime().toMillis());
 			info.setLength(attrs.size());
 			info.setDirectory(attrs.isDirectory());
@@ -82,6 +70,8 @@ public class PosixHandler extends NativeHandler {
 			info.setAttribute(EFS.ATTRIBUTE_OTHER_READ, perms.contains(PosixFilePermission.OTHERS_READ));
 			info.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, perms.contains(PosixFilePermission.OTHERS_WRITE));
 			info.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, perms.contains(PosixFilePermission.OTHERS_EXECUTE));
+		} catch (NoSuchFileException e) {
+			// A non-existing file is not considered an error.
 		} catch (IOException e) {
 			// Leave alone and continue.
 			info.setError(IFileInfo.IO_ERROR);

@@ -4,11 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google) - [458005] Provide a mechanism for disabling file system natives so that Java 7 filesystem.java7 classes can be tested
- *								  [472554] Merge contents of o.e.c.filesystem.java7 plugin into o.e.c.filesystem
+ *     Sergey Prigogin (Google) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -21,12 +20,15 @@ import org.eclipse.core.internal.filesystem.local.unix.UnixFileHandler;
 import org.eclipse.core.internal.filesystem.local.unix.UnixFileNatives;
 
 /**
- * Dispatches methods backed by native code to the appropriate platform specific 
+ * Dispatches methods backed by native code to the appropriate platform specific
  * implementation depending on a library provided by a fragment. Failing this it tries
  * to use Java 7 NIO/2 API's.
  * <p>
  * Use of native libraries can be disabled by adding -Declipse.filesystem.useNatives=false to VM
  * arguments.
+ * <p>
+ * Please notice that the native implementation is significantly faster than the non-native one.
+ * The BenchFileStore test runs 3.1 times faster on Linux with the native code than without it.
  */
 public class LocalFileNativesManager {
 	private static NativeHandler HANDLER;
