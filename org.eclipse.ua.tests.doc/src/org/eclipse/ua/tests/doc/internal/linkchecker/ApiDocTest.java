@@ -50,11 +50,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import junit.framework.TestCase;
 
 public class ApiDocTest extends TestCase {
-	
+
 	static class InternalExtensionFoundException extends SAXException {
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	static class InternalExtensionFinder extends DefaultHandler {
 		/* Look for this pattern:
 		   <element name="extension">
@@ -62,9 +62,9 @@ public class ApiDocTest extends TestCase {
 		         <appInfo>
 		            <meta.element internal="true" />
 		 */
-		
+
 		int state = 0;
-		
+
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			switch (state) {
@@ -72,17 +72,17 @@ public class ApiDocTest extends TestCase {
 				if ("element".equalsIgnoreCase(qName) && "extension".equals(attributes.getValue("name")))
 					state = 1;
 				break;
-				
+
 			case 1:
 				if ("annotation".equalsIgnoreCase(qName))
 					state = 2;
 				break;
-				
+
 			case 2:
 				if ("appInfo".equalsIgnoreCase(qName))
 					state = 3;
 				break;
-				
+
 			case 3:
 				if ("meta.element".equalsIgnoreCase(qName) && "true".equals(attributes.getValue("internal"))) {
 					throw new InternalExtensionFoundException();
@@ -90,13 +90,13 @@ public class ApiDocTest extends TestCase {
 				break;
 			}
 		}
-		
+
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName) {
 			state = 0;
 		}
 	}
-	
+
 	private static final String[] TOCS = {
 			"org.eclipse.platform.doc.isv",
 			"org.eclipse.jdt.doc.isv",
@@ -106,29 +106,32 @@ public class ApiDocTest extends TestCase {
 	private static final String REFERENCE_EXTENSION_POINTS = "reference/extension-points/";
 	private static final String REFERENCE_API = "reference/api/";
 	private static final Pattern NON_API_PACKAGES = Pattern.compile(".+\\.(?:internal|tests|examples)(?:\\..+)?");
-	
+
 	/**
-	 * Missing extension points / API packages currently don't make this test fail,
-	 * since the list contains false positives (esp. when run locally). The test doesn't
-	 * know which bundles eventually end up in the build, and which bundles are:
+	 * Missing extension points / API packages currently don't make this test
+	 * fail, since the list contains false positives (esp. when run locally).
+	 * The test doesn't know which bundles eventually end up in the build, and
+	 * which bundles are:
 	 * <ul>
 	 * <li>part of the test infrastructure</li>
 	 * <li>dependencies (e.g. from Orbit)</li>
-	 * <li>unrelated projects in the user's workspace that are not excluded in the launch configuration</li>
+	 * <li>unrelated projects in the user's workspace that are not excluded in
+	 * the launch configuration</li>
 	 * </ul>
-	 * 
-	 * However, the test prints potentially missing extension points / API packages to System.out.
-	 * 
-	 * @throws Exception 
+	 *
+	 * However, the test prints potentially missing extension points / API
+	 * packages to System.out.
+	 *
+	 * @throws Exception
 	 */
 	public void testTopicsReference() throws Exception {
 		System.out.println("Running " + ApiDocTest.class.getName() + "#testTopicsReference()\n");
-		
+
 		StringBuilder problems = new StringBuilder();
-		
+
 		Set<String> extIds = new TreeSet<String>();
 		Set<String> packageIds = new TreeSet<String>();
-		
+
 		TocFileParser parser = new TocFileParser();
 		for (String tocFile : TOCS) {
 			TocContribution contribution = parser.parse(new TocFile(tocFile, TOPICS_REFERENCE_XML, true, "en", null, null));
@@ -168,17 +171,17 @@ public class ApiDocTest extends TestCase {
 				}
 			}
 		}
-		
+
 		checkExtensionPoints(extIds, problems);
 		checkPackages(packageIds, problems);
-		
+
 		assertEquals("", problems.toString());
 	}
 
 	private static void checkExtensionPoints(Set<String> extIds, StringBuilder problems) throws Exception {
 		Callable<BundleInfo[]> sourceBundlesCache= new Callable<BundleInfo[]>() {
 			private BundleInfo[] bundleInfos;
-			
+
 			@Override
 			public BundleInfo[] call() throws Exception {
 				if (bundleInfos == null) {
@@ -190,9 +193,9 @@ public class ApiDocTest extends TestCase {
 				return bundleInfos;
 			}
 		};
-		
+
 		Set<String> registeredIds = new TreeSet<String>();
-		
+
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint[] extensionPoints = registry.getExtensionPoints();
 		for (IExtensionPoint extensionPoint : extensionPoints) {
@@ -218,7 +221,7 @@ public class ApiDocTest extends TestCase {
 			}
 			registeredIds.add(id);
 		}
-		
+
 		TreeSet<String> unexpectedTocIds = new TreeSet<String>(extIds);
 		unexpectedTocIds.removeAll(registeredIds);
 		if (!unexpectedTocIds.isEmpty()) {
@@ -227,7 +230,7 @@ public class ApiDocTest extends TestCase {
 				problems.append(unexpectedTocId).append('\n');
 			}
 		}
-		
+
 		registeredIds.removeAll(extIds);
 		if (!registeredIds.isEmpty()) {
 			// these currently don't make the test fail, since the list contains false positives (esp. when run locally)
@@ -263,10 +266,10 @@ public class ApiDocTest extends TestCase {
 			return null;
 		}
 	}
-	
+
 	private static void checkPackages(Set<String> packageIds, StringBuilder problems) {
 		Set<String> exportedPackageIds = new TreeSet<String>();
-		
+
 		exportedPackageIds.add("org.eclipse.core.runtime.adaptor"); // not exported, but makes sense to document since accessible from outside of OSGi framework
 		exportedPackageIds.add("org.eclipse.swt.ole.win32"); // somehow missing from State#getExportedPackages(), maybe because it's declared in the fragment only
 
@@ -294,7 +297,7 @@ public class ApiDocTest extends TestCase {
 //				System.out.append("Exported package without class files: ").append(name).append('\n');
 			}
 		}
-		
+
 		TreeSet<String> unexpectedPackageIds = new TreeSet<String>(packageIds);
 		unexpectedPackageIds.removeAll(exportedPackageIds);
 		if (!unexpectedPackageIds.isEmpty()) {
@@ -303,7 +306,7 @@ public class ApiDocTest extends TestCase {
 				problems.append(unexpectedTocId).append('\n');
 			}
 		}
-		
+
 		exportedPackageIds.removeAll(packageIds);
 		if (!exportedPackageIds.isEmpty()) {
 			// these currently don't make the test fail, since the list contains false positives (esp. when run locally)

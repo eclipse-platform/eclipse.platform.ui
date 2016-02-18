@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.help.internal.webapp.servlet.ExtraFilters;
 import org.eclipse.help.internal.webapp.servlet.PrioritizedFilter;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ua.tests.doc.internal.dialogs.SelectTocDialog;
 import org.eclipse.ua.tests.doc.internal.linkchecker.AddScriptFilter;
 import org.eclipse.ua.tests.doc.internal.linkchecker.OnLoadFilter;
@@ -163,7 +164,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		showErrors();
 		SelectTocDialog dlg = new SelectTocDialog(window.getShell());
 		dlg.open();
-		if (dlg.getReturnCode() == SelectTocDialog.CANCEL) {
+		if (dlg.getReturnCode() == Window.CANCEL) {
 			return;
 		}
 		int testKind = dlg.getTestKind();
