@@ -21,26 +21,31 @@ public class TestParameterSubstitution {
 
 	private static final String URL = "http://127.0.0.1:3873/help/index.jsp";
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testNullParameters() {
 		assertEquals(URL, WebBrowserUtil.createParameterString(null, URL));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testEmptyParameters() {
 		assertEquals(URL, WebBrowserUtil.createParameterString("", URL));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testNullURL() {
 		assertEquals("", WebBrowserUtil.createParameterString("", null));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testNoSubstitution() {
 		assertEquals("-console " + URL, WebBrowserUtil.createParameterString("-console", URL));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSubstitution() {
 		assertEquals("-url " + URL + " -console", WebBrowserUtil.createParameterString("-url %URL% -console", URL));
