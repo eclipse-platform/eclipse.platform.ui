@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
-    public static List<BrokenLink> errors = new ArrayList<BrokenLink>();
+	public static List<BrokenLink> errors = new ArrayList<>();
 
     public static void showErrors() {
     	if (errors.size() == 0) {

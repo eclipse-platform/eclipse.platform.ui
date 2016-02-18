@@ -25,7 +25,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class CheckLinkAction implements ILiveHelpAction {
 
 	private static final String HELP_TOPIC = "/help/topic";
-	private static Map<String, String> links = new HashMap<String, String>();
+	private static Map<String, String> links = new HashMap<>();
 	private String link;
 	public final static String ALL_PAGES_LOADED = "ALL_PAGES_LOADED";
 	public final static String CHECK_LINKS = "CHECK_LINKS";
@@ -66,15 +66,15 @@ public class CheckLinkAction implements ILiveHelpAction {
 				url = new URL(next);
 				//URLConnection connection = url.openConnection();
 				//connection.
-				InputStream input = url.openStream();
-			    int nextChar = input.read();
-			    if (nextChar == -1) {
-			    	System.out.println("Cannot read " + next);
-			    	opened = false;
-			    } else {
-			    	opened = true;
-			    }
-			    input.close();
+				try (InputStream input = url.openStream()) {
+					int nextChar = input.read();
+					if (nextChar == -1) {
+						System.out.println("Cannot read " + next);
+						opened = false;
+					} else {
+						opened = true;
+					}
+				}
 			} catch (Exception e) {
 				opened = false;
 			}
@@ -86,7 +86,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 		}
 		//EclipseConnector.setNotFoundCallout(null);
 	    setPageNotFoundPreference(errorPage);
-		links = new HashMap<String, String>();
+		links = new HashMap<>();
 		System.out.println("End check links");
 	}
 

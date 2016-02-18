@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,8 +129,8 @@ public class ApiDocTest extends TestCase {
 
 		StringBuilder problems = new StringBuilder();
 
-		Set<String> extIds = new TreeSet<String>();
-		Set<String> packageIds = new TreeSet<String>();
+		Set<String> extIds = new TreeSet<>();
+		Set<String> packageIds = new TreeSet<>();
 
 		TocFileParser parser = new TocFileParser();
 		for (String tocFile : TOCS) {
@@ -194,7 +194,7 @@ public class ApiDocTest extends TestCase {
 			}
 		};
 
-		Set<String> registeredIds = new TreeSet<String>();
+		Set<String> registeredIds = new TreeSet<>();
 
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint[] extensionPoints = registry.getExtensionPoints();
@@ -222,7 +222,7 @@ public class ApiDocTest extends TestCase {
 			registeredIds.add(id);
 		}
 
-		TreeSet<String> unexpectedTocIds = new TreeSet<String>(extIds);
+		TreeSet<String> unexpectedTocIds = new TreeSet<>(extIds);
 		unexpectedTocIds.removeAll(registeredIds);
 		if (!unexpectedTocIds.isEmpty()) {
 			problems.append("\n* Unexpected extension points in " + TOPICS_REFERENCE_XML + ":\n");
@@ -268,7 +268,7 @@ public class ApiDocTest extends TestCase {
 	}
 
 	private static void checkPackages(Set<String> packageIds, StringBuilder problems) {
-		Set<String> exportedPackageIds = new TreeSet<String>();
+		Set<String> exportedPackageIds = new TreeSet<>();
 
 		exportedPackageIds.add("org.eclipse.core.runtime.adaptor"); // not exported, but makes sense to document since accessible from outside of OSGi framework
 		exportedPackageIds.add("org.eclipse.swt.ole.win32"); // somehow missing from State#getExportedPackages(), maybe because it's declared in the fragment only
@@ -298,7 +298,7 @@ public class ApiDocTest extends TestCase {
 			}
 		}
 
-		TreeSet<String> unexpectedPackageIds = new TreeSet<String>(packageIds);
+		TreeSet<String> unexpectedPackageIds = new TreeSet<>(packageIds);
 		unexpectedPackageIds.removeAll(exportedPackageIds);
 		if (!unexpectedPackageIds.isEmpty()) {
 			problems.append("\n* Unexpected exported API packages in " + TOPICS_REFERENCE_XML + ":\n");

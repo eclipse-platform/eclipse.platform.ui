@@ -42,7 +42,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	private static ArrayList<String> topicList;
 	private static String firstHref;
-    public static List<String> errors = new ArrayList<String>();
+	public static List<String> errors = new ArrayList<>();
     public static String lastPage;
     public static String currentPage;
 
@@ -179,7 +179,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		}
 
 		firstHref = null;
-		topicList = new ArrayList<String>();
+		topicList = new ArrayList<>();
 		for (Toc toc : tocsToCheck) {
 		    reportStatus("Test level = " + testKind + " testing " + toc.getTocContribution().getId());
 		    ITopic[] topics = toc.getTopics();
@@ -189,7 +189,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 		LinkProvider linkProvider = new LinkProvider(topicList);
 		OnLoadFilter.setLinkProvider(linkProvider);
 		EclipseConnector.setNotFoundCallout(new NotFoundCallout());
-		errors = new ArrayList<String>();
+		errors = new ArrayList<>();
 		if (linkProvider.hasNext()) {
 			firstHref = linkProvider.next();
 		    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(firstHref);

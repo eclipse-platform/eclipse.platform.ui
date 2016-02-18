@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class SelectTocDialog extends Dialog {
 	}
 
 	public Toc[] getTocsToCheck() {
-		ArrayList<Toc> selected = new ArrayList<Toc>();
+		ArrayList<Toc> selected = new ArrayList<>();
 		for (int selectedToc : selectedTocs) {
 		    selected.add(tocs[selectedToc]);
 		}
