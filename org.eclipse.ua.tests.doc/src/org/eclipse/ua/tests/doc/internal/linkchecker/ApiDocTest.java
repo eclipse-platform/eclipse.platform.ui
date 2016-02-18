@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.doc.internal.linkchecker;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.Set;
@@ -39,6 +41,7 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.ua.tests.doc.internal.Activator;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -47,9 +50,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import junit.framework.TestCase;
-
-public class ApiDocTest extends TestCase {
+public class ApiDocTest {
 
 	static class InternalExtensionFoundException extends SAXException {
 		private static final long serialVersionUID = 1L;
@@ -124,6 +125,7 @@ public class ApiDocTest extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testTopicsReference() throws Exception {
 		System.out.println("Running " + ApiDocTest.class.getName() + "#testTopicsReference()\n");
 

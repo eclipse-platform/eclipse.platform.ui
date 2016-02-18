@@ -17,10 +17,7 @@ import java.util.List;
 import org.eclipse.help.internal.validation.TocValidator;
 import org.eclipse.help.internal.validation.TocValidator.BrokenLink;
 import org.junit.Assert;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
 /**
  * Contains tests for the documentation bundles that
@@ -36,7 +33,7 @@ import junit.framework.TestSuite;
  * if that project is checked out in your workspace.
  */
 
-public class TocLinkChecker extends TestCase {
+public class TocLinkChecker {
 
 	private final class ReferenceFilter extends TocValidator.Filter {
 		@Override
@@ -72,45 +69,49 @@ public class TocLinkChecker extends TestCase {
 	private static final String[] JDT_USER = {"/org.eclipse.jdt.doc.user/toc.xml"};
 	private static final String[] JDT_ISV = {"/org.eclipse.jdt.doc.isv/toc.xml"};
 
-	public static Test suite() {
-		return new TestSuite(TocLinkChecker.class);
-	}
-
+	@Test
 	public void testPlatformUser() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.validate(PLATFORM_USER);
 		doAssert(failures);
 	}
 
+	@Test
 	public void testPlatformIsvStatic() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PLATFORM_ISV, new NonReferenceNonSampleFilter());
 		doAssert(failures);
 	}
 
+	@Test
 	public void testPlatformIsvGenerated() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PLATFORM_ISV, new ReferenceOrSampleFilter());
 		doAssert(failures);
 	}
 
+	@Test
 	public void testPdeUserStatic() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PDE_USER, new NonReferenceFilter());
 		doAssert(failures);
 	}
 
+	@Test
 	public void testPdeUserGenerated() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(PDE_USER, new ReferenceFilter());
 		doAssert(failures);
 	}
 
+	@Test
 	public void testJdtUser() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.validate(JDT_USER);
 		doAssert(failures);
 	}
 
+	@Test
 	public void testJdtIsvStatic() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(JDT_ISV, new NonReferenceFilter());
 		doAssert(failures);
 	}
 
+	@Test
 	public void testJdtIsvGenerated() throws Exception {
 		ArrayList<BrokenLink> failures = TocValidator.filteredValidate(JDT_ISV, new ReferenceFilter());
 		doAssert(failures);

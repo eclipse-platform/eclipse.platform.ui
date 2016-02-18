@@ -10,30 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.doc.internal.linkchecker;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2009, 2016 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-public class PrebuiltIndexChecker extends TestCase {
+public class PrebuiltIndexChecker {
 
 	private static final String PLATFORM_USER = "org.eclipse.platform.doc.user";
 	private static final String PLATFORM_ISV = "org.eclipse.platform.doc.isv";
@@ -41,26 +39,27 @@ public class PrebuiltIndexChecker extends TestCase {
 	private static final String JDT_USER = "org.eclipse.jdt.doc.user";
 	private static final String JDT_ISV = "org.eclipse.jdt.doc.isv";
 
-	public static Test suite() {
-		return new TestSuite(PrebuiltIndexChecker.class);
-	}
-
+	@Test
 	public void testPlatformUserIndex() {
 		validateIndex(PLATFORM_USER, "index");
 	}
 
+	@Test
 	public void testPlatformIsvIndex() {
 		validateIndex(PLATFORM_ISV, "index");
 	}
 
+	@Test
 	public void testPdeUserIndex() {
 		validateIndex(PDE_USER, "index");
 	}
 
+	@Test
 	public void testJdtUserIndex() {
 		validateIndex(JDT_USER, "index");
 	}
 
+	@Test
 	public void testJdtIsvIndex() {
 		validateIndex(JDT_ISV, "index");
 	}
