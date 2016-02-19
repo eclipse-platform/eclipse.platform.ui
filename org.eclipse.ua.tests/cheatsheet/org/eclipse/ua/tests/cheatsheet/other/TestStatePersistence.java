@@ -68,11 +68,11 @@ public class TestStatePersistence {
 		propsToSave.currentItem = 2;
 		propsToSave.id = TEST_ID;
 		propsToSave.contentPath = PATH;
-		propsToSave.completed = new ArrayList<String>();
-		propsToSave.expanded = new ArrayList<String>();
-		propsToSave.expandRestore = new ArrayList<String>();
-		propsToSave.subItemCompleted = new Hashtable<String, String>();
-		propsToSave.subItemSkipped = new Hashtable<String, String>();
+		propsToSave.completed = new ArrayList<>();
+		propsToSave.expanded = new ArrayList<>();
+		propsToSave.expandRestore = new ArrayList<>();
+		propsToSave.subItemCompleted = new Hashtable<>();
+		propsToSave.subItemSkipped = new Hashtable<>();
 		CheatSheetElement csElement = new CheatSheetElement(TEST_ID);
 		propsToSave.manager = new CheatSheetManager(csElement);
 	}

@@ -84,10 +84,8 @@ public class PluginsRootReplacement {
 
 	private void checkFilter(final String input, final String expected) {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		OutputStream filteredOutput = new PluginsRootResolvingStream(output, null, "../");
-		try {
+		try (OutputStream filteredOutput = new PluginsRootResolvingStream(output, null, "../")) {
 			filteredOutput.write(input.getBytes());
-			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}
@@ -162,16 +160,14 @@ public class PluginsRootReplacement {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(),
 		"/data/help/performance/search/" + filename);
 		assertNotNull(testURL);
-		InputStream input = testURL.openStream();
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		while (input.available() > 0) {
-			int next = input.read();
-			output.write(next);
+		try (InputStream input = testURL.openStream(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			while (input.available() > 0) {
+				int next = input.read();
+				output.write(next);
+			}
+			String data = output.toString();
+			checkFilter(data, data);
 		}
-		String data = output.toString();
-		checkFilter(data, data);
-		input.close();
-		output.close();
 	}
 
 }

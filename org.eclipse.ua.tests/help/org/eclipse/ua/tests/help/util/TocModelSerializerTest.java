@@ -81,7 +81,7 @@ public class TocModelSerializerTest {
 	 * Find all the TOC files to use for this test.
 	 */
 	public static Collection<TocFile> getTocFiles() {
-		Collection<TocFile> tocFiles = new ArrayList<TocFile>();
+		Collection<TocFile> tocFiles = new ArrayList<>();
 		IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, "toc");
 		IExtension[] extensions = xpt.getExtensions();
 		for (IExtension extension : extensions) {

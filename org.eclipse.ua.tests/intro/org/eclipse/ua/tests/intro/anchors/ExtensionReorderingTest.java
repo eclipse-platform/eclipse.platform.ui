@@ -154,7 +154,7 @@ public class ExtensionReorderingTest {
             String attributeValue) {
 
         // find all configs with given attribute and attribute value.
-        Vector<IConfigurationElement> elements = new Vector<IConfigurationElement>();
+		Vector<IConfigurationElement> elements = new Vector<>();
         for (IConfigurationElement configElement : configElements) {
             String currentAttributeValue = configElement
                 .getAttribute(attributeName);

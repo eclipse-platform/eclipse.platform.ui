@@ -224,7 +224,7 @@ public class WorkingSetManagerTest {
 
 	private void createWsetWithAllTocs(WorkingSetManager mgr, String name) {
 		WorkingSet wset = new WorkingSet(name);
-		List<AdaptableToc> tocList = new ArrayList<AdaptableToc>();
+		List<AdaptableToc> tocList = new ArrayList<>();
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 		for (Toc toc : tocs) {
 			tocList.add(mgr.getAdaptableToc(toc.getHref()));

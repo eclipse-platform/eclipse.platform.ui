@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.help.IUAElement;
 
 public class UserTopic implements ITopic {
 
-	private List<ITopic> children = new ArrayList<ITopic>();
+	private List<ITopic> children = new ArrayList<>();
 	private boolean isEnabled;
 	private String href;
 	private String label;

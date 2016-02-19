@@ -53,8 +53,7 @@ public class FilterTest {
 	@Test
 	public void testHeadOutputFilter() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		OutputStream filteredOutput = new FilterHTMLHeadOutputStream(output, CSS2.getBytes());
-		try {
+		try (OutputStream filteredOutput = new FilterHTMLHeadOutputStream(output, CSS2.getBytes())) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEAD1.getBytes());
 			filteredOutput.write(CSS1.getBytes());
@@ -73,8 +72,8 @@ public class FilterTest {
 	@Test
 	public void testHeadAndBodyOutputFilter() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS2.getBytes(), CONTENT2);
-		try {
+		try (FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output,
+				CSS2.getBytes(), CONTENT2)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEAD1.getBytes());
 			filteredOutput.write(CONTENT_TYPE_ISO_8859_1.getBytes());
@@ -94,8 +93,7 @@ public class FilterTest {
 	@Test
 	public void testLowerCaseTags() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2);
-		try {
+		try (OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEADLC1.getBytes());
 			filteredOutput.write(HEADLC2.getBytes());
@@ -113,8 +111,7 @@ public class FilterTest {
 	@Test
 	public void testFilterHeadlessDocument() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2);
-		try {
+		try (OutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, CSS1.getBytes(), CONTENT2)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(BODY1.getBytes());
 			filteredOutput.write(CONTENT1.getBytes());
@@ -130,8 +127,8 @@ public class FilterTest {
 	@Test
 	public void testInsertChineseUtf8() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
-		try {
+		try (FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null,
+				CHINESE_CONTENT)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEAD1.getBytes());
 			filteredOutput.write(CONTENT_TYPE_UTF8.getBytes());
@@ -149,8 +146,8 @@ public class FilterTest {
 	@Test
 	public void testInsertChineseISO8859() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
-		try {
+		try (FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null,
+				CHINESE_CONTENT)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEAD1.getBytes());
 			filteredOutput.write(CONTENT_TYPE_ISO_8859_1.getBytes());
@@ -168,8 +165,8 @@ public class FilterTest {
 	@Test
 	public void testInsertChineseNoCharsetSpecified() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
-		try {
+		try (FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null,
+				CHINESE_CONTENT)) {
 			filteredOutput.write(HTML40.getBytes());
 			filteredOutput.write(HEAD1.getBytes());
 			filteredOutput.write(HEAD2.getBytes());

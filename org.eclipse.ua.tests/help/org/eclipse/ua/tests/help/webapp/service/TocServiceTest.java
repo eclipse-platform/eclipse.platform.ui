@@ -33,15 +33,15 @@ public class TocServiceTest extends TocServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/toc?lang=" + locale);
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("tocContributions", root.getNodeName());
-		return root;
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("tocContributions", root.getNodeName());
+			return root;
+		}
 	}
 
 	/*

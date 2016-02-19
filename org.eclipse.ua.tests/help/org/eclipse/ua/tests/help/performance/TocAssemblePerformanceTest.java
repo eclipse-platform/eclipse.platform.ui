@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.toc.TocAssembler;
 import org.eclipse.help.internal.toc.TocContribution;
@@ -29,6 +26,9 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class TocAssemblePerformanceTest extends PerformanceTestCase {
 
@@ -51,7 +51,7 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 
 	public void assembleToc() throws Exception {
 		TocFileParser parser = new TocFileParser();
-		List<TocContribution> contributions = new ArrayList<TocContribution>();
+		List<TocContribution> contributions = new ArrayList<>();
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/jdttoc.xml"));
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/topics_Guide.xml"));
 		contributions.add(parse(parser, "data/help/performance/org.eclipse.jdt.doc.isv/topics_Porting.xml"));

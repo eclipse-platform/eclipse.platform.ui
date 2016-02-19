@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexAssembler;
@@ -30,6 +27,9 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 
@@ -73,7 +73,7 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		IndexContribution b = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/performance/index/index2.xml", "en"));
 		IndexContribution c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/performance/index/index3.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
-		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(a, b, c));
+		List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(a, b, c));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());
 		assertEquals(100, assembled.getChildren().length);
 	}

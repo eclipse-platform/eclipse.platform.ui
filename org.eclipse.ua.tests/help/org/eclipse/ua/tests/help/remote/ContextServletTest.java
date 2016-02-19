@@ -92,24 +92,24 @@ public class ContextServletTest {
 	protected Element[] makeServletCall(URL url) throws IOException,
 			ParserConfigurationException, FactoryConfigurationError,
 			SAXException {
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("context", root.getNodeName());
-		NodeList children = root.getChildNodes();
-		List<Node> topics = new ArrayList<Node>();
-		int length = children.getLength();
-		for (int i = 0; i < length; i++) {
-			Node next = children.item(i);
-			if ("topic".equals(next.getNodeName())) {
-				topics.add(next);
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("context", root.getNodeName());
+			NodeList children = root.getChildNodes();
+			List<Node> topics = new ArrayList<>();
+			int length = children.getLength();
+			for (int i = 0; i < length; i++) {
+				Node next = children.item(i);
+				if ("topic".equals(next.getNodeName())) {
+					topics.add(next);
+				}
 			}
+			return topics.toArray(new Element[topics.size()]);
 		}
-		return topics.toArray(new Element[topics.size()]);
 	}
 
 }

@@ -87,9 +87,9 @@ public class IntroModelSerializerTest {
 				IntroModelSerializer serializer = new IntroModelSerializer(model);
 
 				String file = FileUtil.getResultFile(pluginRoot + content);
-				PrintWriter out = new PrintWriter(new FileOutputStream(file));
-				out.print(serializer.toString());
-				out.close();
+				try (PrintWriter out = new PrintWriter(new FileOutputStream(file))) {
+					out.print(serializer.toString());
+				}
 
 				/*
 				 * Now do the intro XHTML files. Find all the XHTML files
@@ -100,9 +100,9 @@ public class IntroModelSerializerTest {
 				while (iter.hasNext()) {
 					Map.Entry<String, String> entry = iter.next();
 					file = FileUtil.getResultFile(pluginRoot + entry.getKey());
-					out = new PrintWriter(new FileOutputStream(file));
-					out.print(entry.getValue());
-					out.close();
+					try (PrintWriter out = new PrintWriter(new FileOutputStream(file))) {
+						out.print(entry.getValue());
+					}
 				}
 			}
 		}
@@ -115,8 +115,8 @@ public class IntroModelSerializerTest {
 	 * contents of the XHTML files.
 	 */
 	public static Map<String, String> getXHTMLFiles(IntroModelRoot model) {
-		Map<String, String> map = new HashMap<String, String>();
-		Collection<AbstractIntroPage> pages = new ArrayList<AbstractIntroPage>();
+		Map<String, String> map = new HashMap<>();
+		Collection<AbstractIntroPage> pages = new ArrayList<>();
 		IntroHomePage home = model.getRootPage();
 		if (home.isXHTMLPage()) {
 			pages.add(home);

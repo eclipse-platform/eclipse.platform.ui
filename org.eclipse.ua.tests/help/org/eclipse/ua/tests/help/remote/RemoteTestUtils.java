@@ -55,19 +55,19 @@ public class RemoteTestUtils {
 
 	public static String readFromURL(URL url) throws IOException,
 			UnsupportedEncodingException {
-		InputStream is = url.openStream();
-		InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8");
-		StringBuffer buffer = new StringBuffer();
-		char[] cbuf = new char[256];
-		int len;
-		do {
-			len = inputStreamReader.read(cbuf);
-			if (len > 0) {
-				buffer.append(cbuf, 0, len);
-			}
-		} while (len >= 0);
-		inputStreamReader.close();
-		return buffer.toString();
+		try (InputStream is = url.openStream();
+				InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8")) {
+			StringBuffer buffer = new StringBuffer();
+			char[] cbuf = new char[256];
+			int len;
+			do {
+				len = inputStreamReader.read(cbuf);
+				if (len > 0) {
+					buffer.append(cbuf, 0, len);
+				}
+			} while (len >= 0);
+			return buffer.toString();
+		}
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,19 +56,19 @@ public class FileUtil {
 	 * as a String.
 	 */
 	public static String readString(InputStream in) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		byte[] buffer = new byte[4096];
-		int num;
-		while ((num = in.read(buffer)) > 0) {
-			out.write(buffer, 0, num);
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			byte[] buffer = new byte[4096];
+			int num;
+			while ((num = in.read(buffer)) > 0) {
+				out.write(buffer, 0, num);
+			}
+			String result = new String(out.toByteArray(), "UTF-8");
+			if (result.length() > 0) {
+				// filter windows-specific newline
+				result = result.replaceAll("\r", "");
+			}
+			// ignore whitespace at start or end
+			return result.trim();
 		}
-		String result = new String(out.toByteArray(), "UTF-8");
-		if (result.length() > 0) {
-			// filter windows-specific newline
-			result = result.replaceAll("\r", "");
-		}
-		out.close();
-		// ignore whitespace at start or end
-		return result.trim();
 	}
 }

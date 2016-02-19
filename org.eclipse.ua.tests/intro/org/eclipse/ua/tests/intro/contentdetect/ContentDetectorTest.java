@@ -50,7 +50,7 @@ public class ContentDetectorTest {
 	@Test
 	public void testContributorSaveThreeContributors() {
 		ContentDetectHelper helper = new ContentDetectHelper();
-		HashSet<String> contributors = new HashSet<String>();
+		HashSet<String> contributors = new HashSet<>();
 		contributors.add("one");
 		contributors.add("two");
 		contributors.add("three");
@@ -65,12 +65,12 @@ public class ContentDetectorTest {
 	@Test
 	public void testForNewContent() {
 		ContentDetectHelper helper = new ContentDetectHelper();
-		HashSet<String> contributors = new HashSet<String>();
+		HashSet<String> contributors = new HashSet<>();
 		contributors.add("one");
 		contributors.add("two");
 		contributors.add("three");
 		contributors.add("four");
-		Set<String> previous = new HashSet<String>();
+		Set<String> previous = new HashSet<>();
 		previous.add("five");
 		previous.add("two");
 		previous.add("one");

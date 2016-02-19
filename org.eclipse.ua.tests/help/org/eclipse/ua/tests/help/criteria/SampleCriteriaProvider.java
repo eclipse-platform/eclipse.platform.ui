@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 	}
 
 	private UserCriteria[] getCriteriaFromLabel(String label) {
-		List<UserCriteria> criteria = new ArrayList<UserCriteria>();
+		List<UserCriteria> criteria = new ArrayList<>();
 		if (label == null) {
 			return new UserCriteria[0];
 		}

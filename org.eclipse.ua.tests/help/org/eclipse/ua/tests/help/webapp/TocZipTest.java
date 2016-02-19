@@ -59,17 +59,16 @@ public class TocZipTest {
 			IOException {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/topic" + path);
-		InputStream is = url.openStream();
-		BufferedInputStream buffered = new BufferedInputStream(is);
-	    ByteArrayOutputStream os = new ByteArrayOutputStream();
-	    int result = buffered.read();
-	    while(result != -1) {
-	      os.write(result);
-	      result = buffered.read();
-	    }
-	    buffered.close();
-	    os.close();
-	    return  os.toString();
+		try (InputStream is = url.openStream();
+				BufferedInputStream buffered = new BufferedInputStream(is);
+				ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			int result = buffered.read();
+			while (result != -1) {
+				os.write(result);
+				result = buffered.read();
+			}
+			return os.toString();
+		}
 	}
 
 }

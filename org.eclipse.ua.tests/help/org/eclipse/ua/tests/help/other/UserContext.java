@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class UserContext implements IContext3 {
 
 	private String title;
 	private String text;
-	private List<ITopic> children = new ArrayList<ITopic>();
+	private List<ITopic> children = new ArrayList<>();
 
 	public UserContext(String title, String text) {
 		this.title = title;

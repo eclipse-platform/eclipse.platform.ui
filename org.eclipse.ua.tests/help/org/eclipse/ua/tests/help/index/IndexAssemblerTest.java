@@ -46,7 +46,7 @@ public class IndexAssemblerTest {
 		IndexContribution result_a_b_c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/result_a_b_c.xml", "en"));
 
 		IndexAssembler assembler = new IndexAssembler();
-		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(a, b, c));
+		List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(a, b, c));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());
 
 		String expected = serialize((UAElement)result_a_b_c.getIndex());
@@ -59,7 +59,7 @@ public class IndexAssemblerTest {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/d.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
-		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(contrib));
+		List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(contrib));
 		Index index = assembler.assemble(contributions, Platform.getNL());
 	    IIndexEntry[] children = index.getEntries();
 	    assertEquals(2,children.length);
@@ -87,7 +87,7 @@ public class IndexAssemblerTest {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/hasTitle.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
-		List<IndexContribution> contributions = new ArrayList<IndexContribution>(Arrays.asList(contrib));
+		List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(contrib));
 		Index index = assembler.assemble(contributions, Platform.getNL());
 	    IIndexEntry[] children = index.getEntries();
 	    assertEquals(1,children.length);

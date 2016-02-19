@@ -142,11 +142,11 @@ public class TestPersistence {
 	@Test
     public void testSaveLayoutData() {
     	createCompositeCheatSheet();
-    	Map<String, String> values = new Hashtable<String, String>();
+		Map<String, String> values = new Hashtable<>();
     	values.put("One", "1");
     	values.put("Two", "2");
     	helper.saveCompositeState(model, values);
-        Map<String, String> restoredValues = new Hashtable<String, String>();
+		Map<String, String> restoredValues = new Hashtable<>();
     	createCompositeCheatSheet();
     	model.loadState(restoredValues);
     	assertEquals(2, restoredValues.size());

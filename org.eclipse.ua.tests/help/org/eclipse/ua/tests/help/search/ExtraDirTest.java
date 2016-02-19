@@ -129,7 +129,7 @@ public class ExtraDirTest {
 		WorkingSet[] workingSets = null;
 		if (scope != null) {
 			WorkingSetManager wsm = BaseHelpSystem.getWorkingSetManager();
-			List<AdaptableToc> tocs = new ArrayList<AdaptableToc>();
+			List<AdaptableToc> tocs = new ArrayList<>();
 			StringTokenizer tok = new StringTokenizer(scope, ", \t\n");
 			while (tok.hasMoreTokens()) {
 				tocs.add(wsm.getAdaptableToc(tok.nextToken()));
@@ -138,7 +138,7 @@ public class ExtraDirTest {
 		}
 
 		// expected hits
-		final Set<String> hrefsToFind = new HashSet<String>();
+		final Set<String> hrefsToFind = new HashSet<>();
 		if (expectedResults != null) {
 			StringTokenizer tok = new StringTokenizer(expectedResults, ", \t\n");
 			while (tok.hasMoreTokens()) {
@@ -147,7 +147,7 @@ public class ExtraDirTest {
 		}
 
 		// run test
-		final Set<String> unexpectedHrefs = new HashSet<String>();
+		final Set<String> unexpectedHrefs = new HashSet<>();
 		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
 		SearchResults collector = new SearchResults(workingSets, 500, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());

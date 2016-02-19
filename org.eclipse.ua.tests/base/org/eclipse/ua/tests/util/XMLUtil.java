@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,13 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.junit.Assert;
 import org.xml.sax.Attributes;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 
 /**
  * A utility class for working with XML.
@@ -78,7 +77,7 @@ public class XMLUtil extends Assert {
 			buf.append('<');
 			buf.append(qName);
 
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (int i=0;i<attributes.getLength();++i) {
 				list.add(attributes.getQName(i));
 			}

@@ -52,18 +52,18 @@ public class DynamicXHTMLProcessorTest {
 	}
 
 	private String readStream(InputStream is) throws Exception {
-		InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8");
-		StringBuffer buffer = new StringBuffer();
-		char[] cbuf = new char[256];
-		int len;
-		do {
-			len = inputStreamReader.read(cbuf);
-			if (len > 0) {
-				buffer.append(cbuf, 0, len);
-			}
-		} while (len >= 0);
-		inputStreamReader.close();
-		return buffer.toString();
+		try (InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8")) {
+			StringBuffer buffer = new StringBuffer();
+			char[] cbuf = new char[256];
+			int len;
+			do {
+				len = inputStreamReader.read(cbuf);
+				if (len > 0) {
+					buffer.append(cbuf, 0, len);
+				}
+			} while (len >= 0);
+			return buffer.toString();
+		}
 	}
 
 	@Test

@@ -35,7 +35,7 @@ public class ParseCriteriaDefinition {
 		CriteriaDefinitionContribution result_a_b = parser.parse(new CriteriaDefinitionFile(UserAssistanceTestPlugin.getPluginId(), "data/help/criteria/criteria_definition/result_a_b.xml", "en"));
 
 		CriteriaDefinitionAssembler assembler = new CriteriaDefinitionAssembler();
-		List<CriteriaDefinitionContribution> contributions = new ArrayList<CriteriaDefinitionContribution>(Arrays.asList(a, b));
+		List<CriteriaDefinitionContribution> contributions = new ArrayList<>(Arrays.asList(a, b));
 		CriteriaDefinition assembled = assembler.assemble(contributions);
 
 		String expected = serialize((UAElement)result_a_b.getCriteriaDefinition());

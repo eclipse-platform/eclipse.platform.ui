@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2015 IBM Corporation and others.
+ *  Copyright (c) 2009, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,16 +38,16 @@ public class SearchResult {
 }
 
 public SearchResult[] getSearchResults() {
-     results = new ArrayList<SearchResult>();
-     searchTerm = request.getParameter("searchWord");
-     IToc[] tocs = getTocs();
-     for (IToc toc : tocs) {
-    	 ITopic[] topics = toc.getTopics();
-    	 for (ITopic topic : topics) {
-    		 searchTopic(topic);
-    	 }
-     }
-     return results.toArray(new SearchResult[results.size()]);
+		results = new ArrayList<>();
+		searchTerm = request.getParameter("searchWord");
+		IToc[] tocs = getTocs();
+		for (IToc toc : tocs) {
+			ITopic[] topics = toc.getTopics();
+			for (ITopic topic : topics) {
+				searchTopic(topic);
+			}
+		}
+		return results.toArray(new SearchResult[results.size()]);
 }
 
 private void searchTopic(ITopic topic) {

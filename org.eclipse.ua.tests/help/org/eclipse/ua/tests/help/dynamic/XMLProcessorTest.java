@@ -45,9 +45,11 @@ public class XMLProcessorTest {
 		};
 		XMLProcessor processor = new XMLProcessor(handlers);
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-		InputStream in = bundle.getEntry(FileUtil.getResultFile(path)).openStream();
-		InputStream in2 = processor.process(bundle.getEntry(path).openStream(), '/' + bundle.getSymbolicName() + '/' + path, "UTF-8");
-		XMLUtil.assertXMLEquals("XML content was not processed correctly: " + path, in, in2);
+		try (InputStream in = bundle.getEntry(FileUtil.getResultFile(path)).openStream();
+				InputStream in2 = processor.process(bundle.getEntry(path).openStream(),
+						'/' + bundle.getSymbolicName() + '/' + path, "UTF-8")) {
+			XMLUtil.assertXMLEquals("XML content was not processed correctly: " + path, in, in2);
+		}
 	}
 
 	@Test

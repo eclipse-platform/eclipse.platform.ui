@@ -156,21 +156,10 @@ public class PrebuiltIndexCompatibility {
 			String filePath = resolved.getFile();
 			QueryBuilder queryBuilder = new QueryBuilder("eclipse", new AnalyzerDescriptor("en-us"));
 			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<String>() , false);
-			Directory luceneDirectory = null;
-			IndexSearcher searcher = null;
-			try {
-				luceneDirectory = new NIOFSDirectory(new File(filePath));
-				searcher = new IndexSearcher(IndexReader.open(luceneDirectory, true));
+			try (Directory luceneDirectory = new NIOFSDirectory(new File(filePath));
+					IndexSearcher searcher = new IndexSearcher(IndexReader.open(luceneDirectory, true))) {
 				TopDocs hits = searcher.search(luceneQuery, 500);
 				assertEquals(hits.totalHits, 1);
-			} finally {
-				if (luceneDirectory != null)
-					try {
-						luceneDirectory.close();
-					} catch (IOException x) {
-					}
-				if (searcher != null)
-					searcher.close();
 			}
 		} else {
 			fail("Cannot resolve to file protocol");

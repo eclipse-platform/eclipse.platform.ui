@@ -131,24 +131,25 @@ public class SearchServletTest {
 	protected Node[] makeServletCall(URL url) throws IOException,
 			ParserConfigurationException, FactoryConfigurationError,
 			SAXException {
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("searchHits", root.getNodeName());
-		NodeList children = root.getChildNodes();
-		List<Node> hits = new ArrayList<Node>();
-		int length = children.getLength();
-		for (int i = 0; i < length; i++) {
-			Node next = children.item(i);
-			if ("hit".equals(next.getNodeName())) {
-				hits.add(next);
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			is.close();
+			assertEquals("searchHits", root.getNodeName());
+			NodeList children = root.getChildNodes();
+			List<Node> hits = new ArrayList<>();
+			int length = children.getLength();
+			for (int i = 0; i < length; i++) {
+				Node next = children.item(i);
+				if ("hit".equals(next.getNodeName())) {
+					hits.add(next);
+				}
 			}
+			return hits.toArray(new Node[hits.size()]);
 		}
-		return hits.toArray(new Node[hits.size()]);
 	}
 
 }

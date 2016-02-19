@@ -124,7 +124,7 @@ public class ExtensionServiceTest {
 	private Element[] findChildren(Node parent, String childKind,
 			String attributeName, String attributeValue) {
 		NodeList contributions = parent.getChildNodes();
-		List<Node> results = new ArrayList<Node>();
+		List<Node> results = new ArrayList<>();
 		for (int i = 0; i < contributions.getLength(); i++) {
 			Node next = contributions.item(i);
 			if (next instanceof Element) {
@@ -142,15 +142,15 @@ public class ExtensionServiceTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/extension?lang=" + locale);
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("contentExtensions", root.getNodeName());
-		return root;
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("contentExtensions", root.getNodeName());
+			return root;
+		}
 	}
 
 	@Test

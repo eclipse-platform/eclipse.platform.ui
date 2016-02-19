@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,9 @@ import org.eclipse.help.IUAElement;
 
 public class UserIndexEntry implements IIndexEntry2 {
 
-	private List<IIndexEntry> subentries = new ArrayList<IIndexEntry>();
-	private List<IIndexSee> sees = new ArrayList<IIndexSee>();
-	private List<ITopic> topics = new ArrayList<ITopic>();
+	private List<IIndexEntry> subentries = new ArrayList<>();
+	private List<IIndexSee> sees = new ArrayList<>();
+	private List<ITopic> topics = new ArrayList<>();
 	private boolean isEnabled;
 	private String keyword;
 

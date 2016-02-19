@@ -50,9 +50,10 @@ public class CheatSheetModelSerializerTest {
 			CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
 			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);
 
-			PrintWriter out = new PrintWriter(new FileOutputStream(FileUtil.getResultFile(url.toString().substring("file:/".length()))));
-			out.print(CheatSheetModelSerializer.serialize(sheet));
-			out.close();
+			try (PrintWriter out = new PrintWriter(
+					new FileOutputStream(FileUtil.getResultFile(url.toString().substring("file:/".length()))))) {
+				out.print(CheatSheetModelSerializer.serialize(sheet));
+			}
 		}
 	}
 }

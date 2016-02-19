@@ -86,8 +86,8 @@ public class HelpDataTest {
 		for (String[][] entry : TEST_DATA) {
 			String file = entry[0][0];
 			List<String> expectedTocOrder = Arrays.asList(entry[1]);
-			Set<String> expectedHiddenTocs = new HashSet<String>(Arrays.asList(entry[2]));
-			Set<String> expectedHiddenIndexes = new HashSet<String>(Arrays.asList(entry[3]));
+			Set<String> expectedHiddenTocs = new HashSet<>(Arrays.asList(entry[2]));
+			Set<String> expectedHiddenIndexes = new HashSet<>(Arrays.asList(entry[3]));
 			URL url = UserAssistanceTestPlugin.getDefault().getBundle().getEntry(file);
 			HelpData data = new HelpData(url);
 			Assert.assertEquals("Did not get the expected toc order from help data file " + file, expectedTocOrder, data.getTocOrder());

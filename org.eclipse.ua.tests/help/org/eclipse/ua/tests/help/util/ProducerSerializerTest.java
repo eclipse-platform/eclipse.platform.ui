@@ -55,11 +55,11 @@ public class ProducerSerializerTest {
 					String absolutePath = pluginRoot + relativePath;
 					String resultFile = FileUtil.getResultFile(absolutePath);
 
-					PrintWriter out = new PrintWriter(new FileOutputStream(resultFile));
-					String output = FileUtil.readString(HelpSystem.getHelpContent(href));
-					output = XHTMLUtil.removeEnvironmentSpecificContent(output);
-					out.print(output);
-					out.close();
+					try (PrintWriter out = new PrintWriter(new FileOutputStream(resultFile))) {
+						String output = FileUtil.readString(HelpSystem.getHelpContent(href));
+						output = XHTMLUtil.removeEnvironmentSpecificContent(output);
+						out.print(output);
+					}
 				}
 			}
 		}

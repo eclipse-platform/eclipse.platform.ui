@@ -31,7 +31,7 @@ public class EnabledTopicTest {
 
 		private String label;
 		private boolean isEnabled;
-		private List<ITopic> children = new ArrayList<ITopic>();
+		private List<ITopic> children = new ArrayList<>();
 
 		public ETopic(String label, boolean isEnabled) {
 			this.label = label;
@@ -85,8 +85,8 @@ public class EnabledTopicTest {
 	private class EIndexEntry extends UAElement implements IIndexEntry  {
 
 		private String keyword;
-		private List<ITopic> topics = new ArrayList<ITopic>();
-		private List<IIndexEntry> subEntries = new ArrayList<IIndexEntry>();
+		private List<ITopic> topics = new ArrayList<>();
+		private List<IIndexEntry> subEntries = new ArrayList<>();
 
 		public EIndexEntry(String keyword) {
 			super(keyword);
@@ -118,7 +118,7 @@ public class EnabledTopicTest {
 
 		@Override
 		public synchronized IUAElement[] getChildren() {
-			List<IUAElement> all = new ArrayList<IUAElement>();
+			List<IUAElement> all = new ArrayList<>();
 			all.addAll(subEntries);
 			all.addAll(topics);
 			return all.toArray(new IUAElement[all.size()]);

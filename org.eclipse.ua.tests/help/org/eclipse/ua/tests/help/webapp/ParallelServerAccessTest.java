@@ -119,23 +119,24 @@ public class ParallelServerAccessTest {
 		long uniqueId = getReadOperations();
 		URL url = new URL("http", "localhost", port,
 				"/help/loadtest?value=" + uniqueId + "&repeat=" + paragraphs);
-		InputStream input = url.openStream();
-		int nextChar;
 		long value = 0;
-		// The loadtest servlet  returns the uniqueParam in an opening comment such as <!--1234-->
-		// Read this to verify that we are not getting a cached page
-		boolean inFirstComment = true;
-        do {
-		    nextChar = input.read();
-		    if (inFirstComment) {
-		    	if (nextChar == '>') {
-		    		inFirstComment = false;
-		    	} else if (Character.isDigit((char) nextChar)) {
-		    		value = value * 10 + (nextChar - '0');
-		    	}
-		    }
-        } while (nextChar != '$');
-        input.close();
+		try (InputStream input = url.openStream()) {
+			int nextChar;
+			// The loadtest servlet returns the uniqueParam in an opening
+			// comment such as <!--1234-->
+			// Read this to verify that we are not getting a cached page
+			boolean inFirstComment = true;
+			do {
+				nextChar = input.read();
+				if (inFirstComment) {
+					if (nextChar == '>') {
+						inFirstComment = false;
+					} else if (Character.isDigit((char) nextChar)) {
+						value = value * 10 + (nextChar - '0');
+					}
+				}
+			} while (nextChar != '$');
+		}
         if (uniqueId != value) {
         	throw new UnexpectedValueException(uniqueId, value);
         }

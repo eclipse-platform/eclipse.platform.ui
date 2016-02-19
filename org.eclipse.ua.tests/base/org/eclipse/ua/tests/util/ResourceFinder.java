@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class ResourceFinder {
 	 * recursively traverses subdirectories if requested.
 	 */
 	private static URL[] findFiles(File[] files, String suffix, boolean recursive) {
-		List<URL> list = new ArrayList<URL>();
+		List<URL> list = new ArrayList<>();
 		if (files != null) {
 			for (File file : files) {
 				if (file.isDirectory()) {

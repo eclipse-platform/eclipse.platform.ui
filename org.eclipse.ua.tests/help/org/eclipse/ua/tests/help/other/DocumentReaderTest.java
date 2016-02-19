@@ -30,10 +30,11 @@ public class DocumentReaderTest {
 	private final static int FAILURE = 2;
 
 	private void readFile(DocumentReader docReader, String file) throws IOException, SAXException, ParserConfigurationException {
-		 String pluginId = UserAssistanceTestPlugin.getPluginId();
-		 String locale = "en";
-	     InputStream in  = ResourceLocator.openFromPlugin(pluginId, file, locale);
-		 docReader.read(in);
+		String pluginId = UserAssistanceTestPlugin.getPluginId();
+		String locale = "en";
+		try (InputStream in = ResourceLocator.openFromPlugin(pluginId, file, locale)) {
+			docReader.read(in);
+		}
 	}
 
 	@Test

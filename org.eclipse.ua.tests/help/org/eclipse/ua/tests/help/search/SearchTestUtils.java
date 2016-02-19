@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.junit.Assert;
-
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
-
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.Assert;
 
 public class SearchTestUtils {
 
@@ -47,8 +45,8 @@ public class SearchTestUtils {
 	 */
 	public static String searchForExpectedResults(String searchWord,
 			String[] hrefs, String nl) {
-		final Set<String> hrefsToFind = new HashSet<String>();
-		final Set<String> unexpectedHrefs = new HashSet<String>();
+		final Set<String> hrefsToFind = new HashSet<>();
+		final Set<String> unexpectedHrefs = new HashSet<>();
 		hrefsToFind.addAll(Arrays.asList(hrefs));
 
 		SearchHit[] hits;

@@ -102,7 +102,7 @@ public class TocManagerTest {
 
 	public static boolean hasDuplicateContributions(TocContribution[] tocContributions)
 	{
-		HashSet<String> contributionsFound = new HashSet<String>();
+		HashSet<String> contributionsFound = new HashSet<>();
 
 		for (TocContribution tocContribution : tocContributions) {
 			if(contributionsFound.contains(tocContribution.getId()))

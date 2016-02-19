@@ -77,7 +77,7 @@ public class LoadIndexUsingRemoteHelp {
 	}
 
 	private IIndexEntry[] matchingEntries(IIndex index, String keyword) {
-		List<IIndexEntry> matches = new ArrayList<IIndexEntry>();
+		List<IIndexEntry> matches = new ArrayList<>();
 		IIndexEntry[] entries = index.getEntries();
 		for (IIndexEntry entrie : entries) {
 			if (keyword.equals(entrie.getKeyword())) {

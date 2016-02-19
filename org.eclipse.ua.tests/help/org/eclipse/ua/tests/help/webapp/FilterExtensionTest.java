@@ -41,9 +41,9 @@ public class FilterExtensionTest {
 		ExtraFilters.setFilters(filters);
 		OutputStream out = new ByteArrayOutputStream(1000);
 		MockServletRequest req = new MockServletRequest();
-		OutputStream filteredOutput = new ExtraFilters().filter(req, out);
-		filteredOutput.write("<html>".getBytes());
-		filteredOutput.close();
+		try (OutputStream filteredOutput = new ExtraFilters().filter(req, out)) {
+			filteredOutput.write("<html>".getBytes());
+		}
 		String result = out.toString();
 		String expected = "<!-- pre 3 --><!-- pre 2 --><!-- pre 1 --><html>"
 				+ "<!-- post 1 --><!-- post 2 --><!-- post 3 -->";
@@ -59,9 +59,9 @@ public class FilterExtensionTest {
 		ExtraFilters.setFilters(filters);
 		OutputStream out = new ByteArrayOutputStream(1000);
 		MockServletRequest req = new MockServletRequest();
-		OutputStream filteredOutput = new ExtraFilters().filter(req, out);
-		filteredOutput.write("<html>".getBytes());
-		filteredOutput.close();
+		try (OutputStream filteredOutput = new ExtraFilters().filter(req, out)) {
+			filteredOutput.write("<html>".getBytes());
+		}
 		String result = out.toString();
 		String expected = "<!-- pre 3 --><!-- pre 2 --><!-- pre 2 --><html>"
 				+ "<!-- post 2 --><!-- post 2 --><!-- post 3 -->";
@@ -74,9 +74,9 @@ public class FilterExtensionTest {
 		ExtraFilters.setFilters(filters);
 		OutputStream out = new ByteArrayOutputStream(1000);
 		MockServletRequest req = new MockServletRequest();
-		OutputStream filteredOutput = new ExtraFilters().filter(req, out);
-		filteredOutput.write("<html>".getBytes());
-		filteredOutput.close();
+		try (OutputStream filteredOutput = new ExtraFilters().filter(req, out)) {
+			filteredOutput.write("<html>".getBytes());
+		}
 		String result = out.toString();
 		String expected = "<html>";
 		assertEquals(expected, result);

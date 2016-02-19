@@ -24,10 +24,9 @@ public class EntityResolutionTest {
 
 	public void resolve(String systemId, boolean isSupportedDtd) throws Exception {
 
-			LocalEntityResolver resolver = new LocalEntityResolver();
-			InputSource is = resolver.resolveEntity("publicId", systemId);
-			Reader reader = is.getCharacterStream();
-			InputStream stream = is.getByteStream();
+		LocalEntityResolver resolver = new LocalEntityResolver();
+		InputSource is = resolver.resolveEntity("publicId", systemId);
+		try (Reader reader = is.getCharacterStream(); InputStream stream = is.getByteStream()) {
 			int read;
 			if (reader != null) {
 				char[] cbuf = new char[5];
@@ -42,9 +41,7 @@ public class EntityResolutionTest {
 			} else {
 				assertTrue("Unsupported Entity did not return empty stream", read == -1);
 			}
-			if (stream != null) {
-			    stream.close();
-			}
+		}
 	}
 
 	@Test

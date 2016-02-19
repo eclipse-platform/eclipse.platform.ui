@@ -85,7 +85,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
@@ -107,7 +107,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
@@ -134,7 +134,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(3, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);
@@ -164,7 +164,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
@@ -192,7 +192,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
@@ -224,7 +224,7 @@ public class InfocenterWorkingSetManagerTest {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(3, resources.length);
-		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
+		Set<AdaptableTopic> topics = new HashSet<>();
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);

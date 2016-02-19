@@ -169,10 +169,8 @@ public class ChildLinkInsertion {
 
 	private void checkFilter(final String input, final String expected) {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		OutputStream filteredOutput = new TestableReplacementStream(output, null, "../");
-		try {
+		try (OutputStream filteredOutput = new TestableReplacementStream(output, null, "../")) {
 			filteredOutput.write(input.getBytes());
-			filteredOutput.close();
 		} catch (IOException e) {
 			fail("IO Exception");
 		}

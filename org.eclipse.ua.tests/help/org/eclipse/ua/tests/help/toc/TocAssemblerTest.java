@@ -38,7 +38,7 @@ public class TocAssemblerTest {
 		TocContribution result_b_c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_b_c.xml", true, "en", null, null));
 
 		TocAssembler assembler = new TocAssembler();
-		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(b, c));
+		List<TocContribution> contributions = new ArrayList<>(Arrays.asList(b, c));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 		String expected = serialize(result_b_c);
@@ -51,7 +51,7 @@ public class TocAssemblerTest {
 		TocContribution d = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/d.xml", false, "en", null, null));
 		TocContribution result_a_b_c_d = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/result_a_b_c_d.xml", true, "en", null, null));
 
-		contributions = new ArrayList<TocContribution>(Arrays.asList(a, b, c, d));
+		contributions = new ArrayList<>(Arrays.asList(a, b, c, d));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
 
@@ -68,7 +68,7 @@ public class TocAssemblerTest {
 		TocContribution linkTo3 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo3.xml", true, "en", null, null));
 
 		TocAssembler assembler = new TocAssembler();
-		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(linkTo1, linkTo2, linkTo3));
+		List<TocContribution> contributions = new ArrayList<>(Arrays.asList(linkTo1, linkTo2, linkTo3));
 		contributions = assembler.assemble(contributions);
 		assertEquals(3, contributions.size());
 	}
@@ -79,7 +79,7 @@ public class TocAssemblerTest {
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
 		TocContribution c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/c.xml", true, "en", null, null));
 		TocAssembler assembler = new TocAssembler();
-		List<TocContribution> contributions = new ArrayList<TocContribution>(Arrays.asList(b, c));
+		List<TocContribution> contributions = new ArrayList<>(Arrays.asList(b, c));
 		contributions = assembler.assemble(contributions);
 		IToc toc =contributions.get(0).getToc();
 		assertNotNull(toc.getTopic("/org.eclipse.ua.tests/B_topic3.html"));

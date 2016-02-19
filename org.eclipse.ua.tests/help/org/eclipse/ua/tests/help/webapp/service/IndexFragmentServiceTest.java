@@ -59,14 +59,14 @@ public class IndexFragmentServiceTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/indexfragment?lang=" + locale);
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("tree_data", root.getNodeName());
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("tree_data", root.getNodeName());
+		}
 	}
 
 	@Test

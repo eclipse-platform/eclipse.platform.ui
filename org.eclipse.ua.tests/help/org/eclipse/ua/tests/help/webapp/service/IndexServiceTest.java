@@ -33,15 +33,15 @@ public class IndexServiceTest extends IndexServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/index?lang=" + locale);
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("indexContributions", root.getNodeName());
-		return root;
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("indexContributions", root.getNodeName());
+			return root;
+		}
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 
 	@Override
 	public Set<String> getAllDocuments(String locale) {
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		set.add(DOC_1 + "?id=xml1" + "?id=xml2");
 		set.add(DOC_2);
 		return set;
@@ -32,7 +32,7 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 
 	@Override
 	public Set<String> getContributingPlugins() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		result.add("org.eclipse.ua.tests");
 		return result;
 	}

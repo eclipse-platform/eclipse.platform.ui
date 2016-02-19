@@ -150,7 +150,7 @@ public class TocFragmentServiceTest {
 	private Element[] findChildren(Node parent, String childKind,
 			String attributeName, String attributeValue) {
 		NodeList nodes = parent.getChildNodes();
-		List<Node> results = new ArrayList<Node>();
+		List<Node> results = new ArrayList<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node next = nodes.item(i);
 			if (next instanceof Element) {
@@ -171,7 +171,7 @@ public class TocFragmentServiceTest {
 	private Element[] findHref(Node parent, String childKind,
 			 String attributeValue) {
 		NodeList nodes = parent.getChildNodes();
-		List<Node> results = new ArrayList<Node>();
+		List<Node> results = new ArrayList<>();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node next = nodes.item(i);
 			if (next instanceof Element) {
@@ -196,15 +196,15 @@ public class TocFragmentServiceTest {
 
 	private Node getTreeData(URL url)
 			throws Exception {
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("tree_data", root.getNodeName());
-		return root;
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("tree_data", root.getNodeName());
+			return root;
+		}
 	}
 
 	@Test

@@ -106,7 +106,7 @@ public class TocServletTest {
 
 	private Element[] findChildren(Node parent, String childKind, String attributeName, String attributeValue) {
 		NodeList contributions = parent.getChildNodes();
-		List<Node> results = new ArrayList<Node>();
+		List<Node> results = new ArrayList<>();
 		for (int i = 0; i < contributions.getLength(); i++) {
 			Node next = contributions.item(i);
 			if (next instanceof Element) {
@@ -125,15 +125,15 @@ public class TocServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/toc?lang=" + locale);
-		InputStream is = url.openStream();
-		InputSource inputSource = new InputSource(is);
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		documentBuilder.setEntityResolver(new LocalEntityResolver());
-		Document document = documentBuilder.parse(inputSource);
-		Node root = document.getFirstChild();
-		is.close();
-		assertEquals("tocContributions", root.getNodeName());
-		return root;
+		try (InputStream is = url.openStream()) {
+			InputSource inputSource = new InputSource(is);
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			documentBuilder.setEntityResolver(new LocalEntityResolver());
+			Document document = documentBuilder.parse(inputSource);
+			Node root = document.getFirstChild();
+			assertEquals("tocContributions", root.getNodeName());
+			return root;
+		}
 	}
 
 }
