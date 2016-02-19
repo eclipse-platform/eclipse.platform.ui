@@ -130,6 +130,7 @@ public class IntroHTMLGenerator {
 		HTMLElement head = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
 		// add the title
 		head.addContent(generateTitleElement(introPage.getTitle(), indentLevel + 1));
+		head.addContent(generateUTF8CharsetElement());
 		// create the BASE element
 		String basePath = BundleUtil.getResolvedResourceLocation(introPage.getBase(), introPage.getBundle());
 		HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
@@ -182,6 +183,13 @@ public class IntroHTMLGenerator {
 			}
 		}
 		return head;
+	}
+
+	private HTMLElement generateUTF8CharsetElement() {
+		HTMLElement meta = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_META, 0, false);
+		meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HTTP_EQUIV, IIntroHTMLConstants.CONTENT_TYPE);
+		meta.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CONTENT, IIntroHTMLConstants.TYPE_HTML_UTF_8);
+		return meta;
 	}
 
 	private HTMLElement generateJavascriptElement(int indentLevel) {

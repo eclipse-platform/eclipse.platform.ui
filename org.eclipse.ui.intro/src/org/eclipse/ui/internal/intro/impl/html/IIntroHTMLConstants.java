@@ -47,6 +47,7 @@ public interface IIntroHTMLConstants {
     String ELEMENT_TR = "TR"; //$NON-NLS-1$
     String ELEMENT_TD = "TD"; //$NON-NLS-1$
     String ELEMENT_IFrame = "iFrame"; //$NON-NLS-1$
+	String ELEMENT_META = "meta"; //$NON-NLS-1$
 
     /* HTML attribute names */
     String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -61,11 +62,15 @@ public interface IIntroHTMLConstants {
     String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$
     String ATTRIBUTE_FRAMEBORDER = "frameborder"; //$NON-NLS-1$
     String ATTRIBUTE_SCROLLING = "scrolling"; //$NON-NLS-1$
+	String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
+	String ATTRIBUTE_HTTP_EQUIV = "http-equiv"; //$NON-NLS-1$
 
     /* HTML attribute values */
     String LINK_REL = "stylesheet"; //$NON-NLS-1$
     String LINK_STYLE = "text/css"; //$NON-NLS-1$
     String OBJECT_TYPE = "text/html"; //$NON-NLS-1$
+	String TYPE_HTML_UTF_8 = "text/html; charset=UTF-8"; //$NON-NLS-1$
+	String CONTENT_TYPE = "Content-Type"; //$NON-NLS-1$
 
     String DIV_ID_PAGE = "page"; //$NON-NLS-1$
     String DIV_CLASS_INLINE_HTML = "inline-html"; //$NON-NLS-1$
