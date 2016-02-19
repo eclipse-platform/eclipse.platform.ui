@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 487417
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
@@ -81,7 +82,7 @@ public class EclipseContext implements IEclipseContext {
 
 	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
 
-	private ArrayList<String> modifiable;
+	private Set<String> modifiable;
 
 	private List<Computation> waiting; // list of Computations; null for all non-root entries
 
@@ -445,7 +446,7 @@ public class EclipseContext implements IEclipseContext {
 		if (name == null)
 			return;
 		if (modifiable == null)
-			modifiable = new ArrayList<String>(3);
+			modifiable = new HashSet<String>(3);
 		modifiable.add(name);
 		if (localValues.containsKey(name))
 			return;
@@ -455,12 +456,7 @@ public class EclipseContext implements IEclipseContext {
 	private boolean checkModifiable(String name) {
 		if (modifiable == null)
 			return false;
-		for (Iterator<String> i = modifiable.iterator(); i.hasNext();) {
-			String candidate = i.next();
-			if (candidate.equals(name))
-				return true;
-		}
-		return false;
+		return modifiable.contains(name);
 	}
 
 	public void removeListenersTo(Object object) {
