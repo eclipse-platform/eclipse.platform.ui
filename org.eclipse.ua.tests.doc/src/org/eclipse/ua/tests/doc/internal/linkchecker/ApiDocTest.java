@@ -257,12 +257,13 @@ public class ApiDocTest {
 				if (bundleInfo.getSymbolicName().equals(contributor + ".source")) {
 					URI location = bundleInfo.getLocation();
 					URL fileURL = FileLocator.toFileURL(location.toURL());
-					ZipFile zipFile = new ZipFile(fileURL.getPath());
-					ZipEntry entry = zipFile.getEntry(schemaReference);
-					if (entry == null) {
-						return null;
+					try (ZipFile zipFile = new ZipFile(fileURL.getPath())) {
+						ZipEntry entry = zipFile.getEntry(schemaReference);
+						if (entry == null) {
+							return null;
+						}
+						return new InputSource(zipFile.getInputStream(entry));
 					}
-					return new InputSource(zipFile.getInputStream(entry));
 				}
 			}
 			return null;
