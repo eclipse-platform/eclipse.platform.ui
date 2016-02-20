@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH and others.
+ * Copyright (c) 2016 vogella GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,13 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.internal.databinding.observable.SideEffect;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -40,12 +39,10 @@ public class SnippetSideEffectTwoWayBinding {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		// create the Task model object
-		Task task = new Task();
-
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			// create the Task model object
+			Task task = new Task();
 			final Shell shell = new View(task).createShell();
-			// The SWT event loop
 			Display display1 = Display.getCurrent();
 			while (!shell.isDisposed()) {
 				if (!display1.readAndDispatch()) {
@@ -55,19 +52,21 @@ public class SnippetSideEffectTwoWayBinding {
 		});
 	}
 
-	// Observable Task model, which bean support
-	static class Task extends ModelObject {
+	// Observable Task model
+	static class Task {
 
-		public static final String SUMMARY_FIELD = "summary"; //$NON-NLS-1$
+		private WritableValue<String> summary = new WritableValue<>("Learn Databinding", String.class);
 
-		private String summary = "Learn Databinding";
-
+		/**
+		 * @return the task's summary
+		 * @TrackedGetter
+		 */
 		public String getSummary() {
-			return summary;
+			return summary.getValue();
 		}
 
 		public void setSummary(String summary) {
-			firePropertyChange(SUMMARY_FIELD, this.summary, this.summary = summary);
+			this.summary.setValue(summary);
 		}
 	}
 
@@ -124,12 +123,9 @@ public class SnippetSideEffectTwoWayBinding {
 		private void bindData() {
 
 			// create the observables, which should be bound by the SideEffect
-			IObservableValue taskNameObservable = BeanProperties.value(Task.SUMMARY_FIELD).observe(task);
 			ISWTObservableValue textModifyObservable = WidgetProperties.text(SWT.Modify).observe(summaryText);
 
-			// do the actual binding by using SideEffect#create()
-			ISideEffect modelToTarget = ISideEffect.create(() -> (String) taskNameObservable.getValue(),
-					summaryText::setText);
+			ISideEffect modelToTarget = ISideEffect.create(task::getSummary, summaryText::setText);
 			ISideEffect targetToModel = ISideEffect.create(() -> (String) textModifyObservable.getValue(),
 					task::setSummary);
 
