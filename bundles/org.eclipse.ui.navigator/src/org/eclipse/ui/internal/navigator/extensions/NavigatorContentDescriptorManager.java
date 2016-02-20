@@ -300,8 +300,12 @@ public class NavigatorContentDescriptorManager {
 	 * Clears all cached information.
 	 */
 	public void clearCache() {
-		cachedPossibleChildrenEvaluations.clear();
-		cachedTriggerPointEvaluations.clear();
+		for (EvaluationCache cache : cachedPossibleChildrenEvaluations.values()) {
+			cache.clear();
+		}
+		for (EvaluationCache cache : cachedTriggerPointEvaluations.values()) {
+			cache.clear();
+		}
 	}
 
 	/**

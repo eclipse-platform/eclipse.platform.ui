@@ -177,6 +177,13 @@ public class EvaluationCache implements VisibilityListener {
 	 */
 	@Override
 	public void onVisibilityOrActivationChange() {
+		clear();
+	}
+
+	/**
+	 * Clears the cache.
+	 */
+	public void clear() {
 		// Dump everything in the reference queues.
 		// Don't bother removing from the map based on references, we are about to clear everything anyways.
 		// This might lead to some premature removals because yet to be collected values are not clearing
