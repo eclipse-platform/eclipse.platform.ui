@@ -243,6 +243,7 @@ public class ApiDocTest {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	private static InputSource getExtensionPointSchemaSource(IExtensionPoint extensionPoint, String schemaReference, Callable<BundleInfo[]> sourceBundlesLoader) throws Exception {
 		String contributor = extensionPoint.getContributor().getName();
 		Bundle bundle = Platform.getBundle(contributor);
@@ -257,13 +258,12 @@ public class ApiDocTest {
 				if (bundleInfo.getSymbolicName().equals(contributor + ".source")) {
 					URI location = bundleInfo.getLocation();
 					URL fileURL = FileLocator.toFileURL(location.toURL());
-					try (ZipFile zipFile = new ZipFile(fileURL.getPath())) {
-						ZipEntry entry = zipFile.getEntry(schemaReference);
-						if (entry == null) {
-							return null;
-						}
-						return new InputSource(zipFile.getInputStream(entry));
+					ZipFile zipFile = new ZipFile(fileURL.getPath());
+					ZipEntry entry = zipFile.getEntry(schemaReference);
+					if (entry == null) {
+						return null;
 					}
+					return new InputSource(zipFile.getInputStream(entry));
 				}
 			}
 			return null;
