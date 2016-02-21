@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -819,9 +819,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
 		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 15, 0);
 
-		label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
-		Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);
-		addCheckBox(appearanceComposite, enableWordWrap, new BooleanDomain(), 0);
+		if(isWordWrapPreferenceAllowed()){
+			label= TextEditorMessages.TextEditorPreferencePage_enableWordWrap;
+			Preference enableWordWrap= new Preference(AbstractTextEditor.PREFERENCE_WORD_WRAP_ENABLED, label, null);
+			addCheckBox(appearanceComposite, enableWordWrap, new BooleanDomain(), 0);
+		}
 
 		label= TextEditorMessages.TextEditorPreferencePage_convertTabsToSpaces;
 		Preference spacesForTabs= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, label, null);
@@ -1009,6 +1011,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		appearanceComposite.layout();
 
 		return appearanceComposite;
+	}
+
+	private boolean isWordWrapPreferenceAllowed() {
+		return Boolean.getBoolean("eclipse.show.wrapByDefaultPreference"); //$NON-NLS-1$
 	}
 
 	@Override
