@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -226,13 +226,13 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		}
 
 		if (fHighlightCharacterAtCaretLocation || (fHighlightEnclosingPeerCharacters && !fCharacterPresentAtCaretLocation)) {
-			draw(gc, offset, 1);
-			draw(gc, offset + length - 1, 1);
+			draw(gc, offset);
+			draw(gc, offset + length - 1);
 		} else {
 			if (ICharacterPairMatcher.RIGHT == fAnchor)
-				draw(gc, offset, 1);
+				draw(gc, offset);
 			else
-				draw(gc, offset + length - 1, 1);
+				draw(gc, offset + length - 1);
 		}
 	}
 
@@ -241,20 +241,14 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 *
 	 * @param gc the GC to draw into or <code>null</code> to send a redraw request
 	 * @param offset the offset of the widget region
-	 * @param length the length of the widget region
 	 */
-	private void draw(GC gc, int offset, int length) {
+	private void draw(GC gc, int offset) {
+		int length = 1;
 		if (gc != null) {
 
 			gc.setForeground(fColor);
 
-			Rectangle bounds;
-			if (length > 0)
-				bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
-			else {
-				Point loc= fTextWidget.getLocationAtOffset(offset);
-				bounds= new Rectangle(loc.x, loc.y, 1, fTextWidget.getLineHeight(offset));
-			}
+			Rectangle bounds= fTextWidget.getTextBounds(offset, offset + length - 1);
 
 			// draw box around line segment
 			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
