@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -886,9 +886,16 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * @param hasEditors whether there should be editors open or not
 	 */
 	private void testBringToTop_MinimizedViewBug292966(boolean hasEditors) throws Throwable {
+		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+		IPerspectiveDescriptor resourcePersp = reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+		fActivePage.setPerspective(resourcePersp);
+		processEvents();
+
 		// first show the view we're going to test
 		IViewPart propertiesView = fActivePage.showView(IPageLayout.ID_PROP_SHEET);
 		assertNotNull(propertiesView);
+
+		processEvents();
 
 		proj = FileUtil.createProject("testOpenEditor");
 		// open an editor
@@ -900,17 +907,20 @@ public class IWorkbenchPageTest extends UITestCase {
 		if (!hasEditors) {
 			// close editors if we don't want them opened for this test
 			fActivePage.closeAllEditors(false);
+			processEvents();
 			assertEquals("All the editors should have been closed", 0, fActivePage.getEditorReferences().length); //$NON-NLS-1$
 		}
 
 		// minimize the view we're testing
 		fActivePage.setPartState(fActivePage.getReference(propertiesView), IWorkbenchPage.STATE_MINIMIZED);
 		assertFalse("A minimized view should not be visible", fActivePage.isPartVisible(propertiesView)); //$NON-NLS-1$
+		processEvents();
 
 		// open another view so that it now becomes the active part container
 		IViewPart projectExplorer = fActivePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
 		// get the list of views that shares the stack with this other view
 		IViewPart[] viewStack = fActivePage.getViewStack(projectExplorer);
+		processEvents();
 		// make sure that we didn't inadvertently bring back the test view by mistake
 		for (IViewPart element : viewStack) {
 			assertFalse("The properties view should not be on the same stack as the project explorer", //$NON-NLS-1$
@@ -924,11 +934,11 @@ public class IWorkbenchPageTest extends UITestCase {
 				fActivePage.isPartVisible(propertiesView));
 	}
 
-	public void XXXtestBringToTop_MinimizedViewWithEditorsBug292966() throws Throwable {
+	public void testBringToTop_MinimizedViewWithEditorsBug292966() throws Throwable {
 		testBringToTop_MinimizedViewBug292966(false);
 	}
 
-	public void XXXtestBringToTop_MinimizedViewWithoutEditorsBug292966() throws Throwable {
+	public void testBringToTop_MinimizedViewWithoutEditorsBug292966() throws Throwable {
 		testBringToTop_MinimizedViewBug292966(true);
 	}
 
@@ -3154,21 +3164,31 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * prevention of regressing on bug 209333.
 	 */
 	public void testSetPartState() throws Exception {
+		processEvents();
 		// show a view
 		IViewPart view = fActivePage.showView(MockViewPart.ID);
+		processEvents();
 
 		// now minimize it
 		IViewReference reference = (IViewReference) fActivePage
 				.getReference(view);
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_MINIMIZED);
+		processEvents();
 
 		// since it's minimized
 		assertTrue("This view should be minimized", APITestUtils.isViewMinimized(reference));
+		// for whatever reason this view is still active, and active views
+		// aren't recognized
+		// as hidden even if they *are* physically invisible.
+		assertTrue("Minimized but active view should be visible", fActivePage.isPartVisible(view));
 
 		// try to restore it
 		fActivePage.setPartState(reference, IWorkbenchPage.STATE_RESTORED);
+		processEvents();
+
 		// since it's maximized
 		assertFalse("This view should not be restored", APITestUtils.isViewMinimized(reference));
+		assertTrue("Restored view should be visible", fActivePage.isPartVisible(view));
 	}
 
 	/**
