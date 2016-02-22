@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.help.internal.webapp.utils.JSonHelper;
 public class ParseElement {
 
 	private Properties props;
-	private ArrayList<ParseElement> children = new ArrayList<ParseElement>();
+	private ArrayList<ParseElement> children = new ArrayList<>();
 	private ParseElement parent;
 
 	public ParseElement(Properties props, ParseElement parent) {

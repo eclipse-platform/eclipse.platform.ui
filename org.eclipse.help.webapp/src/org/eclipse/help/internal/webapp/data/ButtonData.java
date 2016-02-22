@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class ButtonData extends RequestData {
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(BUTTON_EXTENSION_POINT);
 		if (allButtons == null) {
-			allButtons = new ArrayList<AbstractButton>();
+			allButtons = new ArrayList<>();
 			for (IConfigurationElement element : elements) {
 				Object obj = null;
 				try {
@@ -57,7 +57,7 @@ public class ButtonData extends RequestData {
 			Collections.sort(allButtons);
 		}
 
-		List<AbstractButton> buttonList = new ArrayList<AbstractButton>();
+		List<AbstractButton> buttonList = new ArrayList<>();
 		for (AbstractButton button : allButtons) {
 			//if (button.isVisible() && button.getLocation() == location) {
 				buttonList.add(button);

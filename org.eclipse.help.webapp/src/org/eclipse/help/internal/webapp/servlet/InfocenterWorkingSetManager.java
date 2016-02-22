@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	// Current working set , empty string means all documents
 	private String currentWorkingSet = ""; //$NON-NLS-1$
-	private SortedSet<WorkingSet> workingSets = new TreeSet<WorkingSet>(new WorkingSetComparator());
+	private SortedSet<WorkingSet> workingSets = new TreeSet<>(new WorkingSetComparator());
 	private String locale;
 	private AdaptableTocsArray root;
 
@@ -213,7 +213,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 				continue;
 			}
 			String name = URLCoder.decode(nameAndCriteria[0]);
-		    List<CriterionResource> criteriaResource = new ArrayList<CriterionResource>();
+		    List<CriterionResource> criteriaResource = new ArrayList<>();
 			for (int j = 1; j < nameAndCriteria.length; ++j) {
 				String criterion = nameAndCriteria[j];
 				String[] keyAndValue = criterion.split("#", -1); //$NON-NLS-1$
@@ -421,7 +421,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(locale);
 		}
-		List<String> criterionIds = new ArrayList<String>();
+		List<String> criterionIds = new ArrayList<>();
 		if(null != allCriteriaValues){
 			for (String criterion : allCriteriaValues.keySet()) {
 				if(null == criterion || 0 == criterion.length() || 0 == getCriterionValueIds(criterion).length)
@@ -441,7 +441,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		if(null == allCriteriaValues){
 			allCriteriaValues = HelpPlugin.getCriteriaManager().getAllCriteriaValues(locale);
 		}
-		List<String> valueIds = new ArrayList<String>();
+		List<String> valueIds = new ArrayList<>();
 		if(null != criterionName && null != allCriteriaValues) {
 			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {

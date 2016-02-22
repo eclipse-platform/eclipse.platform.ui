@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,14 +229,14 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 
 		String category = categories[index];
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 		if(!criteriaMap.keySet().contains(category))
 			return STATE_UNCHECKED;
 
 		Set<String> criterionValuesFromWS = criteriaMap.get(category);
-		Set<String> criterionValuesSet = new HashSet<String>(Arrays.asList(getCriterionValueIds(category)));
+		Set<String> criterionValuesSet = new HashSet<>(Arrays.asList(getCriterionValueIds(category)));
 		if(criterionValuesFromWS.containsAll(criterionValuesSet)){
 			return STATE_CHECKED;
 		}else{
@@ -255,7 +255,7 @@ public class WorkingSetData extends RequestData {
 			return STATE_UNCHECKED;
 
 		String category = categories[categoryIndex];
-		Map<String, Set<String>> criteriaMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
 

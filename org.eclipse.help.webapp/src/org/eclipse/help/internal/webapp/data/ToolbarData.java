@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class ToolbarData extends RequestData {
 			return;
 		}
 
-		List<ToolbarButton> buttonList = new ArrayList<ToolbarButton>();
+		List<ToolbarButton> buttonList = new ArrayList<>();
 		for (int i = 0; i < names.length; i++) {
 			if ("".equals(names[i])) //$NON-NLS-1$
 				buttonList.add(new ToolbarButton());
@@ -110,8 +110,8 @@ public class ToolbarData extends RequestData {
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(BUTTON_EXTENSION_POINT);
 
-		List<AbstractButton> extensionButtons = new ArrayList<AbstractButton>();
-		List<String> scripts = new ArrayList<String>();
+		List<AbstractButton> extensionButtons = new ArrayList<>();
+		List<String> scripts = new ArrayList<>();
 		for (IConfigurationElement element : elements) {
 			Object obj = null;
 			try {

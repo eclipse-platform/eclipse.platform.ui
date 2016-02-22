@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class ResultParser extends DefaultHandler {
 
 	protected String id;
 	protected String label;
-	protected ArrayList<ParseElement> items = new ArrayList<ParseElement>(); //parser populates the items arrayList withe parsed data.
+	protected ArrayList<ParseElement> items = new ArrayList<>(); //parser populates the items arrayList withe parsed data.
 
 	public ResultParser(String label) {
 		this(label, JSonHelper.ID);

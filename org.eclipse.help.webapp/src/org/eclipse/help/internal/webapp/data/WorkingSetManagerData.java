@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class WorkingSetManagerData extends RequestData {
 			if (hrefs == null)
 				hrefs = new String[0];
 
-			ArrayList<AdaptableHelpResource> selectedElements = new ArrayList<AdaptableHelpResource>(hrefs.length);
+			ArrayList<AdaptableHelpResource> selectedElements = new ArrayList<>(hrefs.length);
 			for (String href : hrefs) {
 				AdaptableHelpResource res = getAdaptableHelpResource(href);
 				if (res != null)
@@ -117,7 +117,7 @@ public class WorkingSetManagerData extends RequestData {
 				if (hrefs == null)
 					hrefs = new String[0];
 
-				ArrayList<AdaptableHelpResource> selectedElements = new ArrayList<AdaptableHelpResource>(hrefs.length);
+				ArrayList<AdaptableHelpResource> selectedElements = new ArrayList<>(hrefs.length);
 				for (String href : hrefs) {
 					AdaptableHelpResource res = getAdaptableHelpResource(href);
 					if (res != null)
@@ -214,7 +214,7 @@ public class WorkingSetManagerData extends RequestData {
 		if (criteria == null)
 			criteria = new String[0];
 
-		Map<String, Set<String>> selectedElements = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> selectedElements = new HashMap<>();
 		for (String criterion : criteria) {
 			if(category.contains(criterion)){
 				List<String> allValuesInCategory = Arrays.asList(getCriterionValueIds(criterion));
@@ -223,7 +223,7 @@ public class WorkingSetManagerData extends RequestData {
 				}
 				Set<String> elements = selectedElements.get(criterion);
 				if(null == elements){
-					elements = new HashSet<String>();
+					elements = new HashSet<>();
 				}
 				elements.addAll(allValuesInCategory);
 				selectedElements.put(criterion, elements);
@@ -248,7 +248,7 @@ public class WorkingSetManagerData extends RequestData {
 							continue;
 						Set<String> existedElements = selectedElements.get(criterionName);
 						if(null == existedElements){
-							existedElements = new HashSet<String>();
+							existedElements = new HashSet<>();
 						}
 						existedElements.add(selectedValue);
 						selectedElements.put(criterionName, existedElements);
@@ -258,10 +258,10 @@ public class WorkingSetManagerData extends RequestData {
 		}
 
 
-		List<CriterionResource> resources = new ArrayList<CriterionResource>();
+		List<CriterionResource> resources = new ArrayList<>();
 		for (String key : selectedElements.keySet()) {
 			Set<String> values = selectedElements.get(key);
-			CriterionResource resource = new CriterionResource(key, new ArrayList<String>(values));
+			CriterionResource resource = new CriterionResource(key, new ArrayList<>(values));
 			resources.add(resource);
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import com.ibm.icu.text.Collator;
 public class IndexFragmentServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
+	private static Map<String, String> locale2Response = new WeakHashMap<>();
 	private String startParameter;
 	private String sizeParameter;
 	private String entryParameter;
@@ -157,7 +157,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			if (entries.length == 0) {
 				generateEmptyIndexMessage();
 			} else {
-				entryList = new ArrayList<Integer>();
+				entryList = new ArrayList<>();
 				int nextEntry = findFirstEntry(entries);
 				if (PREVIOUS.equals(modeParameter)) {
 					int remaining = getPreviousEntries(nextEntry, size);

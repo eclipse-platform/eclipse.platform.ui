@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class ExtraFilters implements IFilter {
 	}
 
 	private void readFilters() {
-		filters = new ArrayList<PrioritizedFilter>();
+		filters = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(CONTENTFILTER_XP_NAME);
@@ -77,7 +77,7 @@ public class ExtraFilters implements IFilter {
 	 * For JUnit testing
 	 */
 	public static void setFilters(PrioritizedFilter[] newFilters) {
-		filters = new ArrayList<PrioritizedFilter>();
+		filters = new ArrayList<>();
 		for (PrioritizedFilter newFilter : newFilters) {
 			filters.add(newFilter);
 		}

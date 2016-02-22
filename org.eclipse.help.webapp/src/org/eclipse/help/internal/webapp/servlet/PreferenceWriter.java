@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class PreferenceWriter {
 	private void writePreference(String plugin) {
 		try {
 		    IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(plugin);
-			Set<String> keySet = new HashSet<String>();
+			Set<String> keySet = new HashSet<>();
 		    prefs = DefaultScope.INSTANCE.getNode(plugin);
 			keySet.addAll(Arrays.asList(prefs.keys()));
 			String[] allKeys = keySet.toArray(new String[keySet.size()]);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class TocFragmentServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static Map<String, String> locale2Response = new WeakHashMap<String, String>();
+	private static Map<String, String> locale2Response = new WeakHashMap<>();
 	private boolean isErrorSuppress;
 
 	@Override

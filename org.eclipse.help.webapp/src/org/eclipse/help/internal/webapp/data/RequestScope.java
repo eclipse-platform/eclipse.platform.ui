@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,7 @@ public class RequestScope {
 			HttpServletResponse resp, boolean isSearchFilter) {
 		AbstractHelpScope[] scopeArray;
 		String scopeString;
-		List<AbstractHelpScope> scopes = new ArrayList<AbstractHelpScope>();
+		List<AbstractHelpScope> scopes = new ArrayList<>();
 		if (ProductPreferences.useEnablementFilters()) {
 			scopes.add(new FilterScope()); // Workbench is always filtered, infocenter may be
 		}

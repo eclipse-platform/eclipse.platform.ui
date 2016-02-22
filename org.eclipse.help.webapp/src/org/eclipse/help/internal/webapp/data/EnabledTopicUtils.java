@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class EnabledTopicUtils {
 	public static IIndexEntry[] getEnabled(IIndexEntry[] entries) {
 		for (int i=0;i<entries.length;++i) {
 			if (!isEnabled(entries[i])) {
-				List<IIndexEntry> list = new ArrayList<IIndexEntry>(entries.length);
+				List<IIndexEntry> list = new ArrayList<>(entries.length);
 				for (int j=0;j<entries.length;++j) {
 					if (j < i || isEnabled(entries[j])) {
 						list.add(entries[j]);
@@ -138,7 +138,7 @@ public class EnabledTopicUtils {
 	public static ITopic[] getEnabled(ITopic[] topics) {
 		for (int i=0;i<topics.length;++i) {
 			if (!isEnabled(topics[i])) {
-				List<ITopic> list = new ArrayList<ITopic>(topics.length);
+				List<ITopic> list = new ArrayList<>(topics.length);
 				for (int j=0;j<topics.length;++j) {
 					if (j < i || isEnabled(topics[j])) {
 						list.add(topics[j]);

@@ -41,7 +41,7 @@ public class FrameData extends RequestData {
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(FRAME_EXTENSION_POINT);
 		if (allFrames == null) {
-			allFrames = new ArrayList<AbstractFrame>();
+			allFrames = new ArrayList<>();
 			for (IConfigurationElement element : elements) {
 				Object obj = null;
 				try {
@@ -57,7 +57,7 @@ public class FrameData extends RequestData {
 			Collections.sort(allFrames);
 		}
 
-		List<AbstractFrame> frameList = new ArrayList<AbstractFrame>();
+		List<AbstractFrame> frameList = new ArrayList<>();
 		for (AbstractFrame frame : allFrames) {
 			if (frame.isVisible() && frame.getLocation() == location) {
 				frameList.add(frame);

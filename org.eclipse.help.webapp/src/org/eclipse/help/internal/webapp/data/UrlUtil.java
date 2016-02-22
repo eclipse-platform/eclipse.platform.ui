@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -628,7 +628,7 @@ public class UrlUtil {
 		}
 
 		// locale strings as passed in command line or in preferences
-		final List<String> infocenterLocales= new ArrayList<String>();
+		final List<String> infocenterLocales= new ArrayList<>();
 
 		// first check if locales passed as command line arguments
 		String[] args = Platform.getCommandLineArgs();
@@ -658,7 +658,7 @@ public class UrlUtil {
 
 		// format locales and collect in a set for lookup
 		if (!infocenterLocales.isEmpty()) {
-			locales = new HashSet<String>(10, 0.4f);
+			locales = new HashSet<>(10, 0.4f);
 			for (String locale : infocenterLocales) {
 				if (locale.length() >= 5) {
 					locales.add(locale.substring(0, 2).toLowerCase(Locale.ENGLISH) + "_" //$NON-NLS-1$

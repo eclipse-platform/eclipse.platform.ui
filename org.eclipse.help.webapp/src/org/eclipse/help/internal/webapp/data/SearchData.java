@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466
  *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
  *     Holger Voormann - fix for bug 364324 (http://eclip.se/364324)
- *     Alex Blewitt - Bug 474070 
+ *     Alex Blewitt - Bug 474070
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -87,7 +87,7 @@ public class SearchData extends ActivitiesData {
 	private QueryTooComplexException queryException = null;
 
 	// List of alternate search terms
-	private List<String> altList = new ArrayList<String>();
+	private List<String> altList = new ArrayList<>();
 
 	private boolean showCategories = false;
 
@@ -508,7 +508,7 @@ public class SearchData extends ActivitiesData {
 			return null;
 		}
 		// confirm working set exists and use it
-		ArrayList<WorkingSet> workingSetCol = new ArrayList<WorkingSet>(scopes.length);
+		ArrayList<WorkingSet> workingSetCol = new ArrayList<>(scopes.length);
 		for (String scope : scopes) {
 			WorkingSet ws = wsmgr.getWorkingSet(scope);
 			if (ws != null) {
@@ -537,7 +537,7 @@ public class SearchData extends ActivitiesData {
 			return null;
 		}
 		// create working set from books
-		ArrayList<AdaptableToc> tocs = new ArrayList<AdaptableToc>(scopes.length);
+		ArrayList<AdaptableToc> tocs = new ArrayList<>(scopes.length);
 		for (String scope : scopes) {
 			AdaptableToc toc = wsmgr.getAdaptableToc(scope);
 			if (toc != null) {
@@ -563,7 +563,7 @@ public class SearchData extends ActivitiesData {
 		}
 		IToc toc = tocData.getTocs()[selectedToc];
 		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
-		List<AdaptableHelpResource> resources = new ArrayList<AdaptableHelpResource>();
+		List<AdaptableHelpResource> resources = new ArrayList<>();
 		AdaptableToc adaptableToc = new AdaptableToc(toc);
 		if (topics != null) {
 			ITopic selectedTopic = topics[topics.length - 1];
@@ -589,7 +589,7 @@ public class SearchData extends ActivitiesData {
 		}
 		IToc toc = tocData.getTocs()[selectedToc];
 		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
-		List<AdaptableHelpResource> resources = new ArrayList<AdaptableHelpResource>();
+		List<AdaptableHelpResource> resources = new ArrayList<>();
 		AdaptableSelectedToc adaptableSelectedToc = new AdaptableSelectedToc(toc);
 		if (topics != null) {
 			ITopic selectedTopic = topics[topics.length - 1];
@@ -661,7 +661,7 @@ public class SearchData extends ActivitiesData {
 		}
 		@Override
 		public void addHits(List<SearchHit> hits, String highlightTerms) {
-			List<SearchHit> filtered = new ArrayList<SearchHit>();
+			List<SearchHit> filtered = new ArrayList<>();
 			Iterator<SearchHit> iter = hits.iterator();
 			while (iter.hasNext()) {
 				SearchHit obj = iter.next();
@@ -685,8 +685,8 @@ public class SearchData extends ActivitiesData {
 	private static void primallySortByCategory(ISearchEngineResult[] toSort) {
 
 		// compute TOC ordering
-		Map<String, String> nameIdMap = new HashMap<String, String>();
-		List<String> itemsToOrder = new ArrayList<String>();
+		Map<String, String> nameIdMap = new HashMap<>();
+		List<String> itemsToOrder = new ArrayList<>();
 		for (int i = 0; i < toSort.length; i++) {
 			IHelpResource cat = toSort[i].getCategory();
 			if (cat == null) continue;
@@ -700,7 +700,7 @@ public class SearchData extends ActivitiesData {
 			}
 		}
 		List<Object> order = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
-		final Map<Object, Integer> catOrder = new HashMap<Object, Integer>();
+		final Map<Object, Integer> catOrder = new HashMap<>();
 		for (int i = 0; i < order.size(); i++) {
 			catOrder.put(order.get(i), Integer.valueOf(i));
 		}

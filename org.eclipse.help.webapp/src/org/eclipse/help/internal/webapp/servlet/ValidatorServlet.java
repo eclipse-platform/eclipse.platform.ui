@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.help.internal.webapp.utils.Utils;
 public class ValidatorServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -3783758607845176051L;
-	private Hashtable<String, HttpServlet> servletTable = new Hashtable<String, HttpServlet>();
+	private Hashtable<String, HttpServlet> servletTable = new Hashtable<>();
 
 	protected void process(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -147,8 +147,8 @@ public class ValidatorServlet extends HttpServlet {
 	public boolean isSecure(HttpServletRequest req,HttpServletResponseAdv resp)
 			throws SecurityException {
 		Enumeration<String> names = req.getParameterNames();
-		List<String> values = new ArrayList<String>();
-		List<String> scripts = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
+		List<String> scripts = new ArrayList<>();
 
 		while (names.hasMoreElements()) {
 

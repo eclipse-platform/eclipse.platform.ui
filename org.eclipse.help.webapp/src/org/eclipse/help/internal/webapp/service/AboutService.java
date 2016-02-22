@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,7 +185,7 @@ public class AboutService extends AboutServlet {
 		buf.append(XMLGenerator.xmlEscape(title));
 		buf.append("\""); //$NON-NLS-1$
 
-		List<PluginDetails> plugins = new ArrayList<PluginDetails>();
+		List<PluginDetails> plugins = new ArrayList<>();
 
 		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
 		for (Bundle bundle : bundles) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,8 @@ public class IconFinder {
 
 	private static void addIconPath(String IconKey, String IconPath) {
 		if (IconPathMap == null) {
-			IconPathMap = new HashMap<String, String>();
-			IconPathMap = new TreeMap<String, String>(); // sorted map
+			IconPathMap = new HashMap<>();
+			IconPathMap = new TreeMap<>(); // sorted map
 		}
 		IconPathMap.put(IconKey, IconPath);
 	}

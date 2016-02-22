@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class LayoutData extends RequestData {
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0, false); //$NON-NLS-1$
 
-		ArrayList<AbstractView> viewList = new ArrayList<AbstractView>();
+		ArrayList<AbstractView> viewList = new ArrayList<>();
 		viewList.add(tocview);
 		if (indexview != null) {
 			viewList.add(indexview);

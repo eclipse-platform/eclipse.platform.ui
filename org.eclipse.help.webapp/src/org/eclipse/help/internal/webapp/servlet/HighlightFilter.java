@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public class HighlightFilter implements IFilter {
 	 */
 	private Collection<String> getWords(HttpServletRequest req) {
 		// Collect words to hash set to eliminate duplcates
-		Collection<String> tokens = new ArrayList<String>();
+		Collection<String> tokens = new ArrayList<>();
 
 		String searchWord = req.getParameter("resultof"); //$NON-NLS-1$
 		if (searchWord == null) {
@@ -145,7 +145,7 @@ public class HighlightFilter implements IFilter {
 	private Collection<String> encodeKeyWords(Collection<String> col) {
 		if (col == null)
 			return col;
-		Collection<String> result = new ArrayList<String>();
+		Collection<String> result = new ArrayList<>();
 		for (String word : col) {
 			int l = word.length();
 			if (l < 1)
@@ -166,7 +166,7 @@ public class HighlightFilter implements IFilter {
 			return col;
 
 		// Split words into parts: before "*" and after "*"
-		Collection<String> resultPass1 = new ArrayList<String>();
+		Collection<String> resultPass1 = new ArrayList<>();
 		for (String word : col) {
 			int index;
 			while ((index = word.indexOf("*")) >= 0) { //$NON-NLS-1$
@@ -180,7 +180,7 @@ public class HighlightFilter implements IFilter {
 		}
 
 		// Split words into parts: before "?" and after "?"
-		Collection<String> resultPass2 = new ArrayList<String>();
+		Collection<String> resultPass2 = new ArrayList<>();
 		for (String word : resultPass1) {
 			int index;
 			while ((index = word.indexOf("?")) >= 0) { //$NON-NLS-1$
