@@ -179,7 +179,7 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 		}
 
 		@Override
-		public StyledString emphasizeMatch(IDocument document, int offset, BoldStylerProvider boldStylerProvider) {
+		public StyledString getStyledDisplayString(IDocument document, int offset, BoldStylerProvider boldStylerProvider) {
 			StyledString styledDisplayString= new StyledString();
 			styledDisplayString.append(getStyledDisplayString());
 

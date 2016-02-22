@@ -23,10 +23,8 @@ import org.eclipse.jface.text.IDocument;
  * current caret offset.</li>
  * </ul>
  * <p>
- * <strong>Note:</strong> This proposal needs to implement {@link ICompletionProposalExtension3} to
- * receive the starting offset of the token used to invoke content assist. It also needs to
- * implement {@link ICompletionProposalExtension6} to receive the styled display string of the
- * proposal into which the matches can be emphasized.
+ * <strong>Note:</strong> {@link ICompletionProposal#getDisplayString()} still needs to be correctly
+ * implemented as this method might be ignored in case of uninstalled owner draw support.
  * </p>
  * 
  * @since 3.11
@@ -45,5 +43,5 @@ public interface ICompletionProposalExtension7 {
 	 * @return the styled display string for this proposal with emphasized ranges matching the token
 	 *         at the given offset
 	 */
-	StyledString emphasizeMatch(IDocument document, int offset, BoldStylerProvider boldStylerProvider);
+	StyledString getStyledDisplayString(IDocument document, int offset, BoldStylerProvider boldStylerProvider);
 }

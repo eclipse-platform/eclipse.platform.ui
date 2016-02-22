@@ -857,23 +857,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 			StyleRange[] styleRanges= null;
 			Image image= null;
 			try {
-				if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
-					StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
-					if (current instanceof ICompletionProposalExtension3 && current instanceof ICompletionProposalExtension7) {
-						if (Helper.okToUse(fProposalShell)) {
-							BoldStylerProvider boldStylerProvider= fContentAssistant.getBoldStylerProvider();
-							if (boldStylerProvider == null) {
-								boldStylerProvider= new BoldStylerProvider(fProposalShell.getFont());
-								fContentAssistant.setBoldStylerProvider(boldStylerProvider);
-							}
-							styledString= ((ICompletionProposalExtension7) current).emphasizeMatch(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset,
-									boldStylerProvider);
-						}
+				if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension7 && Helper.okToUse(fProposalShell)) {
+					BoldStylerProvider boldStylerProvider= fContentAssistant.getBoldStylerProvider();
+					if (boldStylerProvider == null) {
+						boldStylerProvider= new BoldStylerProvider(fProposalShell.getFont());
+						fContentAssistant.setBoldStylerProvider(boldStylerProvider);
 					}
+					StyledString styledString= ((ICompletionProposalExtension7) current).getStyledDisplayString(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset,
+							boldStylerProvider);
 					displayString= styledString.getString();
 					styleRanges= styledString.getStyleRanges();
-				} else
+				} else if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
+					StyledString styledString= ((ICompletionProposalExtension6) current).getStyledDisplayString();
+					displayString= styledString.getString();
+					styleRanges= styledString.getStyleRanges();
+				} else {
 					displayString= current.getDisplayString();
+				}
 			} catch (RuntimeException e) {
 				// On failures to retrieve the proposal's text, insert a dummy entry and log the error.
 				displayString= JFaceTextMessages.getString("CompletionProposalPopup.error_retrieving_proposal"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,7 +123,8 @@ public interface ICompletionProposal {
 	 *
 	 * @return the string to be displayed
 	 * 
-	 * @see ICompletionProposalExtension6#getStyledDisplayString()
+	 * @see ICompletionProposalExtension6#getStyledDisplayString() 
+	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
 	 */
 	String getDisplayString();
 

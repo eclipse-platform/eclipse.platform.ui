@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.StyledString;
  * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with the following
  * function:
  * <ul>
- * 	<li>Allow styled ranges in the display string.</li>
+ * <li>Allow styled ranges in the display string.</li>
  * </ul>
  *
  * @since 3.4
@@ -30,7 +30,10 @@ public interface ICompletionProposalExtension6 {
 	 * <p>
 	 * <strong>Note:</strong> {@link ICompletionProposal#getDisplayString()} still needs to be
 	 * correctly implemented as this method might be ignored in case of uninstalled owner draw
-	 * support.
+	 * support. If {@link ICompletionProposalExtension7} is implemented by this proposal then
+	 * instead of using this method, the result from
+	 * {@link ICompletionProposalExtension7#getStyledDisplayString(org.eclipse.jface.text.IDocument, int, BoldStylerProvider)}
+	 * is used to display the proposal.
 	 * </p>
 	 *
 	 * @return the string builder used to display this proposal

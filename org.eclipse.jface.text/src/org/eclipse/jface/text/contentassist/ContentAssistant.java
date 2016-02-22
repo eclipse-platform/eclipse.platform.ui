@@ -1353,7 +1353,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * 
 	 * @param boldStylerProvider the bold styler provider
 	 * 
-	 * @see ICompletionProposalExtension7#emphasizeMatch(IDocument, int, BoldStylerProvider)
+	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
 	 * @since 3.11
 	 */
 	void setBoldStylerProvider(BoldStylerProvider boldStylerProvider) {
@@ -1364,7 +1364,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Returns the {@link BoldStylerProvider} used to emphasize matches in a proposal's styled
 	 * display string.
 	 * 
-	 * @see ICompletionProposalExtension7#emphasizeMatch(IDocument, int, BoldStylerProvider)
+	 * @see ICompletionProposalExtension7#getStyledDisplayString(IDocument, int, BoldStylerProvider)
 	 * 
 	 * @return the {@link BoldStylerProvider}, or <code>null</code> if not set
 	 * @since 3.11
