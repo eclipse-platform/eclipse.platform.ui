@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,21 +112,11 @@ public class EclipseConnection {
 	 */
 	public void renew() throws Exception {
 		Properties p = new Properties();
-		FileInputStream is = null;
-		try {
-			is = new FileInputStream(Options.getConnectionFile());
+		try (FileInputStream is = new FileInputStream(Options.getConnectionFile())) {
 			p.load(is);
-			is.close();
 		} catch (IOException ioe) {
 			// it is ok, eclipse might have just exited
 			throw ioe;
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException ioe2) {
-				}
-			}
 		}
 		host = (String) p.get("host"); //$NON-NLS-1$
 		port = (String) p.get("port"); //$NON-NLS-1$

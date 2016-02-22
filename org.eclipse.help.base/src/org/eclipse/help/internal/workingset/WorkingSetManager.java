@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,9 +204,8 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		File stateFile = getWorkingSetStateFile();
 
 		if (stateFile.exists()) {
-			try {
-				FileInputStream input = new FileInputStream(stateFile);
-				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+			try (FileInputStream input = new FileInputStream(stateFile);
+					InputStreamReader reader = new InputStreamReader(input, "utf-8")) { //$NON-NLS-1$
 
 				InputSource inputSource = new InputSource(reader);
 				inputSource.setSystemId(stateFile.toString());
@@ -217,7 +216,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 				Element rootElement = d.getDocumentElement();
 				restoreWorkingSetState(rootElement);
-				input.close();
 
 				return true;
 			} catch (ParserConfigurationException pce) {
@@ -356,16 +354,15 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 			stateFile = getWorkingSetStateFile();
 			stateFile.getParentFile().mkdir();
-			FileOutputStream stream = new FileOutputStream(stateFile);
+			try (FileOutputStream stream = new FileOutputStream(stateFile)) {
+				Transformer transformer = transformerFactory.newTransformer();
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+				DOMSource source = new DOMSource(doc);
+				StreamResult result = new StreamResult(stream);
 
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(stream);
-
-			transformer.transform(source, result);
-			stream.close();
+				transformer.transform(source, result);
+			}
 			return true;
 		} catch (ParserConfigurationException pce) {
 			HelpPlugin.logError(

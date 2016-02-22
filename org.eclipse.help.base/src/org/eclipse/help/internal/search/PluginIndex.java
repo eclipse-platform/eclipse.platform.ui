@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,9 +141,7 @@ public class PluginIndex {
 
 			return false;
 		}
-		InputStream in = null;
-		try {
-			in = ProxyUtil.getStream(url);
+		try (InputStream in = ProxyUtil.getStream(url)) {
 			Properties prop = new Properties();
 			prop.load(in);
 			String lucene = prop
@@ -159,13 +157,6 @@ public class PluginIndex {
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError(
 					"IOException accessing prebuilt index.", ioe); //$NON-NLS-1$
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return true;
 	}

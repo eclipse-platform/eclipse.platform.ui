@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,12 +172,10 @@ public final class InfoCenter implements ISearchEngine {
 			URLConnection connection = ProxyUtil.getConnection(url);
 			monitor.beginTask(HelpBaseResources.InfoCenter_connecting, 5);
 			is = connection.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					is, "utf-8"));//$NON-NLS-1$
-			monitor.worked(1);
-			load(((Scope) scope).url, reader, collector,
-					new SubProgressMonitor(monitor, 4));
-			reader.close();
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"))) {//$NON-NLS-1$
+				monitor.worked(1);
+				load(((Scope) scope).url, reader, collector, new SubProgressMonitor(monitor, 4));
+			}
 		} catch (FileNotFoundException e) {
 			reportError(HelpBaseResources.InfoCenter_fileNotFound, e, collector);
 		} catch (IOException e) {

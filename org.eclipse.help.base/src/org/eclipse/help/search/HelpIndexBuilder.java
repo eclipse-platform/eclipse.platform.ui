@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.help.search;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -727,11 +726,9 @@ public class HelpIndexBuilder {
 	}
 
 	private Document readXMLFile(File file) throws CoreException {
-		InputStream stream = null;
 		Document d = null;
-		try {
-			stream = new FileInputStream(file);
-			InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		try (InputStream stream = new FileInputStream(file);
+				InputStreamReader reader = new InputStreamReader(stream, "utf-8")) { //$NON-NLS-1$
 			InputSource inputSource = new InputSource(reader);
 			inputSource.setSystemId(manifest.toString());
 
@@ -742,14 +739,6 @@ public class HelpIndexBuilder {
 		} catch (Exception e) {
 			String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_errorParsing, file.getName());
 			throwCoreException(message, e);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
-				stream = null;
-			}
 		}
 		return d;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -789,11 +789,9 @@ public class SearchIndex implements IHelpSearchIndex {
 	 */
 	public void setInconsistent(boolean inconsistent) {
 		if (inconsistent) {
-			try {
+			try (FileOutputStream fos = new FileOutputStream(inconsistencyFile)) {
 				// parent directory already created by beginAddBatch on new
 				// index
-				FileOutputStream fos = new FileOutputStream(inconsistencyFile);
-				fos.close();
 			} catch (IOException ioe) {
 			}
 		} else
@@ -851,9 +849,9 @@ public class SearchIndex implements IHelpSearchIndex {
 		cleanOldIndex();
 		byte[] buf = new byte[8192];
 		File destDir = indexDir;
-		ZipInputStream zis = new ZipInputStream(zipIn);
+
 		FileOutputStream fos = null;
-		try {
+		try (ZipInputStream zis = new ZipInputStream(zipIn)) {
 			ZipEntry zEntry;
 			while ((zEntry = zis.getNextEntry()) != null) {
 				// if it is empty directory, create it
@@ -890,8 +888,6 @@ public class SearchIndex implements IHelpSearchIndex {
 		} finally {
 			try {
 				zipIn.close();
-				if (zis != null)
-					zis.close();
 			} catch (IOException ioe) {
 			}
 		}
@@ -901,18 +897,12 @@ public class SearchIndex implements IHelpSearchIndex {
 	 * Cleans any old index and Lucene lock files by initializing a new index.
 	 */
 	private void cleanOldIndex() {
-		IndexWriter cleaner = null;
-		LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 10000);
-		try {
-			cleaner = new IndexWriter(luceneDirectory, new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer).setOpenMode(
-			        OpenMode.CREATE));
+		try (LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(analyzerDescriptor.getAnalyzer(), 10000);
+				IndexWriter cleaner = new IndexWriter(luceneDirectory,
+						new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_31, analyzer)
+								.setOpenMode(OpenMode.CREATE))) {
+
 		} catch (IOException ioe) {
-		} finally {
-			try {
-				if (cleaner != null)
-					cleaner.close();
-			} catch (IOException ioe) {
-			}
 		}
 	}
 

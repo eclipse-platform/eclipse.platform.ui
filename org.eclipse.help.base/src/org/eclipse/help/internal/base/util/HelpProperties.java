@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,6 @@ public class HelpProperties extends Properties {
 	 * @return true if persistant data was read in
 	 */
 	public boolean restore() {
-		InputStream in = null;
 		boolean loaded = false;
 		clear();
 		// Test if we have a contribution file to start with
@@ -67,18 +66,11 @@ public class HelpProperties extends Properties {
 		// contribution file. return false.
 		if (!file.exists())
 			return loaded;
-		try {
-			in = new FileInputStream(file);
+		try (InputStream in = new FileInputStream(file)) {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
 			HelpPlugin.logError("File " + file.getName() + " cannot be read."); //$NON-NLS-1$ //$NON-NLS-2$
-		} finally {
-			if (in != null)
-				try {
-					in.close();
-				} catch (IOException ioe10) {
-				}
 		}
 		return loaded;
 	}
@@ -89,22 +81,13 @@ public class HelpProperties extends Properties {
 	 * @return true if operation was successful
 	 */
 	public boolean save() {
-		OutputStream out = null;
 		boolean ret = false;
-		try {
-			out = new FileOutputStream(file);
+		try (OutputStream out = new FileOutputStream(file)) {
 			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException ioe00) {
 			HelpPlugin.logError("Exception occurred while saving table " + name //$NON-NLS-1$
 					+ " to file " + file.getAbsolutePath() + ".", ioe00); //$NON-NLS-1$ //$NON-NLS-2$
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException ioe01) {
-			}
 		}
 		return ret;
 	}

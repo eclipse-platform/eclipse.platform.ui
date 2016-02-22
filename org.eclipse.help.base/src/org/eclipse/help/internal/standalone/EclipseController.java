@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,22 +284,15 @@ public class EclipseController implements EclipseLifeCycleListener {
 	private boolean isApplicationRunning() {
 		File applicationLockFile = new File(Options.getLockFile()
 				.getParentFile(), ".applicationlock"); //$NON-NLS-1$
-		RandomAccessFile randomAccessFile = null;
 		FileLock applicationLock = null;
-		try {
-			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw"); //$NON-NLS-1$
+		try (RandomAccessFile randomAccessFile = new RandomAccessFile(applicationLockFile, "rw")) { //$NON-NLS-1$
+
 			applicationLock = randomAccessFile.getChannel().tryLock();
 		} catch (IOException ioe) {
 		} finally {
 			if (applicationLock != null) {
 				try {
 					applicationLock.release();
-				} catch (IOException ioe) {
-				}
-			}
-			if (randomAccessFile != null) {
-				try {
-					randomAccessFile.close();
 				} catch (IOException ioe) {
 				}
 			}

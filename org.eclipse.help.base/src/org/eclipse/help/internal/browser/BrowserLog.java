@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,10 +58,8 @@ public class BrowserLog {
 		if (logFileName == null) {
 			return;
 		}
-		Writer outWriter = null;
-		try {
-			outWriter = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(logFileName, true), "UTF-8")); //$NON-NLS-1$
+		try (Writer outWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(logFileName, true), "UTF-8"))) { //$NON-NLS-1$
 			if (newSession) {
 				newSession = false;
 				outWriter.write(LN + formatter.format(new Date())
@@ -71,12 +69,6 @@ public class BrowserLog {
 			outWriter.flush();
 			outWriter.close();
 		} catch (Exception e) {
-			if (outWriter != null) {
-				try {
-					outWriter.close();
-				} catch (IOException ioe) {
-				}
-			}
 		}
 	}
 }

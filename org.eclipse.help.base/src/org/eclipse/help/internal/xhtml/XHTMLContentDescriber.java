@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,7 @@ public class XHTMLContentDescriber implements IContentDescriber {
 	 */
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
-		Reader reader = null;
-		try {
-			reader = new ASCIIReader(contents, BUFFER_SIZE);
+		try (Reader reader = new ASCIIReader(contents, BUFFER_SIZE)) {
 			char[] chars = new char[BUFFER_SIZE];
 			reader.read(chars);
 			String str = new String(chars);
@@ -43,15 +41,6 @@ public class XHTMLContentDescriber implements IContentDescriber {
 		}
 		catch (Exception e) {
 			return INDETERMINATE;
-		}
-		finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				}
-				catch (IOException e) {
-				}
-			}
 		}
 	}
 

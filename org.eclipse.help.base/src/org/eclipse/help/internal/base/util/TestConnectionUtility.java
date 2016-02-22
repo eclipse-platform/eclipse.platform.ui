@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,15 +71,15 @@ public class TestConnectionUtility {
 			in = connection.getInputStream();
 			if (in!=null)
 			{
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				String line;
-				while (( line = reader.readLine())!=null){
-					if (line.indexOf("<tocContributions>")>-1)  { //$NON-NLS-1$
-						reader.close();
-						return true;
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+					String line;
+					while ((line = reader.readLine()) != null) {
+						if (line.indexOf("<tocContributions>") > -1) { //$NON-NLS-1$
+							reader.close();
+							return true;
+						}
 					}
 				}
-				reader.close();
 			}
 		}catch (Exception ex){}
 		finally{

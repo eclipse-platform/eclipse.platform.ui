@@ -93,16 +93,15 @@ public class HelpServerBinding {
 	}
 
 	private boolean canAccessServer(String host) throws Exception {
-		InputStream input;
 		try {
 			int port = WebappManager.getPort();
 			URL url = new URL("http", host, port, "/help/index.jsp");
 			URLConnection connection = url.openConnection();
 			setTimeout(connection, 5000);
-			input = connection.getInputStream();
-			int firstbyte = input.read();
-			input.close();
-			return firstbyte > 0;
+			try (InputStream input = connection.getInputStream()) {
+				int firstbyte = input.read();
+				return firstbyte > 0;
+			}
 		} catch (Exception e) {
 			return false;
 		}
