@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,13 +107,10 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
-	 */
 	@Override
 	public String[] getPlugins() {
-		Map associations = getPluginAssociations();
-		return (String[])associations.keySet().toArray(new String[associations.size()]);
+		Map<String, ?> associations = getPluginAssociations();
+		return associations.keySet().toArray(new String[associations.size()]);
 	}
 
 	/*
@@ -153,7 +150,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * as a mapping of short IDs to Context objects (shortContextId -> Context).
 	 */
 	public Map[] getPluginContexts(String pluginId, String locale) {
-		List maps = new ArrayList();
+		List<Map> maps = new ArrayList<>();
 		Map associations = getPluginAssociations();
 		ContextFile[] descriptors = (ContextFile[])associations.get(pluginId);
 		for (int i=0;i<descriptors.length;++i) {
@@ -162,7 +159,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 				maps.add(contexts);
 			}
 		}
-		return (Map[])maps.toArray(new Map[maps.size()]);
+		return maps.toArray(new Map[maps.size()]);
 	}
 
 	/*

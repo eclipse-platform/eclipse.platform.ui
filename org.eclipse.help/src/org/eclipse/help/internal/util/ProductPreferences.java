@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class ProductPreferences {
 	 */
 	public static List[] getSecondaryTocOrderings() {
 		if (secondaryTocOrderings == null) {
-			List list = new ArrayList();
+			List<List> list = new ArrayList<>();
 			Properties[] productPreferences = getProductPreferences(false);
 			for (int i=0;i<productPreferences.length;++i) {
 				String pluginId = (String)preferencesToPluginIdMap.get(productPreferences[i]);
@@ -110,7 +110,7 @@ public class ProductPreferences {
 					list.add(ordering);
 				}
 			}
-			secondaryTocOrderings = (List[])list.toArray(new List[list.size()]);
+			secondaryTocOrderings = list.toArray(new List[list.size()]);
 		}
 		return secondaryTocOrderings;
 	}
@@ -267,7 +267,7 @@ public class ProductPreferences {
 			if (activeProduct != null) {
 				activeProductId = activeProduct.getId();
 			}
-			Collection collection = new ArrayList();
+			Collection<Properties> collection = new ArrayList<>();
 			IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.core.runtime.products"); //$NON-NLS-1$
 			for (int i=0;i<elements.length;++i) {
 				if (elements[i].getName().equals("product")) { //$NON-NLS-1$
@@ -298,7 +298,7 @@ public class ProductPreferences {
 					}
 				}
 			}
-			productPreferences = (Properties[])collection.toArray(new Properties[collection.size()]);
+			productPreferences = collection.toArray(new Properties[collection.size()]);
 		}
 		return productPreferences;
 	}

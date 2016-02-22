@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,13 +135,13 @@ public class SequenceResolver {
 					topRank = candidates[i].rank;
 				}
 			}
-			List topCandidates = new ArrayList();
+			List<Candidate> topCandidates = new ArrayList<>();
 			for (int i=0;i<candidates.length;++i) {
 				if (candidates[i].rank == topRank) {
 					topCandidates.add(candidates[i]);
 				}
 			}
-			return (Candidate[])topCandidates.toArray(new Candidate[topCandidates.size()]);
+			return topCandidates.toArray(new Candidate[topCandidates.size()]);
 		}
 		return candidates;
 	}
@@ -163,7 +163,7 @@ public class SequenceResolver {
 		}
 		// if we have no primary candidate then they're all eligible
 		if (primary != null) {
-			List eligibleCandidates = new ArrayList(allCandidates.length);
+			List<Candidate> eligibleCandidates = new ArrayList<>(allCandidates.length);
 			// primary candidate is always eligible
 			eligibleCandidates.add(primary);
 			Set primarySet = Collections.singleton(primary.item);
@@ -176,7 +176,7 @@ public class SequenceResolver {
 					}
 				}
 			}
-			return (Candidate[])eligibleCandidates.toArray(new Candidate[eligibleCandidates.size()]);
+			return eligibleCandidates.toArray(new Candidate[eligibleCandidates.size()]);
 		}
 		return allCandidates;
 	}
@@ -186,7 +186,7 @@ public class SequenceResolver {
 	 * no duplicates.
 	 */
 	private Candidate[] getAllCandidates() {
-		List candidates = new ArrayList();
+		List<Candidate> candidates = new ArrayList<>();
 		Object item = getNextItem(primaryIter);
 		if (item != null) {
 			Candidate c = new Candidate();
@@ -207,7 +207,7 @@ public class SequenceResolver {
 				}
 			}
 		}
-		return (Candidate[])candidates.toArray(new Candidate[candidates.size()]);
+		return candidates.toArray(new Candidate[candidates.size()]);
 	}
 
 	/*

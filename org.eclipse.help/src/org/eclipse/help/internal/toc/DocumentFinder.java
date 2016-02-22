@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class DocumentFinder {
 		String dir = HrefUtil.normalizeDirectoryHref(tocFile.getPluginId(), tocFile.getExtraDir());
 		String locale = tocFile.getLocale();
 
-		List result = new ArrayList();
+		List<String> result = new ArrayList<>();
 		String pluginID = HrefUtil.getPluginIDFromHref(dir);
 		if (pluginID == null) {
 			return new String[0];
@@ -52,7 +52,7 @@ public class DocumentFinder {
 		}
 		// Find doc.zip file
 		IPath iPath = new Path("$nl$/doc.zip"); //$NON-NLS-1$
-		Map override = new HashMap(1);
+		Map<String, String> override = new HashMap<>(1);
 		override.put("$nl$", locale); //$NON-NLS-1$
 		URL url = FileLocator.find(pluginDesc, iPath, override);
 		if (url == null) {
@@ -71,7 +71,7 @@ public class DocumentFinder {
 			href = HrefUtil.normalizeDirectoryPath(href);
 			result.add(href);
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	private static List collectExtraDocumentsFromZip(String pluginID, String directory,
@@ -107,7 +107,7 @@ public class DocumentFinder {
 	private static List createExtraTopicsFromZipFile(String pluginID, ZipFile zipFile,
 			String directory) {
 		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-		List result = new ArrayList();
+		List<String> result = new ArrayList<>();
 		for (Enumeration entriesEnum = zipFile.entries(); entriesEnum.hasMoreElements();) {
 			ZipEntry zEntry = (ZipEntry) entriesEnum.nextElement();
 			if (zEntry.isDirectory()) {

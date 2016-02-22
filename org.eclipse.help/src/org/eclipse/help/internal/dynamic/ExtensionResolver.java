@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class ExtensionResolver {
 			manager = HelpPlugin.getContentExtensionManager();
 		}
 		ContentExtension[] extensions = manager.getExtensions(path, type, locale);
-		List list = new ArrayList();
+		List<Node> list = new ArrayList<>();
 		for (int i=0;i<extensions.length;++i) {
 			String content = extensions[i].getContent();
 			try {
@@ -72,7 +72,7 @@ public class ExtensionResolver {
 				// ignore invalid extensions
 			}
 		}
-		return (Node[])list.toArray(new Node[list.size()]);
+		return list.toArray(new Node[list.size()]);
 	}
 
 	/*
@@ -136,7 +136,7 @@ public class ExtensionResolver {
 				return new Node[] { element };
 			}
 			Element body = findBody(in);
-			List children = new ArrayList();
+			List<Node> children = new ArrayList<>();
 			Node node = body.getFirstChild();
 			while (node != null) {
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -145,7 +145,7 @@ public class ExtensionResolver {
 				children.add(node);
 				node = node.getNextSibling();
 			}
-			return (Node[])children.toArray(new Node[children.size()]);
+			return children.toArray(new Node[children.size()]);
 		}
 		finally {
 			try {

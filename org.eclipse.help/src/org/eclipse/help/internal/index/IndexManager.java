@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class IndexManager {
 
 	private IndexContribution[] readIndexContributions(String locale) {
 		IndexContribution[] cached;
-		List contributions = new ArrayList();
+		List<IndexContribution> contributions = new ArrayList<>();
 		AbstractIndexProvider[] providers = getIndexProviders();
 		for (int i=0;i<providers.length;++i) {
 			IIndexContribution[] contrib;
@@ -111,7 +111,7 @@ public class IndexManager {
 				continue;
 			}
 		}
-		cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
+		cached = contributions.toArray(new IndexContribution[contributions.size()]);
 		return cached;
 	}
 
@@ -129,7 +129,7 @@ public class IndexManager {
 	 */
 	public AbstractIndexProvider[] getIndexProviders() {
 		if (indexProviders == null) {
-			List providers = new ArrayList();
+			List<AbstractIndexProvider> providers = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_INDEX);
 			for (int i=0;i<elements.length;++i) {
@@ -146,7 +146,7 @@ public class IndexManager {
 					}
 				}
 			}
-			indexProviders = (AbstractIndexProvider[])providers.toArray(new AbstractIndexProvider[providers.size()]);
+			indexProviders = providers.toArray(new AbstractIndexProvider[providers.size()]);
 		}
 		return indexProviders;
 	}

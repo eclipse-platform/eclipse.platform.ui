@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class TocManager {
 			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
 			TocContribution[] filtered = filterTocContributions(raw, tocsToFilter);
 			ITocContribution[] ordered = new TocSorter().orderTocContributions(filtered);
-			List orderedTocs = new ArrayList(ordered.length);
+			List<Toc> orderedTocs = new ArrayList<>(ordered.length);
 			for (int i=0;i<ordered.length;++i) {
 				try {
 					Toc toc = (Toc)ordered[i].getToc();
@@ -81,7 +81,7 @@ public class TocManager {
 					HelpPlugin.logError(msg, t);
 				}
 			}
-			tocs = (Toc[])orderedTocs.toArray(new Toc[orderedTocs.size()]);
+			tocs = orderedTocs.toArray(new Toc[orderedTocs.size()]);
 			TopicSorter topicSorter = new TopicSorter();
 			for (int i = 0; i < tocs.length; i++) {
 				topicSorter.sortChildren(tocs[i]);
@@ -202,7 +202,7 @@ public class TocManager {
 	private synchronized TocContribution[] getAndCacheTocContributions(String locale, Map contributionsByLocale) {
 		TocContribution[] cached = (TocContribution[])contributionsByLocale.get(locale);
 		if (cached == null) {
-			HashMap contributions = new HashMap();
+			HashMap<String, TocContribution> contributions = new HashMap<>();
 			AbstractTocProvider[] providers = getTocProviders();
 			for (int i=0;i<providers.length;++i) {
 				ITocContribution[] contrib;
@@ -232,7 +232,7 @@ public class TocManager {
 				}
 
 			}
-			cached = (TocContribution[])contributions.values().toArray(new TocContribution[contributions.size()]);
+			cached = contributions.values().toArray(new TocContribution[contributions.size()]);
 			contributionsByLocale.put(locale, cached);
 		}
 		return cached;
@@ -256,7 +256,7 @@ public class TocManager {
 	 */
 	public AbstractTocProvider[] getTocProviders() {
 		if (tocProviders == null) {
-			List providers = new ArrayList();
+			List<AbstractTocProvider> providers = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
 			for (int i=0;i<elements.length;++i) {
@@ -274,7 +274,7 @@ public class TocManager {
 				}
 			}
 			Collections.sort(providers, new TocProviderComparator());
-			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);
+			tocProviders = providers.toArray(new AbstractTocProvider[providers.size()]);
 		}
 		return tocProviders;
 	}
@@ -292,22 +292,22 @@ public class TocManager {
 	 * ignoredTocs, filter the contribution.
 	 */
 	private TocContribution[] filterTocContributions(TocContribution[] unfiltered, Set tocsToFilter) {
-		List filtered = new ArrayList();
+		List<TocContribution> filtered = new ArrayList<>();
 		for (int i=0;i<unfiltered.length;++i) {
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
 					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
 				filtered.add(unfiltered[i]);
 			}
 		}
-		return (TocContribution[])filtered.toArray(new TocContribution[filtered.size()]);
+		return filtered.toArray(new TocContribution[filtered.size()]);
 	}
 
 	private TocContribution[] getRootTocContributions(String locale, Set tocsToFilter) {
 		TocContribution[] contributions = getTocContributionsForToc(locale);
 		List unassembled = new ArrayList(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler(tocsToFilter);
-		List assembled = assembler.assemble(unassembled);
-		return (TocContribution[])assembled.toArray(new TocContribution[assembled.size()]);
+		List<TocContribution> assembled = assembler.assemble(unassembled);
+		return assembled.toArray(new TocContribution[assembled.size()]);
 	}
 
 	private Set getIgnoredTocContributions() {

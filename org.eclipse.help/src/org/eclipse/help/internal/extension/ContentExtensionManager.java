@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class ContentExtensionManager {
 		if (extensionsByPath == null) {
 			loadExtensions(locale);
 		}
-		List extensions = new ArrayList();
+		List<ContentExtension> extensions = new ArrayList<>();
 		Iterator iter = extensionsByPath.values().iterator();
 		while (iter.hasNext()) {
 			extensions.addAll((Collection)iter.next());
@@ -57,7 +57,7 @@ public class ContentExtensionManager {
 		while (iter.hasNext()) {
 			extensions.addAll((Collection)iter.next());
 		}
-		return (ContentExtension[])extensions.toArray(new ContentExtension[extensions.size()]);
+		return extensions.toArray(new ContentExtension[extensions.size()]);
 	}
 
 	/*
@@ -68,9 +68,9 @@ public class ContentExtensionManager {
 			loadExtensions(locale);
 		}
 		Map map = (type == ContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
-		List extensions = (List)map.get(path);
+		List<ContentExtension> extensions = (List<ContentExtension>) map.get(path);
 		if (extensions != null) {
-			return (ContentExtension[])extensions.toArray(new ContentExtension[extensions.size()]);
+			return extensions.toArray(new ContentExtension[extensions.size()]);
 		}
 		return EMPTY_ARRAY;
 	}
@@ -125,7 +125,7 @@ public class ContentExtensionManager {
 	 */
 	private AbstractContentExtensionProvider[] getContentExtensionProviders() {
 		if (contentExtensionProviders == null) {
-			List providers = new ArrayList();
+			List<AbstractContentExtensionProvider> providers = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTENT_EXTENSION);
 			for (int i=0;i<elements.length;++i) {
@@ -142,7 +142,7 @@ public class ContentExtensionManager {
 					}
 				}
 			}
-			contentExtensionProviders = (AbstractContentExtensionProvider[])providers.toArray(new AbstractContentExtensionProvider[providers.size()]);
+			contentExtensionProviders = providers.toArray(new AbstractContentExtensionProvider[providers.size()]);
 		}
 		return contentExtensionProviders;
 	}

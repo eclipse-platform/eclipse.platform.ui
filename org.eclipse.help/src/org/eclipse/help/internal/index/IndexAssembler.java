@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,7 +92,7 @@ public class IndexAssembler {
 			else if (childA instanceof Topic) {
 				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
 			} else if (childA instanceof IndexSee) {
-				seeTargets.add(((IndexSee)childA));
+				seeTargets.add((childA));
 			}
 		}
 
@@ -120,7 +120,7 @@ public class IndexAssembler {
 					topicHrefs.add(href);
 				}
 			} else if (childB instanceof IndexSee) {
-				if (!seeTargets.contains(((IndexSee) childB))) {
+				if (!seeTargets.contains((childB))) {
 					// add see only if it doesn't exist yet
 					a.appendChild(childB);
 					seeTargets.add(childB);

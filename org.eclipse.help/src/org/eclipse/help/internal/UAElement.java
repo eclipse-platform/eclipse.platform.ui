@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class UAElement implements IUAElement {
 
 	private Element element;
 	private UAElement parent;
-	protected List children;
+	protected List<UAElement> children;
 	private Filter[] filters;
 	private Expression enablementExpression;
     private IUAElement src;
@@ -92,7 +92,7 @@ public class UAElement implements IUAElement {
 
 	private Filter[] getFilterElements() {
 		if (filters == null) {
-			List list = new ArrayList();
+			List<Filter> list = new ArrayList<>();
 			if (element.hasChildNodes()) {
 				Node node = element.getFirstChild();
 				while (node != null) {
@@ -125,7 +125,7 @@ public class UAElement implements IUAElement {
 					node = node.getNextSibling();
 				}
 			}
-			filters = (Filter[])list.toArray(new Filter[list.size()]);
+			filters = list.toArray(new Filter[list.size()]);
 		}
 		return filters;
 	}
@@ -142,7 +142,7 @@ public class UAElement implements IUAElement {
 
 	public void appendChildren(IUAElement[] children) {
 		if (this.children == null && children.length > 0) {
-			this.children = new ArrayList(4);
+			this.children = new ArrayList<>(4);
 		}
 		for (int i=0;i<children.length;i++) {
 			appendChild(children[i] instanceof UAElement ? (UAElement)children[i] : UAElementFactory.newElement(children[i]));
@@ -170,7 +170,7 @@ public class UAElement implements IUAElement {
 	public synchronized IUAElement[] getChildren() {
 		if (children == null) {
 			if (element.hasChildNodes()) {
-				children = new ArrayList(4);
+				children = new ArrayList<>(4);
 				Node node = element.getFirstChild();
 				while (node != null) {
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -186,13 +186,13 @@ public class UAElement implements IUAElement {
 				return new UAElement[0];
 			}
 		}
-		return (UAElement[])children.toArray(new UAElement[children.size()]);
+		return children.toArray(new UAElement[children.size()]);
 	}
 
 	public Object getChildren(Class clazz) {
 		IUAElement[] children = getChildren();
 		if (children.length > 0) {
-			List list = new ArrayList();
+			List<Object> list = new ArrayList<>();
 			for (int i=0;i<children.length;++i) {
 				IUAElement child = children[i];
 				if (clazz.isAssignableFrom(child.getClass())) {
