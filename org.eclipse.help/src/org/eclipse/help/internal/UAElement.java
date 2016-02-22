@@ -189,7 +189,7 @@ public class UAElement implements IUAElement {
 		return children.toArray(new UAElement[children.size()]);
 	}
 
-	public Object getChildren(Class clazz) {
+	public Object getChildren(Class<?> clazz) {
 		IUAElement[] children = getChildren();
 		if (children.length > 0) {
 			List<Object> list = new ArrayList<>();

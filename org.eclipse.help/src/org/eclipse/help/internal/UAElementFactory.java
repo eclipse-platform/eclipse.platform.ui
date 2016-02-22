@@ -98,11 +98,11 @@ public class UAElementFactory {
 
 	public static UAElement newElement(Element element) {
 		String name = element.getNodeName();
-		Class clazz = (Class)classByElementName.get(name);
+		Class<?> clazz = (Class) classByElementName.get(name);
 		if (clazz != null) {
 			try {
-				Constructor constructor = clazz.getConstructor(new Class[] { Element.class });
-				return (UAElement)constructor.newInstance(new Object[] { element });
+				Constructor<?> constructor = clazz.getConstructor(Element.class);
+				return (UAElement) constructor.newInstance(element);
 			}
 			catch (Exception e) {
 				String msg = "Error creating document model element"; //$NON-NLS-1$
@@ -114,12 +114,12 @@ public class UAElementFactory {
 
 	public static UAElement newElement(IUAElement src) {
 		for (int i=0;i<interfaceTable.length;++i) {
-			Class interfaze = interfaceTable[i][0];
-			Class clazz = interfaceTable[i][1];
+			Class<?> interfaze = interfaceTable[i][0];
+			Class<?> clazz = interfaceTable[i][1];
 			if (interfaze.isAssignableFrom(src.getClass())) {
 				try {
-					Constructor constructor = clazz.getConstructor(new Class[] { interfaze });
-					return (UAElement)constructor.newInstance(new Object[] { src });
+					Constructor constructor = clazz.getConstructor(interfaze);
+					return (UAElement) constructor.newInstance(src);
 				}
 				catch (Exception e) {
 					String msg = "Error creating document model element"; //$NON-NLS-1$
