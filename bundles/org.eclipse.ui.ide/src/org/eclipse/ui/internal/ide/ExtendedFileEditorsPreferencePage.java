@@ -54,13 +54,13 @@ public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage
 		Label unknownTypeStrategyLabel = new Label(defaultStrategyComposite, SWT.NONE);
 		unknownTypeStrategyLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		unknownTypeStrategyLabel
-				.setText(IDEWorkbenchMessages.ExtendedFileEditorsPreferencePage_strategyForUnknownFiles);
+				.setText(IDEWorkbenchMessages.ExtendedFileEditorsPreferencePage_strategyForUnassociatedFiles);
 		ComboViewer viewer = new ComboViewer(defaultStrategyComposite);
 		viewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object o) {
 				String id = (String) o;
-				String label = UnknownEditorStrategyRegistry.getLabel(id);
+				String label = UnassociatedEditorStrategyRegistry.getLabel(id);
 				if (label != null) {
 					return label;
 				}
@@ -69,14 +69,14 @@ public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage
 			}
 		});
 		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(UnknownEditorStrategyRegistry.retrieveAllStrategies());
+		viewer.setInput(UnassociatedEditorStrategyRegistry.retrieveAllStrategies());
 		this.idePreferenceStore = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		viewer.setSelection(
-				new StructuredSelection(this.idePreferenceStore.getString(IDE.UNKNOWN_EDITOR_STRATEGY_PREFERENCE_KEY)));
+				new StructuredSelection(this.idePreferenceStore.getString(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY)));
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
-				idePreferenceStore.setValue(IDE.UNKNOWN_EDITOR_STRATEGY_PREFERENCE_KEY,
+				idePreferenceStore.setValue(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY,
 						(String) ((IStructuredSelection) event.getSelection()).getFirstElement());
 			}
 		});
@@ -103,7 +103,7 @@ public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage
 	@Override
 	public void performDefaults() {
 		super.performDefaults();
-		idePreferenceStore.setToDefault(IDE.UNKNOWN_EDITOR_STRATEGY_PREFERENCE_KEY);
+		idePreferenceStore.setToDefault(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY);
 	}
 
 }

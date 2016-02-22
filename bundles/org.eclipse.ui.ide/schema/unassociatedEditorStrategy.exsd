@@ -3,11 +3,11 @@
 <schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.ide" id="unknownEditorStrategy" name="Strategies to handle unassociated files"/>
+         <meta.schema plugin="org.eclipse.ui.ide" id="unassociatedEditorStrategy" name="Strategies to handle unassociated files"/>
       </appInfo>
       <documentation>
          &lt;p&gt;This extension point allows to plug different strategies for supporting unassociated files inside the IDE. Strategies can be such as forcing a specific editor, asking user to choose an editor, polling a remote registry to find an editor...&lt;/p&gt;
-&lt;p&gt;Users and extenders are able to choose which strategy to use by setting the related org.eclipse.ui.ide.unknownEditorStrategy preference to the id of their favourite strategy.&lt;br/&gt;
+&lt;p&gt;Users and extenders are able to choose which strategy to use by setting the related org.eclipse.ui.ide.unassociatedEditorStrategy preference to the id of their favourite strategy.&lt;br/&gt;
 The default strategy is to check for system editor and to open the Eclipse text editor if no relevant editor is found.
 &lt;/p&gt;
       </documentation>
@@ -65,7 +65,7 @@ The default strategy is to check for system editor and to open the Eclipse text 
 
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.ide.IUnknownEditorStrategy"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.ide.IUnassociatedEditorStrategy"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -105,7 +105,7 @@ The default strategy is to check for system editor and to open the Eclipse text 
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         This adds a new interface IUnknownEditorStrategy to the API of org.eclipse.ui.ide.
+         This adds a new interface IUnassociatedEditorStrategy to the API of org.eclipse.ui.ide.
       </documentation>
    </annotation>
 

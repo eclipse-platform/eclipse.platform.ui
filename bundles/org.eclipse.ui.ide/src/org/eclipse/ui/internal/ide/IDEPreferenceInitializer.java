@@ -88,7 +88,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, getShowInSystemExplorerCommand());
 
-		node.put(IDE.UNKNOWN_EDITOR_STRATEGY_PREFERENCE_KEY, SystemEditorOrTextEditorStrategy.EXTENSION_ID);
+		node.put(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY, SystemEditorOrTextEditorStrategy.EXTENSION_ID);
 	}
 
 	/**

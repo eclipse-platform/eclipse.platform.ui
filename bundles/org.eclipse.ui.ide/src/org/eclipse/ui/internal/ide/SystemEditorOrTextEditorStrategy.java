@@ -12,13 +12,13 @@ package org.eclipse.ui.internal.ide;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.ide.IUnknownEditorStrategy;
+import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
 
 /**
  * @since 3.12
  *
  */
-public final class SystemEditorOrTextEditorStrategy implements IUnknownEditorStrategy {
+public final class SystemEditorOrTextEditorStrategy implements IUnassociatedEditorStrategy {
 	static final String EXTENSION_ID = "org.eclipse.ui.ide.systemEditorThenTextEditor"; //$NON-NLS-1$
 
 	@Override

@@ -1023,7 +1023,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String editorAssociationOverride_error_invalidElementName_message;
 	public static String editorAssociationOverride_error_invalidExtension_message;
 
-	public static String ExtendedFileEditorsPreferencePage_strategyForUnknownFiles;
+	public static String ExtendedFileEditorsPreferencePage_strategyForUnassociatedFiles;
 	public static String ExtendedFileEditorsPreferencePage_labelNotResolved;
 
 	static {

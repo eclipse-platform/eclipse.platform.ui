@@ -18,12 +18,12 @@ import org.eclipse.ui.IEditorRegistry;
 
 /**
  * This interface represents a strategy for choosing an IEditorDescriptor for a
- * given file name. It's used by the org.eclipse.ui.ide.unknownEditorStrategy
- * extension point.
+ * given file name. It's used by the
+ * org.eclipse.ui.ide.unassociatedEditorStrategy extension point.
  *
  * @since 3.12
  */
-public interface IUnknownEditorStrategy {
+public interface IUnassociatedEditorStrategy {
 
 	/**
 	 * @param fileName

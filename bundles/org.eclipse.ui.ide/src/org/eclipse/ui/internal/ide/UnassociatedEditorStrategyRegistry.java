@@ -19,15 +19,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.ide.IUnknownEditorStrategy;
+import org.eclipse.ui.ide.IUnassociatedEditorStrategy;
 
 /**
  * @since 3.12
  *
  */
-public class UnknownEditorStrategyRegistry {
+public class UnassociatedEditorStrategyRegistry {
 
-	private static final String EXTENSION_POINT_ID = IDEWorkbenchPlugin.IDE_WORKBENCH + ".unknownEditorStrategy"; //$NON-NLS-1$
+	private static final String EXTENSION_POINT_ID = IDEWorkbenchPlugin.IDE_WORKBENCH + ".unassociatedEditorStrategy"; //$NON-NLS-1$
 
 	private static Map<String, String> idsToLabel;
 
@@ -37,7 +37,7 @@ public class UnknownEditorStrategyRegistry {
 	 * @return an instance of the strategy, or {@code null} if no strategy is
 	 *         found for this id
 	 */
-	public static IUnknownEditorStrategy getStrategy(String strategyId) {
+	public static IUnassociatedEditorStrategy getStrategy(String strategyId) {
 		if (strategyId == null) {
 			return null;
 		}
@@ -47,7 +47,7 @@ public class UnknownEditorStrategyRegistry {
 			for (IConfigurationElement extension : extensions) {
 				if (strategyId.equals(readAttribute(extension, "id"))) { //$NON-NLS-1$
 					try {
-						return (IUnknownEditorStrategy) extension.createExecutableExtension("class"); //$NON-NLS-1$
+						return (IUnassociatedEditorStrategy) extension.createExecutableExtension("class"); //$NON-NLS-1$
 					} catch (CoreException ex) {
 						IDEWorkbenchPlugin.log(ex.getMessage(), ex);
 						return null;
@@ -81,7 +81,8 @@ public class UnknownEditorStrategyRegistry {
 	/**
 	 * @param id
 	 *            the id of the strategy to use
-	 * @return the label for the supplied strategy id, or {@code null} for unknown id.
+	 * @return the label for the supplied strategy id, or {@code null} for
+	 *         unknown id.
 	 */
 	public static String getLabel(String id) {
 		if (idsToLabel == null || !idsToLabel.containsKey(id)) {
