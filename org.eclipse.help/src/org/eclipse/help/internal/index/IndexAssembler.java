@@ -42,7 +42,7 @@ import com.ibm.icu.text.Collator;
 public class IndexAssembler {
 
 	private DocumentProcessor processor;
-	private Comparator comparator;
+	private IndexComparator comparator;
 	private String locale;
 
 	/*
@@ -160,7 +160,7 @@ public class IndexAssembler {
 	 * Comparator. Prune out any empty entry elements. Return true if this node was
 	 * not pruned
 	 */
-	private boolean sortAndPrune(UAElement element, Comparator comparator) {
+	private boolean sortAndPrune(UAElement element, IndexComparator comparator) {
 		// sort children
 		IUAElement[] children = element.getChildren();
 		if (children.length > 1) {
@@ -225,24 +225,24 @@ public class IndexAssembler {
 		}
 	}
 
-	private class IndexComparator implements Comparator {
+	private class IndexComparator implements Comparator<IUAElement> {
 		Collator collator = Collator.getInstance();
 		@Override
-		public int compare(Object o1, Object o2) {
+		public int compare(IUAElement o1, IUAElement o2) {
 			/*
 			 * First separate the objects into different groups by type;
 			 * topics first, then entries, etc. Then within each
 			 * group, sort alphabetically.
 			 */
-			int c1 = getCategory((UAElement)o1);
-			int c2 = getCategory((UAElement)o2);
+			int c1 = getCategory(o1);
+			int c2 = getCategory(o2);
 			if (c1 == c2) {
                 if (o1 instanceof IndexSee) {
                 	return ((IndexSee)o1).compareTo(o2);
                 }
 				// same type of object; compare alphabetically
-				String s1 = getLabel((UAElement)o1);
-				String s2 = getLabel((UAElement)o2);
+				String s1 = getLabel(o1);
+				String s2 = getLabel(o2);
 				//return s1.compareTo(s2);
 				return collator.compare(s1, s2);
 			}
@@ -260,7 +260,7 @@ public class IndexAssembler {
 		 * 4. entries starting with alpha
 		 * 5. other
 		 */
-		private int getCategory(UAElement element) {
+		private int getCategory(IUAElement element) {
 			if (element instanceof Topic) {
 				return 0;
 			}
@@ -289,7 +289,7 @@ public class IndexAssembler {
 		 * Returns the string that will be displayed for the given object,
 		 * used for sorting.
 		 */
-		private String getLabel(UAElement element) {
+		private String getLabel(IUAElement element) {
 			if (element instanceof Topic) {
 				Topic topic = (Topic)element;
 				if (topic.getLabel() == null) {

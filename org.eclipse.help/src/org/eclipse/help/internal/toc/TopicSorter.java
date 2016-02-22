@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import com.ibm.icu.text.Collator;
  */
 public class TopicSorter {
 
-	private Comparator comparator;
+	private TopicComparator comparator;
 
 	public void sortChildren(Toc toc) {
 		if (comparator == null) {
@@ -49,13 +49,13 @@ public class TopicSorter {
 		}
 	}
 
-	private class TopicComparator implements Comparator {
+	private class TopicComparator implements Comparator<ITopic> {
 		Collator collator = Collator.getInstance();
 
 		@Override
-		public int compare(Object o1, Object o2) {
-			String label1 = ((ITopic)o1).getLabel();
-			String label2 = ((ITopic)o2).getLabel();
+		public int compare(ITopic o1, ITopic o2) {
+			String label1 = o1.getLabel();
+			String label2 = o2.getLabel();
 			return collator.compare(label1, label2);
 		}
 	}

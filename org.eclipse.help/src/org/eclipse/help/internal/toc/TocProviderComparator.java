@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,11 @@ import java.util.Comparator;
 import org.eclipse.help.AbstractTocProvider;
 
 
-public class TocProviderComparator implements Comparator{
+public class TocProviderComparator implements Comparator<AbstractTocProvider> {
 
 	@Override
-	public int compare(Object obj1,Object obj2)
+	public int compare(AbstractTocProvider provider1, AbstractTocProvider provider2)
 	{
-		AbstractTocProvider provider1 = (AbstractTocProvider)obj1;
-		AbstractTocProvider provider2 = (AbstractTocProvider)obj2;
-
 		if(provider1.getPriority()<provider2.getPriority())
 			return -1;
 		else if(provider1.getPriority()>provider2.getPriority())
