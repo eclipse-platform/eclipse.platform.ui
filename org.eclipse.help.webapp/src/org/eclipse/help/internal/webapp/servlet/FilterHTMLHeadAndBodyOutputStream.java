@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,15 +275,12 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 	}
 
 	private void parseMetaTag(ByteArrayOutputStream buffer) {
-		ByteArrayInputStream is = new ByteArrayInputStream(buffer.toByteArray());
-		String value = HTMLDocParser.getCharsetFromHTML(is);
-		try {
-			is.close();
+		try (ByteArrayInputStream is = new ByteArrayInputStream(buffer.toByteArray())) {
+			String value = HTMLDocParser.getCharsetFromHTML(is);
+			if (value != null)
+				this.charset = value;
+		} catch (IOException e) {
 		}
-		catch (IOException e) {
-		}
-		if (value!=null)
-			this.charset = value;
 	}
 
 	private void reset() throws IOException {
@@ -303,11 +300,6 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.io.FilterOutputStream#close()
-	 */
 	@Override
 	public void close() throws IOException {
 		reset();

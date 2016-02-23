@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,27 +80,27 @@ public class DynamicXHTMLFilter implements IFilter {
 
 				try {
 					boolean filter = ProductPreferences.useEnablementFilters();
-					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, filter);
-					transferContent(in2, out);
-					in2.close();
+					try (InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, filter)) {
+						transferContent(in2, out);
+					}
 					out.close();
 				}
 				catch (Throwable t) {
-					PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, CHARSET_UTF8));
-					writer.println(ERROR_PAGE_PREFIX);
-					writer.println("<p>"); //$NON-NLS-1$
-					writer.println(WebappResources.getString("ProcessingError", req.getLocale())); //$NON-NLS-1$
-					writer.println("</p>"); //$NON-NLS-1$
-					writer.println("<pre>"); //$NON-NLS-1$
+					try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, CHARSET_UTF8))) {
+						writer.println(ERROR_PAGE_PREFIX);
+						writer.println("<p>"); //$NON-NLS-1$
+						writer.println(WebappResources.getString("ProcessingError", req.getLocale())); //$NON-NLS-1$
+						writer.println("</p>"); //$NON-NLS-1$
+						writer.println("<pre>"); //$NON-NLS-1$
 
-					StringWriter w1 = new StringWriter();
-					PrintWriter w2 = new PrintWriter(w1);
-					t.printStackTrace(w2);
+						StringWriter w1 = new StringWriter();
+						PrintWriter w2 = new PrintWriter(w1);
+						t.printStackTrace(w2);
 
-					writer.println(UrlUtil.htmlEncode(w1.getBuffer().toString()));
-					writer.println("</pre>"); //$NON-NLS-1$
-					writer.println(ERROR_PAGE_SUFFIX);
-					writer.close();
+						writer.println(UrlUtil.htmlEncode(w1.getBuffer().toString()));
+						writer.println("</pre>"); //$NON-NLS-1$
+						writer.println(ERROR_PAGE_SUFFIX);
+					}
 				}
 			}
 		};

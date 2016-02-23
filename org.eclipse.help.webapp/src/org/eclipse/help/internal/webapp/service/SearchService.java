@@ -80,19 +80,13 @@ public class SearchService extends SearchServlet {
 	protected String getJSONResponse(String response)
 			throws IOException {
 		SearchParser searchParser = new SearchParser();
-		InputStream is = null;
-		try {
-			if (response != null) {
-				is = new ByteArrayInputStream(response.getBytes("UTF-8")); //$NON-NLS-1$
+		if (response != null) {
+			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
 				searchParser.parse(is);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
-		if (is != null)
-			is.close();
 
 		// Call after the catch.
 		// An empty JSON is created if any Exception is thrown

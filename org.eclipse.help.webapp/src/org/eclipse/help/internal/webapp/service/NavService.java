@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,27 +110,22 @@ public class NavService extends NavServlet {
 		response = Utils.updateResponse(response);
 
 		OutputStream out = resp.getOutputStream();
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-		writer.write(response);
-		writer.close();
+		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"))) { //$NON-NLS-1$
+			writer.write(response);
+		}
 	}
 
 	protected String getJSONResponse(String response)
 			throws IOException {
 		NavParser navParser = new NavParser();
-		InputStream is = null;
-		try {
-			if (response != null) {
-				is = new ByteArrayInputStream(response.getBytes("UTF-8")); //$NON-NLS-1$
+		if (response != null) {
+			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
 				navParser.parse(is);
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
-		if (is != null)
-			is.close();
 
 		// Call after the catch.
 		// An empty JSON is created if any Exception is thrown

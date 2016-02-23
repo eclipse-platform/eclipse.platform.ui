@@ -105,19 +105,13 @@ public class AboutService extends AboutServlet {
 	protected String getJSONResponse(String response)
 			throws IOException {
 		AboutParser aboutParser = new AboutParser(service);
-		InputStream is = null;
-		try {
-			if (response != null) {
-				is = new ByteArrayInputStream(response.getBytes("UTF-8")); //$NON-NLS-1$
+		if (response != null) {
+			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
 				aboutParser.parse(is);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
-		if (is != null)
-			is.close();
 
 		// Call after the catch.
 		// An empty JSON is created if any Exception is thrown

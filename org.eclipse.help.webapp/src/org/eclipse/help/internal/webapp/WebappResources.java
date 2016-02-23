@@ -162,19 +162,10 @@ public class WebappResources {
 		if (url == null)
 			return null;
 
-		InputStream in= null;
-		try {
-			in= url.openStream();
+		try (InputStream in= url.openStream()) {
 			bundle= new PropertyResourceBundle(in);
 		} catch (IOException e) {
 			bundle = null;
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return bundle;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,15 +84,12 @@ public class TocFragmentService extends TocFragmentServlet {
 	protected String getJSONResponse(String toc, String path, String xmlResource)
 			throws IOException {
 		TocFragmentParser tocParser = new TocFragmentParser();
-		InputStream is = null;
-		try {
-			if (xmlResource != null) {
-	            is = new ByteArrayInputStream(xmlResource.getBytes("UTF-8")); //$NON-NLS-1$
+		if (xmlResource != null) {
+			try (InputStream is = new ByteArrayInputStream(xmlResource.getBytes("UTF-8"))) { //$NON-NLS-1$
 
-	            int level = 0;
+				int level = 0;
 				if (toc != null && toc.length() > 0) {
 					level++;
-
 
 					if (path != null && path.length() > 0) {
 						String[] pathIdxs = path.split("_"); //$NON-NLS-1$
@@ -101,16 +98,12 @@ public class TocFragmentService extends TocFragmentServlet {
 				}
 
 				tocParser.parse(is, level);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
-		if (is != null)
-			is.close();
-
-        // Call after the catch.
+		// Call after the catch.
 		// An empty JSON is created if any Exception is thrown
 		// Else returns the complete JSON
 		return tocParser.toJSON();

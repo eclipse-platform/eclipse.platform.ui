@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,10 @@ public class NavServlet extends HttpServlet {
 			out = filter.filter(req, out);
 		}
 
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
-		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
-		writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
-		writer.close();
+		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"))) { //$NON-NLS-1$
+			AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
+			writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
+		}
 	}
 
 	private void showPageNotFoundPage(HttpServletRequest req,
