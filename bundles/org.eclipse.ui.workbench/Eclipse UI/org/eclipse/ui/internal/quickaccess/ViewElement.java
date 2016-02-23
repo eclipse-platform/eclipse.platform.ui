@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -102,7 +103,14 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		return LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor, window.getContext());
+		String viewLabel = LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor,
+				window.getContext());
+		String categoryLabel = LocalizationHelper.getLocalized(viewDescriptor.getCategory(), viewDescriptor,
+				window.getContext());
+		if (categoryLabel != null) {
+			return NLS.bind(QuickAccessMessages.QuickAccess_ViewWithCategory, viewLabel, categoryLabel);
+		}
+		return viewLabel;
 	}
 
 	@Override
