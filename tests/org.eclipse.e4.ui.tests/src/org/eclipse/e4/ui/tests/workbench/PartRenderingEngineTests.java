@@ -18,9 +18,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
@@ -43,6 +45,7 @@ import org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Control;
@@ -89,6 +92,21 @@ public class PartRenderingEngineTests {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+
+		final Display d = Display.getDefault();
+		appContext.set(Realm.class, DisplayRealm.getRealm(d));
+		appContext.set(UISynchronize.class, new UISynchronize() {
+			@Override
+			public void syncExec(Runnable runnable) {
+				d.syncExec(runnable);
+			}
+
+			@Override
+			public void asyncExec(Runnable runnable) {
+				d.asyncExec(runnable);
+			}
+		});
+
 		LogReaderService logReaderService = appContext
 				.get(LogReaderService.class);
 		logReaderService.addLogListener(listener);
