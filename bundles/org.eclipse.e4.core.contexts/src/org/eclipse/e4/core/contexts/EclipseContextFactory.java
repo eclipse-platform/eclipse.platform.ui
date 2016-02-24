@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,11 +55,26 @@ public final class EclipseContextFactory {
 		synchronized (serviceContexts) {
 			IEclipseContext result = serviceContexts.get(bundleContext);
 			if (result == null) {
-				result = new EclipseContextOSGi(bundleContext);
-				result.set(EclipseContext.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+				result = createServiceContext(bundleContext);
 				serviceContexts.put(bundleContext, result);
 			}
 			return result;
 		}
 	}
+
+	/**
+	 * Creates and returns a new context that can be used to lookup OSGi
+	 * services. A client must dispose the provided context.
+	 *
+	 * @param bundleContext The bundle context to use for service lookup
+	 * @return A new context containing all OSGi services
+	 *
+	 * @since 1.5
+	 */
+	public static IEclipseContext createServiceContext(BundleContext bundleContext) {
+		IEclipseContext result = new EclipseContextOSGi(bundleContext);
+		result.set(EclipseContext.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+		return result;
+	}
+
 }
