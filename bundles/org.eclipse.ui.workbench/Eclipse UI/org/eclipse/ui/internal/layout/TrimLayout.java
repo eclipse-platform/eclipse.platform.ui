@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 488372
  *******************************************************************************/
 package org.eclipse.ui.internal.layout;
 
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -143,37 +143,6 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 			return desc.getAreaId();
 		}
 		return SWT.DEFAULT;
-	}
-
-	/**
-	 * @param control
-	 *            new window trim to be added
-	 * @param areaId
-	 *            the area ID
-	 * @see #getAreaIds()
-	 * @deprecated
-	 */
-	@Deprecated
-	public void addTrim(IWindowTrim control, int areaId) {
-		addTrim(areaId, control, null);
-	}
-
-	/**
-	 *
-	 * @param trim
-	 *            new window trim to be added
-	 * @param areaId
-	 *            the area ID
-	 * @param beforeMe
-	 *            if null, the control will be inserted as the last trim widget
-	 *            on this side of the layout. Otherwise, the control will be
-	 *            inserted before the given widget.
-	 * @see #getAreaIds()
-	 * @deprecated
-	 */
-	@Deprecated
-	public void addTrim(IWindowTrim trim, int areaId, IWindowTrim beforeMe) {
-		addTrim(areaId, trim, beforeMe);
 	}
 
 	@Override
