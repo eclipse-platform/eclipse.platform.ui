@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids: sdavids@gmx.de - see bug 25376
  *     Jeremie Bresson <jbr@bsiag.com> - Allow to specify format for date variable - https://bugs.eclipse.org/75981
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486903, 487327
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 486903, 487327, 487901
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
@@ -51,10 +51,54 @@ public class GlobalTemplateVariables {
 	}
 
 	/**
+	 * The base class for text selection variables that allows to return the current text selection. Sub-classes can
+	 * define the name and the description of the variable via the constructor
+	 *
+	 * @since 3.6
+	 */
+	public static class Selection extends SimpleTemplateVariableResolver {
+
+		public Selection(String name, String description) {
+			super(name, description);
+		}
+
+		@Override
+		protected String resolve(TemplateContext context) {
+			String selection= context.getVariable(SELECTION);
+			if (selection == null)
+				return ""; //$NON-NLS-1$
+			return selection;
+		}
+
+		@Override
+		public void resolve(TemplateVariable variable, TemplateContext context) {
+			List<String> params= variable.getVariableType().getParams();
+			if (params.size() >= 1 && params.get(0) != null) {
+				resolveWithParams(variable, context, params);
+			} else {
+				// No parameter, use default:
+				super.resolve(variable, context);
+			}
+		}
+
+		private void resolveWithParams(TemplateVariable variable, TemplateContext context, List<String> params) {
+			String selection= context.getVariable(SELECTION);
+			if (selection != null) {
+				variable.setValue(selection);
+			} else {
+				String defaultValue= params.get(0);
+				variable.setValue(defaultValue);
+			}
+			variable.setUnambiguous(true);
+			variable.setResolved(true);
+		}
+	}
+
+	/**
 	 * The word selection variable determines templates that work on a full
 	 * lines selection.
 	 */
-	public static class WordSelection extends SimpleTemplateVariableResolver {
+	public static class WordSelection extends Selection {
 
 		/** Name of the word selection variable, value= {@value} */
 		public static final String NAME= "word_selection"; //$NON-NLS-1$
@@ -65,44 +109,13 @@ public class GlobalTemplateVariables {
 		public WordSelection() {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedWord")); //$NON-NLS-1$
 		}
-		@Override
-		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable(SELECTION);
-			if (selection == null)
-				return ""; //$NON-NLS-1$
-			return selection;
-		}
-
-		@Override
-		public void resolve(TemplateVariable variable, TemplateContext context) {
-			List<String> params= variable.getVariableType().getParams();
-			if (params.size() >= 1 && params.get(0) != null) {
-				resolveWithParams(variable, context, params);
-			} else {
-				// No parameter, use default:
-				super.resolve(variable, context);
-			}
-		}
-
-		private void resolveWithParams(TemplateVariable variable, TemplateContext context, List<String> params) {
-			String selection= context.getVariable(SELECTION);
-			if (selection != null) {
-				variable.setValue(selection);
-			} else {
-				String defaultValue= params.get(0);
-				variable.setValue(defaultValue);
-			}
-			variable.setUnambiguous(true);
-			variable.setResolved(true);
-		}
-
 	}
 
 	/**
 	 * The line selection variable determines templates that work on selected
 	 * lines.
 	 */
-	public static class LineSelection extends SimpleTemplateVariableResolver {
+	public static class LineSelection extends Selection {
 
 		/** Name of the line selection variable, value= {@value} */
 		public static final String NAME= "line_selection"; //$NON-NLS-1$
@@ -112,36 +125,6 @@ public class GlobalTemplateVariables {
 		 */
 		public LineSelection() {
 			super(NAME, TextTemplateMessages.getString("GlobalVariables.variable.description.selectedLines")); //$NON-NLS-1$
-		}
-		@Override
-		protected String resolve(TemplateContext context) {
-			String selection= context.getVariable(SELECTION);
-			if (selection == null)
-				return ""; //$NON-NLS-1$
-			return selection;
-		}
-
-		@Override
-		public void resolve(TemplateVariable variable, TemplateContext context) {
-			List<String> params= variable.getVariableType().getParams();
-			if (params.size() >= 1 && params.get(0) != null) {
-				resolveWithParams(variable, context, params);
-			} else {
-				// No parameter, use default:
-				super.resolve(variable, context);
-			}
-		}
-
-		private void resolveWithParams(TemplateVariable variable, TemplateContext context, List<String> params) {
-			String selection= context.getVariable(SELECTION);
-			if (selection != null) {
-				variable.setValue(selection);
-			} else {
-				String defaultValue= params.get(0);
-				variable.setValue(defaultValue);
-			}
-			variable.setUnambiguous(true);
-			variable.setResolved(true);
 		}
 	}
 
