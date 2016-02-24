@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.templates.Template;
 
@@ -164,8 +170,14 @@ public class TemplateReaderWriter {
 					continue;
 
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
-				if (id != null && ids.contains(id))
-					throw new IOException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
+				if (id != null && ids.contains(id)) {
+					String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+					ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+					String message= NLS.bind(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id"), id); //$NON-NLS-1$
+					log.log(new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null));
+				} else {
+					ids.add(id);
+				}
 
 				if (singleId != null && !singleId.equals(id))
 					continue;
