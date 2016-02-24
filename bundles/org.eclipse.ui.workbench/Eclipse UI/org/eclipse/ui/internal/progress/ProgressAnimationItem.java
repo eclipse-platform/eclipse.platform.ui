@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -88,7 +89,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 	 *            flags to use for creation of the progress bar
 	 */
 	ProgressAnimationItem(ProgressRegion region, int flags) {
-		super(region.workbenchWindow);
+		super((WorkbenchWindow) region.workbenchWindow);
 		this.flags = flags;
 		FinishedJobs.getInstance().addListener(this);
 

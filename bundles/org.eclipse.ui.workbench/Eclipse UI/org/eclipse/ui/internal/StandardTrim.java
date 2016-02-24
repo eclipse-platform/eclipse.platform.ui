@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -58,10 +59,11 @@ public class StandardTrim {
 	 * @param toolControl
 	 */
 	private void createProgressBar(Composite parent, MToolControl toolControl) {
-		ProgressRegion progressRegion = new ProgressRegion();
 		IEclipseContext context = modelService.getContainingContext(toolControl);
-		WorkbenchWindow wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
-		progressRegion.createContents(parent, wbw);
+		IEclipseContext child = context.createChild(ProgressRegion.class.getName());
+		child.set(MToolControl.class, toolControl);
+		child.set(Composite.class, parent);
+		ContextInjectionFactory.make(ProgressRegion.class, child);
 	}
 
 	/**

@@ -88,7 +88,7 @@ public class ProgressAnimationItemTest {
 
 	private ProgressAnimationItem createProgressAnimationItem(Composite composite) {
 		ProgressRegion progressRegion = new ProgressRegion();
-		progressRegion.createContents(composite, null);
+		progressRegion.createContents(composite);
 		return (ProgressAnimationItem) progressRegion.getAnimationItem();
 	}
 
