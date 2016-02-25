@@ -319,12 +319,12 @@ CTabFolder {
     swt-selected-tab-fill: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* title background for selected tab */
     swt-shadow-visible: false;
     swt-corner-radius: 16px;
-    unselected-hot-tab-color-background: #161616; /* Bug 465711 */
+    swt-unselected-hot-tab-color-background: #161616; /* Bug 465711 */
 }
 CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
     /* Set the styles for the bottom inner tabs (Bug 430051): */
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    unselected-hot-tab-color-background: #161616; /* Bug 465711 */
+    swt-unselected-hot-tab-color-background: #161616; /* Bug 465711 */
 }
 
 Form,

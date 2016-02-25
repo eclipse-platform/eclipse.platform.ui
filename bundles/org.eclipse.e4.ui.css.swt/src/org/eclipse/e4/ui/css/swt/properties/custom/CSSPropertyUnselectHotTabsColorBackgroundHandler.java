@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Fabio Zadrozny and others.
+ * Copyright (c) 2015, 2016 Fabio Zadrozny and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,15 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyUnselectHotTabsColorBackgroundHandler extends AbstractCSSPropertySWTHandler {
 
-	public static final String UNSELECTED_HOT_TAB_COLOR_BACKGROUND = "unselected-hot-tab-color-background";
+	public static final String UNSELECTED_HOT_TAB_COLOR_BACKGROUND = "swt-unselected-hot-tab-color-background";
+
+	public static final String DEPRECATED_UNSELECTED_HOT_TAB_COLOR_BACKGROUND = "unselected-hot-tab-color-background";
 
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (UNSELECTED_HOT_TAB_COLOR_BACKGROUND.equals(property)) {
+		if (UNSELECTED_HOT_TAB_COLOR_BACKGROUND.equals(property)
+				|| DEPRECATED_UNSELECTED_HOT_TAB_COLOR_BACKGROUND.equals(property)) {
 			if (!(control instanceof CTabFolder)) {
 				return;
 			}
