@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,8 @@ import java.util.ArrayList;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.performance.layout.ComputeSizeTest;
-import org.eclipse.ui.tests.performance.layout.LayoutTest;
 import org.eclipse.ui.tests.performance.layout.PerspectiveWidgetFactory;
 import org.eclipse.ui.tests.performance.layout.ResizeTest;
-import org.eclipse.ui.tests.performance.layout.TestWidgetFactory;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -127,27 +124,6 @@ class WorkbenchPerformanceSuite extends TestSuite {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
             addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], BasicPerformanceTest.NONE));
         }
-    }
-
-    /**
-     * Add performance tests for the layout of the given widget
-     *
-     * @param factory
-     * @since 3.1
-     */
-    private void addLayoutScenarios(TestWidgetFactory factory) {
-
-        // Determine the effect of flushing the cache
-        addTest(new ComputeSizeTest(factory));
-
-        // Test layout(false)
-        addTest(new LayoutTest(factory, false));
-
-        // Test layout(true)
-        addTest(new LayoutTest(factory, true));
-
-        // Test resizing
-        addTest(new ResizeTest(factory));
     }
 
     private void addLayoutScenarios() {
