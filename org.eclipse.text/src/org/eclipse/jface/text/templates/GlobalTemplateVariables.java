@@ -51,13 +51,18 @@ public class GlobalTemplateVariables {
 	}
 
 	/**
-	 * The base class for text selection variables that allows to return the current text selection. Sub-classes can
-	 * define the name and the description of the variable via the constructor
-	 *
+	 * The selection variable determines templates that work on a selection.
+	 * 
 	 * @since 3.6
 	 */
 	public static class Selection extends SimpleTemplateVariableResolver {
 
+		/**
+		 * Creates a word selection variable.
+		 * 
+		 * @param name the name of the variable
+		 * @param description the description of the variable
+		 */
 		public Selection(String name, String description) {
 			super(name, description);
 		}
