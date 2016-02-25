@@ -749,8 +749,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			label.setText(SWTRenderersMessages.choosePartsToSave);
 
-			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE
-					| SWT.BORDER);
+			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE | SWT.BORDER);
 			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 250;
 			data.widthHint = 300;
