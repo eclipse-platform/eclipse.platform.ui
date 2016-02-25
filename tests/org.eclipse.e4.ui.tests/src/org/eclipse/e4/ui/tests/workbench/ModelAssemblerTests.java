@@ -42,8 +42,10 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
@@ -124,7 +126,7 @@ public class ModelAssemblerTests {
 
 	/**
 	 * Tests that fragments are correctly contributed to the application model.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -210,7 +212,7 @@ public class ModelAssemblerTests {
 	 * Tests that fragments configured to be always merged are correctly
 	 * contributed to the application model, even if the model already contains
 	 * the contributed element.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -304,9 +306,54 @@ public class ModelAssemblerTests {
 	}
 
 	/**
+	 * Make sure that all fragments and imports are resolved before the
+	 * post-processors are run. For reference, see
+	 * <a href="https://bugs.eclipse.org/475934">bug 475934</a>.
+	 *
+	 * @throws Exception
+	 *             if anything went wrong during the test
+	 *
+	 */
+	@Test
+	public void testModelProcessingOrder() throws Exception {
+		/* setup application model */
+		/* this creates a window, containing a part and an area */
+		MTrimmedWindow trimmedWindow = MBasicFactory.INSTANCE.createTrimmedWindow();
+		trimmedWindow.setElementId("testModelProcessingOrder-trimmedWindow");
+		application.getChildren().add(trimmedWindow);
+		MPart part = MBasicFactory.INSTANCE.createPart();
+		part.setElementId("testModelProcessingOrder-part");
+		trimmedWindow.getChildren().add(part);
+		MArea area = MAdvancedFactory.INSTANCE.createArea();
+		area.setElementId("testModelProcessingOrder-area");
+		trimmedWindow.getChildren().add(area);
+
+		/* contribute fragment with imports and post-processor */
+		IContributor contributor = ContributorFactorySimple.createContributor(BUNDLE_SYMBOLIC_NAME);
+		IExtensionRegistry registry = createTestExtensionRegistry();
+		assertEquals(0, registry.getConfigurationElementsFor(EXTENSION_POINT_ID).length);
+		// The fragment contributes a Placeholder to the application's Area. The
+		// Placeholder references the Part that we created above.
+		// Besides the Placeholder, the xml also contributes a
+		// post-processor(org.eclipse.e4.ui.tests.workbench.ModelAssemblerProcessingOrderPostProcessor).
+		// It will iterate over the elements of the application model and will
+		// make sure that no imports are left unresolved. The post-processor
+		// will throw an error if such elements are found and this test will
+		// fail.
+		String dataFilePath = "org.eclipse.e4.ui.tests/data/ModelAssembler/modelProcessingOrder.xml";
+		registry.addContribution(getContentsAsInputStream(dataFilePath), contributor, false, null, null, null);
+
+		assembler.processModel(true);
+
+		// the testing was done in the post-processor; if we didn't fail there,
+		// everything went fine.
+		verifyZeroInteractions(logger);
+	}
+
+	/**
 	 * Tests that pre-processors running from a non-persisted state that are
 	 * marked as "always" are executed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -320,7 +367,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a persisted state that are marked
 	 * as "always" are executed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -334,7 +381,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a non-persisted state and marked
 	 * as "initial" are executed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -348,7 +395,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests that pre-processors running from a persisted state and marked as
 	 * "initial" are not executed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -361,7 +408,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors that should always be applied,
 	 * running from a persisted state.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -375,7 +422,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors that should always be applied,
 	 * running from a non-persisted state.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -389,7 +436,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests the execution of post-processors running from a non-persisted state
 	 * declared to be applied as "initial".
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -403,7 +450,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Processors running from a persisted state declared to be applied as
 	 * "initial" should not be run.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -416,7 +463,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Test handling of processor contribution without any processor class. A
 	 * warning should be logged in such cases.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -430,7 +477,7 @@ public class ModelAssemblerTests {
 	/**
 	 * Tests a contribution containing an nonexistent processor class. A warning
 	 * should be logged in such cases.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -447,7 +494,7 @@ public class ModelAssemblerTests {
 	 * Tests a processor contribution that adds to the context an element with
 	 * an id that does not exist in the application model. A warning should be
 	 * logged, but the processors should still be executed.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

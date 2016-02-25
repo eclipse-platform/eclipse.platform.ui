@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+     
+     	 <fragment
+            uri="data/ModelAssembler/modelProcessingOrder-fragment.e4xmi">
+     	 </fragment>
+     
+    	  <processor
+            apply="always"
+            beforefragment="false"
+            class="org.eclipse.e4.ui.tests.workbench.ModelAssemblerProcessingOrderPostProcessor">
+      	</processor>
+	</extension>
+</plugin>
