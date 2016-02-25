@@ -10,6 +10,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442285, 487348
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 485823
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -1366,7 +1367,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 				display.sleep();
 		}
 		if (!swtMenu.isDisposed()
-				&& !(swtMenu.getData() instanceof MenuManager)) {
+				&& swtMenu.getData(MenuManager.MANAGER_KEY) != null) {
 			swtMenu.dispose();
 		}
 	}
