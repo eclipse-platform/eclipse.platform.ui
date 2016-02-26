@@ -159,11 +159,10 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 	private boolean checkEndOfDocument() {
 		StyledText textWidget = getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
-			int partialIndex = JFaceTextUtil.getPartialBottomIndex(textWidget);
-			int bottomLine = JFaceTextUtil.getLineIndex(textWidget, partialIndex);
+			int partialBottomIndex = JFaceTextUtil.getPartialBottomIndex(textWidget);
 			int lineCount = textWidget.getLineCount();
-			int delta = textWidget.getVerticalBar().getIncrement() * 2;
-			return lineCount - bottomLine < delta;
+			int delta = textWidget.getVerticalBar().getIncrement();
+			return lineCount - partialBottomIndex < delta;
 		}
 		return false;
 	}
