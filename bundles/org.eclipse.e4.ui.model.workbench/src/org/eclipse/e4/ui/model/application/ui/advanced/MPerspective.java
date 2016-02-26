@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import java.util.List;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -43,7 +44,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
  * @model
  * @generated
  */
-public interface MPerspective extends MElementContainer<MPartSashContainerElement>, MUILabel, MContext, MHandlerContainer {
+public interface MPerspective extends MElementContainer<MPartSashContainerElement>, MUILabel, MContext, MHandlerContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Windows</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.basic.MWindow}.

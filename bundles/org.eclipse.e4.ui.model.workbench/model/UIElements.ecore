@@ -1051,6 +1051,7 @@
         <eGenericSuperTypes eClassifier="#//ui/UILabel"/>
         <eGenericSuperTypes eClassifier="#//ui/Context"/>
         <eGenericSuperTypes eClassifier="#//commands/HandlerContainer"/>
+        <eGenericSuperTypes eClassifier="#//commands/Bindings"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
