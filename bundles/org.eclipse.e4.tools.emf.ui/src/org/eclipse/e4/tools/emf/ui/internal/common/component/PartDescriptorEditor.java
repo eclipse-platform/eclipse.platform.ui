@@ -367,14 +367,22 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.PartEditor_BindingContexts);
 
+		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties,
+				BasicPackageImpl.Literals.PART_DESCRIPTOR__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
+
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
 
 		parent = createScrollableContainer(folder);
 		item.setControl(parent.getParent());
 
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables,
+				Messages.ModelTooling_Context_Variables_Tooltip, BasicPackageImpl.Literals.PART_DESCRIPTOR__VARIABLES,
+				VERTICAL_LIST_WIDGET_INDENT);
+
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState,
 				ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 
