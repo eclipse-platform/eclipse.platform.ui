@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,26 @@
  * 		font should be activated and used by other components.
  *      Robin Stocker <robin@nibor.org> - Add filter text field
  *      Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *      Simon Scholz <simon.scholz@vogella.com> - Bug 488704
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -56,6 +60,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -251,7 +256,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 	};
 	private Bundle[] bundles = WorkbenchPlugin.getDefault().getBundles();
-	private AboutBundleData[] bundleInfos;
 	private SashForm sashForm;
 	private BundleSigningInfo signingArea;
 
@@ -312,18 +316,6 @@ public class AboutPluginsPage extends ProductInfoPage {
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
-		// create a data object for each bundle, remove duplicates, and include
-		// only resolved bundles (bug 65548)
-		Map<String, AboutBundleData> map = new HashMap<>();
-		for (int i = 0; i < bundles.length; ++i) {
-			AboutBundleData data = new AboutBundleData(bundles[i]);
-			if (BundleUtility.isReady(data.getState())
-					&& !map.containsKey(data.getVersionedId())) {
-				map.put(data.getVersionedId(), data);
-			}
-		}
-		bundleInfos = map.values().toArray(
-				new AboutBundleData[0]);
 		WorkbenchPlugin.class.getSigners();
 
 		sashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
@@ -346,6 +338,26 @@ public class AboutPluginsPage extends ProductInfoPage {
 
 		createTable(outer);
 		setControl(outer);
+	}
+
+	private void calculateAboutBundleData(Consumer<Collection<AboutBundleData>> aboutBundleDataConsumer,
+			Display display) {
+		Job loadBundleDataJob = Job.create(WorkbenchMessages.AboutPluginsPage_Load_Bundle_Data, monitor -> {
+			// create a data object for each bundle, remove duplicates, and
+			// include only resolved bundles (bug 65548)
+			SubMonitor subMonitor = SubMonitor.convert(monitor, bundles.length + 1);
+			Map<String, AboutBundleData> map = new HashMap<>();
+			for (int i = 0; i < bundles.length; ++i) {
+				subMonitor.split(1);
+				AboutBundleData data = new AboutBundleData(bundles[i]);
+				if (BundleUtility.isReady(data.getState()) && !map.containsKey(data.getVersionedId())) {
+					map.put(data.getVersionedId(), data);
+				}
+			}
+			subMonitor.split(1);
+			display.asyncExec(() -> aboutBundleDataConsumer.accept(map.values()));
+		});
+		loadBundleDataJob.schedule();
 	}
 
 	/**
@@ -419,7 +431,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 		gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
 		vendorInfo.getTable().setLayoutData(gridData);
 
-		vendorInfo.setInput(bundleInfos);
+		calculateAboutBundleData(vendorInfo::setInput, parent.getDisplay());
 	}
 
 	/**
