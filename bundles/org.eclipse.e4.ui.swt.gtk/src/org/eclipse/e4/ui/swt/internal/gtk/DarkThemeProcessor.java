@@ -21,6 +21,7 @@ import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.service.event.EventHandler;
 
+@SuppressWarnings("restriction")
 public class DarkThemeProcessor {
 
 	@Inject
