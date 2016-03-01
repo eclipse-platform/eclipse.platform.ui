@@ -62,7 +62,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -71,10 +70,6 @@ import org.osgi.service.event.EventHandler;
  */
 public class ModelServiceImpl implements EModelService {
 	private static String HOSTED_ELEMENT = "HostedElement"; //$NON-NLS-1$
-
-	private static final String COMPATIBILITY_VIEW_URI = "bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"; //$NON-NLS-1$
-
-	private static final String TAG_LABEL = "label"; //$NON-NLS-1$
 
 	private IEclipseContext appContext;
 
@@ -508,13 +503,13 @@ public class ModelServiceImpl implements EModelService {
 
 		MUIElement appElement = refWin == null ? null : refWin.getParent();
 		if (appElement instanceof MApplication) {
-			handleNullRefPlaceHolders(element, refWin, true);
+			getNullRefPlaceHolders(element, refWin, true);
 		}
 
 		return element;
 	}
 
-	private void handleNullRefPlaceHolders(MUIElement element, MWindow refWin, boolean resolveAlways) {
+	private List<MPlaceholder> getNullRefPlaceHolders(MUIElement element, MWindow refWin, boolean resolveAlways) {
 		// use appContext as MApplication.getContext() is null during the processing of
 		// the model processor classes
 		EPlaceholderResolver resolver = appContext.get(EPlaceholderResolver.class);
@@ -541,57 +536,16 @@ public class ModelServiceImpl implements EModelService {
 				nullRefList.add(ph);
 			}
 		}
-		if (!resolveAlways) {
-			List<MPart> partList = findElements(element, null, MPart.class, null);
-			for (MPart part : partList) {
-				if (COMPATIBILITY_VIEW_URI.equals(part.getContributionURI()) && part.getIconURI() == null) {
-					part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
-							ImageDescriptor.getMissingImageDescriptor().createImage());
-				}
-			}
-		}
-		for (MPlaceholder ph : nullRefList) {
-			replacePlaceholder(ph);
-		}
-
-		return;
+		return nullRefList;
 	}
 
 	/**
 	 * @param element
 	 * @param refWin
+	 * @return list of null referencing place holders
 	 */
-	public void handleNullRefPlaceHolders(MUIElement element, MWindow refWin) {
-		handleNullRefPlaceHolders(element, refWin, false);
-	}
-
-	private void replacePlaceholder(MPlaceholder ph) {
-		MPart part = createModelElement(MPart.class);
-		part.setElementId(ph.getElementId());
-		part.getTransientData().put(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY,
-				ImageDescriptor.getMissingImageDescriptor().createImage());
-		String label = (String) ph.getTransientData().get(TAG_LABEL);
-		if (label != null) {
-			part.setLabel(label);
-		} else {
-			part.setLabel(getLabel(ph.getElementId()));
-		}
-		part.setContributionURI(COMPATIBILITY_VIEW_URI);
-		part.setCloseable(true);
-		MElementContainer<MUIElement> curParent = ph.getParent();
-		int curIndex = curParent.getChildren().indexOf(ph);
-		curParent.getChildren().remove(curIndex);
-		curParent.getChildren().add(curIndex, part);
-		if (curParent.getSelectedElement() == ph) {
-			curParent.setSelectedElement(part);
-		}
-	}
-
-	private String getLabel(String str) {
-		int index = str.lastIndexOf('.');
-		if (index == -1)
-			return str;
-		return str.substring(index + 1);
+	public List<MPlaceholder> getNullRefPlaceHolders(MUIElement element, MWindow refWin) {
+		return getNullRefPlaceHolders(element, refWin, false);
 	}
 
 	@Override
