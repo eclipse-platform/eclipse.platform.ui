@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.List;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -3404,6 +3405,30 @@ public class EPartServiceTest extends UITest {
 		assertEquals(1, partListener.getActivated());
 		assertEquals(partBack, partListener.getActivatedParts().get(0));
 		assertTrue(partListener.isValid());
+	}
+
+	@Test
+	public void testPartActivationTimeData_Bug461063() {
+		createApplication("activePart", "nonActivePart");
+
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		MPart activePart = (MPart) partStack.getChildren().get(0);
+		MPart nonActivePart = (MPart) partStack.getChildren().get(1);
+		partStack.setSelectedElement(activePart);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		assertTrue(activePart.getTransientData().containsKey(PartServiceImpl.PART_ACTIVATION_TIME));
+		assertFalse(nonActivePart.getTransientData().containsKey(PartServiceImpl.PART_ACTIVATION_TIME));
+
+		assertTrue(Long.class.isInstance(activePart.getTransientData().get(PartServiceImpl.PART_ACTIVATION_TIME)));
+
+		partService.activate(nonActivePart);
+
+		assertTrue(activePart.getTransientData().containsKey(PartServiceImpl.PART_ACTIVATION_TIME));
+		assertTrue(nonActivePart.getTransientData().containsKey(PartServiceImpl.PART_ACTIVATION_TIME));
 	}
 
 	@Test

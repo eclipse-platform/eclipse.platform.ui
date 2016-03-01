@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel (Lars.Vogel@vogella.com) - Bug 416082,  472654, 395825
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411, 486876
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 450411, 486876, 461063
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 463962
  ******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench;
@@ -66,6 +66,11 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class PartServiceImpl implements EPartService {
+
+	/**
+	 * The part activation time of a part is stored in it's transient data.
+	 */
+	public static final String PART_ACTIVATION_TIME = "partActivationTime"; //$NON-NLS-1$
 
 	private EventHandler selectedHandler = new EventHandler() {
 		@Override
@@ -745,6 +750,9 @@ public class PartServiceImpl implements EPartService {
 				IPresentationEngine pe = part.getContext().get(IPresentationEngine.class);
 				pe.focusGui(part);
 			}
+
+			// store the activation time to sort the parts in MRU order
+			part.getTransientData().put(PART_ACTIVATION_TIME, Long.valueOf(System.currentTimeMillis()));
 
 			firePartActivated(part);
 			UIEvents.publishEvent(UIEvents.UILifeCycle.ACTIVATE, part);
