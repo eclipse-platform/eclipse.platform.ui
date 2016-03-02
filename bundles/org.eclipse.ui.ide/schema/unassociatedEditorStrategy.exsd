@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.ide" id="unassociatedEditorStrategy" name="Strategies to handle unassociated files"/>
+         <meta.schema plugin="org.eclipse.ui.ide" id="unassociatedEditorStrategy" name="Unassociated Editor Strategy"/>
       </appInfo>
       <documentation>
          &lt;p&gt;This extension point allows to plug different strategies for supporting unassociated files inside the IDE. Strategies can be such as forcing a specific editor, asking user to choose an editor, polling a remote registry to find an editor...&lt;/p&gt;
@@ -55,14 +55,14 @@ The default strategy is to check for system editor and to open the Eclipse text 
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A unique id that will be used to identify this unassociated editor strategy
+                  a unique id that will be used to identify this unassociated editor strategy
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified class name implementing the interface org.eclipse.ui.ide.IUnassociatedEditorStrategy
+                  the fully qualified class name implementing the interface org.eclipse.ui.ide.IUnassociatedEditorStrategy
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.ui.ide.IUnassociatedEditorStrategy"/>
@@ -72,7 +72,7 @@ The default strategy is to check for system editor and to open the Eclipse text 
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  Short label describing the strategy. Will be used to present the various strategies to user in Preference Page and other related UI entries.
+                  a short label describing the strategy. Will be used to present the various strategies to user in Preference Page and other related UI entries.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -82,7 +82,7 @@ The default strategy is to check for system editor and to open the Eclipse text 
          <attribute name="interactive" type="boolean" use="required">
             <annotation>
                <documentation>
-                  Declare whether the strategy is interactive, requires user actions or control. In some context, interactive strategies will be ignored as operations have to happen without interaction.
+                  declares whether the strategy is interactive, requires user actions or control. In some contexts, interactive strategies will be ignored as operations have to happen without interaction.
                </documentation>
             </annotation>
          </attribute>
@@ -122,7 +122,7 @@ The default strategy is to check for system editor and to open the Eclipse text 
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2015 Red Hat Inc.&lt;br&gt;
+         Copyright (c) 2015, 2016 Red Hat Inc. and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a
