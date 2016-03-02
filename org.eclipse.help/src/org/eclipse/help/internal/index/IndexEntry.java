@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,12 +41,12 @@ public class IndexEntry extends UAElement implements IIndexEntry2 {
 
 	@Override
 	public IIndexEntry[] getSubentries() {
-		return (IIndexEntry[])getChildren(IIndexEntry.class);
+		return getChildren(IIndexEntry.class);
 	}
 
 	@Override
 	public ITopic[] getTopics() {
-		return (ITopic[])getChildren(ITopic.class);
+		return getChildren(ITopic.class);
 	}
 
 	public void setKeyword(String keyword) {
@@ -55,6 +55,6 @@ public class IndexEntry extends UAElement implements IIndexEntry2 {
 
 	@Override
 	public IIndexSee[] getSees() {
-		return (IIndexSee[])getChildren(IIndexSee.class);
+		return getChildren(IIndexSee.class);
 	}
 }

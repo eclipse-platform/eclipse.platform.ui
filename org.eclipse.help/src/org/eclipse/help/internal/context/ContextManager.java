@@ -87,17 +87,14 @@ public class ContextManager {
 				id = contextId.substring(index+1);
 
 			String warning = "Registered Context Provider IDs:\n"; //$NON-NLS-1$
-			Iterator iter = contextIDsByPluginId.keySet().iterator();
+			Iterator<String> iter = contextIDsByPluginId.keySet().iterator();
 			warning+="--------------------------------\n"; //$NON-NLS-1$
-			while (iter.hasNext())
-			{
-				String pluginID = (String)iter.next();
-				List contextIDList = contextIDsByPluginId.get(pluginID);
-				for (int c=0;c<contextIDList.size();c++)
-				{
-					if (((String)contextIDList.get(c)).equalsIgnoreCase(id))
-					{
-						potentialMatches.add(pluginID+'.'+(String)contextIDList.get(c));
+			while (iter.hasNext()) {
+				String pluginID = iter.next();
+				List<String> contextIDList = contextIDsByPluginId.get(pluginID);
+				for (int c = 0; c < contextIDList.size(); c++) {
+					if (contextIDList.get(c).equalsIgnoreCase(id)) {
+						potentialMatches.add(pluginID+'.'+contextIDList.get(c));
 						break;
 					}
 				}
@@ -155,8 +152,7 @@ public class ContextManager {
 							}
 							list.add(provider);
 						}
-					}
-					else {
+					} else {
 						globalProviders.add(provider);
 					}
 				}
@@ -185,31 +181,27 @@ public class ContextManager {
 			loadContextProviders();
 		}
 
-		Iterator i = providersByPluginId.keySet().iterator();
+		Iterator<String> i = providersByPluginId.keySet().iterator();
 
 		while (i.hasNext())
 		{
-			String pluginID = (String)i.next();
-			ArrayList providers = (ArrayList)providersByPluginId.get(pluginID);
+			String pluginID = i.next();
+			List<AbstractContextProvider> providers = providersByPluginId.get(pluginID);
 
-			for (int p=0;p<providers.size();p++)
-			{
+			for (int p = 0; p < providers.size(); p++) {
 				ContextFileProvider provider = (ContextFileProvider)providers.get(p);
-				Map[] maps = provider.getPluginContexts(pluginID,Platform.getNL());
+				Map<String, Context>[] maps = provider.getPluginContexts(pluginID, Platform.getNL());
 
-				for (int m=0;m<maps.length;m++)
-				{
-					Iterator i2 = maps[m].keySet().iterator();
-					while (i2.hasNext())
-					{
-						String contextID = (String)i2.next();
+				for (int m = 0; m < maps.length; m++) {
+					Iterator<String> i2 = maps[m].keySet().iterator();
+					while (i2.hasNext()) {
+						String contextID = i2.next();
 						String fullID = pluginID+'.'+contextID;
-						Context currentContext = (Context)maps[m].get(contextID);
+						Context currentContext = maps[m].get(contextID);
 
-						if (!contextByContextID.containsKey(fullID))
+						if (!contextByContextID.containsKey(fullID)) {
 							contextByContextID.put(fullID,currentContext);
-						else if (HelpPlugin.DEBUG_CONTEXT)
-						{
+						} else if (HelpPlugin.DEBUG_CONTEXT) {
 							Context initialContext = contextByContextID.get(fullID);
 							String error = "Context Help ID '"+contextID+"' is found in multiple context files in plugin '"+pluginID+"'\n"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								" Description 1: "+initialContext.getText()+'\n'+ //$NON-NLS-1$

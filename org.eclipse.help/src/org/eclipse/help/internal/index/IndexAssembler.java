@@ -49,7 +49,7 @@ public class IndexAssembler {
 	 * Assembles the given index contributions into a complete, sorted index.
 	 * The originals are not modified.
 	 */
-	public Index assemble(List contributions, String locale) {
+	public Index assemble(List<IndexContribution> contributions, String locale) {
 		this.locale = locale;
 		process(contributions);
 		Index index = merge(contributions);
@@ -60,11 +60,11 @@ public class IndexAssembler {
 	/*
 	 * Merge all index contributions into one large index, not sorted.
 	 */
-	private Index merge(List contributions) {
+	private Index merge(List<IndexContribution> contributions) {
 		Index index = new Index();
-		Iterator iter = contributions.iterator();
+		Iterator<IndexContribution> iter = contributions.iterator();
 		while (iter.hasNext()) {
-			IndexContribution contribution = (IndexContribution)iter.next();
+			IndexContribution contribution = iter.next();
 			mergeChildren(index, (Index)contribution.getIndex());
 			contribution.setIndex(null);
 		}
@@ -129,7 +129,7 @@ public class IndexAssembler {
 		}
 	}
 
-	private void process(List contributions) {
+	private void process(List<IndexContribution> contributions) {
 		if (processor == null) {
 			DocumentReader reader = new DocumentReader();
 			processor = new DocumentProcessor(new ProcessorHandler[] {
@@ -138,9 +138,9 @@ public class IndexAssembler {
 				new ExtensionHandler(reader, locale),
 			});
 		}
-		Iterator iter = contributions.iterator();
+		Iterator<IndexContribution> iter = contributions.iterator();
 		while (iter.hasNext()) {
-			IndexContribution contribution = (IndexContribution)iter.next();
+			IndexContribution contribution = iter.next();
 			processor.process((Index)contribution.getIndex(), contribution.getId());
 		}
 	}

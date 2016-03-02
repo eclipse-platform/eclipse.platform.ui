@@ -20,11 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.index.Index;
-import org.eclipse.help.internal.index.IndexContribution;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
@@ -61,7 +61,7 @@ public class IndexServlet extends HttpServlet {
 		}
 		String response = responseByLocale.get(locale);
 		if (response == null) {
-			IndexContribution[] contributions = HelpPlugin.getIndexManager().getIndexContributions(locale);
+			IIndexContribution[] contributions = HelpPlugin.getIndexManager().getIndexContributions(locale);
 			try {
 				response = serialize(contributions, locale);
 			}
@@ -74,14 +74,14 @@ public class IndexServlet extends HttpServlet {
 		return (response != null) ? response : ""; //$NON-NLS-1$
 	}
 
-	public String serialize(IndexContribution[] contributions, String locale) throws TransformerException {
+	public String serialize(IIndexContribution[] contributions, String locale) throws TransformerException {
 		StringBuffer buf = new StringBuffer();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 		buf.append("<indexContributions>\n"); //$NON-NLS-1$
 		if (writer == null) {
 			writer = new DocumentWriter();
 		}
-		for (IndexContribution contrib : contributions) {
+		for (IIndexContribution contrib : contributions) {
 			buf.append("<indexContribution\n"); //$NON-NLS-1$
 			buf.append("      id=\"" + contrib.getId() + '"'); //$NON-NLS-1$
 			buf.append("      locale=\"" + contrib.getLocale() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$

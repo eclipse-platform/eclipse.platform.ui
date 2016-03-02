@@ -109,7 +109,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 
 	@Override
 	public String[] getPlugins() {
-		Map<String, ?> associations = getPluginAssociations();
+		Map<String, ContextFile[]> associations = getPluginAssociations();
 		return associations.keySet().toArray(new String[associations.size()]);
 	}
 
@@ -150,7 +150,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * as a mapping of short IDs to Context objects (shortContextId -> Context).
 	 */
 	public Map<String, Context>[] getPluginContexts(String pluginId, String locale) {
-		List<Map> maps = new ArrayList<>();
+		List<Map<String, Context>> maps = new ArrayList<>();
 		Map<String, ContextFile[]> associations = getPluginAssociations();
 		ContextFile[] descriptors = associations.get(pluginId);
 		for (int i=0;i<descriptors.length;++i) {

@@ -120,7 +120,7 @@ public class ProductPreferences {
 	 * plug-in that has the given helpDataFile and baseTOCS specified (these last
 	 * two may be null if not specified).
 	 */
-	public static List getTocOrdering(String pluginId, String helpDataFile, String baseTOCS) {
+	public static List<String> getTocOrdering(String pluginId, String helpDataFile, String baseTOCS) {
 		if (helpDataFile != null && helpDataFile.length() > 0) {
 			String helpDataPluginId = pluginId;
 			String helpDataPath = helpDataFile;

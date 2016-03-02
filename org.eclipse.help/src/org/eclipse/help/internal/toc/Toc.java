@@ -36,7 +36,7 @@ public class Toc extends UAElement implements IToc2 {
 
 	private ITocContribution contribution;
 	private ITopic topic;
-	private Map href2TopicMap;
+	private Map<String, ITopic> href2TopicMap;
 
 	public Toc(IToc src) {
 		super(NAME, src);
@@ -56,7 +56,7 @@ public class Toc extends UAElement implements IToc2 {
 	/*
 	 * Creates a mapping of all topic hrefs to ITopics.
 	 */
-	private Map createHref2TopicMap() {
+	private Map<String, ITopic> createHref2TopicMap() {
 		Map<String, ITopic> map = new HashMap<>();
 		if (topic != null) {
 			map.put(topic.getHref(), topic);
@@ -112,7 +112,7 @@ public class Toc extends UAElement implements IToc2 {
 	/*
 	 * Returns a mapping of all topic hrefs to ITopics.
 	 */
-	private Map getHref2TopicMap() {
+	private Map<String, ITopic> getHref2TopicMap() {
 		if (href2TopicMap == null) {
 			href2TopicMap = createHref2TopicMap();
 		}
@@ -181,18 +181,18 @@ public class Toc extends UAElement implements IToc2 {
 			}
 			return topic;
 		} else {
-			return (ITopic) getHref2TopicMap().get(href);
+			return getHref2TopicMap().get(href);
 		}
 	}
 
 	@Override
 	public ITopic[] getTopics() {
-		return (ITopic[]) getChildren(ITopic.class);
+		return getChildren(ITopic.class);
 	}
 
 	@Override
 	public ICriteria[] getCriteria() {
-		return (ICriteria[]) getChildren(ICriteria.class);
+		return getChildren(ICriteria.class);
 	}
 
 	public void setLabel(String label) {

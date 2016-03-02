@@ -109,7 +109,7 @@ public class HelpData {
 	 * Returns a list of strings which are the IDs of the tocs/categories listed
 	 * in tocOrder.
 	 */
-	public synchronized List getTocOrder() {
+	public synchronized List<String> getTocOrder() {
 		if (tocOrder == null) {
 			loadHelpData();
 		}
@@ -131,7 +131,7 @@ public class HelpData {
 	 * Returns a set of strings which are the IDs of the indexes listed
 	 * in the hidden section.
 	 */
-	public synchronized Set getHiddenIndexes() {
+	public synchronized Set<String> getHiddenIndexes() {
 		if (hiddenIndexes == null) {
 			loadHelpData();
 		}

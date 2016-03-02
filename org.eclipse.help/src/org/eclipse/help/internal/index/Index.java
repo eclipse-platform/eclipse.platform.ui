@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 Intel Corporation and others.
+ * Copyright (c) 2005, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class Index extends UAElement implements IIndex {
 
 	@Override
 	public IIndexEntry[] getEntries() {
-		return (IIndexEntry[])getChildren(IIndexEntry.class);
+		return getChildren(IIndexEntry.class);
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class Index extends UAElement implements IIndex {
 	public IndexEntry getSeeTarget(IndexSee see) {
 		if (children == null) getChildren();
 		String keyword = see.getKeyword();
-		for (Iterator iter = children.iterator(); iter.hasNext();) {
-			Object next = iter.next();
+		for (Iterator<UAElement> iter = children.iterator(); iter.hasNext();) {
+			UAElement next = iter.next();
 			if (next instanceof IndexEntry && keyword.equals(((IndexEntry)next).getKeyword())) {
 				return (IndexEntry)next;
 			}

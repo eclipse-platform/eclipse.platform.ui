@@ -87,12 +87,12 @@ public class Context extends UAElement implements IContext3 {
 
 	@Override
 	public ICommandLink[] getRelatedCommands() {
-		return (ICommandLink[])getChildren(ICommandLink.class);
+		return getChildren(ICommandLink.class);
 	}
 
 	@Override
 	public IHelpResource[] getRelatedTopics() {
-		return (IHelpResource[])getChildren(IHelpResource.class);
+		return getChildren(IHelpResource.class);
 	}
 
 	@Override

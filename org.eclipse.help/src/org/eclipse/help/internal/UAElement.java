@@ -189,7 +189,8 @@ public class UAElement implements IUAElement {
 		return children.toArray(new UAElement[children.size()]);
 	}
 
-	public Object getChildren(Class<?> clazz) {
+	@SuppressWarnings("unchecked")
+	public <T> T[] getChildren(Class<T> clazz) {
 		IUAElement[] children = getChildren();
 		if (children.length > 0) {
 			List<Object> list = new ArrayList<>();
@@ -199,9 +200,9 @@ public class UAElement implements IUAElement {
 					list.add(child);
 				}
 			}
-			return list.toArray((Object[])Array.newInstance(clazz, list.size()));
+			return list.toArray((T[]) Array.newInstance(clazz, list.size()));
 		}
-		return Array.newInstance(clazz, 0);
+		return (T[]) Array.newInstance(clazz, 0);
 	}
 
 	public String getElementName() {

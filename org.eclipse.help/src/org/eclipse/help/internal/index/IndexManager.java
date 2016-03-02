@@ -40,7 +40,7 @@ public class IndexManager {
 	private static final String ELEMENT_NAME_INDEX_PROVIDER = "indexProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 
-	private Map<String, IndexContribution[]> indexContributionsByLocale = new HashMap<>();
+	private Map<String, IIndexContribution[]> indexContributionsByLocale = new HashMap<>();
 	private Map<String, Index> indexesByLocale = new HashMap<>();
 	private AbstractIndexProvider[] indexProviders;
 
@@ -69,8 +69,8 @@ public class IndexManager {
 	 * Returns all index contributions for the given locale, from all
 	 * providers.
 	 */
-	public synchronized IndexContribution[] getIndexContributions(String locale) {
-		IndexContribution[] contributions = indexContributionsByLocale.get(locale);
+	public synchronized IIndexContribution[] getIndexContributions(String locale) {
+		IIndexContribution[] contributions = indexContributionsByLocale.get(locale);
 		if (contributions == null) {
 			contributions = readIndexContributions(locale);
 			indexContributionsByLocale.put(locale, contributions);
@@ -171,23 +171,22 @@ public class IndexManager {
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredIndexes, filter the contribution.
 	 */
-	private void filterIndexContributions(List unfiltered) {
-		Set indexesToFilter = getIgnoredIndexContributions();
-		ListIterator iter = unfiltered.listIterator();
+	private void filterIndexContributions(List<IndexContribution> unfiltered) {
+		Set<String> indexesToFilter = getIgnoredIndexContributions();
+		ListIterator<IndexContribution> iter = unfiltered.listIterator();
 		while (iter.hasNext()) {
-			IIndexContribution contribution = (IIndexContribution)iter.next();
+			IIndexContribution contribution = iter.next();
 			if (indexesToFilter.contains(contribution.getId())) {
 				iter.remove();
 			}
 		}
 	}
 
-	private Set getIgnoredIndexContributions() {
+	private Set<String> getIgnoredIndexContributions() {
 		HelpData helpData = HelpData.getProductHelpData();
 		if (helpData != null) {
 			return helpData.getHiddenIndexes();
-		}
-		else {
+		} else {
 			HashSet<String> ignored = new HashSet<>();
 			String preferredIndexes = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, "", null); //$NON-NLS-1$
 			if (preferredIndexes.length() > 0) {
