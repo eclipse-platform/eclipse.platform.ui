@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,9 @@ public class HelpData {
 	private static HelpData productHelpData;
 
 	private URL url;
-	private List tocOrder;
-	private Set hiddenTocs;
-	private Set hiddenIndexes;
+	private List<String> tocOrder;
+	private Set<String> hiddenTocs;
+	private Set<String> hiddenIndexes;
 	private String sortMode;
 
 	/*
@@ -120,7 +120,7 @@ public class HelpData {
 	 * Returns a set of strings which are the IDs of the tocs/categories listed
 	 * in the hidden section.
 	 */
-	public synchronized Set getHiddenTocs() {
+	public synchronized Set<String> getHiddenTocs() {
 		if (hiddenTocs == null) {
 			loadHelpData();
 		}
@@ -159,9 +159,9 @@ public class HelpData {
 	 * Loads and parses the file and populates the data structures.
 	 */
 	private void loadHelpData() {
-		tocOrder = new ArrayList();
-		hiddenTocs = new HashSet();
-		hiddenIndexes = new HashSet();
+		tocOrder = new ArrayList<>();
+		hiddenTocs = new HashSet<>();
+		hiddenIndexes = new HashSet<>();
 		sortMode = "true"; //$NON-NLS-1$
 		if (url != null) {
 			try {

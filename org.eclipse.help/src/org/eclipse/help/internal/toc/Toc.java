@@ -1,6 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
@@ -56,7 +57,7 @@ public class Toc extends UAElement implements IToc2 {
 	 * Creates a mapping of all topic hrefs to ITopics.
 	 */
 	private Map createHref2TopicMap() {
-		Map map = new HashMap();
+		Map<String, ITopic> map = new HashMap<>();
 		if (topic != null) {
 			map.put(topic.getHref(), topic);
 		}
@@ -71,7 +72,7 @@ public class Toc extends UAElement implements IToc2 {
 	 * Creates a mapping of all topic hrefs to ITopics under the given ITopic and stores in the
 	 * given Map.
 	 */
-	private void createHref2TopicMapAux(Map map, ITopic topic) {
+	private void createHref2TopicMapAux(Map<String, ITopic> map, ITopic topic) {
 		String href = topic.getHref();
 		if (href != null) {
 			map.put(href, topic);

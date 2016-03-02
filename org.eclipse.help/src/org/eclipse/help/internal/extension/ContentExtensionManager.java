@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.extension;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,8 +37,8 @@ public class ContentExtensionManager {
 	private static final ContentExtension[] EMPTY_ARRAY = new ContentExtension[0];
 
 	private AbstractContentExtensionProvider[] contentExtensionProviders;
-	private Map extensionsByPath;
-	private Map replacesByPath;
+	private Map<String, List<ContentExtension>> extensionsByPath;
+	private Map<String, List<ContentExtension>> replacesByPath;
 
 	/*
 	 * Returns all known extensions for the given locale.
@@ -49,13 +48,13 @@ public class ContentExtensionManager {
 			loadExtensions(locale);
 		}
 		List<ContentExtension> extensions = new ArrayList<>();
-		Iterator iter = extensionsByPath.values().iterator();
+		Iterator<List<ContentExtension>> iter = extensionsByPath.values().iterator();
 		while (iter.hasNext()) {
-			extensions.addAll((Collection)iter.next());
+			extensions.addAll(iter.next());
 		}
 		iter = replacesByPath.values().iterator();
 		while (iter.hasNext()) {
-			extensions.addAll((Collection)iter.next());
+			extensions.addAll(iter.next());
 		}
 		return extensions.toArray(new ContentExtension[extensions.size()]);
 	}
@@ -67,8 +66,9 @@ public class ContentExtensionManager {
 		if (extensionsByPath == null) {
 			loadExtensions(locale);
 		}
-		Map map = (type == ContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
-		List<ContentExtension> extensions = (List<ContentExtension>) map.get(path);
+		Map<String, List<ContentExtension>> map = (type == ContentExtension.CONTRIBUTION ? extensionsByPath
+				: replacesByPath);
+		List<ContentExtension> extensions = map.get(path);
 		if (extensions != null) {
 			return extensions.toArray(new ContentExtension[extensions.size()]);
 		}
@@ -93,8 +93,8 @@ public class ContentExtensionManager {
 	 * type.
 	 */
 	private void loadExtensions(String locale) {
-		extensionsByPath = new HashMap();
-		replacesByPath = new HashMap();
+		extensionsByPath = new HashMap<>();
+		replacesByPath = new HashMap<>();
 		contentExtensionProviders = getContentExtensionProviders();
 		for (int i=0;i<contentExtensionProviders.length;++i) {
 			IContentExtension[] extensions = contentExtensionProviders[i].getContentExtensions(locale);
@@ -104,14 +104,15 @@ public class ContentExtensionManager {
 				String path = extension.getPath();
 				if (content != null && path != null) {
 					int type = extension.getType();
-					Map map = (type == IContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
+					Map<String, List<ContentExtension>> map = (type == IContentExtension.CONTRIBUTION ? extensionsByPath
+							: replacesByPath);
 					content = normalizePath(content);
 					path = normalizePath(path);
 					extension.setContent(content);
 					extension.setPath(path);
-					List list = (List)map.get(path);
+					List<ContentExtension> list = map.get(path);
 					if (list == null) {
-						list = new ArrayList();
+						list = new ArrayList<>();
 						map.put(path, list);
 					}
 					list.add(extension);

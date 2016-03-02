@@ -38,8 +38,8 @@ public class ContentExtensionFileParser extends DefaultHandler {
 
 	private DocumentReader reader;
 	private DocumentProcessor processor;
-	private Map requiredAttributes;
-	private Map deprecatedElements;
+	private Map<String, String[]> requiredAttributes;
+	private Map<String, String> deprecatedElements;
 
 	/*
 	 * Parses the specified content extension XML file into model elements.
@@ -70,7 +70,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 
 	private Map getRequiredAttributes() {
 		if (requiredAttributes == null) {
-			requiredAttributes = new HashMap();
+			requiredAttributes = new HashMap<>();
 			requiredAttributes.put(ContentExtension.NAME_CONTRIBUTION, new String[] { ContentExtension.ATTRIBUTE_CONTENT, ContentExtension.ATTRIBUTE_PATH });
 			requiredAttributes.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, new String[] { ContentExtension.ATTRIBUTE_CONTENT, ContentExtension.ATTRIBUTE_PATH });
 			requiredAttributes.put(ContentExtension.NAME_REPLACEMENT, new String[] { ContentExtension.ATTRIBUTE_CONTENT, ContentExtension.ATTRIBUTE_PATH });
@@ -81,7 +81,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 
 	private Map getDeprecatedElements() {
 		if (deprecatedElements == null) {
-			deprecatedElements = new HashMap();
+			deprecatedElements = new HashMap<>();
 			deprecatedElements.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.NAME_CONTRIBUTION);
 			deprecatedElements.put(ContentExtension.NAME_REPLACEMENT_LEGACY, ContentExtension.NAME_REPLACEMENT);
 		}

@@ -48,17 +48,17 @@ public class TocManager {
 	private AbstractTocProvider[] tocProviders;
 	// There are two sets of TOC contributions, one is used for Toc Assembly and is modified from the original
 	// The other is used by the TocServlet and is unprocessed, i.e. anchors are not replaced with the contributions
-	private Map tocContributionsByLocale = new HashMap();
-	private Map tocContributionsForTocByLocale = new HashMap();
-	private Map tocsByLocale = new HashMap();
-	private Map tocsById = new HashMap();
-	private Map tocsByTopic;
+	private Map<String, TocContribution[]> tocContributionsByLocale = new HashMap<>();
+	private Map<String, TocContribution[]> tocContributionsForTocByLocale = new HashMap<>();
+	private Map<String, Toc[]> tocsByLocale = new HashMap<>();
+	private Map<String, Toc> tocsById = new HashMap<>();
+	private Map<String, Toc> tocsByTopic;
 
 	/*
 	 * Returns all toc entries (complete books) for the given locale.
 	 */
 	public synchronized Toc[] getTocs(String locale) {
-		Toc[] tocs = (Toc[])tocsByLocale.get(locale);
+		Toc[] tocs = tocsByLocale.get(locale);
 		if (tocs == null) {
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_TOC) {
@@ -101,12 +101,12 @@ public class TocManager {
 	 */
 	public synchronized Toc getToc(String id, String locale) {
 		getTocs(locale);
-		return (Toc)tocsById.get(id);
+		return tocsById.get(id);
 	}
 
 	public synchronized Toc getOwningToc(String href) {
 		if (tocsByTopic == null) {
-			tocsByTopic = new HashMap();
+			tocsByTopic = new HashMap<>();
 			Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 			for (int i=0;i<tocs.length;++i) {
 				ITocContribution contribution = tocs[i].getTocContribution();
@@ -116,7 +116,7 @@ public class TocManager {
 				}
 			}
 		}
-		return (Toc)tocsByTopic.get(href);
+		return tocsByTopic.get(href);
 	}
 
 	public synchronized ITopic getTopic(String href, String locale) {
@@ -138,7 +138,7 @@ public class TocManager {
 		ITopic topic = getTopic(href, locale);
 		try {
 			if (topic != null && topic instanceof UAElement) {
-				List path = new ArrayList();
+				List<Integer> path = new ArrayList<>();
 				UAElement element = (UAElement) topic;
 				while (!(element instanceof Toc)) {
 					UAElement parent = element.getParentElement();
@@ -151,7 +151,7 @@ public class TocManager {
 						path.add(new Integer(i));
 						int[] array = new int[path.size()];
 						for (int j=0;j<array.length;++j) {
-							array[j] = ((Integer)path.get(array.length - 1 - j)).intValue();
+							array[j] = path.get(array.length - 1 - j).intValue();
 						}
 						return array;
 					}
@@ -199,8 +199,9 @@ public class TocManager {
 		return getAndCacheTocContributions(locale, tocContributionsForTocByLocale);
 	}
 
-	private synchronized TocContribution[] getAndCacheTocContributions(String locale, Map contributionsByLocale) {
-		TocContribution[] cached = (TocContribution[])contributionsByLocale.get(locale);
+	private synchronized TocContribution[] getAndCacheTocContributions(String locale,
+			Map<String, TocContribution[]> contributionsByLocale) {
+		TocContribution[] cached = contributionsByLocale.get(locale);
 		if (cached == null) {
 			HashMap<String, TocContribution> contributions = new HashMap<>();
 			AbstractTocProvider[] providers = getTocProviders();
@@ -304,19 +305,19 @@ public class TocManager {
 
 	private TocContribution[] getRootTocContributions(String locale, Set tocsToFilter) {
 		TocContribution[] contributions = getTocContributionsForToc(locale);
-		List unassembled = new ArrayList(Arrays.asList(contributions));
+		List<TocContribution> unassembled = new ArrayList<>(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler(tocsToFilter);
 		List<TocContribution> assembled = assembler.assemble(unassembled);
 		return assembled.toArray(new TocContribution[assembled.size()]);
 	}
 
-	private Set getIgnoredTocContributions() {
+	private Set<String> getIgnoredTocContributions() {
 		HelpData helpData = HelpData.getProductHelpData();
 		if (helpData != null) {
 			return helpData.getHiddenTocs();
 		}
 		else {
-			HashSet ignored = new HashSet();
+			HashSet<String> ignored = new HashSet<>();
 			String preferredTocs = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_TOCS_KEY, "", null); //$NON-NLS-1$
 			if (preferredTocs.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$

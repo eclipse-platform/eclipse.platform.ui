@@ -40,19 +40,19 @@ public class IndexManager {
 	private static final String ELEMENT_NAME_INDEX_PROVIDER = "indexProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 
-	private Map indexContributionsByLocale = new HashMap();
-	private Map indexesByLocale = new HashMap();
+	private Map<String, IndexContribution[]> indexContributionsByLocale = new HashMap<>();
+	private Map<String, Index> indexesByLocale = new HashMap<>();
 	private AbstractIndexProvider[] indexProviders;
 
 	public synchronized IIndex getIndex(String locale) {
-		Index index = (Index)indexesByLocale.get(locale);
+		Index index = indexesByLocale.get(locale);
 		if (index == null) {
 			HelpPlugin.getTocManager().getTocs(locale);  // Ensure Tocs and index not built simultaneously
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_INDEX) {
 			    System.out.println("Start to update keyword index for locale " + locale); //$NON-NLS-1$
 			}
-			List contributions = new ArrayList(Arrays.asList(readIndexContributions(locale)));
+			List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(readIndexContributions(locale)));
 			filterIndexContributions(contributions);
 			IndexAssembler assembler = new IndexAssembler();
 			index = assembler.assemble(contributions, locale);
@@ -70,7 +70,7 @@ public class IndexManager {
 	 * providers.
 	 */
 	public synchronized IndexContribution[] getIndexContributions(String locale) {
-		IndexContribution[] contributions = (IndexContribution[])indexContributionsByLocale.get(locale);
+		IndexContribution[] contributions = indexContributionsByLocale.get(locale);
 		if (contributions == null) {
 			contributions = readIndexContributions(locale);
 			indexContributionsByLocale.put(locale, contributions);
@@ -188,7 +188,7 @@ public class IndexManager {
 			return helpData.getHiddenIndexes();
 		}
 		else {
-			HashSet ignored = new HashSet();
+			HashSet<String> ignored = new HashSet<>();
 			String preferredIndexes = Platform.getPreferencesService().getString(HelpPlugin.PLUGIN_ID, HelpPlugin.IGNORED_INDEXES_KEY, "", null); //$NON-NLS-1$
 			if (preferredIndexes.length() > 0) {
 				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$

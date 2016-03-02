@@ -32,7 +32,7 @@ public class SequenceResolver {
 	private List[] secondaryLists;
 	private ListIterator primaryIter;
 	private ListIterator[] secondaryIters;
-	private Set processedItems;
+	private Set<Object> processedItems;
 
 	/*
 	 * Merges the given primary and secondary orderings such that all ordering
@@ -75,7 +75,7 @@ public class SequenceResolver {
 		primaryList = primary;
 		secondaryLists = secondary;
 		prepareDataStructures();
-		List order = new ArrayList();
+		List<Object> order = new ArrayList<>();
 		Object item;
 		while ((item = getNextItem()) != null) {
 			processedItems.add(item);
@@ -97,7 +97,7 @@ public class SequenceResolver {
 		for (int i=0;i<secondaryLists.length;++i) {
 			secondaryIters[i] = secondaryLists[i].listIterator();
 		}
-		processedItems = new HashSet();
+		processedItems = new HashSet<>();
 	}
 
 	/*

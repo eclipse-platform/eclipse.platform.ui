@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,9 @@ public class ContextManager {
 	private static final String ELEMENT_NAME_CONTEXT_PROVIDER = "contextProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 
-	private Map providersByPluginId;
-	private Map contextIDsByPluginId;
-	private List globalProviders;
+	private Map<String, List<AbstractContextProvider>> providersByPluginId;
+	private Map<String, List<String>> contextIDsByPluginId;
+	private List<AbstractContextProvider> globalProviders;
 
 	public ContextManager()
 	{
@@ -82,7 +82,7 @@ public class ContextManager {
 			System.out.println("ContextManager.getContext - no context found"); //$NON-NLS-1$
 
 			String id = contextId;
-			ArrayList potentialMatches = new ArrayList();
+			ArrayList<String> potentialMatches = new ArrayList<>();
 			if ((index = contextId.lastIndexOf('.'))>-1)
 				id = contextId.substring(index+1);
 
@@ -92,7 +92,7 @@ public class ContextManager {
 			while (iter.hasNext())
 			{
 				String pluginID = (String)iter.next();
-				List contextIDList = (List)contextIDsByPluginId.get(pluginID);
+				List contextIDList = contextIDsByPluginId.get(pluginID);
 				for (int c=0;c<contextIDList.size();c++)
 				{
 					if (((String)contextIDList.get(c)).equalsIgnoreCase(id))
@@ -118,12 +118,12 @@ public class ContextManager {
 	 * Returns all registered context providers (potentially cached) for the
 	 * given plug-in id.
 	 */
-	private List getContextProviders(String pluginId) {
+	private List<AbstractContextProvider> getContextProviders(String pluginId) {
 		if (providersByPluginId == null) {
 			loadContextProviders();
 		}
-		List list = new ArrayList();
-		List forPlugin = (List)providersByPluginId.get(pluginId);
+		List<AbstractContextProvider> list = new ArrayList<>();
+		List<AbstractContextProvider> forPlugin = providersByPluginId.get(pluginId);
 		if (forPlugin != null) {
 			list.addAll(forPlugin);
 		}
@@ -135,8 +135,8 @@ public class ContextManager {
 	 * Finds and instantiates all registered context-sensitive help providers.
 	 */
 	private void loadContextProviders() {
-		providersByPluginId = new HashMap();
-		globalProviders = new ArrayList();
+		providersByPluginId = new HashMap<>();
+		globalProviders = new ArrayList<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTEXT);
@@ -148,9 +148,9 @@ public class ContextManager {
 					String[] plugins = provider.getPlugins();
 					if (plugins != null) {
 						for (int j=0;j<plugins.length;++j) {
-							List list = (List)providersByPluginId.get(plugins[j]);
+							List<AbstractContextProvider> list = providersByPluginId.get(plugins[j]);
 							if (list == null) {
-								list = new ArrayList();
+								list = new ArrayList<>();
 								providersByPluginId.put(plugins[j], list);
 							}
 							list.add(provider);
@@ -178,8 +178,8 @@ public class ContextManager {
 	 */
 	private void checkContextProviders()
 	{
-		contextIDsByPluginId = new Hashtable();
-		Hashtable contextByContextID = new Hashtable();
+		contextIDsByPluginId = new Hashtable<>();
+		Hashtable<String, Context> contextByContextID = new Hashtable<>();
 
 		if (providersByPluginId == null) {
 			loadContextProviders();
@@ -210,7 +210,7 @@ public class ContextManager {
 							contextByContextID.put(fullID,currentContext);
 						else if (HelpPlugin.DEBUG_CONTEXT)
 						{
-							Context initialContext = (Context)contextByContextID.get(fullID);
+							Context initialContext = contextByContextID.get(fullID);
 							String error = "Context Help ID '"+contextID+"' is found in multiple context files in plugin '"+pluginID+"'\n"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								" Description 1: "+initialContext.getText()+'\n'+ //$NON-NLS-1$
 								" Description 2: "+currentContext.getText(); //$NON-NLS-1$
@@ -218,9 +218,9 @@ public class ContextManager {
 							System.out.println(error);
 						}
 
-						ArrayList list = (ArrayList)contextIDsByPluginId.get(pluginID);
+						List<String> list = contextIDsByPluginId.get(pluginID);
 						if (list==null){
-							list = new ArrayList();
+							list = new ArrayList<>();
 							contextIDsByPluginId.put(pluginID,list);
 						}
 						list.add(contextID);

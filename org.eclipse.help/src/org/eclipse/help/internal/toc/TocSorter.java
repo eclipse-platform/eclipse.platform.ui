@@ -47,9 +47,9 @@ public class TocSorter {
 	 */
 	public ITocContribution[] orderTocContributions(ITocContribution[] unorderedTocs) {
 		// first categorize the TOCs
-		List itemsToOrder = new ArrayList();
-		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
-		Map nameIdMap = createNameIdMap(categorized);
+		List<String> itemsToOrder = new ArrayList<>();
+		Map<String, Object> categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
+		Map<String, String> nameIdMap = createNameIdMap(categorized);
 
 		// order them
 		List<ITocContribution> orderedItems = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
@@ -63,10 +63,10 @@ public class TocSorter {
 	}
 
 	// Create a mapping from an id to a label that can be sorted
-	private Map createNameIdMap(Map categorized) {
-		Map map = new HashMap();
-		for (Iterator iter = categorized.keySet().iterator(); iter.hasNext();) {
-			String key = (String)iter.next();
+	private Map<String, String> createNameIdMap(Map<String, Object> categorized) {
+		Map<String, String> map = new HashMap<>();
+		for (Iterator<String> iter = categorized.keySet().iterator(); iter.hasNext();) {
+			String key = iter.next();
 			Object value = categorized.get(key);
 			ITocContribution toc;
 			if (value instanceof TocCategory) {
@@ -86,11 +86,11 @@ public class TocSorter {
 	 * mapping from category id/toc id to category/toc. Order of categories/
 	 * tocs is returned via tocOrder.
 	 */
-	private Map categorizeTocs(List tocs, List tocOrder) {
-		Map categorized = new HashMap();
-		Iterator iter = tocs.iterator();
+	private Map<String, Object> categorizeTocs(List<ITocContribution> tocs, List<String> tocOrder) {
+		Map<String, Object> categorized = new HashMap<>();
+		Iterator<ITocContribution> iter = tocs.iterator();
 		while (iter.hasNext()) {
-			ITocContribution toc = (ITocContribution)iter.next();
+			ITocContribution toc = iter.next();
 			String categoryId;
 			try {
 				categoryId = toc.getCategoryId();

@@ -44,12 +44,12 @@ public class TocAssembler {
 	private DocumentProcessor processor;
 	private ProcessorHandler[] handlers;
 
-	private Map anchorsByContributionId;
-	private List contributions;
-	private Map contributionsById;
-	private Map contributionsByLinkTo;
-	private Set processedContributions;
-	private Map requiredAttributes;
+	private Map<String, Set<String>> anchorsByContributionId;
+	private List<TocContribution> contributions;
+	private Map<String, TocContribution> contributionsById;
+	private Map<String, ITocContribution[]> contributionsByLinkTo;
+	private Set<ITocContribution> processedContributions;
+	private Map<String, String[]> requiredAttributes;
 	private Set tocsToFilter;
 
 
@@ -65,17 +65,17 @@ public class TocAssembler {
 	 * Assembles the given toc contributions into complete, linked
 	 * books. The originals are not modified.
 	 */
-	public List assemble(List contributions) {
+	public List<TocContribution> assemble(List<TocContribution> contributions) {
 		this.contributions = contributions;
 		anchorsByContributionId = null;
 		contributionsById = null;
 		contributionsByLinkTo = null;
 		processedContributions = null;
 
-		List books = getBooks();
-		Iterator iter = books.iterator();
+		List<TocContribution> books = getBooks();
+		Iterator<TocContribution> iter = books.iterator();
 		while (iter.hasNext()) {
-			TocContribution book = (TocContribution)iter.next();
+			TocContribution book = iter.next();
 			process(book);
 		}
 		return books;
@@ -91,12 +91,12 @@ public class TocAssembler {
 	 *    another toc), or the link_to target anchor doesn't exist.
 	 * 3. No other toc has a link to this contribution (via "link" element).
 	 */
-	private List getBooks() {
+	private List<TocContribution> getBooks() {
 		Map linkedContributionIds = getLinkedContributionIds(contributions);
-		List books = new ArrayList();
-		Iterator iter = contributions.iterator();
+		List<TocContribution> books = new ArrayList<>();
+		Iterator<TocContribution> iter = contributions.iterator();
 		while (iter.hasNext()) {
-			TocContribution contrib = (TocContribution)iter.next();
+			TocContribution contrib = iter.next();
 			boolean isValidLinkTo = hasValidLinkTo(contrib);
 			boolean isLinkedId = linkedContributionIds.containsKey(contrib.getId());
 			if (!isValidLinkTo && !isLinkedId) {
@@ -143,7 +143,7 @@ public class TocAssembler {
 		if (processor == null) {
 			processor = new DocumentProcessor();
 		}
-		final Map linkedContributionIds = new HashMap();
+		final Map<String, String> linkedContributionIds = new HashMap<>();
 		ProcessorHandler[] linkFinder = new ProcessorHandler[] {
 			new ValidationHandler(getRequiredAttributes()),
 			new ProcessorHandler() {
@@ -189,7 +189,7 @@ public class TocAssembler {
 		if (contrib != null) {
 			process(contrib);
 			if (anchorsByContributionId != null) {
-				Set anchors = (Set)anchorsByContributionId.get(tocContributionId);
+				Set anchors = anchorsByContributionId.get(tocContributionId);
 				if (anchors != null) {
 					return anchors.contains(anchorId);
 				}
@@ -230,7 +230,7 @@ public class TocAssembler {
 	 */
 	private void process(ITocContribution contribution) {
 		if (processedContributions == null) {
-			processedContributions = new HashSet();
+			processedContributions = new HashSet<>();
 		}
 		// don't process the same one twice
 		if (!processedContributions.contains(contribution)) {
@@ -258,14 +258,14 @@ public class TocAssembler {
 	 */
 	private TocContribution getContribution(String id) {
 		if (contributionsById == null) {
-			contributionsById = new HashMap();
-			Iterator iter = contributions.iterator();
+			contributionsById = new HashMap<>();
+			Iterator<TocContribution> iter = contributions.iterator();
 			while (iter.hasNext()) {
-				TocContribution contribution = (TocContribution)iter.next();
+				TocContribution contribution = iter.next();
 				contributionsById.put(contribution.getId(), contribution);
 			}
 		}
-		return (TocContribution)contributionsById.get(id);
+		return contributionsById.get(id);
 	}
 
 	/*
@@ -273,16 +273,16 @@ public class TocAssembler {
 	 * the given anchor path. The path has the form "<contributionId>#<anchorId>",
 	 * e.g. "/my.plugin/toc.xml#myAnchor".
 	 */
-	private TocContribution[] getAnchorContributions(String anchorPath) {
+	private ITocContribution[] getAnchorContributions(String anchorPath) {
 		if (contributionsByLinkTo == null) {
-			contributionsByLinkTo = new HashMap();
-			Iterator iter = contributions.iterator();
+			contributionsByLinkTo = new HashMap<>();
+			Iterator<TocContribution> iter = contributions.iterator();
 			while (iter.hasNext()) {
-				TocContribution srcContribution = (TocContribution)iter.next();
+				TocContribution srcContribution = iter.next();
 				String linkTo = srcContribution.getLinkTo();
 				if (linkTo != null) {
 					String destAnchorPath = HrefUtil.normalizeHref(srcContribution.getContributorId(), linkTo);
-					ITocContribution[] array = (ITocContribution[])contributionsByLinkTo.get(destAnchorPath);
+					ITocContribution[] array = contributionsByLinkTo.get(destAnchorPath);
 					if (array == null) {
 						array = new TocContribution[] { srcContribution };
 					}
@@ -305,7 +305,7 @@ public class TocAssembler {
 				}
 			}
 		}
-		TocContribution[] contributions = (TocContribution[])contributionsByLinkTo.get(anchorPath);
+		ITocContribution[] contributions = contributionsByLinkTo.get(anchorPath);
 		if (contributions == null) {
 			contributions = new TocContribution[0];
 		}
@@ -314,7 +314,7 @@ public class TocAssembler {
 
 	private Map getRequiredAttributes() {
 		if (requiredAttributes == null) {
-			requiredAttributes = new HashMap();
+			requiredAttributes = new HashMap<>();
 			requiredAttributes.put(Toc.NAME, new String[] { Toc.ATTRIBUTE_LABEL });
 			requiredAttributes.put(Topic.NAME, new String[] { Topic.ATTRIBUTE_LABEL });
 			requiredAttributes.put("anchor", new String[] { "id" }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -394,11 +394,11 @@ public class TocAssembler {
 					if (anchorId != null) {
 						// add to set of known anchors
 						if (anchorsByContributionId == null) {
-							anchorsByContributionId = new HashMap();
+							anchorsByContributionId = new HashMap<>();
 						}
-						Set set = (Set)anchorsByContributionId.get(id);
+						Set<String> set = anchorsByContributionId.get(id);
 						if (set == null) {
-							set = new HashSet();
+							set = new HashSet<>();
 							anchorsByContributionId.put(id, set);
 						}
 						set.add(anchorId);
@@ -406,7 +406,8 @@ public class TocAssembler {
 						// process contributions
 						TocContribution destContribution = getContribution(id);
 						if (destContribution != null) {
-							TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
+							ITocContribution[] srcContributions = getAnchorContributions(
+									destContribution.getId() + '#' + anchorId);
 							for (int i=0;i<srcContributions.length;++i) {
 								process(srcContributions[i]);
 								IUAElement[] children = srcContributions[i].getToc().getChildren();

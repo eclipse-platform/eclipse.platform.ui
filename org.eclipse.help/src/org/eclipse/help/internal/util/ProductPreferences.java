@@ -48,8 +48,8 @@ public class ProductPreferences {
 
 	private static Properties[] productPreferences;
 	private static SequenceResolver orderResolver;
-	private static Map preferencesToPluginIdMap;
-	private static Map preferencesToProductIdMap;
+	private static Map<Properties, String> preferencesToPluginIdMap;
+	private static Map<Properties, String> preferencesToProductIdMap;
 	private static List primaryTocOrdering;
 	private static List[] secondaryTocOrderings;
 	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
@@ -102,7 +102,7 @@ public class ProductPreferences {
 			List<List> list = new ArrayList<>();
 			Properties[] productPreferences = getProductPreferences(false);
 			for (int i=0;i<productPreferences.length;++i) {
-				String pluginId = (String)preferencesToPluginIdMap.get(productPreferences[i]);
+				String pluginId = preferencesToPluginIdMap.get(productPreferences[i]);
 				String helpDataFile = (String)productPreferences[i].get(HelpPlugin.PLUGIN_ID + '/' + HelpPlugin.HELP_DATA_KEY);
 				String baseTOCS = (String)productPreferences[i].get(HelpPlugin.PLUGIN_ID + '/' + HelpPlugin.BASE_TOCS_KEY);
 				List ordering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
@@ -225,6 +225,7 @@ public class ProductPreferences {
 	private static class NameComparator implements Comparator {
 
 		private Map tocNames;
+
 		public NameComparator(Map tocNames) {
 			this.tocNames = tocNames;
 		}
@@ -249,11 +250,11 @@ public class ProductPreferences {
 	}
 
 	public static synchronized String getPluginId(Properties prefs) {
-		return (String)preferencesToPluginIdMap.get(prefs);
+		return preferencesToPluginIdMap.get(prefs);
 	}
 
 	public static synchronized String getProductId(Properties prefs) {
-		return (String)preferencesToProductIdMap.get(prefs);
+		return preferencesToProductIdMap.get(prefs);
 	}
 
 	/*
@@ -285,11 +286,11 @@ public class ProductPreferences {
 										collection.add(properties);
 									}
 									if (preferencesToPluginIdMap == null) {
-										preferencesToPluginIdMap = new HashMap();
+										preferencesToPluginIdMap = new HashMap<>();
 									}
 									preferencesToPluginIdMap.put(properties, contributor);
 									if (preferencesToProductIdMap == null) {
-										preferencesToProductIdMap = new HashMap();
+										preferencesToProductIdMap = new HashMap<>();
 									}
 									preferencesToProductIdMap.put(properties, productId);
 								}
@@ -369,16 +370,16 @@ public class ProductPreferences {
 	 * e.g. "item1, item2, item3"
 	 * would return a list of strings containing "item1", "item2", and "item3".
 	 */
-	public static List tokenize(String str) {
+	public static List<String> tokenize(String str) {
 		if (str != null) {
 			StringTokenizer tok = new StringTokenizer(str, " \n\r\t;,"); //$NON-NLS-1$
-			List list = new ArrayList();
+			List<String> list = new ArrayList<>();
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
 			return list;
 		}
-		return new ArrayList();
+		return new ArrayList<>();
 	}
 
 	public int compare(Object o1, Object o2) {

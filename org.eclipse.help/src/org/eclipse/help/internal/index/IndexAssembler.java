@@ -80,9 +80,9 @@ public class IndexAssembler {
 	 */
 	private void mergeChildren(UAElement a, UAElement b) {
 		// create data structures for fast lookup
-		Map entriesByKeyword = new HashMap();
-		Set topicHrefs = new HashSet();
-		Set seeTargets = new HashSet();
+		Map<String, UAElement> entriesByKeyword = new HashMap<>();
+		Set<String> topicHrefs = new HashSet<>();
+		Set<IndexSee> seeTargets = new HashSet<>();
 		IUAElement[] childrenA = a.getChildren();
 		for (int i=0;i<childrenA.length;++i) {
 			UAElement childA = (UAElement)childrenA[i];
@@ -92,7 +92,7 @@ public class IndexAssembler {
 			else if (childA instanceof Topic) {
 				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
 			} else if (childA instanceof IndexSee) {
-				seeTargets.add((childA));
+				seeTargets.add((IndexSee) childA);
 			}
 		}
 
@@ -104,7 +104,7 @@ public class IndexAssembler {
 				String keyword = childB.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 				if (entriesByKeyword.containsKey(keyword)) {
 					// duplicate keyword; merge children
-					mergeChildren((IndexEntry)entriesByKeyword.get(keyword), childB);
+					mergeChildren(entriesByKeyword.get(keyword), childB);
 				}
 				else {
 					// wasn't a duplicate
@@ -123,7 +123,7 @@ public class IndexAssembler {
 				if (!seeTargets.contains((childB))) {
 					// add see only if it doesn't exist yet
 					a.appendChild(childB);
-					seeTargets.add(childB);
+					seeTargets.add((IndexSee) childB);
 				}
 			}
 		}

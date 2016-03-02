@@ -74,9 +74,9 @@ public class DocumentFinder {
 		return result.toArray(new String[result.size()]);
 	}
 
-	private static List collectExtraDocumentsFromZip(String pluginID, String directory,
+	private static List<String> collectExtraDocumentsFromZip(String pluginID, String directory,
 			URL url) {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<>();
 		URL realZipURL;
 		try {
 			realZipURL = FileLocator.toFileURL(FileLocator.resolve(url));
@@ -99,12 +99,12 @@ public class DocumentFinder {
 					"IOException occurred, when accessing Zip file " //$NON-NLS-1$
 							+ realZipURL.getFile()
 							+ ".  File might not be locally available.", ioe); //$NON-NLS-1$
-			return new ArrayList();
+			return new ArrayList<>();
 		}
 		return result;
 	}
 
-	private static List createExtraTopicsFromZipFile(String pluginID, ZipFile zipFile,
+	private static List<String> createExtraTopicsFromZipFile(String pluginID, ZipFile zipFile,
 			String directory) {
 		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 		List<String> result = new ArrayList<>();

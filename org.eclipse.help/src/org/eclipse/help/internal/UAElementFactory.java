@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,10 +71,10 @@ public class UAElementFactory {
 		{ ICriterionValueDefinition.class, CriterionValueDefinition.class },
 	};
 
-	private static final Map classByElementName;
+	private static final Map<String, Class> classByElementName;
 
 	static {
-		classByElementName = Collections.synchronizedMap(new HashMap());
+		classByElementName = Collections.synchronizedMap(new HashMap<String, Class>());
 		classByElementName.put(Anchor.NAME, Anchor.class);
 		classByElementName.put(Include.NAME, Include.class);
 		classByElementName.put(Toc.NAME, Toc.class);
@@ -98,7 +98,7 @@ public class UAElementFactory {
 
 	public static UAElement newElement(Element element) {
 		String name = element.getNodeName();
-		Class<?> clazz = (Class) classByElementName.get(name);
+		Class<?> clazz = classByElementName.get(name);
 		if (clazz != null) {
 			try {
 				Constructor<?> constructor = clazz.getConstructor(Element.class);
