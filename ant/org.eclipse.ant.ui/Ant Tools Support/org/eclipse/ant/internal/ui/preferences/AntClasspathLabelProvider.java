@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,20 +16,16 @@ import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Label provider for classpath elements
  */
-public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider {
+public class AntClasspathLabelProvider implements ILabelProvider {
 
 	private AntClasspathBlock fBlock;
 
@@ -99,46 +95,6 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 			return label.toString();
 		}
 		return element.toString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	@Override
-	public Color getBackground(Object element) {
-		if (isUnmodifiable(element)) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	@Override
-	public Color getForeground(Object element) {
-		if (isUnmodifiable(element)) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		}
-		return null;
-	}
-
-	private boolean isUnmodifiable(Object element) {
-		if (element instanceof GlobalClasspathEntries) {
-			int type = ((GlobalClasspathEntries) element).getType();
-			if (type == ClasspathModel.CONTRIBUTED) {
-				return true;
-			}
-		} else if (element instanceof ClasspathEntry) {
-			return isUnmodifiable(((ClasspathEntry) element).getParent());
-		}
-		return false;
 	}
 
 	/*

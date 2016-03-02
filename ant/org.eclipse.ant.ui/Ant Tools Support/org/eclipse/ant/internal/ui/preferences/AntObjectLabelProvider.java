@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,9 @@ import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -30,7 +26,7 @@ import org.eclipse.ui.ide.IDE;
 /**
  * Label provider for type elements
  */
-public class AntObjectLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
+public class AntObjectLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	/*
 	 * (non-Javadoc) Method declared on IBaseLabelProvider.
@@ -120,46 +116,5 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 
 	public static Image getPropertyImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	@Override
-	public Color getForeground(Object element) {
-		if (isUnmodifiable(element)) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	@Override
-	public Color getBackground(Object element) {
-		if (isUnmodifiable(element)) {
-			Display display = Display.getCurrent();
-			return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		}
-		return null;
-	}
-
-	private boolean isUnmodifiable(Object element) {
-		if (element instanceof AntObject) {
-			if (((AntObject) element).isDefault()) {
-				return true;
-			}
-		} else if (element instanceof Property) {
-			if (((Property) element).isDefault()) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
