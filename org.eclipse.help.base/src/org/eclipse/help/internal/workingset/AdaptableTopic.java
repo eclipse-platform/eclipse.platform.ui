@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,12 +79,12 @@ public class AdaptableTopic extends AdaptableHelpResource {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap<>();
 			topicMap.put(getHref(), element);
-			FastStack stack = new FastStack();
+			FastStack<ITopic> stack = new FastStack<>();
 			ITopic[] topics = getSubtopics();
 			for (int i = 0; i < topics.length; i++)
 				stack.push(topics[i]);
 			while (!stack.isEmpty()) {
-				ITopic topic = (ITopic) stack.pop();
+				ITopic topic = stack.pop();
 				if (topic != null) {
 					String topicHref = topic.getHref();
 					if (topicHref != null) {
