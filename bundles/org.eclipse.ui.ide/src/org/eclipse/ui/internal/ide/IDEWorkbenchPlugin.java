@@ -92,6 +92,11 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      */
     private MarkerImageProviderRegistry markerImageProviderRegistry = null;
 
+	/**
+	 * Unassociated file/editor strategy registry; lazily initialized
+	 */
+	private UnassociatedEditorStrategyRegistry unassociatedEditorStrategyRegistry = null;
+
 	private ResourceManager resourceManager;
 
 	/**
@@ -262,6 +267,17 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         return markerImageProviderRegistry;
     }
 
+	/**
+	 * Returns the unassociated file/editor strategy registry for the workbench.
+	 *
+	 * @return the unassociated file/editor strategy registry
+	 */
+	public synchronized UnassociatedEditorStrategyRegistry getUnassociatedEditorStrategyRegistry() {
+		if (unassociatedEditorStrategyRegistry == null) {
+			unassociatedEditorStrategyRegistry = new UnassociatedEditorStrategyRegistry();
+		}
+		return unassociatedEditorStrategyRegistry;
+	}
 
     /**
      * Returns the about information of all known features,

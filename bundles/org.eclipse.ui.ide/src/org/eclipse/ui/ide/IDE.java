@@ -871,7 +871,7 @@ public final class IDE {
 				defaultEditor);
 		return getEditorDescriptor(name, editorReg, defaultEditor, allowInteractive).getId();
 	}
-	
+
 	/**
 	 * Applies the <code>org.eclipse.ui.ide.editorAssociationOverride</code> extensions to the given
 	 * input.
@@ -1177,7 +1177,7 @@ public final class IDE {
 
 		return editorDesc;
 	}
-	
+
 	/**
 	 * Get the editor descriptor for a given name using the editorDescriptor
 	 * passed in as a default as a starting point.
@@ -1245,8 +1245,10 @@ public final class IDE {
 		String preferedStrategy = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY);
 		IUnassociatedEditorStrategy res = null;
-		if (allowInteractive || !UnassociatedEditorStrategyRegistry.isInteractive(preferedStrategy)) {
-			res = UnassociatedEditorStrategyRegistry.getStrategy(preferedStrategy);
+		UnassociatedEditorStrategyRegistry registry = IDEWorkbenchPlugin.getDefault()
+				.getUnassociatedEditorStrategyRegistry();
+		if (allowInteractive || !registry.isInteractive(preferedStrategy)) {
+			res = registry.getStrategy(preferedStrategy);
 		}
 		if (res == null) {
 			res = new SystemEditorOrTextEditorStrategy();
