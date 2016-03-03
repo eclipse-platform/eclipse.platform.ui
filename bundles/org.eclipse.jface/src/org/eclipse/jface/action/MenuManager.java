@@ -10,7 +10,7 @@
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 12116 [Contributions] widgets: MenuManager.setImageDescriptor() method needed
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440252
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 436225
- *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 488500, Bug 485823
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 488500
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -43,13 +43,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * </p>
  */
 public class MenuManager extends ContributionManager implements IMenuManager {
-	/**
-	 * The key under which the {@link MenuManager} is added to the data
-	 * properties of the {@link Menu} created by the manager.
-	 * 
-	 * @since 3.12
-	 */
-	public static final String MANAGER_KEY = "org.eclipse.jface.action.MenuManager.managerKey"; //$NON-NLS-1$
+	private static final String MANAGER_KEY = "org.eclipse.jface.action.MenuManager.managerKey"; //$NON-NLS-1$
 
     /**
      * The menu id.

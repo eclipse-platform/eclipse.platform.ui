@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@
  *     Patrick Naish <patrick.naish@microfocus.com> - Bug 435274
  *     René Brandstetter <Rene.Brandstetter@gmx.net> - Bug 378849
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 378849
- *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556, Bug 485823
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430, 472654
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  *******************************************************************************/
@@ -387,6 +387,7 @@ MenuManagerEventHelper.getInstance()
 				}
 				newMenu = menuManager.createMenuBar((Decorations) parent);
 				((Decorations) parent).setMenuBar(newMenu);
+				newMenu.setData(menuManager);
 				menuBar = true;
 			} else {
 				menuManager = getManager(menuModel);
@@ -398,6 +399,7 @@ MenuManagerEventHelper.getInstance()
 				newMenu = menuManager.createContextMenu((Control) parent);
 				// we can't be sure this is the correct parent.
 				// ((Control) parent).setMenu(newMenu);
+				newMenu.setData(menuManager);
 			}
 		} else if (parent instanceof Menu) {
 			// Object data = ((Menu) parent).getData();
@@ -421,6 +423,7 @@ MenuManagerEventHelper.getInstance()
 					((Control) parent).setMenu(newMenu);
 				}
 			}
+			newMenu.setData(menuManager);
 		}
 		if (menuManager != null && !menuManager.getRemoveAllWhenShown()) {
 			processContributions(menuModel, menuModel.getElementId(), menuBar,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 485823
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -120,7 +119,8 @@ public class MenuManagerRendererFilter implements Listener {
 		MenuManager menuManager = null;
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj == null) {
-			Object tmp = menu.getData(MenuManager.MANAGER_KEY);
+			Object tmp = menu
+					.getData("org.eclipse.jface.action.MenuManager.managerKey"); //$NON-NLS-1$
 			if (tmp instanceof MenuManager) {
 				MenuManager tmpManager = (MenuManager) tmp;
 				menuManager = tmpManager;
