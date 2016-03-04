@@ -143,8 +143,6 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_Name, master, context, textProp,
 				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME),
 				Messages.ModelTooling_Empty_Warning);
-		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_TypeId, master, context, textProp,
-				EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
 
 		{
 			final Label l = new Label(parent, SWT.NONE);
