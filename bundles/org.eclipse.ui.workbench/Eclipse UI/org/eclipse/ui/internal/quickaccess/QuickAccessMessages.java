@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -19,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
  */
 public class QuickAccessMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.quickaccess.messages"; //$NON-NLS-1$
+	public static String QuickAccess_TooltipDescription;
 	public static String QuickAccess_Perspectives;
 	public static String QuickAccess_Commands;
 	public static String QuickAccess_Properties;
