@@ -246,7 +246,12 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(id);
 			return listenerList != null ? listenerList : new ListenerList<IDebugContextListener>();
         } else { 
-			ListenerList<IDebugContextListener> retVal = fListenersByPartId.get(null);
+			ListenerList<IDebugContextListener> listenerList = fListenersByPartId.get(null);
+			ListenerList<IDebugContextListener> retVal = new ListenerList<>();
+			for (IDebugContextListener iDebugContextListener : listenerList) {
+				retVal.add(iDebugContextListener);
+			}
+
 			outer: for (Iterator<String> itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) {
                 String listenerPartId = itr.next(); 
                 for (int i = 0; i < fProviders.size(); i++) { 
@@ -257,9 +262,8 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
                         continue outer; 
                     } 
                 }
-                
-				for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
-					inner: for (IDebugContextListener addedListener : retVal) {
+                inner: for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
+					for (IDebugContextListener addedListener : retVal) {
 						if (iDebugContextListener.equals(addedListener)){
 							continue inner;
 						}
