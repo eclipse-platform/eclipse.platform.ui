@@ -20,18 +20,7 @@
   <artifactId>org.eclipse.debug.ui</artifactId>
   <version>3.11.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-compiler-plugin</artifactId>
-        <version>${tycho.version}</version>
-        <configuration>
-          <compilerArgs>
-            <arg>-warn:+resource</arg>
-          </compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
- </build>
+  <properties>
+    <code.ignoredWarnings>-warn:+resource</code.ignoredWarnings>
+  </properties>
 </project>
