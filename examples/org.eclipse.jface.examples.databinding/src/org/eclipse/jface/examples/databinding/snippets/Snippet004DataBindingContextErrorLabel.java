@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Brad Reynolds and others.
+ * Copyright (c) 2006, 2016 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 116920, 159768
  *     Matthew Hall - bug 260329
  *     Hendrik Still <hendrik.still@vogella.com> - Bug 434283
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 489106
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
@@ -70,7 +71,7 @@ public class Snippet004DataBindingContextErrorLabel {
 
 				// Bind the error label to the validation error on the dbc.
 				dbc.bindValue(
-						WidgetProperties.text(SWT.Modify).observe(errorLabel),
+						WidgetProperties.text().observe(errorLabel),
 						new AggregateValidationStatus(dbc.getBindings(),
 								AggregateValidationStatus.MAX_SEVERITY));
 
