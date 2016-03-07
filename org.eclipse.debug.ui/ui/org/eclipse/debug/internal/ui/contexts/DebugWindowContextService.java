@@ -224,8 +224,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
     }
 
 	protected void notify(final DebugContextEvent event, ListenerList<IDebugContextListener> listeners) {
-		for (IDebugContextListener iDebugContextListener : listeners) {
-			final IDebugContextListener listener = iDebugContextListener;
+		for (final IDebugContextListener listener : listeners) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -262,13 +261,8 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
                         continue outer; 
                     } 
                 }
-                inner: for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
-					for (IDebugContextListener addedListener : retVal) {
-						if (iDebugContextListener.equals(addedListener)){
-							continue inner;
-						}
-					}
-					retVal.add(iDebugContextListener);
+				for (IDebugContextListener iDebugContextListener : fListenersByPartId.get(listenerPartId)) {
+					retVal.add(iDebugContextListener); // no effect if listener already present
 				}
 			}
 			return retVal;
@@ -292,13 +286,8 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 						continue outer;
 					}
 				}
-				inner: for (IDebugContextListener iDebugContextListener : fPostListenersByPartId.get(listenerPartId)) {
-					for (IDebugContextListener addedListener : retVal) {
-						if (iDebugContextListener.equals(addedListener)) {
-							continue inner;
-						}
-					}
-					retVal.add(iDebugContextListener);
+				for (IDebugContextListener iDebugContextListener : fPostListenersByPartId.get(listenerPartId)) {
+					retVal.add(iDebugContextListener); // no effect if listener already present
 				}
 			}
 			return retVal;
