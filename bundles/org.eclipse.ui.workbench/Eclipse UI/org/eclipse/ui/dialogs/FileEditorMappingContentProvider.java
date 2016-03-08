@@ -25,8 +25,7 @@ import org.eclipse.ui.IFileEditorMapping;
  *
  * @see org.eclipse.jface.viewers.IContentProvider
  */
-public class FileEditorMappingContentProvider implements
-        IStructuredContentProvider {
+public class FileEditorMappingContentProvider implements IStructuredContentProvider {
 
     /**
      * Singleton instance accessor.
