@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2013 Tom Schindl and others.
+ * Copyright (c) 2006 - 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565, 487940
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -15,7 +15,6 @@ package org.eclipse.jface.snippets.viewers;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -30,14 +29,6 @@ public class Snippet001TableViewer {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return (MyModel[]) inputElement;
-		}
-
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 	}

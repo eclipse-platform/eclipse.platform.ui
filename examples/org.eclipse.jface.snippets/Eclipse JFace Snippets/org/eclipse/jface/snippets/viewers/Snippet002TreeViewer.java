@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 - 2015 Tom Schindl and others.
+ * Copyright (c) 2006 - 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 414565, 475361, 487940
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -34,16 +33,6 @@ public class Snippet002TreeViewer {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((MyModel)inputElement).child.toArray();
-		}
-
-		@Override
-		public void dispose() {
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
 		}
 
 		@Override
