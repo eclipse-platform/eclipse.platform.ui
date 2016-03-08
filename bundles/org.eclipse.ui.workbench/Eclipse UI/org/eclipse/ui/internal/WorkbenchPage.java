@@ -3471,6 +3471,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (!revert) {
 			dummyPerspective = (MPerspective) modelService.cloneSnippet(application, desc.getId(),
 					window);
+			if (dummyPerspective != null) {
+				handleNullRefPlaceHolders(dummyPerspective, window);
+			}
 		}
 
 		if (dummyPerspective == null) {
