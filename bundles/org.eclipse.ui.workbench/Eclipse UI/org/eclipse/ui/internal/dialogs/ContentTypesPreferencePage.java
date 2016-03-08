@@ -135,28 +135,16 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	private class FileSpecContentProvider implements IStructuredContentProvider {
 
 		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-		@Override
 		public Object[] getElements(Object inputElement) {
 			IContentType contentType = (IContentType) inputElement;
 			String[] userextfileSpecs = contentType
-					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC
-							| IContentType.IGNORE_PRE_DEFINED);
+					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED);
 			String[] usernamefileSpecs = contentType
-					.getFileSpecs(IContentType.FILE_NAME_SPEC
-							| IContentType.IGNORE_PRE_DEFINED);
+					.getFileSpecs(IContentType.FILE_NAME_SPEC | IContentType.IGNORE_PRE_DEFINED);
 			String[] preextfileSpecs = contentType
-					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC
-							| IContentType.IGNORE_USER_DEFINED);
+					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 			String[] prenamefileSpecs = contentType
-					.getFileSpecs(IContentType.FILE_NAME_SPEC
-							| IContentType.IGNORE_USER_DEFINED);
+					.getFileSpecs(IContentType.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED);
 
 			return createSpecs(userextfileSpecs, usernamefileSpecs,
 					preextfileSpecs, prenamefileSpecs);
@@ -242,11 +230,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(null);
-		}
-
-		@Override
-		public void dispose() {
-
 		}
 
 		@Override
