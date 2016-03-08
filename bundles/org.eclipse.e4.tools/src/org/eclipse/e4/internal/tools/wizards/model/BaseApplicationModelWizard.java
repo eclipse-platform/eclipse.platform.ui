@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 - 2014 BestSolution.at and others.
+ * Copyright (c) 2010 - 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  * Dmitry Spiridenok <d.spiridenok@gmail.com> - Bug 408712
  * Marco Descher <marco@descher.at> - Bug 434371
+ * Olivier Prouvost <olivier.prouvost@opcoach.com> Bug 485723, Bug 436836
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
@@ -44,6 +45,7 @@ import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -339,6 +341,12 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			fModel.getPluginBase().add(clonedExtens);
 		}
 
+		// Fix 485723 Must do the same for extension points
+		for (final IPluginExtensionPoint ep : registryModel.getPluginBase().getExtensionPoints()) {
+			final IPluginExtensionPoint clonedExtensionPoint = copyExtensionPoint(fModel.getFactory(), ep);
+			fModel.getPluginBase().add(clonedExtensionPoint);
+		}
+
 		// Can now check if we must add this extension (may be already inside).
 		final IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (final IPluginExtension iPluginExtension : extensions) {
@@ -378,6 +386,22 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 				}
 			}
 			return clonedExt;
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	// Used to Fix bug #485723
+	private IPluginExtensionPoint copyExtensionPoint(IExtensionsModelFactory factory, final IPluginExtensionPoint ep) {
+		try {
+			final IPluginExtensionPoint clonedExtPt = factory.createExtensionPoint();
+			clonedExtPt.setId(ep.getId());
+			clonedExtPt.setName(ep.getName());
+			clonedExtPt.setSchema(ep.getSchema());
+
+			return clonedExtPt;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
