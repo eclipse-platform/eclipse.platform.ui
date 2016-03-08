@@ -21,6 +21,6 @@
   <version>3.11.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
-    <code.ignoredWarnings>-warn:+resource</code.ignoredWarnings>
+    <code.ignoredWarnings>-warn:+resource,-deprecation,unavoidableGenericProblems</code.ignoredWarnings>
   </properties>
 </project>
