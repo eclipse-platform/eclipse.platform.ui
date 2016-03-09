@@ -259,7 +259,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
         saveInterval.setPage(this);
         saveInterval.setTextLimit(Integer.toString(
                 IDEInternalPreferences.MAX_SAVE_INTERVAL).length());
-        saveInterval.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_saveIntervalError, new Integer(IDEInternalPreferences.MAX_SAVE_INTERVAL)));
+		saveInterval.setErrorMessage(NLS.bind(IDEWorkbenchMessages.WorkbenchPreference_saveIntervalError,
+				Integer.valueOf(IDEInternalPreferences.MAX_SAVE_INTERVAL)));
         saveInterval
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);

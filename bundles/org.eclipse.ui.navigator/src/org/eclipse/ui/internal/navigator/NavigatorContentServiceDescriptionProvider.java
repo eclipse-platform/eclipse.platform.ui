@@ -79,7 +79,7 @@ public final class NavigatorContentServiceDescriptionProvider implements
 	protected final String getDefaultStatusBarMessage(int aSize) {
 		return NLS.bind(aSize != 1 ? CommonNavigatorMessages.Navigator_statusLineMultiSelect
 				: CommonNavigatorMessages.Navigator_statusLineSingleSelect,
-				new Object[] { new Integer(aSize) });
+				new Object[] { Integer.valueOf(aSize) });
 
 	}
 
