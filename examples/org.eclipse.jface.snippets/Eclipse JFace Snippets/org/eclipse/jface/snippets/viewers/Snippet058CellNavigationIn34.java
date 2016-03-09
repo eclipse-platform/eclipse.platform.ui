@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Tom Schindl and others.
+ * Copyright (c) 2006, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *     Niels Lippke - initial API and implementation
- *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427
+ *     Lars Vogel (lars.vogel@gmail.com) - Bug 413427, 489234
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -190,8 +190,8 @@ public class Snippet058CellNavigationIn34 {
 			@Override
 			protected Object getValue(Object element) {
 				if (((Person) element).gender.equals("M"))
-					return new Integer(0);
-				return new Integer(1);
+					return Integer.valueOf(0);
+				return Integer.valueOf(1);
 			}
 
 			@Override

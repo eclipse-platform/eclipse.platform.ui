@@ -10,7 +10,7 @@
  *     Dinko Ivanov - bug 164365
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 448143
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 475361
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 475361, 489234
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -72,7 +72,7 @@ public class Snippet027ComboBoxCellEditors {
 			@Override
 			protected Object getValue(Object element) {
 				// We need to calculate back to the index
-				return new Integer(((MyModel) element).counter / 10);
+				return Integer.valueOf(((MyModel) element).counter / 10);
 			}
 
 			@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Tom Schindl and others.
+ * Copyright (c) 2006, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
- *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 414565, 489234
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442343
  *******************************************************************************/
 
@@ -51,7 +51,7 @@ public class Snippet017TableViewerHideShowColumns {
 
 				@Override
 				public void run() {
-					column.setData("restoredWidth", new Integer(width));
+					column.setData("restoredWidth", Integer.valueOf(width));
 				}
 			});
 

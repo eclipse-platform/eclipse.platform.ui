@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Tom Schindl and others.
+ * Copyright (c) 2007, 2016 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
  *     Wayne Beaton - bug 185540
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 413427, 475361
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 413427, 475361, 489234
  *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 414565
  *******************************************************************************/
 
@@ -74,7 +74,7 @@ public class Snippet034CellEditorPerRow {
 		@Override
 		protected Object getValue(Object element) {
 			if( element instanceof MyModel2 ) {
-				return new Integer(((MyModel) element).counter);
+				return Integer.valueOf(((MyModel) element).counter);
 			} else {
 				return ((MyModel) element).counter + "";
 			}
