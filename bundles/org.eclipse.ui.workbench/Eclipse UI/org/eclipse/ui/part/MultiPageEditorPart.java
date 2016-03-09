@@ -392,7 +392,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				int pageCount = getPageCount();
 				Object[] result = new Object[pageCount];
 				for (int i = 0; i < pageCount; i++) {
-					result[i] = new Integer(i);
+					result[i] = Integer.valueOf(i);
 				}
 				return result;
 			}

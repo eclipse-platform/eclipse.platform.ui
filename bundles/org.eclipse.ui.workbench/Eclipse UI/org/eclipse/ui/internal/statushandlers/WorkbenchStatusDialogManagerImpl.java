@@ -139,7 +139,7 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * @return populated dialogState
 	 */
 	public Map initDialogState(Map dialogState, int displayMask, String dialogTitle) {
-		dialogState.put(IStatusDialogConstants.MASK, new Integer(displayMask));
+		dialogState.put(IStatusDialogConstants.MASK, Integer.valueOf(displayMask));
 		dialogState.put(IStatusDialogConstants.TITLE,
 				dialogTitle == null ? JFaceResources
 						.getString("Problem_Occurred") : //$NON-NLS-1$

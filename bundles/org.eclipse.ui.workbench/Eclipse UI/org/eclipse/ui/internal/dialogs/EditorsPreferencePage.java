@@ -360,7 +360,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         recentFilesEditor.setTextLimit(Integer.toString(EditorHistory.MAX_SIZE)
                 .length());
         recentFilesEditor
-                .setErrorMessage(NLS.bind(WorkbenchMessages.WorkbenchPreference_recentFilesError, new Integer(EditorHistory.MAX_SIZE) ));
+				.setErrorMessage(NLS.bind(WorkbenchMessages.WorkbenchPreference_recentFilesError,
+						Integer.valueOf(EditorHistory.MAX_SIZE)));
         recentFilesEditor
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         recentFilesEditor.setValidRange(0, EditorHistory.MAX_SIZE);

@@ -55,7 +55,7 @@ public class BindingElement extends ModelElement {
 		setTrigger(b.getTriggerSequence());
 		setContext((ContextElement) model.getContextIdToElement().get(
 				b.getContextId()));
-		setUserDelta(new Integer(b.getType()));
+		setUserDelta(Integer.valueOf(b.getType()));
 		setModelObject(b);
 	}
 
@@ -91,7 +91,7 @@ public class BindingElement extends ModelElement {
 		setCommandInfo(cmd);
 		setTrigger(null);
 		setContext(null);
-		setUserDelta(new Integer(Binding.SYSTEM));
+		setUserDelta(Integer.valueOf(Binding.SYSTEM));
 
 		setModelObject(cmd);
 	}
@@ -207,7 +207,7 @@ public class BindingElement extends ModelElement {
 		setTrigger(binding.getTriggerSequence());
 		setContext((ContextElement) contextModel.getContextIdToElement().get(
 				binding.getContextId()));
-		setUserDelta(new Integer(binding.getType()));
+		setUserDelta(Integer.valueOf(binding.getType()));
 		setModelObject(binding);
 	}
 
@@ -218,7 +218,7 @@ public class BindingElement extends ModelElement {
 		setCommandInfo(parameterizedCommand);
 		setTrigger(null);
 		setContext(null);
-		setUserDelta(new Integer(Binding.SYSTEM));
+		setUserDelta(Integer.valueOf(Binding.SYSTEM));
 		setModelObject(parameterizedCommand);
 	}
 }

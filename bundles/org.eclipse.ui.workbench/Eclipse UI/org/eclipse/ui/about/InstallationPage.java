@@ -129,7 +129,7 @@ public abstract class InstallationPage extends DialogPage {
 	protected Button createButton(Composite parent, int id, String label) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
-		button.setData(new Integer(id));
+		button.setData(Integer.valueOf(id));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -90,7 +89,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
         }
 
         if (propertyType == Integer.class) {
-            return new Integer(targetTheme.getInt(propertyId));
+			return Integer.valueOf(targetTheme.getInt(propertyId));
         }
 
         if (propertyType == Boolean.class) {

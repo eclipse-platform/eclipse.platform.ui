@@ -1245,7 +1245,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// we're on a 32 bit platform so invoke it with splash
 			// handle as an int
 			splashShell = (Shell) method.invoke(null, new Object[] { display,
-					new Integer(splashHandle) });
+					Integer.valueOf(splashHandle) });
 		} catch (NoSuchMethodException e) {
 			// look for the 64 bit internal_new shell method
 			try {

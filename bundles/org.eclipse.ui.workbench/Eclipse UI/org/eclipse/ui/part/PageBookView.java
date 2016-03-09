@@ -429,14 +429,14 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			// for backward compability with IPage
 			rec.page.setActionBars(rec.subActionBars);
 
-			count = new Integer(0);
+			count = Integer.valueOf(0);
 		} else {
 			site = (IPageSite) mapPageToSite.get(rec.page);
 			rec.subActionBars = (SubActionBars) site.getActionBars();
 			count = ((Integer) mapPageToNumRecs.get(rec.page));
 		}
 
-		mapPageToNumRecs.put(rec.page, new Integer(count.intValue() + 1));
+		mapPageToNumRecs.put(rec.page, Integer.valueOf(count.intValue() + 1));
 	}
 
 	/**
@@ -872,7 +872,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				((PageSite) site).dispose();
 			}
 		} else {
-			mapPageToNumRecs.put(rec.page, new Integer(newCount));
+			mapPageToNumRecs.put(rec.page, Integer.valueOf(newCount));
 		}
 	}
 

@@ -190,8 +190,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 		saveInterval.setPage(this);
 		saveInterval.setTextLimit(Integer.toString(MAX_SAVE_INTERVAL).length());
 		saveInterval.setErrorMessage(NLS.bind(
-				WorkbenchMessages.WorkbenchPreference_workbenchSaveIntervalError, new Integer(
-						MAX_SAVE_INTERVAL)));
+				WorkbenchMessages.WorkbenchPreference_workbenchSaveIntervalError, Integer.valueOf(MAX_SAVE_INTERVAL)));
 		saveInterval.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		saveInterval.setValidRange(0, MAX_SAVE_INTERVAL);
 

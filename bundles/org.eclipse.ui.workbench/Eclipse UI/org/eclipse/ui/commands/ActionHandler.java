@@ -238,7 +238,7 @@ public final class ActionHandler extends AbstractHandler {
         }
         map.put(ATTRIBUTE_HANDLED, handled ? Boolean.TRUE : Boolean.FALSE);
         map.put(ATTRIBUTE_ID, action.getId());
-        map.put(ATTRIBUTE_STYLE, new Integer(action.getStyle()));
+		map.put(ATTRIBUTE_STYLE, Integer.valueOf(action.getStyle()));
         return Collections.unmodifiableMap(map);
     }
 

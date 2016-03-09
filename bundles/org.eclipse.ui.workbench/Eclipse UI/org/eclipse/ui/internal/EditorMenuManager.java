@@ -71,7 +71,7 @@ public class EditorMenuManager extends SubMenuManager {
                         item);
 			} else {
 				// no acclerator if the item is disabled
-                return new Integer(0);
+				return Integer.valueOf(0);
 			}
         }
 
