@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -391,20 +392,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param groupingEntries
 	 */
 	private void processGroupingEntries(Map<String, Collection<MarkerGroupingEntry>> groupingEntries) {
-		Iterator<String> entriesIterator = groupingEntries.keySet().iterator();
-		while (entriesIterator.hasNext()) {
-			String nextGroupId = entriesIterator.next();
-			Iterator<MarkerGroupingEntry> nextEntriesIterator = groupingEntries.get(nextGroupId).iterator();
+		for (Entry<String, Collection<MarkerGroupingEntry>> entry : groupingEntries.entrySet()) {
+			String nextGroupId = entry.getKey();
 			if (markerGroups.containsKey(nextGroupId)) {
-				while (nextEntriesIterator.hasNext()) {
-					MarkerGroupingEntry next = nextEntriesIterator.next();
-					next.setGroup(markerGroups.get(nextGroupId));
+				MarkerGroup group = markerGroups.get(nextGroupId);
+				for (MarkerGroupingEntry markerGroupingEntry : entry.getValue()) {
+					markerGroupingEntry.setGroup(group);
 				}
 			} else {
-				while (nextEntriesIterator.hasNext()) {
-					MarkerGroupingEntry next = nextEntriesIterator.next();
+				for (MarkerGroupingEntry markerGroupingEntry : entry.getValue()) {
 					IDEWorkbenchPlugin.log(NLS.bind("markerGroupingEntry {0} defines invalid group {1}", //$NON-NLS-1$
-							new String[] { next.getId(), nextGroupId }));
+							new String[] { markerGroupingEntry.getId(), nextGroupId }));
 				}
 			}
 		}
@@ -669,16 +667,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private void removeValues(String value, Map<String, String> cache) {
 		Collection<String> keysToRemove = new ArrayList<>();
-		Iterator<String> keys = cache.keySet().iterator();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			if (cache.get(key).equals(value)) {
-				keysToRemove.add(key);
+		for (Entry<String, String> entry : cache.entrySet()) {
+			if (entry.getValue().equals(value)) {
+				keysToRemove.add(entry.getKey());
 			}
 		}
-		Iterator<String> keysToRemoveIterator = keysToRemove.iterator();
-		while (keysToRemoveIterator.hasNext()) {
-			cache.remove(keysToRemoveIterator.next());
+		for (String toRemove : keysToRemove) {
+			cache.remove(toRemove);
 		}
 	}
 

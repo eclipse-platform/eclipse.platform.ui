@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -268,13 +268,13 @@ public class ThemeRegistry implements IThemeRegistry {
      *
      * @param otherData the other data to add
      */
-    public void addData(Map otherData) {
-        for (Iterator i = otherData.keySet().iterator(); i.hasNext();) {
-            Object key = i.next();
+    public void addData(Map<?, ?> otherData) {
+		for (Entry<?, ?> entry : otherData.entrySet()) {
+			Object key = entry.getKey();
             if (dataMap.containsKey(key)) {
 				continue;
 			}
-            dataMap.put(key, otherData.get(key));
+			dataMap.put(key, entry.getValue());
         }
     }
 

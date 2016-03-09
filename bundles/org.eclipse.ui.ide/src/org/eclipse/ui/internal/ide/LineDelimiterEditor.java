@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
@@ -167,11 +167,10 @@ public class LineDelimiterEditor {
 	}
 
 	private String getKeyForValue(String value) {
-		Map knownValues = Platform.knownPlatformLineSeparators();
-		Set keys = knownValues.keySet();
-		for (Iterator iter = keys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-			if (knownValues.get(key).equals(value)) {
+		Map<String, String> knownValues = Platform.knownPlatformLineSeparators();
+		for (Entry<String, String> entry : knownValues.entrySet()) {
+			String key = entry.getKey();
+			if (entry.getValue().equals(value)) {
 				return key;
 			}
 		}

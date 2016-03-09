@@ -12,9 +12,9 @@ package org.eclipse.jface.fieldassist;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -162,8 +162,9 @@ public class FieldAssistColors {
 		}
 
 		// Look for any stored colors that were created on this display
-		for (Iterator<Color> i = displays.keySet().iterator(); i.hasNext();) {
-			Color color = i.next();
+		for (Entry<Color, Display> entry : displays.entrySet()) {
+			Color color = entry.getKey();
+			;
 			if (displays.get(color).equals(display)) {
 				// The color is on this display. Mark it for removal.
 				toBeRemoved.add(color);
@@ -171,27 +172,23 @@ public class FieldAssistColors {
 				// Now look for any references to it in the required field color
 				// map
 				List<Color> toBeRemovedFromRequiredMap = new ArrayList<>(1);
-				for (Iterator<Color> iter = requiredFieldColorMap.keySet().iterator(); iter
-						.hasNext();) {
-					Color bgColor = iter.next();
-					if (requiredFieldColorMap.get(bgColor)
-							.equals(color)) {
+				for (Entry<Color, Color> colorMapEntry : requiredFieldColorMap.entrySet()) {
+					Color bgColor = colorMapEntry.getKey();
+					if (colorMapEntry.getValue().equals(color)) {
 						// mark it for removal from the required field color map
 						toBeRemovedFromRequiredMap.add(bgColor);
 					}
 				}
 				// Remove references in the required field map now that
 				// we are done iterating.
-				for (int j = 0; j < toBeRemovedFromRequiredMap.size(); j++) {
-					requiredFieldColorMap.remove(toBeRemovedFromRequiredMap
-							.get(j));
+				for (Color toRemove : toBeRemovedFromRequiredMap) {
+					requiredFieldColorMap.remove(toRemove);
 				}
 			}
 		}
 		// Remove references in the display map now that we are
 		// done iterating
-		for (int i = 0; i < toBeRemoved.size(); i++) {
-			Color color = toBeRemoved.get(i);
+		for (Color color : toBeRemoved) {
 			// Removing from the display map must be done before disposing the
 			// color or else the comparison between this color and the one
 			// in the map will fail.

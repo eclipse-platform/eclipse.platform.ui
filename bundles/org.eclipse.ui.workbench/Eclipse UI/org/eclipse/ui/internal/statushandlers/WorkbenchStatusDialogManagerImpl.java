@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -364,11 +363,9 @@ public class WorkbenchStatusDialogManagerImpl {
 	 * @return true if any StatusHandler should be displayed in modal window
 	 */
 	public boolean shouldBeModal() {
-		Map modals = (Map) dialogState
+		Map<?, ?> modals = (Map<?, ?>) dialogState
 				.get(IStatusDialogConstants.STATUS_MODALS);
-		for (Iterator it = modals.keySet().iterator(); it.hasNext();) {
-			Object o = it.next();
-			Object value = modals.get(o);
+		for (Object value : modals.values()) {
 			if (value instanceof Boolean) {
 				Boolean b = (Boolean) value;
 				if (b.booleanValue()) {

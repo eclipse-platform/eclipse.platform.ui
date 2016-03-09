@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -632,8 +633,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 
 				Map<String, String> props = ctxt.getProperties();
-				for (String key : props.keySet()) {
-					lclContext.set(key, props.get(key));
+				for (Entry<String, String> entry : props.entrySet()) {
+					lclContext.set(entry.getKey(), entry.getValue());
 				}
 			}
 		}

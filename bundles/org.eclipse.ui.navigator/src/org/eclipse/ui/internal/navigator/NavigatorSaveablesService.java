@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -417,10 +418,10 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 			// has the side effect of recomputing saveablesProviderMap:
 			getSaveablesProviders();
 		}
-        for(Iterator<NavigatorContentDescriptor> sItr = saveablesProviderMap.keySet().iterator(); sItr.hasNext();) {
-        	NavigatorContentDescriptor descriptor = sItr.next();
+		for (Entry<NavigatorContentDescriptor, SaveablesProvider> entry : saveablesProviderMap.entrySet()) {
+			NavigatorContentDescriptor descriptor = entry.getKey();
                 if(descriptor.isTriggerPoint(element) || descriptor.isPossibleChild(element)) {
-                	SaveablesProvider provider = saveablesProviderMap.get(descriptor);
+				SaveablesProvider provider = entry.getValue();
                 	Saveable  saveable = provider.getSaveable(element);
                         if(saveable != null) {
                                 return saveable;

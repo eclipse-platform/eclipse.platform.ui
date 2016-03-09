@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -725,12 +726,10 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public JobInfo[] getJobInfos(boolean debug) {
 		synchronized (jobs) {
-			Iterator<Job> iterator = jobs.keySet().iterator();
 			Collection<JobInfo> result = new ArrayList<>();
-			while (iterator.hasNext()) {
-				Job next = iterator.next();
-				if (!isCurrentDisplaying(next, debug)) {
-					result.add(jobs.get(next));
+			for (Entry<Job, JobInfo> entry : jobs.entrySet()) {
+				if (!isCurrentDisplaying(entry.getKey(), debug)) {
+					result.add(entry.getValue());
 				}
 			}
 			JobInfo[] infos = new JobInfo[result.size()];
@@ -747,12 +746,10 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public JobTreeElement[] getRootElements(boolean debug) {
 		synchronized (jobs) {
-			Iterator<Job> iterator = jobs.keySet().iterator();
 			Collection<JobTreeElement> result = new HashSet<>();
-			while (iterator.hasNext()) {
-				Job next = iterator.next();
-				if (!isCurrentDisplaying(next, debug)) {
-					JobInfo jobInfo = jobs.get(next);
+			for (Entry<Job, JobInfo> entry : jobs.entrySet()) {
+				if (!isCurrentDisplaying(entry.getKey(), debug)) {
+					JobInfo jobInfo = entry.getValue();
 					GroupInfo group = jobInfo.getGroupInfo();
 					if (group == null) {
 						result.add(jobInfo);
@@ -774,11 +771,7 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	public boolean hasJobInfos() {
 		synchronized (jobs) {
-			Iterator<Job> iterator = jobs.keySet().iterator();
-			while (iterator.hasNext()) {
-				return true;
-			}
-			return false;
+			return !jobs.isEmpty();
 		}
 	}
 

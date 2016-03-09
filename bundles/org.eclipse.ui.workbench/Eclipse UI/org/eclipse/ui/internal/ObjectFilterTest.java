@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionFilter;
@@ -21,7 +21,7 @@ import org.eclipse.ui.IActionFilter;
  * and evaluate the results for a given object.
  */
 public class ObjectFilterTest {
-    private HashMap filterElements;
+	private HashMap<String, String> filterElements;
 
     /**
      * Create a new object filter.
@@ -90,10 +90,9 @@ public class ObjectFilterTest {
 		}
 
         // Run the action filter.
-        Iterator iter = filterElements.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = (String) iter.next();
-            String value = (String) filterElements.get(name);
+		for (Entry<String, String> entry : filterElements.entrySet()) {
+			String name = entry.getKey();
+			String value = entry.getValue();
             if (!filter.testAttribute(object, name, value)) {
 				return false;
 			}

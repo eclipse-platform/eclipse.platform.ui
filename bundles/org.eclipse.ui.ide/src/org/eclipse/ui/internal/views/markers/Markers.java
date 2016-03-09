@@ -17,9 +17,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IMarker;
@@ -209,14 +209,12 @@ class Markers {
 	MarkerCategory[] groupIntoCategories(IProgressMonitor monitor, MarkerEntry[] newMarkers) {
 		Map<MarkerGroupingEntry, Integer> boundaryInfoMap = groupMarkerEntries(newMarkers,
 				builder.getCategoryGroup(), newMarkers.length - 1, monitor);
-		Iterator<MarkerGroupingEntry> iterator = boundaryInfoMap.keySet().iterator();
 		int start = 0;
 		MarkerCategory[] markerCategories = new MarkerCategory[boundaryInfoMap.size()];
 		int i = 0;
 		int end = 0;
-		while (iterator.hasNext()) {
-			MarkerGroupingEntry key = iterator.next();
-			end = boundaryInfoMap.get(key).intValue();
+		for (Entry<MarkerGroupingEntry, Integer> entry : boundaryInfoMap.entrySet()) {
+			end = entry.getValue();
 			markerCategories[i++] = new MarkerCategory(this, start, end,
 					builder.getCategoryGroup().getMarkerField()
 							.getValue(newMarkers[start]));
@@ -263,17 +261,13 @@ class Markers {
 		}
 		TreeMap<MarkerGroupingEntry, Integer> result = new TreeMap<>(
 				group.getEntriesComparator());
-		Iterator<MarkerGroupingEntry> keys = map.keySet().iterator();
 		int i = 0;
-		while (keys.hasNext()) {
+		for (Entry<MarkerGroupingEntry, List<MarkerEntry>> mapEntry : map.entrySet()) {
 			if (monitor.isCanceled()) {
 				return Collections.emptyMap();
 			}
-			MarkerGroupingEntry key = keys.next();
-			List<MarkerEntry> list = map.get(key);
-			Iterator<MarkerEntry> iterator = list.iterator();
-			while (iterator.hasNext()) {
-				MarkerEntry entry = iterator.next();
+			MarkerGroupingEntry key = mapEntry.getKey();
+			for (MarkerEntry entry : mapEntry.getValue()) {
 				entries[i++] = entry;
 			}
 			result.put(key, i - 1);
