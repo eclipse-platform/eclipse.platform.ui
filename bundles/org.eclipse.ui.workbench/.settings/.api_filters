@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/dialogs/FileEditorMappingContentProvider.java" type="org.eclipse.ui.dialogs.FileEditorMappingContentProvider">
+        <filter comment="Error in the API tooling" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileEditorMappingContentProvider"/>
+                <message_argument value="dispose()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Error in the API tooling" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.dialogs.FileEditorMappingContentProvider"/>
+                <message_argument value="inputChanged(Viewer, Object, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="Eclipse UI/org/eclipse/ui/handlers/HandlerUtil.java" type="org.eclipse.ui.handlers.HandlerUtil">
         <filter comment="Made documented restrictions official" id="336744520">
             <message_arguments>
