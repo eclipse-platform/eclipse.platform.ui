@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TypedListener;
+
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -873,7 +875,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		}
 
 		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
-			if (VerticalRuler.IS_MAC_BUG_298936) {
+			if (VerticalRuler.IS_MAC_BUG_298936 || Util.isGtk()) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {
