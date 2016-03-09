@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,13 +158,9 @@ public class PopupDialog extends Window {
 	private class ResizeAction extends Action {
 
 		ResizeAction() {
-			super(JFaceResources.getString("PopupDialog.resize"), //$NON-NLS-1$
-					IAction.AS_PUSH_BUTTON);
+			super(JFaceResources.getString("PopupDialog.resize"), IAction.AS_PUSH_BUTTON); //$NON-NLS-1$
 		}
 
-		/*
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			performTrackerAction(SWT.RESIZE);
@@ -178,8 +174,7 @@ public class PopupDialog extends Window {
 	private class PersistBoundsAction extends Action {
 
 		PersistBoundsAction() {
-			super(JFaceResources.getString("PopupDialog.persistBounds"), //$NON-NLS-1$
-					IAction.AS_CHECK_BOX);
+			super(JFaceResources.getString("PopupDialog.persistBounds"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 			setChecked(persistLocation && persistSize);
 		}
 
@@ -197,8 +192,7 @@ public class PopupDialog extends Window {
 	private class PersistSizeAction extends Action {
 
 		PersistSizeAction() {
-			super(JFaceResources.getString("PopupDialog.persistSize"), //$NON-NLS-1$
-					IAction.AS_CHECK_BOX);
+			super(JFaceResources.getString("PopupDialog.persistSize"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 			setChecked(persistSize);
 		}
 
@@ -215,8 +209,7 @@ public class PopupDialog extends Window {
 	private class PersistLocationAction extends Action {
 
 		PersistLocationAction() {
-			super(JFaceResources.getString("PopupDialog.persistLocation"), //$NON-NLS-1$
-					IAction.AS_CHECK_BOX);
+			super(JFaceResources.getString("PopupDialog.persistLocation"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 			setChecked(persistLocation);
 		}
 
@@ -230,8 +223,7 @@ public class PopupDialog extends Window {
 	 * Shell style appropriate for a simple hover popup that cannot get focus.
 	 *
 	 */
-	public final static int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP
-			| SWT.TOOL;
+	public final static int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL;
 
 	/**
 	 * Shell style appropriate for an info popup that can get focus.
@@ -609,8 +601,7 @@ public class PopupDialog extends Window {
 		// off by a menu or secondary popup showing.
 		shell.addListener(SWT.Activate, event -> {
 			// ignore this event if we have launched a child
-			if (event.widget == getShell()
-					&& getShell().getShells().length == 0) {
+			if (event.widget == getShell() && getShell().getShells().length == 0) {
 				listenToDeactivate = true;
 				// Typically we start listening for parent deactivate after
 				// we are activated, except on the Mac, where the deactivate
@@ -818,8 +809,7 @@ public class PopupDialog extends Window {
 
 		Composite titleAreaComposite = new Composite(parent, SWT.NONE);
 		getPopupLayout().copy().numColumns(2).applyTo(titleAreaComposite);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
-				false).applyTo(titleAreaComposite);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(titleAreaComposite);
 
 		createTitleControl(titleAreaComposite);
 
@@ -941,13 +931,10 @@ public class PopupDialog extends Window {
 		toolBar = new ToolBar(parent, SWT.FLAT);
 		ToolItem viewMenuButton = new ToolItem(toolBar, SWT.PUSH, 0);
 
-		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(
-				toolBar);
+		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(toolBar);
 		viewMenuButton.setImage(JFaceResources.getImage(POPUP_IMG_MENU));
-		viewMenuButton.setDisabledImage(JFaceResources
-				.getImage(POPUP_IMG_MENU_DISABLED));
-		viewMenuButton.setToolTipText(JFaceResources
-				.getString("PopupDialog.menuTooltip")); //$NON-NLS-1$
+		viewMenuButton.setDisabledImage(JFaceResources.getImage(POPUP_IMG_MENU_DISABLED));
+		viewMenuButton.setToolTipText(JFaceResources.getString("PopupDialog.menuTooltip")); //$NON-NLS-1$
 		viewMenuButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
