@@ -181,7 +181,7 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 	 */
 	@Override
 	protected Object doGetValue() {
-		return new Integer(selection);
+		return Integer.valueOf(selection);
 	}
 
 	@Override

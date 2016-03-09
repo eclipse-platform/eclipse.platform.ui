@@ -611,7 +611,7 @@ public abstract class Dialog extends Window {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText(label);
 		button.setFont(JFaceResources.getDialogFont());
-		button.setData(new Integer(id));
+		button.setData(Integer.valueOf(id));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -624,7 +624,7 @@ public abstract class Dialog extends Window {
 				shell.setDefaultButton(button);
 			}
 		}
-		buttons.put(new Integer(id), button);
+		buttons.put(Integer.valueOf(id), button);
 		setButtonLayoutData(button);
 		return button;
 	}
@@ -828,7 +828,7 @@ public abstract class Dialog extends Window {
 	 * @since 2.0
 	 */
 	protected Button getButton(int id) {
-		return buttons.get(new Integer(id));
+		return buttons.get(Integer.valueOf(id));
 	}
 
 	/**

@@ -28,8 +28,8 @@ public class IntegerFieldEditor extends StringFieldEditor {
     private static final int DEFAULT_TEXT_LIMIT = 10;
 
     /**
-     * Creates a new integer field editor
-     */
+    * Creates a new integer field editor
+    */
     protected IntegerFieldEditor() {
     }
 
@@ -72,7 +72,7 @@ public class IntegerFieldEditor extends StringFieldEditor {
         minValidValue = min;
         maxValidValue = max;
 		setErrorMessage(JFaceResources.format("IntegerFieldEditor.errorMessageRange", //$NON-NLS-1$
-				new Integer(min), new Integer(max)));
+				Integer.valueOf(min), Integer.valueOf(max)));
     }
 
     @Override
@@ -127,7 +127,7 @@ public class IntegerFieldEditor extends StringFieldEditor {
 	protected void doStore() {
         Text text = getTextControl();
         if (text != null) {
-            Integer i = new Integer(text.getText());
+			Integer i = Integer.valueOf(text.getText());
             getPreferenceStore().setValue(getPreferenceName(), i.intValue());
         }
     }
@@ -140,6 +140,6 @@ public class IntegerFieldEditor extends StringFieldEditor {
      *   contain a parsable integer
      */
     public int getIntValue() throws NumberFormatException {
-        return new Integer(getStringValue()).intValue();
+		return Integer.valueOf(getStringValue()).intValue();
     }
 }

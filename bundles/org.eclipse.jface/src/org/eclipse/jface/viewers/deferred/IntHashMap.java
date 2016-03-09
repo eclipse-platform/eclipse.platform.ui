@@ -50,7 +50,7 @@ import java.util.HashMap;
      * @param value
      */
     public void put(Object key, int value) {
-        map.put(key, new Integer(value));
+		map.put(key, Integer.valueOf(value));
     }
 
     /**

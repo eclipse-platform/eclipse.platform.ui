@@ -153,6 +153,6 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	@Override
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
 		super.relayout(layoutBar, oldCount, newCount);
-		firePropertyChange(PROP_LAYOUT, new Integer(oldCount), new Integer(newCount));
+		firePropertyChange(PROP_LAYOUT, Integer.valueOf(oldCount), Integer.valueOf(newCount));
 	}
 }

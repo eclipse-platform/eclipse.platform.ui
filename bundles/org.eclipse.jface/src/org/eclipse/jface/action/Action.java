@@ -50,9 +50,9 @@ public abstract class Action extends AbstractAction {
 	 */
 	private static final String VAL_PUSH_BTN = "PUSH_BTN"; //$NON-NLS-1$
 
-	private static final Integer VAL_RADIO_BTN_OFF = new Integer(0);
+	private static final Integer VAL_RADIO_BTN_OFF = Integer.valueOf(0);
 
-	private static final Integer VAL_RADIO_BTN_ON = new Integer(1);
+	private static final Integer VAL_RADIO_BTN_ON = Integer.valueOf(1);
 
 	private static final Boolean VAL_TOGGLE_BTN_OFF = Boolean.FALSE;
 

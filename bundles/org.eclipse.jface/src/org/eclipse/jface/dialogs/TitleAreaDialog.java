@@ -628,12 +628,12 @@ public class TitleAreaDialog extends TrayDialog {
 				null);
 		messageLabel.getAccessible().sendEvent(
 				ACC.EVENT_TEXT_CHANGED,
-				new Object[] { new Integer(ACC.TEXT_DELETE), new Integer(0),
-						new Integer(oldMessage.length()), oldMessage });
+				new Object[] { Integer.valueOf(ACC.TEXT_DELETE), Integer.valueOf(0),
+						Integer.valueOf(oldMessage.length()), oldMessage });
 		messageLabel.getAccessible().sendEvent(
 				ACC.EVENT_TEXT_CHANGED,
-				new Object[] { new Integer(ACC.TEXT_INSERT), new Integer(0),
-						new Integer(newMessage.length()), newMessage });
+				new Object[] { Integer.valueOf(ACC.TEXT_INSERT), Integer.valueOf(0),
+						Integer.valueOf(newMessage.length()), newMessage });
 	}
 
 	/**

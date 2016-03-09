@@ -548,7 +548,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		button.setText(IDialogConstants.CANCEL_LABEL);
 		setButtonLayoutData(button);
 		button.setFont(parent.getFont());
-		button.setData(new Integer(IDialogConstants.CANCEL_ID));
+		button.setData(Integer.valueOf(IDialogConstants.CANCEL_ID));
 		button.addSelectionListener(cancelListener);
 		return button;
 	}

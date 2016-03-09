@@ -289,7 +289,7 @@ public final class ExternalActionManager {
 						final KeyStroke keyStroke = (KeyStroke) trigger;
 						final int accelerator = SWTKeySupport
 								.convertKeyStrokeToAccelerator(keyStroke);
-						return new Integer(accelerator);
+						return Integer.valueOf(accelerator);
 					}
 				}
 			}
