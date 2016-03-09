@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.viewers;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -26,17 +23,18 @@ import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for ViewerInputObservableValue.
  *
  * @since 1.2
  */
-public class ViewerInputObservableValueTest extends
-		AbstractDefaultRealmTestCase {
+public class ViewerInputObservableValueTest extends AbstractDefaultRealmTestCase {
 	private TableViewer viewer;
 	private static String[] model = new String[] { "0", "1" };
 
@@ -133,14 +131,6 @@ public class ViewerInputObservableValueTest extends
 	}
 
 	static class ContentProvider implements IStructuredContentProvider {
-		@Override
-		public void dispose() {
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return (String[]) inputElement;

@@ -22,8 +22,7 @@ import org.eclipse.ui.IWorkbenchPart;
  *
  * @author Anthony Hunter
  */
-public class TabListContentProvider
-	implements IStructuredContentProvider {
+public class TabListContentProvider implements IStructuredContentProvider {
 
 	protected TabbedPropertyRegistry registry;
 
@@ -44,13 +43,6 @@ public class TabListContentProvider
 		Assert.isTrue(inputElement instanceof ISelection);
 			return registry
 			.getTabDescriptors(currentPart, (ISelection) inputElement);
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-		/* not used */
 	}
 
 	/**
