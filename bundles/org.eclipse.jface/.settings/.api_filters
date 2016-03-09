@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/viewers/ArrayContentProvider.java" type="org.eclipse.jface.viewers.ArrayContentProvider">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ArrayContentProvider"/>
+                <message_argument value="dispose()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="IContentProvider now has default methods" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ArrayContentProvider"/>
+                <message_argument value="inputChanged(Viewer, Object, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
