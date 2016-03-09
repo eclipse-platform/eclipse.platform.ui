@@ -11,14 +11,13 @@
  *     Bryan Hunt - Fix for Bug 245457
  *     Didier Villevalois - Fix for Bug 178534
  *     Robin Stocker - Fix for Bug 193034 (tool tip also on text)
- *     Alena Laskavaia - Bug 481604
+ *     Alena Laskavaia - Bug 481604, Bug 482024
  *     Ralf Petter <ralf.petter@gmail.com> - Bug 183675
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -27,7 +26,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -267,88 +265,98 @@ public class ExpandableComposite extends Canvas {
 			}
 			int x = marginWidth + thmargin;
 			int y = marginHeight + tvmargin;
-			Point tsize = NULL_SIZE;
-			Point tcsize = NULL_SIZE;
-			if (toggle != null)
-				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			int twidth = clientArea.width - marginWidth - marginWidth
-					- thmargin - thmargin;
-			if (tsize.x > 0)
-				twidth -= tsize.x + IGAP;
-			if (textClient != null) {
-				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			}
-			Point size = NULL_SIZE;
-			if (textLabel != null) {
-				if (tcsize.x > 0 && FormUtil.isWrapControl(textClient)) {
-					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (twidth < size.x + IGAP + tcsize.x) {
-						twidth -= IGAP;
-						if (textLabel instanceof Label) {
-							GC gc = new GC(textLabel);
-							size = FormUtil.computeWrapSize(gc, ((Label)textLabel).getText(), Math.round(twidth*(size.x/(float)(size.x+tcsize.x))));
-							gc.dispose();
-						} else
-							size = textLabelCache.computeSize(Math.round(twidth*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
-						tcsize = textClientCache.computeSize(twidth-size.x, SWT.DEFAULT);
-					}
+			// toggle
+			Point toggleSize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+			int width = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
+			if (toggleSize.x > 0)
+				width -= toggleSize.x + IGAP;
+
+			// TODO: This code is common between computeSize and layout
+			int gapBetweenTcAndLabel = (textClient != null && textLabel != null) ? IGAP : 0;
+
+			int widthForTcAndLabel = Math.max(0, width - gapBetweenTcAndLabel);
+
+			Point tcDefault = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point labelDefault = this.textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+			int tcWidthBeforeSplit = Math.min(width, tcDefault.x);
+			int labelWidthBeforeSplit = Math.min(width, labelDefault.x);
+
+			int tcWidthAfterSplit = tcWidthBeforeSplit;
+			int labelWidthAfterSplit = labelWidthBeforeSplit;
+
+			int expectedWidthForTcAndLabel = tcWidthBeforeSplit + labelWidthBeforeSplit;
+
+			if (expectedWidthForTcAndLabel > widthForTcAndLabel) {
+				// this is heuristic since we don't have a reliable way to find
+				// out if control can wrap. It checks if width of each label or
+				// textClient is less then half
+				// and gives them what they asked in this case
+				if (labelWidthBeforeSplit < widthForTcAndLabel / 2) {
+					labelWidthAfterSplit = labelWidthBeforeSplit;
+				} else {
+					labelWidthAfterSplit = widthForTcAndLabel * labelWidthBeforeSplit
+							/ expectedWidthForTcAndLabel;
 				}
-				else {
-					if (tcsize.x > 0)
-						twidth -= tcsize.x + IGAP;
-					size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
+
+				if (tcWidthBeforeSplit < widthForTcAndLabel / 2) {
+					tcWidthAfterSplit = tcWidthBeforeSplit;
+					labelWidthAfterSplit = widthForTcAndLabel - tcWidthAfterSplit;
+				} else {
+					tcWidthAfterSplit = widthForTcAndLabel - labelWidthAfterSplit;
 				}
 			}
-			if (textLabel instanceof Label) {
-				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
-				if (defSize.y == size.y) {
-					// One line - pick the smaller of the two widths
-					size.x = Math.min(defSize.x, size.x);
-				}
-			}
+
+			// TODO: Add support for fill alignment of textControl
+
+			Point tcsize = textClientCache.computeSize(tcWidthAfterSplit, SWT.DEFAULT);
+			Point size = textLabelCache.computeSize(labelWidthAfterSplit, SWT.DEFAULT);
+
+			int height = Math.max(tcsize.y, size.y); // max of label/text client
+			height = Math.max(height, toggleSize.y); // or max of toggle
+
+			boolean leftAlignment = textClient != null && (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0;
 			if (toggle != null) {
-				GC gc = new GC(ExpandableComposite.this);
-				gc.setFont(getFont());
-				FontMetrics fm = gc.getFontMetrics();
-				int textHeight = fm.getHeight();
-				gc.dispose();
-				if (textClient != null
-						&& (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
-					textHeight = Math.max(textHeight, tcsize.y);
-				}
-				int ty = textHeight / 2 - tsize.y / 2 + 1;
+				// if label control is absent we vcenter the toggle, because
+				// text client is usually a lot thicker
+				// before it was using leftAlignment flag for that which I think
+				// is not related to this at all
+				int ty = size.x == 0 ? (height - toggleSize.y) / 2 : 0;
 				ty = Math.max(ty, 0);
 				ty += marginHeight + tvmargin;
 				toggle.setLocation(x, ty);
-				toggle.setSize(tsize);
-				x += tsize.x + IGAP;
+				toggle.setSize(toggleSize);
+				x += toggleSize.x + IGAP;
 			}
 			if (textLabel != null) {
 				int ty = y;
-				if (textClient != null
-						&& (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
+				if (leftAlignment) {
 					if (size.y < tcsize.y)
 						ty = tcsize.y / 2 - size.y / 2 + marginHeight
 								+ tvmargin;
 				}
-				String os = System.getProperty("os.name"); //$NON-NLS-1$
-				if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
-					size.x += 1; // See Bug 342610
-				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
 			}
+
 			if (textClient != null) {
+				int tcwidth = clientArea.width - marginWidth - marginWidth - thmargin - thmargin;
+				if (toggleSize.x > 0)
+					tcwidth -= toggleSize.x + IGAP;
+				if (size.x > 0)
+					tcwidth -= size.x + IGAP;
+				tcwidth = Math.min(tcsize.x, tcwidth);
+				if (tcwidth < 0)
+					tcwidth = 0;
 				int tcx;
 				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT) != 0) {
-					tcx = x + size.x + GAP;
+					tcx = x + ((size.x > 0) ? size.x + IGAP : 0);
 				} else {
-					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
+					tcx = clientArea.width - tcwidth - marginWidth - thmargin;
 				}
-				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
+				textClientCache.setBounds(tcx, y, tcwidth, height);
 			}
-			int height = Math.max(tcsize.y, size.y); // max of label/text client
-			height = Math.max(height, tsize.y); // or max of toggle
+
 			y += height;
 			if (hasTitleBar())
 				y += tvmargin;
@@ -389,12 +397,11 @@ public class ExpandableComposite extends Canvas {
 				boolean changed) {
 			initCache(changed);
 
-			int width = 0;
-			Point tsize = NULL_SIZE;
-			int twidth = 0;
+			Point toggleSize = NULL_SIZE;
+			int toggleWidthPlusGap = 0;
 			if (toggle != null) {
-				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				twidth = tsize.x + IGAP;
+				toggleSize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				toggleWidthPlusGap = toggleSize.x + IGAP;
 			}
 			int thmargin = 0;
 			int tvmargin = 0;
@@ -403,55 +410,47 @@ public class ExpandableComposite extends Canvas {
 				thmargin = titleBarTextMarginWidth;
 				tvmargin = IVGAP;
 			}
-			int innerwHint = wHint;
-			if (innerwHint != SWT.DEFAULT)
-				innerwHint -= twidth + marginWidth + marginWidth + thmargin
-						+ thmargin;
 
-			int innertHint = innerwHint;
+			// TODO: This code is common between computeSize and layout
+			int gapBetweenTcAndLabel = (textClient != null && textLabel != null) ? IGAP : 0;
 
-			Point tcsize = NULL_SIZE;
-			if (textClient != null) {
-				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			}
-			Point size = NULL_SIZE;
+			Point tcDefault = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point labelDefault = this.textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
-			if (textLabel != null) {
-				if (tcsize.x > 0 && FormUtil.isWrapControl(textClient)) {
-					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (innertHint != SWT.DEFAULT && innertHint < size.x + IGAP + tcsize.x) {
-						innertHint -= IGAP;
-						if (textLabel instanceof Label) {
-							GC gc = new GC(textLabel);
-							size = FormUtil.computeWrapSize(gc, ((Label)textLabel).getText(), Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))));
-							gc.dispose();
-						} else
-							size = textLabelCache.computeSize(Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
-						tcsize = textClientCache.computeSize(innertHint-size.x, SWT.DEFAULT);
-					}
-				} else {
-					if (innertHint != SWT.DEFAULT && tcsize.x > 0)
-						innertHint -= IGAP + tcsize.x;
-					size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
-				}
+			int width = 0;
+			if (wHint == SWT.DEFAULT) {
+				width += toggleWidthPlusGap;
+				width += labelDefault.x;
+				width += gapBetweenTcAndLabel;
+				width += tcDefault.x;
+			} else {
+				width = wHint - marginWidth - marginWidth - thmargin - thmargin;
 			}
-			if (textLabel instanceof Label) {
-				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
-				if (defSize.y == size.y) {
-					// One line - pick the smaller of the two widths
-					size.x = Math.min(defSize.x, size.x);
-				}
+
+			width = Math.max(0, width);
+
+			int widthForTcAndLabel = Math.max(0, width - gapBetweenTcAndLabel - toggleWidthPlusGap);
+
+			int tcWidthBeforeSplit = Math.min(width, tcDefault.x);
+			int labelWidthBeforeSplit = Math.min(width, labelDefault.x);
+
+			int tcWidthAfterSplit = tcWidthBeforeSplit;
+			int labelWidthAfterSplit = labelWidthBeforeSplit;
+
+			int expectedWidthForTcAndLabel = tcWidthBeforeSplit + labelWidthBeforeSplit;
+
+			if (expectedWidthForTcAndLabel > widthForTcAndLabel) {
+				labelWidthAfterSplit = widthForTcAndLabel * labelWidthBeforeSplit / expectedWidthForTcAndLabel;
+				tcWidthAfterSplit = widthForTcAndLabel - labelWidthAfterSplit;
 			}
-			if (size.x > 0)
-				width = size.x;
-			if (tcsize.x > 0)
-				width += IGAP + tcsize.x;
-			if (toggle != null)
-				width += twidth;
+
+			// TODO: Add support for fill alignment of textControl
+
+			Point tcsize = textClientCache.computeSize(tcWidthAfterSplit, SWT.DEFAULT);
+			Point size = textLabelCache.computeSize(labelWidthAfterSplit, SWT.DEFAULT);
 
 			int height = Math.max(tcsize.y, size.y); // max of label/text client
-			height = Math.max(height, tsize.y); // or max of toggle
+			height = Math.max(height, toggleSize.y); // or max of toggle
 
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
@@ -462,23 +461,22 @@ public class ExpandableComposite extends Canvas {
 				int cwHint = wHint;
 				int clientIndent = 0;
 				if ((expansionStyle & CLIENT_INDENT) != 0)
-					clientIndent = twidth;
+					clientIndent = toggleWidthPlusGap;
 
 				if (cwHint != SWT.DEFAULT) {
 					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
 					if ((expansionStyle & CLIENT_INDENT) != 0)
 						if (tcsize.x > 0)
-							cwHint -= twidth;
+							cwHint -= toggleWidthPlusGap;
 				}
 				Point dsize = null;
-				Point csize = clientCache.computeSize(FormUtil.getWidthHint(
-						cwHint, client), SWT.DEFAULT);
+				Point csize = clientCache.computeSize(cwHint, SWT.DEFAULT);
 				if (getDescriptionControl() != null) {
 					int dwHint = cwHint;
 					if (dwHint == SWT.DEFAULT) {
 						dwHint = csize.x;
 						if ((expansionStyle & CLIENT_INDENT) != 0)
-							dwHint -= twidth;
+							dwHint -= toggleWidthPlusGap;
 					}
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 					width = Math.max(width, dsize.x + clientIndent);
@@ -496,9 +494,19 @@ public class ExpandableComposite extends Canvas {
 				}
 			}
 
-			Point result = new Point(width + marginWidth + marginWidth
-					+ thmargin + thmargin, height + marginHeight + marginHeight
-					+ tvmargin + tvmargin);
+			int resultWidth = width + marginWidth + marginWidth + thmargin + thmargin;
+
+			if (wHint != SWT.DEFAULT) {
+				resultWidth = wHint;
+			}
+
+			int resultHeight = height + marginHeight + marginHeight + tvmargin + tvmargin;
+
+			if (hHint != SWT.DEFAULT) {
+				resultHeight = hHint;
+			}
+
+			Point result = new Point(resultWidth, resultHeight);
 			return result;
 		}
 
