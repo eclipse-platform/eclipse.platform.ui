@@ -64,7 +64,6 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class AbstractContributionItem extends ContributionItem {
 
-	protected static final String HELP_CONTEXT_ID = "HelpContextId"; //$NON-NLS-1$
 	protected static final String FORCE_TEXT = "FORCE_TEXT"; //$NON-NLS-1$
 	protected static final String ICON_URI = "iconURI"; //$NON-NLS-1$
 	protected static final String DISABLED_URI = "disabledURI"; //$NON-NLS-1$
@@ -499,7 +498,7 @@ public abstract class AbstractContributionItem extends ContributionItem {
 	protected void handleHelpRequest() {
 		if (helpService == null)
 			return;
-		String helpContextId = getModel().getPersistedState().get(HELP_CONTEXT_ID);
+		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
 		if (helpContextId != null)
 			helpService.displayHelp(helpContextId);
 	}

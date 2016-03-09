@@ -43,6 +43,19 @@ public interface ECommandService {
 	public Command defineCommand(String id, String name, String description, Category category,
 			IParameter[] parameters);
 
+	/**
+	 * @param id
+	 * @param name
+	 * @param description
+	 * @param category
+	 * @param parameters
+	 * @param helpContextId
+	 * @return
+	 * @noreference
+	 */
+	public Command defineCommand(String id, String name, String description, Category category,
+			IParameter[] parameters,String helpContextId);
+
 	public Category getCategory(String categoryId);
 
 	public Command getCommand(String commandId);

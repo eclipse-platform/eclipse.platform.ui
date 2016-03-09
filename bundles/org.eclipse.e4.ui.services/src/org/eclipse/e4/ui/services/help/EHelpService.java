@@ -16,7 +16,7 @@ package org.eclipse.e4.ui.services.help;
  * Provides services related to the help system.
  */
 public interface EHelpService {
-
+	public static final String HELP_CONTEXT_ID = "HelpContextId"; //$NON-NLS-1$
 	/**
 	 * Calls the help support system to display the given help context ID.
 	 *

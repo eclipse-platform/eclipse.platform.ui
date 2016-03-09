@@ -84,10 +84,6 @@ public class HandledContributionItem extends AbstractContributionItem {
 
 	@Inject
 	@Optional
-	private EHelpService helpService;
-
-	@Inject
-	@Optional
 	@SuppressWarnings("restriction")
 	private ICommandHelpService commandHelpService;
 
@@ -387,9 +383,15 @@ public class HandledContributionItem extends AbstractContributionItem {
 	@Override
 	@SuppressWarnings("restriction")
 	protected void handleHelpRequest() {
+		if(helpService==null)
+			return;
+		String helpContextId = getModel().getPersistedState().get(EHelpService.HELP_CONTEXT_ID);
+		if (helpContextId != null) {
+			helpService.displayHelp(helpContextId);
+			return;
+		}
 		MCommand command = getModel().getCommand();
-		if (command == null || helpService == null
-				|| commandHelpService == null) {
+		if (command == null || commandHelpService == null) {
 			return;
 		}
 
