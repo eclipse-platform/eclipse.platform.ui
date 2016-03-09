@@ -199,7 +199,7 @@ public class CSSSWTColorHelper {
 			percent = (int) value
 			.getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE);
 		}
-		return new Integer(percent);
+		return Integer.valueOf(percent);
 	}
 
 	public static Gradient getGradient(CSSValueList list, Display display) {

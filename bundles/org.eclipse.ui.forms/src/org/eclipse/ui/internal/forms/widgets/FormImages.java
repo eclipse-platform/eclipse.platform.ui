@@ -104,8 +104,8 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = hash * 7 + new Integer(fTheight).hashCode();
-			hash = hash * 7 + new Integer(fMarginHeight).hashCode();
+			hash = hash * 7 + Integer.valueOf(fTheight).hashCode();
+			hash = hash * 7 + Integer.valueOf(fMarginHeight).hashCode();
 			return hash;
 		}
 
@@ -172,7 +172,7 @@ public class FormImages {
 			int hash = super.hashCode();
 			hash = hash * 7 + Boolean.valueOf(fVertical).hashCode();
 			for (int fPercent : fPercents)
-				hash = hash * 7 + new Integer(fPercent).hashCode();
+				hash = hash * 7 + Integer.valueOf(fPercent).hashCode();
 			return hash;
 		}
 
@@ -272,8 +272,8 @@ public class FormImages {
 		@Override
 		public int hashCode() {
 			int hash = super.hashCode();
-			hash = hash * 7 + new Integer(fTheight).hashCode();
-			hash = hash * 7 + new Integer(fMarginHeight).hashCode();
+			hash = hash * 7 + Integer.valueOf(fTheight).hashCode();
+			hash = hash * 7 + Integer.valueOf(fMarginHeight).hashCode();
 			return hash;
 		}
 
@@ -362,13 +362,13 @@ public class FormImages {
 	private synchronized Image getGradient(AbstractImageDescriptor desc, Display display) {
 		checkHashMaps();
 		Image result = manager.getResourceManager(display).createImage(desc);
-		descriptors.put(new Integer(result.hashCode()), desc);
+		descriptors.put(Integer.valueOf(result.hashCode()), desc);
 		return result;
 	}
 
 	public synchronized boolean markFinished(Image image, Display display) {
 		checkHashMaps();
-		Integer imageHashCode = new Integer(image.hashCode());
+		Integer imageHashCode = Integer.valueOf(image.hashCode());
 		AbstractImageDescriptor desc = descriptors.get(imageHashCode);
 		if (desc != null) {
 			LocalResourceManager resourceManager = manager.getResourceManager(display);

@@ -83,7 +83,7 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 		};
 		page.addPartListener(listener);
 		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
-		windowKey = new Integer(window.hashCode());
+		windowKey = Integer.valueOf(window.hashCode());
 	}
 
 	public Integer getWindowKey() {

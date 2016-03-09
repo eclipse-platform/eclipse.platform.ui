@@ -76,7 +76,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	}
 
 	private Integer getWindowKey(IWorkbenchWindow window) {
-		return new Integer(window.hashCode());
+		return Integer.valueOf(window.hashCode());
 	}
 
 	@Override
