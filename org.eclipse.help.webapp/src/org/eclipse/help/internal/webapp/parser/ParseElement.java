@@ -82,7 +82,7 @@ public class ParseElement {
 				String val = props.getProperty(key);
 
 				buff.append(JSonHelper.NEWLINE + space + JSonHelper.SPACE);
-				buff.append(key);
+				buff.append(JSonHelper.getQuotes(key));
 				buff.append(JSonHelper.COLON);
 				try {
 					val = URLEncoder.encode(val, "UTF-8"); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class ParseElement {
 		} else {
 
 			buff.append(JSonHelper.NEWLINE + space + JSonHelper.SPACE);
-			buff.append(JSonHelper.CHILDREN);
+			buff.append(JSonHelper.getQuotes(JSonHelper.CHILDREN));
 			buff.append(JSonHelper.COLON);
 			buff.append(JSonHelper.BEGIN_BRACKET);
 
@@ -141,7 +141,7 @@ public class ParseElement {
 				String val = props.getProperty(key);
 
 				buff.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
-				buff.append(key);
+				buff.append(JSonHelper.getQuotes(key));
 				buff.append(JSonHelper.COLON);
 				try {
 					val = URLEncoder.encode(val, "UTF-8"); //$NON-NLS-1$
@@ -164,7 +164,7 @@ public class ParseElement {
 		} else {
 
 			buff.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
-			buff.append(JSonHelper.ITEMS);
+			buff.append(JSonHelper.getQuotes(JSonHelper.ITEMS));
 			buff.append(JSonHelper.COLON);
 			buff.append(JSonHelper.BEGIN_BRACKET);
 

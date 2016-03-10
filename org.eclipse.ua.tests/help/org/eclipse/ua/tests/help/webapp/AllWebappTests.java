@@ -32,7 +32,8 @@ import org.junit.runners.Suite;
 	HelpServerInterrupt.class,
 	HelpServerBinding.class,
 	HtmlCoderTest.class,
-	TocZipTest.class
+	TocZipTest.class,
+	JsonHelperTests.class
 })
 public class AllWebappTests {
 }

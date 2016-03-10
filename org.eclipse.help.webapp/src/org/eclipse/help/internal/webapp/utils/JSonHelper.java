@@ -15,7 +15,7 @@ public final class JSonHelper {
 	//JSON Characters
 	public static final String BEGIN_BRACE = "{"; //$NON-NLS-1$
 	public static final String END_BRACE  = "}"; //$NON-NLS-1$
-	public static final String QUOTE  = "\'"; //$NON-NLS-1$
+	public static final String DOUBLEQUOTE  = "\""; //$NON-NLS-1$
 	public static final String COLON  = ":"; //$NON-NLS-1$
 	public static final String BEGIN_BRACKET  = "["; //$NON-NLS-1$
 	public static final String END_BRACKET  =   "]"; //$NON-NLS-1$
@@ -52,8 +52,14 @@ public final class JSonHelper {
 	public static final String TOPIC			= "Topic"; //$NON-NLS-1$
 	public static final String NUMERIC_PATH		= "NumericPath"; //$NON-NLS-1$
 
-	public static String getQuotes(String str){
-		return ((str != null)?QUOTE + str + QUOTE:""); //$NON-NLS-1$
+	public static String getQuotes(String str) {
+		if (str == null) {
+			return ""; //$NON-NLS-1$
+		}
+		if (str.indexOf(DOUBLEQUOTE) < 0) {
+			return DOUBLEQUOTE + str + DOUBLEQUOTE;
+		}
+		return DOUBLEQUOTE + str.replaceAll(DOUBLEQUOTE, "\\\\" + DOUBLEQUOTE) + DOUBLEQUOTE; //$NON-NLS-1$
 	}
 
 }

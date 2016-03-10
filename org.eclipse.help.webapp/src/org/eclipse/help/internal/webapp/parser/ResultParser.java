@@ -77,19 +77,19 @@ public class ResultParser extends DefaultHandler {
 		buf.append(JSonHelper.BEGIN_BRACE);
 		buf.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
 
-		buf.append(JSonHelper.IDENTIFIER);
+		buf.append(JSonHelper.getQuotes(JSonHelper.IDENTIFIER));
 		buf.append(JSonHelper.COLON);
 		buf.append(JSonHelper.getQuotes(id));
 		buf.append(JSonHelper.COMMA);
 
 		buf.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
-		buf.append(JSonHelper.LABEL);
+		buf.append(JSonHelper.getQuotes(JSonHelper.LABEL));
 		buf.append(JSonHelper.COLON);
 		buf.append(JSonHelper.getQuotes(label));
 		buf.append(JSonHelper.COMMA);
 
 		buf.append(JSonHelper.NEWLINE + JSonHelper.SPACE);
-		buf.append(JSonHelper.ITEMS);
+		buf.append(JSonHelper.getQuotes(JSonHelper.ITEMS));
 		buf.append(JSonHelper.COLON);
 		buf.append(JSonHelper.BEGIN_BRACKET);
 
