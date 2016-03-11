@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -139,7 +140,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 			exceptionCount++;
 			if (exceptionCount > 1) {
 				dialog.updateMessage(MessageFormat.format(MSG_FATAL_ERROR,
-						new Object[] { MSG_FATAL_ERROR_Recursive }));
+						MSG_FATAL_ERROR_Recursive));
 				dialog.getShell().forceActive();
 			} else {
 				if (openQuestionDialog(t)) {
@@ -184,8 +185,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 			dialog = openInternalQuestionDialog(PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell(),
-					MSG_FATAL_ERROR_Title, MessageFormat.format(
-							MSG_FATAL_ERROR, new Object[] { msg }), detail, 1);
+					MSG_FATAL_ERROR_Title, MessageFormat.format(MSG_FATAL_ERROR, msg), detail, 1);
 
 			return dialog.open() == 0;
 		} catch (Throwable th) {

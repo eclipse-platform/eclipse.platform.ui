@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,24 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
-
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Represents the default implementation of a tab descriptor on the tabbed
@@ -202,8 +201,7 @@ public class TabDescriptor extends AbstractTabDescriptor {
 			CoreException exception) {
 		String pluginId = configurationElement.getDeclaringExtension()
 				.getNamespaceIdentifier();
-		String message = MessageFormat.format(TAB_ERROR,
-				new Object[] { pluginId });
+		String message = MessageFormat.format(TAB_ERROR, pluginId);
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, exception);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 20016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 
 package org.eclipse.ui.tests.operations;
@@ -641,7 +642,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 			throws CoreException {
 
 		assertTrue(MessageFormat.format("{0} markers should have been created",
-				new Object[] { Integer.valueOf(expectedCount) }),
+				new Integer(expectedCount)),
 				markers.length == expectedCount);
 
 		for (int i = 0; i < markers.length; i++) {

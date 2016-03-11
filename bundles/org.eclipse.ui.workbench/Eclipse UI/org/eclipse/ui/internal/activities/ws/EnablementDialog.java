@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
@@ -16,7 +17,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -116,7 +116,7 @@ public class EnablementDialog extends Dialog {
             }
             text.setText(MessageFormat.format(RESOURCE_BUNDLE
                     .getString("requiresSingle"), //$NON-NLS-1$
-                    new Object[] { activityText }));
+					activityText));
 
             text = new Label(composite, SWT.NONE);
 			text
@@ -232,7 +232,7 @@ public class EnablementDialog extends Dialog {
                 desc = RESOURCE_BUNDLE.getString("noDescAvailable"); //$NON-NLS-1$
             }
             detailsLabel.setText(MessageFormat.format(RESOURCE_BUNDLE
-                    .getString("detailsLabel"), new Object[] { name })); //$NON-NLS-1$
+					.getString("detailsLabel"), name)); //$NON-NLS-1$
             detailsText.setText(desc);
         }
     }

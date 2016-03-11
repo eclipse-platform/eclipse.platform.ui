@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
@@ -110,14 +111,9 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 				.getNamespaceIdentifier();
 		String message = TabbedPropertyMessages.SectionDescriptor_Section_error;
 		if (exception == null) {
-			message = MessageFormat.format(
-					TabbedPropertyMessages.SectionDescriptor_Section_error,
-					new Object[] { pluginId });
+			message = MessageFormat.format(TabbedPropertyMessages.SectionDescriptor_Section_error, pluginId);
 		} else {
-			message = MessageFormat
-					.format(
-							TabbedPropertyMessages.SectionDescriptor_class_not_found_error,
-							new Object[] { pluginId });
+			message = MessageFormat.format(TabbedPropertyMessages.SectionDescriptor_class_not_found_error, pluginId);
 		}
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.SECTION_ERROR, message, exception);

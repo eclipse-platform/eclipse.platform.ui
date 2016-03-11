@@ -12,6 +12,7 @@
  *     Cornel Izbasa <cizbasa@info.uvt.ro> - Bug 442440
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 446864, 466927
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -1379,16 +1380,12 @@ public class ExtendedMarkersView extends ViewPart {
 		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
 			// In case of tasks view and bookmarks view, show only selection
 			// count
-			return MessageFormat.format(MarkerMessages.marker_statusSelectedCount, new Object[] { entries.length });
+			return MessageFormat.format(MarkerMessages.marker_statusSelectedCount, entries.length);
 		}
-		return MessageFormat
-				.format(
-						MarkerMessages.marker_statusSummarySelected,
-						new Object[] { entries.length,
-								MessageFormat
-										.format(
-												MarkerMessages.errorsAndWarningsSummaryBreakdown,
-												counts[0], counts[1], /* combine infos and others */ counts[2] + counts[3])});
+		return MessageFormat.format(MarkerMessages.marker_statusSummarySelected, entries.length,
+				/* combine infos and others */
+				MessageFormat.format(MarkerMessages.errorsAndWarningsSummaryBreakdown, counts[0], counts[1],
+						counts[2] + counts[3]));
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  ******************************************************************************/
 
 package org.eclipse.ui.internal.themes;
@@ -97,22 +98,20 @@ public class ThemeElementDefinition {
 		String description = this.description != null && this.description.trim().length() != 0 ? this.description
 				: label;
 		if (isAddedByCss() && isModifiedByUser()) {
-			return MessageFormat.format(
-					RESOURCE_BUNDLE.getString("Added.by.css.and.modified.by.user.label"), //$NON-NLS-1$
-					new Object[] { description }).trim();
+			return MessageFormat.format(RESOURCE_BUNDLE.getString("Added.by.css.and.modified.by.user.label"), //$NON-NLS-1$
+					description).trim();
 		}
 		if (isAddedByCss()) {
 			return MessageFormat.format(RESOURCE_BUNDLE.getString("Added.by.css.label"), //$NON-NLS-1$
-					new Object[] { description }).trim();
+					description).trim();
 		}
 		if (isOverridden() && isModifiedByUser()) {
-			return MessageFormat.format(
-					RESOURCE_BUNDLE.getString("Overridden.by.css.and.modified.by.user.label"), //$NON-NLS-1$
-					new Object[] { description }).trim();
+			return MessageFormat.format(RESOURCE_BUNDLE.getString("Overridden.by.css.and.modified.by.user.label"), //$NON-NLS-1$
+					description).trim();
 		}
 		if (isOverridden()) {
 			return MessageFormat.format(RESOURCE_BUNDLE.getString("Overridden.by.css.label"), //$NON-NLS-1$
-					new Object[] { description }).trim();
+					description).trim();
 		}
 		return description;
 	}

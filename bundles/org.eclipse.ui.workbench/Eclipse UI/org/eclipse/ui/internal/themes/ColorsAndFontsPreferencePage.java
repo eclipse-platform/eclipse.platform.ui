@@ -11,6 +11,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136, 472654
  *     Robert Roth <robert.roth.off@gmail.com> - Bugs 274005, 456291
  *     Mickael Istria (Red Hat Inc.) - Theme and fontregistry rather than pref
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
@@ -2121,10 +2122,8 @@ getPreferenceStore(),
 		String messageTop = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$
 		String fontColorString = RESOURCE_BUNDLE.getString("fontColorString"); //$NON-NLS-1$
 		RGB rgb = currentColor.getRGB();
-		String messageBottom = MessageFormat
-				.format(fontColorString,
-						new Object[] { Integer.valueOf(rgb.red), Integer.valueOf(rgb.green),
-								Integer.valueOf(rgb.blue) });
+		String messageBottom = MessageFormat.format(fontColorString, Integer.valueOf(rgb.red),
+				Integer.valueOf(rgb.green), Integer.valueOf(rgb.blue));
 
 		// calculate position of the vertical line
 		int separator = (clientArea.width - 2) / 3;
@@ -2234,7 +2233,7 @@ getPreferenceStore(),
 			return description;
 		}
 		return MessageFormat.format(RESOURCE_BUNDLE.getString("definitionNotAvailInTheme"), //$NON-NLS-1$
-				new Object[] { description }).trim();
+				description).trim();
 	}
 
 	private void updateDefinitionState(ThemeElementDefinition definition, boolean reset) {

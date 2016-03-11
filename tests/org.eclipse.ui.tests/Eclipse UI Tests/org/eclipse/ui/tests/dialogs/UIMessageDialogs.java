@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700, Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
@@ -130,8 +130,7 @@ public class UIMessageDialogs extends TestCase {
         Dialog dialog = new MessageDialog(
                 getShell(),
                 ResourceNavigatorMessages.DropAdapter_question,
-                null, MessageFormat.format(ResourceNavigatorMessages.DropAdapter_overwriteQuery,
-                        new Object[] { DUMMY_RELATIVE_PATH }),
+				null, MessageFormat.format(ResourceNavigatorMessages.DropAdapter_overwriteQuery, DUMMY_RELATIVE_PATH),
                 MessageDialog.QUESTION, 0,
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,

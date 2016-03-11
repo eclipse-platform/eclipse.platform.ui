@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 445538
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
@@ -168,8 +169,7 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 							// the href to its id
 							String commandGroupLink = MessageFormat.format(
 									"<a href=\"{0}\">{1}</a>", //$NON-NLS-1$
-									new Object[] { actionSet.descriptor.getId(),
-											actionSet.descriptor.getLabel() });
+									actionSet.descriptor.getId(), actionSet.descriptor.getLabel());
 
 							if (commandGroupList == null) {
 								commandGroupList = commandGroupLink;
