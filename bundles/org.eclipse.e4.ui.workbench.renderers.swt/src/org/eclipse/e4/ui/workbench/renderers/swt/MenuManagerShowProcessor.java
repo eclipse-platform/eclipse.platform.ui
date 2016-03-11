@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,12 @@ public class MenuManagerShowProcessor implements IMenuListener2 {
 
 		if (menuModel != null && menuManager != null) {
 			cleanUp(menuModel, menuManager);
+			if (menuManager.getRemoveAllWhenShown()) {
+				// This needs to be done or else menu items get added multiple
+				// times to MenuModel which results in incorrect behavior and
+				// memory leak - bug 486474
+				menuModel.getChildren().removeAll(menuModel.getChildren());
+			}
 		}
 		if (menuModel instanceof MPopupMenu) {
 			showPopup(menu, (MPopupMenu) menuModel, menuManager);
