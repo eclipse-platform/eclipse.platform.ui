@@ -20,8 +20,9 @@ The Quicklinks is experimental component and is not yet considered API.
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="quicklink"/>
+            <element ref="command"/>
             <element ref="override"/>
+            <element ref="url"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,14 +51,14 @@ The Quicklinks is experimental component and is not yet considered API.
       </complexType>
    </element>
 
-   <element name="quicklink">
+   <element name="command">
       <annotation>
          <documentation>
-            Defines a Quicklink component
+            Defines a Quicklink component.  One of &quot;command&quot; or &quot;url&quot; must be specified.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="command" type="string" use="required">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   The command identifier to be invoked.  The command can also be a serialized command to encode command parameters (see ParameterizedCommand#serialize() for details).
@@ -114,13 +115,92 @@ The Quicklinks is experimental component and is not yet considered API.
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="standby" type="boolean">
+         <attribute name="resolution">
             <annotation>
                <documentation>
-                  If true  (the default), the Welcome/Intro part should be put into standby mode after executing the command.
-If false, the Welcome/Intro will remain open.
+                  What should happen to the Welcome view after executing the command.
+If &quot;full&quot; or unspecified, the Welcome/Intro part will be put into full visual mode.
+If &quot;standby&quot;  (the default), the Welcome/Intro part will be put into standby mode.
+If &quot;launchbar&quot;, the Welcome/Intro will be put into &apos;launchbar&apos; mode in the status area.
+If &quot;close&quot; then the Welcome/Intro will be closed.
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="standby">
+                  </enumeration>
+                  <enumeration value="launchbar">
+                  </enumeration>
+                  <enumeration value="close">
+                  </enumeration>
+                  <enumeration value="full">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="url">
+      <annotation>
+         <documentation>
+            Defines a URL Quicklink component.  URL Quicklinks must provide a label and it is recommended to provide an icon and description
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="location" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The URL to be invoked.  The URL can either be an Intro URL or an external URL.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The label to be displayed. If unspecified, the command name is used instead.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A description for the quicklink. If unspecified, use the command&apos;s description.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The icon to be used for the quicklink.  If unspecified, the command&apos;s associated image is used instead.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="importance">
+            <annotation>
+               <documentation>
+                  Define the level of importance of this item.  If unspecified, defaults to &quot;low&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="high">
+                  </enumeration>
+                  <enumeration value="medium">
+                  </enumeration>
+                  <enumeration value="low">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

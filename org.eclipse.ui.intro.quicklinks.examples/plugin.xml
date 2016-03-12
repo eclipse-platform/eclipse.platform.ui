@@ -14,32 +14,34 @@
    <extension
          point="org.eclipse.ui.intro.quicklinks">
       <!-- Invoke a simple command -->
-      <quicklink
-            command="org.eclipse.ui.edit.text.openLocalFile"
+      <command
             description="Open a single file"
+            id="org.eclipse.ui.edit.text.openLocalFile"
             label="Open an existing file"
+            resolution="launchbar"
             standby="true">
-      </quicklink>
+      </command>
       
       <!--
       	Open the New Java Project wizard; note that icon is provided by <override> below;
       	want to override label and description as the command description is generic
        -->
-      <quicklink
-            command="org.eclipse.ui.newWizard(newWizardId=org.eclipse.jdt.ui.wizards.JavaProjectWizard)"
+      <command
             description="Create a new Java Eclipse project"
+            id="org.eclipse.ui.newWizard(newWizardId=org.eclipse.jdt.ui.wizards.JavaProjectWizard)"
             label="Create a new Java project"
             standby="true">
-      </quicklink>
+      </command>
       
       <!-- Open the Import Existing Project -->
-      <quicklink
-            command="org.eclipse.ui.file.import(importWizardId=org.eclipse.ui.wizards.import.ExternalProject)"
+      <command
             description="Import an already existing project into Eclipse"
             icon="platform:/plugin/org.eclipse.ui/icons/full/wizban/import_wiz.png"
+            id="org.eclipse.ui.file.import(importWizardId=org.eclipse.ui.wizards.import.ExternalProject)"
             label="Import an existing project"
+            resolution="standby"
             standby="true">
-      </quicklink>
+      </command>
       
       <!-- Cause all New XXX quicklinks to use the wizban/new_wiz image -->
       <override
@@ -52,10 +54,23 @@
       	Use default labelling and icon from showMPC command; importance should
       	cause it to be sorted above other commands
        -->
-      <quicklink
-            command="org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"
+      <command
+            id="org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"
+            importance="high"
+            resolution="close">
+      </command>
+      <url
+            location="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.jdt.helloworld"
+            label="Let Eclipse guide how to create Hello World"
+            description="Use Eclipse's guided walkthrough to create Hello World"
             importance="high">
-      </quicklink>
+      </url>
+      <url
+            location="http://google.com"
+            label="Open Google"
+            description="Use Google to search the world"
+            importance="medium">
+      </url>
    </extension>
 
 </plugin>

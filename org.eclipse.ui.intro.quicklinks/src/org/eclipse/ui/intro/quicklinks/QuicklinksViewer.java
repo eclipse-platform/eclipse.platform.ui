@@ -56,6 +56,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
+import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
@@ -101,23 +102,15 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	/** Model holding the relevant attributes of a Quicklink element */
 	class Quicklink implements Comparable<Quicklink> {
 		String commandSpec;
+		String url;
 		String label;
 		String description;
 		String iconUrl;
-		boolean standby = true;
 		Importance importance = Importance.MEDIUM;
 		long rank;
+		String resolution;
 
 		public Quicklink() {
-		}
-
-		public Quicklink(String commandSpec) {
-			this.commandSpec = commandSpec;
-		}
-
-		public Quicklink(String commandSpec, Importance importance) {
-			this.commandSpec = commandSpec;
-			this.importance = importance;
 		}
 
 		@Override
@@ -143,21 +136,30 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	 */
 	class ModelReader implements Supplier<List<Quicklink>> {
 		private static final String QL_EXT_PT = "org.eclipse.ui.intro.quicklinks"; //$NON-NLS-1$
-		private static final String ELMT_QUICKLINK = "quicklink"; //$NON-NLS-1$
-		private static final String ATT_COMMAND = "command"; //$NON-NLS-1$
+		private static final String ELMT_COMMAND = "command"; //$NON-NLS-1$
+		private static final String ATT_ID = "id"; //$NON-NLS-1$
+		private static final String ELMT_URL = "url"; //$NON-NLS-1$
+		private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
+
+		private static final String ELMT_OVERRIDE = "override"; //$NON-NLS-1$
+		private static final String ATT_THEME = "theme"; //$NON-NLS-1$
+
 		private static final String ATT_LABEL = "label"; //$NON-NLS-1$
 		private static final String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
 		private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 		private static final String ATT_IMPORTANCE = "importance"; //$NON-NLS-1$
-		private static final String ATT_STANDBY = "standby"; //$NON-NLS-1$
-		private static final String ELMT_OVERRIDE = "override"; //$NON-NLS-1$
-		private static final String ATT_THEME = "theme"; //$NON-NLS-1$
+		private static final String ATT_RESOLUTION = "resolution"; //$NON-NLS-1$
 
-		/** commandSpec &rarr; quicklink */
+		/** commandSpec/url &rarr; quicklink */
 		private Map<String, Quicklink> quicklinks = new LinkedHashMap<>();
 		/** bundle symbolic name &rarr; bundle id */
 		private Map<String, Long> bundleIds;
 		private Bundle[] bundles;
+		private CommandManager manager;
+
+		public ModelReader(IServiceLocator locator) {
+			manager = locator.getService(CommandManager.class);
+		}
 
 		/**
 		 * Return the list of configured {@link Quicklink} that can be found.
@@ -165,7 +167,6 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		 * @return
 		 */
 		public List<Quicklink> get() {
-			CommandManager manager = locator.getService(CommandManager.class);
 			IExtension extensions[] = getExtensions(QL_EXT_PT);
 
 			// Process definitions from the product bundle first
@@ -174,7 +175,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 				for (IExtension ext : extensions) {
 					if (productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
 						for (IConfigurationElement ce : ext.getConfigurationElements()) {
-							processDefinition(manager, ce);
+							processDefinition(ce);
 						}
 					}
 				}
@@ -183,18 +184,19 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			for (IExtension ext : extensions) {
 				if (productBundle == null || !productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
 					for (IConfigurationElement ce : ext.getConfigurationElements()) {
-						processDefinition(manager, ce);
+						processDefinition(ce);
 					}
 				}
 			}
 
+			// Now process all command overrides
 			for (IExtension ext : extensions) {
 				for (IConfigurationElement ce : ext.getConfigurationElements()) {
 					if (!ELMT_OVERRIDE.equals(ce.getName())) {
 						continue;
 					}
 					String theme = ce.getAttribute(ATT_THEME);
-					String commandSpecPattern = ce.getAttribute(ATT_COMMAND);
+					String commandSpecPattern = ce.getAttribute(ATT_ID);
 					String icon = ce.getAttribute(ATT_ICON);
 					if (theme != null && icon != null && Objects.equals(theme, getCurrentThemeId())
 							&& commandSpecPattern != null) {
@@ -206,34 +208,57 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			return new ArrayList<>(quicklinks.values());
 		}
 
-		private void processDefinition(CommandManager manager, IConfigurationElement ce) {
-			if (!ELMT_QUICKLINK.equals(ce.getName())) {
+		private void processDefinition(IConfigurationElement ce) {
+			if (!ELMT_COMMAND.equals(ce.getName()) && !ELMT_URL.equals(ce.getName())) {
 				return;
 			}
-			String commandSpec = ce.getAttribute(ATT_COMMAND);
-			try {
-				ParameterizedCommand pc = manager.deserialize(commandSpec);
-				if (pc != null && pc.getCommand().isDefined()) {
-					Quicklink ql = new Quicklink();
-					ql.commandSpec = commandSpec;
+
+			String key = null;
+			Quicklink ql = new Quicklink();
+			if (ELMT_COMMAND.equals(ce.getName())) {
+				key = ce.getAttribute(ATT_ID);
+				if (key == null) {
+					Log.warning("Skipping '" + ce.getName() + "': missing " + ATT_ID);
+					return;
+				}
+				try {
+					ql.commandSpec = key;
+					ParameterizedCommand pc = manager.deserialize(ql.commandSpec);
+					if (!pc.getCommand().isDefined()) {
+						// not an error
+						return;
+					}
 					ql.label = Optional.ofNullable(ce.getAttribute(ATT_LABEL)).orElse(pc.getCommand().getName());
 					ql.description = Optional.ofNullable(ce.getAttribute(ATT_DESCRIPTION))
 							.orElse(pc.getCommand().getDescription());
-					ql.iconUrl = getImageURL(ce, ATT_ICON, commandSpec);
-					ql.rank = getRank(ce.getContributor().getName());
-					if (ce.getAttribute(ATT_IMPORTANCE) != null) {
-						ql.importance = Importance.forId(ce.getAttribute(ATT_IMPORTANCE));
-					}
-					if (ce.getAttribute(ATT_STANDBY) != null) {
-						ql.standby = Boolean.valueOf(ce.getAttribute(ATT_STANDBY));
-					}
-					// discard if already seen
-					quicklinks.putIfAbsent(commandSpec, ql);
+					ql.iconUrl = getImageURL(ce, ATT_ICON, ql.commandSpec);
+				} catch (NotDefinedException e) {
+					// not an error
+					return;
+				} catch (SerializationException e) {
+					Log.error("Skipping '" + ql.commandSpec + "'", e);
+					return;
 				}
-			} catch (NotDefinedException | SerializationException e) {
-				/* skip */
-				System.err.printf("Skipping '%s': %s\n", commandSpec, e);
+			} else if (ELMT_URL.equals(ce.getName())) {
+				key = ce.getAttribute(ATT_LOCATION);
+				if (key == null) {
+					Log.warning("Skipping '" + ELMT_URL + "': missing " + ATT_LOCATION);
+					return;
+				}
+				ql.url = key;
+				ql.label = ce.getAttribute(ATT_LABEL);
+				ql.description = ce.getAttribute(ATT_DESCRIPTION);
+				ql.iconUrl = getImageURL(ce, ATT_ICON, null);
 			}
+			ql.rank = getRank(ce.getContributor().getName());
+			if (ce.getAttribute(ATT_IMPORTANCE) != null) {
+				ql.importance = Importance.forId(ce.getAttribute(ATT_IMPORTANCE));
+			}
+			if (ce.getAttribute(ATT_RESOLUTION) != null) {
+				ql.resolution = ce.getAttribute(ATT_RESOLUTION);
+			}
+			// discard if already seen
+			quicklinks.putIfAbsent(key, ql);
 		}
 
 		/**
@@ -321,7 +346,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		} else {
 			this.locator = PlatformUI.getWorkbench();
 		}
-		model = new ModelReader();
+		model = new ModelReader(this.locator);
 	}
 
 	/**
@@ -342,14 +367,13 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		getQuicklinks().forEach(ql -> {
 			try {
 				// ah how lovely to embed HTML in code
-				String urlEncodedCommand = URLEncoder.encode(ql.commandSpec, "UTF-8");
-				out.append("<a class='content-link' id='");
-				out.append(asCSSId(ql.commandSpec));
-				out.append("' ");
-				out.append(" href='http://org.eclipse.ui.intro/execute?command=");
+				String urlEncodedCommand = asEmbeddedURL(ql);
+				out.append("<a class='content-link'");
+				if (ql.commandSpec != null) {
+					out.append(" id='").append(asCSSId(ql.commandSpec)).append("' ");
+				}
+				out.append(" href='");
 				out.append(urlEncodedCommand);
-				out.append("&standby=");
-				out.append(Boolean.toString(ql.standby));
 				out.append("'>");
 				if (ql.iconUrl != null) {
 					out.append("<img class='background-image' src='").append(ql.iconUrl).append("'>");
@@ -368,6 +392,17 @@ public class QuicklinksViewer implements IIntroContentProvider {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	private String asEmbeddedURL(Quicklink ql) throws UnsupportedEncodingException {
+		if (ql.url != null) {
+			return ql.url;
+		}
+		String encoded = URLEncoder.encode(ql.commandSpec, "UTF-8");
+		if (ql.resolution != null) {
+			encoded += "&standby=" + ql.resolution;
+		}
+		return "http://org.eclipse.ui.intro/execute?command=" + encoded;
 	}
 
 	/**
@@ -482,16 +517,29 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		return links;
 	}
 
+	private Quicklink forCommand(String commandSpec) {
+		Quicklink ql = new Quicklink();
+		ql.commandSpec = commandSpec;
+		return ql;
+	}
+
+	private Quicklink forCommand(String commandSpec, Importance importance) {
+		Quicklink ql = new Quicklink();
+		ql.commandSpec = commandSpec;
+		ql.importance = importance;
+		return ql;
+	}
+
 	/**
 	 * Return the default commands to be shown if there is no other content
 	 * available
 	 */
 	private List<Quicklink> generateDefaultQuicklinks() {
-		return Arrays.asList(new Quicklink("org.eclipse.oomph.setup.ui.questionnaire", Importance.HIGH),
-				new Quicklink("org.eclipse.ui.cheatsheets.openCheatSheet"),
-				new Quicklink("org.eclipse.ui.newWizard"), new Quicklink("org.eclipse.ui.file.import"),
-				new Quicklink("org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"),
-				new Quicklink("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW));
+		return Arrays.asList(forCommand("org.eclipse.oomph.setup.ui.questionnaire", Importance.HIGH),
+				forCommand("org.eclipse.ui.cheatsheets.openCheatSheet"), forCommand("org.eclipse.ui.newWizard"),
+				forCommand("org.eclipse.ui.file.import"),
+				forCommand("org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"),
+				forCommand("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW));
 	}
 
 	public void dispose() {
