@@ -20,8 +20,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +38,10 @@ import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -64,8 +69,11 @@ import org.osgi.framework.FrameworkUtil;
  * from the command metadata, including the image icon, but can be tailored.
  * These tailorings can be made optional depending on the current theme.
  * 
- * This is still experimental and subject to change.
+ * This implementation is still experimental and subject to change. Feedback
+ * welcome as a <a href="http://eclip.se/9f">bug report on the Eclipse Bugzilla
+ * against Platform/User Assistance</a>.
  */
+@SuppressWarnings("restriction")
 public class QuicklinksViewer implements IIntroContentProvider {
 
 	/** Represents the importance of an element */
@@ -91,21 +99,49 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	}
 
 	/** Model holding the relevant attributes of a Quicklink element */
-	class Quicklink {
+	class Quicklink implements Comparable<Quicklink> {
 		String commandSpec;
 		String label;
 		String description;
 		String iconUrl;
 		boolean standby = true;
-		Importance importance = Importance.LOW;
+		Importance importance = Importance.MEDIUM;
+		long rank;
 
-		String bundleSymbolicName;
+		public Quicklink() {
+		}
+
+		public Quicklink(String commandSpec) {
+			this.commandSpec = commandSpec;
+		}
+
+		public Quicklink(String commandSpec, Importance importance) {
+			this.commandSpec = commandSpec;
+			this.importance = importance;
+		}
+
+		@Override
+		public int compareTo(Quicklink b) {
+			int impA = this.importance.level;
+			int impB = b.importance.level;
+			if (impA != impB) {
+				return impA - impB;
+			}
+			long diff = this.rank - b.rank;
+			if (diff > 0) {
+				return 1;
+			}
+			if (diff < 0) {
+				return -1;
+			}
+			return 0;
+		}
 	}
 
 	/**
 	 * Responsible for retrieving Quicklinks and applying any icon overrides
 	 */
-	class ModelReader implements Supplier<Stream<Quicklink>> {
+	class ModelReader implements Supplier<List<Quicklink>> {
 		private static final String QL_EXT_PT = "org.eclipse.ui.intro.quicklinks"; //$NON-NLS-1$
 		private static final String ELMT_QUICKLINK = "quicklink"; //$NON-NLS-1$
 		private static final String ATT_COMMAND = "command"; //$NON-NLS-1$
@@ -117,60 +153,153 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		private static final String ELMT_OVERRIDE = "override"; //$NON-NLS-1$
 		private static final String ATT_THEME = "theme"; //$NON-NLS-1$
 
-		private List<Quicklink> quicklinks = new ArrayList<>();
+		/** commandSpec &rarr; quicklink */
+		private Map<String, Quicklink> quicklinks = new LinkedHashMap<>();
+		/** bundle symbolic name &rarr; bundle id */
+		private Map<String, Long> bundleIds;
+		private Bundle[] bundles;
 
-		public Stream<Quicklink> get() {
+		/**
+		 * Return the list of configured {@link Quicklink} that can be found.
+		 * 
+		 * @return
+		 */
+		public List<Quicklink> get() {
 			CommandManager manager = locator.getService(CommandManager.class);
+			IExtension extensions[] = getExtensions(QL_EXT_PT);
 
-			for (IConfigurationElement ce : getExtensionRegistry().getConfigurationElementsFor(QL_EXT_PT)) {
-				if (!ELMT_QUICKLINK.equals(ce.getName())) {
-					continue;
-				}
-				String commandSpec = ce.getAttribute(ATT_COMMAND);
-				try {
-					ParameterizedCommand pc = manager.deserialize(commandSpec);
-					if (pc != null && pc.getCommand().isDefined()) {
-						Quicklink ql = new Quicklink();
-						ql.bundleSymbolicName = ce.getContributor().getName();
-						ql.commandSpec = commandSpec;
-						ql.label = Optional.ofNullable(ce.getAttribute(ATT_LABEL)).orElse(pc.getCommand().getName());
-						ql.description = Optional.ofNullable(ce.getAttribute(ATT_DESCRIPTION))
-								.orElse(pc.getCommand().getDescription());
-						ql.iconUrl = QuicklinksViewer.this.getImageURL(ce, ATT_ICON, commandSpec);
-						if (ce.getAttribute(ATT_IMPORTANCE) != null) {
-							ql.importance = Importance.forId(ce.getAttribute(ATT_IMPORTANCE));
+			// Process definitions from the product bundle first
+			Bundle productBundle = Platform.getProduct().getDefiningBundle();
+			if(productBundle != null) {
+				for (IExtension ext : extensions) {
+					if (productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
+						for (IConfigurationElement ce : ext.getConfigurationElements()) {
+							processDefinition(manager, ce);
 						}
-						if (ce.getAttribute(ATT_STANDBY) != null) {
-							ql.standby = Boolean.valueOf(ce.getAttribute(ATT_STANDBY));
-						}
-						quicklinks.add(ql);
 					}
-				} catch (NotDefinedException | SerializationException e) {
-					/* skip */
-					System.err.printf("Skipping '%s': %s\n", commandSpec, e);
+				}
+			}
+			
+			for (IExtension ext : extensions) {
+				if (productBundle == null || !productBundle.getSymbolicName().equals(ext.getNamespaceIdentifier())) {
+					for (IConfigurationElement ce : ext.getConfigurationElements()) {
+						processDefinition(manager, ce);
+					}
 				}
 			}
 
-			for (IConfigurationElement ce : getExtensionRegistry().getConfigurationElementsFor(QL_EXT_PT)) {
-				if (!ELMT_OVERRIDE.equals(ce.getName())) {
-					continue;
-				}
-				String theme = ce.getAttribute(ATT_THEME);
-				String commandSpecPattern = ce.getAttribute(ATT_COMMAND);
-				String icon = ce.getAttribute(ATT_ICON);
-				if (theme != null && icon != null && Objects.equals(theme, getCurrentThemeId()) && commandSpecPattern != null) {
-					findMatchingQuicklinks(commandSpecPattern)
-							.forEach(ql -> ql.iconUrl = QuicklinksViewer.this.getImageURL(ce, ATT_ICON, null));
+			for (IExtension ext : extensions) {
+				for (IConfigurationElement ce : ext.getConfigurationElements()) {
+					if (!ELMT_OVERRIDE.equals(ce.getName())) {
+						continue;
+					}
+					String theme = ce.getAttribute(ATT_THEME);
+					String commandSpecPattern = ce.getAttribute(ATT_COMMAND);
+					String icon = ce.getAttribute(ATT_ICON);
+					if (theme != null && icon != null && Objects.equals(theme, getCurrentThemeId())
+							&& commandSpecPattern != null) {
+						findMatchingQuicklinks(commandSpecPattern)
+								.forEach(ql -> ql.iconUrl = getImageURL(ce, ATT_ICON, null));
+					}
 				}
 			}
-			return quicklinks.stream();
+			return new ArrayList<>(quicklinks.values());
 		}
 
+		private void processDefinition(CommandManager manager, IConfigurationElement ce) {
+			if (!ELMT_QUICKLINK.equals(ce.getName())) {
+				return;
+			}
+			String commandSpec = ce.getAttribute(ATT_COMMAND);
+			try {
+				ParameterizedCommand pc = manager.deserialize(commandSpec);
+				if (pc != null && pc.getCommand().isDefined()) {
+					Quicklink ql = new Quicklink();
+					ql.commandSpec = commandSpec;
+					ql.label = Optional.ofNullable(ce.getAttribute(ATT_LABEL)).orElse(pc.getCommand().getName());
+					ql.description = Optional.ofNullable(ce.getAttribute(ATT_DESCRIPTION))
+							.orElse(pc.getCommand().getDescription());
+					ql.iconUrl = getImageURL(ce, ATT_ICON, commandSpec);
+					ql.rank = getRank(ce.getContributor().getName());
+					if (ce.getAttribute(ATT_IMPORTANCE) != null) {
+						ql.importance = Importance.forId(ce.getAttribute(ATT_IMPORTANCE));
+					}
+					if (ce.getAttribute(ATT_STANDBY) != null) {
+						ql.standby = Boolean.valueOf(ce.getAttribute(ATT_STANDBY));
+					}
+					// discard if already seen
+					quicklinks.putIfAbsent(commandSpec, ql);
+				}
+			} catch (NotDefinedException | SerializationException e) {
+				/* skip */
+				System.err.printf("Skipping '%s': %s\n", commandSpec, e);
+			}
+		}
+
+		/**
+		 * Find {@link Quicklink}s whose {@code commandSpec} matches the simple
+		 * wildcard pattern in {@code commandSpecPattern}
+		 * 
+		 * @param commandSpecPattern
+		 *            a simple wildcard pattern supporting *, ?
+		 * @return the set of matching Quicklinks
+		 */
 		private Stream<Quicklink> findMatchingQuicklinks(String commandSpecPattern) {
-			commandSpecPattern = commandSpecPattern.replace(".", "\\.").replace("(", "\\(").replace(")", "\\)")
+			// transform simple wildcards into regexp
+			String regexp = commandSpecPattern.replace(".", "\\.").replace("(", "\\(").replace(")", "\\)")
 					.replace("*", ".*");
-			final Pattern pattern = Pattern.compile(commandSpecPattern);
-			return quicklinks.stream().filter(ql -> pattern.matcher(ql.commandSpec).matches());
+			final Pattern pattern = Pattern.compile(regexp);
+			return quicklinks.values().stream().filter(
+					ql -> commandSpecPattern.equals(ql.commandSpec) || pattern.matcher(ql.commandSpec).matches());
+		}
+
+		private IExtension[] getExtensions(String extPtId) {
+			IExtensionRegistry registry = locator.getService(IExtensionRegistry.class);
+			IExtensionPoint extPt = registry.getExtensionPoint(extPtId);
+			return extPt == null ? new IExtension[0] : extPt.getExtensions();
+		}
+
+
+		private long getRank(String bundleSymbolicName) {
+			if (bundleIds == null) {
+				Bundle bundle = FrameworkUtil.getBundle(getClass());
+				bundleIds = new HashMap<>();
+				bundles = bundle.getBundleContext().getBundles();
+			}
+			return bundleIds.computeIfAbsent(bundleSymbolicName, bsn -> {
+				for (Bundle b : bundles) {
+					if (bsn.equals(b.getSymbolicName())
+							&& (b.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
+						return b.getBundleId();
+					}
+				}
+				return Long.MAX_VALUE;
+			});
+		}
+
+		/**
+		 * @return URL to image, suitable for using in an external browser; may
+		 *         be a <code>data:</code> URL; may be null
+		 */
+		private String getImageURL(IConfigurationElement ce, String attr, String commandId) {
+			String iconURL = MenuHelper.getIconURI(ce, attr);
+			if (iconURL != null) {
+				return asBrowserURL(iconURL);
+			}
+
+			if (commandId == null) {
+				return null;
+			}
+			ICommandImageService images = locator.getService(ICommandImageService.class);
+			if (images == null) {
+				return null;
+			}
+			ImageDescriptor descriptor = images.getImageDescriptor(commandId);
+			iconURL = MenuHelper.getImageUrl(descriptor);
+			if (iconURL != null) {
+				return asBrowserURL(iconURL);
+			}
+			return asDataURL(descriptor);
 		}
 	}
 
@@ -179,29 +308,33 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 	private IIntroContentProviderSite site;
 	private IServiceLocator locator;
-	private Map<String, Long> bundleIds;
-	private Bundle[] bundles;
+
+	private Supplier<List<Quicklink>> model;
 
 	public void init(IIntroContentProviderSite site) {
 		this.site = site;
 		// IIntroContentProviderSite should provide services.
-		if (site instanceof AbstractIntroPartImplementation) {
+		if (site instanceof IServiceLocator) {
+			this.locator = (IServiceLocator) site;
+		} else if (site instanceof AbstractIntroPartImplementation) {
 			this.locator = ((AbstractIntroPartImplementation) site).getIntroPart().getIntroSite();
 		} else {
 			this.locator = PlatformUI.getWorkbench();
 		}
+		model = new ModelReader();
 	}
 
-	public String getCurrentThemeId() {
+	/**
+	 * Find the current Welcome/Intro identifier
+	 * 
+	 * @return the current identifier or {@code null} if no theme
+	 */
+	protected String getCurrentThemeId() {
 		if (site instanceof AbstractIntroPartImplementation) {
 			IntroTheme theme = ((AbstractIntroPartImplementation) site).getModel().getTheme();
 			return theme.getId();
 		}
 		return null;
-	}
-
-	public IExtensionRegistry getExtensionRegistry() {
-		return locator.getService(IExtensionRegistry.class);
 	}
 
 	public void createContent(String id, PrintWriter out) {
@@ -237,6 +370,10 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		});
 	}
 
+	/**
+	 * Transform the Eclipse Command identifier (with dots) to a CSS-compatible
+	 * class
+	 */
 	private String asCSSId(String commandSpec) {
 		int indexOf = commandSpec.indexOf('(');
 		if (indexOf > 0) {
@@ -246,30 +383,13 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	}
 
 	/**
-	 * @return URL to image, suitable for using in an external browser; may be a
-	 *         <code>data:</code> URL; may be null
+	 * Rewrite or possible extract the icon at the given URL to a stable URL
+	 * that can be embedded in HTML and rendered in a browser. May create
+	 * temporary files that will be cleaned up on exit.
+	 * 
+	 * @param iconURL
+	 * @return stable URL
 	 */
-	private String getImageURL(IConfigurationElement ce, String attr, String commandId) {
-		String iconURL = MenuHelper.getIconURI(ce, attr);
-		if (iconURL != null) {
-			return asBrowserURL(iconURL);
-		}
-
-		if (commandId == null) {
-			return null;
-		}
-		ICommandImageService images = locator.getService(ICommandImageService.class);
-		if (images == null) {
-			return null;
-		}
-		ImageDescriptor descriptor = images.getImageDescriptor(commandId);
-		iconURL = MenuHelper.getImageUrl(descriptor);
-		if (iconURL != null) {
-			return asBrowserURL(iconURL);
-		}
-		return asDataURL(descriptor);
-	}
-
 	private String asBrowserURL(String iconURL) {
 		if (iconURL.startsWith("file:") || iconURL.startsWith("http:")) {
 			return iconURL;
@@ -314,7 +434,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		loader.save(output, SWT.IMAGE_PNG);
 		if (output.size() * 4 / 3 < MAX_URL_LENGTH) {
 			// You'd think there was a more efficient way to do this...
-			return "data:image/png;base64," + Base64.getUrlEncoder().encodeToString(output.toByteArray());
+			return "data:image/png;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
 		}
 		try {
 			File tempFile = File.createTempFile("qlink", "png");
@@ -353,42 +473,27 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		tableViewer.setInput(getQuicklinks().toArray());
 	}
 
-	private Stream<Quicklink> getQuicklinks() {
-		return new ModelReader().get().sorted(this::compareQuicklinks);
+	private List<Quicklink> getQuicklinks() {
+		List<Quicklink> links = model.get();
+		if (links.isEmpty()) {
+			links = generateDefaultQuicklinks();
+		}
+		links.sort(Quicklink::compareTo);
+		return links;
+	}
+
+	/**
+	 * Return the default commands to be shown if there is no other content
+	 * available
+	 */
+	private List<Quicklink> generateDefaultQuicklinks() {
+		return Arrays.asList(new Quicklink("org.eclipse.oomph.setup.ui.questionnaire", Importance.HIGH),
+				new Quicklink("org.eclipse.ui.cheatsheets.openCheatSheet"),
+				new Quicklink("org.eclipse.ui.newWizard"), new Quicklink("org.eclipse.ui.file.import"),
+				new Quicklink("org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"),
+				new Quicklink("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW));
 	}
 
 	public void dispose() {
-	}
-
-	private int compareQuicklinks(Quicklink a, Quicklink b) {
-		int impA = a.importance.level;
-		int impB = b.importance.level;
-		if (impA != impB) {
-			return impA - impB;
-		}
-		long diff = getRank(a) - getRank(b);
-		if (diff > 0) {
-			return 1;
-		}
-		if (diff < 0) {
-			return -1;
-		}
-		return 0;
-	}
-
-	private long getRank(Quicklink ql) {
-		if (bundleIds == null) {
-			Bundle bundle = FrameworkUtil.getBundle(getClass());
-			bundleIds = new HashMap<>();
-			bundles = bundle.getBundleContext().getBundles();
-		}
-		return bundleIds.computeIfAbsent(ql.bundleSymbolicName, bsn -> {
-			for (Bundle b : bundles) {
-				if (bsn.equals(b.getSymbolicName()) && (b.getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-					return b.getBundleId();
-				}
-			}
-			return Long.MAX_VALUE;
-		});
 	}
 }
