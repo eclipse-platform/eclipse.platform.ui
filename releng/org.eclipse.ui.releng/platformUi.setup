@@ -13,6 +13,11 @@
     name="ui"
     label="UI">
   <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.platform.ui"
+      value="=https://git.eclipse.org/c/platform/eclipse.platform.ui.git/plain/releng/org.eclipse.ui.releng/platformUi.setup->${git.clone.platform.ui.location|uri}/releng/org.eclipse.ui.releng/platformUi.setup"
+      vm="true"/>
+  <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.platform.ui"
       remoteURI="platform/eclipse.platform.ui"
@@ -139,7 +144,7 @@
             project="org.eclipse.ui"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.2/@workingSets.2 //@setupTasks.2/@workingSets.1"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets.2 //@setupTasks.3/@workingSets.1"/>
       </predicate>
     </workingSet>
     <workingSet
