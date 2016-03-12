@@ -152,4 +152,18 @@ public abstract class IntroConfigurer {
 	public String getMixinStyle(String pageId, String extensionId) {
 		return null;
 	}
+
+	/**
+	 * Return true if {@code pageId} is the configured start page.
+	 * 
+	 * @param pageId
+	 *            the page identifier
+	 * @since 3.5
+	 */
+	protected boolean isStartPage(String pageId) {
+		return pageId.equals(model.getStartPageId());
+
+	}
+
+
 }

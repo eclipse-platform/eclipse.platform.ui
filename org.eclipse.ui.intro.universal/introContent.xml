@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-    Copyright (c) 2005, 2010 IBM Corporation and others.
+    Copyright (c) 2005, 2016 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
    
     Contributors:
          IBM Corporation - initial API and implementation
+         Manumitting Technologies Inc - Added 'qroot' page (bug 466370)
  -->
 
 <!-- 
@@ -15,7 +16,7 @@
 -->
 <introContent>
 	<!-- Root page -->
-	<page id="root" alt-style="$theme$/swt/root.properties" style="$theme$/html/root.css" style-id="page">
+	<page id="root" alt-style="$theme$/swt/root.properties" style="$theme$/html/root.css" style-id="page rootlike">
 		<anchor id="head-anchor"/>
         <title style-id="intro-header">$introTitle$</title>
         <group id="links-background">
@@ -33,6 +34,45 @@
 		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor"/></group>
 		<group id="extra-group5" filteredFrom="swt"><anchor id="anchor"/></group>
     </page>
+	
+	<!-- A root page that looks more like other quadranted pages, with Quicklinks -->
+	<page id="qroot" alt-style="$theme$/swt/root.properties" style="$theme$/html/qroot.css" style-id="page rootlike">
+		<anchor id="head-anchor" />
+		<title style-id="intro-header">$introTitle$</title>
+        <group id="branding">
+        	<img src="$introBrandingImage$" alt="$introBrandingImageText$"/>
+        </group>
+		<group id="extra-group1" filteredFrom="swt" />
+		<!-- navigation -->
+        <group id="action-links" computed="true" />
+		<!-- content -->
+		<group id="page-content">
+            <text style-id="page-title" id="page-title" filteredFrom="html">Get Started...</text>
+            <text style-id="page-description" id="page-description">$introDescription-root$</text>
+			<!-- panes -->
+			<group id="top-left" computed="true">
+				<contentProvider pluginId="org.eclipse.ui.intro.quicklinks"
+					class="org.eclipse.ui.intro.quicklinks.QuicklinksViewer" id="quick-links">
+				</contentProvider>
+			</group>
+			<group id="top-right" computed="true">
+				<group id="page-links" computed="true"  filteredFrom="swt">
+				</group>
+			</group>
+			<group id="content-divider" filteredFrom="swt" />
+			<group id="bottom-left" computed="true" />
+			<group id="bottom-right" computed="true" />
+		</group>
+		<!-- extra groups for additional effects -->
+		<group id="extra-group2" filteredFrom="swt"><anchor id="anchor" /></group>
+		<group id="extra-group3" filteredFrom="swt"><anchor id="anchor" /></group>
+		<group id="extra-group4" filteredFrom="swt"><anchor id="anchor" /></group>
+		<group id="extra-group5" filteredFrom="swt">
+			<anchor id="anchor" />
+			<contentProvider id="welcome-restart-check" pluginId="org.eclipse.ui.intro"
+				class="org.eclipse.ui.intro.contentproviders.AlwaysWelcomeCheckbox" />
+		</group>
+	</page>
 	
 	<!-- Standby page -->
     <page id="standby" alt-style="$theme$/swt/standby.properties" style="$theme$/html/standby.css" style-id="page">

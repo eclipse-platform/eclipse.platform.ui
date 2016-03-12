@@ -209,26 +209,18 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	public IntroElement[] getGroupChildren(String pageId, String groupId) {
-		if (pageId.equals(ID_ROOT)) {
-			if (groupId.equals(DIV_PAGE_LINKS))
+		// root-like pages have more details on the page and action links
+		boolean rootLike = pageId.equals(ID_ROOT) || isStartPage(pageId) || pageId.equals(ID_STANDBY);
+		if (rootLike && groupId.equals(DIV_PAGE_LINKS))
 				return getRootPageLinks(false);
-			if (groupId.equals(DIV_ACTION_LINKS))
+		if (rootLike && groupId.equals(DIV_ACTION_LINKS))
 				return getRootPageActionLinks(false);
-		} else if (pageId.equals(ID_STANDBY)) {
-			if (groupId.equals(DIV_PAGE_LINKS))
-				return getRootPageLinks(true);
-			if (groupId.equals(DIV_ACTION_LINKS))
-				return getRootPageActionLinks(true);
-		} else {
-			// other pages
-			if (groupId.equals(DIV_PAGE_LINKS))
-				return getNavLinks(pageId);
-			if (groupId.equals(DIV_LAYOUT_TOP_LEFT)
-					|| groupId.equals(DIV_LAYOUT_TOP_RIGHT)
-					|| groupId.equals(DIV_LAYOUT_BOTTOM_LEFT)
-					|| groupId.equals(DIV_LAYOUT_BOTTOM_RIGHT))
-				return getContent(pageId, groupId);
-		}
+		// other pages
+		if (groupId.equals(DIV_PAGE_LINKS))
+			return getNavLinks(pageId);
+		if (groupId.equals(DIV_LAYOUT_TOP_LEFT) || groupId.equals(DIV_LAYOUT_TOP_RIGHT)
+				|| groupId.equals(DIV_LAYOUT_BOTTOM_LEFT) || groupId.equals(DIV_LAYOUT_BOTTOM_RIGHT))
+			return getContent(pageId, groupId);
 		return new IntroElement[0];
 	}
 
