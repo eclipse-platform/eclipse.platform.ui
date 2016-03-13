@@ -13,6 +13,11 @@
     name="text"
     label="Text">
   <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.platform.text"
+      value="=http://git.eclipse.org/c/platform/eclipse.platform.text.git/plain/org.eclipse.text.releng/platformText.setup->${git.clone.platform.text.location|uri}/releng/org.eclipse.text.releng/platformText.setup"
+      vm="true"/>
+  <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.platform.text"
       remoteURI="platform/eclipse.platform.text"
