@@ -15,7 +15,7 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.platform.text"
-      value="=http://git.eclipse.org/c/platform/eclipse.platform.text.git/plain/org.eclipse.text.releng/platformText.setup->${git.clone.platform.text.location|uri}/releng/org.eclipse.text.releng/platformText.setup"
+      value="=https://git.eclipse.org/c/platform/eclipse.platform.text.git/plain/org.eclipse.text.releng/platformText.setup->${git.clone.platform.text.location|uri}/org.eclipse.text.releng/platformText.setup"
       vm="true"/>
   <setupTask
       xsi:type="git:GitCloneTask"
@@ -40,63 +40,10 @@
     <description>Platform Text</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.filebuffers/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.jface.text/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.search/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.text/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.ui.editors/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.ui.workbench.texteditor/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.filebuffers.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.jface.text.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.search.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.text.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.ui.editors.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.ui.workbench.texteditor.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.ui.examples.javaeditor/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform Text"
-        activeRepositoryList="${eclipse.target.platform}"
-        includeAllPlatforms="true">
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="*"/>
       <sourceLocator
@@ -115,7 +62,7 @@
             project="org.eclipse.text"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.15/@workingSets.1 //@setupTasks.15/@workingSets.2"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets.2 //@setupTasks.3/@workingSets.1"/>
       </predicate>
     </workingSet>
     <workingSet
