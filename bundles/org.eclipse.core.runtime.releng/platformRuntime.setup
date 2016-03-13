@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Project
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    name="runtime"
+    label="Runtime">
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.platform.runtime"
+      value="=https://git.eclipse.org/c/platform/eclipse.platform.runtime.git/plain/org.eclipse.core.runtime.releng/platformRuntime.setup->${git.clone.platform.runtime.location|uri}/org.eclipse.org.eclipse.core.runtime.releng/platformRuntime.setup"
+      vm="true"/>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="git.clone.platform.runtime"
+      remoteURI="platform/eclipse.platform.runtime"
+      pushURI="">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/InducedChoices">
+      <detail
+          key="inherit">
+        <value>eclipse.git.gerrit.remoteURIs</value>
+      </detail>
+      <detail
+          key="label">
+        <value>Platform Runtime Git or Gerrit Repository</value>
+      </detail>
+      <detail
+          key="target">
+        <value>remoteURI</value>
+      </detail>
+    </annotation>
+    <description>Platform Runtime</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:PreferenceTask"
+      key="/project/org.eclipse.core.contenttype/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
+      value="warning"/>
+  <setupTask
+      xsi:type="setup:PreferenceTask"
+      key="/project/org.eclipse.core.expressions/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
+      value="warning"/>
+  <setupTask
+      xsi:type="setup:PreferenceTask"
+      key="/project/org.eclipse.core.expressions.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
+      value="warning"/>
+  <setupTask
+      xsi:type="setup.targlets:TargletTask">
+    <targlet
+        name="Platform Runtime"
+        activeRepositoryList="${eclipse.target.platform}"
+        includeAllPlatforms="true">
+      <requirement
+          name="*"/>
+      <sourceLocator
+          rootFolder="${git.clone.platform.runtime.location}"
+          locateNestedProjects="true">
+        <predicate
+            xsi:type="predicates:NotPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.core\.tools.*">
+            <annotation
+                source="http://www.eclipse.org/oomph/base/Warning">
+              <detail
+                  key="diagnostic">
+                <value>This bundle appears to be very old and no longer supported.</value>
+              </detail>
+            </annotation>
+          </operand>
+        </predicate>
+      </sourceLocator>
+    </targlet>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask">
+    <workingSet
+        name="Platform Runtime">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.core.runtime"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//@projects[name='runtime']/@setupTasks.5/@workingSets.1"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Platform Runtime Tests">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.core.runtime"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*\.tests.*|com\.google\.code\.atinject\.tck"/>
+      </predicate>
+    </workingSet>
+  </setupTask>
+  <stream
+      name="master"
+      label="Master">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="eclipse.target.platform"
+        value="Neon"
+        storageURI="scope://Workspace"/>
+  </stream>
+  <description>The Platform Runtime support</description>
+  <logicalProjectContainer
+      xsi:type="setup:Project"
+      href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='platform']"/>
+</setup:Project>
