@@ -15,7 +15,7 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.platform.resources"
-      value="=https://git.eclipse.org/c/platform/eclipse.platform.resources.git/plain/org.eclipse.core.resources.releng/platformResources.setup->${git.clone.platform.resources.location|uri}/org.eclipse.core.resources.releng/platformResources.setup"
+      value="=https://git.eclipse.org/c/platform/eclipse.platform.resources.git/plain/bundles/org.eclipse.core.resources.releng/platformResources.setup->${git.clone.platform.resources.location|uri}/bundles/org.eclipse.core.resources.releng/platformResources.setup"
       vm="true"/>
   <setupTask
       xsi:type="git:GitCloneTask"
@@ -50,8 +50,7 @@
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform Resources"
-        activeRepositoryList="${eclipse.target.platform}"
-        includeAllPlatforms="true">
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="*"/>
       <sourceLocator
@@ -85,7 +84,7 @@
             project="org.eclipse.core.resources"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.5/@workingSets.1 //@setupTasks.5/@workingSets.2"/>
+            excludedWorkingSet="//@setupTasks.5/@workingSets.1"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -98,18 +97,6 @@
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*\.tests\.resources.*|org\.eclipse\.core\.resources\.spysupport"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="Platform Resources Utilities">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.core.resources"/>
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.core\.tools\.resources"/>
       </predicate>
     </workingSet>
   </setupTask>
