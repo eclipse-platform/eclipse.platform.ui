@@ -63,7 +63,7 @@
             project="org.eclipse.help"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.3/@workingSets.1"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets.1 //@setupTasks.3/@workingSets.2"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -77,6 +77,19 @@
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*\.tests.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="Platform UA Examples"
+        id="">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.help"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*\.examples.*"/>
       </predicate>
     </workingSet>
   </setupTask>
