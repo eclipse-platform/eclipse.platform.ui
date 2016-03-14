@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.revisions.RevisionPainter;
 import org.eclipse.jface.internal.text.source.DiffPainter;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -322,7 +321,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 	public void redraw() {
 
 		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
-			if (VerticalRuler.IS_MAC_BUG_298936 || Util.isGtk()) {
+			if (VerticalRuler.AVOID_NEW_GC) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {

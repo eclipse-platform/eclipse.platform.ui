@@ -81,12 +81,15 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		}
 	}
 
-	/**
-	 * <code>true</code> if we're on a Mac, where "new GC(canvas)" is expensive.
-	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
-	 * @since 3.6
-	 */
-	static final boolean IS_MAC_BUG_298936= Util.isMac();
+    /**
+     * <code>true</code> if we're on a Mac/GTK, where "new GC(canvas)" is expensive.
+     * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
+     * @see <a href="https://bugs.eclipse.org/467499">bug 467499</a>
+     * @since 3.6
+     */
+    static final boolean AVOID_NEW_GC= Util.isMac() || Util.isGtk();
+
+
 
 	/** The vertical ruler's text viewer */
 	private ITextViewer fTextViewer;
@@ -466,7 +469,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 */
 	private void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			if (IS_MAC_BUG_298936 || Util.isGtk()) {
+			if (AVOID_NEW_GC) {
 				fCanvas.redraw();
 				fCanvas.update();
 			} else {
