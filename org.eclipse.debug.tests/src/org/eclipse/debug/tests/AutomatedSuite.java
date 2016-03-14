@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
+import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipse.debug.tests.launching.ArgumentParsingTests;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
@@ -97,5 +98,8 @@ public class AutomatedSuite extends TestSuite {
 
 		// Step filters
 		addTest(new TestSuite(StepFiltersTests.class));
+
+		// Console view
+		addTest(new TestSuite(ConsoleManagerTests.class));
 	}
 }

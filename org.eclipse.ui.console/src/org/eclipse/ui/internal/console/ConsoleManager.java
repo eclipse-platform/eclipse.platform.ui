@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrey Loskutov <loskutov@gmx.de> - bug 489546
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
@@ -280,7 +282,7 @@ public class ConsoleManager implements IConsoleManager {
 
 
 	private class ShowConsoleViewJob extends WorkbenchJob {
-		private IConsole console;
+		private Set<IConsole> queue = new LinkedHashSet<IConsole>();
 
 		ShowConsoleViewJob() {
 			super("Show Console View"); //$NON-NLS-1$
@@ -288,50 +290,66 @@ public class ConsoleManager implements IConsoleManager {
 			setPriority(Job.SHORT);
 		}
 
-		void setConsole(IConsole console) {
-			this.console = console;
+		void addConsole(IConsole console) {
+			synchronized (queue) {
+				queue.add(console);
+			}
 		}
 
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			Set<IConsole> consolesToShow;
+			synchronized (queue) {
+				consolesToShow = new LinkedHashSet<>(queue);
+				queue.clear();
+			}
+			for (IConsole c : consolesToShow) {
+				showConsole(c);
+			}
+			synchronized (queue) {
+				if (!queue.isEmpty()) {
+					schedule();
+				}
+			}
+			return Status.OK_STATUS;
+		}
+
+		private void showConsole(IConsole c) {
 			boolean consoleFound = false;
-            IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			IConsole c = console;
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (window != null && c != null) {
-                IWorkbenchPage page= window.getActivePage();
-                if (page != null) {
-                    synchronized (fConsoleViews) {
+				IWorkbenchPage page = window.getActivePage();
+				if (page != null) {
+					synchronized (fConsoleViews) {
 						for (IConsoleView consoleView : fConsoleViews) {
 							if (consoleView.getSite().getPage().equals(page)) {
-	                            boolean consoleVisible = page.isPartVisible(consoleView);
-	                            if (consoleVisible) {
-	                                consoleFound = true;
+								boolean consoleVisible = page.isPartVisible(consoleView);
+								if (consoleVisible) {
+									consoleFound = true;
 									boolean bringToTop = shouldBringToTop(c, consoleView);
-	                                if (bringToTop) {
-	                                    page.bringToTop(consoleView);
-	                                }
+									if (bringToTop) {
+										page.bringToTop(consoleView);
+									}
 									consoleView.display(c);
-	                            }
-                            }
+								}
+							}
 						}
-                    }
+					}
 
-                    if (!consoleFound) {
-                        try {
-                            IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
+					if (!consoleFound) {
+						try {
+							IConsoleView consoleView = (IConsoleView) page.showView(IConsoleConstants.ID_CONSOLE_VIEW, null, IWorkbenchPage.VIEW_CREATE);
 							boolean bringToTop = shouldBringToTop(c, consoleView);
-                            if (bringToTop) {
-                                page.bringToTop(consoleView);
-                            }
+							if (bringToTop) {
+								page.bringToTop(consoleView);
+							}
 							consoleView.display(c);
-                        } catch (PartInitException pie) {
-                            ConsolePlugin.log(pie);
-                        }
-                    }
-                }
-            }
-            console = null;
-			return Status.OK_STATUS;
+						} catch (PartInitException pie) {
+							ConsolePlugin.log(pie);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -341,7 +359,7 @@ public class ConsoleManager implements IConsoleManager {
 	 */
 	@Override
 	public void showConsoleView(final IConsole console) {
-		showJob.setConsole(console);
+		showJob.addConsole(console);
 		showJob.schedule(100);
 	}
 
