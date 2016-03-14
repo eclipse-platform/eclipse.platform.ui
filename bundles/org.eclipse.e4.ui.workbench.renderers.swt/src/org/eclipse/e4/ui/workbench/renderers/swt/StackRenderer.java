@@ -847,6 +847,12 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	@Override
 	protected void createTab(MElementContainer<MUIElement> stack,
 			MUIElement element) {
+
+		// an invisible element won't have the correct widget hierarchy
+		if (!element.isVisible()) {
+			return;
+		}
+
 		MPart part = null;
 		if (element instanceof MPart)
 			part = (MPart) element;
