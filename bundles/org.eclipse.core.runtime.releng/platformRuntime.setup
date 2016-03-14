@@ -15,7 +15,7 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.platform.runtime"
-      value="=https://git.eclipse.org/c/platform/eclipse.platform.runtime.git/plain/org.eclipse.core.runtime.releng/platformRuntime.setup->${git.clone.platform.runtime.location|uri}/org.eclipse.org.eclipse.core.runtime.releng/platformRuntime.setup"
+      value="=https://git.eclipse.org/c/platform/eclipse.platform.runtime.git/plain/bundles/org.eclipse.core.runtime.releng/platformRuntime.setup->${git.clone.platform.runtime.location|uri}/bundles/org.eclipse.core.runtime.releng/platformRuntime.setup"
       vm="true"/>
   <setupTask
       xsi:type="git:GitCloneTask"
@@ -55,8 +55,7 @@
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform Runtime"
-        activeRepositoryList="${eclipse.target.platform}"
-        includeAllPlatforms="true">
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="*"/>
       <sourceLocator
