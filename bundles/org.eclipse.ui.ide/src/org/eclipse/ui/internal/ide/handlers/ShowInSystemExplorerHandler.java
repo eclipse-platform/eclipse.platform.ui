@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474273
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 487772
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 487772, 486777
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.handlers;
@@ -19,9 +19,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -48,6 +50,11 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	 * Command id
 	 */
 	public static final String ID = "org.eclipse.ui.ide.showInSystemExplorer"; //$NON-NLS-1$
+
+	/**
+	 * Parameter, which can optionally be passed to the command.
+	 */
+	public static final String RESOURCE_PATH_PARAMETER = "org.eclipse.ui.ide.showInSystemExplorer.path"; //$NON-NLS-1$
 
 	private static final String VARIABLE_RESOURCE = "${selected_resource_loc}"; //$NON-NLS-1$
 	private static final String VARIABLE_RESOURCE_URI = "${selected_resource_uri}"; //$NON-NLS-1$
@@ -108,11 +115,25 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 	}
 
 	private IResource getResource(ExecutionEvent event) {
-		IResource resource = getSelectionResource(event);
-		if (resource==null) {
+		IResource resource = getResourceByParameter(event);
+		if (resource == null) {
+			resource = getSelectionResource(event);
+		}
+		if (resource == null) {
 			resource = getEditorInputResource(event);
 		}
 		return resource;
+	}
+
+	private IResource getResourceByParameter(ExecutionEvent event) {
+		String parameter = event.getParameter(RESOURCE_PATH_PARAMETER);
+		if (parameter == null) {
+			return null;
+		}
+		IPath path = new Path(parameter);
+		IResource item = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+
+		return item;
 	}
 
 	private IResource getSelectionResource(ExecutionEvent event) {

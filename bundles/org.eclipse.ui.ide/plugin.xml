@@ -1020,6 +1020,11 @@
             name="%command.showInSystemExplorer.name"
             id="org.eclipse.ui.ide.showInSystemExplorer"
             description="%command.showInSystemExplorer.description">
+         <commandParameter
+               id="org.eclipse.ui.ide.showInSystemExplorer.path"
+               name="%commandParameter.resourceSystemPath"
+               optional="true">
+         </commandParameter>
       </command>
    </extension>
 
@@ -2325,6 +2330,13 @@
             properties="input"
             type="org.eclipse.ui.IWorkbenchPart">
       </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.ide.handlers.PagePropertyTester"
+            id="org.eclipse.ui.ide.pagepropertytester"
+            namespace="org.eclipse.ui.ide.page"
+            properties="activePreferencePage"
+            type="org.eclipse.swt.widgets.Shell">
+      </propertyTester>
    </extension>
    <extension
          point="org.eclipse.core.resources.filterMatchers">
@@ -2392,6 +2404,13 @@
                   variable="activePart">
                <test
                      property="org.eclipse.ui.ide.editor.input">
+               </test>
+            </with>
+            <with
+                  variable="activeShell">
+               <test
+                     property="org.eclipse.ui.ide.page.activePreferencePage"
+                     value="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage">
                </test>
             </with>
              </or>
