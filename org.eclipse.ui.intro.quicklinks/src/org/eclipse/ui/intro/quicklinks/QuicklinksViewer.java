@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.commands.CommandManager;
@@ -142,6 +142,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
 
 		private static final String ELMT_OVERRIDE = "override"; //$NON-NLS-1$
+		private static final String ATT_COMMANDID = "command"; //$NON-NLS-1$
 		private static final String ATT_THEME = "theme"; //$NON-NLS-1$
 
 		private static final String ATT_LABEL = "label"; //$NON-NLS-1$
@@ -155,11 +156,6 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		/** bundle symbolic name &rarr; bundle id */
 		private Map<String, Long> bundleIds;
 		private Bundle[] bundles;
-		private CommandManager manager;
-
-		public ModelReader(IServiceLocator locator) {
-			manager = locator.getService(CommandManager.class);
-		}
 
 		/**
 		 * Return the list of configured {@link Quicklink} that can be found.
@@ -196,12 +192,12 @@ public class QuicklinksViewer implements IIntroContentProvider {
 						continue;
 					}
 					String theme = ce.getAttribute(ATT_THEME);
-					String commandSpecPattern = ce.getAttribute(ATT_ID);
+					String commandSpecPattern = ce.getAttribute(ATT_COMMANDID);
 					String icon = ce.getAttribute(ATT_ICON);
 					if (theme != null && icon != null && Objects.equals(theme, getCurrentThemeId())
 							&& commandSpecPattern != null) {
 						findMatchingQuicklinks(commandSpecPattern)
-								.forEach(ql -> ql.iconUrl = getImageURL(ce, ATT_ICON, null));
+								.forEach(ql -> ql.iconUrl = getImageURL(ce, ATT_ICON));
 					}
 				}
 			}
@@ -221,24 +217,10 @@ public class QuicklinksViewer implements IIntroContentProvider {
 					Log.warning("Skipping '" + ce.getName() + "': missing " + ATT_ID);
 					return;
 				}
-				try {
-					ql.commandSpec = key;
-					ParameterizedCommand pc = manager.deserialize(ql.commandSpec);
-					if (!pc.getCommand().isDefined()) {
-						// not an error
-						return;
-					}
-					ql.label = Optional.ofNullable(ce.getAttribute(ATT_LABEL)).orElse(pc.getCommand().getName());
-					ql.description = Optional.ofNullable(ce.getAttribute(ATT_DESCRIPTION))
-							.orElse(pc.getCommand().getDescription());
-					ql.iconUrl = getImageURL(ce, ATT_ICON, ql.commandSpec);
-				} catch (NotDefinedException e) {
-					// not an error
-					return;
-				} catch (SerializationException e) {
-					Log.error("Skipping '" + ql.commandSpec + "'", e);
-					return;
-				}
+				ql.commandSpec = key;
+				ql.label = ce.getAttribute(ATT_LABEL);
+				ql.description = ce.getAttribute(ATT_DESCRIPTION);
+				ql.iconUrl = getImageURL(ce, ATT_ICON);
 			} else if (ELMT_URL.equals(ce.getName())) {
 				key = ce.getAttribute(ATT_LOCATION);
 				if (key == null) {
@@ -248,7 +230,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 				ql.url = key;
 				ql.label = ce.getAttribute(ATT_LABEL);
 				ql.description = ce.getAttribute(ATT_DESCRIPTION);
-				ql.iconUrl = getImageURL(ce, ATT_ICON, null);
+				ql.iconUrl = getImageURL(ce, ATT_ICON);
 			}
 			ql.rank = getRank(ce.getContributor().getName());
 			if (ce.getAttribute(ATT_IMPORTANCE) != null) {
@@ -275,7 +257,8 @@ public class QuicklinksViewer implements IIntroContentProvider {
 					.replace("*", ".*");
 			final Pattern pattern = Pattern.compile(regexp);
 			return quicklinks.values().stream().filter(
-					ql -> commandSpecPattern.equals(ql.commandSpec) || pattern.matcher(ql.commandSpec).matches());
+					ql -> ql.commandSpec != null && (commandSpecPattern.equals(ql.commandSpec)
+							|| pattern.matcher(ql.commandSpec).matches()));
 		}
 
 		private IExtension[] getExtensions(String extPtId) {
@@ -306,25 +289,12 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		 * @return URL to image, suitable for using in an external browser; may
 		 *         be a <code>data:</code> URL; may be null
 		 */
-		private String getImageURL(IConfigurationElement ce, String attr, String commandId) {
+		private String getImageURL(IConfigurationElement ce, String attr) {
 			String iconURL = MenuHelper.getIconURI(ce, attr);
 			if (iconURL != null) {
 				return asBrowserURL(iconURL);
 			}
-
-			if (commandId == null) {
-				return null;
-			}
-			ICommandImageService images = locator.getService(ICommandImageService.class);
-			if (images == null) {
-				return null;
-			}
-			ImageDescriptor descriptor = images.getImageDescriptor(commandId);
-			iconURL = MenuHelper.getImageUrl(descriptor);
-			if (iconURL != null) {
-				return asBrowserURL(iconURL);
-			}
-			return asDataURL(descriptor);
+			return null;
 		}
 	}
 
@@ -333,7 +303,8 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 	private IIntroContentProviderSite site;
 	private IServiceLocator locator;
-
+	private CommandManager manager;
+	private ICommandImageService images;
 	private Supplier<List<Quicklink>> model;
 
 	public void init(IIntroContentProviderSite site) {
@@ -346,7 +317,10 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		} else {
 			this.locator = PlatformUI.getWorkbench();
 		}
-		model = new ModelReader(this.locator);
+		manager = locator.getService(CommandManager.class);
+		images = locator.getService(ICommandImageService.class);
+
+		model = new ModelReader();
 	}
 
 	/**
@@ -513,16 +487,56 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		if (links.isEmpty()) {
 			links = generateDefaultQuicklinks();
 		}
-		links.sort(Quicklink::compareTo);
-		return links;
+		return links.stream().filter(this::populateQuicklink).sorted(Quicklink::compareTo)
+				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Attempt to populate common fields given other information. For commands,
+	 * we look up information in the ICommandService and ICommandImageService.
+	 * Return false if this quicklink cannot be found and should not be shown.
+	 * 
+	 * @return true if should be included
+	 */
+	private boolean populateQuicklink(Quicklink ql) {
+		if (ql.commandSpec == null) {
+			// non-commmands are fine
+			return true;
+		}
+		try {
+			ParameterizedCommand pc = manager.deserialize(ql.commandSpec);
+			if (!pc.getCommand().isDefined()) {
+				// not an error: just not found
+				return false;
+			}
+			if (ql.label == null) {
+				ql.label = pc.getCommand().getName();
+			}
+			if (ql.description == null) {
+				ql.description = pc.getCommand().getDescription();
+			}
+			if (ql.iconUrl == null && images != null) {
+				ImageDescriptor descriptor = images.getImageDescriptor(pc.getId());
+				if (descriptor != null) {
+					String iconUrl = MenuHelper.getImageUrl(descriptor);
+					ql.iconUrl = iconUrl != null ? asBrowserURL(iconUrl) : asDataURL(descriptor);
+				}
+			}
+			return true;
+		} catch (NotDefinedException | SerializationException e) {
+			// exclude commands that don't exist or are mis-fashioned
+			return false;
+		}
+	}
+
+	/** Simplify creating a quicklink for a command */
 	private Quicklink forCommand(String commandSpec) {
 		Quicklink ql = new Quicklink();
 		ql.commandSpec = commandSpec;
 		return ql;
 	}
 
+	/** Simplify creating a quicklink for a command */
 	private Quicklink forCommand(String commandSpec, Importance importance) {
 		Quicklink ql = new Quicklink();
 		ql.commandSpec = commandSpec;
