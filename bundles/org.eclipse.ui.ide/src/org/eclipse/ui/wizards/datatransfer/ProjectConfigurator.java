@@ -48,18 +48,21 @@ public interface ProjectConfigurator {
 
 	/**
 	 * This method MUST BE stateless (ideally static)
-	 * @param folder
+	 *
+	 * @param container
 	 * @param monitor
-	 * @return true if the given folder is for sure to be considered as a project
+	 * @return true if the given folder is for sure to be considered as a
+	 *         project
 	 */
 	public boolean shouldBeAnEclipseProject(IContainer container, IProgressMonitor monitor);
 
 	/**
 	 * This method MUST BE stateless (ideally static)
-	 * @param folder
+	 *
+	 * @param project
 	 * @param monitor
-	 * @return	the set of children folder to ignore in import operation. Typically
-	 * 			work directories such as bin/ target/ ....
+	 * @return the set of children folder to ignore in import operation.
+	 *         Typically work directories such as bin/ target/ ....
 	 */
 	public Set<IFolder> getDirectoriesToIgnore(IProject project, IProgressMonitor monitor);
 
@@ -84,9 +87,12 @@ public interface ProjectConfigurator {
 
 	/**
 	 * This method MUST BE be stateless (ideally static)
+	 *
 	 * @param project
-	 * @param ignoredPaths paths that have to be ignore when checking whether configurator applies.
-	 * Those will typically be nested projects, or "work" directory (bin/ target/ ...)
+	 * @param excludedDirectories
+	 *            paths that have to be ignored when checking whether
+	 *            configurator applies. Those will typically be nested projects,
+	 *            or "work" directory (bin/ target/ ...)
 	 * @param monitor
 	 */
 	public void configure(IProject project, Set<IPath> excludedDirectories, IProgressMonitor monitor);
