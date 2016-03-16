@@ -301,8 +301,8 @@ public final class ParameterizedCommand implements Comparable {
 
 		try {
 			ArrayList<Parameterization> parms = new ArrayList<>();
-			for (Entry<String, ?> entry : ((Map<String, ?>) parameters).entrySet()) {
-				String key = entry.getKey();
+			for (Entry<?, ?> entry : ((Map<?, ?>) parameters).entrySet()) {
+				String key = (String) entry.getKey();
 				IParameter parameter = null;
 				// get the parameter from the command
 				parameter = command.getParameter(key);
