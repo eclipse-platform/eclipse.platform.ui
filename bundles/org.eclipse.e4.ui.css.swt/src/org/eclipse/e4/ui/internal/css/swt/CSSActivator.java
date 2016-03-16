@@ -104,6 +104,13 @@ public class CSSActivator implements BundleActivator {
 		}
 	}
 
+	public void log(int logError, String message, Throwable e) {
+		LogService logger = getLogger();
+		if (logger != null) {
+			logger.log(logError, message, e);
+		}
+	}
+
 	public IColorAndFontProvider getColorAndFontProvider() {
 		if (colorAndFontProviderTracker == null) {
 			if (context == null) {

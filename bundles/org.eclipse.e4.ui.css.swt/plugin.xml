@@ -537,6 +537,34 @@
                name="swt-hot-border-color">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.StyledTextElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyStyledTextScrollbarSWTHandler">
+         <property-name
+               name="swt-scrollbar-themed">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-background-color">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-foreground-color">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-width">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-mouse-near-scroll-width">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-horizontal-visible">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-vertical-visible">
+         </property-name>
+         <property-name
+               name="swt-scrollbar-border-radius">
+         </property-name>
+      </handler>
 
 
       <!-- Theme element definitions -->

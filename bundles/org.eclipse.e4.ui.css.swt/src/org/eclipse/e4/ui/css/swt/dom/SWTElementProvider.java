@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2016 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430639
- *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201, 434309
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201, 434309, 430278
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -74,6 +75,9 @@ public class SWTElementProvider implements IElementProvider {
 		}
 		if (element instanceof Table) {
 			return new TableElement((Table) element, engine);
+		}
+		if (element instanceof StyledText) {
+			return new StyledTextElement((StyledText) element, engine);
 		}
 		if (element instanceof Composite) {
 			return new CompositeElement((Composite) element, engine);

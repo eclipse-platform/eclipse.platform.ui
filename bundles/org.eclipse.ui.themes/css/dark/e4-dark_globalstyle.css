@@ -9,7 +9,7 @@
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189, 430848
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 431635
- *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148, 465711
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148, 465711, 430278
  *     Lars Vogel <Lars.Vogel@vogella.com> Bug 463652,466275
  *******************************************************************************/
 
@@ -19,6 +19,7 @@
  * 2.) Bug 419377 - Setting a property to 'inherit' is not supported
  * 3.) Bug 430051 - Regression for CTabRendering when drawing bottom tabs
  * 4.) Bug 401015 - Add support for styling hyperlinks in Links
+ * 5.) Bug 430278 - Add support for styling Scrollbars
  *******************************************************************************/
 
 
@@ -462,4 +463,22 @@ Label#org-eclipse-ui-buildid-text {
 
 ProgressIndicator#org-eclipse-ui-splash-progressIndicator {
 	background-color: #e1e1e1;
+}
+
+/*
+	 * Default values for using a styled scrollbar to allow a user to set -Dswt.enable.themedScrollBar=true/false to force
+	 * it to true/false regardless of the CSS value.
+	 *
+	 * swt-scrollbar-themed must be present for -Dswt.enable.themedScrollBar to be supported
+	 */
+
+StyledText {
+
+	swt-scrollbar-themed: false;
+
+	swt-scrollbar-background-color: #383838;
+	swt-scrollbar-foreground-color: #494949;
+	swt-scrollbar-width: 4px;
+	swt-scrollbar-border-radius: 4px;
+	swt-scrollbar-mouse-near-scroll-width: 15px;
 }
