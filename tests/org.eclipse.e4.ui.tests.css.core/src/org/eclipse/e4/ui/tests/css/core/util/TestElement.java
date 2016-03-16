@@ -16,12 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 
 /**
  * Dummy DOM Element implementation for testing.
@@ -63,6 +62,11 @@ public class TestElement extends ElementAdapter {
 	public String getAttribute(String name) {
 		String value = attrs.get(name);
 		return value == null ? "" : value;
+	}
+
+	@Override
+	public boolean hasAttribute(String name) {
+		return attrs.containsKey(name);
 	}
 
 	@Override

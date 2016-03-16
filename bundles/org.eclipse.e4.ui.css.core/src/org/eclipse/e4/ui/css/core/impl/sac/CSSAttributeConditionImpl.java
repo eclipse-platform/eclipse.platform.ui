@@ -123,6 +123,9 @@ public class CSSAttributeConditionImpl extends AbstractAttributeCondition {
 	 */
 	@Override
 	public boolean match(Element e, String pseudoE) {
+		if (!e.hasAttribute(getLocalName())) {
+			return false;
+		}
 		String val = getValue();
 		if (val == null) {
 			return !e.getAttribute(getLocalName()).equals("");

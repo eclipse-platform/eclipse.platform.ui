@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430468
  *     Alain Le Guennec <Alain.LeGuennec@esterel-technologies.com> - Bug 458334
+ *     Lars Sadau <lars@sadau-online.de> - Bug 487994
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.core;
 
@@ -44,16 +45,47 @@ public class CSSEngineTest {
 
 	@Test
 	public void testSelectorMatchOneOf() throws Exception {
-		TestCSSEngine engine = new TestCSSEngine();
-		engine.setElementProvider((element, engine1) -> {
-			Element e = new TestElement("E", engine1);
-			e.setAttribute("a", element.toString());
-			return e;
-		});
+		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
 		Selector selector = engine.parseSelectors("E[a~='B']").item(0);
 		assertTrue(engine.matches(selector, "B AB", null));
 		assertTrue(engine.matches(selector, "BC B", null));
 		assertFalse(engine.matches(selector, "ABC", null));
 		assertTrue(engine.matches(selector, "B", null));
 	}
+
+	@Test
+	public void testSelectorAttributeIs() throws Exception {
+		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
+		Selector selector = engine.parseSelectors("E[a='B']").item(0);
+		assertFalse(engine.matches(selector, "ABC", null));
+		assertTrue(engine.matches(selector, "B", null));
+	}
+
+	@Test
+	public void testSelectorAttributeIs_EmptySting() throws Exception {
+		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
+		Selector selector = engine.parseSelectors("E[a='']").item(0);
+		assertFalse(engine.matches(selector, "ABC", null));
+		assertTrue(engine.matches(selector, "", null));
+	}
+
+	@Test
+	public void testSelectorAttributeIs_NotPresent() throws Exception {
+		TestCSSEngine engine = engineWhichProducesElementsWithAttributeA();
+		Selector selector = engine.parseSelectors("E[b='']").item(0);
+		assertFalse(engine.matches(selector, "ABC", null));
+		assertFalse(engine.matches(selector, "", null));
+	}
+
+
+	private TestCSSEngine engineWhichProducesElementsWithAttributeA() {
+		TestCSSEngine engine = new TestCSSEngine();
+		engine.setElementProvider((element, aEngine) -> {
+			Element e = new TestElement("E", aEngine);
+			e.setAttribute("a", element.toString());
+			return e;
+		});
+		return engine;
+	}
+
 }
