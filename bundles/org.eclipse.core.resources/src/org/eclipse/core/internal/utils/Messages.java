@@ -326,6 +326,9 @@ public class Messages extends NLS {
 	public static String WM_nativeErr;
 	public static String WM_mutexAbandoned;
 
+	public static String cleanMarkersOnProject;
+	public static String addingMissingNatureMarkersOnProject;
+
 	static {
 		// initialize resource bundles
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

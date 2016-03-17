@@ -21,7 +21,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	// internal preference keys
 	public static final String PREF_OPERATIONS_PER_SNAPSHOT = "snapshots.operations"; //$NON-NLS-1$
-	public static final String PREF_DELTA_EXPIRATION = "delta.expiration";  //$NON-NLS-1$
+	public static final String PREF_DELTA_EXPIRATION = "delta.expiration"; //$NON-NLS-1$
 
 	// DEFAULTS
 	public static final boolean PREF_AUTO_REFRESH_DEFAULT = false;
@@ -39,6 +39,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static final long PREF_MAX_FILE_STATE_SIZE_DEFAULT = 1024 * 1024l; // 1 MB
 	public static final int PREF_MAX_FILE_STATES_DEFAULT = 50;
 	public static final long PREF_DELTA_EXPIRATION_DEFAULT = 30 * 24 * 3600 * 1000l; // 30 days
+	/**
+	 * Default setting for {@value ResourcesPlugin#PREF_MISSING_NATURE_MARKER_SEVERITY}.
+	 * Currently -1/ignore, but very likely to change.
+	 *
+	 * @since 3.12
+	 */
+	public static final int PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT = -1;
 
 	public PreferenceInitializer() {
 		super();
@@ -59,6 +66,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(ResourcesPlugin.PREF_BUILD_ORDER, PREF_BUILD_ORDER_DEFAULT);
 		node.putInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, PREF_MAX_BUILD_ITERATIONS_DEFAULT);
 		node.putBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, PREF_DEFAULT_BUILD_ORDER_DEFAULT);
+		node.putInt(ResourcesPlugin.PREF_MISSING_NATURE_MARKER_SEVERITY, PREF_MISSING_NATURE_MARKER_SEVERITY_DEFAULT);
 
 		// history store defaults
 		node.putBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, PREF_APPLY_FILE_STATE_POLICY_DEFAULT);

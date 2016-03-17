@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -327,6 +327,14 @@ public final class ResourcesPlugin extends Plugin {
 	public static final boolean DEFAULT_PREF_SEPARATE_DERIVED_ENCODINGS = false;
 
 	/**
+	 * Name of a preference for configuring the marker severity in case project
+	 * description references an unknown nature.
+	 *
+	 * @since 3.12
+	 */
+	public static final String PREF_MISSING_NATURE_MARKER_SEVERITY = "missingNatureMarkerSeverity"; //$NON-NLS-1$
+
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;
@@ -339,6 +347,8 @@ public final class ResourcesPlugin extends Plugin {
 
 	private ServiceRegistration<IWorkspace> workspaceRegistration;
 	private ServiceRegistration<DebugOptionsListener> debugRegistration;
+
+	private CheckMissingNaturesListener checkMissingNaturesListener;
 
 	/**
 	 * Constructs an instance of this plug-in runtime class.
@@ -429,6 +439,7 @@ public final class ResourcesPlugin extends Plugin {
 		if (workspace == null) {
 			return;
 		}
+		workspace.removeResourceChangeListener(checkMissingNaturesListener);
 		if (workspaceRegistration != null) {
 			workspaceRegistration.unregister();
 		}
@@ -467,6 +478,8 @@ public final class ResourcesPlugin extends Plugin {
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
+		checkMissingNaturesListener = new CheckMissingNaturesListener();
+		workspace.addResourceChangeListener(checkMissingNaturesListener, IResourceChangeEvent.POST_CHANGE);
 		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
 	}
 

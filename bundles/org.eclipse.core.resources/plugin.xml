@@ -257,4 +257,18 @@
          </bundle>
       </component>
    </extension>
+   <extension
+         id="unknownNature"
+         name="%unknownNatureMarkerName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="natureId">
+      </attribute>
+   </extension>
 </plugin>
