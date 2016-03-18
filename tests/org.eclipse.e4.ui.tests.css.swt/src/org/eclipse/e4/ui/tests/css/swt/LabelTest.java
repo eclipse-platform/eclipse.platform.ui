@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2009, 2016 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,15 +15,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Label;
 import org.junit.Test;
 
 public class LabelTest extends CSSSWTTestCase {
 
-	static final RGB RED = new RGB(255, 0, 0);
-	static final RGB GREEN = new RGB(0, 255, 0);
-	static final RGB BLUE = new RGB(0, 0, 255);
 
 	@Test
 	public void testColor() {
@@ -62,23 +58,23 @@ public class LabelTest extends CSSSWTTestCase {
 
 	@Test
 	public void testAlignment() {
-		Label labelToTest = createTestLabel("Label { alignment: right }");
+		Label labelToTest = createTestLabel("Label { swt-alignment: right }");
 		assertEquals(SWT.RIGHT, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { alignment: center; }");
+		labelToTest = createTestLabel("Label { swt-alignment: center; }");
 		assertEquals(SWT.CENTER, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { alignment: left; }");
+		labelToTest = createTestLabel("Label { swt-alignment: left; }");
 		assertEquals(SWT.LEFT, labelToTest.getAlignment());
 
 	}
 
 	@Test
 	public void testAlignment2() {
-		Label labelToTest = createTestLabel("Label { alignment: trail }");
+		Label labelToTest = createTestLabel("Label { swt-alignment: trail }");
 		assertEquals(SWT.TRAIL, labelToTest.getAlignment());
 
-		labelToTest = createTestLabel("Label { alignment: lead; }");
+		labelToTest = createTestLabel("Label { swt-alignment: lead; }");
 		assertEquals(SWT.LEAD, labelToTest.getAlignment());
 	}
 }

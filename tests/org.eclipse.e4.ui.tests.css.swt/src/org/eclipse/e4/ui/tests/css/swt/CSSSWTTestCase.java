@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2016 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,16 +18,21 @@ import java.io.StringReader;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.After;
 import org.junit.Before;
 
 public class CSSSWTTestCase {
+	static final RGB RED = new RGB(255, 0, 0);
+	static final RGB GREEN = new RGB(0, 255, 0);
+	static final RGB BLUE = new RGB(0, 0, 255);
 
 	protected Display display;
 	protected CSSEngine engine;
@@ -99,6 +104,27 @@ public class CSSSWTTestCase {
 
 		Label labelToTest = new Label(panel, SWT.NONE);
 		labelToTest.setText("Some label text");
+
+		// Apply styles
+		engine.applyStyles(labelToTest, true);
+
+		shell.pack();
+		return labelToTest;
+	}
+
+	protected Link createTestLink(String styleSheet) {
+		engine = createEngine(styleSheet, display);
+
+		// Create widgets
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		FillLayout layout = new FillLayout();
+		shell.setLayout(layout);
+
+		Composite panel = new Composite(shell, SWT.NONE);
+		panel.setLayout(new FillLayout());
+
+		Link labelToTest = new Link(panel, SWT.NONE);
+		labelToTest.setText("Some text <A HREF='./somewhere'>some link text</A>");
 
 		// Apply styles
 		engine.applyStyles(labelToTest, true);
