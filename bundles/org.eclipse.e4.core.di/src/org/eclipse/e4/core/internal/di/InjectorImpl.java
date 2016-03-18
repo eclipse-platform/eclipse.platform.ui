@@ -88,7 +88,7 @@ public class InjectorImpl implements IInjector {
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
 	final private static Boolean DEFAULT_BOOLEAN = Boolean.FALSE;
-	final private static Integer DEFAULT_INTEGER = new Integer(0);
+	final private static Integer DEFAULT_INTEGER = Integer.valueOf(0);
 	final private static Character DEFAULT_CHAR = new Character((char) 0);
 	final private static Float DEFAULT_FLOAT = new Float(0.0f);
 	final private static Double DEFAULT_DOUBLE = new Double(0.0d);
