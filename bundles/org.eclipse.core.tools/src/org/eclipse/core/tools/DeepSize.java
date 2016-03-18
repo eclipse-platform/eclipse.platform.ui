@@ -82,11 +82,11 @@ public class DeepSize {
 	private void count(Class c, int size) {
 		Object accumulatedSizes = sizes.get(c);
 		int existingSize = (accumulatedSizes == null) ? 0 : ((Integer) accumulatedSizes).intValue();
-		sizes.put(c, new Integer(existingSize + size));
+		sizes.put(c, Integer.valueOf(existingSize + size));
 
 		Object accumulatedCounts = counts.get(c);
 		int existingCount = (accumulatedCounts == null) ? 0 : ((Integer) accumulatedCounts).intValue();
-		counts.put(c, new Integer(existingCount + 1));
+		counts.put(c, Integer.valueOf(existingCount + 1));
 	}
 
 	public void deepSize(Object o) {

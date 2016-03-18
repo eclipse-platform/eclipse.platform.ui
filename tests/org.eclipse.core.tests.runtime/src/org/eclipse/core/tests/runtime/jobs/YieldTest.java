@@ -89,9 +89,11 @@ public class YieldTest extends AbstractJobManagerTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		for (int i = 0; i < jobListeners.length; i++)
-			if (jobListeners[i] instanceof TestJobListener)
+		for (int i = 0; i < jobListeners.length; i++) {
+			if (jobListeners[i] instanceof TestJobListener) {
 				((TestJobListener) jobListeners[i]).cancelAllJobs();
+			}
+		}
 		waitForCompletion();
 		for (int i = 0; i < jobListeners.length; i++) {
 			manager.removeJobChangeListener(jobListeners[i]);
@@ -230,8 +232,9 @@ public class YieldTest extends AbstractJobManagerTest {
 		final IStatus yieldResult = yieldJob.getResult();
 		if (!yieldResult.isOK()) {
 			Throwable t = yieldResult.getException();
-			if (t != null)
+			if (t != null) {
 				fail("yieldJob failed", t);
+			}
 			fail("yieldJob failed:" + yieldResult);
 		}
 		waitForCompletion(conflictingJob);
@@ -651,8 +654,9 @@ public class YieldTest extends AbstractJobManagerTest {
 		final IStatus yieldResult = yieldJob.getResult();
 		if (!yieldResult.isOK()) {
 			Throwable t = yieldResult.getException();
-			if (t != null)
+			if (t != null) {
 				fail("yieldJob failed", t);
+			}
 			fail("yieldJob failed:" + yieldResult);
 		}
 		waitForCompletion(conflictingJob);
@@ -664,21 +668,22 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule = new PathRule(getName());
 		final Object SYNC = new Object();
 		final int count = 100;
-		final Integer[] started = new Integer[] {new Integer(0)};
+		final Integer[] started = new Integer[] {Integer.valueOf(0)};
 		final List<Job> jobs = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob" + i) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC) {
-						started[0] = new Integer(started[0].intValue() + 1);
+						started[0] = Integer.valueOf(started[0].intValue() + 1);
 						SYNC.notifyAll();
 					}
 					barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
 					while (true) {
 
-						if (yieldRule(null) != null)
+						if (yieldRule(null) != null) {
 							break;
+						}
 
 						if (getFinishedJobs(jobs.toArray(new Job[jobs.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
@@ -734,21 +739,22 @@ public class YieldTest extends AbstractJobManagerTest {
 		final TestBarrier barrier_A = new TestBarrier();
 		final PathRule rule_A = new PathRule(getName() + "_ruleA");
 		final Object SYNC_A = new Object();
-		final Integer[] started_A = new Integer[] {new Integer(0)};
+		final Integer[] started_A = new Integer[] {Integer.valueOf(0)};
 		final List<Job> jobs_A = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_A_" + i) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC_A) {
-						started_A[0] = new Integer(started_A[0].intValue() + 1);
+						started_A[0] = Integer.valueOf(started_A[0].intValue() + 1);
 						SYNC_A.notifyAll();
 					}
 					barrier_A.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
 					while (true) {
 
-						if (yieldRule(null) != null)
+						if (yieldRule(null) != null) {
 							break;
+						}
 
 						if (getFinishedJobs(jobs_A.toArray(new Job[jobs_A.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
@@ -790,21 +796,22 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule_B = new PathRule(getName() + "_ruleB");
 		final Object SYNC_B = new Object();
 
-		final Integer[] started_B = new Integer[] {new Integer(0)};
+		final Integer[] started_B = new Integer[] { Integer.valueOf(0) };
 		final List<Job> jobs_B = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_B_" + i) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					synchronized (SYNC_B) {
-						started_B[0] = new Integer(started_B[0].intValue() + 1);
+						started_B[0] = Integer.valueOf(started_B[0].intValue() + 1);
 						SYNC_B.notifyAll();
 					}
 					barrier_B.waitForStatus(TestBarrier.STATUS_WAIT_FOR_START);
 					while (true) {
 
-						if (yieldRule(null) != null)
+						if (yieldRule(null) != null) {
 							break;
+						}
 
 						if (getFinishedJobs(jobs_B.toArray(new Job[jobs_B.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
@@ -969,9 +976,10 @@ public class YieldTest extends AbstractJobManagerTest {
 					Job.getJobManager().beginRule(rule, monitor);
 					b.setStatus(TestBarrier.STATUS_RUNNING);
 					while (yieldRule(null) == null) {
-						if (monitor.isCanceled())
+						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						//loop until yield succeeds
+						}
 					}
 				} finally {
 					Job.getJobManager().endRule(rule);
@@ -992,8 +1000,9 @@ public class YieldTest extends AbstractJobManagerTest {
 		JobChangeAdapter a = new JobChangeAdapter() {
 			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				if (event.getJob() == yieldA)
+				if (event.getJob() == yieldA) {
 					count[0]++;
+				}
 			}
 		};
 		Job.getJobManager().addJobChangeListener(a);
@@ -1053,8 +1062,9 @@ public class YieldTest extends AbstractJobManagerTest {
 		JobChangeAdapter a = new JobChangeAdapter() {
 			@Override
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				if (event.getJob() == conflicting)
+				if (event.getJob() == conflicting) {
 					count[0]++;
+				}
 			}
 		};
 		Job.getJobManager().addJobChangeListener(a);

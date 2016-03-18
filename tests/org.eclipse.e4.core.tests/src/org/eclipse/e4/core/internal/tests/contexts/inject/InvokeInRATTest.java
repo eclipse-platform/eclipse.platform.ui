@@ -57,12 +57,12 @@ public class InvokeInRATTest {
 			}});
 
 		// check that updates are propagated
-		context.set("active", new Integer(123));
+		context.set("active", Integer.valueOf(123));
 		context.set("selected", "abc");
 		TestHandler handler = new TestHandler();
 		context.set("handlerA", handler);
 
-		assertEquals(new Integer(123), handler.active);
+		assertEquals(Integer.valueOf(123), handler.active);
 		assertEquals("abc", handler.selected);
 
 		// check handler replacement
@@ -71,16 +71,16 @@ public class InvokeInRATTest {
 		context.set("handlerA", newHandler);
 		assertEquals(1, count[0]);
 
-		assertEquals(new Integer(123), newHandler.active);
+		assertEquals(Integer.valueOf(123), newHandler.active);
 		assertEquals("abc", newHandler.selected);
 
 		// change values in the context; values should not be propagated to handlers
-		context.set("active", new Integer(456));
+		context.set("active", Integer.valueOf(456));
 		context.set("selected", "xyz");
 
-		assertEquals(new Integer(123), handler.active);
+		assertEquals(Integer.valueOf(123), handler.active);
 		assertEquals("abc", handler.selected);
-		assertEquals(new Integer(123), newHandler.active);
+		assertEquals(Integer.valueOf(123), newHandler.active);
 		assertEquals("abc", newHandler.selected);
 	}
 }

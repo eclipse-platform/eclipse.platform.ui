@@ -53,13 +53,13 @@ public class DumpTool implements IApplication {
 		String fileName = System.getProperty("dump.file"); //$NON-NLS-1$
 		if (fileName == null) {
 			System.err.println("Use \"dump.file\" system property to point to the metadata file to be dumped"); //$NON-NLS-1$
-			return new Integer(0);
+			return Integer.valueOf(0);
 		}
 
 		File toDump = new File(fileName);
 		if (!toDump.exists()) {
 			System.err.println("File \"" + toDump.getAbsolutePath() + "\" does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
-			return new Integer(1);
+			return Integer.valueOf(1);
 		}
 
 		// ready to parse
@@ -81,7 +81,7 @@ public class DumpTool implements IApplication {
 		}
 
 		System.out.println("DumpTool finished...");
-		return new Integer(0);
+		return Integer.valueOf(0);
 	}
 
 	private void dump(String fileName) {

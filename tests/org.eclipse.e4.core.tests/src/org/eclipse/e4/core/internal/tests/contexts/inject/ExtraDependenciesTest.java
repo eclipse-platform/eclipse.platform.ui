@@ -64,7 +64,7 @@ public class ExtraDependenciesTest {
 	public void testExtraDependencies() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("arg1", "abc");
-		context.set("arg2", new Integer (123));
+		context.set("arg2", Integer.valueOf (123));
 
 		IEclipseContext otherContext = EclipseContextFactory.create();
 		otherContext.set("arg3", "other");
@@ -75,11 +75,11 @@ public class ExtraDependenciesTest {
 
 		// check that initial values are properly injected
 		assertEquals("abc", object.string);
-		assertEquals(new Integer(123), object.integer);
+		assertEquals(Integer.valueOf(123), object.integer);
 		assertEquals("other", object.other);
 
 		// modify argument value to cause update - bug 308650
-		context.set("arg2", new Integer (789));
+		context.set("arg2", Integer.valueOf (789));
 
 		// change the "other" value; should not be propagated
 		otherContext.set("arg3", "wrong");
@@ -96,9 +96,9 @@ public class ExtraDependenciesTest {
 
 		// check that changes in the method arguments are propagated
 		context.set("arg1", "xyz");
-		context.set("arg2", new Integer (456));
+		context.set("arg2", Integer.valueOf (456));
 		assertEquals("xyz", object.string);
-		assertEquals(new Integer(456), object.integer);
+		assertEquals(Integer.valueOf(456), object.integer);
 		assertNull(object.other);
 
 		// check that disposal of the injected context causes disposal of the injected object

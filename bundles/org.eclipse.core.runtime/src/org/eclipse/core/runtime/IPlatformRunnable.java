@@ -32,13 +32,13 @@ public interface IPlatformRunnable {
 	 * Exit object indicating normal termination
 	 */
 	@Deprecated
-	public static final Integer EXIT_OK = new Integer(0);
+	public static final Integer EXIT_OK = Integer.valueOf(0);
 
 	/**
 	 * Exit object requesting platform restart
 	 */
 	@Deprecated
-	public static final Integer EXIT_RESTART = new Integer(23);
+	public static final Integer EXIT_RESTART = Integer.valueOf(23);
 
 	/**
 	 * Exit object requesting that the command passed back be executed.  Typically
@@ -46,7 +46,7 @@ public interface IPlatformRunnable {
 	 * relaunched the command line will be retrieved from the <code>eclipse.exitdata</code> system property.
 	 */
 	@Deprecated
-	public static final Integer EXIT_RELAUNCH = new Integer(24);
+	public static final Integer EXIT_RELAUNCH = Integer.valueOf(24);
 
 	/**
 	 * Runs this runnable with the given args and returns a result.

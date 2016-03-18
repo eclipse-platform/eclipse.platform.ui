@@ -26,6 +26,6 @@ public class AddContextFunction extends ContextFunction {
 		Integer yInt = (Integer) context.get("y");
 		int sum = xInt == null ? 0 : xInt.intValue();
 		sum += yInt == null ? 0 : yInt.intValue();
-		return new Integer(sum);
+		return Integer.valueOf(sum);
 	}
 }

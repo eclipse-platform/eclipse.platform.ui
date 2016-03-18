@@ -74,7 +74,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 			return; // this is not the event we are interested in
 		}
 		events.add(newEvent);
-		simpleEvents.add(new Integer(delta.getKind()));
+		simpleEvents.add(Integer.valueOf(delta.getKind()));
 		notifyAll();
 	}
 

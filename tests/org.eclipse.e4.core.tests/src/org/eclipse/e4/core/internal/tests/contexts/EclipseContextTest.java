@@ -117,19 +117,19 @@ public class EclipseContextTest {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
 		parent.set("sum", new AddContextFunction());
-		parent.set("x", new Integer(3));
-		parent.set("y", new Integer(3));
-		child.set("x", new Integer(1));
-		child.set("y", new Integer(1));
+		parent.set("x", Integer.valueOf(3));
+		parent.set("y", Integer.valueOf(3));
+		child.set("x", Integer.valueOf(1));
+		child.set("y", Integer.valueOf(1));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
-		child.set("x", new Integer(5));
+		child.set("x", Integer.valueOf(5));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		child.remove("x");
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(4, ((Integer) child.get("sum")).intValue());
-		parent.set("x", new Integer(10));
+		parent.set("x", Integer.valueOf(10));
 		assertEquals(13, ((Integer) parent.get("sum")).intValue());
 		assertEquals(11, ((Integer) child.get("sum")).intValue());
 	}
@@ -317,8 +317,8 @@ public class EclipseContextTest {
 	public void testRemoveValueComputationOnDispose() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild("ChildContext");
-		parent.set("x", new Integer(1));
-		parent.set("y", new Integer(1));
+		parent.set("x", Integer.valueOf(1));
+		parent.set("y", Integer.valueOf(1));
 		parent.set("sum", new AddContextFunction());
 
 		child.get("sum");
@@ -331,7 +331,7 @@ public class EclipseContextTest {
 	public void testNullInheritance() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild("ChildContext");
-		parent.set("x", new Integer(1));
+		parent.set("x", Integer.valueOf(1));
 		child.set("x", null);
 		assertNull(child.get("x"));
 	}
@@ -366,7 +366,7 @@ public class EclipseContextTest {
 	public void testGetCFNotAValueToParent() {
 		IEclipseContext parent = EclipseContextFactory.create("ParentContext");
 		IEclipseContext child = parent.createChild();
-		parent.set("x", new Integer(1));
+		parent.set("x", Integer.valueOf(1));
 		child.set("x", new ContextFunction() {
 
 			/*

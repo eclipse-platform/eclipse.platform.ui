@@ -32,7 +32,7 @@ public class CountExpressionTest extends TestCase {
 	private static EvaluationContext evaluationContext(int size) {
 		List<Integer> variable = new ArrayList<>(size + 1);
 		for (int i = 0; i < size; ++i)
-			variable.add(new Integer(i));
+			variable.add(Integer.valueOf(i));
 		return new EvaluationContext(null, variable);
 	}
 

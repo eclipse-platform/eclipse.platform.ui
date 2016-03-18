@@ -164,7 +164,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		if (obj instanceof String)
 			return defaults.get(key, STRING_DEFAULT_DEFAULT);
 		else if (obj instanceof Integer)
-			return new Integer(defaults.getInt(key, INT_DEFAULT_DEFAULT));
+			return Integer.valueOf(defaults.getInt(key, INT_DEFAULT_DEFAULT));
 		else if (obj instanceof Double)
 			return new Double(defaults.getDouble(key, DOUBLE_DEFAULT_DEFAULT));
 		else if (obj instanceof Float)
@@ -512,8 +512,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		final int intValue = getInt(name);
 		if (value == intValue)
 			return;
-		Integer oldValue = new Integer(intValue);
-		Integer newValue = new Integer(value);
+		Integer oldValue = Integer.valueOf(intValue);
+		Integer newValue = Integer.valueOf(value);
 		try {
 			notify = false;
 			if (getDefaultInt(name) == value)

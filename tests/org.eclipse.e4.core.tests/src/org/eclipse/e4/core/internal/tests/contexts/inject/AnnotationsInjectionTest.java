@@ -113,7 +113,7 @@ public class AnnotationsInjectionTest {
 	 */
 	@Test
 	public synchronized void testInjection() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
 		Float testFloat = new Float(12.3);
@@ -199,7 +199,7 @@ public class AnnotationsInjectionTest {
 
 	@Test
 	public void testOptionalInjection() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set(Integer.class.getName(), testInt);
 
@@ -264,7 +264,7 @@ public class AnnotationsInjectionTest {
 	@Test
 	public void testInheritedSpecialMethods() {
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Integer.class.getName(), new Integer(123));
+		context.set(Integer.class.getName(), Integer.valueOf(123));
 		context.set(String.class.getName(), new String("abc"));
 		context.set(Float.class.getName(), new Float(12.3));
 

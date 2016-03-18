@@ -93,7 +93,7 @@ public class TestConstructorInjection {
 	@Test
 	public void testConstructorInjection() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
-		Integer intValue = new Integer(123);
+		Integer intValue = Integer.valueOf(123);
 		context.set(Integer.class.getName(), intValue);
 		Boolean boolValue = Boolean.TRUE;
 		context.set(Boolean.class.getName(), boolValue);

@@ -43,10 +43,10 @@ public class ReparentingTest {
 		IEclipseContext parent = EclipseContextFactory.create("parent");
 		final IEclipseContext child = parent.createChild("child");
 		parent.set("sum", new AddContextFunction());
-		parent.set("x", new Integer(3));
-		parent.set("y", new Integer(3));
-		child.set("x", new Integer(1));
-		child.set("y", new Integer(1));
+		parent.set("x", Integer.valueOf(3));
+		parent.set("y", Integer.valueOf(3));
+		child.set("x", Integer.valueOf(1));
+		child.set("y", Integer.valueOf(1));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 		child.setParent(EclipseContextFactory.create());
@@ -63,8 +63,8 @@ public class ReparentingTest {
 		// setup
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
-		child.set("x", new Integer(1));
-		child.set("y", new Integer(1));
+		child.set("x", Integer.valueOf(1));
+		child.set("y", Integer.valueOf(1));
 		assertEquals(null, parent.get("sum"));
 		assertEquals(null, child.get("sum"));
 
@@ -76,8 +76,8 @@ public class ReparentingTest {
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 
 		// changed values in parent shouldn't affect child
-		newParent.set("x", new Integer(3));
-		newParent.set("y", new Integer(3));
+		newParent.set("x", Integer.valueOf(3));
+		newParent.set("y", Integer.valueOf(3));
 		assertEquals(6, ((Integer) newParent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}
@@ -88,8 +88,8 @@ public class ReparentingTest {
 		child.set("sum", new AddContextFunction());
 		assertEquals(0, ((Integer) child.get("sum")).intValue());
 		IEclipseContext parent = EclipseContextFactory.create();
-		parent.set("x", new Integer(3));
-		parent.set("y", new Integer(3));
+		parent.set("x", Integer.valueOf(3));
+		parent.set("y", Integer.valueOf(3));
 		child.setParent(parent);
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 
@@ -99,8 +99,8 @@ public class ReparentingTest {
 	public void testContextFunctionParentBecomeNull() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
-		parent.set("x", new Integer(3));
-		parent.set("y", new Integer(3));
+		parent.set("x", Integer.valueOf(3));
+		parent.set("y", Integer.valueOf(3));
 		child.set("sum", new AddContextFunction());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		child.setParent(null);
@@ -111,13 +111,13 @@ public class ReparentingTest {
 	public void testContextFunctionSwitchParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = parent.createChild();
-		parent.set("x", new Integer(3));
-		parent.set("y", new Integer(3));
+		parent.set("x", Integer.valueOf(3));
+		parent.set("y", Integer.valueOf(3));
 		child.set("sum", new AddContextFunction());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		IEclipseContext newParent = EclipseContextFactory.create();
-		newParent.set("x", new Integer(1));
-		newParent.set("y", new Integer(1));
+		newParent.set("x", Integer.valueOf(1));
+		newParent.set("y", Integer.valueOf(1));
 		child.setParent(newParent);
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}

@@ -203,14 +203,14 @@ public class InjectionEventTest {
 		String eventTopic = "e4/test/eventInjection";
 		Dictionary<String, Object> d = new Hashtable<>();
 		d.put(EventConstants.EVENT_TOPIC, eventTopic);
-		d.put("data1", new Integer(5));
+		d.put("data1", Integer.valueOf(5));
 		d.put("data2", "sample");
 		Event event = new Event(eventTopic, d);
 		helper.sendEvent(event);
 
 		assertEquals(1, target.counter1);
 		assertEquals(event, target.event);
-		assertEquals(new Integer(5), target.event.getProperty("data1"));
+		assertEquals(Integer.valueOf(5), target.event.getProperty("data1"));
 		assertEquals("sample", target.event.getProperty("data2"));
 	}
 
@@ -243,14 +243,14 @@ public class InjectionEventTest {
 		String eventTopic = "e4/test/eventInjection";
 		Dictionary<String, Object> d = new Hashtable<>();
 		d.put(EventConstants.EVENT_TOPIC, eventTopic);
-		d.put("data1", new Integer(5));
+		d.put("data1", Integer.valueOf(5));
 		d.put("data2", "sample");
 		Event event = new Event(eventTopic, d);
 		helper.sendEvent(event);
 
 		assertEquals(1, target.counter1);
 		assertEquals(event, target.event);
-		assertEquals(new Integer(5), target.event.getProperty("data1"));
+		assertEquals(Integer.valueOf(5), target.event.getProperty("data1"));
 		assertEquals("sample", target.event.getProperty("data2"));
 	}
 

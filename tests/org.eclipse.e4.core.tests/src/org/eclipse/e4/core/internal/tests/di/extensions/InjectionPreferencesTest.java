@@ -238,23 +238,23 @@ public class InjectionPreferencesTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		InjectTargetConversion target = ContextInjectionFactory.make(InjectTargetConversion.class, context);
 
-		assertEquals(new Integer(12), target.intField);
+		assertEquals(Integer.valueOf(12), target.intField);
 		assertEquals(Boolean.TRUE, target.booleanField);
 		assertEquals(new Double(12.35345345345d), target.doubleField);
 		assertEquals(new Float(5.13f), target.floatField);
 		assertEquals(new Long(131232343453453L), target.longField);
 
-		assertEquals(new Integer(12), target.intArg);
+		assertEquals(Integer.valueOf(12), target.intArg);
 		assertEquals(Boolean.TRUE, target.booleanArg);
 
 		// change
 		node.putInt(KEY_INT, 777);
 		node.putBoolean(KEY_BOOL, false);
 
-		assertEquals(new Integer(777), target.intField);
+		assertEquals(Integer.valueOf(777), target.intField);
 		assertEquals(Boolean.FALSE, target.booleanField);
 
-		assertEquals(new Integer(777), target.intArg);
+		assertEquals(Integer.valueOf(777), target.intArg);
 		assertEquals(Boolean.FALSE, target.booleanArg);
 
 		assertNotNull(target.preferences);

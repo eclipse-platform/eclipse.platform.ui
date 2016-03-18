@@ -112,7 +112,7 @@ public class ContextInjectionDisposeTest {
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		Object fieldValue = new Integer(123);
+		Object fieldValue = Integer.valueOf(123);
 		Object methodValue = "abc";
 		context.set(Integer.class.getName(), fieldValue);
 		context.set(String.class.getName(), methodValue);

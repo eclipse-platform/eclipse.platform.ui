@@ -113,7 +113,7 @@ public class ContextInjectionTest {
 	 */
 	@Test
 	public synchronized void testInjection() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
 		Float testFloat = new Float(12.3);
@@ -151,7 +151,7 @@ public class ContextInjectionTest {
 	 */
 	@Test
 	public synchronized void testInjectionFromParent() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
 		Float testFloat = new Float(12.3);
@@ -192,7 +192,7 @@ public class ContextInjectionTest {
 	 */
 	@Test
 	public synchronized void testInjectionAndInheritance() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Float testFloat = new Float(12.3);
 
@@ -275,7 +275,7 @@ public class ContextInjectionTest {
 	 */
 	@Test
 	public synchronized void testInjectionCloseOverride() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(12.3);
 		Boolean testBoolean = Boolean.TRUE;

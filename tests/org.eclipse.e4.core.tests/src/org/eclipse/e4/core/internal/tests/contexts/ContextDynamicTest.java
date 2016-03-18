@@ -50,7 +50,7 @@ public class ContextDynamicTest {
 	 */
 	@Test
 	public synchronized void testAddRemove() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
 		Float testFloat = new Float(12.3);
@@ -79,7 +79,7 @@ public class ContextDynamicTest {
 
 		// change value
 		Double testDouble2 = new Double(3.45);
-		Integer testInt2 = new Integer(123);
+		Integer testInt2 = Integer.valueOf(123);
 		context.set(Double.class.getName(), testDouble2);
 		context.set(Integer.class.getName(), testInt2);
 
@@ -113,7 +113,7 @@ public class ContextDynamicTest {
 	 */
 	@Test
 	public synchronized void testParentAddRemove() {
-		Integer testInt = new Integer(123);
+		Integer testInt = Integer.valueOf(123);
 		String testString = new String("abc");
 		Double testDouble = new Double(1.23);
 		Float testFloat = new Float(12.3);
@@ -143,7 +143,7 @@ public class ContextDynamicTest {
 
 		// change value
 		Double testDouble2 = new Double(3.45);
-		Integer testInt2 = new Integer(123);
+		Integer testInt2 = Integer.valueOf(123);
 		context.set(Double.class.getName(), testDouble2);
 		context.set(Integer.class.getName(), testInt2);
 

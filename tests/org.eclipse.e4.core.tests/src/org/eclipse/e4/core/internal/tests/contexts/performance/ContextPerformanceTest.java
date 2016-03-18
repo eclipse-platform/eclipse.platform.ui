@@ -54,7 +54,7 @@ public class ContextPerformanceTest extends TestCase {
 
 		// add some values to the contexts
 		for (int i = 0; i < 100; i++) {
-			context.set("Value-" + i, new Integer(i));
+			context.set("Value-" + i, Integer.valueOf(i));
 		}
 		// do some additional service lookups on non-existent keys
 		for (int i = 0; i < 1000; i++) {
