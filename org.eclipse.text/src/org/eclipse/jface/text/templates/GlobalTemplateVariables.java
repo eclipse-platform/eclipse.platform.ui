@@ -100,8 +100,8 @@ public class GlobalTemplateVariables {
 	}
 
 	/**
-	 * The word selection variable determines templates that work on a full
-	 * lines selection.
+	 * The word selection variable determines templates that work on selected words, but not on
+	 * selected lines.
 	 */
 	public static class WordSelection extends Selection {
 
