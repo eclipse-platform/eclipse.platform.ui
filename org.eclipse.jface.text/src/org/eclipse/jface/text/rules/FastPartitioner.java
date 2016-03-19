@@ -318,6 +318,9 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 					partitionStart= partition.getOffset() + partition.getLength();
 					contentType= IDocument.DEFAULT_CONTENT_TYPE;
 				}
+			} else {
+				partitionStart = 0;
+				reparseStart = 0;
 			}
 
 			fPositionUpdater.update(e);
