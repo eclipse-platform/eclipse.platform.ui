@@ -23,7 +23,7 @@ import org.osgi.service.log.LogEntry;
 public class Log implements ILog, SynchronousLogListener, LogFilter {
 	final Bundle bundle;
 	private final Logger logger;
-	private final Set<ILogListener> logListeners = new HashSet<ILogListener>(5);
+	private final Set<ILogListener> logListeners = new HashSet<>(5);
 
 	public Log(Bundle plugin, Logger logger) {
 		if (plugin == null)

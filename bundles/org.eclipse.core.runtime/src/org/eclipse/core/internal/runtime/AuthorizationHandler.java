@@ -169,7 +169,7 @@ public class AuthorizationHandler {
 			return;
 		try {
 			Method method = authClass.getMethod("addAuthorizationInfo", new Class[] {URL.class, String.class, String.class, Map.class}); //$NON-NLS-1$
-			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme, new HashMap<String,String>(info)});
+			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme, new HashMap<>(info)});
 		} catch (Exception e) {
 			log(e);
 		}
@@ -265,7 +265,7 @@ public class AuthorizationHandler {
 				Method method = authClass.getMethod("getAuthorizationInfo", new Class[] {URL.class, String.class, String.class}); //$NON-NLS-1$
 				@SuppressWarnings("unchecked")
 				Map<String,String> info = (Map<String,String>) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
-				return info == null ? null : new HashMap<String,String>(info);
+				return info == null ? null : new HashMap<>(info);
 			} catch (Exception e) {
 				log(e);
 			}

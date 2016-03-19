@@ -32,13 +32,13 @@ public class PerformanceStatsProcessor extends Job {
 	/**
 	 * Events that have occurred but have not yet been broadcast.
 	 */
-	private final ArrayList<PerformanceStats> changes = new ArrayList<PerformanceStats>();
+	private final ArrayList<PerformanceStats> changes = new ArrayList<>();
 
 	/**
 	 * Event failures that have occurred but have not yet been broadcast.
 	 * Maps (PerformanceStats -> Long).
 	 */
-	private final HashMap<PerformanceStats,Long> failures = new HashMap<PerformanceStats,Long>();
+	private final HashMap<PerformanceStats,Long> failures = new HashMap<>();
 
 	/**
 	 * Event listeners.

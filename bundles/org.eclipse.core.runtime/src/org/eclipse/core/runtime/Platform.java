@@ -1451,7 +1451,7 @@ public final class Platform {
 	 * @since 3.1
 	 */
 	public static Map<String,String> knownPlatformLineSeparators() {
-		Map<String,String> result = new LinkedHashMap<String,String>(5);
+		Map<String,String> result = new LinkedHashMap<>(5);
 		result.put(LINE_SEPARATOR_KEY_WINDOWS, LINE_SEPARATOR_VALUE_CRLF);
 		result.put(LINE_SEPARATOR_KEY_UNIX, LINE_SEPARATOR_VALUE_LF);
 		return result;

@@ -60,7 +60,7 @@ public final class InternalPlatform {
 	private static String keyringFile;
 
 	//XXX This is not synchronized
-	private static Map<Bundle,Log> logs = new HashMap<Bundle,Log>(5);
+	private static Map<Bundle,Log> logs = new HashMap<>(5);
 
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	private static String password = ""; //$NON-NLS-1$
@@ -92,7 +92,7 @@ public final class InternalPlatform {
 	private ServiceTracker<Location,Location> configurationLocation = null;
 	private BundleContext context;
 
-	private Map<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>> groupProviders = new HashMap<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>>(3);
+	private Map<IBundleGroupProvider,ServiceRegistration<IBundleGroupProvider>> groupProviders = new HashMap<>(3);
 	private ServiceTracker<Location,Location> installLocation = null;
 	private ServiceTracker<Location,Location> instanceLocation = null;
 	private ServiceTracker<Location,Location> userLocation = null;
@@ -660,7 +660,7 @@ public final class InternalPlatform {
 		} catch (IOException e) {
 			return null;
 		}
-		List<URL>result = new ArrayList<URL>(5);
+		List<URL>result = new ArrayList<>(5);
 		for (Enumeration<?> groups = ini.propertyNames(); groups.hasMoreElements();) {
 			String group = (String) groups.nextElement();
 			for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) { //$NON-NLS-1$
@@ -740,7 +740,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		instanceLocation = new ServiceTracker<Location,Location>(context, filter, null);
+		instanceLocation = new ServiceTracker<>(context, filter, null);
 		instanceLocation.open();
 
 		try {
@@ -748,7 +748,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		userLocation = new ServiceTracker<Location,Location>(context, filter, null);
+		userLocation = new ServiceTracker<>(context, filter, null);
 		userLocation.open();
 
 		try {
@@ -756,7 +756,7 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		configurationLocation = new ServiceTracker<Location,Location>(context, filter, null);
+		configurationLocation = new ServiceTracker<>(context, filter, null);
 		configurationLocation.open();
 
 		try {
@@ -764,26 +764,26 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this.  It should never happen as we have tested the above format.
 		}
-		installLocation = new ServiceTracker<Location,Location>(context, filter, null);
+		installLocation = new ServiceTracker<>(context, filter, null);
 		installLocation.open();
 
 		if (context != null) {
-			logTracker = new ServiceTracker<FrameworkLog,FrameworkLog>(context, FrameworkLog.class, null);
+			logTracker = new ServiceTracker<>(context, FrameworkLog.class, null);
 			logTracker.open();
 		}
 
 		if (context != null) {
-			bundleTracker = new ServiceTracker<PackageAdmin,PackageAdmin>(context, PackageAdmin.class, null);
+			bundleTracker = new ServiceTracker<>(context, PackageAdmin.class, null);
 			bundleTracker.open();
 		}
 
 		if (context != null) {
-			contentTracker = new ServiceTracker<IContentTypeManager,IContentTypeManager>(context, IContentTypeManager.class, null);
+			contentTracker = new ServiceTracker<>(context, IContentTypeManager.class, null);
 			contentTracker.open();
 		}
 
 		if (context != null) {
-			preferencesTracker = new ServiceTracker<IPreferencesService,IPreferencesService>(context, IPreferencesService.class, null);
+			preferencesTracker = new ServiceTracker<>(context, IPreferencesService.class, null);
 			preferencesTracker.open();
 		}
 
@@ -792,19 +792,19 @@ public final class InternalPlatform {
 		} catch (InvalidSyntaxException e) {
 			// ignore this, it should never happen
 		}
-		groupProviderTracker = new ServiceTracker<IBundleGroupProvider,IBundleGroupProvider>(context, filter, null);
+		groupProviderTracker = new ServiceTracker<>(context, filter, null);
 		groupProviderTracker.open();
 
-		logReaderTracker = new ServiceTracker<ExtendedLogReaderService,ExtendedLogReaderService>(context, ExtendedLogReaderService.class.getName(), null);
+		logReaderTracker = new ServiceTracker<>(context, ExtendedLogReaderService.class.getName(), null);
 		logReaderTracker.open();
 
-		extendedLogTracker = new ServiceTracker<ExtendedLogService,ExtendedLogService>(context, ExtendedLogService.class, null);
+		extendedLogTracker = new ServiceTracker<>(context, ExtendedLogService.class, null);
 		extendedLogTracker.open();
 
-		environmentTracker = new ServiceTracker<EnvironmentInfo,EnvironmentInfo>(context, EnvironmentInfo.class, null);
+		environmentTracker = new ServiceTracker<>(context, EnvironmentInfo.class, null);
 		environmentTracker.open();
 
-		debugTracker = new ServiceTracker<DebugOptions,DebugOptions>(context, DebugOptions.class, null);
+		debugTracker = new ServiceTracker<>(context, DebugOptions.class, null);
 		debugTracker.open();
 	}
 
