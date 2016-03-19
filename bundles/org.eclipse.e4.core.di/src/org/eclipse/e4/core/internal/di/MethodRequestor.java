@@ -26,7 +26,7 @@ public class MethodRequestor extends Requestor<Method> {
 	/**
 	 * The parameters annotation cache.  Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
 	 */
-	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<Method, Annotation[][]>();
+	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<>();
 
 	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);

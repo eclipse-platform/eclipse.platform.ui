@@ -59,7 +59,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 			if (primarySupplier != null)
 				objectRef = primarySupplier.makeReference(requestingObject);
 			else
-				objectRef = new WeakReference<Object>(requestingObject);
+				objectRef = new WeakReference<>(requestingObject);
 			objectHashcode = requestingObject.hashCode();
 		} else {
 			objectRef = null;

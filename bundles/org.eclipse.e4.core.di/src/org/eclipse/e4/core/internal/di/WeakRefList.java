@@ -21,7 +21,7 @@ public class WeakRefList {
 	private List<WeakReference<?>> userObjects;
 
 	public WeakRefList(int initialSize) {
-		userObjects = new ArrayList<WeakReference<?>>(initialSize);
+		userObjects = new ArrayList<>(initialSize);
 	}
 
 	public Object[] getSafeCopy() {
@@ -50,7 +50,7 @@ public class WeakRefList {
 	}
 
 	public void add(Object object) {
-		WeakReference<?> ref = new WeakReference<Object>(object);
+		WeakReference<?> ref = new WeakReference<>(object);
 		synchronized (userObjects) {
 			userObjects.add(ref);
 		}

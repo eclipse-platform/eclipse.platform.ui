@@ -68,6 +68,6 @@ abstract public class PrimaryObjectSupplier {
 	 * @return a new weak reference to the object
 	 */
 	public WeakReference<Object> makeReference(Object object) {
-		return new WeakReference<Object>(object);
+		return new WeakReference<>(object);
 	}
 }

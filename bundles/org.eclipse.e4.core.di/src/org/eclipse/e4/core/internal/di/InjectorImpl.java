@@ -96,19 +96,19 @@ public class InjectorImpl implements IInjector {
 	final private static Short DEFAULT_SHORT = new Short((short) 0);
 	final private static Byte DEFAULT_BYTE = new Byte((byte) 0);
 
-	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<PrimaryObjectSupplier, List<WeakReference<?>>>();
-	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
-	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
-	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
+	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<>();
+	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<>();
+	private HashMap<Class<?>, Object> singletonCache = new HashMap<>();
+	private Map<Class<?>, Set<Binding>> bindings = new HashMap<>();
 	private Map<Class<? extends Annotation>, Map<AnnotatedElement, Boolean>> annotationsPresent = new HashMap<>();
 
 	// Performance improvement:
-	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<Class<?>, Method[]>();
-	private Map<Class<?>, Field[]> fieldsCache = new WeakHashMap<Class<?>, Field[]>();
-	private Map<Class<?>, Constructor<?>[]> constructorsCache = new WeakHashMap<Class<?>, Constructor<?>[]>();
-	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<Class<?>, Map<Method, Boolean>>();
+	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<>();
+	private Map<Class<?>, Field[]> fieldsCache = new WeakHashMap<>();
+	private Map<Class<?>, Constructor<?>[]> constructorsCache = new WeakHashMap<>();
+	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<>();
 
-	private Set<Class<?>> classesBeingCreated = new HashSet<Class<?>>(5);
+	private Set<Class<?>> classesBeingCreated = new HashSet<>(5);
 
 	private PrimaryObjectSupplier defaultSupplier;
 
@@ -123,7 +123,7 @@ public class InjectorImpl implements IInjector {
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
-		ArrayList<Requestor<?>> requestors = new ArrayList<Requestor<?>>();
+		ArrayList<Requestor<?>> requestors = new ArrayList<>();
 		processClassHierarchy(object, objectSupplier, tempSupplier, true /* track */, true /* normal order */, requestors);
 
 		// if we are not establishing any links to the injected object (nothing to inject,
@@ -160,7 +160,7 @@ public class InjectorImpl implements IInjector {
 		synchronized (injectedObjects) {
 			List<WeakReference<?>> list;
 			if (!injectedObjects.containsKey(objectSupplier)) {
-				list = new ArrayList<WeakReference<?>>();
+				list = new ArrayList<>();
 				injectedObjects.put(objectSupplier, list);
 			} else
 				list = injectedObjects.get(objectSupplier);
@@ -168,7 +168,7 @@ public class InjectorImpl implements IInjector {
 				if (object == ref.get())
 					return; // we already have it
 			}
-			list.add(new WeakReference<Object>(object));
+			list.add(new WeakReference<>(object));
 		}
 	}
 
@@ -211,7 +211,7 @@ public class InjectorImpl implements IInjector {
 				return; // not injected at this time
 			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
 
-			ArrayList<Requestor<?>> requestors = new ArrayList<Requestor<?>>();
+			ArrayList<Requestor<?>> requestors = new ArrayList<>();
 			processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
 
 			for (Requestor<?> requestor : requestors) {
@@ -342,7 +342,7 @@ public class InjectorImpl implements IInjector {
 
 			Constructor<?>[] constructors = getDeclaredConstructors(clazz);
 			// Sort the constructors by descending number of constructor arguments
-			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<Constructor<?>>(constructors.length);
+			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<>(constructors.length);
 			for (Constructor<?> constructor : constructors)
 				sortedConstructors.add(constructor);
 			Collections.sort(sortedConstructors, new Comparator<Constructor<?>>() {
@@ -705,7 +705,7 @@ public class InjectorImpl implements IInjector {
 			if (isOverridden == null) {
 				isOverridden = isOverridden(method, classHierarchy);
 				if (methodMap == null) {
-					methodMap = new WeakHashMap<Method, Boolean>();
+					methodMap = new WeakHashMap<>();
 					isOverriddenCache.put(originalClass, methodMap);
 				}
 				methodMap.put(method, isOverridden);
@@ -866,7 +866,7 @@ public class InjectorImpl implements IInjector {
 				}
 				collection.add(internalBinding);
 			} else {
-				Set<Binding> collection = new HashSet<Binding>(1);
+				Set<Binding> collection = new HashSet<>(1);
 				collection.add(internalBinding);
 				bindings.put(clazz, collection);
 			}

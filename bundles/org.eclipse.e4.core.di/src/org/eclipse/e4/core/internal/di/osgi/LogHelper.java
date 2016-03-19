@@ -21,7 +21,7 @@ public class LogHelper {
 
 	private static ServiceTracker<FrameworkLog, FrameworkLog> openLogTracker() {
 		try {
-			ServiceTracker<FrameworkLog, FrameworkLog> st = new ServiceTracker<FrameworkLog, FrameworkLog>(
+			ServiceTracker<FrameworkLog, FrameworkLog> st = new ServiceTracker<>(
 					FrameworkUtil.getBundle(LogHelper.class).getBundleContext(), FrameworkLog.class, null);
 			st.open();
 			return st;

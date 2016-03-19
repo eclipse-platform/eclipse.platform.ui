@@ -33,7 +33,7 @@ import org.osgi.framework.ServiceReference;
  */
 public class ProviderHelper {
 
-	static protected Map<String, ExtendedObjectSupplier> extendedSuppliers = new HashMap<String, ExtendedObjectSupplier>();
+	static protected Map<String, ExtendedObjectSupplier> extendedSuppliers = new HashMap<>();
 
 	static {
 		// in case if any extended object supplier changes, clear the supplier cache

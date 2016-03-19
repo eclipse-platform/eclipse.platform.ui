@@ -92,7 +92,7 @@ public class ObjectDescriptor implements IObjectDescriptor {
 		if (allAnnotations.length == 0)
 			return null;
 		Annotation[] result;
-		List<Annotation> qualifiers = new ArrayList<Annotation>();
+		List<Annotation> qualifiers = new ArrayList<>();
 		for (Annotation annotation : allAnnotations) {
 			if (annotation.annotationType().isAnnotationPresent(Qualifier.class))
 				qualifiers.add(annotation);
