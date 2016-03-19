@@ -195,7 +195,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * A set of progress monitors we must track cancellation requests for.
 	 * @GuardedBy("itself")
 	 */
-	final List<Object[]> monitorStack = new ArrayList<Object[]>();
+	final List<Object[]> monitorStack = new ArrayList<>();
 
 	private final InternalWorker internalWorker;
 
@@ -285,8 +285,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			waiting = new JobQueue(false);
 			waitingThreadJobs = new JobQueue(false, false);
 			sleeping = new JobQueue(true);
-			running = new HashSet<InternalJob>(10);
-			yielding = new HashSet<InternalJob>(10);
+			running = new HashSet<>(10);
+			yielding = new HashSet<>(10);
 			pool = new WorkerPool(this);
 		}
 		pool.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
@@ -932,7 +932,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		synchronized (lock) {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			int states = suspended ? Job.RUNNING : Job.RUNNING | Job.WAITING | Job.SLEEPING;
-			jobs = Collections.synchronizedSet(new HashSet<InternalJob>(select(family, states)));
+			jobs = Collections.synchronizedSet(new HashSet<>(select(family, states)));
 			jobCount = jobs.size();
 			if (jobCount > 0) {
 				//if there is only one blocking job, use it in the blockage callback below
@@ -1290,7 +1290,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * family and are in one of the provided states.
 	 */
 	private List<InternalJob> select(Object family, int stateMask) {
-		List<InternalJob> members = new ArrayList<InternalJob>();
+		List<InternalJob> members = new ArrayList<>();
 		synchronized (lock) {
 			if ((stateMask & Job.RUNNING) != 0) {
 				for (Iterator<InternalJob> it = running.iterator(); it.hasNext();) {

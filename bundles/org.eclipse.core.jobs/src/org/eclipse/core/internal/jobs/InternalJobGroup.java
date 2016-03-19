@@ -46,9 +46,9 @@ public class InternalJobGroup {
 
 	private volatile int state = JobGroup.NONE;
 	private volatile MultiStatus result;
-	private final Set<InternalJob> runningJobs = new HashSet<InternalJob>();
-	private final Set<InternalJob> otherActiveJobs = new HashSet<InternalJob>();
-	private final List<IStatus> results = new ArrayList<IStatus>();
+	private final Set<InternalJob> runningJobs = new HashSet<>();
+	private final Set<InternalJob> otherActiveJobs = new HashSet<>();
+	private final List<IStatus> results = new ArrayList<>();
 	private boolean cancelingDueToError;
 	private int failedJobsCount;
 	private int canceledJobsCount;
@@ -240,7 +240,7 @@ public class InternalJobGroup {
 	}
 
 	final List<Job> internalGetActiveJobs() {
-		List<Job> activeJobs = new ArrayList<Job>(runningJobs.size() + otherActiveJobs.size());
+		List<Job> activeJobs = new ArrayList<>(runningJobs.size() + otherActiveJobs.size());
 		for (InternalJob job : runningJobs)
 			activeJobs.add((Job) job);
 		for (InternalJob job : otherActiveJobs)
@@ -276,7 +276,7 @@ public class InternalJobGroup {
 	}
 
 	final List<IStatus> getCompletedJobResults() {
-		return new ArrayList<IStatus>(results);
+		return new ArrayList<>(results);
 	}
 
 	protected boolean shouldCancel(IStatus lastCompletedJobResult, int numberOfFailedJobs, int numberOfCanceledJobs) {
@@ -284,7 +284,7 @@ public class InternalJobGroup {
 	}
 
 	protected MultiStatus computeGroupResult(List<IStatus> jobResults) {
-		List<IStatus> importantResults = new ArrayList<IStatus>();
+		List<IStatus> importantResults = new ArrayList<>();
 		for (IStatus jobResult : jobResults) {
 			if (jobResult.getSeverity() != IStatus.OK)
 				importantResults.add(jobResult);

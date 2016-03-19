@@ -181,7 +181,7 @@ public class ObjectMap implements Map {
 	 */
 	@Override
 	public Set keySet() {
-		Set<Object> result = new HashSet<Object>(size());
+		Set<Object> result = new HashSet<>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);
@@ -282,7 +282,7 @@ public class ObjectMap implements Map {
 	 * Creates a new hash map with the same contents as this map.
 	 */
 	private HashMap<Object, Object> toHashMap() {
-		HashMap<Object, Object> result = new HashMap<Object, Object>(size());
+		HashMap<Object, Object> result = new HashMap<>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.put(elements[i], elements[i + 1]);
@@ -300,7 +300,7 @@ public class ObjectMap implements Map {
 	 */
 	@Override
 	public Collection values() {
-		Set<Object> result = new HashSet<Object>(size());
+		Set<Object> result = new HashSet<>(size());
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);

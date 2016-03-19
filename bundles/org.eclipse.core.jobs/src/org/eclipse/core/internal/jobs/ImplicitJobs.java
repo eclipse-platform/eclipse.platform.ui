@@ -35,14 +35,14 @@ class ImplicitJobs {
 	 * Set of suspended scheduling rules.
 	 * @GuardedBy("this")
 	 */
-	private final Set<ISchedulingRule> suspendedRules = new HashSet<ISchedulingRule>(20);
+	private final Set<ISchedulingRule> suspendedRules = new HashSet<>(20);
 
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
 	 * @GuardedBy("this")
 	 */
-	private final Map<Thread, ThreadJob> threadJobs = new HashMap<Thread, ThreadJob>(20);
+	private final Map<Thread, ThreadJob> threadJobs = new HashMap<>(20);
 
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;

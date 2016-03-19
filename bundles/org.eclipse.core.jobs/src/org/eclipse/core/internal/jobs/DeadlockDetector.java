@@ -74,9 +74,9 @@ class DeadlockDetector {
 	//matrix of relationships between threads and locks
 	private int[][] graph = EMPTY_MATRIX;
 	//index is column in adjacency matrix for the lock
-	private final ArrayList<ISchedulingRule> locks = new ArrayList<ISchedulingRule>();
+	private final ArrayList<ISchedulingRule> locks = new ArrayList<>();
 	//index is row in adjacency matrix for the thread
-	private final ArrayList<Thread> lockThreads = new ArrayList<Thread>();
+	private final ArrayList<Thread> lockThreads = new ArrayList<>();
 	//whether the graph needs to be resized
 	private boolean resize = false;
 
@@ -185,7 +185,7 @@ class DeadlockDetector {
 	 * Returns all the locks owned by the given thread
 	 */
 	private Object[] getOwnedLocks(Thread current) {
-		ArrayList<ISchedulingRule> ownedLocks = new ArrayList<ISchedulingRule>(1);
+		ArrayList<ISchedulingRule> ownedLocks = new ArrayList<>(1);
 		int index = indexOf(current, false);
 
 		for (int j = 0; j < graph[index].length; j++) {
@@ -201,7 +201,7 @@ class DeadlockDetector {
 	 * Returns an array of threads that form the deadlock (usually 2).
 	 */
 	private Thread[] getThreadsInDeadlock(Thread cause) {
-		ArrayList<Thread> deadlockedThreads = new ArrayList<Thread>(2);
+		ArrayList<Thread> deadlockedThreads = new ArrayList<>(2);
 		/**
 		 * if the thread that caused deadlock doesn't own any locks, then it is not part
 		 * of the deadlock (it just caused it because of a rule it tried to acquire)
@@ -219,7 +219,7 @@ class DeadlockDetector {
 		if (rule == null)
 			return new Thread[0];
 		int lockIndex = indexOf(rule, false);
-		ArrayList<Thread> blocking = new ArrayList<Thread>(1);
+		ArrayList<Thread> blocking = new ArrayList<>(1);
 		for (int i = 0; i < graph.length; i++) {
 			if (graph[i][lockIndex] > NO_STATE)
 				blocking.add(lockThreads.get(i));
@@ -295,7 +295,7 @@ class DeadlockDetector {
 		 * or conflict with a lock the given lock will acquire implicitly
 		 * (locks are acquired implicitly when a conflicting lock is acquired)
 		 */
-		ArrayList<ISchedulingRule> conflicting = new ArrayList<ISchedulingRule>(1);
+		ArrayList<ISchedulingRule> conflicting = new ArrayList<>(1);
 		//only need two passes through all the locks to pick up all conflicting rules
 		int NUM_PASSES = 2;
 		conflicting.add(lock);
@@ -490,7 +490,7 @@ class DeadlockDetector {
 	 */
 	private ISchedulingRule[] realLocksForThread(Thread owner) {
 		int threadIndex = indexOf(owner, false);
-		ArrayList<ISchedulingRule> ownedLocks = new ArrayList<ISchedulingRule>(1);
+		ArrayList<ISchedulingRule> ownedLocks = new ArrayList<>(1);
 		for (int j = 0; j < graph[threadIndex].length; j++) {
 			if ((graph[threadIndex][j] > NO_STATE) && (locks.get(j) instanceof ILock))
 				ownedLocks.add(locks.get(j));

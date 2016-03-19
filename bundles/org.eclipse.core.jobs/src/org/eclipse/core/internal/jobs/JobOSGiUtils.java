@@ -59,7 +59,7 @@ class JobOSGiUtils {
 		}
 
 		// register debug options listener
-		Hashtable<String, String> properties = new Hashtable<String, String>(2);
+		Hashtable<String, String> properties = new Hashtable<>(2);
 		properties.put(DebugOptions.LISTENER_SYMBOLICNAME, JobManager.PI_JOBS);
 		debugRegistration = context.registerService(DebugOptionsListener.class, JobManager.getInstance(), properties);
 

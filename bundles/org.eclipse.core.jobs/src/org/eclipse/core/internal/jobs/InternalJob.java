@@ -83,7 +83,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * The list of job listeners. Never null.
 	 * @GuardedBy("itself")
 	 */
-	private final ListenerList<IJobChangeListener> listeners = new ListenerList<IJobChangeListener>(ListenerList.IDENTITY);
+	private final ListenerList<IJobChangeListener> listeners = new ListenerList<>(ListenerList.IDENTITY);
 
 	private volatile IProgressMonitor monitor;
 	private String name;

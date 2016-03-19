@@ -76,7 +76,7 @@ public class LockManager {
 	 * (a stack is needed because when a thread tries to re-acquire suspended locks,
 	 * it can cause deadlock, and some locks it owns can be suspended again)
 	 */
-	private HashMap<Thread, Stack<LockState[]>> suspendedLocks = new HashMap<Thread, Stack<LockState[]>>();
+	private HashMap<Thread, Stack<LockState[]>> suspendedLocks = new HashMap<>();
 
 	public LockManager() {
 		super();
@@ -167,7 +167,7 @@ public class LockManager {
 			synchronized (suspendedLocks) {
 				Stack<LockState[]> prevLocks = suspendedLocks.get(found.getCandidate());
 				if (prevLocks == null)
-					prevLocks = new Stack<LockState[]>();
+					prevLocks = new Stack<>();
 				prevLocks.push(suspended);
 				suspendedLocks.put(found.getCandidate(), prevLocks);
 			}

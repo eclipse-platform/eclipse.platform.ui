@@ -87,7 +87,7 @@ public class MultiRule implements ISchedulingRule {
 	 * array in which no rules are MultiRules.
 	 */
 	private static ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
-		ArrayList<ISchedulingRule> myRules = new ArrayList<ISchedulingRule>(nestedRules.length);
+		ArrayList<ISchedulingRule> myRules = new ArrayList<>(nestedRules.length);
 		for (int i = 0; i < nestedRules.length; i++) {
 			if (nestedRules[i] instanceof MultiRule) {
 				ISchedulingRule[] children = ((MultiRule) nestedRules[i]).getChildren();
