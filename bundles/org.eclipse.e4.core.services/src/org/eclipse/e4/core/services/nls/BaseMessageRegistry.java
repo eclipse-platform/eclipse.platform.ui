@@ -64,7 +64,7 @@ public class BaseMessageRegistry<M> {
 
 	private M messages;
 
-	private final Map<MessageConsumer, MessageSupplier> bindings = new HashMap<MessageConsumer, MessageSupplier>();
+	private final Map<MessageConsumer, MessageSupplier> bindings = new HashMap<>();
 
 	/**
 	 * Register a consumer and a function that is acting as the supplier of the translation value.

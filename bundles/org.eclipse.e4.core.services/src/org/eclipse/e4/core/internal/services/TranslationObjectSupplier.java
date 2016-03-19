@@ -57,7 +57,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	 * Map that contains all {@link IRequestor} that requested an instance of a messages class. Used
 	 * to inform all requestor if the instances have changed due to a locale change.
 	 */
-	private Map<Class<?>, Set<IRequestor>> listeners = new HashMap<Class<?>, Set<IRequestor>>();
+	private Map<Class<?>, Set<IRequestor>> listeners = new HashMap<>();
 
 	@Override
 	public Object get(IObjectDescriptor descriptor, IRequestor requestor, boolean track,
@@ -123,7 +123,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 	private void addListener(Class<?> descriptorsClass, IRequestor requestor) {
 		Set<IRequestor> registered = this.listeners.get(descriptorsClass);
 		if (registered == null) {
-			registered = new HashSet<IRequestor>();
+			registered = new HashSet<>();
 			this.listeners.put(descriptorsClass, registered);
 		}
 		registered.add(requestor);

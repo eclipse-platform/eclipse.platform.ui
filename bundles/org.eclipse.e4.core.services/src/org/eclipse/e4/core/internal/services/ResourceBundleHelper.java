@@ -65,7 +65,7 @@ public class ResourceBundleHelper {
 
 	private static ServiceTracker<LogService, LogService> openLogTracker() {
 		try {
-			ServiceTracker<LogService, LogService> st = new ServiceTracker<LogService, LogService>(
+			ServiceTracker<LogService, LogService> st = new ServiceTracker<>(
 					FrameworkUtil.getBundle(ResourceBundleHelper.class).getBundleContext(), LogService.class, null);
 			st.open();
 			return st;
@@ -605,7 +605,7 @@ public class ResourceBundleHelper {
 		return new Locale(language, country, variant);
 	}
 
-	private static HashSet<String> invalidLocalesLogged = new HashSet<String>();
+	private static HashSet<String> invalidLocalesLogged = new HashSet<>();
 
 	static void logInvalidFormat(String str, LogService logService) {
 		if (logService != null && !invalidLocalesLogged.contains(str)) {
