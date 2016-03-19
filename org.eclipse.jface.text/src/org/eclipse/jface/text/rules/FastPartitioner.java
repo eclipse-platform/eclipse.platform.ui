@@ -306,8 +306,8 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 				if (partition.includes(reparseStart)) {
 					partitionStart= partition.getOffset();
 					contentType= partition.getType();
-					if (e.getOffset() == partition.getOffset() + partition.getLength())
-						reparseStart= partitionStart;
+					// Invalid optimization we need to reparse the complete partition to check if it is still valid (see bug 382953)
+					reparseStart= partitionStart;
 					-- first;
 				} else if (reparseStart == e.getOffset() && reparseStart == partition.getOffset() + partition.getLength()) {
 					partitionStart= partition.getOffset();
