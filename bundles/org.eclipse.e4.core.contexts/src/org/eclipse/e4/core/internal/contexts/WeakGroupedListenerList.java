@@ -56,12 +56,12 @@ public class WeakGroupedListenerList {
 		}
 	}
 
-	private Map<String, HashSet<WeakComputationReference>> listeners = new HashMap<String, HashSet<WeakComputationReference>>(10, 0.8f);
+	private Map<String, HashSet<WeakComputationReference>> listeners = new HashMap<>(10, 0.8f);
 
 	synchronized public void add(String groupName, Computation computation) {
 		HashSet<WeakComputationReference> nameListeners = listeners.get(groupName);
 		if (nameListeners == null) {
-			nameListeners = new HashSet<WeakComputationReference>(30, 0.75f);
+			nameListeners = new HashSet<>(30, 0.75f);
 			nameListeners.add(new WeakComputationReference(computation));
 			listeners.put(groupName, nameListeners);
 		}
@@ -78,7 +78,7 @@ public class WeakGroupedListenerList {
 
 	synchronized public Set<String> getNames() {
 		Set<String> tmp = listeners.keySet(); // clone internal name list
-		Set<String> usedNames = new HashSet<String>(tmp.size());
+		Set<String> usedNames = new HashSet<>(tmp.size());
 		usedNames.addAll(tmp);
 		return usedNames;
 	}
@@ -89,7 +89,7 @@ public class WeakGroupedListenerList {
 
 	synchronized public Set<Computation> getListeners() {
 		Collection<HashSet<WeakComputationReference>> collection = listeners.values();
-		Set<Computation> result = new HashSet<Computation>();
+		Set<Computation> result = new HashSet<>();
 		for (HashSet<WeakComputationReference> set : collection) {
 			for (Iterator<WeakComputationReference> i = set.iterator(); i.hasNext();) {
 				WeakComputationReference ref = i.next();
@@ -107,7 +107,7 @@ public class WeakGroupedListenerList {
 		HashSet<WeakComputationReference> tmp = listeners.get(groupName);
 		if (tmp == null)
 			return null;
-		Set<Computation> result = new HashSet<Computation>(tmp.size());
+		Set<Computation> result = new HashSet<>(tmp.size());
 
 		for (Iterator<WeakComputationReference> i = tmp.iterator(); i.hasNext();) {
 			WeakComputationReference ref = i.next();

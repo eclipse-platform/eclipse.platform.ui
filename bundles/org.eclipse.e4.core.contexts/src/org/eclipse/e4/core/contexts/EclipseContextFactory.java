@@ -41,7 +41,7 @@ public final class EclipseContextFactory {
 		return result;
 	}
 
-	private static WeakHashMap<BundleContext, IEclipseContext> serviceContexts = new WeakHashMap<BundleContext, IEclipseContext>();
+	private static WeakHashMap<BundleContext, IEclipseContext> serviceContexts = new WeakHashMap<>();
 
 	/**
 	 * Returns a context that can be used to lookup OSGi services. A client must never dispose the
