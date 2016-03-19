@@ -122,7 +122,7 @@ public class EvaluationContext implements IEvaluationContext {
 		Assert.isNotNull(name);
 		Assert.isNotNull(value);
 		if (fVariables == null)
-			fVariables= new HashMap<String, Object>();
+			fVariables= new HashMap<>();
 		fVariables.put(name, value);
 	}
 

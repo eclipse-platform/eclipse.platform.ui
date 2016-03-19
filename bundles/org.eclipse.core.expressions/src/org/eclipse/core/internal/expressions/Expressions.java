@@ -75,7 +75,7 @@ public class Expressions {
 				return ((Boolean)obj).booleanValue();
 		}
 		if (nameMap == null) {
-			nameMap = new HashMap<String, Boolean>();
+			nameMap = new HashMap<>();
 			knownClassesMap.put(clazz, nameMap);
 		}
 		boolean isSubtype = uncachedIsSubtype(clazz, type);
@@ -111,7 +111,7 @@ public class Expressions {
 			synchronized (Expressions.class) {
 				Set<String> classNames= cache.get(classLoader);
 				if (classNames == null) {
-					classNames= new HashSet<String>();
+					classNames= new HashSet<>();
 					cache.put(classLoader, classNames);
 				}
 				classNames.add(className);

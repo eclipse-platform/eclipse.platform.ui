@@ -35,7 +35,7 @@ public class DefinitionRegistry implements IRegistryChangeListener {
 
 	private Map<String, Expression> getCache() {
 		if (cache == null) {
-			cache= new HashMap<String, Expression>();
+			cache= new HashMap<>();
 		}
 		return cache;
 	}

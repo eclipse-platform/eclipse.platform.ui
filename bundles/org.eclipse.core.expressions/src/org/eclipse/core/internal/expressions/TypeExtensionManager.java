@@ -171,7 +171,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 				String typeAttr= config.getAttribute(TYPE);
 				List<IConfigurationElement> typeConfigs= fConfigurationElementMap.get(typeAttr);
 				if (typeConfigs == null) {
-					typeConfigs= new ArrayList<IConfigurationElement>();
+					typeConfigs= new ArrayList<>();
 					fConfigurationElementMap.put(typeAttr, typeConfigs);
 				}
 				typeConfigs.add(config);
