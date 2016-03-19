@@ -28,8 +28,8 @@ public final class ContentTypeCatalog {
 	/**
 	 * All fields are guarded by lock on "this"
 	 */
-	private final Map<ContentType, ContentType[]> allChildren = new HashMap<ContentType, ContentType[]>();
-	private final Map<String, IContentType> contentTypes = new HashMap<String, IContentType>();
+	private final Map<ContentType, ContentType[]> allChildren = new HashMap<>();
+	private final Map<String, IContentType> contentTypes = new HashMap<>();
 	private final Map<String, Set<ContentType>> fileExtensions = new HashMap<>();
 	private final Map<String, Set<ContentType>> fileNames = new HashMap<>();
 	private int generation;
@@ -185,7 +185,7 @@ public final class ContentTypeCatalog {
 		String mappingKey = FileSpec.getMappingKeyFor(text);
 		Set<ContentType> existing = fileSpecMap.get(mappingKey);
 		if (existing == null)
-			fileSpecMap.put(mappingKey, existing = new HashSet<ContentType>());
+			fileSpecMap.put(mappingKey, existing = new HashSet<>());
 		existing.add(contentType);
 	}
 
@@ -324,7 +324,7 @@ public final class ContentTypeCatalog {
 	}
 
 	synchronized public IContentType[] getAllContentTypes() {
-		List<ContentType> result = new ArrayList<ContentType>(contentTypes.size());
+		List<ContentType> result = new ArrayList<>(contentTypes.size());
 		for (Iterator<IContentType> i = contentTypes.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
 			if (type.isValid() && !type.isAlias())
@@ -337,7 +337,7 @@ public final class ContentTypeCatalog {
 		ContentType[] children = allChildren.get(parent);
 		if (children != null)
 			return children;
-		List<ContentType> result = new ArrayList<ContentType>(5);
+		List<ContentType> result = new ArrayList<>(5);
 		for (Iterator<IContentType> i = this.contentTypes.values().iterator(); i.hasNext();) {
 			ContentType next = (ContentType) i.next();
 			if (next.getBaseType() == parent)
@@ -407,8 +407,8 @@ public final class ContentTypeCatalog {
 	}
 
 	private IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator<IContentType> validPolicy, Comparator<IContentType> indeterminatePolicy) throws IOException {
-		Map<String, Object> properties = new HashMap<String, Object>();
-		final List<ContentType> appropriate = new ArrayList<ContentType>(5);
+		Map<String, Object> properties = new HashMap<>();
+		final List<ContentType> appropriate = new ArrayList<>(5);
 		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer, properties);
 		final int appropriateFullName = appropriate.size();
 		final int validExtension = collectMatchingByContents(validFullName, subset[1], appropriate, buffer, properties) - validFullName;
@@ -582,7 +582,7 @@ public final class ContentTypeCatalog {
 	private Set<ContentType> selectMatchingByName(final IScopeContext context, Collection<ContentType> source, final Collection<ContentType> existing, final String fileSpecText, final int fileSpecType) {
 		if (source == null || source.isEmpty())
 			return Collections.EMPTY_SET;
-		final Set<ContentType> destination = new HashSet<ContentType>(5);
+		final Set<ContentType> destination = new HashSet<>(5);
 		// process all content types in the given collection
 		for (Iterator<ContentType> i = source.iterator(); i.hasNext();) {
 			final ContentType root = i.next();

@@ -146,7 +146,7 @@ public class ContentTypeBuilder {
 		IConfigurationElement[] propertyCEs = null;
 		Map<QualifiedName, String> defaultProperties = null;
 		if ((propertyCEs = contentTypeCE.getChildren("property")).length > 0) { //$NON-NLS-1$
-			defaultProperties = new HashMap<QualifiedName, String>();
+			defaultProperties = new HashMap<>();
 			for (int i = 0; i < propertyCEs.length; i++) {
 				String defaultValue = propertyCEs[i].getAttributeAsIs("default"); //$NON-NLS-1$
 				if (defaultValue == null)

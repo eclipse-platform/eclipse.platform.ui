@@ -95,7 +95,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	public Collection<ContentType> getDirectlyAssociated(final ContentTypeCatalog catalog, final String fileSpec, final int typeMask) {
 		//TODO: make sure we include built-in associations as well
 		final IEclipsePreferences root = context.getNode(ContentTypeManager.CONTENT_TYPE_PREF_NODE);
-		final Set<ContentType> result = new HashSet<ContentType>(3);
+		final Set<ContentType> result = new HashSet<>(3);
 		try {
 			root.accept(new IPreferenceNodeVisitor() {
 				@Override

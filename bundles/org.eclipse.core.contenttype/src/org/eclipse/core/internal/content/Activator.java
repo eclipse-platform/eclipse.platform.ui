@@ -45,7 +45,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 		// ContentTypeManager should be started first
 		ContentTypeManager.startup();
 		contentManagerService = bundleContext.registerService(IContentTypeManager.class, ContentTypeManager.getInstance(), new Hashtable<String, Object>());
-		registryTracker = new ServiceTracker<IExtensionRegistry, IExtensionRegistry>(context, IExtensionRegistry.class, this);
+		registryTracker = new ServiceTracker<>(context, IExtensionRegistry.class, this);
 		registryTracker.open();
 	}
 
@@ -77,7 +77,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	 */
 	public SAXParserFactory getFactory() {
 		if (parserTracker == null) {
-			parserTracker = new ServiceTracker<SAXParserFactory, Object>(bundleContext, SAXParserFactory.class, null);
+			parserTracker = new ServiceTracker<>(bundleContext, SAXParserFactory.class, null);
 			parserTracker.open();
 		}
 		SAXParserFactory theFactory = (SAXParserFactory) parserTracker.getService();
@@ -92,7 +92,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	 */
 	public boolean getBooleanDebugOption(String option, boolean defaultValue) {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker<DebugOptions, Object>(bundleContext, DebugOptions.class, null);
+			debugTracker = new ServiceTracker<>(bundleContext, DebugOptions.class, null);
 			debugTracker.open();
 		}
 		DebugOptions options = (DebugOptions) debugTracker.getService();

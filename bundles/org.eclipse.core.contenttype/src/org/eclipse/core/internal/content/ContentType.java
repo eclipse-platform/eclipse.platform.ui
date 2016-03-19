@@ -44,7 +44,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 	final static byte ASSOCIATED_BY_EXTENSION = 2;
 	final static byte ASSOCIATED_BY_NAME = 1;
 	private static final String DESCRIBER_ELEMENT = "describer"; //$NON-NLS-1$
-	private static ArrayList<FileSpec> EMPTY_LIST = new ArrayList<FileSpec>(0);
+	private static ArrayList<FileSpec> EMPTY_LIST = new ArrayList<>(0);
 	private static final Object INHERITED_DESCRIBER = "INHERITED DESCRIBER"; //$NON-NLS-1$
 
 	private static final Object NO_DESCRIBER = "NO DESCRIBER"; //$NON-NLS-1$
@@ -90,7 +90,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		contentType.priority = priority;
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
 			contentType.builtInAssociations = true;
-			contentType.fileSpecs = new ArrayList<FileSpec>(fileExtensions.length + fileNames.length);
+			contentType.fileSpecs = new ArrayList<>(fileExtensions.length + fileNames.length);
 			for (int i = 0; i < fileNames.length; i++)
 				contentType.internalAddFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED);
 			for (int i = 0; i < fileExtensions.length; i++)
@@ -306,7 +306,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			return new String[0];
 		// invert the last two bits so it is easier to compare
 		typeMask ^= (IGNORE_PRE_DEFINED | IGNORE_USER_DEFINED);
-		List<String> result = new ArrayList<String>(fileSpecs.size());
+		List<String> result = new ArrayList<>(fileSpecs.size());
 		for (Iterator<FileSpec> i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = i.next();
 			if ((spec.getType() & typeMask) == spec.getType())
@@ -396,7 +396,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		if ((typeMask & ContentType.SPEC_USER_DEFINED) == 0) {
 			// plug-in defined - all that is left to be done is to add it to the list
 			if (fileSpecs.isEmpty())
-				fileSpecs = new ArrayList<FileSpec>(3);
+				fileSpecs = new ArrayList<>(3);
 			fileSpecs.add(newFileSpec);
 			return true;
 		}

@@ -242,12 +242,12 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 				pname = params[i].getAttribute("name"); //$NON-NLS-1$
 				if (ELEMENT_TO_FIND.equals(pname)) {
 					if (elements == null)
-						elements = new LinkedList<QualifiedElement>();
+						elements = new LinkedList<>();
 					elements.add(new QualifiedElement(params[i].getAttribute("value"))); //$NON-NLS-1$
 				}
 			}
 
-			List<QualifiedElement> qualifiedElements = new ArrayList<QualifiedElement>();
+			List<QualifiedElement> qualifiedElements = new ArrayList<>();
 
 			// create list of qualified elements
 			if (elements != null) {

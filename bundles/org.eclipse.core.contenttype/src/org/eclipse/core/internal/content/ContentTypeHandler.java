@@ -60,7 +60,7 @@ public class ContentTypeHandler implements IContentType {
 
 	ContentTypeHandler(ContentType target, int generation) {
 		this.id = target.getId();
-		this.targetRef = new SoftReference<ContentType>(target);
+		this.targetRef = new SoftReference<>(target);
 		this.generation = generation;
 	}
 
@@ -152,7 +152,7 @@ public class ContentTypeHandler implements IContentType {
 		ContentTypeCatalog catalog = ContentTypeManager.getInstance().getCatalog();
 		if (target == null || catalog.getGeneration() != generation) {
 			target = catalog.getContentType(id);
-			targetRef = new SoftReference<ContentType>(target);
+			targetRef = new SoftReference<>(target);
 			generation = catalog.getGeneration();
 		}
 		return target == null ? null : target.getAliasTarget(true);
