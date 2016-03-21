@@ -88,7 +88,7 @@ public class GlobalTemplateVariables {
 
 		private void resolveWithParams(TemplateVariable variable, TemplateContext context, List<String> params) {
 			String selection= context.getVariable(SELECTION);
-			if (selection != null) {
+			if (selection != null && !selection.isEmpty()) {
 				variable.setValue(selection);
 			} else {
 				String defaultValue= params.get(0);
