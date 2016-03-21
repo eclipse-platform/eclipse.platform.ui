@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google) - [464838] ModalContext.run method should call done() on the progress monitor passed to the constructor
  *******************************************************************************/
 package org.eclipse.jface.operation;
 
@@ -126,6 +127,7 @@ public class ModalContext {
 			} catch (Error e) {
 				throwable = e;
 			} finally {
+				progressMonitor.done();
 				// Notify the operation of change of thread of control.
 				if (runnable instanceof IThreadListener) {
 					Throwable exception = invokeThreadListener(((IThreadListener) runnable), callingThread);
