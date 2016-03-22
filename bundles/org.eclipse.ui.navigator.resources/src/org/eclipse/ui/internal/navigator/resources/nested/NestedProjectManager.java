@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Red Hat Inc., and others.
+ * Copyright (c) 2014, 2016 Red Hat Inc., and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,10 @@
 package org.eclipse.ui.internal.navigator.resources.nested;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
@@ -32,8 +35,18 @@ public class NestedProjectManager {
 
 	private static NestedProjectManager INSTANCE = new NestedProjectManager();
 
-	private Map<IPath, IProject> locationsToProjects = Collections
-			.synchronizedMap(new TreeMap<IPath, IProject>(new PathComparator()));
+	/**
+	 * This structure sorts project by location, so we can assume that:
+	 * <ul>
+	 * <li>If a project is nested under another, then the parent project is the
+	 * previous item in the map. So getting the parent is just about checking
+	 * the previous project for parency.</li>
+	 * <li>the children project of a project (with any depth not only direct
+	 * ones) are the immediately following items in the map.</li>
+	 * </ul>
+	 */
+	private SortedMap<IPath, IProject> locationsToProjects = Collections
+			.synchronizedSortedMap(new TreeMap<IPath, IProject>(new PathComparator()));
 
 	private int knownProjectsCount;
 
@@ -155,4 +168,47 @@ public class NestedProjectManager {
 		return null;
 	}
 
+	/**
+	 * @param container
+	 *            a container to ask for nested projects
+	 * @return the direct children projects for given container
+	 */
+	public IProject[] getDirectChildrenProjects(IContainer container) {
+		Set<IProject> res = new HashSet<>();
+		IPath containerLocation = container.getLocation();
+		for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(container.getProject().getLocation())
+				.entrySet()) {
+			if (entry.getValue().equals(container.getProject())) {
+				// ignore current project
+			} else if (containerLocation.isPrefixOf(entry.getKey())) {
+				if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
+					res.add(entry.getValue());
+				}
+			} else { // moved to another branch, not worth continuing
+				break;
+			}
+		}
+		return res.toArray(new IProject[res.size()]);
+	}
+
+	/**
+	 * @param container
+	 * @return whether the container has some projects as direct children
+	 */
+	public boolean hasDirectChildrenProjects(IContainer container) {
+		IPath containerLocation = container.getLocation();
+		for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(container.getProject().getLocation())
+				.entrySet()) {
+			if (entry.getValue().equals(container.getProject())) {
+				// ignore current project
+			} else if (containerLocation.isPrefixOf(entry.getKey())) {
+				if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
+					return true;
+				}
+			} else { // moved to another branch, not worth continuing
+				break;
+			}
+		}
+		return false;
+	}
 }
