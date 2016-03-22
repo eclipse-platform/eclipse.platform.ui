@@ -24,8 +24,6 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-  	<!-- Test not ready for Surefire -->
-  	<skipTests>true</skipTests>
     <testSuite>${project.artifactId}</testSuite>
     <testClass>org.eclipse.ui.tests.navigator.NavigatorTestSuite</testClass>
   </properties>
