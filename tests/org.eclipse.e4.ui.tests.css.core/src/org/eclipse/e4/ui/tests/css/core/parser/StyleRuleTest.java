@@ -146,4 +146,14 @@ public class StyleRuleTest {
 		assertEquals(32.0f, colorValue.getBlue().getFloatValue(
 				CSSPrimitiveValue.CSS_NUMBER), 0f);
 	}
+
+	@Test
+	public void testGetCSSText() throws Exception {
+		String css = "Label, * > Label { background-color: rgb(255, 2, 32); }";
+		CSSStyleSheet styleSheet = ParserTestUtil.parseCss(css);
+		CSSRuleList rules = styleSheet.getCssRules();
+		CSSRule rule = rules.item(0);
+		assertEquals(css, rule.getCssText());
+	}
+
 }
