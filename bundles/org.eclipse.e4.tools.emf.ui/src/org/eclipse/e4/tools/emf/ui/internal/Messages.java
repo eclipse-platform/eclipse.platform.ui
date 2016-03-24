@@ -483,6 +483,7 @@ public class Messages {
 	public String WindowEditor_Windows;
 	public String WindowEditor_Controls;
 	public String WindowEditor_SharedElements;
+	public String WindowEditor_Snippets;
 
 	public String VApplicationAddons_AddAddon;
 	public String VApplicationAddons_TreeLabel;

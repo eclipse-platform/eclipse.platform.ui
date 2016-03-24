@@ -82,6 +82,7 @@ public class WindowEditor extends AbstractComponentEditor {
 	private final IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties
 			.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private final IListProperty SHARED_ELEMENTS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
+	private final IListProperty SNIPPETS = EMFProperties.list(UiPackageImpl.Literals.SNIPPET_CONTAINER__SNIPPETS);
 	private final IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 
 	private Action addMainMenu;
@@ -402,6 +403,14 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element,
 				Messages.WindowEditor_SharedElements) {
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SNIPPETS, SNIPPETS, element,
+				Messages.WindowEditor_Snippets) {
 			@Override
 			protected boolean accepted(Object o) {
 				return true;

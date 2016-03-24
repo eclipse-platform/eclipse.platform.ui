@@ -272,6 +272,8 @@ public class ModelEditor implements IGotoObject {
 	public static final String VIRTUAL_TRIM_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_TRIM_CONTRIBUTIONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName()
 			+ ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_SNIPPETS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SNIPPETS"; //$NON-NLS-1$
+
 	public static final String VIRTUAL_MODEL_FRAGEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_FRAGEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_IMPORTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_IMPORTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_CATEGORIES = ModelEditor.class.getName() + ".VIRTUAL_CATEGORIES"; //$NON-NLS-1$
@@ -1209,6 +1211,7 @@ public class ModelEditor implements IGotoObject {
 				ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS,
 				ContextInjectionFactory.make(VWindowControlEditor.class, context));
+		registerVirtualEditor(VIRTUAL_WINDOW_SNIPPETS, ContextInjectionFactory.make(VSnippetsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, ContextInjectionFactory.make(VPartDescriptor.class, context));
 		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU,
 				ContextInjectionFactory.make(VPartDescriptorMenuEditor.class, context));
