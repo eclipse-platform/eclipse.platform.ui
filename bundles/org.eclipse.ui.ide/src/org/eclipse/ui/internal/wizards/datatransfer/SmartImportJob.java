@@ -451,7 +451,7 @@ public class SmartImportJob extends Job {
 					listener.projectConfigured(project, configurator);
 				}
 			}
-			excludedPaths.addAll(toPathSet(configurator.getDirectoriesToIgnore(project, monitor)));
+			excludedPaths.addAll(toPathSet(configurator.getFoldersToIgnore(project, monitor)));
 			monitor.worked(1);
 		}
 
@@ -494,7 +494,7 @@ public class SmartImportJob extends Job {
 					if (this.listener != null) {
 						listener.projectConfigured(project, additionalConfigurator);
 					}
-					excludedPaths.addAll(toPathSet(additionalConfigurator.getDirectoriesToIgnore(project, monitor)));
+					excludedPaths.addAll(toPathSet(additionalConfigurator.getFoldersToIgnore(project, monitor)));
 				}
 				monitor.worked(1);
 			}
@@ -630,18 +630,23 @@ public class SmartImportJob extends Job {
 			if (this.configurationManager == null) {
 				this.configurationManager = new ProjectConfiguratorExtensionManager();
 			}
-			for (ProjectConfigurator configurator : configurationManager
-					.getAllActiveProjectConfigurators(this.rootDirectory)) {
-				Set<File> supportedFiles = configurator.findConfigurableLocations(SmartImportJob.this.rootDirectory,
+			List<ProjectConfigurator> activeConfigurators = configurationManager
+					.getAllActiveProjectConfigurators(this.rootDirectory);
+			for (ProjectConfigurator configurator : activeConfigurators) {
+				Set<File> supportedDirectories = configurator.findConfigurableLocations(
+						SmartImportJob.this.rootDirectory,
 						monitor);
-				if (supportedFiles != null) {
-					for (File supportedFile : supportedFiles) {
+				if (supportedDirectories != null) {
+					for (File supportedFile : supportedDirectories) {
 						if (!res.containsKey(supportedFile)) {
 							res.put(supportedFile, new ArrayList<ProjectConfigurator>());
 						}
 						res.get(supportedFile).add(configurator);
 					}
 				}
+			}
+			for (ProjectConfigurator configurator : activeConfigurators) {
+				configurator.removeDirtyDirectories(res);
 			}
 			this.importProposals = res;
 		}

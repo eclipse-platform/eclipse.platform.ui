@@ -57,7 +57,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  class defining the import startegy contribution. This class is responsible of 3 things:
+                  class defining the import strategy contribution. This class is responsible for 3 things:
                   &lt;ul&gt;
                     &lt;li&gt;Detecting and deciding whether a given folder is meant to be an Eclipse project in workspace, generally depending on the existence of particular files, pattern or text&lt;/li&gt;
                     &lt;li&gt;Whether it applies on an existing Eclipse project, generally depending on the existence of particular files, pattern or text&lt;/li&gt;
@@ -151,7 +151,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         0.1.0
+         3.12
       </documentation>
    </annotation>
 
@@ -160,7 +160,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         See in same plugin, contribution of the EclipseProjectConfiguror.
+         See in same plugin, contribution of the EclipseProjectConfigurator.
       </documentation>
    </annotation>
 
@@ -169,7 +169,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         API is currently instable. Feature is incubation.
+         API is currently instable. Feature is in incubation.
       </documentation>
    </annotation>
 
