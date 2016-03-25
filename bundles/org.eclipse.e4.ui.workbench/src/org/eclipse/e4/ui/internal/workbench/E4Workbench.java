@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import org.eclipse.e4.core.commands.ExpressionContext;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -128,6 +129,8 @@ public class E4Workbench implements IWorkbench {
 
 		osgiRegistration = Activator.getDefault().getContext()
 				.registerService(IWorkbench.class.getName(), this, properties);
+
+		ContextInjectionFactory.make(PartOnTopManager.class, appContext);
 	}
 
 	@Override
