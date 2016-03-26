@@ -156,15 +156,20 @@ public class ImageHyperlink extends Hyperlink {
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		checkWidget();
+		Rectangle trim = computeTrim(0, 0, 0, 0);
 		Point isize = computeMaxImageSize();
-		int spacing = isize.x>0?textSpacing:0;
+		int spacing = isize.x > 0 ? textSpacing : 0;
 		Point textSize = null;
 		if (getText() != null) {
 			int innerWHint = wHint;
 			if (wHint != SWT.DEFAULT) {
-				innerWHint = wHint - 2 * marginWidth - isize.x - spacing;
+				innerWHint = wHint - 2 * marginWidth - isize.x - spacing - trim.width;
 			}
-			textSize = super.computeSize(innerWHint, hHint, changed);
+			int innerHHint = SWT.DEFAULT;
+			if (hHint != SWT.DEFAULT) {
+				innerHHint = hHint - trim.height;
+			}
+			textSize = super.computeSize(innerWHint, innerHHint, changed);
 		}
 		int width = isize.x;
 		int height = isize.y;
@@ -175,7 +180,13 @@ public class ImageHyperlink extends Hyperlink {
 		}
 		width += 2 * marginWidth;
 		height += 2 * marginHeight;
-		return new Point(width, height);
+
+		if (wHint != SWT.DEFAULT)
+			width = wHint;
+		if (hHint != SWT.DEFAULT)
+			height = hHint;
+
+		return new Point(width + trim.width, height + trim.height);
 	}
 
 	@Override

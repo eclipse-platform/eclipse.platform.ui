@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.forms;
 import org.eclipse.ui.tests.forms.layout.AllLayoutTests;
 import org.eclipse.ui.tests.forms.util.AllUtilityTests;
 import org.eclipse.ui.tests.forms.widgets.AllWidgetsTests;
-import org.eclipse.ui.tests.forms.widgets.SizeCacheTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -27,8 +26,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	AllLayoutTests.class,
 	AllUtilityTests.class,
-	AllWidgetsTests.class,
-	SizeCacheTest.class
+	AllWidgetsTests.class
 })
 public class AllFormsTests {
 

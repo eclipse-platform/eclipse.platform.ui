@@ -16,102 +16,123 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestTableWrapLayout {
 
-	private final String A1 = "A";
-	private final String A10 = "A A A A A A A A A A";
-	private final String A20 = A10 + " " + A10;
-	private final String A40 = A20 + " " + A20;
-	private final String A80 = A40 + " " + A40;
+	private Display display;
+	private Shell shell;
+	private Composite inner;
+	private TableWrapLayout layout;
 
 	// Returns the width + left
-	private int rightEdge(Label lab) {
+	private int rightEdge(Control lab) {
 		Rectangle r = lab.getBounds();
 		return r.x + r.width;
+	}
+
+	@Before
+	public void setUp() {
+		display = PlatformUI.getWorkbench().getDisplay();
+		shell = new Shell(display);
+		shell.setLayout(new FillLayout());
+		inner = new Composite(shell, SWT.NONE);
+		inner.setSize(100, 300);
+		layout = new TableWrapLayout();
+		layout.leftMargin = 0;
+		layout.rightMargin = 0;
+		layout.topMargin = 0;
+		layout.bottomMargin = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		inner.setLayout(layout);
+	}
+
+	@After
+	public void tearDown() {
+		shell.dispose();
+	}
+
+	/**
+	 * Test a simple two-cell layout.
+	 */
+	@Test
+	public void testTableWrapLayoutNonWrappingLabels() {
+		Control l1 = ControlFactory.create(inner, 10, 100, 15);
+		Control l2 = ControlFactory.create(inner, 80, 800, 15);
+
+		Point preferredSize = inner.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		int minimumWidth = layout.computeMinimumWidth(inner, false);
+		Point wrappedSize = inner.computeSize(400, SWT.DEFAULT);
+
+		inner.pack();
+		assertEquals(new Rectangle(0, 0, 100, 15), l1.getBounds());
+		assertEquals(new Rectangle(0, 15, 800, 15), l2.getBounds());
+		assertEquals(new Point(800, 30), preferredSize);
+		assertEquals(80, minimumWidth);
+		assertEquals(new Point(400, 45), wrappedSize);
 	}
 
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
 	@Test
-	public void testTableWrapLayoutNonWrappingLabels() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setSize(100, 300);
-		shell.setLayout(new FillLayout());
-		Composite inner = new Composite(shell, SWT.V_SCROLL);
-		inner.setLayout(new TableWrapLayout());
-		Label l1 = new Label(inner, SWT.NULL);
-		l1.setText(A10);
-		Label l2 = new Label(inner, SWT.NULL);
-		l2.setText(A80);
-		shell.layout();
-		assertEquals(l1.getSize().y, l2.getSize().y);
-		assertTrue(l2.getSize().x > 100);
-		shell.dispose();
-	}
+	public void testWrappingPoint() {
+		Control l1 = ControlFactory.create(inner, 30, 100, 15);
 
-	/**
-	 * Test that labels with the WRAP property set do indeed wrap.
-	 */
-    // Test suppressed for now - does not pass but not sure if this is a bug
-	public void suppressed_testWrappingPoint() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setSize(300, 300);
-		shell.setLayout(new FillLayout());
-		Composite inner = new Composite(shell, SWT.V_SCROLL);
-		TableWrapLayout tableWrapLayout = new TableWrapLayout();
-		tableWrapLayout.leftMargin = 0;
-		tableWrapLayout.rightMargin = 0;
-		inner.setLayout(tableWrapLayout);
-		Label l1 = new Label(inner, SWT.WRAP);
-		l1.setText(A10);
-		shell.layout();
-		int originalWidth = l1.getSize().x;
-		int originalHeight = l1.getSize().y;
-		shell.setSize(originalWidth, 300);
-		shell.layout();
-		assertEquals(l1.getSize().y, originalHeight);
-		shell.setSize(originalWidth / 2, 300);
-		shell.layout();
+		// Validate the behavior of computeSize()
+		Point preferredSize = inner.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+		int preferredHeightWheneThereIsExtraHorizontalSpace = inner.computeSize(200, SWT.DEFAULT).y;
+		int preferredHeightWhenControlFillsSpace = inner.computeSize(100, SWT.DEFAULT).y;
+		int preferredHeightWhenControlCompressed = inner.computeSize(50, SWT.DEFAULT).y;
+		assertEquals(15, preferredHeightWheneThereIsExtraHorizontalSpace);
+		assertEquals(15, preferredHeightWhenControlFillsSpace);
+		assertEquals(30, preferredHeightWhenControlCompressed);
+		assertEquals(new Point(100, 15), preferredSize);
+
+		// Validate the behavior of layout()
+		inner.setSize(100, 15);
 		inner.layout();
-		assertTrue(l1.getSize().y > originalHeight);
-		shell.dispose();
+		assertEquals(15, l1.getSize().y);
+
+		inner.setSize(100, 300);
+		inner.layout();
+		assertEquals(15, l1.getSize().y);
+
+		inner.setSize(50, 300);
+		inner.layout();
+		assertEquals(30, l1.getSize().y);
+
+		// Validate the behavior of computeMinimumWidth
+		assertEquals(30, layout.computeMinimumWidth(inner, false));
+		assertEquals(100, layout.computeMaximumWidth(inner, false));
 	}
 
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
-	// Test suppressed for now, see Bug 196686
-	public void suppressed_testTableWrapLayoutWrappingLabels() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setSize(100, 300);
-		shell.setLayout(new FillLayout());
-		Composite inner = new Composite(shell, SWT.V_SCROLL);
-		inner.setLayout(new TableWrapLayout());
-		Label l1 = new Label(inner, SWT.WRAP);
-		l1.setText(A10);
-		Label l2 = new Label(inner, SWT.WRAP);
-		l2.setText(A80);
-		shell.layout();
-		assertTrue(l1.getSize().y < l2.getSize().y);
-		assertTrue("Label is too wide for layout ", l1.getSize().x <= 100);
-		assertTrue("Label is too wide for layout ", l2.getSize().x <= 100);
-		assertTrue("Labels overlap", l2.getBounds().y >= l1.getBounds().y + l1.getBounds().height);
-		shell.dispose();
+	@Test
+	public void testTableWrapLayoutWrappingLabels() {
+		Control l1 = ControlFactory.create(inner, 30, 100, 15);
+		Control l2 = ControlFactory.create(inner, 50, 800, 15);
+
+		inner.setSize(300, 1000);
+		inner.layout(false);
+
+		assertEquals("l1 had the wrong bounds", new Rectangle(0, 0, 100, 15), l1.getBounds());
+		assertEquals("l2 had the wrong bounds", new Rectangle(0, 15, 300, 40), l2.getBounds());
 	}
 
 	/**
@@ -119,97 +140,121 @@ public class TestTableWrapLayout {
 	 */
 	@Test
 	public void testTableWrapLayoutTwoColumnsWrappingLabels() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setSize(100, 300);
-		shell.setLayout(new FillLayout());
-		Composite inner = new Composite(shell, SWT.V_SCROLL);
-		TableWrapLayout tableWrapLayout = new TableWrapLayout();
-		tableWrapLayout.numColumns = 2;
-		inner.setLayout(tableWrapLayout);
-		Label l1 = new Label(inner, SWT.WRAP);
-		l1.setText(A10);
-		Label l2 = new Label(inner, SWT.WRAP);
-		l2.setText(A20);
-		Label l3 = new Label(inner, SWT.WRAP);
-		l3.setText(A40);
-		Label l4 = new Label(inner, SWT.WRAP);
-		l4.setText(A80);
-		shell.layout();
-		assertTrue(l1.getSize().x < l2.getSize().x);
-		assertTrue(l1.getSize().y < l3.getSize().y);
-		assertTrue(l1.getSize().x < l4.getSize().x);
-		assertTrue(l2.getSize().y < l3.getSize().y);
-		assertTrue("Label is too wide for layout ", l1.getSize().x + l2.getSize().x <= 100);
-		assertTrue("Labels overlap", l2.getBounds().x >= l1.getBounds().x + l1.getBounds().width);
-		assertTrue("Labels overlap", l3.getBounds().y >= l1.getBounds().y + l1.getBounds().height);
-		assertTrue("Labels overlap", l4.getBounds().x >= l3.getBounds().x + l3.getBounds().width);
-		assertTrue("Labels overlap", l4.getBounds().y >= l2.getBounds().y + l2.getBounds().height);
-		shell.dispose();
+		layout.numColumns = 2;
+		Control l1 = ControlFactory.create(inner, 31, 100, 15);
+		Control l2 = ControlFactory.create(inner, 32, 200, 15);
+		Control l3 = ControlFactory.create(inner, 33, 400, 15);
+		Control l4 = ControlFactory.create(inner, 34, 800, 15);
+
+		inner.setSize(300, 1000);
+		inner.layout(false);
+
+		assertEquals(300, l3.getBounds().width + l4.getBounds().width);
+		assertTrue(rightEdge(l1) <= l2.getBounds().x);
+		assertEquals(rightEdge(l3), l4.getBounds().x);
+		assertTrue(bottomEdge(l1) <= l3.getBounds().y);
+		assertTrue(bottomEdge(l1) <= l4.getBounds().y);
+
+		Point preferredSize = inner.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+		assertEquals(new Point(1200, 30), preferredSize);
+
+		int minWidth = layout.computeMinimumWidth(inner, false);
+		assertEquals(67, minWidth);
+	}
+
+	/**
+	 * Test what happens when the grid is compressed below its minimum size. It
+	 * should remove pixels from the column that creates the least amount of
+	 * truncation.
+	 * <p>
+	 * Test is currently suppressed because this layout cannot handle this case
+	 * properly yet.
+	 */
+	public void suppressed_testCompressedBelowMinimumSize() {
+		layout.numColumns = 2;
+		Control l1 = ControlFactory.create(inner, 50, 200, 50);
+		l1.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB, TableWrapData.FILL));
+		Control l2 = ControlFactory.create(inner, 200, 200, 50);
+		l2.setLayoutData(new TableWrapData(TableWrapData.FILL, TableWrapData.FILL));
+		Control l3 = ControlFactory.create(inner, 400, 400, 50);
+		TableWrapData data = new TableWrapData(TableWrapData.FILL, TableWrapData.FILL);
+		data.colspan = 2;
+		l3.setLayoutData(data);
+
+		inner.setSize(300, 1000);
+		inner.layout(false);
+
+		assertEquals(new Rectangle(0, 0, 100, 50), l1.getBounds());
+		assertEquals(new Rectangle(100, 0, 200, 50), l1.getBounds());
+		assertEquals(new Rectangle(0, 50, 300, 50), l1.getBounds());
 	}
 
 	/**
 	 * Test alignments and margins
 	 */
-	// Suppressed for now - see Bug 196686
-	public void suppressed_testTableWrapLayoutAlignment() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell shell = new Shell(display);
-		shell.setSize(100, 300);
-		shell.setLayout(new FillLayout());
-		Composite inner = new Composite(shell, SWT.V_SCROLL);
-		TableWrapLayout tableWrapLayout = new TableWrapLayout();
+	@Test
+	public void testTableWrapLayoutAlignment() {
 		final int LEFT_MARGIN = 1;
 		final int RIGHT_MARGIN = 2;
 		final int TOP_MARGIN = 3;
 		final int BOTTOM_MARGIN = 4;
-		tableWrapLayout.leftMargin = LEFT_MARGIN;
-		tableWrapLayout.rightMargin = RIGHT_MARGIN;
-		tableWrapLayout.topMargin = TOP_MARGIN;
-		tableWrapLayout.bottomMargin = BOTTOM_MARGIN;
-		inner.setLayout(tableWrapLayout);
-		Label lab0 = new Label(inner, SWT.WRAP);
-		lab0.setText(A80);
-		Label labLeft = new Label(inner, SWT.NULL);
-		labLeft.setText(A1);
+		layout.leftMargin = LEFT_MARGIN;
+		layout.rightMargin = RIGHT_MARGIN;
+		layout.topMargin = TOP_MARGIN;
+		layout.bottomMargin = BOTTOM_MARGIN;
+		Control lab0 = ControlFactory.create(inner, 50, 800, 15);
+
+		Control labLeft = ControlFactory.create(inner, 50, 100, 15);
 		TableWrapData dataLeft = new TableWrapData();
 		dataLeft.align = TableWrapData.LEFT;
 		labLeft.setLayoutData(dataLeft);
-		Label labRight = new Label(inner, SWT.NULL);
-		labRight.setText(A1);
+
+		Control labRight = ControlFactory.create(inner, 50, 100, 15);
 		TableWrapData dataRight = new TableWrapData();
 		dataRight.align = TableWrapData.RIGHT;
 		labRight.setLayoutData(dataRight);
-		Label labCenter = new Label(inner, SWT.NULL);
-		labCenter.setText(A1);
+
+		Control labCenter = ControlFactory.create(inner, 50, 100, 15);
 		TableWrapData dataCenter = new TableWrapData();
 		dataCenter.align = TableWrapData.CENTER;
 		labCenter.setLayoutData(dataCenter);
-		Label labFill = new Label(inner, SWT.NULL);
-		labFill.setText(A1);
+
+		Control labFill = ControlFactory.create(inner, 50, 100, 15);
 		TableWrapData dataFill = new TableWrapData();
 		dataFill.align = TableWrapData.FILL;
 		labFill.setLayoutData(dataFill);
-		shell.layout();
+
+		inner.setSize(300 + LEFT_MARGIN + RIGHT_MARGIN, 1000);
+		inner.layout(false);
+
 		// Check layout
-		assertEquals(LEFT_MARGIN , labLeft.getBounds().x);
-		assertTrue(rightEdge(lab0) > rightEdge(labLeft));
-		assertTrue(rightEdge(labLeft) + tableWrapLayout.rightMargin < 100);
+		assertEquals(new Rectangle(LEFT_MARGIN, TOP_MARGIN, 300, 40), lab0.getBounds());
+		assertEquals(new Rectangle(LEFT_MARGIN, bottomEdge(lab0), 100, 15), labLeft.getBounds());
+		assertEquals(new Rectangle(rightEdge(lab0) - 100, bottomEdge(labLeft), 100, 15), labRight.getBounds());
 
-		assertEquals(rightEdge(labRight), rightEdge(lab0));
-		assertTrue(labRight.getBounds().x > LEFT_MARGIN);
+		int centerPoint = (leftEdge(labCenter) + rightEdge(labCenter)) / 2;
+		assertEquals(150, centerPoint - LEFT_MARGIN);
 
-		assertTrue(labCenter.getBounds().x > LEFT_MARGIN);
-		assertTrue(rightEdge(lab0) > rightEdge(labCenter));
+		assertEquals(new Rectangle(LEFT_MARGIN, bottomEdge(labCenter), 300, 5), labFill.getBounds());
+	}
 
-		int offCenter = rightEdge(labCenter) + labCenter.getBounds().x
-		   - rightEdge(lab0) + lab0.getBounds().x;
-		assertTrue(offCenter >= -2);
-		assertTrue(offCenter <= 2);
+	private static void makeFilled(Control control) {
+		TableWrapData data = new TableWrapData();
+		data.align = TableWrapData.FILL;
+		data.valign = TableWrapData.FILL;
+		control.setLayoutData(data);
+	}
 
-		assertEquals(LEFT_MARGIN , labFill.getBounds().x);
-		assertEquals(rightEdge(labFill), rightEdge(lab0));
-		shell.dispose();
+	private int leftEdge(Control control) {
+		Rectangle bounds = control.getBounds();
+
+		return bounds.x;
+	}
+
+	private int bottomEdge(Control control) {
+		Rectangle bounds = control.getBounds();
+
+		return bounds.y + bounds.height;
 	}
 
 }

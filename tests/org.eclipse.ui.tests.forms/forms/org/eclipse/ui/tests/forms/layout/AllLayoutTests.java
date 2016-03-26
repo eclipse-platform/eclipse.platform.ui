@@ -12,6 +12,8 @@
 
 package org.eclipse.ui.tests.forms.layout;
 
+import org.eclipse.ui.tests.forms.widgets.HintAdjustmentTest;
+import org.eclipse.ui.tests.forms.widgets.SizeCacheTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -20,8 +22,10 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	HintAdjustmentTest.class,
+	SizeCacheTest.class,
 	TestColumnWrapLayout.class,
-	TestTableWrapLayout.class
+	TestTableWrapLayout.class,
 })
 public class AllLayoutTests {
 

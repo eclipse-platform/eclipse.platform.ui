@@ -309,7 +309,7 @@ public class FormToolkit {
 	 * @return the composite widget
 	 */
 	public Composite createComposite(Composite parent, int style) {
-		Composite composite = new LayoutComposite(parent, style | orientation);
+		Composite composite = new Composite(parent, style | orientation);
 		adapt(composite);
 		return composite;
 	}

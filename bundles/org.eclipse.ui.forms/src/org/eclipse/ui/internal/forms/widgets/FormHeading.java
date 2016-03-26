@@ -87,6 +87,8 @@ public class FormHeading extends Canvas {
 
 	private SizeCache messageCache = new SizeCache();
 
+	private SizeCache titleRegionCache = new SizeCache();
+
 	private TitleRegion titleRegion;
 
 	private MessageRegion messageRegion;
@@ -123,9 +125,11 @@ public class FormHeading extends Canvas {
 	}
 
 	private class FormHeadingLayout extends Layout implements ILayoutExtension {
+		private static final int MIN_WIDTH = -2;
+
 		@Override
 		public int computeMinimumWidth(Composite composite, boolean flushCache) {
-			return computeSize(composite, 5, SWT.DEFAULT, flushCache).x;
+			return layout(composite, false, 0, 0, MIN_WIDTH, SWT.DEFAULT, flushCache).x;
 		}
 
 		@Override
@@ -148,6 +152,8 @@ public class FormHeading extends Canvas {
 
 		private Point layout(Composite composite, boolean move, int x, int y,
 				int width, int height, boolean flushCache) {
+			titleRegionCache.setControl(titleRegion);
+
 			Point tsize = null;
 			Point msize = null;
 			Point tbsize = null;
@@ -157,6 +163,7 @@ public class FormHeading extends Canvas {
 				clientCache.flush();
 				messageCache.flush();
 				toolbarCache.flush();
+				titleRegionCache.flush();
 			}
 			if (hasToolBar()) {
 				ToolBar tb = toolBarManager.getControl();
@@ -165,17 +172,17 @@ public class FormHeading extends Canvas {
 			}
 			if (headClient != null) {
 				clientCache.setControl(headClient);
-				int cwhint = width;
-				if (cwhint != SWT.DEFAULT) {
-					cwhint -= HMARGIN * 2;
+				int clientWidthHint = width;
+				if (clientWidthHint != SWT.DEFAULT && clientWidthHint != MIN_WIDTH) {
+					clientWidthHint -= HMARGIN * 2;
 					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
-						cwhint -= tbsize.x + SPACING;
+						clientWidthHint -= tbsize.x + SPACING;
 				}
-				clsize = clientCache.computeSize(cwhint, SWT.DEFAULT);
+				clsize = computeSize(clientCache, clientWidthHint);
 			}
 			int totalFlexWidth = width;
 			int flexWidth = totalFlexWidth;
-			if (totalFlexWidth != SWT.DEFAULT) {
+			if (totalFlexWidth != SWT.DEFAULT && totalFlexWidth != MIN_WIDTH) {
 				totalFlexWidth -= TITLE_HMARGIN * 2;
 				// complete right margin
 				if (hasToolBar() && getToolBarAlignment() == SWT.TOP
@@ -207,11 +214,11 @@ public class FormHeading extends Canvas {
 			 * SWT.DEFAULT); } }
 			 */
 			if (!hasMessageRegion()) {
-				tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
+				tsize = computeSize(titleRegionCache, flexWidth);
 			} else {
 				// Total flexible area in the first row is flexWidth.
 				// Try natural widths of title and
-				Point tsizeNatural = titleRegion.computeSize(SWT.DEFAULT,
+				Point tsizeNatural = titleRegionCache.computeSize(SWT.DEFAULT,
 						SWT.DEFAULT);
 				messageCache.setControl(messageRegion.getMessageControl());
 				Point msizeNatural = messageCache.computeSize(SWT.DEFAULT,
@@ -219,7 +226,7 @@ public class FormHeading extends Canvas {
 				// try to fit all
 				tsize = tsizeNatural;
 				msize = msizeNatural;
-				if (flexWidth != SWT.DEFAULT) {
+				if (flexWidth != SWT.DEFAULT && flexWidth != MIN_WIDTH) {
 					int needed = tsizeNatural.x + msizeNatural.x;
 					if (needed > flexWidth) {
 						// too big - try to limit the message
@@ -336,6 +343,24 @@ public class FormHeading extends Canvas {
 				}
 			}
 			return size;
+		}
+
+		/**
+		 * Computes the preferred or minimum size of the given client cache.
+		 *
+		 * @param clientCache
+		 *            size cache for the control whose size is being computed
+		 * @param wHint
+		 *            the width of the control, in pixels, or SWT.DEFAULT if the
+		 *            preferred size is being computed, or MIN_WIDTH if the minimum size
+		 *            is being computed
+		 */
+		private Point computeSize(SizeCache clientCache, int wHint) {
+			if (wHint == MIN_WIDTH) {
+				int minWidth = clientCache.computeMinimumWidth();
+				return clientCache.computeSize(minWidth, SWT.DEFAULT);
+			}
+			return clientCache.computeSize(wHint, SWT.DEFAULT);
 		}
 	}
 

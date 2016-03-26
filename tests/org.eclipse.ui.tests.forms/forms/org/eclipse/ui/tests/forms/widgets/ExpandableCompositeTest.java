@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.tests.forms.layout.ControlFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,12 +141,7 @@ public class ExpandableCompositeTest {
 	}
 
 	private Composite rectangleComposite(final Composite parent, final int x, final int y) {
-		return new Composite(parent, SWT.NONE) {
-			@Override
-			public Point computeSize(int wHint, int hHint, boolean changed) {
-				return new Point(x, y);
-			}
-		};
+		return ControlFactory.create(parent, x, y);
 	}
 
 	private Composite createClient() {

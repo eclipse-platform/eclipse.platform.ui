@@ -78,7 +78,15 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	 */
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
-		Rectangle trim = computeTrim(0, 0, 10, 10);
+		int width = 10;
+		int height = 10;
+		if (wHint != SWT.DEFAULT) {
+			width = wHint;
+		}
+		if (hHint != SWT.DEFAULT) {
+			height = hHint;
+		}
+		Rectangle trim = computeTrim(0, 0, width, height);
 		return new Point(trim.width, trim.height);
 	}
 	/**
@@ -209,7 +217,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 		return currentPage;
 	}
 	private Composite createPage() {
-		Composite page = new LayoutComposite(pageBook, SWT.NULL);
+		Composite page = new Composite(pageBook, SWT.NULL);
 		page.setBackground(getBackground());
 		page.setForeground(getForeground());
 		page.setMenu(pageBook.getMenu());
