@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -306,7 +306,6 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 				if (partition.includes(reparseStart)) {
 					partitionStart= partition.getOffset();
 					contentType= partition.getType();
-					// Invalid optimization we need to reparse the complete partition to check if it is still valid (see bug 382953)
 					reparseStart= partitionStart;
 					-- first;
 				} else if (reparseStart == e.getOffset() && reparseStart == partition.getOffset() + partition.getLength()) {
@@ -319,8 +318,8 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 					contentType= IDocument.DEFAULT_CONTENT_TYPE;
 				}
 			} else {
-				partitionStart = 0;
-				reparseStart = 0;
+				partitionStart= 0;
+				reparseStart= 0;
 			}
 
 			fPositionUpdater.update(e);
