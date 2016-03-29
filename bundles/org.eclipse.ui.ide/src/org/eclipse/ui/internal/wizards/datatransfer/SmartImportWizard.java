@@ -25,6 +25,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -202,7 +203,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 				if (asFile != null && this.initialSelection == null) {
 					this.initialSelection = asFile;
 				} else {
-					IWorkingSet asWorkingSet = toWorkingSet(item);
+					IWorkingSet asWorkingSet = Adapters.adapt(item, IWorkingSet.class);
 					if (asWorkingSet != null) {
 						this.initialWorkingSets.add(asWorkingSet);
 					}
@@ -229,15 +230,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 			if (resource != null) {
 				return resource.getLocation().toFile();
 			}
-		}
-		return null;
-	}
-
-	private IWorkingSet toWorkingSet(Object o) {
-		if (o instanceof IWorkingSet) {
-			return (IWorkingSet)o;
-		} else if (o instanceof IAdaptable) {
-			return ((IAdaptable)o).getAdapter(IWorkingSet.class);
 		}
 		return null;
 	}
