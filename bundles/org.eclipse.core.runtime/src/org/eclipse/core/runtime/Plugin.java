@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 476403, 478769
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 476403, 478769, 490586
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -319,8 +319,8 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated Replaced by {@link IEclipsePreferences}. Preferences are now stored according
 	 * to scopes in the {@link IPreferencesService}. The return value of this method corresponds to
 	 * a combination of the {@link InstanceScope} and the {@link DefaultScope}. To set preferences
-	 * for your plug-in, use <tt>new InstanceScope().getNode(&lt;yourPluginId&gt;)</tt>.  To set default
-	 * preferences for your plug-in, use <tt>new DefaultScope().getNode(&lt;yourPluginId&gt;)</tt>.
+	 * for your plug-in, use <tt>InstanceScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</tt>.  To set default
+	 * preferences for your plug-in, use <tt>DefaultScope.INSTANCE.getNode(&lt;yourPluginId&gt;)</tt>.
 	 * To lookup an integer preference value for your plug-in, use
 	 * <tt>Platform.getPreferencesService().getInt(&lt;yourPluginId&gt;, &lt;preferenceKey&gt;, &lt;defaultValue&gt;, null)</tt>.
 	 * Similar methods exist on {@link IPreferencesService} for obtaining other kinds
