@@ -319,7 +319,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 			return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
         }
         if (selection.size() > 1) {
-            return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, new Integer(selection.size()));
+            return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, Integer.valueOf(selection.size()));
         }
         return ""; //$NON-NLS-1$
     }

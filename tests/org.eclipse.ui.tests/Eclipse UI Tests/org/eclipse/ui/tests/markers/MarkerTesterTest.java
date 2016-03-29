@@ -64,23 +64,23 @@ public class MarkerTesterTest extends UITestCase {
 
 		IMarker errorMarker = project.createMarker(IMarker.PROBLEM);
 		Map attributes = new HashMap();
-		attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
+		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_ERROR));
 		errorMarker.setAttributes(attributes);
 
 		EvaluationContext context = new EvaluationContext(null, errorMarker);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
-				"severity", null, new Integer(IMarker.SEVERITY_ERROR));
+				"severity", null, Integer.valueOf(IMarker.SEVERITY_ERROR));
 		EvaluationResult result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 
 		IMarker warningMarker = project.createMarker(IMarker.PROBLEM);
 		attributes = new HashMap();
-		attributes.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_WARNING));
+		attributes.put(IMarker.SEVERITY, Integer.valueOf(IMarker.SEVERITY_WARNING));
 		warningMarker.setAttributes(attributes);
 
 		context = new EvaluationContext(null, warningMarker);
 		testExpression = new TestExpression(MARKER_NAMESPACE, "severity", null,
-				new Integer(IMarker.SEVERITY_WARNING));
+				Integer.valueOf(IMarker.SEVERITY_WARNING));
 		result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 
@@ -125,23 +125,23 @@ public class MarkerTesterTest extends UITestCase {
 
 		IMarker highPriority = project.createMarker(IMarker.PROBLEM);
 		Map attributes = new HashMap();
-		attributes.put(IMarker.PRIORITY, new Integer(IMarker.PRIORITY_HIGH));
+		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_HIGH));
 		highPriority.setAttributes(attributes);
 
 		EvaluationContext context = new EvaluationContext(null, highPriority);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
-				"priority", null, new Integer(IMarker.PRIORITY_HIGH));
+				"priority", null, Integer.valueOf(IMarker.PRIORITY_HIGH));
 		EvaluationResult result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 
 		IMarker lowPriority = project.createMarker(IMarker.PROBLEM);
 		attributes = new HashMap();
-		attributes.put(IMarker.PRIORITY, new Integer(IMarker.PRIORITY_LOW));
+		attributes.put(IMarker.PRIORITY, Integer.valueOf(IMarker.PRIORITY_LOW));
 		lowPriority.setAttributes(attributes);
 
 		context = new EvaluationContext(null, lowPriority);
 		testExpression = new TestExpression(MARKER_NAMESPACE, "priority", null,
-				new Integer(IMarker.PRIORITY_LOW));
+				Integer.valueOf(IMarker.PRIORITY_LOW));
 		result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 	}
@@ -223,7 +223,7 @@ public class MarkerTesterTest extends UITestCase {
 
 		EvaluationContext context = new EvaluationContext(null, someTaskMarker);
 		TestExpression testExpression = new TestExpression(MARKER_NAMESPACE,
-				"resourceType", null, new Integer(IResource.PROJECT));
+				"resourceType", null, Integer.valueOf(IResource.PROJECT));
 		EvaluationResult result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 
@@ -237,7 +237,7 @@ public class MarkerTesterTest extends UITestCase {
 
 		context = new EvaluationContext(null, someOtherMarker);
 		testExpression = new TestExpression(MARKER_NAMESPACE, "resourceType",
-				null, new Integer(IResource.FOLDER));
+				null, Integer.valueOf(IResource.FOLDER));
 		result = testExpression.evaluate(context);
 		assertEquals(EvaluationResult.TRUE, result);
 

@@ -34,7 +34,7 @@ public class SpinnerObservableValueTest extends AbstractSWTTestCase {
 		assertEquals(0, spinner.getSelection());
 		assertEquals(0, ((Integer) observableValue.getValue()).intValue());
 
-		Integer expected1 = new Integer(1);
+		Integer expected1 = Integer.valueOf(1);
 		spinner.setSelection(expected1.intValue());
 
 //		assertEquals(1, testCounterValueChangeListener.counter);
@@ -43,7 +43,7 @@ public class SpinnerObservableValueTest extends AbstractSWTTestCase {
 
 		observableValue.dispose();
 
-		Integer expected2 = new Integer(2);
+		Integer expected2 = Integer.valueOf(2);
 		spinner.setSelection(expected2.intValue());
 
 //		assertEquals(1, testCounterValueChangeListener.counter);

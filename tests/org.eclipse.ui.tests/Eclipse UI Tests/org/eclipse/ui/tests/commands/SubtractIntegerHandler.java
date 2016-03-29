@@ -26,6 +26,6 @@ public class SubtractIntegerHandler extends AbstractHandler {
 				.getObjectParameterForExecution(CommandParameterTypeTest.MINUEND);
 		Integer subtrahend = (Integer) event
 				.getObjectParameterForExecution(CommandParameterTypeTest.SUBTRAHEND);
-		return new Integer(minuend.intValue() - subtrahend.intValue());
+		return Integer.valueOf(minuend.intValue() - subtrahend.intValue());
 	}
 }

@@ -31,7 +31,7 @@ public class NumberToByteConverterTest extends NumberToNumberTestHarness {
 
 	@Override
 	protected Number doGetOutOfRangeNumber() {
-		return new Integer(Byte.MAX_VALUE + 1);
+		return Integer.valueOf(Byte.MAX_VALUE + 1);
 	}
 
 	@Override

@@ -136,7 +136,7 @@ public class MocksTest  {
 
 	@Test
 	public void testPrimitiveIntSetLastReturnValue() {
-		Integer value = new Integer(1);
+		Integer value = Integer.valueOf(1);
 		primitiveMock.getInt();
 		Mocks.setLastReturnValue(primitiveMock, value);
 		Mocks.startChecking(primitiveMock);

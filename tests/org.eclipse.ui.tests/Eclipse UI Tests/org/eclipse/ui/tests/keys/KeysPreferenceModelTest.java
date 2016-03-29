@@ -439,8 +439,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 				new PropertyChangeEvent(conflict2, BindingElement.PROP_CONTEXT,
 						dialog, window),
 				new PropertyChangeEvent(conflict2,
-						BindingElement.PROP_USER_DELTA, new Integer(
-								Binding.SYSTEM), new Integer(Binding.USER)),
+						BindingElement.PROP_USER_DELTA, Integer.valueOf(
+								Binding.SYSTEM), Integer.valueOf(Binding.USER)),
 				new PropertyChangeEvent(conflict2,
 						ModelElement.PROP_MODEL_OBJECT, c2model, conflict2
 								.getModelObject()),
@@ -495,8 +495,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 						BindingElement.PROP_CONFLICT, Boolean.TRUE,
 						Boolean.FALSE),
 				new PropertyChangeEvent(conflict2,
-						BindingElement.PROP_USER_DELTA, new Integer(
-								Binding.SYSTEM), new Integer(Binding.USER)),
+						BindingElement.PROP_USER_DELTA, Integer.valueOf(
+								Binding.SYSTEM), Integer.valueOf(Binding.USER)),
 				new PropertyChangeEvent(controller.getConflictModel(),
 						ConflictModel.PROP_CONFLICTS_REMOVE, null, conflict2),
 				new PropertyChangeEvent(conflict2,
@@ -573,8 +573,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 				new PropertyChangeEvent(conflict4, BindingElement.PROP_CONTEXT,
 						null, window),
 				new PropertyChangeEvent(conflict4,
-						BindingElement.PROP_USER_DELTA, new Integer(
-								Binding.SYSTEM), new Integer(Binding.USER)),
+						BindingElement.PROP_USER_DELTA, Integer.valueOf(
+								Binding.SYSTEM), Integer.valueOf(Binding.USER)),
 				new PropertyChangeEvent(cm, CommonModel.PROP_SELECTED_ELEMENT,
 						null, conflict4.getContext()),
 				new PropertyChangeEvent(conflict4,
@@ -833,13 +833,13 @@ public class KeysPreferenceModelTest extends UITestCase {
 		KeySequence ctrl5 = KeySequence.getInstance("CTRL+5 N");
 		activateEditor.setTrigger(ctrl5);
 
-		assertEquals(new Integer(Binding.USER), activateEditor.getUserDelta());
+		assertEquals(Integer.valueOf(Binding.USER), activateEditor.getUserDelta());
 		bm.copy();
 		BindingElement activeTwo = (BindingElement) bm.getSelectedElement();
 		assertFalse(activateEditor == activeTwo);
 
 		activeTwo.setTrigger(KeySequence.getInstance("CTRL+5 M"));
-		assertEquals(new Integer(Binding.USER), activeTwo.getUserDelta());
+		assertEquals(Integer.valueOf(Binding.USER), activeTwo.getUserDelta());
 
 		ArrayList activates = new ArrayList();
 		Iterator i = bm.getBindings().iterator();
@@ -863,7 +863,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 			}
 		}
 		assertEquals(1, activates.size());
-		assertEquals(new Integer(Binding.SYSTEM), activateEditor.getUserDelta());
+		assertEquals(Integer.valueOf(Binding.SYSTEM), activateEditor.getUserDelta());
 	}
 
 	public void testRestoreCommand() throws Exception {

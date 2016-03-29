@@ -32,7 +32,7 @@ public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase 
 		assertEquals(-1, list.getSelectionIndex());
 		assertEquals(-1, ((Integer) observableValue.getValue()).intValue());
 
-		Integer value = new Integer(0);
+		Integer value = Integer.valueOf(0);
 		observableValue.setValue(value);
 		assertEquals("list selection index", value.intValue(), list
 				.getSelectionIndex());
@@ -52,7 +52,7 @@ public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase 
 		list.select(0);
 		list.notifyListeners(SWT.Selection, null);
 		assertEquals(0, list.getSelectionIndex());
-		assertEquals(new Integer(0), observableValue.getValue());
+		assertEquals(Integer.valueOf(0), observableValue.getValue());
 
 		observableValue.dispose();
 

@@ -33,7 +33,7 @@ class TestJob extends Job {
 		try {
 			final Field field = InternalJob.class.getDeclaredField("flags");
 			field.setAccessible(true); // hack for testing
-			field.set(this, new Integer(state));
+			field.set(this, Integer.valueOf(state));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

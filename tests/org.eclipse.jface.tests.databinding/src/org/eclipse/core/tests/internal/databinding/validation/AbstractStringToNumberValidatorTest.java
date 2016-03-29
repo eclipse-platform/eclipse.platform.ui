@@ -45,7 +45,7 @@ public class AbstractStringToNumberValidatorTest extends TestCase {
 
 	static class ValidatorStub extends AbstractStringToNumberValidator {
 		ValidatorStub(NumberFormatConverter c) {
-			super(c, new Integer(Integer.MIN_VALUE), new Integer(Integer.MAX_VALUE));
+			super(c, Integer.valueOf(Integer.MIN_VALUE), Integer.valueOf(Integer.MAX_VALUE));
 		}
 
 		@Override

@@ -43,7 +43,7 @@ public class CComboSingleSelectionObservableValueTest extends
 		assertEquals(-1, combo.getSelectionIndex());
 		assertEquals(-1, ((Integer) observableValue.getValue()).intValue());
 
-		Integer value = new Integer(1);
+		Integer value = Integer.valueOf(1);
 		observableValue.setValue(value);
 		assertEquals("combo selection index", value.intValue(), combo
 				.getSelectionIndex());
@@ -98,7 +98,7 @@ public class CComboSingleSelectionObservableValueTest extends
 
 		@Override
 		public Object createValue(IObservableValue observable) {
-			return new Integer(_createValue(observable));
+			return Integer.valueOf(_createValue(observable));
 		}
 
 		private int _createValue(IObservableValue observable) {

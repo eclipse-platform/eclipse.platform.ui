@@ -89,7 +89,7 @@ public class SessionView extends MockViewPart {
 
         // Read int.
         Integer bigInt = memento.getInteger("integer");
-        Assert.assertEquals(bigInt, new Integer(50));
+        Assert.assertEquals(bigInt, Integer.valueOf(50));
 
         // Read string.
         String str = memento.getString("string");
@@ -99,7 +99,7 @@ public class SessionView extends MockViewPart {
         IMemento child = memento.getChild("single");
         Assert.assertNotNull(child);
         bigInt = child.getInteger("id");
-        Assert.assertEquals(bigInt, new Integer(1));
+        Assert.assertEquals(bigInt, Integer.valueOf(1));
 
         // Read multiple children.
         bigInt = memento.getInteger("multiple.count");
@@ -111,7 +111,7 @@ public class SessionView extends MockViewPart {
             child = children[nX];
             Assert.assertNotNull(child);
             bigInt = child.getInteger("id");
-            Assert.assertEquals(bigInt, new Integer(nX));
+            Assert.assertEquals(bigInt, Integer.valueOf(nX));
         }
     }
 }

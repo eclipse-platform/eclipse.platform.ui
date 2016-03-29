@@ -35,7 +35,7 @@ public class StringToShortValidatorTest extends
 
 	@Override
 	protected Number getOutOfRangeNumber() {
-		return new Integer(Short.MAX_VALUE + 1);
+		return Integer.valueOf(Short.MAX_VALUE + 1);
 	}
 
 	@Override

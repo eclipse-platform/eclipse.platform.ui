@@ -54,14 +54,14 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
         for (int i = 0; i < values.length; i++) {
             String expected = values[i];
             assertEquals("Wrong label provided", //$NON-NLS-1$
-                    expected, provider.getText(new Integer(i)));
+                    expected, provider.getText(Integer.valueOf(i)));
 
         }
 
         testWrongLabel(provider, new Object());
         testWrongLabel(provider, null);
-        testWrongLabel(provider, new Integer(-1));
-        testWrongLabel(provider, new Integer(values.length));
+        testWrongLabel(provider, Integer.valueOf(-1));
+        testWrongLabel(provider, Integer.valueOf(values.length));
     }
 
     /**

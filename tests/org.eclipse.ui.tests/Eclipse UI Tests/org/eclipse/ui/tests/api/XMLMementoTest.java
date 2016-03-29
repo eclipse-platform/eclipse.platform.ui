@@ -335,9 +335,9 @@ public class XMLMementoTest extends TestCase {
 	public void testPutAndGetInteger() throws WorkbenchException, IOException {
 		final String key = "key";
 
-		Integer[] values = new Integer[] { new Integer(36254), new Integer(0),
-				new Integer(1), new Integer(-36254),
-				new Integer(Integer.MAX_VALUE), new Integer(Integer.MIN_VALUE) };
+		Integer[] values = new Integer[] { Integer.valueOf(36254), Integer.valueOf(0),
+				Integer.valueOf(1), Integer.valueOf(-36254),
+				Integer.valueOf(Integer.MAX_VALUE), Integer.valueOf(Integer.MIN_VALUE) };
 
 		for (final Integer value : values) {
 			testPutAndGet(new MementoChecker() {

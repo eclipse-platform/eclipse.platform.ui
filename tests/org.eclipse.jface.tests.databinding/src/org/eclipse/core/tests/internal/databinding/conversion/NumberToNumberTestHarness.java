@@ -76,7 +76,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 	}
 
 	public void testValidConversion() throws Exception {
-		Integer value = new Integer(1);
+		Integer value = Integer.valueOf(1);
 		Number result = (Number) doGetToBoxedTypeValidator(Integer.class)
 				.convert(value);
 
@@ -85,7 +85,7 @@ public abstract class NumberToNumberTestHarness extends TestCase {
 		// regardless if the converter is for the primitive value the returned
 		// value will be the boxed type
 		assertEquals(doGetToType(false), result.getClass());
-		assertEquals(value, new Integer(result.intValue()));
+		assertEquals(value, Integer.valueOf(result.intValue()));
 	}
 
 	public void testOutOfRangeConversion() throws Exception {

@@ -58,16 +58,16 @@ public abstract class StringToNumberParserTestHarness extends TestCase {
 		}
 
 		// test integers
-		assertTrue("valid Integer", assertValid(new Integer(1)));
+		assertTrue("valid Integer", assertValid(Integer.valueOf(1)));
 
-		result = assertValid(new Integer(Integer.MIN_VALUE));
+		result = assertValid(Integer.valueOf(Integer.MIN_VALUE));
 		if (minDouble > Integer.MIN_VALUE) {
 			assertFalse("invalid Integer min", result);
 		} else {
 			assertTrue("valid integer min", result);
 		}
 
-		result = assertValid(new Integer(Integer.MAX_VALUE));
+		result = assertValid(Integer.valueOf(Integer.MAX_VALUE));
 		if (maxDouble < Integer.MAX_VALUE) {
 			assertFalse("valid Integer max", result);
 		} else {

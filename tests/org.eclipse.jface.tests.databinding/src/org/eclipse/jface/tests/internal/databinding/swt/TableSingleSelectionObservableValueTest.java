@@ -68,7 +68,7 @@ public class TableSingleSelectionObservableValueTest extends
 		assertEquals(-1, table.getSelectionIndex());
 		assertEquals(-1, ((Integer) observable.getValue()).intValue());
 
-		Integer value = new Integer(0);
+		Integer value = Integer.valueOf(0);
 		observable.setValue(value);
 		assertEquals("table selection index", value.intValue(), table
 				.getSelectionIndex());
@@ -80,7 +80,7 @@ public class TableSingleSelectionObservableValueTest extends
 		table.setSelection(value);
 
 		assertEquals("table selection index", value, table.getSelectionIndex());
-		assertEquals("observable value", new Integer(value), observable
+		assertEquals("observable value", Integer.valueOf(value), observable
 				.getValue());
 	}
 
@@ -142,9 +142,9 @@ public class TableSingleSelectionObservableValueTest extends
 			switch (value) {
 			case -1:
 			case 1:
-				return new Integer(0);
+				return Integer.valueOf(0);
 			case 0:
-				return new Integer(1);
+				return Integer.valueOf(1);
 			}
 
 			Assert.isTrue(false);

@@ -119,7 +119,7 @@ public class TestMemento implements IMemento {
 
 	@Override
 	public void putInteger(String key, int value) {
-		values.put(key,new Integer(value));
+		values.put(key,Integer.valueOf(value));
 
 	}
 

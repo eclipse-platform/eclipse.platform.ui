@@ -35,7 +35,7 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 	public void testGetValue() {
 		IValueProperty property = BindingProperties.convertedValue(converter);
 
-		assertEquals("123", property.getValue(new Integer(123)));
+		assertEquals("123", property.getValue(Integer.valueOf(123)));
 	}
 
 	public void testGetValueForNullSource() {
@@ -50,7 +50,7 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 		IValueProperty property = BindingProperties.convertedValue(converter);
 
 		try {
-			property.setValue(new Integer(123), "123");
+			property.setValue(Integer.valueOf(123), "123");
 			fail("setting a value should trigger an exception!");
 		} catch (UnsupportedOperationException e) {
 			// expected exception

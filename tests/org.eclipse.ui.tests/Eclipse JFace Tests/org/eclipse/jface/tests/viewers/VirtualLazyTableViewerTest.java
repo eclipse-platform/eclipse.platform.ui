@@ -64,7 +64,7 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 
 	// this method is called from TestLazyModelContentProvider
 	public void updateElementCalled(int index) {
-		updatedElements.add(new Integer(index));
+		updatedElements.add(Integer.valueOf(index));
 		if(updatedElementFailureTriggerIndex!=-1 && updatedElements.size()>=updatedElementFailureTriggerIndex) {
 			fail("unexpected call to updateElement, this is the " + updatedElements.size() + "th call");
 		}

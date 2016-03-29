@@ -186,7 +186,7 @@ public class Mocks {
 							: new Short((short) 0);
 				} else if (returnType == int.class) {
 					result = (returnValue != null) ? (Integer) returnValue
-							: new Integer(0);
+							: Integer.valueOf(0);
 				} else if (returnType == long.class) {
 					result = (returnValue != null) ? (Long) returnValue
 							: new Long(0);

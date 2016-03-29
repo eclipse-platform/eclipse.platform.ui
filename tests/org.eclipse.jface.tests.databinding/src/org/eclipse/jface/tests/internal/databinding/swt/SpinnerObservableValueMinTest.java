@@ -64,12 +64,12 @@ public class SpinnerObservableValueMinTest extends ObservableDelegateTest {
 	public void testGetValue() throws Exception {
 		int min = 100;
 		spinner.setMinimum(min);
-		assertEquals(new Integer(min), observable.getValue());
+		assertEquals(Integer.valueOf(min), observable.getValue());
 	}
 
 	public void testSetValue() throws Exception {
 		int min = 100;
-		observable.setValue(new Integer(min));
+		observable.setValue(Integer.valueOf(min));
 		assertEquals(min, spinner.getMinimum());
 	}
 
@@ -122,7 +122,7 @@ public class SpinnerObservableValueMinTest extends ObservableDelegateTest {
 		}
 
 		private Integer createIntegerValue(IObservableValue observable) {
-			return new Integer(((Integer) observable.getValue()).intValue() + 1);
+			return Integer.valueOf(((Integer) observable.getValue()).intValue() + 1);
 		}
 	}
 }

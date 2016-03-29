@@ -108,7 +108,7 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 		try {
 			method = ColumnViewer.class.getDeclaredMethod("getViewerColumn", new Class[]{int.class});
 			method.setAccessible(true);
-			return (ViewerColumn) method.invoke(viewer, new Object[]{new Integer(index)});
+			return (ViewerColumn) method.invoke(viewer, new Object[]{Integer.valueOf(index)});
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

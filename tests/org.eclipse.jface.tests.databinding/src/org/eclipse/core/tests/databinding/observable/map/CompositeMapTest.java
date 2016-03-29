@@ -74,8 +74,8 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getChangedKeys().size());
 		assertEquals(Collections.singleton(newPerson), tracker.event.diff
 				.getAddedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getNewValue(newPerson));
-		assertEquals(new Integer(42), composedMap.get(newPerson));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getNewValue(newPerson));
+		assertEquals(Integer.valueOf(42), composedMap.get(newPerson));
 	}
 
 	public void testAddSharedToFirstMap() {
@@ -93,9 +93,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getChangedKeys().size());
 		assertEquals(Collections.singleton(person2), tracker.event.diff
 				.getAddedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getNewValue(person2));
-		assertEquals(new Integer(42), composedMap.get(person2));
-		assertEquals(new Integer(42), composedMap.get(person1));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getNewValue(person2));
+		assertEquals(Integer.valueOf(42), composedMap.get(person2));
+		assertEquals(Integer.valueOf(42), composedMap.get(person1));
 	}
 
 	public void testRemoveFromFirstMap() {
@@ -112,7 +112,7 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getChangedKeys().size());
 		assertEquals(Collections.singleton(newPerson), tracker.event.diff
 				.getRemovedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getOldValue(newPerson));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getOldValue(newPerson));
 		assertFalse("newPerson should be removed", composedMap.containsKey(newPerson));
 	}
 
@@ -133,9 +133,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getChangedKeys().size());
 		assertEquals(Collections.singleton(person2), tracker.event.diff
 				.getRemovedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getOldValue(person2));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getOldValue(person2));
 		assertFalse("person2 should be removed", composedMap.containsKey(person2));
-		assertEquals(new Integer(42), composedMap.get(person1));
+		assertEquals(Integer.valueOf(42), composedMap.get(person1));
 	}
 
 	public void testChangeInFirstMap() {
@@ -151,9 +151,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getRemovedKeys().size());
 		assertEquals(Collections.singleton(person1), tracker.event.diff
 				.getChangedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getOldValue(person1));
-		assertEquals(new Integer(0), tracker.event.diff.getNewValue(person1));
-		assertEquals(new Integer(0), composedMap.get(person1));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getOldValue(person1));
+		assertEquals(Integer.valueOf(0), tracker.event.diff.getNewValue(person1));
+		assertEquals(Integer.valueOf(0), composedMap.get(person1));
 	}
 
 	public void testChangeInFirstMapToShared() {
@@ -172,9 +172,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getRemovedKeys().size());
 		assertEquals(Collections.singleton(person1), tracker.event.diff
 				.getChangedKeys());
-		assertEquals(new Integer(42), tracker.event.diff.getOldValue(person1));
-		assertEquals(new Integer(13), tracker.event.diff.getNewValue(person1));
-		assertEquals(new Integer(13), composedMap.get(person1));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getOldValue(person1));
+		assertEquals(Integer.valueOf(13), tracker.event.diff.getNewValue(person1));
+		assertEquals(Integer.valueOf(13), composedMap.get(person1));
 	}
 
 	public void testChangeInFirstMapFromShared() {
@@ -193,9 +193,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getRemovedKeys().size());
 		assertEquals(Collections.singleton(person1), tracker.event.diff
 				.getChangedKeys());
-		assertEquals(new Integer(13), tracker.event.diff.getOldValue(person1));
-		assertEquals(new Integer(0), tracker.event.diff.getNewValue(person1));
-		assertEquals(new Integer(0), composedMap.get(person1));
+		assertEquals(Integer.valueOf(13), tracker.event.diff.getOldValue(person1));
+		assertEquals(Integer.valueOf(0), tracker.event.diff.getNewValue(person1));
+		assertEquals(Integer.valueOf(0), composedMap.get(person1));
 	}
 
 	public void testChangeInSecondMap() {
@@ -211,9 +211,9 @@ public class CompositeMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, tracker.event.diff.getRemovedKeys().size());
 		assertEquals(Collections.singleton(person0), tracker.event.diff
 				.getChangedKeys());
-		assertEquals(new Integer(13), tracker.event.diff.getOldValue(person0));
-		assertEquals(new Integer(42), tracker.event.diff.getNewValue(person0));
-		assertEquals(new Integer(42), composedMap.get(person0));
+		assertEquals(Integer.valueOf(13), tracker.event.diff.getOldValue(person0));
+		assertEquals(Integer.valueOf(42), tracker.event.diff.getNewValue(person0));
+		assertEquals(Integer.valueOf(42), composedMap.get(person0));
 	}
 
 	public void testDispose() {

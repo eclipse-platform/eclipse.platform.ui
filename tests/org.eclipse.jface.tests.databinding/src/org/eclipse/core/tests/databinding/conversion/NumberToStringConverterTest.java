@@ -70,7 +70,7 @@ public class NumberToStringConverterTest extends TestCase {
 	}
 
 	public void testConvertIntegerToString() throws Exception {
-		Integer input = new Integer(1000);
+		Integer input = Integer.valueOf(1000);
 		String expected = integerFormat.format(input.longValue());
 
 		NumberToStringConverter converter = NumberToStringConverter
@@ -143,7 +143,7 @@ public class NumberToStringConverterTest extends TestCase {
 		if(icuBigDecimal != null && icuBigDecimalCtr != null) {
 			// ICU Big Decimal constructor available
 			Number icubd = (Number) icuBigDecimalCtr.newInstance(
-					new Object[] { javabd.unscaledValue(), new Integer(javabd.scale()) });
+					new Object[] { javabd.unscaledValue(), Integer.valueOf(javabd.scale()) });
 			return numberFormat.format(icubd);
 		}
 		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");

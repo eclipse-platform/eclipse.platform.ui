@@ -34,7 +34,7 @@ public class StringToNumberParserTest extends TestCase {
 	public void testParseNonStringThrowsIllegalArgumentException()
 			throws Exception {
 		try {
-			StringToNumberParser.parse(new Integer(0), integerFormat, false);
+			StringToNumberParser.parse(Integer.valueOf(0), integerFormat, false);
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
@@ -55,7 +55,7 @@ public class StringToNumberParserTest extends TestCase {
 	}
 
 	public void testReturnsNumberWhenSuccessfullyParsed() throws Exception {
-		Integer number = new Integer(5);
+		Integer number = Integer.valueOf(5);
 		ParseResult result = StringToNumberParser.parse(integerFormat
 				.format(number.longValue()), integerFormat, false);
 		assertNull(result.getPosition());

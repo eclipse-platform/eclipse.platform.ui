@@ -26,11 +26,11 @@ public class StringToNumberParserIntegerTest extends
 
 	@Override
 	protected Number getValidMax() {
-		return new Integer(Integer.MAX_VALUE);
+		return Integer.valueOf(Integer.MAX_VALUE);
 	}
 
 	@Override
 	protected Number getValidMin() {
-		return new Integer(Integer.MIN_VALUE);
+		return Integer.valueOf(Integer.MIN_VALUE);
 	}
 }

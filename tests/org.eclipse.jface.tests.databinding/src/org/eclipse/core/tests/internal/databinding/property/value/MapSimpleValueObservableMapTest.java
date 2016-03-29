@@ -43,11 +43,11 @@ public class MapSimpleValueObservableMapTest extends
 		String key = "key";
 
 		// Add an entry on the master map for our key.
-		Integer oldValue = new Integer(111);
+		Integer oldValue = Integer.valueOf(111);
 		masterMap.put(key, oldValue);
 
 		// Replace the entry on the detail map for our key.
-		Integer newValue = new Integer(777);
+		Integer newValue = Integer.valueOf(777);
 		Object returnedOldValue = detailMap.put(key, newValue);
 
 		// Check that the replaced old value is our original value.

@@ -48,7 +48,7 @@ public abstract class NumberToNumberValidatorTestHarness extends TestCase {
 	}
 
 	public void testValidReturnsOK() throws Exception {
-		assertTrue(doGetToBoxedTypeValidator(Integer.class).validate(new Integer(1)).isOK());
+		assertTrue(doGetToBoxedTypeValidator(Integer.class).validate(Integer.valueOf(1)).isOK());
 	}
 
 	public void testOutOfRangeReturnsError() throws Exception {

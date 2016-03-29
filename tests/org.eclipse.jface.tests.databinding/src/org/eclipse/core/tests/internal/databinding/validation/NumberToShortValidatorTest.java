@@ -23,7 +23,7 @@ import com.ibm.icu.text.NumberFormat;
 public class NumberToShortValidatorTest extends NumberToNumberValidatorTestHarness {
 	@Override
 	protected Number doGetOutOfRangeNumber() {
-		return new Integer(Short.MAX_VALUE + 1);
+		return Integer.valueOf(Short.MAX_VALUE + 1);
 	}
 
 	@Override

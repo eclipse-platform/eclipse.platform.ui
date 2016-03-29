@@ -116,7 +116,7 @@ public class ProblemsViewPerformanceTest extends BasicPerformanceTest {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			Map attribs = new HashMap();
 			for (int i = 0; i < 1000; i++) {
-				attribs.put(IMarker.SEVERITY, new Integer(
+				attribs.put(IMarker.SEVERITY, Integer.valueOf(
 						IMarker.SEVERITY_ERROR));
 				attribs.put(IMarker.MESSAGE, "this is a test " + i);
 				MarkerUtilities.createMarker(root, attribs, IMarker.PROBLEM);

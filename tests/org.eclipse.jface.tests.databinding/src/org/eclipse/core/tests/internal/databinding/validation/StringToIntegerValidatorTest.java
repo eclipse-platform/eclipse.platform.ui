@@ -36,7 +36,7 @@ public class StringToIntegerValidatorTest extends
 
 	@Override
 	protected Number getInRangeNumber() {
-		return new Integer(1);
+		return Integer.valueOf(1);
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class ObjectToPrimitiveValidatorTest extends TestCase {
 		assertEquals("The wrong validation error was found.", result
 				.getMessage(), this.objectToPrimitiveValidator.getNullHint());
 
-		result = this.objectToPrimitiveValidator.validate(new Integer(1));
+		result = this.objectToPrimitiveValidator.validate(Integer.valueOf(1));
 		assertTrue("No validation error should be found.", result.isOK());
 
 		result = this.objectToPrimitiveValidator.validate(new Object());

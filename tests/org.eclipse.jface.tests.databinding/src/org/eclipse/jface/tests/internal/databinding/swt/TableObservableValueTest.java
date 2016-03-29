@@ -41,7 +41,7 @@ public class TableObservableValueTest extends AbstractSWTTestCase {
 		table.notifyListeners(SWT.Selection, null);
 
 		assertEquals(0, table.getSelectionIndex());
-		assertEquals(new Integer(0), observableValue.getValue());
+		assertEquals(Integer.valueOf(0), observableValue.getValue());
 
 		observableValue.dispose();
 

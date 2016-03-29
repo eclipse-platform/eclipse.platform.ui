@@ -64,7 +64,7 @@ public class WorkbenchStatusDialogManagerImplTest extends TestCase {
 
 	/*try not to accept cancel */
 	public void testCheckMasking(){
-		mgr.setProperty(IStatusDialogConstants.MASK, new Integer(0));
+		mgr.setProperty(IStatusDialogConstants.MASK, Integer.valueOf(0));
 		assertFalse(mgr.shouldAccept(new StatusAdapter(Status.CANCEL_STATUS)));
 	}
 

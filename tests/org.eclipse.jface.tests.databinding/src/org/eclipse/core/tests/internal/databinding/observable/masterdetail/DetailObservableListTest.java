@@ -173,7 +173,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		public IObservableCollection createObservableCollection(
 				final Realm realm, final int elementCount) {
 
-			IObservableValue master = new WritableValue(realm, new Integer(
+			IObservableValue master = new WritableValue(realm, Integer.valueOf(
 					elementCount), Integer.class);
 			IObservableFactory factory = new FactoryStub(realm, elementType);
 			return new DetailObservableListStub(factory, master, elementType);
@@ -192,7 +192,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		@Override
 		public void change(IObservable observable) {
 			final IObservableValue master = ((DetailObservableListStub) observable).master;
-			master.setValue(new Integer(((Integer) master.getValue())
+			master.setValue(Integer.valueOf(((Integer) master.getValue())
 					.intValue() + 1));
 		}
 	}

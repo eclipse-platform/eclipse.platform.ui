@@ -153,9 +153,9 @@ public abstract class ResourceWrapperContentProvider implements
 		}
 		Integer current = (Integer) counters.get(counterId);
 		if (current == null) {
-			counters.put(counterId, new Integer(1));
+			counters.put(counterId, Integer.valueOf(1));
 		} else {
-			counters.put(counterId, new Integer(current.intValue() + 1));
+			counters.put(counterId, Integer.valueOf(current.intValue() + 1));
 		}
 	}
 

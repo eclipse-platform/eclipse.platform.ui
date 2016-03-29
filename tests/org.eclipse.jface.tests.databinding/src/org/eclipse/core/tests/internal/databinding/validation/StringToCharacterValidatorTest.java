@@ -56,7 +56,7 @@ public class StringToCharacterValidatorTest extends TestCase {
 	}
 
 	public void testNonStringIsInvalid() throws Exception {
-		assertFalse(primitiveValidator.validate(new Integer(4)).isOK());
+		assertFalse(primitiveValidator.validate(Integer.valueOf(4)).isOK());
 	}
 
 	public void testLongerThanOneCharacterIsInvalid() throws Exception {

@@ -31,7 +31,7 @@ public class NumberToShortConverterTest extends NumberToNumberTestHarness {
 
 	@Override
 	protected Number doGetOutOfRangeNumber() {
-		return new Integer(Short.MAX_VALUE + 1);
+		return Integer.valueOf(Short.MAX_VALUE + 1);
 	}
 
 	@Override

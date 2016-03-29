@@ -33,7 +33,7 @@ public class ComboSingleSelectionObservableValueTest extends
 		assertEquals(-1, combo.getSelectionIndex());
 		assertEquals(-1, ((Integer) observableValue.getValue()).intValue());
 
-		Integer value = new Integer(1);
+		Integer value = Integer.valueOf(1);
 		observableValue.setValue(value);
 		assertEquals("combo selection index", value.intValue(), combo
 				.getSelectionIndex());

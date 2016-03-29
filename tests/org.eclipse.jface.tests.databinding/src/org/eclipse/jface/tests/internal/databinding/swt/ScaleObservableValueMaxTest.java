@@ -64,12 +64,12 @@ public class ScaleObservableValueMaxTest extends ObservableDelegateTest {
 	public void testGetValue() throws Exception {
 		int max = 100;
 		scale.setMaximum(max);
-		assertEquals(new Integer(max), observable.getValue());
+		assertEquals(Integer.valueOf(max), observable.getValue());
 	}
 
 	public void testSetValue() throws Exception {
 		int max = 100;
-		observable.setValue(new Integer(max));
+		observable.setValue(Integer.valueOf(max));
 		assertEquals(max, scale.getMaximum());
 	}
 
@@ -122,7 +122,7 @@ public class ScaleObservableValueMaxTest extends ObservableDelegateTest {
 		}
 
 		private Integer createIntegerValue(IObservableValue observable) {
-			return new Integer(((Integer) observable.getValue()).intValue() + 1);
+			return Integer.valueOf(((Integer) observable.getValue()).intValue() + 1);
 		}
 	}
 }

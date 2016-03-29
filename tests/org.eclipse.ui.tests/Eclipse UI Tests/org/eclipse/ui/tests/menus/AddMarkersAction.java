@@ -64,7 +64,7 @@ public class AddMarkersAction implements IWorkbenchWindowActionDelegate {
 									"Test Path " + i);
 						}
 
-						attribs.put(IMarker.SEVERITY, new Integer(
+						attribs.put(IMarker.SEVERITY, Integer.valueOf(
 								IMarker.SEVERITY_ERROR));
 						attribs.put(IMarker.MESSAGE, "this is a test " + i);
 						attribs.put(IMarker.LOCATION, "Location " + i);

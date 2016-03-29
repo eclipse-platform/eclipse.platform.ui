@@ -135,7 +135,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(cart, "lodgingDays"));
 
-        assertEquals(new Integer(cart.getLodgingDays()).toString(), text.getText());
+        assertEquals(Integer.valueOf(cart.getLodgingDays()).toString(), text.getText());
     }
 
     public void testScenario04() {
