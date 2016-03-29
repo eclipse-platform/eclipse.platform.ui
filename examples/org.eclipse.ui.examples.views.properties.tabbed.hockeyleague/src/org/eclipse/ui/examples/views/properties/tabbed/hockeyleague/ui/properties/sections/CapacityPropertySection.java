@@ -35,7 +35,7 @@ public class CapacityPropertySection
 	 */
 	protected Integer getFeatureInteger() {
 		Arena arena = (Arena) eObject;
-		return new Integer(arena.getCapacity());
+		return Integer.valueOf(arena.getCapacity());
 	}
 
 	/**

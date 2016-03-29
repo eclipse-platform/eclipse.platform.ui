@@ -139,7 +139,7 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 
 							if (addCount > 0) {
 								for (int i = 0; i < addCount; i++) {
-									toAdd.add(new Integer(randomNumberGenerator
+									toAdd.add(Integer.valueOf(randomNumberGenerator
 											.nextInt(20)));
 								}
 							}

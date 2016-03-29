@@ -93,7 +93,7 @@ public class Snippet012CompositeUpdater {
 
 	static class Counter extends WritableValue {
 		Counter() {
-			super(new Integer(0), Integer.class);
+			super(Integer.valueOf(0), Integer.class);
 			scheduleIncrementTask();
 		}
 
@@ -107,7 +107,7 @@ public class Snippet012CompositeUpdater {
 						@Override
 						public void run() {
 							Integer currentVal = (Integer) getValue();
-							setValue(new Integer(currentVal.intValue() + 1));
+							setValue(Integer.valueOf(currentVal.intValue() + 1));
 						}
 					});
 					scheduleIncrementTask();

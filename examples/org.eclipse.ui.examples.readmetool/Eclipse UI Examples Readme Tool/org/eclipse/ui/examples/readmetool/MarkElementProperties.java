@@ -69,11 +69,11 @@ public class MarkElementProperties implements IPropertySource {
     @Override
 	public Object getPropertyValue(Object name) {
         if (name.equals(PROPERTY_LINECOUNT))
-            return new Integer(element.getNumberOfLines());
+            return Integer.valueOf(element.getNumberOfLines());
         if (name.equals(PROPERTY_START))
-            return new Integer(element.getStart());
+            return Integer.valueOf(element.getStart());
         if (name.equals(PROPERTY_LENGTH))
-            return new Integer(element.getLength());
+            return Integer.valueOf(element.getLength());
         return null;
     }
 

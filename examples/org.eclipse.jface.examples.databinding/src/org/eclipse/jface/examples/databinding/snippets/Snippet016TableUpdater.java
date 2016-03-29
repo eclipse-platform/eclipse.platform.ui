@@ -48,13 +48,13 @@ public class Snippet016TableUpdater {
 	}
 
 	static class Stuff {
-		private WritableValue counter = new WritableValue(new Integer(1), Integer.class);
+		private WritableValue counter = new WritableValue(Integer.valueOf(1), Integer.class);
 
 		public Stuff(final Display display) {
 			display.timerExec(1000, new Runnable() {
 				@Override
 				public void run() {
-					counter.setValue(new Integer(1 + ((Integer) counter
+					counter.setValue(Integer.valueOf(1 + ((Integer) counter
 							.getValue()).intValue()));
 					display.timerExec(1000, this);
 				}

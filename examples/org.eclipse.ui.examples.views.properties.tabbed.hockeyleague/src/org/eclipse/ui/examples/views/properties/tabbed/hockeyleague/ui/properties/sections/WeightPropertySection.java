@@ -70,7 +70,7 @@ public class WeightPropertySection
 	 * @see org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.ui.properties.sections.AbstractIntegerPropertySection#getFeatureInteger()
 	 */
 	protected Integer getFeatureInteger() {
-		return new Integer(((Player) eObject).getWeightValue());
+		return Integer.valueOf(((Player) eObject).getWeightValue());
 	}
 
 	/**

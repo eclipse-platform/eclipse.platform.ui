@@ -65,7 +65,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 		// We are only implementing this for our internal use, not for
 		// content assist, so many of the methods are ignored.
 		public String getControlContents(Control control) {
-			return new Integer(((Spinner) control).getSelection()).toString();
+			return Integer.valueOf(((Spinner) control).getSelection()).toString();
 		}
 
 		public void setControlContents(Control control, String text,

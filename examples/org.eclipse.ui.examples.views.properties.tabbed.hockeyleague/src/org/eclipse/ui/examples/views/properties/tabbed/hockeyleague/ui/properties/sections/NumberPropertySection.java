@@ -33,7 +33,7 @@ public class NumberPropertySection
 	 * @see org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.ui.properties.sections.AbstractStringPropertySection#getFeatureText()
 	 */
 	protected Integer getFeatureInteger() {
-		return new Integer(((Player) eObject).getNumber());
+		return Integer.valueOf(((Player) eObject).getNumber());
 	}
 
 	/**

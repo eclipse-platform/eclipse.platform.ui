@@ -29,7 +29,7 @@ public abstract class AbstractIntegerPropertySection
 			refresh();
 			return true;
 		}
-		Integer integer = new Integer(Integer.parseInt(newText)); 
+		Integer integer = Integer.valueOf(Integer.parseInt(newText)); 
 		return getFeatureInteger().equals(integer);
 	}
 
@@ -51,6 +51,6 @@ public abstract class AbstractIntegerPropertySection
 	 * @see org.eclipse.ui.examples.views.properties.tabbed.hockeyleague.ui.properties.sections.AbstractTextPropertySection#getFeatureValue(java.lang.String)
 	 */
 	protected Object getFeatureValue(String newText) {
-		return new Integer(Integer.parseInt(newText));
+		return Integer.valueOf(Integer.parseInt(newText));
 	}
 }

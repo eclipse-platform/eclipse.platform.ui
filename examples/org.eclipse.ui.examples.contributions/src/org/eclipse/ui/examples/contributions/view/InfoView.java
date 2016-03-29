@@ -159,15 +159,13 @@ public class InfoView extends ViewPart {
 	 * Instantiate any handlers specific to this view and activate them.
 	 */
 	private void createHandlers() {
-		IHandlerService handlerService = (IHandlerService) getSite()
-				.getService(IHandlerService.class);
+		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
 		countHandler = new AbstractHandler() {
 			public Object execute(ExecutionEvent event) {
 				List elements = (List) viewer.getInput();
 				MessageDialog.openInformation(getSite().getShell(),
 						ContributionMessages.SampleHandler_plugin_name,
-						NLS.bind(ContributionMessages.InfoView_countElements,
-								new Integer(elements.size())));
+						NLS.bind(ContributionMessages.InfoView_countElements, elements.size()));
 				return null;
 			}
 		};

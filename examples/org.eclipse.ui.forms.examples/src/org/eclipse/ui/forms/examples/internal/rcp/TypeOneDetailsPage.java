@@ -82,7 +82,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		choices = new Button[TypeOne.CHOICES.length];
 		for (int i=0; i<TypeOne.CHOICES.length; i++) {
 			choices[i] = toolkit.createButton(client, TypeOne.CHOICES[i], SWT.RADIO);
-			choices[i].setData(new Integer(i));
+			choices[i].setData(Integer.valueOf(i));
 			choices[i].addSelectionListener(choiceListener);
 			gd = new GridData();
 			gd.horizontalSpan = 2;

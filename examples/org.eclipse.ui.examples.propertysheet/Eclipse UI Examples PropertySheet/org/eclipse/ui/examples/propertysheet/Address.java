@@ -62,7 +62,7 @@ public class Address implements IPropertySource {
     private static final String CITY_DEFAULT = MessageUtil
             .getString("unspecified_city"); //$NON-NLS-1$
 
-    private static final Integer PROVINCE_DEFAULT = new Integer(0);
+    private static final Integer PROVINCE_DEFAULT = Integer.valueOf(0);
 
     private static final String POSTALCODE_DEFAULT = "A1B2C3"; //$NON-NLS-1$
 

@@ -45,7 +45,7 @@ public class UserFileParser {
         user1
                 .setAddress(new Address(
                         new StreetAddress(232, MessageUtil
-                                .getString("Champlain")), MessageUtil.getString("Hull"), new Integer(5), MessageUtil.getString("A1B2C3"))); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+                                .getString("Champlain")), MessageUtil.getString("Hull"), Integer.valueOf(5), MessageUtil.getString("A1B2C3"))); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
         user1.setBirthday(new Birthday(18, 1, 1981));
         user1.setCoop(Boolean.TRUE);
         user1.setHairColor(new RGB(0, 0, 0));
@@ -59,7 +59,7 @@ public class UserFileParser {
         user2
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Toronto"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Toronto"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
         user2.setBirthday(new Birthday(7, 5, 1978));
         user2.setCoop(Boolean.TRUE);
         user2.setHairColor(new RGB(0, 0, 0));
@@ -74,7 +74,7 @@ public class UserFileParser {
         user3
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Ottawa"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Ottawa"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
         user3.setBirthday(new Birthday(11, 23, 1962));
         user3.setHairColor(new RGB(0, 0, 0));
         user3.setEyeColor(new RGB(0, 0, 0));
@@ -88,7 +88,7 @@ public class UserFileParser {
         user4
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Ottawa"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Ottawa"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
         //
         UserElement user5 = uiTeam.createUser("tiger"); //$NON-NLS-1$
         user5.setFullName(new Name(MessageUtil.getString("Tiger_Woods"))); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class UserFileParser {
         user5
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Ottawa"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Ottawa"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
         //
         UserElement user6 = uiTeam.createUser("jack"); //$NON-NLS-1$
         user6.setFullName(new Name(MessageUtil.getString("Jack_Nicklaus"))); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class UserFileParser {
         user6
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Ottawa"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Ottawa"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
         //
         UserElement greg = uiTeam.createUser("weslock"); //$NON-NLS-1$
         greg.setFullName(new Name(MessageUtil.getString("Weslock"))); //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class UserFileParser {
         greg
                 .setAddress(new Address(
                         new StreetAddress(),
-                        MessageUtil.getString("Ottawa"), new Integer(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
+                        MessageUtil.getString("Ottawa"), Integer.valueOf(4), MessageUtil.getString("A1B2C3"))); //$NON-NLS-2$ //$NON-NLS-1$
 
         return root;
     }

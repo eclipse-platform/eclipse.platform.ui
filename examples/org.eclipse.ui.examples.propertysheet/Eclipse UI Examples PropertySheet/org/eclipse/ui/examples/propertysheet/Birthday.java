@@ -47,11 +47,11 @@ public class Birthday implements IPropertySource {
     public static final String P_YEAR = MessageUtil.getString("year"); //$NON-NLS-1$
 
     //default values
-    private static final Integer DAY_DEFAULT = new Integer(1);
+    private static final Integer DAY_DEFAULT = Integer.valueOf(1);
 
-    private static final Integer MONTH_DEFAULT = new Integer(1);
+    private static final Integer MONTH_DEFAULT = Integer.valueOf(1);
 
-    private static final Integer YEAR_DEFAULT = new Integer(2000);
+    private static final Integer YEAR_DEFAULT = Integer.valueOf(2000);
 
     //static date formater
     private static final DateFormat formatter = new SimpleDateFormat(
@@ -112,9 +112,9 @@ public class Birthday implements IPropertySource {
      */
     public Birthday(int day, int month, int year) {
         super();
-        setDay(new Integer(day));
-        setMonth(new Integer(month));
-        setYear(new Integer(year));
+        setDay(Integer.valueOf(day));
+        setMonth(Integer.valueOf(month));
+        setYear(Integer.valueOf(year));
     }
 
     /**
@@ -171,9 +171,9 @@ public class Birthday implements IPropertySource {
     @Override
 	public Object getPropertyValue(Object propKey) {
         if (propKey.equals(P_ID_DAY))
-            return new Integer(getDay().intValue() - 1);
+            return Integer.valueOf(getDay().intValue() - 1);
         if (propKey.equals(P_ID_MONTH))
-            return new Integer(getMonth().intValue() - 1);
+            return Integer.valueOf(getMonth().intValue() - 1);
         if (propKey.equals(P_ID_YEAR))
             return getYear().toString();
         return null;
@@ -247,16 +247,16 @@ public class Birthday implements IPropertySource {
     @Override
 	public void setPropertyValue(Object name, Object value) {
         if (P_ID_DAY.equals(name)) {
-            setDay(new Integer(((Integer) value).intValue() + 1));
+            setDay(Integer.valueOf(((Integer) value).intValue() + 1));
             return;
         }
         if (P_ID_MONTH.equals(name)) {
-            setMonth(new Integer(((Integer) value).intValue() + 1));
+            setMonth(Integer.valueOf(((Integer) value).intValue() + 1));
             return;
         }
         if (P_ID_YEAR.equals(name)) {
             try {
-                setYear(new Integer((String) value));
+                setYear(Integer.valueOf((String) value));
             } catch (NumberFormatException e) {
                 setYear(YEAR_DEFAULT);
             }

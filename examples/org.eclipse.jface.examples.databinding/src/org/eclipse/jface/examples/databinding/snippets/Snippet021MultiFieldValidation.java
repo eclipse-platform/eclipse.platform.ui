@@ -230,9 +230,9 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		};
 		dbc.addValidationStatusProvider(validator);
 
-		IObservableValue modelField1 = new WritableValue(new Integer(1),
+		IObservableValue modelField1 = new WritableValue(Integer.valueOf(1),
 				Integer.TYPE);
-		IObservableValue modelField2 = new WritableValue(new Integer(4),
+		IObservableValue modelField2 = new WritableValue(Integer.valueOf(4),
 				Integer.TYPE);
 		dbc.bindValue(validator.observeValidatedValue(middleField1),
 				modelField1);
@@ -288,7 +288,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			}
 		});
 
-		IObservableValue modelSum = new WritableValue(new Integer(5),
+		IObservableValue modelSum = new WritableValue(Integer.valueOf(5),
 				Integer.TYPE);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue),
 				modelSum);

@@ -144,7 +144,7 @@ public class ArenaImpl extends HockeyleagueObjectImpl implements Arena {
 			case HockeyleaguePackage.ARENA__ADDRESS:
 				return getAddress();
 			case HockeyleaguePackage.ARENA__CAPACITY:
-				return new Integer(getCapacity());
+				return Integer.valueOf(getCapacity());
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}

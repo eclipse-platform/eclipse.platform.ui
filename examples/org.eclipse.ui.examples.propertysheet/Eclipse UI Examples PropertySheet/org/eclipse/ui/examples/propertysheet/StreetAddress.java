@@ -29,7 +29,7 @@ public class StreetAddress implements IPropertySource {
     private String streetName;
 
     //default property values
-    private static final Integer BUILD_NO_DEFAULT = new Integer(0);
+    private static final Integer BUILD_NO_DEFAULT = Integer.valueOf(0);
 
     private static final String APTBOX_DEFAULT = MessageUtil
             .getString("unspecified"); //$NON-NLS-1$
@@ -77,7 +77,7 @@ public class StreetAddress implements IPropertySource {
      */
     public StreetAddress(int buildNo, String streetName) {
         super();
-        setBuildNo(new Integer(buildNo));
+        setBuildNo(Integer.valueOf(buildNo));
         setStreetName(streetName);
     }
 
@@ -86,7 +86,7 @@ public class StreetAddress implements IPropertySource {
      */
     public StreetAddress(int buildNo, String aptBox, String streetName) {
         super();
-        setBuildNo(new Integer(buildNo));
+        setBuildNo(Integer.valueOf(buildNo));
         setAptBox(aptBox);
         setStreetName(streetName);
     }
@@ -219,7 +219,7 @@ public class StreetAddress implements IPropertySource {
 	public void setPropertyValue(Object name, Object value) {
         if (name.equals(P_ID_BUILD_NO)) {
             try {
-                setBuildNo(new Integer(Integer.parseInt((String) value)));
+                setBuildNo(Integer.valueOf(Integer.parseInt((String) value)));
             } catch (NumberFormatException e) {
                 setBuildNo(BUILD_NO_DEFAULT);
             }

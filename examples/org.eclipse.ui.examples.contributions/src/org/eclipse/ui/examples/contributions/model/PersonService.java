@@ -50,8 +50,8 @@ public class PersonService implements IPersonService, IDisposable {
 	private void fillModel() {
 		int i = ME;
 		for (int j = 0; j < datafill.length; j += 2) {
-			Integer iid = new Integer(i++);
-			Person p = new Person(iid.intValue(), datafill[j], datafill[j + 1]);
+			int iid = i++;
+			Person p = new Person(iid, datafill[j], datafill[j + 1]);
 			if (p.getId() == ME) {
 				p.setAdminRights(true);
 			}
@@ -83,7 +83,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPerson(int)
 	 */
 	public Person getPerson(int id) {
-		Person p = (Person) people.get(new Integer(id));
+		Person p = (Person) people.get(Integer.valueOf(id));
 		if (p == null) {
 			return null;
 		}
@@ -106,7 +106,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 */
 	public void updatePerson(Person person) {
 		Assert.isNotNull(person);
-		Person p = (Person) people.get(new Integer(person.getId()));
+		Person p = (Person) people.get(Integer.valueOf(person.getId()));
 		if (p == null) {
 			Assert.isNotNull(p, "Must update a real person"); //$NON-NLS-1$
 		}
@@ -141,7 +141,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#createPerson(int)
 	 */
 	public Person createPerson(int id) {
-		Integer iid = new Integer(id);
+		Integer iid = Integer.valueOf(id);
 		if (people.containsKey(iid)) {
 			return null;
 		}

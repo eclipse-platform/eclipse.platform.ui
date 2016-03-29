@@ -71,7 +71,7 @@ public class RadioGroup {
             throw new IllegalArgumentException("A radio button was not passed");
          }
          buttons[i] = (IRadioButton) DuckType.implement(IRadioButton.class, radioButtons[i]);
-         buttons[i].setData(Integer.toString(i), new Integer(i));
+         buttons[i].setData(Integer.toString(i), Integer.valueOf(i));
          buttons[i].addSelectionListener(selectionListener);
       }
       this.buttons = buttons;

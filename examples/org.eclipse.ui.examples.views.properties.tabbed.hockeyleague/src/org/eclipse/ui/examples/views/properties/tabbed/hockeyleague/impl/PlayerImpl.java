@@ -399,15 +399,15 @@ public abstract class PlayerImpl extends HockeyleagueObjectImpl implements Playe
 			case HockeyleaguePackage.PLAYER__BIRTHPLACE:
 				return getBirthplace();
 			case HockeyleaguePackage.PLAYER__NUMBER:
-				return new Integer(getNumber());
+				return Integer.valueOf(getNumber());
 			case HockeyleaguePackage.PLAYER__HEIGHT_MESUREMENT:
 				return getHeightMesurement();
 			case HockeyleaguePackage.PLAYER__HEIGHT_VALUE:
-				return new Integer(getHeightValue());
+				return Integer.valueOf(getHeightValue());
 			case HockeyleaguePackage.PLAYER__WEIGHT_MESUREMENT:
 				return getWeightMesurement();
 			case HockeyleaguePackage.PLAYER__WEIGHT_VALUE:
-				return new Integer(getWeightValue());
+				return Integer.valueOf(getWeightValue());
 			case HockeyleaguePackage.PLAYER__SHOT:
 				return getShot();
 			case HockeyleaguePackage.PLAYER__BIRTHDATE:
