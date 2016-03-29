@@ -32,7 +32,7 @@ public class TestPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 
-		IScopeContext context = new DefaultScope();
+		IScopeContext context = DefaultScope.INSTANCE;
 		IEclipsePreferences node = context.getNode(TestPlugin.getDefault()
 				.getBundle().getSymbolicName());
 		node.put(TEST_LISTENER_KEY, TEST_DEFAULT_VALUE);
