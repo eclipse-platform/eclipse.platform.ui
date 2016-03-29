@@ -18,8 +18,7 @@
             description="Open a single file"
             id="org.eclipse.ui.edit.text.openLocalFile"
             label="Open an existing file"
-            resolution="launchbar"
-            standby="true">
+            resolution="launchbar">
       </command>
       
       <!--
@@ -29,8 +28,7 @@
       <command
             description="Create a new Java Eclipse project"
             id="org.eclipse.ui.newWizard(newWizardId=org.eclipse.jdt.ui.wizards.JavaProjectWizard)"
-            label="Create a new Java project"
-            standby="true">
+            label="Create a new Java project">
       </command>
       
       <!-- Open the Import Existing Project -->
@@ -39,8 +37,7 @@
             icon="platform:/plugin/org.eclipse.ui/icons/full/wizban/import_wiz.png"
             id="org.eclipse.ui.file.import(importWizardId=org.eclipse.ui.wizards.import.ExternalProject)"
             label="Import an existing project"
-            resolution="standby"
-            standby="true">
+            resolution="standby">
       </command>
       
       <!-- Cause all New XXX quicklinks to use the wizban/new_wiz image -->
