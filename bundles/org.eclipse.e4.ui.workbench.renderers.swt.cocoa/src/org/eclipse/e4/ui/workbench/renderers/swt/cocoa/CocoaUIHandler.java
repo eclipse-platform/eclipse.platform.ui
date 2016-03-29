@@ -769,7 +769,7 @@ public class CocoaUIHandler {
 			method = clazz.getMethod("object_getInstanceVariable", new Class[] { //$NON-NLS-1$
 					int.class, byte[].class, int[].class });
 			int[] resultPtr = new int[1];
-			method.invoke(null, new Object[] { new Integer((int) delegateId), name, resultPtr });
+			method.invoke(null, new Object[] { Integer.valueOf((int) delegateId), name, resultPtr });
 			return new long[] { resultPtr[0] };
 		}
 	}
@@ -817,7 +817,7 @@ public class CocoaUIHandler {
 		if (PTR_CLASS == long.class)
 			return new Long(value);
 		else
-			return new Integer((int) value);
+			return Integer.valueOf((int) value);
 	}
 
 	private ParameterizedCommand generateParameterizedCommand(final MHandledItem item) {
