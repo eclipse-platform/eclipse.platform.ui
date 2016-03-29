@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views.properties.tabbed
 Eclipse-LazyStart: true
 Bundle-Vendor: %Plugin.providerName
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
