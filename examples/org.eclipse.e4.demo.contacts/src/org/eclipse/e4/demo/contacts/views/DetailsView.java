@@ -67,7 +67,7 @@ public class DetailsView {
 
 	@Persist
 	public void doSave(@Optional IProgressMonitor monitor) throws IOException,
-			InterruptedException {
+	InterruptedException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -194,7 +194,7 @@ public class DetailsView {
 	private void updatePartTitle(Contact contact) {
 		StringBuffer title = new StringBuffer("Details of ");
 		title.append(contact.getFirstName()).append(' ')
-				.append(contact.getLastName());
+		.append(contact.getLastName());
 		uiItem.setLabel(title.toString());
 	}
 
@@ -206,9 +206,9 @@ public class DetailsView {
 				MessageDialog dialog = new MessageDialog(
 						detailComposite.getShell(), "Save vCard", null,
 						"The current vCard has been modified. Save changes?",
-						MessageDialog.CONFIRM, new String[] {
-								IDialogConstants.YES_LABEL,
-								IDialogConstants.NO_LABEL }, 0);
+						MessageDialog.CONFIRM, 0,
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.NO_LABEL);
 				dialog.create();
 				ThemeUtil.applyDialogStyles(engine, dialog.getShell());
 				if (dialog.open() == Window.OK) {

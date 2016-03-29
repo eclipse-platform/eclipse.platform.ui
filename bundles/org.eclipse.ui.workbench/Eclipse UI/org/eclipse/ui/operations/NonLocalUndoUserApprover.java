@@ -199,8 +199,8 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 			@Override
 			public void run() {
 				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title,
-						null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
-		                        discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
+						null, message, MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, discardButton,
+						IDialogConstants.CANCEL_LABEL); // yes is the default
 		        answer[0] = dialog.open();
 		}});
 		switch (answer[0]) {

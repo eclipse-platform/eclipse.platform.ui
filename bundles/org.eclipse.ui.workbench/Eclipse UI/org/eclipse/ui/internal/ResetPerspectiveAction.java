@@ -48,11 +48,9 @@ public class ResetPerspectiveAction extends PerspectiveAction {
     @Override
 	protected void run(IWorkbenchPage page, IPerspectiveDescriptor persp) {
         String message = NLS.bind(WorkbenchMessages.ResetPerspective_message, persp.getLabel() );
-        String[] buttons = new String[] { IDialogConstants.OK_LABEL,
-                IDialogConstants.CANCEL_LABEL };
         MessageDialog d = new MessageDialog(getWindow().getShell(),
                 WorkbenchMessages.ResetPerspective_title,
-                null, message, MessageDialog.QUESTION, buttons, 0);
+				null, message, MessageDialog.QUESTION, 0, IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL);
         if (d.open() == 0) {
 			page.resetPerspective();
 		}

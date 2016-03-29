@@ -1084,9 +1084,9 @@ public class ResourceInfoPage extends PropertyPage {
 
 			MessageDialog dialog = new MessageDialog(getShell(),
 					IDEWorkbenchMessages.ResourceInfo_recursiveChangesTitle,
-					null, message, MessageDialog.QUESTION, new String[] {
-							IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL }, 1);
+					null, message, MessageDialog.QUESTION, 1,
+					IDialogConstants.YES_LABEL,
+					IDialogConstants.NO_LABEL);
 
 			return dialog.open() == 0;
 		}
