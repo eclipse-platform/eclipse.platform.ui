@@ -204,6 +204,41 @@ public class SmartImportRootWizardPage extends WizardPage {
 		setDescription(DataTransferMessages.SmartImportWizardPage_importProjectsInFolderDescription);
 		Composite res = new Composite(parent, SWT.NONE);
 		res.setLayout(new GridLayout(4, false));
+
+		createInputSelectionOptions(res);
+
+		createConfigurationOptions(res);
+
+		Composite proposalParent = new Composite(res, SWT.NONE);
+		proposalParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
+		proposalParent.setLayout(new FillLayout());
+		createProposalsGroup(proposalParent);
+
+		Group workingSetsGroup = new Group(res, SWT.NONE);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1);
+		layoutData.verticalIndent = 20;
+		workingSetsGroup.setLayoutData(layoutData);
+		workingSetsGroup.setLayout(new GridLayout(1, false));
+		workingSetsGroup.setText(DataTransferMessages.SmartImportWizardPage_workingSets);
+		workingSetsBlock = new WorkingSetConfigurationBlock(getDialogSettings(),
+				"org.eclipse.ui.resourceWorkingSetPage"); //$NON-NLS-1$
+		if (this.workingSets != null) {
+			workingSetsBlock.setWorkingSets(this.workingSets.toArray(new IWorkingSet[this.workingSets.size()]));
+		}
+		workingSetsBlock.createContent(workingSetsGroup);
+
+		if (this.selection != null) {
+			rootDirectoryText.setText(this.selection.getAbsolutePath());
+			validatePage();
+		}
+
+		setControl(res);
+	}
+
+	/**
+	 * @param res
+	 */
+	private void createInputSelectionOptions(Composite res) {
 		Label rootDirectoryLabel = new Label(res, SWT.NONE);
 		rootDirectoryLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		rootDirectoryLabel.setText(DataTransferMessages.SmartImportWizardPage_selectRootDirectory);
@@ -311,7 +346,12 @@ public class SmartImportRootWizardPage extends WizardPage {
 				}
 			}
 		});
+	}
 
+	/**
+	 * Creates the UI elements for the import options
+	 */
+	private void createConfigurationOptions(Composite res) {
 		Link showDetectorsLink = new Link(res, SWT.NONE);
 		showDetectorsLink.setText(DataTransferMessages.SmartImportWizardPage_showAvailableDetectors);
 		showDetectorsLink.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 4, 1));
@@ -357,30 +397,6 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 		});
 
-		Composite proposalParent = new Composite(res, SWT.NONE);
-		proposalParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
-		proposalParent.setLayout(new FillLayout());
-		createProposalsGroup(proposalParent);
-
-		Group workingSetsGroup = new Group(res, SWT.NONE);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1);
-		layoutData.verticalIndent = 20;
-		workingSetsGroup.setLayoutData(layoutData);
-		workingSetsGroup.setLayout(new GridLayout(1, false));
-		workingSetsGroup.setText(DataTransferMessages.SmartImportWizardPage_workingSets);
-		workingSetsBlock = new WorkingSetConfigurationBlock(getDialogSettings(),
-				"org.eclipse.ui.resourceWorkingSetPage"); //$NON-NLS-1$
-		if (this.workingSets != null) {
-			workingSetsBlock.setWorkingSets(this.workingSets.toArray(new IWorkingSet[this.workingSets.size()]));
-		}
-		workingSetsBlock.createContent(workingSetsGroup);
-
-		if (this.selection != null) {
-			rootDirectoryText.setText(this.selection.getAbsolutePath());
-			validatePage();
-		}
-
-		setControl(res);
 	}
 
 	/**
