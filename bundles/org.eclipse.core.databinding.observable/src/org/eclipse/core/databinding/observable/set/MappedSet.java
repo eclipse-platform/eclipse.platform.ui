@@ -136,10 +136,10 @@ public class MappedSet extends ObservableSet {
 	protected boolean handleAddition(Object mapValue) {
 		Integer count = (Integer) valueCounts.get(mapValue);
 		if (count == null) {
-			valueCounts.put(mapValue, new Integer(1));
+			valueCounts.put(mapValue, Integer.valueOf(1));
 			return true;
 		}
-		valueCounts.put(mapValue, new Integer(count.intValue() + 1));
+		valueCounts.put(mapValue, Integer.valueOf(count.intValue() + 1));
 		return false;
 	}
 
@@ -153,7 +153,7 @@ public class MappedSet extends ObservableSet {
 			valueCounts.remove(mapValue);
 			return true;
 		}
-		valueCounts.put(mapValue, new Integer(count.intValue() - 1));
+		valueCounts.put(mapValue, Integer.valueOf(count.intValue() - 1));
 		return false;
 	}
 

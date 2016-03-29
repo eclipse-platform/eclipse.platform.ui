@@ -42,9 +42,9 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  *
  * <pre>
  * final IObservableList addends = WritableValue.withValueType(Integer.TYPE);
- * addends.add(new Integer(0));
- * addends.add(new Integer(1));
- * addends.add(new Integer(2));
+ * addends.add(Integer.valueOf(0));
+ * addends.add(Integer.valueOf(1));
+ * addends.add(Integer.valueOf(2));
  *
  * IObservableValue sum = new ComputedValue() {
  * 	protected Object calculate() {
@@ -59,7 +59,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
  *
  * System.out.println(sum.getValue()); // =&gt; 3
  *
- * addends.add(new Integer(10));
+ * addends.add(Integer.valueOf(10));
  * System.out.println(sum.getValue()); // =&gt; 13
  * </pre>
  *

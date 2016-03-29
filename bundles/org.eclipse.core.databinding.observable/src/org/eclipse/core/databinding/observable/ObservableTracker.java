@@ -199,7 +199,7 @@ public class ObservableTracker {
 		if (newCount < 0)
 			throw new IllegalStateException("Ignore count is already zero"); //$NON-NLS-1$
 
-		currentIgnoreCount.set(newCount == 0 ? null : new Integer(newCount));
+		currentIgnoreCount.set(newCount == 0 ? null : Integer.valueOf(newCount));
 	}
 
 	/**

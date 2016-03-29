@@ -38,7 +38,7 @@ public class NumberToIntegerConverter extends NumberToNumberConverter implements
 	@Override
 	protected Number doConvert(Number number) {
 		if (StringToNumberParser.inIntegerRange(number)) {
-			return new Integer(number.intValue());
+			return Integer.valueOf(number.intValue());
 		}
 
 		return null;

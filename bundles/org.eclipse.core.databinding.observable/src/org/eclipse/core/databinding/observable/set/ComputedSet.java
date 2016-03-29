@@ -44,7 +44,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  *
  * <pre>
  * final IObservableValue max = WritableValue.withValueType(Integer.TYPE);
- * max.setValue(new Integer(0));
+ * max.setValue(Integer.valueOf(0));
  * IObservableSet primes = new ComputedSet() {
  * 	protected Set calculate() {
  * 		int maxVal = ((Integer) max.getValue()).intValue();
@@ -56,7 +56,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  * 				if (i % knownPrime.intValue() == 0)
  * 					continue outer;
  * 			}
- * 			result.add(new Integer(i));
+ * 			result.add(Integer.valueOf(i));
  * 		}
  * 		return result;
  * 	}
@@ -64,7 +64,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  *
  * System.out.println(primes); // =&gt; &quot;[]&quot;
  *
- * max.setValue(new Integer(20));
+ * max.setValue(Integer.valueOf(20));
  * System.out.println(primes); // =&gt; &quot;[2, 3, 5, 7, 11, 13, 17, 19]&quot;
  * </pre>
  *

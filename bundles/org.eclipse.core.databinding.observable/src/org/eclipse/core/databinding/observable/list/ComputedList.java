@@ -45,7 +45,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  *
  * <pre>
  * final IObservableValue count = WritableValue.withValueType(Integer.TYPE);
- * count.setValue(new Integer(0));
+ * count.setValue(Integer.valueOf(0));
  * IObservableList fibonacci = new ComputedList() {
  * 	protected List calculate() {
  * 		int size = ((Integer) count.getValue()).intValue();
@@ -53,13 +53,13 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  * 		List result = new ArrayList();
  * 		for (int i = 0; i &lt; size; i++) {
  * 			if (i == 0)
- * 				result.add(new Integer(0));
+ * 				result.add(Integer.valueOf(0));
  * 			else if (i == 1)
- * 				result.add(new Integer(1));
+ * 				result.add(Integer.valueOf(1));
  * 			else {
  * 				Integer left = (Integer) result.get(i - 2);
  * 				Integer right = (Integer) result.get(i - 1);
- * 				result.add(new Integer(left.intValue() + right.intValue()));
+ * 				result.add(Integer.valueOf(left.intValue() + right.intValue()));
  * 			}
  * 		}
  * 		return result;
@@ -68,7 +68,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  *
  * System.out.println(fibonacci); // =&gt; &quot;[]&quot;
  *
- * count.setValue(new Integer(5));
+ * count.setValue(Integer.valueOf(5));
  * System.out.println(fibonacci); // =&gt; &quot;[0, 1, 1, 2, 3]&quot;
  * </pre>
  *

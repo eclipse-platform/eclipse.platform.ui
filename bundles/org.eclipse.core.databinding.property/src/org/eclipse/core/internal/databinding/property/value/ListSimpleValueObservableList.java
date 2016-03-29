@@ -445,7 +445,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 
 		for (ListIterator<M> it = ListSimpleValueObservableList.this.masterList.listIterator(); it.hasNext();) {
 			if (masterElement == it.next())
-				indices.add(new Integer(it.previousIndex()));
+				indices.add(Integer.valueOf(it.previousIndex()));
 		}
 
 		int[] result = new int[indices.size()];

@@ -125,7 +125,7 @@ public class NumberToStringConverter extends Converter {
 				// Full ICU4J present. Convert java.math.BigDecimal to ICU BigDecimal to format. Bug #180392.
 				BigDecimal o = (BigDecimal) fromObject;
 				try {
-					fromObject = icuBigDecimalCtr.newInstance(new Object[] {o.unscaledValue(), new Integer(o.scale())});
+					fromObject = icuBigDecimalCtr.newInstance(new Object[] {o.unscaledValue(), Integer.valueOf(o.scale())});
 				}
 				catch(InstantiationException e) {}
 				catch(InvocationTargetException e) {}

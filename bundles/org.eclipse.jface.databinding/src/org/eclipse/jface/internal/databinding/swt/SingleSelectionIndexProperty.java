@@ -26,6 +26,6 @@ public abstract class SingleSelectionIndexProperty extends
 
 	@Override
 	protected void doSetValue(Object source, Object value) {
-		super.doSetValue(source, value == null ? new Integer(-1) : value);
+		super.doSetValue(source, value == null ? Integer.valueOf(-1) : value);
 	}
 }

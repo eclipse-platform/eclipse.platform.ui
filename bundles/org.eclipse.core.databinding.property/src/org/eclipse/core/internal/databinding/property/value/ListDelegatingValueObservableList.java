@@ -322,7 +322,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 
 		for (ListIterator<T> it = masterList.listIterator(); it.hasNext();) {
 			if (masterElement == it.next())
-				indices.add(new Integer(it.previousIndex()));
+				indices.add(Integer.valueOf(it.previousIndex()));
 		}
 
 		int[] result = new int[indices.size()];

@@ -138,11 +138,11 @@ public final class UnionSet<E> extends ObservableSet<E> {
 
 			Integer refCount = refCounts.get(added);
 			if (refCount == null) {
-				refCounts.put(added, new Integer(1));
+				refCounts.put(added, Integer.valueOf(1));
 				addsToFire.add(added);
 			} else {
 				int refs = refCount.intValue();
-				refCount = new Integer(refs + 1);
+				refCount = Integer.valueOf(refs + 1);
 				refCounts.put(added, refCount);
 			}
 		}
@@ -157,7 +157,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 					removesToFire.add(removed);
 					refCounts.remove(removed);
 				} else {
-					refCount = new Integer(refCount.intValue() - 1);
+					refCount = Integer.valueOf(refCount.intValue() - 1);
 					refCounts.put(removed, refCount);
 				}
 			}
@@ -207,10 +207,10 @@ public final class UnionSet<E> extends ObservableSet<E> {
 			Integer refCount = refCounts.get(next);
 			if (refCount == null) {
 				adds.add(next);
-				refCount = new Integer(1);
+				refCount = Integer.valueOf(1);
 				refCounts.put(next, refCount);
 			} else {
-				refCount = new Integer(refCount.intValue() + 1);
+				refCount = Integer.valueOf(refCount.intValue() + 1);
 				refCounts.put(next, refCount);
 			}
 		}

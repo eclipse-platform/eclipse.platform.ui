@@ -54,8 +54,8 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	 */
 	private final Class<?> boxedType;
 
-	private static final Integer MIN_INTEGER = new Integer(Integer.MIN_VALUE);
-	private static final Integer MAX_INTEGER = new Integer(Integer.MAX_VALUE);
+	private static final Integer MIN_INTEGER = Integer.valueOf(Integer.MIN_VALUE);
+	private static final Integer MAX_INTEGER = Integer.valueOf(Integer.MAX_VALUE);
 
 	// This code looks deceptive, but we can't use Double.MIN_VALUE because it
 	// is actually the smallest *positive* number.
@@ -163,7 +163,7 @@ public class StringToNumberConverter extends NumberFormatConverter {
 		 */
 		if (Integer.class.equals(boxedType)) {
 			if (StringToNumberParser.inIntegerRange(result.getNumber())) {
-				return new Integer(result.getNumber().intValue());
+				return Integer.valueOf(result.getNumber().intValue());
 			}
 		} else if (Double.class.equals(boxedType)) {
 			if (StringToNumberParser.inDoubleRange(result.getNumber())) {

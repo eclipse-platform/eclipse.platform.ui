@@ -117,12 +117,12 @@ public class StringToNumberParser {
 		if (errorIndex < value.length()) {
 			return BindingMessages.formatString(
 					BindingMessages.VALIDATE_NUMBER_PARSE_ERROR, new Object[] {
-							value, new Integer(errorIndex + 1),
+							value, Integer.valueOf(errorIndex + 1),
 							new Character(value.charAt(errorIndex)) });
 		}
 		return BindingMessages.formatString(
 				BindingMessages.VALIDATE_NUMBER_PARSE_ERROR_NO_CHARACTER,
-				new Object[] { value, new Integer(errorIndex + 1) });
+				new Object[] { value, Integer.valueOf(errorIndex + 1) });
 	}
 
 	/**

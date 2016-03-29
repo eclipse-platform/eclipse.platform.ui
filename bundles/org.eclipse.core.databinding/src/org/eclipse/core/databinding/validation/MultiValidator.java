@@ -90,8 +90,8 @@ import org.eclipse.core.runtime.IStatus;
  * dbc.addValidationStatusProvider(validator);
  *
  * // Bind the middle observables to the model observables.
- * IObservableValue model0 = new WritableValue(new Integer(2), Integer.TYPE);
- * IObservableValue model1 = new WritableValue(new Integer(4), Integer.TYPE);
+ * IObservableValue model0 = new WritableValue(Integer.valueOf(2), Integer.TYPE);
+ * IObservableValue model1 = new WritableValue(Integer.valueOf(4), Integer.TYPE);
  * dbc.bind(middle0, model0, null, null);
  * dbc.bind(middle1, model1, null, null);
  * </pre>
@@ -108,8 +108,8 @@ import org.eclipse.core.runtime.IStatus;
  * // Validated observables do not change value until the validator passes.
  * IObservableValue validated0 = validator.observeValidatedValue(middle0);
  * IObservableValue validated1 = validator.observeValidatedValue(middle1);
- * IObservableValue model0 = new WritableValue(new Integer(2), Integer.TYPE);
- * IObservableValue model1 = new WritableValue(new Integer(4), Integer.TYPE);
+ * IObservableValue model0 = new WritableValue(Integer.valueOf(2), Integer.TYPE);
+ * IObservableValue model1 = new WritableValue(Integer.valueOf(4), Integer.TYPE);
  * // Bind to the validated value, not the middle/target
  * dbc.bind(validated0, model0, null, null);
  * dbc.bind(validated1, model1, null, null);
