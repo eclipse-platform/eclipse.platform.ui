@@ -526,10 +526,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 
 						public String getDescription() {
 							if (showSecondaryPopup && !user.equals("tori"))  //$NON-NLS-1$
-								return MessageFormat
-										.format(
-												TaskAssistExampleMessages.ExampleDialog_ProposalDescription,
-												new String[] { user });
+								return MessageFormat.format(TaskAssistExampleMessages.ExampleDialog_ProposalDescription, user);
 							return null;
 						}
 
