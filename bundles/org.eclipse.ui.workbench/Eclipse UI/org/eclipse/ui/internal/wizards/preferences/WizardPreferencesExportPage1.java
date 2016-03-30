@@ -210,6 +210,6 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	private void reportException(Exception e) {
 		Shell shell = getControl().getShell();
 		WorkbenchPlugin.log(e.getMessage(), e);
-		MessageDialog.open(MessageDialog.ERROR, shell, new String(), e.getLocalizedMessage(), SWT.SHEET);
+		MessageDialog.open(MessageDialog.ERROR, shell, "", e.getLocalizedMessage(), SWT.SHEET); //$NON-NLS-1$
 	}
 }
