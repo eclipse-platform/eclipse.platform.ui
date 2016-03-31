@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
@@ -493,12 +494,6 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 				return new Object[] { selectedOrganizers.get(0) };
 			}
 			return new Object[0];
-		}
-		@Override
-		public void dispose() {
-		}
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 	

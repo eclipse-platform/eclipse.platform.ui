@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
@@ -46,7 +47,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -112,11 +112,6 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		public Object[] getElements(Object inputElement) {
 			return lm.getLaunchConfigurationTypes();
 		}
-		@Override
-		public void dispose() {lm = null;}
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-		
 	}
 	private String OVERWRITE = "overwrite"; //$NON-NLS-1$
 	private String OLD_PATH = "oldpath"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Bug 173306: When editing source lookup, new source
  *     					containers should be added at the top of the list
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -19,13 +20,11 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -58,20 +57,6 @@ public class SourceContainerViewer extends TreeViewer {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
-		}
-		
-		/**
-		 * @see IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-		}
-		
-		/**
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-		 */
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
 		/** 

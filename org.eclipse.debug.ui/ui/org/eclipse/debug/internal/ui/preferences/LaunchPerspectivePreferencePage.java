@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
@@ -46,7 +47,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -145,10 +145,6 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		public boolean hasChildren(Object element) {return element instanceof ILaunchConfigurationType;}
 		@Override
 		public Object getParent(Object element) {return null;}
-		@Override
-		public void dispose() {}
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
 	/**

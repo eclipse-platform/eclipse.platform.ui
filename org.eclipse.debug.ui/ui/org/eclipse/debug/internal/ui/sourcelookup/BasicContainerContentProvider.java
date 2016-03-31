@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 490755
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -16,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 /**
  * Provides content for a tree viewer that shows only containers.
  * 
@@ -29,13 +29,6 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	 * Creates a new ResourceContentProvider.
 	 */
 	public BasicContainerContentProvider() {
-	}
-	/**
-	 * The visual part that is using this content provider is about
-	 * to be disposed. Deallocate all allocated SWT resources.
-	 */
-	@Override
-	public void dispose() {
 	}
 	
 	/* (non-Javadoc)
@@ -83,13 +76,5 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
 	}
 }
