@@ -33,4 +33,4 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.renderers.swt;x-friends:="o
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
- org.w3c.dom.css;version="2.0.0"
+ org.w3c.dom.css

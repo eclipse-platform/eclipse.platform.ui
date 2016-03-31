@@ -50,6 +50,6 @@ Import-Package: com.ibm.icu.text;version="4.2.1",
  org.osgi.framework;version="1.5.0",
  org.osgi.service.packageadmin;version="1.2.0",
  org.osgi.util.tracker;version="1.4.0",
- org.w3c.dom.css;version="2.0.0"
+ org.w3c.dom.css
 Service-Component: OSGI-INF/testableobject.xml, OSGI-INF/statusreporter.xml,
  OSGI-INF/menuservice.xml
