@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.progress.internal.PreferenceStore;
 import org.eclipse.e4.ui.progress.internal.Preferences;
 import org.eclipse.e4.ui.progress.internal.ProgressManager;
+import org.eclipse.e4.ui.progress.internal.ProgressViewUpdater;
 import org.eclipse.e4.ui.progress.internal.Services;
 
 public class ProgressViewAddon {
@@ -31,5 +32,7 @@ public class ProgressViewAddon {
 		ContextInjectionFactory.make(Services.class, context);
 		ProgressManager progressManager = ContextInjectionFactory.make(ProgressManager.class, context);
 		appContext.set(ProgressManager.class, progressManager);
+		// bug-fix: add a ProgressViewUpdater to the application context
+		appContext.set(ProgressViewUpdater.class, ContextInjectionFactory.make(ProgressViewUpdater.class, appContext));
 	}
 }

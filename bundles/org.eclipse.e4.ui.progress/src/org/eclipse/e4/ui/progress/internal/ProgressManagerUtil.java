@@ -23,6 +23,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.progress.IProgressConstants;
 import org.eclipse.e4.ui.progress.IProgressService;
 import org.eclipse.e4.ui.progress.internal.legacy.StatusUtil;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -146,10 +148,16 @@ public class ProgressManagerUtil {
 		Services services = Services.getInstance();
 		MPart progressView = (MPart) services.getModelService().find(
 		        ProgressManager.PROGRESS_VIEW_NAME, services.getMWindow());
+		EPartService partService = services.getPartService();
+		if (progressView == null) {
+			progressView = partService.createPart(ProgressManager.PROGRESS_VIEW_NAME);
+			if (progressView != null)
+				partService.showPart(progressView, PartState.VISIBLE);
+		}
 		if (progressView == null) {
 			return;
 		}
-		services.getPartService().activate(progressView);
+		partService.activate(progressView);
 	}
 
 	/**
