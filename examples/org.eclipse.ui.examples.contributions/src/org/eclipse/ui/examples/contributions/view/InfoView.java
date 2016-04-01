@@ -25,9 +25,6 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -57,42 +54,27 @@ public class InfoView extends ViewPart {
 	private IHandler countHandler;
 	private ArrayList<Object> viewerInput;
 
-	private IPropertyChangeListener personListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
-				refresh();
-			} else if (IPersonService.PROP_ADD.equals(event.getProperty())) {
-				viewerInput.add(event.getNewValue());
-				viewer.add(event.getNewValue());
-			}
+	private IPropertyChangeListener personListener = event -> {
+		if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
+			refresh();
+		} else if (IPersonService.PROP_ADD.equals(event.getProperty())) {
+			viewerInput.add(event.getNewValue());
+			viewer.add(event.getNewValue());
 		}
 	};
 
 	private static class ContentProvider implements IStructuredContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// nothing to do here
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List) {
 				return ((List<?>) inputElement).toArray();
@@ -101,20 +83,12 @@ public class InfoView extends ViewPart {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new ListViewer(parent);
 		viewer.setContentProvider(new ContentProvider());
 		viewer.setLabelProvider(new LabelProvider());
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				editSelection();
-			}
-		});
+		viewer.addDoubleClickListener(event -> editSelection());
 		IPersonService service = getSite().getService(
 				IPersonService.class);
 		viewerInput = new ArrayList<>(service.getPeople());
@@ -134,11 +108,7 @@ public class InfoView extends ViewPart {
 		createHandlers();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -161,6 +131,7 @@ public class InfoView extends ViewPart {
 	private void createHandlers() {
 		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		countHandler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) {
 				List<?> elements = (List<?>) viewer.getInput();
 				MessageDialog.openInformation(getSite().getShell(),
@@ -172,11 +143,7 @@ public class InfoView extends ViewPart {
 		handlerService.activateHandler(VIEW_COUNT_ID, countHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		if (countHandler != null) {
 			// we must dispose our handlers, although in this case it will

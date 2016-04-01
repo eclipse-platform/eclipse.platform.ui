@@ -49,11 +49,7 @@ public class InfoEditor extends EditorPart {
 	private boolean dirty = false;
 	private IHandler resetHandler;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		monitor.beginTask(getPartName(), 3);
 		person.setSurname(surnameText.getText());
@@ -68,21 +64,12 @@ public class InfoEditor extends EditorPart {
 		setDirty(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
+	@Override
 	public void doSaveAs() {
 		// nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite,
-	 *      org.eclipse.ui.IEditorInput)
-	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		setSite(site);
@@ -100,11 +87,7 @@ public class InfoEditor extends EditorPart {
 		setPartName("Person - " + pinput.getIndex()); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#isDirty()
-	 */
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -114,28 +97,22 @@ public class InfoEditor extends EditorPart {
 		firePropertyChange(ISaveablePart.PROP_DIRTY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		KeyListener keyListener = new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if ((e.keyCode & SWT.MODIFIER_MASK) == 0) {
 					setDirty(true);
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				// nothing
 			}
@@ -180,6 +157,7 @@ public class InfoEditor extends EditorPart {
 	private void createHandlers() {
 		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		resetHandler = new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) {
 				updateText();
 				setDirty(false);
@@ -189,11 +167,7 @@ public class InfoEditor extends EditorPart {
 		handlerService.activateHandler(EDITOR_RESET_ID, resetHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		surnameText.setFocus();
 	}

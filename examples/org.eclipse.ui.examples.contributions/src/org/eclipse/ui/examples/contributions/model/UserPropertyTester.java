@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,7 @@ public class UserPropertyTester extends PropertyTester {
 	private final static String IS_ADMIN = "isAdmin"; //$NON-NLS-1$
 	private final static String ID = "id"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object,
-	 *      java.lang.String, java.lang.Object[], java.lang.Object)
-	 */
+	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (!(receiver instanceof Person)) {

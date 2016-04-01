@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class Person {
 		this.admin = admin;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer(surname);
 		buf.append(", "); //$NON-NLS-1$
@@ -75,20 +76,12 @@ public class Person {
 		return new Person(id, surname, givenname);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	@Override
 	public int hashCode() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Person) {
 			Person p = (Person) o;

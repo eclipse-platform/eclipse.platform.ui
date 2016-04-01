@@ -35,12 +35,6 @@ import org.eclipse.ui.services.IEvaluationService;
 public class AdminHandler extends AbstractHandler implements IElementUpdater {
 	private static final String ID = "org.eclipse.ui.examples.contributions.view.adminRights"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement,
-	 *      java.util.Map)
-	 */
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		IEvaluationService service = PlatformUI
@@ -64,11 +58,7 @@ public class AdminHandler extends AbstractHandler implements IElementUpdater {
 		element.setChecked(((Person) o).hasAdminRights());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) {
 		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
 		if (!(sel instanceof IStructuredSelection)) {

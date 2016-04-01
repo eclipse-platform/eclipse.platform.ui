@@ -29,11 +29,7 @@ public class UserSourceProvider extends AbstractSourceProvider {
 
 	private Person user = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISourceProvider#dispose()
-	 */
+	@Override
 	public void dispose() {
 		user = null;
 	}
@@ -56,11 +52,7 @@ public class UserSourceProvider extends AbstractSourceProvider {
 		fireSourceChanged(ISources.ACTIVE_SITE << 1, USER, getCurrentUser());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISourceProvider#getProvidedSourceNames()
-	 */
+	@Override
 	public String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}

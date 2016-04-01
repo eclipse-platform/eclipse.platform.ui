@@ -39,12 +39,7 @@ public class DynamicEditorList extends CompoundContributionItem {
 	private static final IContributionItem[] EMPTY = new IContributionItem[0];
 
 	private static class NobodyHereContribution extends ContributionItem {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
-		 *      int)
-		 */
+		@Override
 		public void fill(Menu menu, int index) {
 			MenuItem item = new MenuItem(menu, SWT.NONE, index);
 			item.setText(ContributionMessages.DynamicEditorList_label);
@@ -52,11 +47,7 @@ public class DynamicEditorList extends CompoundContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
-	 */
+	@Override
 	protected IContributionItem[] getContributionItems() {
 		// maybe we can find a better way for contributed IContributionItems
 		IWorkbenchWindow window = PlatformUI.getWorkbench()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,13 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         super(configurer);
     }
 
-    public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
+    @Override
+	public ActionBarAdvisor createActionBarAdvisor(IActionBarConfigurer configurer) {
         return new ApplicationActionBarAdvisor(configurer);
     }
     
-    public void preWindowOpen() {
+    @Override
+	public void preWindowOpen() {
         IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
         configurer.setInitialSize(new Point(800, 300));
         configurer.setShowCoolBar(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		super(configurer);
 	}
 
+	@Override
 	protected void makeActions(final IWorkbenchWindow window) {
 		// register any actions that need to be there as
 		// default handlers for commands.
@@ -44,11 +45,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		register(saveAll);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.ActionBarAdvisor#dispose()
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		openWindow = null;

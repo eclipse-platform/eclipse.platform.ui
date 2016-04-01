@@ -39,67 +39,39 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 		serviceLocator.hasService(IHandlerService.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#addPersonChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
+	@Override
 	public void addPersonChangeListener(IPropertyChangeListener listener) {
 		localListeners.add(listener);
 		parentService.addPersonChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPeople()
-	 */
+	@Override
 	public Collection<Person> getPeople() {
 		return parentService.getPeople();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPerson(int)
-	 */
+	@Override
 	public Person getPerson(int id) {
 		return parentService.getPerson(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#removePersonChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-	 */
+	@Override
 	public void removePersonChangeListener(IPropertyChangeListener listener) {
 		localListeners.remove(listener);
 		parentService.removePersonChangeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#updatePerson(org.eclipse.ui.examples.contributions.model.Person)
-	 */
+	@Override
 	public void updatePerson(Person person) {
 		parentService.updatePerson(person);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#createPerson(int)
-	 */
+	@Override
 	public Person createPerson(int id) {
 		return parentService.createPerson(id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.services.IDisposable#dispose()
-	 */
+	@Override
 	public void dispose() {
 		Object[] array = localListeners.getListeners();
 		localListeners.clear();
@@ -111,9 +83,7 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 		parentService = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#login(org.eclipse.ui.examples.contributions.model.Person)
-	 */
+	@Override
 	public void login(Person person) {
 		parentService.login(person);
 	}

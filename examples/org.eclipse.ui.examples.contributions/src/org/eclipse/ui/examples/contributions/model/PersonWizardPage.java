@@ -46,11 +46,7 @@ public class PersonWizardPage extends WizardPage implements Listener {
 		setDescription(ContributionMessages.PersonWizardPage_descriptoin);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		// top level group
@@ -140,11 +136,7 @@ public class PersonWizardPage extends WizardPage implements Listener {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-	 */
+	@Override
 	public void handleEvent(Event event) {
 		// this plus validatePage() are blunt force validation.
 		setPageComplete(validatePage());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,31 +25,18 @@ public class PersonWizard extends Wizard implements INewWizard {
 	private PersonWizardPage mainPage;
 	private IWorkbench workbench;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+	@Override
 	public void addPages() {
 		mainPage = new PersonWizardPage(workbench);
 		addPage(mainPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+	@Override
 	public boolean performFinish() {
 		return mainPage.finish();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench,
-	 *      org.eclipse.jface.viewers.IStructuredSelection)
-	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 	}

@@ -31,69 +31,42 @@ public class PersonInput implements IEditorInput {
 		return index;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorInput#exists()
-	 */
+	@Override
 	public boolean exists() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorInput#getName()
-	 */
+	@Override
 	public String getName() {
 		return "" + index; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorInput#getPersistable()
-	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
-	 */
+	@Override
 	public String getToolTipText() {
 		return getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+
+	@Override
 	public int hashCode() {
 		return index;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof PersonInput) {
 			return index == ((PersonInput)o).index; 
