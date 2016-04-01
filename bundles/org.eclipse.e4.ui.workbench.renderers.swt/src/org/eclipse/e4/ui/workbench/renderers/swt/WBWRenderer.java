@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -245,7 +246,15 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		if (UIEvents.UIElement.VISIBLE.equals(attName)) {
 			boolean isVisible = (Boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+
+			Rectangle oldBounds = theShell.getBounds();
 			theShell.setVisible(isVisible);
+			// Workaround for bug 490944: Making a shell visible can change its
+			// size. This is a no-op if the bug isn't present.
+			Rectangle newBounds = theShell.getBounds();
+			if (!Objects.equals(oldBounds, newBounds)) {
+				theShell.setBounds(oldBounds);
+			}
 		}
 	}
 
@@ -690,8 +699,16 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		shell.layout(true);
 		forceLayout(shell);
+		Rectangle oldBounds = shell.getBounds();
 		if (shellME.isVisible()) {
 			shell.open();
+
+			// Workaround for bug 490944: Making a shell visible can change its
+			// size. This is a no-op if the bug isn't present.
+			Rectangle newBounds = shell.getBounds();
+			if (!Objects.equals(oldBounds, newBounds)) {
+				shell.setBounds(oldBounds);
+			}
 		} else {
 			shell.setVisible(false);
 		}
