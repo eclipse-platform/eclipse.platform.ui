@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,9 @@ import org.eclipse.ui.services.ISourceProviderService;
 public class PersonService implements IPersonService, IDisposable {
 
 	private static final int ME = 1114;
-	private Map people = new TreeMap();
+	private Map<Integer, Person> people = new TreeMap<>();
 	private IServiceLocator serviceLocator;
-	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+	private ListenerList<IPropertyChangeListener> listeners = new ListenerList<IPropertyChangeListener>(ListenerList.IDENTITY);
 
 	public PersonService(IServiceLocator locator) {
 		serviceLocator = locator;
@@ -73,7 +73,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 * 
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPeople()
 	 */
-	public Collection getPeople() {
+	public Collection<Person> getPeople() {
 		return Collections.unmodifiableCollection(people.values());
 	}
 
@@ -83,7 +83,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPerson(int)
 	 */
 	public Person getPerson(int id) {
-		Person p = (Person) people.get(Integer.valueOf(id));
+		Person p = people.get(Integer.valueOf(id));
 		if (p == null) {
 			return null;
 		}
@@ -106,7 +106,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 */
 	public void updatePerson(Person person) {
 		Assert.isNotNull(person);
-		Person p = (Person) people.get(Integer.valueOf(person.getId()));
+		Person p = people.get(Integer.valueOf(person.getId()));
 		if (p == null) {
 			Assert.isNotNull(p, "Must update a real person"); //$NON-NLS-1$
 		}
@@ -168,7 +168,7 @@ public class PersonService implements IPersonService, IDisposable {
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#login(org.eclipse.ui.examples.contributions.model.Person)
 	 */
 	public void login(Person person) {
-		ISourceProviderService sources = (ISourceProviderService) serviceLocator
+		ISourceProviderService sources = serviceLocator
 				.getService(ISourceProviderService.class);
 		// should do some more checks
 		UserSourceProvider userProvider = (UserSourceProvider) sources

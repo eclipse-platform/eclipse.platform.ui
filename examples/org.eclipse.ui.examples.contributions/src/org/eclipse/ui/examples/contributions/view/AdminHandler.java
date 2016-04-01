@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,9 @@ public class AdminHandler extends AbstractHandler implements IElementUpdater {
 	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement,
 	 *      java.util.Map)
 	 */
+	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		IEvaluationService service = (IEvaluationService) PlatformUI
+		IEvaluationService service = PlatformUI
 				.getWorkbench().getService(IEvaluationService.class);
 		if (service == null) {
 			return;
@@ -83,10 +84,10 @@ public class AdminHandler extends AbstractHandler implements IElementUpdater {
 		}
 		Person p = (Person) o;
 		p.setAdminRights(!p.hasAdminRights());
-		IPersonService service = (IPersonService) PlatformUI.getWorkbench()
+		IPersonService service = PlatformUI.getWorkbench()
 				.getService(IPersonService.class);
 		service.updatePerson(p);
-		ICommandService commands = (ICommandService) PlatformUI.getWorkbench()
+		ICommandService commands = PlatformUI.getWorkbench()
 				.getService(ICommandService.class);
 		commands.refreshElements(ID, null);
 		return null;

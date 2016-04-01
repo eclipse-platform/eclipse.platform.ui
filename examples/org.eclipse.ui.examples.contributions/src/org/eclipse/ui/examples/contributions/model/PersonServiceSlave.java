@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 
 	private IServiceLocator serviceLocator;
 	private IPersonService parentService;
-	private ListenerList localListeners = new ListenerList(
+	private ListenerList<IPropertyChangeListener> localListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	public PersonServiceSlave(IServiceLocator locator, IPersonService parent) {
@@ -54,7 +54,7 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 	 * 
 	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#getPeople()
 	 */
-	public Collection getPeople() {
+	public Collection<Person> getPeople() {
 		return parentService.getPeople();
 	}
 

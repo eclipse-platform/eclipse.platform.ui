@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,7 @@ public class PersonWizardPage extends WizardPage implements Listener {
 		if (getId() == 0) {
 			return false;
 		}
-		IPersonService service = (IPersonService) locator.getService(IPersonService.class);
+		IPersonService service = locator.getService(IPersonService.class);
 		if (service.getPerson(getId()) != null) {
 			setErrorMessage(NLS.bind(
 					ContributionMessages.PersonWizardPage_error_alreadyExists, getId()));
@@ -130,8 +130,7 @@ public class PersonWizardPage extends WizardPage implements Listener {
 	}
 
 	boolean finish() {
-		IPersonService service = (IPersonService) locator
-				.getService(IPersonService.class);
+		IPersonService service = locator.getService(IPersonService.class);
 		Person person = service.createPerson(getId());
 		if (person == null) {
 			return false;

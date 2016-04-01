@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class InfoEditor extends EditorPart {
 		monitor.worked(1);
 		person.setGivenname(givennameText.getText());
 		monitor.worked(1);
-		IPersonService service = (IPersonService) getSite().getService(
+		IPersonService service = getSite().getService(
 				IPersonService.class);
 		service.updatePerson(person);
 		monitor.worked(1);
@@ -91,7 +91,7 @@ public class InfoEditor extends EditorPart {
 			throw new PartInitException("Not a person"); //$NON-NLS-1$
 		}
 		PersonInput pinput = (PersonInput) input;
-		IPersonService service = (IPersonService) getSite().getService(
+		IPersonService service = getSite().getService(
 				IPersonService.class);
 		person = service.getPerson(pinput.getIndex());
 		if (person == null) {
@@ -178,8 +178,7 @@ public class InfoEditor extends EditorPart {
 	 * Instantiate any handlers specific to this view and activate them.
 	 */
 	private void createHandlers() {
-		IHandlerService handlerService = (IHandlerService) getSite()
-				.getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		resetHandler = new AbstractHandler() {
 			public Object execute(ExecutionEvent event) {
 				updateText();

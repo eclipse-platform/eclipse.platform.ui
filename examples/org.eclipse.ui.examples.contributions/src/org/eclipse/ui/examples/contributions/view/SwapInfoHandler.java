@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,9 @@ public class SwapInfoHandler extends AbstractHandler {
 			if (selection.size() != 2) {
 				return null;
 			}
-			Iterator i = selection.iterator();
-			Person p1 = (Person) i.next();
-			Person p2 = (Person) i.next();
+			Iterator<Person> i = selection.iterator();
+			Person p1 = i.next();
+			Person p2 = i.next();
 			view.swap(p1, p2);
 		}
 		return null;

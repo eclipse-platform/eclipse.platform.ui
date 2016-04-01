@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class DynamicEditorList extends CompoundContributionItem {
 			return EMPTY;
 		}
 		IEditorReference[] editors = page.getEditorReferences();
-		ArrayList menuList = new ArrayList();
+		ArrayList<IContributionItem> menuList = new ArrayList<>();
 
 		int editorNum = 1;
 		for (int i = 0; i < editors.length && editorNum < 10; i++) {
@@ -85,16 +85,16 @@ public class DynamicEditorList extends CompoundContributionItem {
 		if (menuList.isEmpty()) {
 			menuList.add(new NobodyHereContribution());
 		}
-		return (IContributionItem[]) menuList
-				.toArray(new IContributionItem[menuList.size()]);
+		return menuList.toArray(new IContributionItem[menuList.size()]);
 	}
 
+	@SuppressWarnings("unchecked")
 	private IContributionItem createItem(int i, IEditorReference ref)
 			throws PartInitException {
 		CommandContributionItemParameter p = new CommandContributionItemParameter(
 				PlatformUI.getWorkbench(), null, ActivateEditorHandler.ID,
 				CommandContributionItem.STYLE_PUSH);
-		p.parameters = new HashMap();
+		p.parameters = new HashMap<>();
 		PersonInput editorInput = (PersonInput) ref.getEditorInput();
 		p.parameters.put(ActivateEditorHandler.PARM_EDITOR, editorInput.getIndex());
 		String menuNum = Integer.toString(i);

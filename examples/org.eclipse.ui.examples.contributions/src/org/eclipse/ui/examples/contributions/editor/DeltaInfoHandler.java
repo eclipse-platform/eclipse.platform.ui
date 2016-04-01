@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,18 +27,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class DeltaInfoHandler extends AbstractHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		InfoEditor editor = (InfoEditor) HandlerUtil
 				.getActiveEditorChecked(event);
 		Person local = editor.getCurrentPerson();
 
-		IPersonService service = (IPersonService) editor.getSite().getService(
-				IPersonService.class);
+		IPersonService service = editor.getSite().getService(IPersonService.class);
 		Person model = service.getPerson(local.getId());
 
 		boolean delta = false;

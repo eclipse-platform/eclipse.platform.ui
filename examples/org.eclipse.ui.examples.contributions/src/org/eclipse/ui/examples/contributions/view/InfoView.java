@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class InfoView extends ViewPart {
 	private static final String VIEW_CONTEXT_ID = "org.eclipse.ui.examples.contributions.view.context"; //$NON-NLS-1$
 	private ListViewer viewer;
 	private IHandler countHandler;
-	private ArrayList viewerInput;
+	private ArrayList<Object> viewerInput;
 
 	private IPropertyChangeListener personListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
@@ -95,7 +95,7 @@ public class InfoView extends ViewPart {
 		 */
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof List) {
-				return ((List) inputElement).toArray();
+				return ((List<?>) inputElement).toArray();
 			}
 			return null;
 		}
@@ -115,9 +115,9 @@ public class InfoView extends ViewPart {
 				editSelection();
 			}
 		});
-		IPersonService service = (IPersonService) getSite().getService(
+		IPersonService service = getSite().getService(
 				IPersonService.class);
-		viewerInput = new ArrayList(service.getPeople());
+		viewerInput = new ArrayList<>(service.getPeople());
 		service.addPersonChangeListener(personListener);
 		viewer.setInput(viewerInput);
 		getSite().setSelectionProvider(viewer);
@@ -148,7 +148,7 @@ public class InfoView extends ViewPart {
 	 * activation events and will be removed when the view is disposed.
 	 */
 	private void activateContext() {
-		IContextService contextService = (IContextService) getSite()
+		IContextService contextService = getSite()
 				.getService(IContextService.class);
 		// this will get cleaned up automatically when the site
 		// is disposed
@@ -159,10 +159,10 @@ public class InfoView extends ViewPart {
 	 * Instantiate any handlers specific to this view and activate them.
 	 */
 	private void createHandlers() {
-		IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+		IHandlerService handlerService = getSite().getService(IHandlerService.class);
 		countHandler = new AbstractHandler() {
 			public Object execute(ExecutionEvent event) {
-				List elements = (List) viewer.getInput();
+				List<?> elements = (List<?>) viewer.getInput();
 				MessageDialog.openInformation(getSite().getShell(),
 						ContributionMessages.SampleHandler_plugin_name,
 						NLS.bind(ContributionMessages.InfoView_countElements, elements.size()));
@@ -194,7 +194,7 @@ public class InfoView extends ViewPart {
 	 * @param p2
 	 */
 	public void swap(Person p1, Person p2) {
-		List elements = viewerInput;
+		List<?> elements = viewerInput;
 		int i1 = elements.indexOf(p1);
 		int i2 = elements.indexOf(p2);
 		Collections.swap(elements, i1, i2);
@@ -209,7 +209,7 @@ public class InfoView extends ViewPart {
 	}
 
 	private void editSelection() {
-		IHandlerService handlerService = (IHandlerService) getSite()
+		IHandlerService handlerService = getSite()
 				.getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(EditInfoHandler.ID, null);
