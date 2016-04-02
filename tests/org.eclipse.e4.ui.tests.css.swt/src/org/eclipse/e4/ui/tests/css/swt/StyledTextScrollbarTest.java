@@ -40,19 +40,6 @@ public class StyledTextScrollbarTest extends CSSSWTTestCase {
 		shell.dispose();
 	}
 
-	/**
-	 * Used to manually inspect things.
-	 */
-	private void interact() {
-		shell.open();
-
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
-
 	private StyledText createStyledText() {
 		FillLayout layout = new FillLayout();
 		shell.setLayout(layout);
