@@ -347,7 +347,23 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
 			
 			ScrollBar verticalBar= textWidget.getVerticalBar();
-			thumbHeight= verticalBar != null ? Math.max(Math.min(bounds.height, verticalBar.getThumbBounds().height), 0) : 0;
+			if (verticalBar != null && !verticalBar.getVisible()) {
+				// Note: when the vertical bar is invisible, the thumbHeight is not reliable,
+				// so, we'll compute what would be the thumbHeight in case it was visible.
+				int max= verticalBar.getMaximum();
+				double clientAreaHeight= textWidget.getClientArea().height;
+				if (max > clientAreaHeight) {
+					double percentage= clientAreaHeight / max;
+					thumbHeight= (int) (bounds.height * percentage);
+				} else {
+					thumbHeight= bounds.height;
+				}
+				if (thumbHeight < 0) {
+					thumbHeight= 0;
+				}
+			} else {
+				thumbHeight= verticalBar != null ? Math.max(Math.min(bounds.height, verticalBar.getThumbBounds().height), 0) : 0;
+			}
 			
 	        int partialTopIndex= JFaceTextUtil.getPartialTopIndex(textWidget);
 	        int topLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialTopIndex));

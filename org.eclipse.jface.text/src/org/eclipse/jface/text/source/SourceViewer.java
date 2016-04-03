@@ -136,12 +136,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				width -= overviewRulerWidth + fGap;
 			}
 
+			ScrollBar horizontalBar= textWidget.getHorizontalBar();
+			final boolean hScrollVisible= horizontalBar != null && horizontalBar.getVisible();
 			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
 				int verticalRulerWidth= fVerticalRuler.getWidth();
 				final Control verticalRulerControl= fVerticalRuler.getControl();
 				int oldWidth= verticalRulerControl.getBounds().width;
-				ScrollBar horizontalBar= textWidget.getHorizontalBar();
-				boolean hScrollVisible= horizontalBar != null && horizontalBar.isVisible();
 				int rulerHeight= clArea.height - topTrim;
 				if (hScrollVisible)
 					rulerHeight-= scrollbarHeight;
@@ -163,16 +163,24 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				int[] arrowHeights= getVerticalScrollArrowHeights(textWidget, bottomOffset);
 				
 				int overviewRulerX= clArea.x + clArea.width - overviewRulerWidth - 1;
-				fOverviewRuler.getControl().setBounds(overviewRulerX, clArea.y + arrowHeights[0], overviewRulerWidth, clArea.height - arrowHeights[0] - arrowHeights[1] - scrollbarHeight);
-				
+				boolean noSpaceForHeader= (arrowHeights[0] <= 0 && arrowHeights[1] <= 0 && !hScrollVisible);
 				Control headerControl= fOverviewRuler.getHeaderControl();
-				boolean noArrows= arrowHeights[0] < 6 && arrowHeights[1] < 6; // need at least 6px to render the header control
-				if (noArrows || arrowHeights[0] < arrowHeights[1] && arrowHeights[0] < scrollbarHeight && arrowHeights[1] > scrollbarHeight) {
-					// // not enough space for header at top => move to bottom
-					int headerHeight= noArrows ? scrollbarHeight : arrowHeights[1];
-					headerControl.setBounds(overviewRulerX, clArea.y + clArea.height - arrowHeights[1] - scrollbarHeight, overviewRulerWidth, headerHeight);
+				Control rulerControl= fOverviewRuler.getControl();
+				if (noSpaceForHeader) {
+					// If we don't have space to draw because we don't have arrows and the horizontal scroll is invisible, 
+					// use the whole space for the ruler and leave the headerControl without any space (will actually be invisible).
+					rulerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, clArea.height);
+					headerControl.setBounds(0, 0, 0, 0);
 				} else {
-					headerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, arrowHeights[0]);
+					boolean smallArrows= arrowHeights[0] < 6 && arrowHeights[1] < 6; // need at least 6px to render the header control
+					rulerControl.setBounds(overviewRulerX, clArea.y + arrowHeights[0], overviewRulerWidth, clArea.height - arrowHeights[0] - arrowHeights[1] - scrollbarHeight);
+					if (smallArrows || arrowHeights[0] < arrowHeights[1] && arrowHeights[0] < scrollbarHeight && arrowHeights[1] > scrollbarHeight) {
+						// not enough space for header at top => move to bottom
+						int headerHeight= smallArrows ? scrollbarHeight : arrowHeights[1];
+						headerControl.setBounds(overviewRulerX, clArea.y + clArea.height - arrowHeights[1] - scrollbarHeight, overviewRulerWidth, headerHeight);
+					} else {
+						headerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, arrowHeights[0]);
+					}
 				}
 				headerControl.redraw();
 			}
