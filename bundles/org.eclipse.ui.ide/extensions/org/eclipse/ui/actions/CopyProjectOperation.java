@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,12 +159,12 @@ public class CopyProjectOperation {
 					IDEWorkbenchMessages.CopyProjectOperation_copyProject);
 			op1.setModelProviderIds(getModelProviderIds());
 			try {
-				PlatformUI.getWorkbench().getOperationSupport()
-						.getOperationHistory().execute(
-								op1,
-								monitor,
-								WorkspaceUndoUtil
-										.getUIInfoAdapter(parentShell));
+				// If we are Copying projects and their content, do not execute
+				// the operation in the undo history, since it cannot be
+				// properly restored, if it has modified or new files added to
+				// it. Just execute it directly so it won't be added to the undo
+				// history.
+				op1.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(parentShell));
 			} catch (final ExecutionException e) {
 				if (e.getCause() instanceof CoreException) {
 					recordError((CoreException)e.getCause());

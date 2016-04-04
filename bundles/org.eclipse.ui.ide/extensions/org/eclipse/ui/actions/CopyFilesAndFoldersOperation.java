@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1295,9 +1295,13 @@ public class CopyFilesAndFoldersOperation {
 				copyMoveOp.setCreateLinks(createLinks);
 				copyMoveOp.setRelativeVariable(relativeVariable);
 			}
-			PlatformUI.getWorkbench().getOperationSupport()
-					.getOperationHistory().execute(op, monitor,
-							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
+			// If we are copying files and folders, do not execute the operation
+			// in the undo history, since the creation of a new file is not
+			// added to undo history and modification of a file is not added to
+			// the same undo history and therefore a redo cannot be properly
+			// done. Just execute it directly so it won't be added to the undo
+			// history.
+			op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
 		} catch (ExecutionException e) {
 			if (e.getCause() instanceof CoreException) {
 				recordError((CoreException) e.getCause());
@@ -1347,9 +1351,13 @@ public class CopyFilesAndFoldersOperation {
 					destinationPaths,
 					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
 			op.setModelProviderIds(getModelProviderIds());
-			PlatformUI.getWorkbench().getOperationSupport()
-					.getOperationHistory().execute(op, monitor,
-							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
+			// If we are copying files and folders, do not execute the operation
+			// in the undo history, since the creation of a new file is not
+			// added to undo history and modification of a file is not added to
+			// the same undo history and therefore a redo cannot be properly
+			// done. Just execute it directly so it won't be added to the undo
+			// history.
+			op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
 		} catch (ExecutionException e) {
 			if (e.getCause() instanceof CoreException) {
 				recordError((CoreException) e.getCause());
