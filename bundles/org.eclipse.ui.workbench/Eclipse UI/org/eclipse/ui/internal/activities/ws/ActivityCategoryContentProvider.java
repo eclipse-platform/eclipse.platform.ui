@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.activities.IActivity;
@@ -249,6 +248,8 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        manager = (IActivityManager) newInput;
+		if (newInput instanceof IActivityManager) {
+			manager = (IActivityManager) newInput;
+		}
     }
 }
