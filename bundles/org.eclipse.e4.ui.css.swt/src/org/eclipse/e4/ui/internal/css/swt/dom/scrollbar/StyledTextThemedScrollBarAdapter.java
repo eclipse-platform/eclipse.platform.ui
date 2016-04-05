@@ -13,12 +13,19 @@ package org.eclipse.e4.ui.internal.css.swt.dom.scrollbar;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextContent;
+import org.eclipse.swt.custom.TextChangeListener;
+import org.eclipse.swt.custom.TextChangedEvent;
+import org.eclipse.swt.custom.TextChangingEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.osgi.service.log.LogService;
 
@@ -56,12 +63,142 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 	}
 
 	/**
+	 * Ideally this whole class wouldn't be needed (i.e.: if we knew when the
+	 * scroll max/selection changed), but unfortunately, these notifications
+	 * aren't reliable, so, this class is used to poll such a change when the
+	 * text on the StyledText changes.
+	 */
+	static abstract class AbstractStyledTextScrollHandler extends AbstractScrollHandler
+	implements ModifyListener, TextChangeListener {
+
+		private final StyledText fStyledText;
+		private AbstractThemedScrollBarAdapter fAbstractThemedScrollBarAdapter;
+		private StyledTextContent fTextContent;
+		private int fLastMax;
+		private int fLastSelection;
+		private int fCheckedTimes;
+
+		protected AbstractStyledTextScrollHandler(StyledText styledText, ScrollBar scrollBar,
+				IScrollBarSettings scrollBarSettings) {
+			super(scrollBar, scrollBarSettings);
+			this.fStyledText = styledText;
+			this.fStyledText.setAlwaysShowScrollBars(true);
+		}
+
+		@Override
+		protected void checkScrollbarInvisible() {
+			if (this.fScrollBar == null || this.fScrollBar.isDisposed()
+					|| !this.fScrollBarSettings.getScrollBarThemed()) {
+				return;
+			}
+			if (this.fScrollBar.isVisible()) {
+				if (fCheckedTimes > 20) {
+					// If some client continually tries to make it visible,
+					// we'll skip trying to put it off... Note that this
+					// will only be fixed when SWT provides an API which
+					// allows us to actually override the scrollbar (so that
+					// visibility changes affect the themed scrollbar and
+					// not the native one).
+					return;
+				}
+				fCheckedTimes++;
+				Display.getDefault().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (fStyledText.isDisposed()) {
+							return;
+						}
+						if (!fStyledText.getAlwaysShowScrollBars()) {
+							// We conflict with the setting to make it
+							// visible or invisible
+							fStyledText.setAlwaysShowScrollBars(true);
+						}
+						if (fScrollBar != null && !fScrollBar.isDisposed()) {
+							fScrollBar.setVisible(false);
+						}
+					}
+				});
+			}
+		}
+
+		@Override
+		public void install(AbstractThemedScrollBarAdapter abstractThemedScrollBarAdapter) {
+			super.install(abstractThemedScrollBarAdapter);
+			fStyledText.addModifyListener(this);
+			this.fAbstractThemedScrollBarAdapter = abstractThemedScrollBarAdapter;
+			fTextContent = fStyledText.getContent();
+			fTextContent.addTextChangeListener(this);
+			if(fScrollBar != null){
+				fLastMax = fScrollBar.getMaximum();
+				fLastSelection = fScrollBar.getSelection();
+			}
+		}
+
+		@Override
+		public void uninstall(AbstractThemedScrollBarAdapter abstractThemedScrollBarAdapter, boolean disposing) {
+			super.uninstall(abstractThemedScrollBarAdapter, disposing);
+			fStyledText.removeModifyListener(this);
+			if (fTextContent != null) {
+				fTextContent.removeTextChangeListener(this);
+				fTextContent = null;
+			}
+			this.fAbstractThemedScrollBarAdapter = null;
+		}
+
+		private void checkNeedUpdate() {
+			if(fScrollBar != null){
+				if (fLastMax != fScrollBar.getMaximum() || fLastSelection != fScrollBar.getSelection()) {
+					this.fAbstractThemedScrollBarAdapter.fPainter.redrawScrollBars();
+				}
+			}
+		}
+
+		@Override
+		public void modifyText(ModifyEvent e) {
+			checkNeedUpdate();
+		}
+
+		@Override
+		public void textSet(TextChangedEvent event) {
+			checkNeedUpdate();
+		}
+
+		@Override
+		public void textChanged(TextChangedEvent event) {
+			checkNeedUpdate();
+		}
+
+		@Override
+		public void textChanging(TextChangingEvent event) {
+
+		}
+
+		@Override
+		public void paintControl(GC gc, Rectangle currClientArea, Scrollable scrollable) {
+			// At each paint, check if the content changed and keep the last
+			// max/selection (unfortunately, it doesn't provide a reliable way
+			// to listen such changes, so, we must poll it).
+			if(fScrollBar != null){
+				fLastMax = fScrollBar.getMaximum();
+				fLastSelection = fScrollBar.getSelection();
+			}
+
+			if (fTextContent != null && fStyledText.getContent() != fTextContent) {
+				fTextContent.removeTextChangeListener(this);
+				fTextContent = fStyledText.getContent();
+				fTextContent.addTextChangeListener(this);
+			}
+			super.paintControl(gc, currClientArea, scrollable);
+		}
+	}
+
+	/**
 	 * Handles the scroll vertically.
 	 */
-	static class StyledTextVerticalScrollHandler extends AbstractScrollHandler {
+	static class StyledTextVerticalScrollHandler extends AbstractStyledTextScrollHandler {
 
 		public StyledTextVerticalScrollHandler(StyledText styledText, IScrollBarSettings scrollBarSettings) {
-			super(styledText.getVerticalBar(), scrollBarSettings);
+			super(styledText, styledText.getVerticalBar(), scrollBarSettings);
 		}
 
 		@Override
@@ -152,10 +289,10 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 	/**
 	 * Handles the scroll horizontally.
 	 */
-	/* default */ static class StyledTextHorizontalScrollHandler extends AbstractScrollHandler {
+	/* default */ static class StyledTextHorizontalScrollHandler extends AbstractStyledTextScrollHandler {
 
 		public StyledTextHorizontalScrollHandler(StyledText styledText, IScrollBarSettings scrollBarSettings) {
-			super(styledText.getHorizontalBar(), scrollBarSettings);
+			super(styledText, styledText.getHorizontalBar(), scrollBarSettings);
 		}
 
 		@Override
