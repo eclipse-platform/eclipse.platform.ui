@@ -207,12 +207,13 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 		createInputSelectionOptions(res);
 
-		createConfigurationOptions(res);
 
 		Composite proposalParent = new Composite(res, SWT.NONE);
 		proposalParent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 		proposalParent.setLayout(new FillLayout());
 		createProposalsGroup(proposalParent);
+
+		createConfigurationOptions(res);
 
 		Group workingSetsGroup = new Group(res, SWT.NONE);
 		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false, 4, 1);
