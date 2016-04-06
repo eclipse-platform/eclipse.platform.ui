@@ -408,7 +408,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 		selectionSummary = new Label(res, SWT.NONE);
 		selectionSummary.setLayoutData(new GridData(SWT.FILL, SWT.DEFAULT, true, false, 2, 1));
 		selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary, 0, 0));
-		FilteredTree filterTree = new FilteredTree(res, SWT.BORDER | SWT.CHECK, new PatternFilter(), true) {
+		PatternFilter patternFilter = new PatternFilter();
+		patternFilter.setIncludeLeadingWildcard(true);
+		FilteredTree filterTree = new FilteredTree(res, SWT.BORDER | SWT.CHECK, patternFilter, true) {
 			@Override
 			public CheckboxTreeViewer doCreateTreeViewer(Composite treeParent, int style) {
 				return new CheckboxTreeViewer(treeParent, style);
