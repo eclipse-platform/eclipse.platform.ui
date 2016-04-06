@@ -20,8 +20,7 @@ import org.w3c.dom.css.CSSValue;
  * Abstract CSS Property SWT Handler to check if the <code>element</code>
  * coming from applyCSSProperty and retrieveCSSProperty methods is SWT Control.
  */
-public abstract class AbstractCSSPropertySWTHandler implements
-		ICSSPropertyHandler {
+public abstract class AbstractCSSPropertySWTHandler implements ICSSPropertyHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
