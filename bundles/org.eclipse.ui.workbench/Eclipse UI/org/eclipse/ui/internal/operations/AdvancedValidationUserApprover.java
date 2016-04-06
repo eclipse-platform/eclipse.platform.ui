@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.internal.operations;
 
@@ -327,7 +328,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
-					message, MessageDialog.WARNING, buttons, 0);
+					message, MessageDialog.WARNING, 0, buttons);
 			int dialogAnswer = dialog.open();
 			// The user has been given the specific status and has chosen
 			// to proceed or to cancel. The user choice determines what

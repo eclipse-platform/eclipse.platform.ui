@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
@@ -412,7 +413,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
         getDisplay().syncExec(() -> {
 		    MessageDialog dialog = new MessageDialog(
 		            getShell(),
-		            ResourceNavigatorMessages.DropAdapter_question, null, msg, MessageDialog.QUESTION, options, 0);
+					ResourceNavigatorMessages.DropAdapter_question, null, msg, MessageDialog.QUESTION, 0, options);
 		    dialog.open();
 		    int returnVal = dialog.getReturnCode();
 		    String[] returnCodes = { YES, ALL, NO, CANCEL };

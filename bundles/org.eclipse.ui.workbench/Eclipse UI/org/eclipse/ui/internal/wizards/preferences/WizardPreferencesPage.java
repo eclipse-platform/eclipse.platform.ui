@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.preferences;
 
@@ -503,8 +504,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	protected boolean queryYesNoQuestion(String message) {
 		MessageDialog dialog = new MessageDialog(getContainer().getShell(),
 				PreferencesMessages.Question, (Image) null, message,
-				MessageDialog.NONE, new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.NO_LABEL }, 0) {
+				MessageDialog.NONE, 0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL) {
 			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;
@@ -979,14 +979,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 									.toOSString());
 		}
 
-		final MessageDialog dialog = new MessageDialog(getContainer()
-				.getShell(), PreferencesMessages.Question, null, messageString,
-				MessageDialog.QUESTION, new String[] {
-						IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.NO_TO_ALL_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0) {
+		final MessageDialog dialog = new MessageDialog(getContainer().getShell(), PreferencesMessages.Question, null,
+				messageString, MessageDialog.QUESTION, 0, IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL,
+				IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL) {
 			@Override
 			protected int getShellStyle() {
 				return super.getShellStyle() | SWT.SHEET;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
 import java.util.ResourceBundle;
-
-import junit.framework.TestCase;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -20,6 +19,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+
+import junit.framework.TestCase;
 
 public class TextMessageDialogsAuto extends TestCase {
 
@@ -40,9 +41,9 @@ public class TextMessageDialogsAuto extends TestCase {
      */
     private MessageDialog getConfirmDialog(String title, String message) {
         return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.QUESTION, new String[] {
-                        IDialogConstants.OK_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0);
+				MessageDialog.QUESTION, 0,
+				IDialogConstants.OK_LABEL,
+				IDialogConstants.CANCEL_LABEL);
     }
 
     /*
@@ -54,9 +55,9 @@ public class TextMessageDialogsAuto extends TestCase {
      */
     private MessageDialog getQuestionDialog(String title, String message) {
         return new MessageDialog(getShell(), title, null, message,
-                MessageDialog.QUESTION,
-                new String[] { IDialogConstants.YES_LABEL,
-                        IDialogConstants.NO_LABEL }, 0);
+				MessageDialog.QUESTION, 0,
+				IDialogConstants.YES_LABEL,
+				IDialogConstants.NO_LABEL);
     }
 
     public void testCloseFileDeleted() {
@@ -96,20 +97,10 @@ public class TextMessageDialogsAuto extends TestCase {
         ResourceBundle bundle = ResourceBundle
                 .getBundle("org.eclipse.ui.texteditor.EditorMessages");
         if (bundle != null) {
-            dialog = new MessageDialog(
-                    getShell(),
-                    bundle
-                            .getString("Editor_error_activated_deleted_save_title"),
-                    null,
-                    bundle
-                            .getString("Editor_error_activated_deleted_save_message"),
-                    MessageDialog.QUESTION,
-                    new String[] {
-                            bundle
-                                    .getString("Editor_error_activated_deleted_save_button_save"),
-                            bundle
-                                    .getString("Editor_error_activated_deleted_save_button_close") },
-                    0);
+			dialog = new MessageDialog(getShell(), bundle.getString("Editor_error_activated_deleted_save_title"), null,
+					bundle.getString("Editor_error_activated_deleted_save_message"), MessageDialog.QUESTION, 0,
+					bundle.getString("Editor_error_activated_deleted_save_button_save"),
+					bundle.getString("Editor_error_activated_deleted_save_button_close"));
         }
         DialogCheck.assertDialogTexts(dialog, this);
     }

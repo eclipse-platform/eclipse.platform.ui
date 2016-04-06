@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93353 -
  *     [Dialogs] InternalErrorDialog#buttonPressed should explicitly call super
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -64,7 +65,7 @@ public class InternalErrorDialog extends MessageDialog {
             Image dialogTitleImage, String dialogMessage, Throwable detail,
             int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
         super(parentShell, dialogTitle, dialogTitleImage, dialogMessage,
-                dialogImageType, dialogButtonLabels, defaultIndex);
+                dialogImageType, defaultIndex, dialogButtonLabels);
         defaultButtonIndex = defaultIndex;
         this.detail = detail;
         setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 372799
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -531,7 +532,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 									model.getName());
 					dialog = new MessageDialog(shellProvider.getShell(),
 							WorkbenchMessages.Save_Resource, null, message,
-							MessageDialog.QUESTION, buttons, 0) {
+							MessageDialog.QUESTION, 0, buttons) {
 						@Override
 						protected int getShellStyle() {
 							return (canCancel ? SWT.CLOSE : SWT.NONE)

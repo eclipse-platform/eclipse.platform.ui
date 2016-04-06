@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
-
-import junit.framework.TestCase;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
@@ -19,6 +18,8 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
+
+import junit.framework.TestCase;
 
 /**
  * @since 3.0
@@ -69,8 +70,7 @@ public class ImageRegistryTest extends TestCase {
     public void testGetIconMessageDialogImages() {
 
         IconAndMessageDialog iconDialog = new MessageDialog(null,
-                "testGetDialogIcons", null, "Message", Window.CANCEL,
-                new String[] { "cancel" }, 0);
+				"testGetDialogIcons", null, "Message", Window.CANCEL, 0, "cancel");
 
         Image[] images = new Image[] { iconDialog.getErrorImage(),
                 iconDialog.getInfoImage(), iconDialog.getQuestionImage(),

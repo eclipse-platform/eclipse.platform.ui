@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *     Christian Georgi (SAP)            - Bug 432480
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 490700
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
@@ -274,13 +275,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				currentHighContrast = !currentHighContrast;
 
 				// make sure they really want to do this
-				if (new MessageDialog(null,
-						IDEWorkbenchMessages.SystemSettingsChange_title, null,
-						IDEWorkbenchMessages.SystemSettingsChange_message,
-						MessageDialog.QUESTION, new String[] {
-								IDEWorkbenchMessages.SystemSettingsChange_yes,
-								IDEWorkbenchMessages.SystemSettingsChange_no },
-						1).open() == Window.OK) {
+				if (new MessageDialog(null, IDEWorkbenchMessages.SystemSettingsChange_title, null,
+						IDEWorkbenchMessages.SystemSettingsChange_message, MessageDialog.QUESTION, 1,
+						IDEWorkbenchMessages.SystemSettingsChange_yes, IDEWorkbenchMessages.SystemSettingsChange_no)
+								.open() == Window.OK) {
 					PlatformUI.getWorkbench().restart();
 				}
 			}
@@ -509,7 +507,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private Map<String, AboutInfo> computeBundleGroupMap() {
 		// use tree map to get predicable order
-		Map<String, AboutInfo> ids = new TreeMap<String, AboutInfo>();
+		Map<String, AboutInfo> ids = new TreeMap<>();
 
 		IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
 		for (int i = 0; i < providers.length; ++i) {
@@ -833,7 +831,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			// support old welcome perspectives if intro plugin is not present
 			if (!hasIntro()) {
 				Map<String, AboutInfo> m = getNewlyAddedBundleGroups();
-				ArrayList<AboutInfo> list = new ArrayList<AboutInfo>(m.size());
+				ArrayList<AboutInfo> list = new ArrayList<>(m.size());
 				for (Iterator<AboutInfo> i = m.values().iterator(); i.hasNext();) {
 					AboutInfo info = i.next();
 					if (info != null && info.getWelcomePerspectiveId() != null
