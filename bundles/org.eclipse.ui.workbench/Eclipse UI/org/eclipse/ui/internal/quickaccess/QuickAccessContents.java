@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 491272
  *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
@@ -135,9 +135,8 @@ public abstract class QuickAccessContents {
 				table.setSelection(selectionIndex);
 			} else if (filterTextEmpty) {
 				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0, QuickAccessMessages.QuickAccessContents_QuickAccess);
-				item.setText(1, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
-				item.setForeground(1, grayColor);
+				item.setText(0, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+				item.setForeground(0, grayColor);
 			} else {
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setText(0, QuickAccessMessages.QuickAccessContents_NoMatchingResults);
