@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -68,8 +68,7 @@ public class StandbyPart implements IIntroConstants {
     private EmptyStandbyContentPart emptyPart;
     private IMemento memento;
 
-    // hastable has partIds as keys, and ControlKeys are values.
-    private Hashtable cachedContentParts = new Hashtable();
+	private Map<String, ControlKey> cachedContentParts = new HashMap<>();
 
     private ControlKey cachedControlKey;
 
@@ -363,9 +362,7 @@ public class StandbyPart implements IIntroConstants {
      * 
      */
     public void dispose() {
-        Enumeration values = cachedContentParts.elements();
-        while (values.hasMoreElements()) {
-            ControlKey controlKey = (ControlKey) values.nextElement();
+		for (ControlKey controlKey : cachedContentParts.values()) {
             controlKey.getContentPart().dispose();
         }
         toolkit.dispose();

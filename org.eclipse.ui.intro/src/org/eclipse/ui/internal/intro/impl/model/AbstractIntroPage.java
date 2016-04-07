@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
@@ -113,8 +114,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * <li>Shared hashtable has alt-styles as keys and bundles as values.</li>
      * </ul>
      */
-    private Vector styles;
-    private Hashtable altStyles;
+	private Vector<String> styles;
+	private Map<String, Bundle> altStyles;
 	private boolean isDynamic = false;
 	protected boolean isStandbyPage;
 
@@ -294,7 +295,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      *         hashtable if page is not expandable, does not have any includes,
      *         or has includes that do not merge styles.
      */
-    public Hashtable getAltStyles() {
+	public Map<String, Bundle> getAltStyles() {
         // call get children first to resolve includes and populate hashtable.
         // Resolving children will initialize the style vectors.
         getChildren();
@@ -354,12 +355,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Util method to add map of altstyles to list.
      */
-    protected void addAltStyles(Hashtable altStyles) {
+	protected void addAltStyles(Map<String, Bundle> altStyles) {
         if (altStyles == null)
             return;
         if (this.altStyles == null)
             // delay creation until needed.
-            this.altStyles = new Hashtable();
+			this.altStyles = new Hashtable<>();
         this.altStyles.putAll(altStyles);
     }
 
@@ -369,7 +370,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return false;
         if (this.styles == null)
             // delay creation until needed.
-            this.styles = new Vector();
+			this.styles = new Vector<>();
         return true;
     }
 
@@ -378,7 +379,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return false;
         if (this.altStyles == null)
             // delay creation until needed.
-            this.altStyles = new Hashtable();
+			this.altStyles = new Hashtable<>();
         return true;
     }
 
@@ -540,7 +541,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         else {
             // page was not found in content file. Perform load actions, and log
             // fact. init the children vector.
-            children = new Vector();
+			children = new Vector<>();
             loaded = true;
             // free DOM model for memory performance.
             element = null;
@@ -554,7 +555,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         this.dom = dom;
         this.isXHTMLPage = true;
         // init empty children vector.
-        children = new Vector();
+		children = new Vector<>();
         loaded = true;
     }
 
@@ -803,9 +804,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
         // styles are safe for a shallow copy.
         if (styles != null)
-            clone.styles = (Vector) styles.clone();
+			clone.styles = new Vector<String>(styles);
         if (altStyles != null)
-            clone.altStyles = (Hashtable) altStyles.clone();
+			clone.altStyles = new Hashtable<>(altStyles);
         return clone;
     }
 

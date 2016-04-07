@@ -14,12 +14,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.intro.config.IntroElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public class PageData {
 	public static final String P_TOP_LEFT = "page-content/top-left"; //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class PageData {
 	public static final String P_BOTTOM_RIGHT = "page-content/bottom-right"; //$NON-NLS-1$
 
 	private String id;
-	private ArrayList groups = new ArrayList();
+	private ArrayList<GroupData> groups = new ArrayList<>();
 	private GroupData hidden=null;
 	
 	public PageData(String id) {
@@ -59,7 +59,7 @@ public class PageData {
 			groups.add(gd);
 	}
 
-	public void addAnchors(List result, String groupId) {
+	public void addAnchors(List<IntroElement> result, String groupId) {
 		GroupData group = findGroup(groupId);
 		if (group==null) return;
 		group.addAnchors(result);
@@ -69,7 +69,7 @@ public class PageData {
 		if (isHidden(extensionId))
 			return null;
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gdata = (GroupData)groups.get(i);
+			GroupData gdata = groups.get(i);
 			if (gdata.contains(extensionId)) {
 				IPath resolvedPath = new Path(id);
 				resolvedPath = resolvedPath.append(gdata.getPath());
@@ -82,7 +82,7 @@ public class PageData {
 
 	public String resolveDefaultPath() {
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gdata = (GroupData)groups.get(i);
+			GroupData gdata = groups.get(i);
 			if (gdata.isDefault()) {
 				IPath resolvedPath = new Path(id).append(gdata.getPath());
 				resolvedPath = resolvedPath.append(IUniversalIntroConstants.DEFAULT_ANCHOR);
@@ -100,7 +100,7 @@ public class PageData {
 		if (groupId.equals(IUniversalIntroConstants.HIDDEN))
 			return hidden;
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gdata = (GroupData)groups.get(i);
+			GroupData gdata = groups.get(i);
 			IPath path = new Path(gdata.getPath());
 			if (path.lastSegment().equals(groupId))
 				return gdata;
@@ -137,7 +137,7 @@ public class PageData {
 	private GroupData findDefaultGroup() {
 		GroupData defaultGroup = null;
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gd = (GroupData)groups.get(i);
+			GroupData gd = groups.get(i);
 			if (gd.isDefault()) {
 				if (defaultGroup==null)
 					defaultGroup = gd;
@@ -155,7 +155,7 @@ public class PageData {
 	
 	public ExtensionData findExtension(String extensionId, boolean checkHidden) {
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gdata = (GroupData)groups.get(i);
+			GroupData gdata = groups.get(i);
 			ExtensionData ed = find(gdata, extensionId);
 			if (ed!=null)
 				return ed;
@@ -176,7 +176,7 @@ public class PageData {
 	public String resolveExtension(String extensionId) {
 		// check the explicit groups
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gdata = (GroupData)groups.get(i);
+			GroupData gdata = groups.get(i);
 			if (gdata.contains(extensionId)) {
 				return id+"/"+gdata.getPath()+"/"+extensionId;  //$NON-NLS-1$//$NON-NLS-2$
 			}
@@ -186,7 +186,7 @@ public class PageData {
 			return null;
 		// create the default: pick the last group
 		if (groups.size()==0) return null;
-		GroupData last = (GroupData)groups.get(groups.size()-1);
+		GroupData last = groups.get(groups.size()-1);
 		return id + "/" + last.getPath() + "/" + IUniversalIntroConstants.DEFAULT_ANCHOR;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
@@ -195,7 +195,7 @@ public class PageData {
 		String indent2 = indent+"   "; //$NON-NLS-1$
 		writer.println("<page id=\""+id+"\">");  //$NON-NLS-1$//$NON-NLS-2$
 		for (int i=0; i<groups.size(); i++) {
-			GroupData gd = (GroupData)groups.get(i);
+			GroupData gd = groups.get(i);
 			gd.write(writer, indent2);
 		}
 		if (hidden!=null)

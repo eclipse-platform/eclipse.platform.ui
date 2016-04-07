@@ -48,7 +48,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	
 	private IntroData primaryIntroData;
 	private IntroData[] secondaryIntroData;
-	private SequenceResolver sequenceResolver;
+	private SequenceResolver<IntroElement> sequenceResolver;
 
 	public UniversalIntroConfigurer() {
 		loadData();
@@ -225,7 +225,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	public IntroElement[] getLaunchBarShortcuts() {
-		ArrayList links = new ArrayList();
+		ArrayList<IntroElement> links = new ArrayList<>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
@@ -236,11 +236,11 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 					links.add(page);
 			}
 		}
-		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+		return links.toArray(new IntroElement[links.size()]);
 	}
 
 	private IntroElement[] getRootPageLinks(boolean standby) {
-		ArrayList links = new ArrayList();
+		ArrayList<IntroElement> links = new ArrayList<IntroElement>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
@@ -258,7 +258,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			if (page !=null)
 				links.add(page);
 		}
-		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+		return links.toArray(new IntroElement[links.size()]);
 	}
 
 	private IntroElement[] getRootPageActionLinks(boolean standby) {
@@ -274,7 +274,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private IntroElement[] getNavLinks(String pageId) {
-		ArrayList links = new ArrayList();
+		ArrayList<IntroElement> links = new ArrayList<IntroElement>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);		
 		/*
 		 * In high contrast mode the workbench link must be generated in the nav links 
@@ -294,7 +294,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			}
 		}
 
-		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
+		return links.toArray(new IntroElement[links.size()]);
 	}
 
 	private IntroElement createRootPageLink(String id, boolean standby) {
@@ -500,7 +500,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			}
 		}
 		// load all other installed (but not running) products' intro data
-		List result = new ArrayList();
+		List<IntroData> result = new ArrayList<IntroData>();
 		Properties[] prefs = ProductPreferences.getProductPreferences(false);
 		for (int i=0;i<prefs.length;++i) {
 			String key = UniversalIntroPlugin.PLUGIN_ID + '/' + VAR_INTRO_DATA;
@@ -515,18 +515,18 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 				}
 			}
 		}
-		secondaryIntroData = (IntroData[])result.toArray(new IntroData[result.size()]);
+		secondaryIntroData = result.toArray(new IntroData[result.size()]);
 	}
 
 	private IntroElement[] getContent(String pageId, String groupId) {
-		List result = new ArrayList();
+		List<IntroElement> result = new ArrayList<IntroElement>();
 		if (!ContentDetector.getNewContributors().isEmpty()) {
 			// Add a new content fallback anchor
 			IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
 			fallback.setAttribute("id", NEW_CONTENT_ANCHOR); //$NON-NLS-1$
 			result.add(fallback);
 		}
-		List anchors = getAnchors(pageId, groupId);
+		List<IntroElement> anchors = getAnchors(pageId, groupId);
 		if (anchors != null) {
 			result.addAll(anchors);
 		}
@@ -534,36 +534,38 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
 		fallback.setAttribute("id", DEFAULT_ANCHOR); //$NON-NLS-1$
 		result.add(fallback);
-		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);
+		return result.toArray(new IntroElement[result.size()]);
 	}
 
-	private List getAnchors(String pageId, String groupId) {
-		List primaryAnchors = null;
+	private List<IntroElement> getAnchors(String pageId, String groupId) {
+		List<IntroElement> primaryAnchors = null;
 		if (primaryIntroData != null) {
 			primaryAnchors = getAnchors(primaryIntroData, pageId, groupId);
 		}
 		if (primaryAnchors == null) {
-			primaryAnchors = Collections.EMPTY_LIST;
+			primaryAnchors = Collections.emptyList();
 		}
-		List secondaryAnchorsList = new ArrayList();
+		List<List<IntroElement>> secondaryAnchorsList = new ArrayList<>();
 		for (int i=0;i<secondaryIntroData.length;++i) {
 			IntroData idata = secondaryIntroData[i];
-			List anchors = getAnchors(idata, pageId, groupId);
+			List<IntroElement> anchors = getAnchors(idata, pageId, groupId);
 			if (anchors != null) {
 				secondaryAnchorsList.add(anchors);
 			}
 		}
-		List[] secondaryAnchors = (List[])secondaryAnchorsList.toArray(new List[secondaryAnchorsList.size()]);
+
+		@SuppressWarnings("unchecked")
+		List<IntroElement>[] secondaryAnchors = secondaryAnchorsList.toArray(new List[secondaryAnchorsList.size()]);
 		if (sequenceResolver == null) {
-			sequenceResolver = new SequenceResolver();
+			sequenceResolver = new SequenceResolver<IntroElement>();
 		}
 		return sequenceResolver.getSequence(primaryAnchors, secondaryAnchors);
 	}
 	
-	private List getAnchors(IntroData data, String pageId, String groupId) {
+	private List<IntroElement> getAnchors(IntroData data, String pageId, String groupId) {
 		PageData pdata = data.getPage(pageId);
 		if (pdata != null) {
-			List anchors = new ArrayList();
+			List<IntroElement> anchors = new ArrayList<IntroElement>();
 			pdata.addAnchors(anchors, groupId);
 			return anchors;
 		}
@@ -664,7 +666,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return false;
 	}
 
-	public void init(IIntroSite site, Map themeProperties) {
+	public void init(IIntroSite site, Map<String, String> themeProperties) {
 		super.init(site, themeProperties);
 		Action customizeAction = new CustomizeAction(site);
 		customizeAction.setText(Messages.SharedIntroConfigurer_customize_label);

@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -30,12 +31,11 @@ public class SharedConfigExtensionsManager {
 
     private IExtensionRegistry registry;
 
-    // Holds all standbyPart extensions. Key is id, value is
-    // IntroStandbyContentPart.
-    private Hashtable standbyParts = new Hashtable();
+	// Holds all standbyPart extensions
+	private Map<String, IntroStandbyContentPart> standbyParts = new HashMap<>();
 
-    // Holds all command extensions. Key is name, value is IntroURLAction.
-    private Hashtable commands = new Hashtable();
+	// Holds all command extensions
+	private Map<String, IntroURLAction> commands = new HashMap<>();
 
     /*
      * Prevent creation.

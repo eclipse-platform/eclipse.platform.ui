@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -26,7 +28,7 @@ public class FindSupport {
 	private static String[] NL_JAR_VARIANTS = buildNLVariants(Platform.getNL());
 
 	private static String[] buildNLVariants(String nl) {
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<>();
 		IPath base = new Path("nl"); //$NON-NLS-1$
 
 		IPath path = new Path(nl.replace('_', '/'));
@@ -64,19 +66,18 @@ public class FindSupport {
     }
 
     /**
-     * Proposed API for Platform in Eclispe 3.2. 
-     * Same as @link #find(Bundle, IPath) except multiple entries can be
-     * returned if more than one entry matches the path in the host and 
-     * any of its fragments.
-     * 
-     * @param bundle
-     * @param path
-     * @param override
-     * @returnan array of entries which match the given path.  An empty 
-     * array is returned if no matches are found.
-     */
-    public static URL[] findEntries(Bundle bundle, IPath path, Map override) {
-        ArrayList results = new ArrayList(1);
+	 * Proposed API for Platform in Eclipse 3.2. Same as @link #find(Bundle, IPath) except multiple
+	 * entries can be returned if more than one entry matches the path in the host and any of its
+	 * fragments.
+	 * 
+	 * @param bundle
+	 * @param path
+	 * @param override
+	 * @return an array of entries which match the given path. An empty array is returned if no
+	 *         matches are found.
+	 */
+	public static URL[] findEntries(Bundle bundle, IPath path, Map<String, String> override) {
+		List<URL> results = new ArrayList<>(1);
         find(bundle, path, override, results);
         return (URL[]) results.toArray(new URL[results.size()]);
     }
@@ -84,11 +85,11 @@ public class FindSupport {
 	/**
 	 * See doc on @link Platform#find(Bundle, IPath, Map) Platform#find(Bundle, IPath, Map) 
 	 */
-	public static URL find(Bundle b, IPath path, Map override) {
+	public static URL find(Bundle b, IPath path, Map<String, String> override) {
         return find(b, path, override, null);
     }
  
-    private static URL find(Bundle b, IPath path, Map override, ArrayList multiple) {
+	private static URL find(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		if (path == null)
 			return null;
 
@@ -128,15 +129,11 @@ public class FindSupport {
 		return null;
 	}
 
-	private static URL findOS(Bundle b, IPath path, Map override, ArrayList multiple) {
+	private static URL findOS(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		String os = null;
 		if (override != null)
-			try {
-				// check for override
-				os = (String) override.get("$os$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
+			// check for override
+			os = override.get("$os$"); //$NON-NLS-1$
 		if (os == null)
 			// use default
 			os = Platform.getOS();
@@ -146,12 +143,8 @@ public class FindSupport {
 		// Now do the same for osarch
 		String osArch = null;
 		if (override != null)
-			try {
-				// check for override
-				osArch = (String) override.get("$arch$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
+			// check for override
+			osArch = (String) override.get("$arch$"); //$NON-NLS-1$
 		if (osArch == null)
 			// use default
 			osArch = Platform.getOSArch();
@@ -179,15 +172,11 @@ public class FindSupport {
 		return findInFragments(b, path, multiple);
 	}
 
-	private static URL findWS(Bundle b, IPath path, Map override, ArrayList multiple) {
+	private static URL findWS(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		String ws = null;
 		if (override != null)
-			try {
-				// check for override
-				ws = (String) override.get("$ws$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
+			// check for override
+			ws = override.get("$ws$"); //$NON-NLS-1$
 		if (ws == null)
 			// use default
 			ws = Platform.getWS();
@@ -208,16 +197,12 @@ public class FindSupport {
 		return findInFragments(b, path, multiple);
 	}
 
-	private static URL findNL(Bundle b, IPath path, Map override, ArrayList multiple) {
+	private static URL findNL(Bundle b, IPath path, Map<String, String> override, List<URL> multiple) {
 		String nl = null;
 		String[] nlVariants = null;
 		if (override != null)
-			try {
-				// check for override
-				nl = (String) override.get("$nl$"); //$NON-NLS-1$
-			} catch (ClassCastException e) {
-				// just in case
-			}
+			// check for override
+			nl = override.get("$nl$"); //$NON-NLS-1$
 		nlVariants = nl == null ? NL_JAR_VARIANTS : buildNLVariants(nl);
 		if (nl != null && nl.length() == 0)
 			return null;
@@ -240,19 +225,19 @@ public class FindSupport {
 		return findInFragments(b, path, multiple);
 	}
 
-	private static URL findInPlugin(Bundle b, IPath filePath, ArrayList multiple) {
+	private static URL findInPlugin(Bundle b, IPath filePath, List<URL> multiple) {
 		URL result = b.getEntry(filePath.toString());
         if (result != null && multiple != null)
             multiple.add(result);
         return result;
 	}
 
-	private static URL findInFragments(Bundle b, IPath filePath, ArrayList multiple) {
+	private static URL findInFragments(Bundle b, IPath filePath, List<URL> multiple) {
 		Bundle[] fragments = Platform.getFragments(b);
 		if (fragments == null)
 			return null;
 
-        multiple.ensureCapacity(fragments.length + 1);
+		// multiple.ensureCapacity(fragments.length + 1);
 		URL fileURL = null;
 		int i = 0;
 		while (i < fragments.length && fileURL == null) {

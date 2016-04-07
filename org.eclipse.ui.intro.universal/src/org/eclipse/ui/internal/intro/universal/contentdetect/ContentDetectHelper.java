@@ -86,8 +86,8 @@ public class ContentDetectHelper {
 		saveMemento(writeMemento, EXTENSION_NAMES_XML);
 	}
 	
-	public Set getContributors() {	
-		Set contributors = new HashSet();
+	public Set<String> getContributors() {
+		Set<String> contributors = new HashSet<>();
 		XMLMemento readMemento = getReadMemento(EXTENSION_NAMES_XML);
 		if (readMemento == null) {
 			return contributors;
@@ -155,8 +155,8 @@ public class ContentDetectHelper {
 		return stateFile;
 	}
 	
-	public Set findNewContributors(Set contributors, Set previousContributors) {
-		Set result = new HashSet(contributors);
+	public Set<String> findNewContributors(Set<String> contributors, Set<String> previousContributors) {
+		Set<String> result = new HashSet<>(contributors);
 		for (Iterator iter = previousContributors.iterator(); iter.hasNext();) {
 			result.remove(iter.next());
 		}

@@ -12,8 +12,9 @@
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -45,7 +46,7 @@ public class BaseExtensionPointManager {
     protected static final String ATT_ID = AbstractIntroIdElement.ATT_ID;
 
 
-    protected Hashtable introModels = new Hashtable();
+	protected Map<String, IntroModelRoot> introModels = new HashMap<>();
     protected IExtensionRegistry registry;
     protected SharedConfigExtensionsManager sharedConfigExtensionsManager;
     private String extensionFilter;
@@ -155,7 +156,7 @@ public class BaseExtensionPointManager {
          * from a specific plug-in (fixed data set).
          */
         if (extensionFilter != null) {
-        	List filtered = new ArrayList();
+			List<IConfigurationElement> filtered = new ArrayList<>();
         	for (int i=0;i<configExtensionElements.length;++i) {
         		if (extensionFilter.equals(configExtensionElements[i].getContributor().getName())) {
         			filtered.add(configExtensionElements[i]);
@@ -222,7 +223,7 @@ public class BaseExtensionPointManager {
             String attributeValue) {
 
         // find all configs with given attribute and attibute value.
-        Vector elements = new Vector();
+		Vector<IConfigurationElement> elements = new Vector<>();
         for (int i = 0; i < configElements.length; i++) {
             String currentAttributeValue = configElements[i]
                 .getAttribute(attributeName);
@@ -259,7 +260,7 @@ public class BaseExtensionPointManager {
     /**
      * @return Returns the cached introModels.
      */
-    public Hashtable getIntroModels() {
+	public Map<String, IntroModelRoot> getIntroModels() {
         return introModels;
     }
     

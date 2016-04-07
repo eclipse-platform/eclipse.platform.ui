@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
 public class GroupData {
 	boolean fDefault=false;
 	private String path;
-	private ArrayList children = new ArrayList();
+	private ArrayList<BaseData> children = new ArrayList<>();
 	
 	public GroupData(String path, boolean defaultGroup) {
 		fDefault = defaultGroup;
@@ -60,9 +60,9 @@ public class GroupData {
 		return fDefault;
 	}
 
-	public void addAnchors(List result) {
+	public void addAnchors(List<IntroElement> result) {
 		for (int i = 0; i < children.size(); i++) {
-			BaseData edata = (BaseData) children.get(i);
+			BaseData edata = children.get(i);
 			String id = edata.getId();
 			IntroElement element = null;
 			String tagName="anchor"; //$NON-NLS-1$
@@ -107,13 +107,13 @@ public class GroupData {
 	}
 	
 	public BaseData[] getChildren() {
-		return (BaseData[])children.toArray(new BaseData[children.size()]);
+		return children.toArray(new BaseData[children.size()]);
 	}
 
 	public int getExtensionCount() {
 		int count=0;
 		for (int i=0; i<children.size(); i++) {
-			BaseData data = (BaseData)children.get(i);
+			BaseData data = children.get(i);
 			if (data instanceof ExtensionData)
 				count++;
 		}
@@ -141,7 +141,7 @@ public class GroupData {
 	
 	BaseData find(String extensionId) {
 		for (int i = 0; i < children.size(); i++) {
-			BaseData data = (BaseData) children.get(i);
+			BaseData data = children.get(i);
 			if (data.getId().equals(extensionId))
 				return data;
 		}
@@ -154,7 +154,7 @@ public class GroupData {
 	
 	public int getIndexOf(String baseId) {
 		for (int i = 0; i < children.size(); i++) {
-			BaseData bd = (BaseData) children.get(i);
+			BaseData bd = children.get(i);
 			if (bd.getId().equals(baseId))
 				return i;
 		}
@@ -173,14 +173,14 @@ public class GroupData {
 	
 	public void moveUp(BaseData ed) {
 		int index = children.indexOf(ed);
-		BaseData swapped = (BaseData)children.get(index-1);
+		BaseData swapped = children.get(index-1);
 		children.set(index, swapped);
 		children.set(index-1, ed);
 	}
 
 	public void moveDown(BaseData ed) {
 		int index = children.indexOf(ed);
-		BaseData swapped = (BaseData)children.get(index+1);
+		BaseData swapped = children.get(index+1);
 		children.set(index, swapped);
 		children.set(index+1, ed);		
 	}
@@ -210,7 +210,7 @@ public class GroupData {
 				writer.println(">"); //$NON-NLS-1$
 		}
 		for (int i=0; i<children.size(); i++) {
-			BaseData ed = (BaseData)children.get(i);
+			BaseData ed = children.get(i);
 			ed.write(writer, indent+"   "); //$NON-NLS-1$
 		}
 		writer.print(indent);

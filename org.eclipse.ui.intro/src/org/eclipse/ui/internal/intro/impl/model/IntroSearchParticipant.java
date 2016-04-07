@@ -51,10 +51,10 @@ public class IntroSearchParticipant extends SearchParticipant {
 	 * 
 	 * @see org.eclipse.help.search.LuceneSearchParticipant#getContributingPlugins()
 	 */
-	public Set getContributingPlugins() {
+	public Set<String> getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				"org.eclipse.ui.intro.config"); //$NON-NLS-1$
-		HashSet set = new HashSet();
+		Set<String> set = new HashSet<>();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!element.getName().equals("config")) //$NON-NLS-1$
@@ -77,8 +77,8 @@ public class IntroSearchParticipant extends SearchParticipant {
 	 * 
 	 * @see org.eclipse.help.search.LuceneSearchParticipant#getAllDocuments(java.lang.String)
 	 */
-	public Set getAllDocuments(String locale) {
-		HashSet set = new HashSet();
+	public Set<String> getAllDocuments(String locale) {
+		HashSet<String> set = new HashSet<>();
 		IProduct product = Platform.getProduct();
 		if (product == null) {
 			return set;
@@ -122,7 +122,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		return set;
 	}
 
-	private void loadFromModel(IntroModelRoot model, HashSet set, String locale) {
+	private void loadFromModel(IntroModelRoot model, Set<String> set, String locale) {
 		IntroPage[] pages = model.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			IntroPage page = pages[i];

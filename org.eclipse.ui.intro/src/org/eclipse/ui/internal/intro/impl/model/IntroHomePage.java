@@ -42,7 +42,7 @@ public class IntroHomePage extends AbstractIntroPage {
      * links. Try to get the real links in the page, and all links in all divs.
      */
     public IntroLink[] getLinks() {
-        Vector linkVector = new Vector();
+		Vector<AbstractIntroElement> linkVector = new Vector<>();
 
         AbstractIntroElement[] children = getChildren();
         for (int i = 0; i < children.length; i++) {
@@ -59,7 +59,7 @@ public class IntroHomePage extends AbstractIntroPage {
         return links;
     }
 
-    private void addLinks(IntroGroup group, Vector linkVector) {
+	private void addLinks(IntroGroup group, Vector<AbstractIntroElement> linkVector) {
         AbstractIntroElement[] children = group.getChildren();
         for (int i = 0; i < children.length; i++) {
             AbstractIntroElement child = children[i];

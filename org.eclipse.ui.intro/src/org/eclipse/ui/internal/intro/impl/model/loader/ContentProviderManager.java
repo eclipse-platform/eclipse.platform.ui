@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
@@ -49,7 +49,7 @@ public class ContentProviderManager {
 	// class on each navigation. Key is the contentProvider id, value
 	// is a wrapper class to hold the actual Intro content provider instance and
 	// the intro page that holds it.
-	private Hashtable contentProviders = new Hashtable();
+	private Map<String, ContentProviderWrapper> contentProviders = new HashMap<>();
 
 
 	class ContentProviderWrapper {
@@ -138,10 +138,7 @@ public class ContentProviderManager {
 
 
 	public AbstractIntroPage getContentProviderParentPage(IIntroContentProvider provider) {
-		Enumeration keys = contentProviders.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			ContentProviderWrapper wrapper = (ContentProviderWrapper) contentProviders.get(key);
+		for (ContentProviderWrapper wrapper : contentProviders.values()) {
 			boolean foundKey = wrapper.getIIntroContentProvider().equals(provider) ? true : false;
 			if (foundKey) {
 				return wrapper.getParentPage();

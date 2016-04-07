@@ -42,12 +42,12 @@ public class ContentDetector extends IntroContentDetector {
 			int previous = helper.getExtensionCount();
 			if (numIntroExtensions != previous) {
 				helper.saveExtensionCount(numIntroExtensions);
-				Set contributors = new HashSet();
+				Set<String> contributors = new HashSet<>();
 				for (int i = 0; i < extensions.length; i++) {
 					contributors.add(extensions[i].getContributor().getName());
 				}
 				if (numIntroExtensions > previous && previous != ContentDetectHelper.NO_STATE) {
-					Set previousContributors = helper.getContributors();
+					Set<String> previousContributors = helper.getContributors();
 					newContributors = helper.findNewContributors(contributors, previousContributors);
 					helper.saveContributors(contributors);
 					return true;

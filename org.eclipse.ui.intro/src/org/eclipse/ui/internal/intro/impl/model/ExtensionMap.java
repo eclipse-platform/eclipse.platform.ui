@@ -24,7 +24,7 @@ public class ExtensionMap {
 	
 	private static ExtensionMap instance;
 	private static String startPage;
-	private Map extensions = new HashMap();
+	private Map<String, String> extensions = new HashMap<>();
 	
 	private ExtensionMap() {
 		
@@ -65,7 +65,7 @@ public class ExtensionMap {
 	 * Clear the map and content page
 	 */
 	public void clear() {
-		extensions = new HashMap();	
+		extensions = new HashMap<>();
 		startPage = null;
 	}
 

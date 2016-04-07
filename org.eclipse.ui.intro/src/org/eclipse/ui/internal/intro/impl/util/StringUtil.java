@@ -59,7 +59,7 @@ public class StringUtil {
     		return string.split(delimiters);
     	} catch (NoSuchMethodError e) {
     		// not running 1.4 so try a string tokenizer
-    		List result = new ArrayList();
+			List<String> result = new ArrayList<>();
     		for (StringTokenizer tokenizer = new StringTokenizer(string, delimiters); tokenizer.hasMoreTokens(); )
     			result.add(tokenizer.nextToken());
     		return (String[]) result.toArray(new String[result.size()]);

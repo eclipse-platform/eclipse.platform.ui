@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -60,8 +61,8 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private Element element;
     private String base;
 
-    private Vector styles = new Vector();
-    private Hashtable altStyles = new Hashtable();
+	private Vector<String> styles = new Vector<>();
+	private Map<String, Bundle> altStyles = new HashMap<>();
 
     IntroExtensionContent(Element element, Bundle bundle, String base, IConfigurationElement configExtElement) {
         super(element, bundle);
@@ -178,7 +179,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
 
     protected Element[] getChildren() {
         NodeList nodeList = element.getChildNodes();
-        Vector vector = new Vector();
+		Vector<Node> vector = new Vector<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE)
@@ -230,7 +231,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     /**
      * @return Returns the altStyle.
      */
-    protected Hashtable getAltStyles() {
+	protected Map<String, Bundle> getAltStyles() {
         return altStyles;
     }
 

@@ -95,18 +95,18 @@ public final class CustomizableIntroPart extends IntroPart implements
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
 
-        public Class[] getAdapterList() {
+		public Class<?>[] getAdapterList() {
             return new Class[] { StandbyPart.class, IntroPartPresentation.class };
         }
 
-        public Object getAdapter(Object adaptableObject, Class adapterType) {
+		public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
             if (!(adaptableObject instanceof CustomizableIntroPart))
                 return null;
 
             if (adapterType.equals(StandbyPart.class)) {
-                return getStandbyPart();
+				return adapterType.cast(getStandbyPart());
             } else if (adapterType.equals(IntroPartPresentation.class)) {
-                return getPresentation();
+				return adapterType.cast(getPresentation());
             } else
                 return null;
         }

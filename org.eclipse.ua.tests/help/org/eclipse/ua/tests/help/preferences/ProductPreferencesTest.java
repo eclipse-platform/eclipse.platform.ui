@@ -173,7 +173,7 @@ public class ProductPreferencesTest {
 	public void testGetValue() {
 		for (String[] data : GET_VALUE_DATA) {
 			String key = data[0];
-			Set<String> allowableValues = new HashSet<String>(ProductPreferences.tokenize(data[1]));
+			Set<String> allowableValues = new HashSet<>(ProductPreferences.tokenize(data[1]));
 			Properties primary = ProductPreferences.loadPropertiesFile(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName(), "data/help/preferences/" + data[2]);
 			Properties[] secondary = new Properties[data.length - 3];
 			for (int j=0;j<secondary.length;++j) {

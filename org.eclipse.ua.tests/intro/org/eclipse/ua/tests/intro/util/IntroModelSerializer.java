@@ -11,7 +11,7 @@
 package org.eclipse.ua.tests.intro.util;
 
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer;
@@ -111,7 +111,7 @@ public class IntroModelSerializer {
 			text.append(filterURL(style + "\n\t\t\t")); //$NON-NLS-1$
         text.append("\n\tpage alt-styles are = "); //$NON-NLS-1$
 
-        final Hashtable<String, Bundle> altStylesHashtable = page.getAltStyles();
+		final Map<String, Bundle> altStylesHashtable = page.getAltStyles();
         if (altStylesHashtable == null)
             return;
 

@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -130,11 +130,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IConfigurationElement[] configExtensionElements;
 
     // maintain listener list for model changes.
-    public ListenerList propChangeListeners = new ListenerList();
+	public ListenerList<IPropertyListener> propChangeListeners = new ListenerList<>();
 
     // a list to hold all loaded DOMs until resolving all configExtensions
     // is done. 
-    private List unresolvedConfigExt = new ArrayList();
+	private List<ExtensionContent> unresolvedConfigExt = new ArrayList<>();
 
 
     private class ExtensionContent {
@@ -175,7 +175,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * 
      */
     protected void loadChildren() {
-        children = new Vector();
+		children = new Vector<>();
         if (Log.logInfo)
             Log.info("Creating Intro plugin model...."); //$NON-NLS-1$
 
@@ -462,9 +462,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	int previousSize;
     	do {
     		previousSize = unresolvedConfigExt.size();
-    		List stillUnresolved = new ArrayList();
-    		for (Iterator iter = unresolvedConfigExt.iterator(); iter.hasNext();) {
-                ExtensionContent content = (ExtensionContent) iter.next(); 
+			List<ExtensionContent> stillUnresolved = new ArrayList<>();
+			for (ExtensionContent content : unresolvedConfigExt) {
                 Element extensionContentElement = content.element;
                 IConfigurationElement configExtElement = content.configExtElement;
 				Bundle bundle = BundleUtil.getBundleFromConfigurationElement(configExtElement);
@@ -497,7 +496,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // get the bundle from the extensions since they are defined in
         // other plugins.
-    	List elements = new ArrayList();
+		List<Element> elements = new ArrayList<>();
         Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
             IntroExtensionContent.TAG_CONTAINER_EXTENSION);
         Element[] replacementContents =	 ModelUtil.getElementsByTagName(dom,
@@ -509,7 +508,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return (Element[])elements.toArray(new Element[elements.size()]);
     }
 
-	private void addUnfilteredExtensions(List elements, Element[] extensionContents) {
+	private void addUnfilteredExtensions(List<Element> elements, Element[] extensionContents) {
 		for (int i = 0; i < extensionContents.length; i++) {
         	Element extensionContentElement = extensionContents[i];
         	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
@@ -679,7 +678,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             targetContainer.getParentPage().addStyles(styles);
 
         // for alt-style cache bundle for loading resources.
-        Hashtable altStyles = extension.getAltStyles();
+		Map<String, Bundle> altStyles = extension.getAltStyles();
         if (altStyles != null)
             targetContainer.getParentPage().addAltStyles(altStyles);
     }

@@ -39,16 +39,18 @@ public class DynamicXHTMLProcessorTest {
 
 	private String process(String path) throws Exception {
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-		InputStream is = getProcessedInput(path, bundle);
-		return readStream(is);
+		try (InputStream is = getProcessedInput(path, bundle)) {
+			return readStream(is);
+		}
 	}
 
 	protected InputStream getProcessedInput(String path, Bundle bundle)
 			throws IOException, SAXException, ParserConfigurationException,
 			TransformerException, TransformerConfigurationException {
-		InputStream in = bundle.getEntry(path).openStream();
-		String href = '/' + bundle.getBundleId() +path;
-		return DynamicXHTMLProcessor.process(href, in, "en", true);
+		try (InputStream in = bundle.getEntry(path).openStream()) {
+			String href = '/' + bundle.getBundleId() + path;
+			return DynamicXHTMLProcessor.process(href, in, "en", true);
+		}
 	}
 
 	private String readStream(InputStream is) throws Exception {

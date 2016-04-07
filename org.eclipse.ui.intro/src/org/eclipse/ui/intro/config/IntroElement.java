@@ -12,6 +12,7 @@ package org.eclipse.ui.intro.config;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Used to provide children of the computed gruops while constructing intro content. Clients provide
@@ -25,8 +26,8 @@ public class IntroElement {
 
 	private String name;
 	private String value;
-	private Hashtable atts = new Hashtable();
-	private ArrayList children;
+	private Hashtable<String, String> atts = new Hashtable<>();
+	private List<IntroElement> children;
 
 	/**
 	 * Creates a new intro element with the provided name.
@@ -67,7 +68,7 @@ public class IntroElement {
 	 * @return an enumeration of all the element names
 	 */
 
-	public Enumeration getAttributes() {
+	public Enumeration<String> getAttributes() {
 		return atts.keys();
 	}
 
@@ -107,7 +108,7 @@ public class IntroElement {
 	 */
 	public void addChild(IntroElement child) {
 		if (children == null)
-			children = new ArrayList();
+			children = new ArrayList<>();
 		children.add(child);
 	}
 

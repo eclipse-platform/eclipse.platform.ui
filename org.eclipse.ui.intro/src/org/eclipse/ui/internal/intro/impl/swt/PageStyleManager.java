@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.swt;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -39,7 +40,7 @@ import org.osgi.framework.Bundle;
 public class PageStyleManager extends SharedStyleManager {
 
     private AbstractIntroPage page;
-    private Hashtable altStyleContexts = new Hashtable();
+	private Map<Properties, StyleContext> altStyleContexts = new HashMap<>();
     private IntroModelRoot root;
 
 
@@ -68,13 +69,12 @@ public class PageStyleManager extends SharedStyleManager {
 
         // AltStyles Hashtable has alt-styles as keys, the bundles as
         // values.
-        Hashtable altStyles = page.getAltStyles();
+		Map<String, Bundle> altStyles = page.getAltStyles();
         if (altStyles != null) {
-            Enumeration styles = altStyles.keys();
-            while (styles.hasMoreElements()) {
-                String style = (String) styles.nextElement();
+			for (Entry<String, Bundle> entry : altStyles.entrySet()) {
+				String style = entry.getKey();
                 Properties inheritedProperties = new Properties();
-                Bundle bundle = (Bundle) altStyles.get(style);
+				Bundle bundle = entry.getValue();
                 StyleContext sc = new StyleContext();
                 sc.bundle = bundle;
                 load(inheritedProperties, style, sc);
@@ -124,10 +124,7 @@ public class PageStyleManager extends SharedStyleManager {
             return properties;
 
         // search inherited properties second.
-        Enumeration inheritedPageProperties = altStyleContexts.keys();
-        while (inheritedPageProperties.hasMoreElements()) {
-            Properties aProperties = (Properties) inheritedPageProperties
-                .nextElement();
+		for (Properties aProperties : altStyleContexts.keySet()) {
             if (aProperties.containsKey(key))
                 return aProperties;
         }

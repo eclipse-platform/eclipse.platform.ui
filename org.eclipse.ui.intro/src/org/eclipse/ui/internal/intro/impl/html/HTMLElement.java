@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -25,19 +25,19 @@ public class HTMLElement {
 	private String elementName;
 
 	// a collection of attributes that belong to this element (possibly empty)
-	private Map elementAttributes;
+	private Map<String, String> elementAttributes;
 
 	// a collection of other HTMLElements or Strings contained inside this
 	// element
-	private Vector elementContent;
+	private Vector<Object> elementContent;
 
 	public HTMLElement(String name) {
 		this.elementName = name;
-		this.elementAttributes = new Hashtable();
-		this.elementContent = new Vector();
+		this.elementAttributes = new HashMap<>();
+		this.elementContent = new Vector<>();
 	}
 
-	public HTMLElement(String name, Map attributes, Vector content) {
+	public HTMLElement(String name, Map<String, String> attributes, Vector<Object> content) {
 		this.elementName = name;
 		this.elementAttributes = attributes;
 		this.elementContent = content;
@@ -67,9 +67,9 @@ public class HTMLElement {
 	 * 
 	 * @return Returns the elementAttributes.
 	 */
-	public Map getElementAttributes() {
+	public Map<String, String> getElementAttributes() {
 		if (elementAttributes == null)
-			elementAttributes = new Hashtable();
+			elementAttributes = new HashMap<>();
 
 		return elementAttributes;
 	}
@@ -80,7 +80,7 @@ public class HTMLElement {
 	 * @param elementAttributes
 	 *            The elementAttributes to set.
 	 */
-	public void setElementAttributes(Map elementAttributes) {
+	public void setElementAttributes(Map<String, String> elementAttributes) {
 		this.elementAttributes = elementAttributes;
 	}
 
@@ -89,9 +89,9 @@ public class HTMLElement {
 	 * 
 	 * @return Returns the elementContent.
 	 */
-	public Vector getElementContent() {
+	public Vector<Object> getElementContent() {
 		if (elementContent == null)
-			elementContent = new Vector();
+			elementContent = new Vector<>();
 
 		return elementContent;
 	}
@@ -102,7 +102,7 @@ public class HTMLElement {
 	 * @param elementContent
 	 *            The elementContent to set.
 	 */
-	public void setElementContent(Vector elementContent) {
+	public void setElementContent(Vector<Object> elementContent) {
 		this.elementContent = elementContent;
 	}
 

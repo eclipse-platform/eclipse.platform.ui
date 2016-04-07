@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.intro.impl.model.url;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Properties;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -532,11 +531,8 @@ public class IntroURL implements IIntroURL {
      * @return
      */
     private AbstractIntroPage findPageToShow(String pageId) {
-        // get all cached models.
-        Hashtable models = ExtensionPointManager.getInst().getIntroModels();
-        Enumeration values = models.elements();
-        while (values.hasMoreElements()) {
-            IntroModelRoot model = (IntroModelRoot) values.nextElement();
+		// check all cached models.
+		for (IntroModelRoot model : ExtensionPointManager.getInst().getIntroModels().values()) {
             AbstractIntroPage page = (AbstractIntroPage) model.findChild(
                 pageId, AbstractIntroElement.ABSTRACT_PAGE);
             if (page != null)

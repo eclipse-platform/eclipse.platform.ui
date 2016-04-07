@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 public class History {
     // History of Intro Pages and real URL visited by Intro Browser. All
     // elements are all of type HistoryObject.
-    private Vector history = new Vector();
+	private Vector<HistoryObject> history = new Vector<>();
     private int navigationLocation = 0;
 
 
@@ -170,8 +170,8 @@ public class History {
     }
 
     private void trimHistory(Object location) {
-        List newHistory = history.subList(0, navigationLocation + 1);
-        history = new Vector(newHistory);
+		List<HistoryObject> newHistory = history.subList(0, navigationLocation + 1);
+		history = new Vector<>(newHistory);
         history.add(new HistoryObject(location));
         // point the nav location to the end of the vector.
         navigationLocation = getHistoryEndPosition();

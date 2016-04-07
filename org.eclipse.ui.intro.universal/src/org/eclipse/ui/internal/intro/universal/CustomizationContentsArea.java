@@ -111,8 +111,8 @@ public class CustomizationContentsArea {
 	private TableViewer bottomLeft;
 	private TableViewer bottomRight;
 	private CheckboxTableViewer rootPages;
-	private ArrayList introRootPages = new ArrayList();
-	private ArrayList themeList = new ArrayList();
+	private ArrayList<String> introRootPages = new ArrayList<>();
+	private ArrayList<IntroTheme> themeList = new ArrayList<>();
 	private IntroTheme introTheme;
 	private String introThemeId;
 	private IntroData introData;
@@ -688,7 +688,7 @@ public class CustomizationContentsArea {
 		enableFontsButton();
 		// sync up the root page checklist
 		rootPages.setInput(ROOT_PAGE_TABLE);
-		ArrayList selected = new ArrayList();
+		ArrayList<RootPage> selected = new ArrayList<>();
 		for (int i = 0; i < ROOT_PAGE_TABLE.length; i++) {
 			String id = ROOT_PAGE_TABLE[i].id;
 			if (introRootPages.contains(id))

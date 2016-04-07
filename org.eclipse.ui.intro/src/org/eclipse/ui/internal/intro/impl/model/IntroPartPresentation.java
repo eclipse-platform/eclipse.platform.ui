@@ -105,7 +105,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 			String value = element.getAttribute(ATT_STYLE);
 			if (value!=null) {
 				IntroModelRoot root = getModelRoot();
-				ArrayList list = new ArrayList();
+				ArrayList<String> list = new ArrayList<>();
 				StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 				for (;stok.hasMoreTokens();) {
 					String oneStyle = stok.nextToken().trim();
@@ -232,7 +232,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 				IntroModelRoot model = getModelRoot();
 				if (model != null && model.getConfigurer() != null) {
 					IntroTheme theme = model.getTheme();
-					Map properties = theme!=null?theme.getProperties():null;
+					Map<String, String> properties = theme != null ? theme.getProperties() : null;
 					model.getConfigurer().init(introPart.getIntroSite(), properties);
 				}
 				if (Log.logInfo)
@@ -278,7 +278,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 	 */
 	private Vector getValidImplementationElements(IConfigurationElement configElement) {
 
-		Vector validList = new Vector();
+		Vector<IConfigurationElement> validList = new Vector<>();
 
 		// There can be more than one implementation contribution. Add each
 		// valid one. First start with OS, then WS then no OS.

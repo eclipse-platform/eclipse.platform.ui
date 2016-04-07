@@ -20,15 +20,15 @@ import java.util.Map;
  */
 public class PreferenceArbiter {
 
-	private Map references;
+	private Map<Object, int[]> references;
 	private Object leader;
 	
 	public void consider(Object obj) {
 		if (obj != null) {
 			if (references == null) {
-				references = new HashMap();
+				references = new HashMap<>();
 			}
-			int[] count = (int[])references.get(obj);
+			int[] count = references.get(obj);
 			if (count == null) {
 				count = new int[] { 0 };
 				references.put(obj, count);
@@ -38,7 +38,7 @@ public class PreferenceArbiter {
 				if (leader == null) {
 					leader = obj;
 				}
-				else if (count[0] > ((int[])references.get(leader))[0]) {
+				else if (count[0] > (references.get(leader))[0]) {
 					leader = obj;
 				}
 			}

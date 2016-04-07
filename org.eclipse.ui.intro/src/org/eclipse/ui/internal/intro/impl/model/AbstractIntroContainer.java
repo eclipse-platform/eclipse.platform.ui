@@ -34,7 +34,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     protected static final String ATT_BG_IMAGE = "bgImage"; //$NON-NLS-1$
 	// vector is lazily created when children are loaded in a call to
     // loadChildren().
-    protected Vector children;
+	protected Vector<AbstractIntroElement> children;
     protected boolean loaded = false;
     protected boolean resolved = false;
     protected Element element;
@@ -133,7 +133,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         AbstractIntroElement[] childrenElements = getChildren();
         // if we have no children, we still need to return an empty array of
         // the correct type.
-        Vector typedChildren = new Vector();
+		Vector<AbstractIntroElement> typedChildren = new Vector<>();
         for (int i = 0; i < childrenElements.length; i++) {
             AbstractIntroElement element = childrenElements[i];
             if (element.isOfType(elementMask))
@@ -218,11 +218,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     protected void loadChildren() {
         // init the children vector. old children are disposed automatically.
-        children = new Vector();
+		children = new Vector<>();
         
 
         NodeList nodeList = element.getChildNodes();
-        Vector vector = new Vector();
+		Vector<Node> vector = new Vector<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE)
@@ -365,11 +365,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * @param unfiltered the unfiltered elements
      * @return a new Vector with elements filtered
      */
-    private Vector filterChildren(Vector unfiltered) {
-    	Vector filtered = new Vector();
-    	Iterator iter = unfiltered.iterator();
+	private <T> Vector<T> filterChildren(Vector<T> unfiltered) {
+		Vector<T> filtered = new Vector<>();
+		Iterator<T> iter = unfiltered.iterator();
     	while (iter.hasNext()) {
-    		Object element = iter.next();
+			T element = iter.next();
     		if (!UAContentFilter.isFiltered(element, IntroEvaluationContext.getContext())) {
         		filtered.add(element);
     		}
@@ -609,7 +609,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public Object clone() throws CloneNotSupportedException {
         AbstractIntroContainer clone = (AbstractIntroContainer) super.clone();
-        clone.children = new Vector();
+		clone.children = new Vector<>();
         if (children != null) {
             for (int i = 0; i < children.size(); i++) {
                 AbstractIntroElement cloneChild = (AbstractIntroElement) ((AbstractIntroElement) children

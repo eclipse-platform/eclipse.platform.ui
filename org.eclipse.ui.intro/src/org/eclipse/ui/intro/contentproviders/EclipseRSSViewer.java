@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -98,7 +99,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	private static final String HREF_BULLET = "bullet"; //$NON-NLS-1$
 
-	private HashMap params;
+	private Map<String, String> params;
 
 	private IIntroContentProviderSite site;
 
@@ -106,7 +107,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	private String id;
 
-	private List items;
+	private List<NewsItem> items;
 
 	private Composite parent;
 
@@ -149,8 +150,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		} else {
 			if (items.size() > 0) {
 				out.println("<ul id=\"news-feed\" class=\"news-list\">"); //$NON-NLS-1$
-				for (int i = 0; i < items.size(); i++) {
-					NewsItem item = (NewsItem) items.get(i);
+				for (NewsItem item : items) {
 					out.print("<li>"); //$NON-NLS-1$
 					out.print("<a class=\"topicList\" href=\""); //$NON-NLS-1$
 					out.print(createExternalURL(item.url));
@@ -396,7 +396,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		private static final String ELEMENT_TITLE = "title"; //$NON-NLS-1$
 		private static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
 
-		private Stack stack = new Stack();
+		private Stack<String> stack = new Stack<>();
 		private StringBuffer buf;
 		private NewsItem item;
 
@@ -456,8 +456,8 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		}
 	}
 
-	private HashMap setParams(String query) {
-		HashMap _params = new HashMap();
+	private Map<String, String> setParams(String query) {
+		Map<String, String> _params = new HashMap<>();
 		//String[] t = _query.split("?");
 		//String query = t[1];
 		if (query != null && query.length() > 1) {
@@ -484,7 +484,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		public void run()
 		{
 			threadRunning = true;
-			items = Collections.synchronizedList(new ArrayList());
+			items = Collections.synchronizedList(new ArrayList<>());
 
 			InputStream in = null;
 
@@ -520,7 +520,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		}
 
 		private void setTimeout(URLConnection conn, int milliseconds) {
-			Class conClass = conn.getClass();
+			Class<? extends URLConnection> conClass = conn.getClass();
 			try {
 				Method timeoutMethod = conClass.getMethod(
 						"setConnectTimeout", new Class[]{ int.class } ); //$NON-NLS-1$

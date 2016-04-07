@@ -33,7 +33,7 @@ public abstract class IntroConfigurer {
 	 */
 	public static final String TB_ADDITIONS = "additions"; //$NON-NLS-1$
 
-	protected Map themeProperties;
+	protected Map<String, String> themeProperties;
 	protected IIntroSite site;
 
 	private IntroModelRoot model;
@@ -49,7 +49,7 @@ public abstract class IntroConfigurer {
 	 *            <code>null</code> if no theme is currently active or the active theme has no
 	 *            properties.
 	 */
-	public void init(IIntroSite site, Map themeProperties) {
+	public void init(IIntroSite site, Map<String, String> themeProperties) {
 		this.themeProperties = themeProperties;
 		this.site = site;
 	}

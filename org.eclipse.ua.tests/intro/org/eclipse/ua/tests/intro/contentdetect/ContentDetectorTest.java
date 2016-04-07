@@ -90,7 +90,7 @@ public class ContentDetectorTest {
 		assertFalse(detector.isNewContentAvailable());
 		Set<?> newContent = ContentDetector.getNewContributors();
 		assertTrue(newContent == null || newContent.size() == 0);
-		String firstContribution = (String) helper.getContributors().iterator().next();
+		String firstContribution = helper.getContributors().iterator().next();
 		assertFalse(ContentDetector.isNew(firstContribution));
 	}
 

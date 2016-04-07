@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.intro.universal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,7 +37,7 @@ import org.xml.sax.SAXParseException;
 
 public class IntroData {
 	private String productId;
-	private Hashtable pages=new Hashtable();
+	private Map<String, PageData> pages = new HashMap<>();
 	private boolean active;
 	
 	public IntroData(String productId, String fileNameOrData, boolean active) {
@@ -192,9 +192,7 @@ public class IntroData {
 	public void write(PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>"); //$NON-NLS-1$
 		writer.println("<extensions>"); //$NON-NLS-1$
-		for (Enumeration keys = pages.keys(); keys.hasMoreElements();) {
-			String id = (String)keys.nextElement();
-			PageData pd = (PageData)pages.get(id);
+		for (PageData pd : pages.values()) {
 			pd.write(writer, "   "); //$NON-NLS-1$
 		}
 		writer.println("</extensions>"); //$NON-NLS-1$

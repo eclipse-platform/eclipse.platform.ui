@@ -41,7 +41,8 @@ public class FormattedHTMLElement extends HTMLElement {
 		this.spanMultipleLines = spanMultipleLines;
 		this.endTagRequired = endTagRequired;
 	}
-	public FormattedHTMLElement(String name, Map attributes, Vector content,
+
+	public FormattedHTMLElement(String name, Map<String, String> attributes, Vector<Object> content,
 			int indentLevel, boolean spanMultipleLines) {
 		super(name, attributes, content);
 		this.indentLevel = indentLevel;

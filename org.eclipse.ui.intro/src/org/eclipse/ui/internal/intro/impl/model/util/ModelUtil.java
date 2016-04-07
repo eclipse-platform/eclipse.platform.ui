@@ -275,7 +275,7 @@ public class ModelUtil {
      */
     public static Element[] getElementsByTagName(Element parent, String tagName) {
         NodeList allChildElements = parent.getElementsByTagName(tagName);
-        Vector vector = new Vector();
+		Vector<Element> vector = new Vector<>();
         for (int i = 0; i < allChildElements.getLength(); i++) {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);
@@ -296,7 +296,7 @@ public class ModelUtil {
      */
     public static Element[] getElementsByTagName(Document dom, String tagName) {
         NodeList allChildElements = dom.getElementsByTagName(tagName);
-        Vector vector = new Vector();
+		Vector<Element> vector = new Vector<>();
         for (int i = 0; i < allChildElements.getLength(); i++) {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);

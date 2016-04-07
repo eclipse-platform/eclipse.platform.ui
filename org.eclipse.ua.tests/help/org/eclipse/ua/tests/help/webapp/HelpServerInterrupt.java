@@ -102,17 +102,16 @@ public class HelpServerInterrupt {
 	}
 
 	private void checkServer() throws Exception {
-		InputStream input;
 		long start = System.currentTimeMillis();
 		try {
 			int port = WebappManager.getPort();
 			URL url = new URL("http", "localhost", port, "/help/index.jsp");
 			URLConnection connection = url.openConnection();
 			setTimeout(connection, 5000);
-			input = connection.getInputStream();
-			int firstbyte = input.read();
-			Assert.assertTrue(firstbyte > 0);
-			input.close();
+			try (InputStream input = connection.getInputStream()) {
+				int firstbyte = input.read();
+				Assert.assertTrue(firstbyte > 0);
+			}
 		} catch (Exception e) {
 			long elapsed = System.currentTimeMillis() - start;
 			System.out.println("Fail, milliseconds = " + elapsed);

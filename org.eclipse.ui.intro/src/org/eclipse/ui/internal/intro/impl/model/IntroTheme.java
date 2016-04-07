@@ -24,7 +24,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 	private static final String ATT_PATH = "path"; //$NON-NLS-1$
 	private String name;
 	private String path;
-	private Hashtable properties; 
+	private Hashtable<String, String> properties;
 	private boolean scalable;
 	
 	public IntroTheme(IConfigurationElement element) {
@@ -56,7 +56,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 		return THEME;
 	}
 	
-	public Map getProperties() {
+	public Map<String, String> getProperties() {
 		return properties;
 	}
 	
@@ -68,7 +68,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 		IConfigurationElement [] children = element.getChildren("property"); //$NON-NLS-1$
 		if (children.length==0)
 			return;
-		properties = new Hashtable();
+		properties = new Hashtable<>();
 		for (int i=0; i<children.length; i++) {
 			IConfigurationElement property = children[i];
 			String name = property.getAttribute("name"); //$NON-NLS-1$

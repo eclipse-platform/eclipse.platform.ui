@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -29,7 +30,8 @@ import org.eclipse.ui.intro.config.IntroElement;
  * @since 3.1
  */
 public class IntroLaunchBarElement extends AbstractIntroElement {
-    private ArrayList shortcuts;
+
+	private List<IntroLaunchBarShortcut> shortcuts;
 
     IntroLaunchBarElement(IConfigurationElement element) {
         super(element);
@@ -159,7 +161,7 @@ public class IntroLaunchBarElement extends AbstractIntroElement {
      * 
      */
     private void createShortcuts() {
-        shortcuts = new ArrayList();
+		shortcuts = new ArrayList<>();
         IntroModelRoot model = getModelRoot();
         IntroConfigurer configurer = model!=null?model.getConfigurer():null;
         

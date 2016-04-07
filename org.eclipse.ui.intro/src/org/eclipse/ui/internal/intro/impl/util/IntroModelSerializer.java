@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
@@ -125,16 +125,12 @@ public class IntroModelSerializer {
             text.append(filterURL(styles[i] + "\n\t\t\t")); //$NON-NLS-1$
         text.append("\n\tpage alt-styles are = "); //$NON-NLS-1$
 
-        Hashtable altStylesHashtable = page.getAltStyles();
+		Map<String, Bundle> altStylesHashtable = page.getAltStyles();
         if (altStylesHashtable == null)
             return;
 
-        Enumeration altStyles = altStylesHashtable.keys();
-        while (altStyles.hasMoreElements()) {
-            String altStyle = (String) altStyles.nextElement();
-
-            Bundle bundle = (Bundle) altStylesHashtable.get(altStyle);
-            text.append(filterURL(altStyle) + " from " + bundle.getSymbolicName()); //$NON-NLS-1$
+		for (Entry<String, Bundle> entry : altStylesHashtable.entrySet()) {
+			text.append(filterURL(entry.getKey()) + " from " + entry.getValue().getSymbolicName()); //$NON-NLS-1$
             text.append("\n\t\t"); //$NON-NLS-1$
         }
     }

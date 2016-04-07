@@ -40,7 +40,9 @@ public class FileUtil {
 	 * be encoded as UTF-8).
 	 */
 	public static String getContents(String absolutePath) throws IOException {
-		return readString(new FileInputStream(absolutePath));
+		try (FileInputStream fis = new FileInputStream(absolutePath)) {
+			return readString(fis);
+		}
 	}
 
 	/**
