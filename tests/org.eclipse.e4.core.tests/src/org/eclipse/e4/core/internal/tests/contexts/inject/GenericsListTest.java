@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH and others.
+ * Copyright (c) 2015, 2016 vogella GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class GenericsListTest {
 		assertEquals(list, userObject.field);
 	}
 
-	@Test
+	@Test(expected = ClassCastException.class)
 	public void testTypeErasure() {
 
 		List<Integer> list = new ArrayList<>();
@@ -78,13 +77,7 @@ public class GenericsListTest {
 		// of the type erasure
 		assertEquals(list, userObject.field);
 
-		// create ClassCastExeception
-		try {
-			userObject.combineIt();
-			fail();
-		} catch (ClassCastException e) {
-			// this exception is supposed to happen
-		}
+		userObject.combineIt();
 	}
 
 
