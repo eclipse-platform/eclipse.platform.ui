@@ -357,6 +357,38 @@
    </extension>
 
    <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.ui.ide.quickaccess.actionset"
+            label="%openQuickAccessActionSet.label"
+            visible="true">
+            <!-- see http://bugs.eclipse.org/bugs/show_bug.cgi?id=15684    -->
+<!-- Note: The menu (re-) definition has to be here due to bug 15684-->
+<!-- =================================================================== -->
+<!-- Search Menu                                                         -->
+<!-- =================================================================== -->
+          <menu
+               label="%searchMenu.label"
+               path="navigate"
+               id="org.eclipse.search.menu">
+				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
+				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
+				<separator name="fileSearchContextMenuActionsGroup"/> <!-- to be used by clients      -->
+	         	<separator name="contextMenuActionsGroup"/> <!-- to be used by clients -->
+	         	<separator name="occurencesActionsGroup"/> <!-- to be used by clients -->
+	         	<separator name="extraSearchGroup"/> <!-- to be used by clients -->
+         </menu>
+          <action
+               class="org.eclipse.ui.internal.quickaccess.TriggerQuickAccessAction"
+               id="org.eclipse.ui.ide.search.openQuickAccess"
+               label="%openQuickAccess.label"
+               menubarPath="org.eclipse.search.menu/extraSearchGroup"
+               tooltip="%openQuickAccess.description">
+         </action>
+      </actionSet>
+   </extension>
+
+   <extension
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
