@@ -28,7 +28,7 @@ public class TocSorter {
 	 * A category of tocs. A category has an id and a list of contained
 	 * tocs.
 	 */
-	private static class TocCategory extends ArrayList {
+	private static class TocCategory extends ArrayList<ITocContribution> {
 
 		private static final long serialVersionUID = 1L;
 
@@ -52,14 +52,14 @@ public class TocSorter {
 		Map<String, String> nameIdMap = createNameIdMap(categorized);
 
 		// order them
-		List<ITocContribution> orderedItems = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
+		List<String> orderedItems = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
 
 		// replace with actual TocContribution or category
-		orderedItems = substituteValues(orderedItems, categorized);
+		List<Object> actualItems = substituteValues(orderedItems, categorized);
 
 		// expand the categories
-		orderedItems = expandCategories(orderedItems);
-		return orderedItems.toArray(new ITocContribution[orderedItems.size()]);
+		List<ITocContribution> expandedItems = expandCategories(actualItems);
+		return expandedItems.toArray(new ITocContribution[orderedItems.size()]);
 	}
 
 	// Create a mapping from an id to a label that can be sorted
@@ -71,7 +71,7 @@ public class TocSorter {
 			ITocContribution toc;
 			if (value instanceof TocCategory) {
 				TocCategory category = (TocCategory)value;
-				toc = (ITocContribution) category.get(0);
+				toc = category.get(0);
 			} else {
 				toc = (ITocContribution)value;
 			}
@@ -115,7 +115,7 @@ public class TocSorter {
 					String tocLabel = toc.getToc().getLabel();
 					boolean done = false;
 					for (int next = 0; next < category.size() && !done; next++ ) {
-						String nextName = ((ITocContribution)category.get(next)).getToc().getLabel();
+						String nextName = category.get(next).getToc().getLabel();
 						if (tocLabel.compareToIgnoreCase(nextName) < 0) {
 							done = true;
 							category.add(next, toc);
@@ -149,13 +149,11 @@ public class TocSorter {
 	 * Expands all categories in the given list to actual toc contributions
 	 * organized by category.
 	 */
-	private List expandCategories(List entries) {
-		List expanded = new ArrayList();
-		Iterator iter = entries.iterator();
-		while (iter.hasNext()) {
-			Object entry = iter.next();
+	private List<ITocContribution> expandCategories(List<Object> entries) {
+		List<ITocContribution> expanded = new ArrayList<>();
+		for (Object entry : entries) {
 			if (entry instanceof ITocContribution) {
-				expanded.add(entry);
+				expanded.add((ITocContribution) entry);
 			}
 			else if (entry instanceof TocCategory) {
 				expanded.addAll((TocCategory)entry);
@@ -168,12 +166,10 @@ public class TocSorter {
 	 * Substitutes each item with it's corresponding mapping from the map.
 	 * Original List is not modified.
 	 */
-	private static List substituteValues(List items, Map map) {
+	private static List<Object> substituteValues(List<String> items, Map<String, Object> map) {
 		if (items != null && map != null) {
-			List result = new ArrayList(items.size());
-			Iterator iter = items.iterator();
-			while (iter.hasNext()) {
-				Object key = iter.next();
+			List<Object> result = new ArrayList<>(items.size());
+			for (String key : items) {
 				Object value = map.get(key);
 				if (value != null) {
 					result.add(value);

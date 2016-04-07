@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,11 +46,11 @@ import com.ibm.icu.text.Collator;
 public class ProductPreferences {
 
 	private static Properties[] productPreferences;
-	private static SequenceResolver orderResolver;
+	private static SequenceResolver<String> orderResolver;
 	private static Map<Properties, String> preferencesToPluginIdMap;
 	private static Map<Properties, String> preferencesToProductIdMap;
-	private static List primaryTocOrdering;
-	private static List[] secondaryTocOrderings;
+	private static List<String> primaryTocOrdering;
+	private static List<String>[] secondaryTocOrderings;
 	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private static boolean rtl;
 	private static boolean directionInitialized = false;
@@ -61,9 +60,10 @@ public class ProductPreferences {
 	 * toc entry is a String, either the id of the toc contribution or the
 	 * id of the category of tocs.
 	 */
-	public static List getTocOrder(List itemsToOrder, Map nameIdMap) {
-		List primaryOrdering = getPrimaryTocOrdering();
-		List[] secondaryOrdering = new List[0];
+	public static List<String> getTocOrder(List<String> itemsToOrder, Map<String, String> nameIdMap) {
+		List<String> primaryOrdering = getPrimaryTocOrdering();
+		@SuppressWarnings("unchecked")
+		List<String>[] secondaryOrdering = new List[0];
 		if (primaryOrdering == null || primaryOrdering.size() == 0) {
 			secondaryOrdering = getSecondaryTocOrderings();
 		}
@@ -75,7 +75,7 @@ public class ProductPreferences {
 	 * product (either specified via help data xml file or deprecated comma-separated
 	 * list in plugin_customization.ini). Help data takes precedence.
 	 */
-	public static List getPrimaryTocOrdering() {
+	public static List<String> getPrimaryTocOrdering() {
 		if (primaryTocOrdering == null) {
 			IProduct product = Platform.getProduct();
 			String pluginId = null;
@@ -87,7 +87,7 @@ public class ProductPreferences {
 			primaryTocOrdering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
 			// active product has no preference for toc order
 			if (primaryTocOrdering == null) {
-				primaryTocOrdering = new ArrayList();
+				primaryTocOrdering = new ArrayList<>();
 			}
 		}
 		return primaryTocOrdering;
@@ -97,19 +97,21 @@ public class ProductPreferences {
 	 * Returns all secondary toc ordering. These are the preferred toc orders of all
 	 * defined products except the active product.
 	 */
-	public static List[] getSecondaryTocOrderings() {
+	@SuppressWarnings("unchecked")
+	public static List<String>[] getSecondaryTocOrderings() {
 		if (secondaryTocOrderings == null) {
-			List<List> list = new ArrayList<>();
+			List<List<String>> list = new ArrayList<>();
 			Properties[] productPreferences = getProductPreferences(false);
 			for (int i=0;i<productPreferences.length;++i) {
 				String pluginId = preferencesToPluginIdMap.get(productPreferences[i]);
 				String helpDataFile = (String)productPreferences[i].get(HelpPlugin.PLUGIN_ID + '/' + HelpPlugin.HELP_DATA_KEY);
 				String baseTOCS = (String)productPreferences[i].get(HelpPlugin.PLUGIN_ID + '/' + HelpPlugin.BASE_TOCS_KEY);
-				List ordering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
+				List<String> ordering = getTocOrdering(pluginId, helpDataFile, baseTOCS);
 				if (ordering != null) {
 					list.add(ordering);
 				}
 			}
+			// can't instantiate arrays of generic type
 			secondaryTocOrderings = list.toArray(new List[list.size()]);
 		}
 		return secondaryTocOrderings;
@@ -187,7 +189,7 @@ public class ProductPreferences {
 	 * but not present are skipped, and items present but not ordered are added
 	 * at the end.
 	 */
-	public static List getOrderedList(List items, List order) {
+	public static List getOrderedList(List<String> items, List<String> order) {
 		return getOrderedList(items, order, null, null);
 	}
 
@@ -196,23 +198,22 @@ public class ProductPreferences {
 	 * The primary ordering must be satisfied in all cases. As many secondary orderings
 	 * as reasonably possible will be satisfied.
 	 */
-	public static List getOrderedList(List items, List primary, List[] secondary, Map nameIdMap) {
-		List result = new ArrayList();
-		List set = new ArrayList(items);
+	public static List<String> getOrderedList(List<String> items, List<String> primary, List<String>[] secondary,
+			Map<String, String> nameIdMap) {
+		List<String> result = new ArrayList<>();
+		List<String> set = new ArrayList<>(items);
 		if (orderResolver == null) {
-			orderResolver = new SequenceResolver();
+			orderResolver = new SequenceResolver<>();
 		}
-		List order = orderResolver.getSequence(primary, secondary);
-		Iterator iter = order.iterator();
-		while (iter.hasNext()) {
-			Object obj = iter.next();
+		List<String> order = orderResolver.getSequence(primary, secondary);
+		for (String obj : order) {
 			if (set.contains(obj)) {
 				result.add(obj);
 				set.remove(obj);
 			}
 		}
 		if (HelpData.getProductHelpData().isSortOthers() && nameIdMap != null) {
-			List remaining = new ArrayList();
+			List<String> remaining = new ArrayList<>();
 			remaining.addAll(set);
 			sortByName(remaining, nameIdMap);
 			result.addAll(remaining);
@@ -222,16 +223,16 @@ public class ProductPreferences {
 		return result;
 	}
 
-	private static class NameComparator implements Comparator {
+	private static class NameComparator implements Comparator<String> {
 
-		private Map tocNames;
+		private Map<String, String> tocNames;
 
-		public NameComparator(Map tocNames) {
+		public NameComparator(Map<String, String> tocNames) {
 			this.tocNames = tocNames;
 		}
 
 		@Override
-		public int compare(Object o1, Object o2) {
+		public int compare(String o1, String o2) {
 			Object name1 = tocNames.get(o1);
 			Object name2 = tocNames.get(o2);
 			if (!(name1 instanceof String)) {
@@ -245,7 +246,7 @@ public class ProductPreferences {
 
 	}
 
-	private static void sortByName(List remaining, Map categorized) {
+	private static void sortByName(List<String> remaining, Map<String, String> categorized) {
 		Collections.sort(remaining, new NameComparator(categorized));
 	}
 

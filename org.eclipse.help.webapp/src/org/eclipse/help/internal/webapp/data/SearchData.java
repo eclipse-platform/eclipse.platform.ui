@@ -699,7 +699,7 @@ public class SearchData extends ActivitiesData {
 				}
 			}
 		}
-		List<Object> order = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
+		List<String> order = ProductPreferences.getTocOrder(itemsToOrder, nameIdMap);
 		final Map<Object, Integer> catOrder = new HashMap<>();
 		for (int i = 0; i < order.size(); i++) {
 			catOrder.put(order.get(i), Integer.valueOf(i));

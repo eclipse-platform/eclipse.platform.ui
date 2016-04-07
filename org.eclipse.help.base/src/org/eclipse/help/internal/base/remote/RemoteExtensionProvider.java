@@ -66,8 +66,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 							reader = new DocumentReader();
 						}
 						UAElement element = reader.read(in);
-						IContentExtension[] children = (IContentExtension[]) element
-								.getChildren(IContentExtension.class);
+						IContentExtension[] children = element.getChildren(IContentExtension.class);
 						for (int contrib = 0; contrib < children.length; contrib++) {
 							contributions.add(children[contrib]);
 						}

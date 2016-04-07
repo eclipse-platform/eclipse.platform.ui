@@ -149,6 +149,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * Returns the context definitions for the given plug-in and locale,
 	 * as a mapping of short IDs to Context objects (shortContextId -> Context).
 	 */
+	@SuppressWarnings("unchecked")
 	public Map<String, Context>[] getPluginContexts(String pluginId, String locale) {
 		List<Map<String, Context>> maps = new ArrayList<>();
 		Map<String, ContextFile[]> associations = getPluginAssociations();
