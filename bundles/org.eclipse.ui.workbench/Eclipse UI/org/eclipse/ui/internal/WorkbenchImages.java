@@ -188,6 +188,7 @@ public/*final*/class WorkbenchImages {
 
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS, PATH_ETOOL + "help_contents.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH, PATH_ETOOL + "help_search.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_TIPS_AND_TRICKS, PATH_ETOOL + "tricks.png", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW, PATH_ETOOL + "new_fastview.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW, PATH_DTOOL + "new_fastview.png", true); //$NON-NLS-1$
