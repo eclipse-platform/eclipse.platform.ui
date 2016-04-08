@@ -11,7 +11,7 @@
  * 		font should be activated and used by other components.
  *      Robin Stocker <robin@nibor.org> - Add filter text field
  *      Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *      Simon Scholz <simon.scholz@vogella.com> - Bug 488704
+ *      Simon Scholz <simon.scholz@vogella.com> - Bug 488704, 491316
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -473,14 +474,13 @@ public class AboutPluginsPage extends ProductInfoPage {
 			return null;
 		}
 
-		URL aboutUrl = Platform.find(bundle, baseNLPath.append(PLUGININFO),
-				null);
+		URL aboutUrl = FileLocator.find(bundle, baseNLPath.append(PLUGININFO), null);
 		if (!makeLocal) {
 			return aboutUrl;
 		}
 		if (aboutUrl != null) {
 			try {
-				URL result = Platform.asLocalURL(aboutUrl);
+				URL result = FileLocator.toFileURL(aboutUrl);
 				try {
 					// Make local all content in the "about" directory.
 					// This is needed to handle jar'ed plug-ins.
@@ -488,7 +488,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 					// subdirs.
 					URL about = new URL(aboutUrl, "about_files"); //$NON-NLS-1$
 					if (about != null) {
-						Platform.asLocalURL(about);
+						FileLocator.toFileURL(about);
 					}
 				} catch (IOException e) {
 					// skip the about dir if its not found or there are other
