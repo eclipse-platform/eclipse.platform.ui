@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2015, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.forms.widgets;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
@@ -905,7 +906,8 @@ public class FormToolkit {
 	private void initializeBorderStyle() {
 		String osname = System.getProperty("os.name"); //$NON-NLS-1$
 		String osversion = System.getProperty("os.version"); //$NON-NLS-1$
-		if (osname.startsWith("Windows") && "5.1".compareTo(osversion) <= 0) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (osname.startsWith("Windows") //$NON-NLS-1$
+				&& compareVersion(osversion, 5, 1) >= 0) {
 			// Skinned widgets used on newer Windows (e.g. XP (5.1), Vista
 			// (6.0))
 			// Check for Windows Classic. If not used, set the style to BORDER
@@ -914,6 +916,27 @@ public class FormToolkit {
 				borderStyle = SWT.BORDER;
 		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
+	}
+
+	private int compareVersion(String version, int... numbers) {
+		try (Scanner scanner = new Scanner(version)) {
+			scanner.useDelimiter("\\."); //$NON-NLS-1$
+
+			for (int number : numbers) {
+				if (!scanner.hasNextInt())
+					return -1;
+
+				int result = Integer.compare(scanner.nextInt(), number);
+				if (result != 0)
+					return result;
+			}
+
+			while (scanner.hasNextInt())
+				if (scanner.nextInt() > 0)
+					return 1;
+		}
+
+		return 0;
 	}
 
 	/**
