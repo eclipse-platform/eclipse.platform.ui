@@ -77,11 +77,11 @@ public class ContentDetectHelper {
 		return extensionCount.intValue();
 	}
 
-	public void saveContributors(Set contributors) {
+	public void saveContributors(Set<String> contributors) {
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ROOT);
-		for (Iterator iter = contributors.iterator(); iter.hasNext();) {
+		for (Iterator<String> iter = contributors.iterator(); iter.hasNext();) {
 			IMemento childMemento = writeMemento.createChild(CONTRIBUTOR);
-			childMemento.putString(NAME, (String)iter.next());
+			childMemento.putString(NAME, iter.next());
 		}
 		saveMemento(writeMemento, EXTENSION_NAMES_XML);
 	}

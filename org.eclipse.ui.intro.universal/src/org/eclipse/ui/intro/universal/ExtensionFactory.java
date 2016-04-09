@@ -46,11 +46,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 	private String propertyName;
 	private static final String WELCOME_CUSTOMIZATION_PREFERENCE_PAGE = "welcomeCustomization"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtensionFactory#create()
-	 */
+	@Override
 	public Object create() throws CoreException {
 		if (WELCOME_CUSTOMIZATION_PREFERENCE_PAGE.equals(id))
 			return configure(new WelcomeCustomizationPreferencePage());
@@ -66,12 +62,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 		return obj;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
 		if (data instanceof String)

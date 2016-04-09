@@ -178,6 +178,7 @@ public class CustomizationContentsArea {
 			return nameNoMnemonic;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this)
 				return true;
@@ -190,6 +191,7 @@ public class CustomizationContentsArea {
 			return false;
 		}
 
+		@Override
 		public String toString() {
 			return name;
 		}
@@ -197,6 +199,7 @@ public class CustomizationContentsArea {
 
 	class TableContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement == ROOT_PAGE_TABLE)
 				return ROOT_PAGE_TABLE;
@@ -209,9 +212,11 @@ public class CustomizationContentsArea {
 			return new Object[0];
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -225,6 +230,7 @@ public class CustomizationContentsArea {
 			this.viewer = viewer;
 		}
 
+		@Override
 		public void dragStart(DragSourceEvent event) {
 			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 			if (ssel.size() > 0) {
@@ -234,17 +240,19 @@ public class CustomizationContentsArea {
 			}
 		};
 
+		@Override
 		public void dragSetData(DragSourceEvent event) {
 			IStructuredSelection ssel = (IStructuredSelection) viewer.getSelection();
 			BaseData[] array = new BaseData[ssel.size()];
 			int i = 0;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				array[i++] = (BaseData) iter.next();
+			for (Iterator<BaseData> iter = ssel.iterator(); iter.hasNext();) {
+				array[i++] = iter.next();
 			}
 			event.data = array;
 			sel = array;
 		}
 
+		@Override
 		public void dragFinished(DragSourceEvent event) {
 			if (event.detail == DND.DROP_MOVE) {
 				GroupData gd = (GroupData) viewer.getInput();
@@ -268,6 +276,7 @@ public class CustomizationContentsArea {
 			super(viewer);
 		}
 
+		@Override
 		public boolean performDrop(Object data) {
 			BaseData target = (BaseData) getCurrentTarget();
 			int loc = getCurrentLocation();
@@ -311,6 +320,7 @@ public class CustomizationContentsArea {
 			return -1;
 		}
 
+		@Override
 		public boolean validateDrop(Object target, int operation, TransferData transferType) {
 			return ExtensionDataTransfer.getInstance().isSupportedType(transferType);
 		}
@@ -318,6 +328,7 @@ public class CustomizationContentsArea {
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof RootPage) {
 				return ((RootPage) obj).getNameNoMnemonic();
@@ -339,6 +350,7 @@ public class CustomizationContentsArea {
 			return super.getText(obj);
 		}
 		
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof ExtensionData) {
 				ExtensionData ed = (ExtensionData) obj;
@@ -359,12 +371,14 @@ public class CustomizationContentsArea {
 			return null;
 		}
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0)
 				return getImage(element);
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (columnIndex == 1 || element instanceof IntroTheme || element instanceof RootPage)
 				return getText(element);
@@ -429,6 +443,7 @@ public class CustomizationContentsArea {
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TabItem[] selection = tabFolder.getSelection();
 				onTabChange(selection[0]);
@@ -445,6 +460,7 @@ public class CustomizationContentsArea {
 			serialize.setText(Messages.WelcomeCustomizationPreferencePage_serialize);
 			serialize.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doSerializeState();
 				}
@@ -657,9 +673,9 @@ public class CustomizationContentsArea {
 	}
 
 	public void dispose() {
-		Iterator iter = themeList.iterator();
+		Iterator<IntroTheme> iter = themeList.iterator();
 		while (iter.hasNext()) {
-			((IntroTheme)iter.next()).dispose();
+			iter.next().dispose();
 		}
 		extensionImage.dispose();
 		ihighImage.dispose();
@@ -672,7 +688,7 @@ public class CustomizationContentsArea {
 	private void updateIntroThemeFromData() {
 		if (introThemeId != null) {
 			for (int i = 0; i < themeList.size(); i++) {
-				IntroTheme theme = (IntroTheme) themeList.get(i);
+				IntroTheme theme = themeList.get(i);
 				if (theme.getId().equals(introThemeId)) {
 					introTheme = theme;
 					break;
@@ -713,6 +729,7 @@ public class CustomizationContentsArea {
 	public boolean performOk() {
 		saveData();
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				restartIntro();
 			}
@@ -781,7 +798,7 @@ public class CustomizationContentsArea {
 		for (int i = 0; i < introRootPages.size(); i++) {
 			if (i > 0)
 				sbuf.append(","); //$NON-NLS-1$
-			sbuf.append((String) introRootPages.get(i));
+			sbuf.append(introRootPages.get(i));
 		}
 		String key = pid + "_" + INTRO_ROOT_PAGES; //$NON-NLS-1$
 		uprefs.put(key, sbuf.toString());
@@ -858,6 +875,7 @@ public class CustomizationContentsArea {
 		themes.setContentProvider(contentProvider);
 		themes.setLabelProvider(labelProvider);
 		themes.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				Object sel = ((StructuredSelection) e.getSelection()).getFirstElement();
 				introTheme = (IntroTheme) sel;
@@ -875,6 +893,7 @@ public class CustomizationContentsArea {
 		themePreview.setLayoutData(gd);
 		themePreview.addPaintListener(new PaintListener() {
 
+			@Override
 			public void paintControl(PaintEvent e) {
 				if (introTheme == null)
 					return;
@@ -897,6 +916,7 @@ public class CustomizationContentsArea {
 		// Filter empty pages
 		ViewerFilter[] rootPageFilters = new ViewerFilter[] {
 			new ViewerFilter() {
+				@Override
 				public boolean select(Viewer viewer, Object parentElement,
 						Object element) {
 					if (element instanceof RootPage) {
@@ -914,6 +934,7 @@ public class CustomizationContentsArea {
 		rootPages.getControl().setLayoutData(gd);
 		rootPages.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				RootPage page = (RootPage) event.getElement();
 				boolean checked = event.getChecked();
@@ -976,7 +997,7 @@ public class CustomizationContentsArea {
 
 	private boolean getRootPageSelected(String id) {
 		for (int i = 0; i < introRootPages.size(); i++) {
-			String cid = (String) introRootPages.get(i);
+			String cid = introRootPages.get(i);
 			if (cid.equals(id))
 				return true;
 		}
@@ -994,6 +1015,7 @@ public class CustomizationContentsArea {
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				fillPopupMenu(manager, viewer);
 			}
@@ -1021,10 +1043,12 @@ public class CustomizationContentsArea {
 				IUniversalIntroConstants.P_NAME });
 		viewer.setCellModifier(new ICellModifier() {
 
+			@Override
 			public boolean canModify(Object element, String property) {
 				return property.equals(IUniversalIntroConstants.P_IMPORTANCE);
 			}
 
+			@Override
 			public Object getValue(Object element, String property) {
 				if (element instanceof ExtensionData) {
 					ExtensionData ed = (ExtensionData) element;
@@ -1034,6 +1058,7 @@ public class CustomizationContentsArea {
 				return null;
 			}
 
+			@Override
 			public void modify(Object element, String property, Object value) {
 				Integer ivalue = (Integer) value;
 				TableItem item = (TableItem) element;
@@ -1055,6 +1080,7 @@ public class CustomizationContentsArea {
 		
 		manager.add(new Separator());
 		Action addSeparator = new Action(Messages.WelcomeCustomizationPreferencePage_addSeparator) {
+			@Override
 			public void run() {
 				doAddSeparator(viewer);
 			}
@@ -1066,12 +1092,14 @@ public class CustomizationContentsArea {
 		if (ssel.size() == 1 && viewer != available) {
 			Action upAction = new Action(Messages.WelcomeCustomizationPreferencePage_up) {
 
+				@Override
 				public void run() {
 					doMove(viewer, true);
 				}
 			};
 			Action downAction = new Action(Messages.WelcomeCustomizationPreferencePage_down) {
 
+				@Override
 				public void run() {
 					doMove(viewer, false);
 				}
@@ -1096,7 +1124,7 @@ public class CustomizationContentsArea {
 			
 			boolean addDeleteSeparator=false;
 			
-			for (Iterator iter=ssel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter=ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof SeparatorData)
 					addDeleteSeparator=true;
@@ -1107,6 +1135,7 @@ public class CustomizationContentsArea {
 			}
 			if (addDeleteSeparator) {
 				Action deleteSeparator = new Action(Messages.WelcomeCustomizationPreferencePage_removeSeparator) {
+					@Override
 					public void run() {
 						doRemoveSeparators(viewer);
 					}
@@ -1122,6 +1151,7 @@ public class CustomizationContentsArea {
 			return;
 		Action action = new Action(name) {
 
+			@Override
 			public void run() {
 				doMoveTo(source, target);
 			}
@@ -1154,8 +1184,8 @@ public class CustomizationContentsArea {
 	private void doRemoveSeparators(Viewer viewer) {
 		StructuredSelection ssel = ((StructuredSelection) viewer.getSelection());
 		GroupData gd = (GroupData) viewer.getInput();
-		for (Iterator iter=ssel.iterator(); iter.hasNext();) {
-			SeparatorData sdata = (SeparatorData)iter.next();
+		for (Iterator<SeparatorData> iter=ssel.iterator(); iter.hasNext();) {
+			SeparatorData sdata = iter.next();
 			gd.remove(sdata);
 		}
 		viewer.refresh();

@@ -36,6 +36,7 @@ public class CustomizationDialog extends TrayDialog {
 		this.pageId = pageId;
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		CustomizationContentsArea contents = getContentsArea();
 		contents.setShell(getShell());
@@ -46,6 +47,7 @@ public class CustomizationDialog extends TrayDialog {
 		return outerContainer;
 	}
 	
+	@Override
 	protected void okPressed() {
 		if (getContentsArea().performOk()) {
 		    getContentsArea().dispose();
@@ -53,12 +55,14 @@ public class CustomizationDialog extends TrayDialog {
 		super.okPressed();
 	}
 	
+	@Override
 	protected void cancelPressed() {
 	    getContentsArea().dispose();
 	    super.cancelPressed();
 	}
 
-    protected void configureShell(Shell newShell) {
+    @Override
+	protected void configureShell(Shell newShell) {
 	    super.configureShell(newShell);	
 		newShell.setText(Messages.WelcomeCustomizationPreferencePage_Customize); 
 	    newShell.setImage(ImageUtil.createImage("full/elcl16/configure.gif")); //$NON-NLS-1$);

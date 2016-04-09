@@ -113,12 +113,8 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start(BundleContext context) throws Exception {
+    @Override
+	public void start(BundleContext context) throws Exception {
         super.start(context);
         inst = this;
         if (Log.logInfo)
@@ -126,12 +122,8 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop(BundleContext context) throws Exception {
+    @Override
+	public void stop(BundleContext context) throws Exception {
     	resetVolatileImageRegistry();
         super.stop(context);
     }

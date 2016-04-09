@@ -108,8 +108,8 @@ public class ContentDetectorTest {
 		assertFalse(detector.isNewContentAvailable());
 		// Make the first extension appear new
 		helper.saveExtensionCount(extensionCount - 1);
-		Set<?> contributors = helper.getContributors();
-		String firstContribution = (String) contributors.iterator().next();
+		Set<String> contributors = helper.getContributors();
+		String firstContribution = contributors.iterator().next();
 		String copyOfFirstContribution = "" + firstContribution;
 		contributors.remove(firstContribution);
 		helper.saveContributors(contributors);

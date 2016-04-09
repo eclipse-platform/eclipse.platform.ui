@@ -54,6 +54,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		loadData();
 	}
 
+	@Override
 	public String getVariable(String variableName) {
 		if (variableName.equals(HIGH_CONTRAST)) {
 			boolean highContrast = ImageUtil.isHighContrast();
@@ -100,6 +101,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	 * 
 	 * @see org.eclipse.ui.intro.config.IntroConfigurer#getMixinStyle(java.lang.String)
 	 */
+	@Override
 	public String getMixinStyle(String pageId, String extensionId) {
 		// if active product has a preference, use it
 		if (primaryIntroData != null) {
@@ -208,6 +210,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return value;
 	}
 
+	@Override
 	public IntroElement[] getGroupChildren(String pageId, String groupId) {
 		// root-like pages have more details on the page and action links
 		boolean rootLike = pageId.equals(ID_ROOT) || isStartPage(pageId) || pageId.equals(ID_STANDBY);
@@ -224,6 +227,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return new IntroElement[0];
 	}
 
+	@Override
 	public IntroElement[] getLaunchBarShortcuts() {
 		ArrayList<IntroElement> links = new ArrayList<>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
@@ -240,7 +244,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private IntroElement[] getRootPageLinks(boolean standby) {
-		ArrayList<IntroElement> links = new ArrayList<IntroElement>();
+		ArrayList<IntroElement> links = new ArrayList<>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
 		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
@@ -274,7 +278,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private IntroElement[] getNavLinks(String pageId) {
-		ArrayList<IntroElement> links = new ArrayList<IntroElement>();
+		ArrayList<IntroElement> links = new ArrayList<>();
 		String ids = getVariable(VAR_INTRO_ROOT_PAGES);		
 		/*
 		 * In high contrast mode the workbench link must be generated in the nav links 
@@ -500,7 +504,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			}
 		}
 		// load all other installed (but not running) products' intro data
-		List<IntroData> result = new ArrayList<IntroData>();
+		List<IntroData> result = new ArrayList<>();
 		Properties[] prefs = ProductPreferences.getProductPreferences(false);
 		for (int i=0;i<prefs.length;++i) {
 			String key = UniversalIntroPlugin.PLUGIN_ID + '/' + VAR_INTRO_DATA;
@@ -519,7 +523,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private IntroElement[] getContent(String pageId, String groupId) {
-		List<IntroElement> result = new ArrayList<IntroElement>();
+		List<IntroElement> result = new ArrayList<>();
 		if (!ContentDetector.getNewContributors().isEmpty()) {
 			// Add a new content fallback anchor
 			IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
@@ -554,10 +558,9 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		List<IntroElement>[] secondaryAnchors = secondaryAnchorsList.toArray(new List[secondaryAnchorsList.size()]);
 		if (sequenceResolver == null) {
-			sequenceResolver = new SequenceResolver<IntroElement>();
+			sequenceResolver = new SequenceResolver<>();
 		}
 		return sequenceResolver.getSequence(primaryAnchors, secondaryAnchors);
 	}
@@ -565,13 +568,14 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	private List<IntroElement> getAnchors(IntroData data, String pageId, String groupId) {
 		PageData pdata = data.getPage(pageId);
 		if (pdata != null) {
-			List<IntroElement> anchors = new ArrayList<IntroElement>();
+			List<IntroElement> anchors = new ArrayList<>();
 			pdata.addAnchors(anchors, groupId);
 			return anchors;
 		}
 		return null;
 	}
 	
+	@Override
 	public String resolvePath(String extensionId, String path) {
 		boolean extensionRelativePath = false;
 		IPath ipath = new Path(path);
@@ -666,6 +670,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return false;
 	}
 
+	@Override
 	public void init(IIntroSite site, Map<String, String> themeProperties) {
 		super.init(site, themeProperties);
 		Action customizeAction = new CustomizeAction(site);

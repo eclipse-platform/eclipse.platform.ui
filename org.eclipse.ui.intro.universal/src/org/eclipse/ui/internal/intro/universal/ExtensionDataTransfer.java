@@ -31,14 +31,17 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 		return _instance;
 	}
 
+	@Override
 	protected String[] getTypeNames() {
 		return new String[] { MYTYPENAME };
 	}
 
+	@Override
 	protected int[] getTypeIds() {
 		return new int[] { MYTYPEID };
 	}
 
+	@Override
 	public void javaToNative(Object object, TransferData transferData) {
 		if (!checkMyType(object) || !isSupportedType(transferData)) {
 			DND.error(DND.ERROR_INVALID_DATA);
@@ -70,6 +73,7 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 		}
 	}
 
+	@Override
 	public Object nativeToJava(TransferData transferData) {
 		if (isSupportedType(transferData)) {
 			byte[] buffer = (byte[]) super.nativeToJava(transferData);
@@ -129,6 +133,7 @@ public class ExtensionDataTransfer extends ByteArrayTransfer {
 		return true;
 	}
 
+	@Override
 	protected boolean validate(Object object) {
 		return checkMyType(object);
 	}

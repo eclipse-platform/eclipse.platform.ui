@@ -24,6 +24,7 @@ public class CustomizeAction extends Action {
 		this.site = site;
 	}
 	
+	@Override
 	public void run() {
 		String pageId = IntroPlugin.getDefault().getIntroModelRoot().getCurrentPageId();
 		run(pageId);

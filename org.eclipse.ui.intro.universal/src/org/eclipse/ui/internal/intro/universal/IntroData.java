@@ -52,7 +52,7 @@ public class IntroData {
 	}
 	
 	public PageData getPage(String pageId) {
-		return (PageData)pages.get(pageId);
+		return pages.get(pageId);
 	}
 
 	public boolean isActive() {
@@ -132,7 +132,7 @@ public class IntroData {
 	    if (path.charAt(path.length()-1)!='@')
 	    	return;
 	    String pageId = path.substring(0, at);
-	    PageData pd = (PageData)pages.get(pageId);
+	    PageData pd = pages.get(pageId);
 	    if (pd==null) {
 	    	pd = new PageData(pageId);
 	    	pages.put(pageId, pd);

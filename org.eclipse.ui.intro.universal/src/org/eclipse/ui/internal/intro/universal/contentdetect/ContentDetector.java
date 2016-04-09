@@ -20,12 +20,13 @@ import org.eclipse.ui.intro.IntroContentDetector;
 
 public class ContentDetector extends IntroContentDetector {
 
-	private static Set newContributors;
+	private static Set<String> newContributors;
 	private static boolean detectorCalled = false;
 	
 	public ContentDetector() {
 	}
 
+	@Override
 	public boolean isNewContentAvailable() {		
 		try {
 			detectorCalled = true;
@@ -57,7 +58,7 @@ public class ContentDetector extends IntroContentDetector {
 		} catch (Exception e) { 
 			return false;
 		}
-		newContributors = new HashSet();
+		newContributors = new HashSet<>();
 		return false;
 	}
 	
@@ -65,7 +66,7 @@ public class ContentDetector extends IntroContentDetector {
 	 * @return The set of the ids of config extensions which are new since the last time
 	 * intro was opened. May be null if there are no contributors.
 	 */
-	public static Set getNewContributors() {
+	public static Set<String> getNewContributors() {
 		if (!detectorCalled) {
 		    detectorCalled = true;
 		    new ContentDetector().isNewContentAvailable();

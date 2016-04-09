@@ -109,10 +109,12 @@ public class ExtensionData extends BaseData {
 		return IMPORTANCE_TABLE[fImportance];
 	}
 
+	@Override
 	public String toString() {
 		return name != null ? name : id;
 	}
 
+	@Override
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
 		writer.print("<extension id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$

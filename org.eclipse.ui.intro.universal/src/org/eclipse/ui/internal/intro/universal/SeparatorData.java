@@ -21,6 +21,7 @@ public class SeparatorData extends BaseData {
 		this.id = id;
 	}
 
+	@Override
 	public void write(PrintWriter writer, String indent) {
 		writer.print(indent);
 		writer.print("<separator id=\""); //$NON-NLS-1$

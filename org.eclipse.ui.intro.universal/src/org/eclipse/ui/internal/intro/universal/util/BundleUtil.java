@@ -62,7 +62,7 @@ public class BundleUtil {
      * @return
      */
     public static String getBundleHeader(Bundle bundle, String key) {
-        return (String) bundle.getHeaders().get(key);
+        return bundle.getHeaders().get(key);
     }
 
 

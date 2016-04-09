@@ -43,29 +43,35 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		return contentsArea;
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		getContentsArea().setShell(getShell());
 		return getContentsArea().createContents(parent);
 	}
 
+	@Override
 	public void dispose() {
 		getContentsArea().dispose();
 		super.dispose();
 	}
 
+	@Override
 	public boolean performOk() {
 		return getContentsArea().performOk();
 	}
 
+	@Override
 	protected void performDefaults() {
 		getContentsArea().performDefaults();
 	}
 
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 			throws CoreException {
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	
