@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class ContentDetectHelper {
 	
 	public Set<String> findNewContributors(Set<String> contributors, Set<String> previousContributors) {
 		Set<String> result = new HashSet<>(contributors);
-		for (Iterator iter = previousContributors.iterator(); iter.hasNext();) {
+		for (Iterator<String> iter = previousContributors.iterator(); iter.hasNext();) {
 			result.remove(iter.next());
 		}
 		return result;
