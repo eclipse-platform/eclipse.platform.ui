@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@
  *     René Brandstetter <Rene.Brandstetter@gmx.net> - Bug 378849
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 378849
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 460556
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430, 472654
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430, 472654, 460886
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
@@ -115,53 +115,63 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	IEventBroker eventBroker;
-	private EventHandler itemUpdater = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// Ensure that this event is for a MMenuItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
-				return;
 
-			MMenuItem itemModel = (MMenuItem) event.getProperty(UIEvents.EventTags.ELEMENT);
+	@Inject
+	@Optional
+	private void subscribeUILabelTopicAll(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
+		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			IContributionItem ici = getContribution(itemModel);
-			if (ici == null) {
-				return;
-			}
-
-			String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
-			if (UIEvents.UILabel.LABEL.equals(attName) || UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
-				ici.update();
-			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
-				ici.update();
-			} else if (UIEvents.UILabel.TOOLTIP.equals(attName) || UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
-				ici.update();
-			}
+		if (element instanceof MMenuItem) {
+			handleLabelOfMenuItem(event, element);
 		}
-	};
-
-	private EventHandler labelUpdater = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			// Ensure that this event is for a MMenu
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenu))
-				return;
-
-			String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
-			MMenu model = (MMenu) event.getProperty(UIEvents.EventTags.ELEMENT);
-			MenuManager manager = getManager(model);
-			if ((manager == null))
-				return;
-			if (UIEvents.UILabel.LABEL.equals(attName) || UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
-				manager.setMenuText(getText(model));
-				manager.update(IAction.TEXT);
-			}
-			if (UIEvents.UILabel.ICONURI.equals(attName)) {
-				manager.setImageDescriptor(getImageDescriptor(model));
-				manager.update(IAction.IMAGE);
-			}
+		else if (element instanceof MMenu) {
+			updateLabelOfMenu(event);
 		}
-	};
+		// nothing to do otherwise
+	}
+
+	/**
+	 * @param event
+	 */
+	private void updateLabelOfMenu(Event event) {
+		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
+		MMenu model = (MMenu) event.getProperty(UIEvents.EventTags.ELEMENT);
+		MenuManager manager = getManager(model);
+		if ((manager == null)) {
+			return;
+		}
+		if (UIEvents.UILabel.LABEL.equals(attName) || UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
+			manager.setMenuText(getText(model));
+			manager.update(IAction.TEXT);
+		}
+		if (UIEvents.UILabel.ICONURI.equals(attName)) {
+			manager.setImageDescriptor(getImageDescriptor(model));
+			manager.update(IAction.IMAGE);
+		}
+	}
+
+	/**
+	 * @param event
+	 * @param element
+	 */
+	private void handleLabelOfMenuItem(Event event, Object element) {
+		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
+
+		MMenuItem itemModel = (MMenuItem) element;
+
+		IContributionItem ici = getContribution(itemModel);
+		if (ici == null) {
+			return;
+		}
+
+		if (UIEvents.UILabel.LABEL.equals(attName) || UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
+			ici.update();
+		} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+			ici.update();
+		} else if (UIEvents.UILabel.TOOLTIP.equals(attName) || UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
+			ici.update();
+		}
+	}
 
 	private EventHandler toBeRenderedUpdater = new EventHandler() {
 		@Override
@@ -285,8 +295,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	@PostConstruct
 	public void init() {
-		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, itemUpdater);
-		eventBroker.subscribe(UIEvents.UILabel.TOPIC_ALL, labelUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_SELECTED, selectionUpdater);
 		eventBroker.subscribe(UIEvents.Item.TOPIC_ENABLED, enabledUpdater);
 		eventBroker.subscribe(UIEvents.UIElement.TOPIC_ALL, toBeRenderedUpdater);
@@ -322,8 +330,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	@PreDestroy
 	public void contextDisposed() {
-		eventBroker.unsubscribe(itemUpdater);
-		eventBroker.unsubscribe(labelUpdater);
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
