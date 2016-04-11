@@ -482,3 +482,7 @@ StyledText {
 	swt-scrollbar-border-radius: 4px;
 	swt-scrollbar-mouse-near-scroll-width: 15px;
 }
+
+Link {
+	swt-link-foreground-color: '#org-eclipse-ui-workbench-LINK_COLOR'
+}

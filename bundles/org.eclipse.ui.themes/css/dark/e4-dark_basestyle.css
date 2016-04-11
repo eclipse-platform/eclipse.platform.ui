@@ -33,7 +33,8 @@ ThemesExtension { color-definition:
     '#org-eclipse-ui-workbench-ACTIVE_TAB_SELECTED_TEXT_COLOR',
     '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_START',
     '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END',
-    '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
+    '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR',
+    '#org-eclipse-ui-workbench-LINK_COLOR';
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
@@ -159,4 +160,10 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR 
     color: #CCCCCC;
     category: '#org-eclipse-ui-presentation-default';
     label: url('platform:/plugin/org.eclipse.ui.themes?message=ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR');
+}
+
+ColorDefinition#org-eclipse-ui-workbench-LINK_COLOR {
+    color: #6FC5EE;
+    category: '#org-eclipse-ui-presentation-default';
+    label: url('platform:/plugin/org.eclipse.ui.themes?message=LINK_COLOR');
 }

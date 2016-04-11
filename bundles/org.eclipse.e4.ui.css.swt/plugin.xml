@@ -565,6 +565,13 @@
                name="swt-scrollbar-border-radius">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.LinkElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyLinkSWTHandler">
+         <property-name
+               name="swt-link-foreground-color">
+         </property-name>
+      </handler>
 
 
       <!-- Theme element definitions -->

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -78,6 +79,9 @@ public class SWTElementProvider implements IElementProvider {
 		}
 		if (element instanceof StyledText) {
 			return new StyledTextElement((StyledText) element, engine);
+		}
+		if (element instanceof Link) {
+			return new LinkElement((Link) element, engine);
 		}
 		if (element instanceof Composite) {
 			return new CompositeElement((Composite) element, engine);
