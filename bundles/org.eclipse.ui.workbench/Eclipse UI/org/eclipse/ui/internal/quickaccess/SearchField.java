@@ -56,6 +56,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -111,6 +113,7 @@ public class SearchField {
 
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
+	private Font font;
 
 	@PostConstruct
 	void createControls(final Composite parent, MApplication application, MWindow window) {
@@ -299,7 +302,14 @@ public class SearchField {
 	private Text createText(Composite parent) {
 		Text text = new Text(parent, SWT.SEARCH);
 		text.setToolTipText(QuickAccessMessages.QuickAccess_TooltipDescription);
-		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
+		// FIXME need to access the real shortcut
+		text.setMessage(NLS.bind(QuickAccessMessages.QuickAccess_EnterSearch, "Ctrl+3")); //$NON-NLS-1$
+
+		FontData[] fD = text.getFont().getFontData();
+		int round = (int) Math.round(fD[0].getHeight() * 0.8);
+		fD[0].setHeight(round);
+		font = new Font(text.getDisplay(), fD[0]);
+		text.setFont(font);
 
 		GC gc = new GC(text);
 		Point p = gc.textExtent(QuickAccessMessages.QuickAccess_EnterSearch);
