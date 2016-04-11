@@ -59,7 +59,7 @@ public class DefaultBrowser extends AbstractWebBrowser {
 					+ path
 					+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
 					e);
-			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, path));
+			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchExternalWebBrowser, path));
 		}
 	}
 

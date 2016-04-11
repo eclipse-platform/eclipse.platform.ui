@@ -35,6 +35,6 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 				return;
 		}
 		if (!Program.launch(urlText))
-			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
+			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchExternalWebBrowser, urlText));
 	}
 }

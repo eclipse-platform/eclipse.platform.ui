@@ -108,7 +108,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 						if (reportNonZeroExitValue[0] && process.exitValue() != 0) {
 							Trace.trace(Trace.SEVERE,
 									"External browser returned non-zero status: " + process.exitValue()); //$NON-NLS-1$
-							WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
+							WebBrowserUtil.openError(NLS.bind(Messages.errorCouldNotLaunchExternalWebBrowser, urlText));
 						}
 						DefaultBrowserSupport.getInstance().removeBrowser(ExternalBrowserInstance.this);
 					} catch (Exception e) {
@@ -121,7 +121,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 		} catch (Exception e) {
 			Trace.trace(Trace.SEVERE, "Could not launch external browser", e); //$NON-NLS-1$
 			WebBrowserUtil.openError(NLS.bind(
-					Messages.errorCouldNotLaunchWebBrowser, urlText));
+					Messages.errorCouldNotLaunchExternalWebBrowser, urlText));
 		}
 	}
 
