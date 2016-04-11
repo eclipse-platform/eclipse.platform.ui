@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,14 +9,19 @@
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 436225
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Fabio Zadrozny <fabiofz at gmail dot com> - Bug 459833
  *******************************************************************************/
 
 package org.eclipse.ui.internal.services;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
@@ -120,17 +125,38 @@ public final class ServiceLocator implements IDisposable, INestable,
 
 	@Override
 	public final void dispose() {
-		Iterator<Object> i = servicesToDispose.values().iterator();
-		while (i.hasNext()) {
-			Object obj = i.next();
-			if (obj instanceof IDisposable) {
-				((IDisposable) obj).dispose();
+		disposeServices();
+		if (servicesToDispose.size() > 0) {
+			// If someone registered during shutdown, dispose of it too.
+			// See: Bug 459833 - ConcurrentModificationException in
+			// ServiceLocator.dispose
+			disposeServices();
+
+			// Check if there was some other leftover and warn about it.
+			if (servicesToDispose.size() > 0) {
+				WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING,
+						String.format(
+								"Services: %s register themselves while disposing (skipping dispose of such services).", //$NON-NLS-1$
+								servicesToDispose),
+						null));
 			}
 		}
 		servicesToDispose.clear();
 		e4Context = null;
 		disposed = true;
 		owner = null;
+	}
+
+	private void disposeServices() {
+		HashMap<Class<?>, Object> copy = new HashMap<>(servicesToDispose);
+		Set<Entry<Class<?>, Object>> entrySet = copy.entrySet();
+		for (Entry<Class<?>, Object> entry : entrySet) {
+			if (entry.getValue() instanceof IDisposable) {
+				IDisposable iDisposable = (IDisposable) entry.getValue();
+				iDisposable.dispose();
+			}
+			servicesToDispose.remove(entry.getKey());
+		}
 	}
 
 	@Override
