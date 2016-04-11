@@ -326,7 +326,7 @@ class FindReplaceDialog extends Dialog {
 					initIncrementalBaseLocation();
 
 				fNeedsInitialFindBeforeReplace= false;
-				performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
+				performSearch(((e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT) ^ isForwardSearch());
 				updateFindHistory();
 			}
 		});
@@ -336,9 +336,9 @@ class FindReplaceDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fNeedsInitialFindBeforeReplace)
-					performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
+					performSearch(((e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT) ^ isForwardSearch());
 				if (performReplaceSelection())
-					performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
+					performSearch(((e.stateMask & SWT.MODIFIER_MASK) == SWT.SHIFT) ^ isForwardSearch());
 				updateFindAndReplaceHistory();
 			}
 		});
