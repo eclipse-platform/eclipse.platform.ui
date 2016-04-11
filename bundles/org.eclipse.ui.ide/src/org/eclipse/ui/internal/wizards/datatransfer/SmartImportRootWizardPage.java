@@ -102,9 +102,11 @@ public class SmartImportRootWizardPage extends WizardPage {
 		public String getText(Object o) {
 			File file = (File) o;
 			String label = file.getAbsolutePath();
-			if (label.startsWith(getWizard().getImportJob().getRoot().getAbsolutePath())) {
-				label = label
-						.substring(getWizard().getImportJob().getRoot().getParentFile().getAbsolutePath().length() + 1);
+			File root = getWizard().getImportJob().getRoot();
+			if (label.startsWith(root.getAbsolutePath())) {
+				if (root.getParentFile() != null) {
+					label = label.substring(root.getParentFile().getAbsolutePath().length() + 1);
+				}
 			}
 			return label;
 		}
