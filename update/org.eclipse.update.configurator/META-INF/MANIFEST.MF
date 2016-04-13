@@ -20,3 +20,4 @@ Import-Package: javax.xml.parsers,
  org.xml.sax,
  org.xml.sax.helpers
 Service-Component: OSGI-INF/bundleGroup.xml
+Bundle-ActivationPolicy: lazy
