@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,7 +189,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		 */
 		private int[] getVerticalScrollArrowHeights(StyledText textWidget, int bottomOffset) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
-			if (verticalBar == null || !verticalBar.isVisible())
+			if (verticalBar == null || !verticalBar.getVisible())
 				return new int[] { 0, 0 };
 			
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
@@ -203,7 +203,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				try {
 					int fakeHeight= 1000;
 					bottomOffset= bottomOffset - originalSize.y + fakeHeight;
-					textWidget.setSize(originalSize.x, fakeHeight);
+					textWidget.setSize(originalSize.x + 100, fakeHeight);
 					verticalBar.setValues(0, 0, 1 << 30, 1, 10, 10);
 					arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
 					fScrollArrowHeights= arrowHeights;
@@ -226,8 +226,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		private int[] computeScrollArrowHeights(StyledText textWidget, int bottomOffset) {
 			ScrollBar verticalBar= textWidget.getVerticalBar();
 			Rectangle thumbTrackBounds= verticalBar.getThumbTrackBounds();
-			if (thumbTrackBounds.height == 0) // SWT returns bogus values on Cocoa in this case, see https://bugs.eclipse.org/352990
+			if (thumbTrackBounds.height == 0) {
+				// SWT returns bogus values on Cocoa in this case, see https://bugs.eclipse.org/352990
+				// SWT returns bogus values on Windows when the control is too small, see https://bugs.eclipse.org/485540
 				return new int[] { 0, 0 };
+			}
 			
 			int topArrowHeight= thumbTrackBounds.y;
 			int bottomArrowHeight= bottomOffset - (thumbTrackBounds.y + thumbTrackBounds.height);
