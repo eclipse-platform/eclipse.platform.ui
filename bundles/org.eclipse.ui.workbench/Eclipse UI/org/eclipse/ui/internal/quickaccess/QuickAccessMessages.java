@@ -34,6 +34,7 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccess_StartTypingToFindMatches;
 	public static String QuickAccess_AvailableCategories;
 	public static String QuickAccess_EnterSearch;
+	public static String QuickAccess_EnterSearch_Empty;
 	public static String QuickAccess_SelectedString;
 	public static String QuickAccess_ViewWithCategory;
 	public static String QuickAccessContents_NoMatchingResults;
