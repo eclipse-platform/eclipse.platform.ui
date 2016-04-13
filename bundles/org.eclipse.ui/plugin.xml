@@ -1170,6 +1170,12 @@
             name="%command.windowsHideTrimbars.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.FullScreenHandler"
+            description="%command.fullscreenmode.description"
+            id="org.eclipse.ui.window.fullscreenmode"
+            name="%command.fullscreenmode.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.internal.handlers.MinimizePartHandler"
             description="%command.minimizePart.description"
             id="org.eclipse.ui.window.minimizePart"
