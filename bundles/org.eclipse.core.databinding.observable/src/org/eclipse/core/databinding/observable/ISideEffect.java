@@ -115,20 +115,35 @@ import org.eclipse.core.internal.databinding.observable.SideEffect;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISideEffect {
+
 	/**
 	 * Disposes the side-effect, detaching all listeners and deallocating all
 	 * memory used by the side-effect. The side-effect will not execute again
-	 * after this method is invoked, and no other public methods may be invoked
-	 * on the side-effect after invoking this one.
+	 * after this method is invoked.
 	 * <p>
 	 * This method may be invoked more than once.
 	 */
 	void dispose();
 
 	/**
-	 * Pauses an {@link ISideEffect}, preventing it from running again until it
-	 * is resumed. Note that the side-effect will continue listening to its
-	 * dependencies while it is paused. If a dependency changes while the
+	 * Returns true if this side-effect has been disposed. A disposed
+	 * side-effect will never execute again or retain any strong references to
+	 * the observables it uses. A side-effect which has not been disposed has
+	 * some possibility of executing again in the future and of retaining strong
+	 * references to observables.
+	 *
+	 * @return true if this side-effect has been disposed.
+	 */
+	boolean isDisposed();
+
+	/**
+	 * Increments the count of the number of times the {@link ISideEffect} has
+	 * been paused. If the side-effect has been paused a greater number of times
+	 * than it has been resumed, it enters the paused state.
+	 * <p>
+	 * When a {@link ISideEffect} is paused, this prevents it from running again
+	 * until it is resumed. Note that the side-effect will continue listening to
+	 * its dependencies while it is paused. If a dependency changes while the
 	 * {@link ISideEffect} is paused, the {@link ISideEffect} will run again
 	 * after it is resumed.
 	 * <p>
@@ -139,25 +154,33 @@ public interface ISideEffect {
 	void pause();
 
 	/**
-	 * Resumes a paused {@link ISideEffect}, causing it to start reacting to
-	 * changes in tracked getters invoked by its runnable. It will continue to
-	 * react to changes until it is either paused or disposed. If the
-	 * {@link ISideEffect} is dirty, it will be run at the earliest opportunity
-	 * after the method returns.
+	 * Increments the count of the number of times the {@link ISideEffect} has
+	 * been resumed. If the side-effect has been resumed an equal number of
+	 * times than it has been paused, it leaves the paused state and enters the
+	 * resumed state. It is an error to resume {@link ISideEffect} more often
+	 * than it has been paused.
 	 * <p>
-	 * Has no effect if the {@link ISideEffect} is already resumed.
+	 * When a {@link ISideEffect} is resumed, it starts reacting to changes in
+	 * tracked getters invoked by its runnable. It will continue to react to
+	 * changes until it is either paused or disposed. If the {@link ISideEffect}
+	 * is dirty, it will be run at the earliest opportunity after this method
+	 * returns.
 	 */
 	void resume();
 
 	/**
-	 * Resumes a paused {@link ISideEffect}, causing it to start reacting to
-	 * changes in TrackedGetters invoked by its runnable. It will continue to
-	 * react to changes until it is either paused or disposed. If the
-	 * {@link ISideEffect} is dirty, it will be run synchronously.
+	 * Increments the count of the number of times the {@link ISideEffect} has
+	 * been resumed. If the side-effect has been resumed an equal or greater
+	 * number of times than it has been paused, it leaves the paused state and
+	 * enters the resumed state.
+	 * <p>
+	 * When a {@link ISideEffect} is resumed, it starts reacting to changes in
+	 * TrackedGetters invoked by its runnable. It will continue to react to
+	 * changes until it is either paused or disposed. If the {@link ISideEffect}
+	 * is dirty, it will be run synchronously.
 	 * <p>
 	 * This is a convenience method which is fully equivalent to calling
 	 * {@link #resume} followed by {@link #runIfDirty}, but slightly faster.
-	 * <p>
 	 */
 	void resumeAndRunIfDirty();
 
@@ -168,6 +191,27 @@ public interface ISideEffect {
 	 * currently paused.
 	 */
 	void runIfDirty();
+
+	/**
+	 * Adds a listener that will be invoked when this {@link ISideEffect}
+	 * instance is disposed. The listener will not be invoked if the receiver
+	 * has already been disposed at the time when the listener is attached.
+	 *
+	 * @param disposalConsumer
+	 *            a consumer which will be notified once this
+	 *            {@link ISideEffect} is disposed.
+	 */
+	void addDisposeListener(Consumer<ISideEffect> disposalConsumer);
+
+	/**
+	 * Removes a dispose listener from this {@link ISideEffect} instance. Has no
+	 * effect if no such listener was previously attached.
+	 *
+	 * @param disposalConsumer
+	 *            a consumer which is supposed to be removed from the dispose
+	 *            listener list.
+	 */
+	void removeDisposeListener(Consumer<ISideEffect> disposalConsumer);
 
 	/**
 	 * Creates a new {@link ISideEffect} on the default {@link Realm} but does

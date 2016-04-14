@@ -12,10 +12,12 @@ package org.eclipse.core.tests.databinding;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.internal.databinding.observable.SideEffect;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -333,6 +335,39 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 		}).resume();
 		runAsync();
 		assertTrue(hasRun.get());
+	}
+
+	public void testSideEffectFiresDisposeEvent() throws Exception {
+		AtomicBoolean hasRun = new AtomicBoolean();
+
+		// Make sure that a dispose event is sent correctly.
+		ISideEffect disposeTest = ISideEffect.createPaused(() -> {
+		});
+		disposeTest.resume();
+		disposeTest.addDisposeListener(sideEffect -> {
+			assertTrue(disposeTest == sideEffect);
+			hasRun.set(true);
+		});
+		disposeTest.dispose();
+		runAsync();
+		assertTrue(hasRun.get());
+	}
+
+	public void testCanRemoveDisposeListener() throws Exception {
+		AtomicBoolean hasRun = new AtomicBoolean();
+
+		// Make sure that a dispose event is sent correctly.
+		ISideEffect disposeTest = ISideEffect.createPaused(() -> {
+		});
+		disposeTest.resume();
+		Consumer<ISideEffect> disposeListener = sideEffect -> {
+			hasRun.set(true);
+		};
+		disposeTest.addDisposeListener(disposeListener);
+		disposeTest.removeDisposeListener(disposeListener);
+		disposeTest.dispose();
+		runAsync();
+		assertFalse(hasRun.get());
 	}
 
 	// Doesn't currently work, but this would be a desirable property for
