@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.ui.examples.job;singleton:=true
 Bundle-Version: 3.0.0
-Bundle-ClassPath: ProgressExamples.jar
+Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.examples.jobs.ProgressExamplesPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
