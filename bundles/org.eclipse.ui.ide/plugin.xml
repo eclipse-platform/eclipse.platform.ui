@@ -2512,7 +2512,7 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="&#x0A;menu:org.eclipse.ui.appearance?after=org.eclipse.ui.ToggleCoolbarAction">
+            locationURI="menu:org.eclipse.ui.appearance?after=org.eclipse.ui.ToggleCoolbarAction">
          <command
                commandId="org.eclipse.ui.window.fullscreenmode"
                style="push">
