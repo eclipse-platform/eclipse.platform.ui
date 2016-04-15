@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -435,5 +435,15 @@ public interface IInternalDebugUIConstants {
      * 
      * @since 3.4
      */
-    public static final String THEME_CONSOLE_COLOR_STD_ERR= "org.eclipse.debug.ui.console.stream.err"; //$NON-NLS-1$        
+	public static final String THEME_CONSOLE_COLOR_STD_ERR = "org.eclipse.debug.ui.console.stream.err"; //$NON-NLS-1$
+
+
+	/**
+	 * Boolean preference indicating if launch action should launch or terminate
+	 * and relaunch by default
+	 * 
+	 * @since 3.11
+	 */
+	public static final String PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION = IDebugUIConstants.PLUGIN_ID + ".RelaunchAndTerminateLaunchAction"; //$NON-NLS-1$
+
 }

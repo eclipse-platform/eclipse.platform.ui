@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public class DebugPreferencesMessages extends NLS {
 	public static String LaunchingPreferencePage_4;
 
 	public static String LaunchingPreferencePage_41;
+	public static String LaunchingPreferencePage_42;
 	public static String LaunchingPreferencePage_5;
 	public static String LaunchingPreferencePage_6;
 	public static String LaunchingPreferencePage_7;

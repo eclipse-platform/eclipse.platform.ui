@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2014 IBM Corporation and others.
+ *  Copyright (c) 2004, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -63,6 +63,8 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, false);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, true);
 		
+		prefs.setDefault(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION, false);
+
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_TRACK_VIEWS, true);
@@ -201,8 +203,8 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		
 			if (oldValue != null && !oldValue.equals(newValue))
 				store.firePropertyChangeEvent(key, oldValue, newValue);
+			}
 		}
-	}
 
 	public static void setThemeBasedPreferences(final IPreferenceStore store, final boolean fireEvent) {
 		Display display= PlatformUI.getWorkbench().getDisplay();
