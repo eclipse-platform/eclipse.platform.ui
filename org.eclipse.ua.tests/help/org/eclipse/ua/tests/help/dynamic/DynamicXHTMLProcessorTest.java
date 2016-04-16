@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -54,7 +55,7 @@ public class DynamicXHTMLProcessorTest {
 	}
 
 	private String readStream(InputStream is) throws Exception {
-		try (InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8")) {
+		try (InputStreamReader inputStreamReader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
 			StringBuffer buffer = new StringBuffer();
 			char[] cbuf = new char[256];
 			int len;

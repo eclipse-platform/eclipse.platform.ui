@@ -12,7 +12,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,13 +111,8 @@ public class InjectionFilter implements IFilter {
 			}
 			appendDisabled(disabledContent, upLevels, addNarrow, relativePath);
 		}
-		try {
-			return new FilterHTMLHeadAndBodyOutputStream(
-					out,
-					script.toString().getBytes("ASCII"), addDisabled ? disabledContent.toString() : null); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return out;
-		}
+		return new FilterHTMLHeadAndBodyOutputStream(out,
+					script.toString().getBytes(StandardCharsets.US_ASCII), addDisabled ? disabledContent.toString() : null);
 	}
 
 

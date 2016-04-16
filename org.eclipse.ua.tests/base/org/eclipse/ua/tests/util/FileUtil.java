@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.osgi.framework.Bundle;
 
@@ -64,7 +65,7 @@ public class FileUtil {
 			while ((num = in.read(buffer)) > 0) {
 				out.write(buffer, 0, num);
 			}
-			String result = new String(out.toByteArray(), "UTF-8");
+			String result = new String(out.toByteArray(), StandardCharsets.UTF_8);
 			if (result.length() > 0) {
 				// filter windows-specific newline
 				result = result.replaceAll("\r", "");

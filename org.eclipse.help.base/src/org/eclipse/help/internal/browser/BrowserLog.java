@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
-import java.io.*;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Log for messages output by external browser processes.
@@ -59,7 +64,7 @@ public class BrowserLog {
 			return;
 		}
 		try (Writer outWriter = new BufferedWriter(
-				new OutputStreamWriter(new FileOutputStream(logFileName, true), "UTF-8"))) { //$NON-NLS-1$
+				new OutputStreamWriter(new FileOutputStream(logFileName, true), StandardCharsets.UTF_8))) {
 			if (newSession) {
 				newSession = false;
 				outWriter.write(LN + formatter.format(new Date())

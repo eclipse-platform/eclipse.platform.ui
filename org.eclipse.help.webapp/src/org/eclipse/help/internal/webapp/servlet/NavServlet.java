@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -71,7 +72,7 @@ public class NavServlet extends HttpServlet {
 			out = filter.filter(req, out);
 		}
 
-		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"))) { //$NON-NLS-1$
+		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
 			AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
 			writeContent(topic, path, locale, writer, UrlUtil.isRTL(req, resp), scope);
 		}

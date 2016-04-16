@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -107,7 +108,7 @@ public class ContentDetectHelper {
 			final File stateFile = getStateFile(filename); 
 
 			FileInputStream input = new FileInputStream(stateFile);
-			reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+			reader = new InputStreamReader(input, StandardCharsets.UTF_8);
 			memento = XMLMemento.createReadRoot(reader);
 
 			
@@ -134,7 +135,7 @@ public class ContentDetectHelper {
 		OutputStreamWriter writer = null;
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
-			writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+			writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
 			memento.save(writer);
 		} catch (IOException e) {
 			stateFile.delete();

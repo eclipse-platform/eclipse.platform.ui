@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -36,8 +37,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLUtil extends Assert {
 
 	public static void assertXMLEquals(String msg, String s1, String s2) throws Exception {
-		InputStream in1 = new ByteArrayInputStream(s1.getBytes("UTF-8"));
-		InputStream in2 = new ByteArrayInputStream(s2.getBytes("UTF-8"));
+		InputStream in1 = new ByteArrayInputStream(s1.getBytes(StandardCharsets.UTF_8));
+		InputStream in2 = new ByteArrayInputStream(s2.getBytes(StandardCharsets.UTF_8));
 		assertXMLEquals(msg, in1, in2);
 	}
 
@@ -49,7 +50,7 @@ public class XMLUtil extends Assert {
 
 	public static void assertParseableXML(String s)  {
 		try {
-			InputStream in1 = new ByteArrayInputStream(s.getBytes("UTF-8"));
+			InputStream in1 = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
 			process(in1);
 		} catch (Exception e) {
 			fail("Unable to parse source: " + s);

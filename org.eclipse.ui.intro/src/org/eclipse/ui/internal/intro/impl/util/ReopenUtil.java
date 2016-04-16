@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.XMLMemento;
@@ -60,7 +61,7 @@ public class ReopenUtil {
 			final File stateFile = getStateFile();
 
 			FileInputStream input = new FileInputStream(stateFile);
-			reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
+			reader = new InputStreamReader(input, StandardCharsets.UTF_8);
 			memento = XMLMemento.createReadRoot(reader);
 
 			
@@ -86,7 +87,7 @@ public class ReopenUtil {
 		OutputStreamWriter writer = null;
 		try {
 			FileOutputStream stream = new FileOutputStream(stateFile);
-			writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+			writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
 			memento.save(writer);
 		} catch (IOException e) {
 			stateFile.delete();

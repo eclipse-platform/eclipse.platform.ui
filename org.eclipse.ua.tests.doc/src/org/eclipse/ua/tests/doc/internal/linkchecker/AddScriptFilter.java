@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.ua.tests.doc.internal.linkchecker;
 
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,13 +36,7 @@ public class AddScriptFilter implements IFilter {
 		script.append(relativePath);
 		script.append("content/org.eclipse.ua.tests.doc/checkdoc.js\"> </script>"); //$NON-NLS-1$
 
-		try {
-			return new FilterHTMLHeadOutputStream(
-					out,
-					script.toString().getBytes("ASCII")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return out;
-		}
+		return new FilterHTMLHeadOutputStream(out, script.toString().getBytes(StandardCharsets.US_ASCII));
 	}
 
 }

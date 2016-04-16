@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -85,7 +86,7 @@ public class TocFragmentService extends TocFragmentServlet {
 			throws IOException {
 		TocFragmentParser tocParser = new TocFragmentParser();
 		if (xmlResource != null) {
-			try (InputStream is = new ByteArrayInputStream(xmlResource.getBytes("UTF-8"))) { //$NON-NLS-1$
+			try (InputStream is = new ByteArrayInputStream(xmlResource.getBytes(StandardCharsets.UTF_8))) {
 
 				int level = 0;
 				if (toc != null && toc.length() > 0) {

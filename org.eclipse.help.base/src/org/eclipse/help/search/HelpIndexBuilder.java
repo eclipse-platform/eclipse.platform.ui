@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -728,7 +729,7 @@ public class HelpIndexBuilder {
 	private Document readXMLFile(File file) throws CoreException {
 		Document d = null;
 		try (InputStream stream = new FileInputStream(file);
-				InputStreamReader reader = new InputStreamReader(stream, "utf-8")) { //$NON-NLS-1$
+				InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
 			InputSource inputSource = new InputSource(reader);
 			inputSource.setSystemId(manifest.toString());
 

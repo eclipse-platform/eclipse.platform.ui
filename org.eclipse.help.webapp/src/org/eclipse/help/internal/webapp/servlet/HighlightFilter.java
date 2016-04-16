@@ -12,6 +12,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import javax.servlet.http.*;
@@ -90,11 +91,7 @@ public class HighlightFilter implements IFilter {
 		buf.append(scriptPart5);
 		buf.append(buf2.toString());
 		buf.append(sheetRefPart3);
-		try {
-			return buf.toString().getBytes("ASCII"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return new byte[0];
-		}
+		return buf.toString().getBytes(StandardCharsets.US_ASCII);
 	}
 
 	/**

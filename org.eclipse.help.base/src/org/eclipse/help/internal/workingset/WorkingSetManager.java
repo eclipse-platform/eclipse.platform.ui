@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -205,7 +206,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 		if (stateFile.exists()) {
 			try (FileInputStream input = new FileInputStream(stateFile);
-					InputStreamReader reader = new InputStreamReader(input, "utf-8")) { //$NON-NLS-1$
+					InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
 
 				InputSource inputSource = new InputSource(reader);
 				inputSource.setSystemId(stateFile.toString());

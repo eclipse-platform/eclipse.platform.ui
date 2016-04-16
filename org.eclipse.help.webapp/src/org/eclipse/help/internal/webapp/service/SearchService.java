@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +82,7 @@ public class SearchService extends SearchServlet {
 			throws IOException {
 		SearchParser searchParser = new SearchParser();
 		if (response != null) {
-			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
+			try (InputStream is = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
 				searchParser.parse(is);
 			} catch (Exception e) {
 				e.printStackTrace();

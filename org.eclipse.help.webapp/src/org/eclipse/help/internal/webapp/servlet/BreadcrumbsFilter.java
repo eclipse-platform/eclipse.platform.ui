@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -84,7 +85,7 @@ public class BreadcrumbsFilter implements IFilter {
 				String headContent = HEAD_CONTENT1 + backpath + HEAD_CONTENT2 + backpath +
 				    HEAD_CONTENT3;
 				return new FilterHTMLHeadAndBodyOutputStream(out, headContent
-						.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
+						.getBytes(StandardCharsets.US_ASCII), bodyContent);
 			}
 			catch (Exception e) {
 				return out;

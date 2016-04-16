@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
@@ -56,7 +57,7 @@ public class RemoteTestUtils {
 	public static String readFromURL(URL url) throws IOException,
 			UnsupportedEncodingException {
 		try (InputStream is = url.openStream();
-				InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8")) {
+				InputStreamReader inputStreamReader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
 			StringBuffer buffer = new StringBuffer();
 			char[] cbuf = new char[256];
 			int len;

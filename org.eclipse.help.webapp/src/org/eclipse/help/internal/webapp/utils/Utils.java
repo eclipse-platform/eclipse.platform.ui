@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 public class Utils {
 
@@ -44,7 +45,7 @@ public class Utils {
 			char[] buffer = new char[1024];
 			try {
 				Reader reader = new BufferedReader(
-						new InputStreamReader(is, "UTF-8")); //$NON-NLS-1$
+						new InputStreamReader(is, StandardCharsets.UTF_8));
 				int n;
 				while ((n = reader.read(buffer)) != -1) {
 					writer.write(buffer, 0, n);

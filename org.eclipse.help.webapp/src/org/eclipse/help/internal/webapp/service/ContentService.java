@@ -17,6 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -82,7 +83,7 @@ public class ContentService extends HttpServlet {
 		} else {
 			String response = Utils.convertStreamToString(ProxyUtil.getStream(url));
 			response = Utils.updateResponse(response);
-			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"))) { //$NON-NLS-1$
+			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
 				writer.write(response);
 			}
 		}

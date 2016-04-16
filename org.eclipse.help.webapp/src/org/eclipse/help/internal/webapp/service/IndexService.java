@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public class IndexService extends IndexServlet {
 			throws IOException {
 		IndexParser indexParser = new IndexParser();
 		if (response != null) {
-			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
+			try (InputStream is = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
 				indexParser.parse(is);
 			} catch (Exception e) {
 				e.printStackTrace();

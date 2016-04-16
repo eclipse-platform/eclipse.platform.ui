@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
@@ -110,7 +111,7 @@ public class NavService extends NavServlet {
 		response = Utils.updateResponse(response);
 
 		OutputStream out = resp.getOutputStream();
-		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"))) { //$NON-NLS-1$
+		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
 			writer.write(response);
 		}
 	}
@@ -119,7 +120,7 @@ public class NavService extends NavServlet {
 			throws IOException {
 		NavParser navParser = new NavParser();
 		if (response != null) {
-			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
+			try (InputStream is = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
 				navParser.parse(is);
 
 			} catch (Exception e) {

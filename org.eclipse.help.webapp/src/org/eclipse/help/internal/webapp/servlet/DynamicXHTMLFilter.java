@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,7 +37,6 @@ public class DynamicXHTMLFilter implements IFilter {
 
 	private static final String ERROR_PAGE_PREFIX = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n</head>\n<body>"; //$NON-NLS-1$
 	private static final String ERROR_PAGE_SUFFIX = "</body>\n</html>"; //$NON-NLS-1$
-	private static final String CHARSET_UTF8 = "UTF-8"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
@@ -86,7 +86,7 @@ public class DynamicXHTMLFilter implements IFilter {
 					out.close();
 				}
 				catch (Throwable t) {
-					try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, CHARSET_UTF8))) {
+					try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
 						writer.println(ERROR_PAGE_PREFIX);
 						writer.println("<p>"); //$NON-NLS-1$
 						writer.println(WebappResources.getString("ProcessingError", req.getLocale())); //$NON-NLS-1$

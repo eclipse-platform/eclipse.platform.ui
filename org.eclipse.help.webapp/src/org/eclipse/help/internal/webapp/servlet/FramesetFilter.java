@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.*;
 
@@ -84,11 +85,6 @@ public class FramesetFilter implements IFilter {
 		}
 
 		script.append(scriptPart3);
-		try {
-			return new FilterHTMLHeadOutputStream(out, script.toString()
-					.getBytes("ASCII")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException uee) {
-			return out;
-		}
+		return new FilterHTMLHeadOutputStream(out, script.toString().getBytes(StandardCharsets.US_ASCII));
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -106,7 +107,7 @@ public class AboutService extends AboutServlet {
 			throws IOException {
 		AboutParser aboutParser = new AboutParser(service);
 		if (response != null) {
-			try (InputStream is = new ByteArrayInputStream(response.getBytes("UTF-8"))) { //$NON-NLS-1$
+			try (InputStream is = new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8))) {
 				aboutParser.parse(is);
 			} catch (Exception e) {
 				e.printStackTrace();

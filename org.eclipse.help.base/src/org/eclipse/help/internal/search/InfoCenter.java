@@ -12,6 +12,7 @@ package org.eclipse.help.internal.search;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import javax.xml.parsers.*;
@@ -172,7 +173,7 @@ public final class InfoCenter implements ISearchEngine {
 			URLConnection connection = ProxyUtil.getConnection(url);
 			monitor.beginTask(HelpBaseResources.InfoCenter_connecting, 5);
 			is = connection.getInputStream();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8"))) {//$NON-NLS-1$
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 				monitor.worked(1);
 				load(((Scope) scope).url, reader, collector, new SubProgressMonitor(monitor, 4));
 			}
