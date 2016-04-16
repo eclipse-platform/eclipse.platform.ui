@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -89,7 +87,6 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.put(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE, IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT);
 
 		node.put(IDEInternalPreferences.WORKBENCH_SYSTEM_EXPLORER, getShowInSystemExplorerCommand());
-		node.put(IDEInternalPreferences.WORKSPACE_NAME, getWorkspaceDirectoryName());
 
 		node.put(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY, SystemEditorOrTextEditorStrategy.EXTENSION_ID);
 	}
@@ -113,14 +110,6 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// if all else fails, return empty default
 		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the name of the workspace directory.
-	 */
-	private String getWorkspaceDirectoryName() {
-		IPath workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		return workspaceDir.lastSegment();
 	}
 
 	private String getHelpSeparatorKey(String groupId) {
