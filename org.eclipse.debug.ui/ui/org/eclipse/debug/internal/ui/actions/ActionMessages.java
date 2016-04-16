@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2016 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -223,6 +223,7 @@ public class ActionMessages extends NLS {
     public static String SuspendAction_3;
     public static String TerminateAction_0;
     public static String TerminateAction_3;
+	public static String TerminateAndLaunchFailure;
     public static String TerminateAllAction_2;
     public static String TerminateAllAction_3;
 
