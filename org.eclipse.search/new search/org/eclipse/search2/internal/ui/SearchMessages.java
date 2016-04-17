@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Robert Roth (robert.roth.off@gmail.com) - Bug 487093: You can too easily clear the search history
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
@@ -102,5 +103,7 @@ public final class SearchMessages extends NLS {
 	public static String RetrieverAction_empty_selection;
 	public static String RetrieverAction_error_title;
 	public static String RetrieverAction_error_message;
+	public static String RemoveAllSearchesAction_confirm_label;
+	public static String RemoveAllSearchesAction_confirm_message;
 
 }
