@@ -218,15 +218,6 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 			return o.toString();
 		}
 
-		// FIXME: Commented out dead code. Filed https://bugs.eclipse.org/415442 to review this part of the code.
-		//		try {
-		//			//o = PropertyUtils.getProperty(widget, attr);
-		//			if (o != null)
-		//				return o.toString();
-		//		} catch (Exception e) {
-		//			// e.printStackTrace();
-		//		}
-
 		return "";
 	}
 
