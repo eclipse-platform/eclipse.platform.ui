@@ -1200,8 +1200,16 @@
       <key
             commandId="org.eclipse.ui.window.fullscreenmode"
             contextId="org.eclipse.ui.contexts.window"
+            platform="win32"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+F11">
+            sequence="M3+F11">
+      </key>
+      <key
+            commandId="org.eclipse.ui.window.fullscreenmode"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="gtk"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+F11">
       </key>
    </extension>
 
