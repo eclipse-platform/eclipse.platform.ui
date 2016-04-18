@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * 		Implemented workbench auto-save to correctly restore state in case of crash.
  * Andrey Loskutov <loskutov@gmx.de> - Bug 388476, 445538, 463262
  * Alain Bernard <alain.bernard1224@gmail.com> - Bug 281490
+ * Patrik Suzzi <psuzzi@gmail.com> - Bug 491785
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -460,6 +461,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_useColoredLabels;
 	public static String ToggleFullScreenMode_ActivationPopup_Description;
 	public static String ToggleFullScreenMode_ActivationPopup_Description_NoKeybinding;
+	public static String ToggleFullScreenMode_ActivationPopup_DoNotShowAgain;
 
 	// --- File Editors ---
 	public static String FileEditorPreference_fileTypes;

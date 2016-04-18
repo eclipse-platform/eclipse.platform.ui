@@ -6,7 +6,7 @@
  *
  * Contributors:
  * 	Simon Scholz <simon.scholz@vogella.com> - initial API and implementation;
- * 	Patrik Suzzi <psuzzi@gmail.com> - Bug 491572
+ * 	Patrik Suzzi <psuzzi@gmail.com> - Bug 491572, 491785
  ******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
@@ -39,6 +40,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -50,6 +52,9 @@ import org.eclipse.ui.keys.IBindingService;
 public class FullScreenHandler extends AbstractHandler {
 
 	private static final String FULL_SCREEN_COMMAND_ID = "org.eclipse.ui.window.fullscreenmode"; //$NON-NLS-1$
+	private static final String FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID = "org.eclipse.ui.window.fullscreenmode.donotshowinfoagain"; //$NON-NLS-1$
+
+	private boolean showInfoPopup;
 
 	@Override
 	public Object execute(ExecutionEvent event) {
@@ -59,6 +64,9 @@ public class FullScreenHandler extends AbstractHandler {
 		ECommandService commandService = window.getService(ECommandService.class);
 		BindingTableManager bindingTableManager = window.getService(BindingTableManager.class);
 		IContextService bindingContextService = window.getService(IContextService.class);
+
+		showInfoPopup = !WorkbenchPlugin.getDefault().getPreferenceStore()
+				.getBoolean(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID);
 
 		Optional<TriggerSequence> sequence = getKeybindingSequence(bindingService, commandService, bindingTableManager,
 				bindingContextService, FULL_SCREEN_COMMAND_ID);
@@ -72,9 +80,11 @@ public class FullScreenHandler extends AbstractHandler {
 			if (!keybinding.isEmpty()) {
 				message = NLS.bind(WorkbenchMessages.ToggleFullScreenMode_ActivationPopup_Description, keybinding);
 			}
-			FullScreenInfoPopup fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE, true,
-					false, false, false, false, null, null, message);
-			fullScreenInfoPopup.open();
+			if (showInfoPopup) {
+				FullScreenInfoPopup fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE,
+						true, false, false, false, false, null, null, message);
+				fullScreenInfoPopup.open();
+			}
 		}
 		return Status.OK_STATUS;
 	}
@@ -82,6 +92,7 @@ public class FullScreenHandler extends AbstractHandler {
 	private static class FullScreenInfoPopup extends PopupDialog {
 
 		private String message;
+		private String messageDoNotShowAgain;
 
 		public FullScreenInfoPopup(Shell parent, int shellStyle, boolean takeFocusOnOpen, boolean persistSize,
 				boolean persistLocation, boolean showDialogMenu, boolean showPersistActions, String titleText,
@@ -89,6 +100,7 @@ public class FullScreenHandler extends AbstractHandler {
 			super(parent, shellStyle, takeFocusOnOpen, persistSize, persistLocation, showDialogMenu, showPersistActions,
 					titleText, infoText);
 			this.message = message;
+			this.messageDoNotShowAgain = WorkbenchMessages.ToggleFullScreenMode_ActivationPopup_DoNotShowAgain;
 		}
 
 		@Override
@@ -105,19 +117,30 @@ public class FullScreenHandler extends AbstractHandler {
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite) super.createDialogArea(parent);
 
-			Link link = new Link(composite, SWT.BORDER);
+			Link link = new Link(composite, SWT.NONE);
 			link.setText(message);
-
-			link.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					close();
-				}
-			});
 			GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 			gd.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
 			gd.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
 			link.setLayoutData(gd);
+
+			Button btnDoNotShow = new Button(composite, SWT.CHECK);
+			btnDoNotShow.setText(messageDoNotShowAgain);
+			btnDoNotShow.setSelection(WorkbenchPlugin.getDefault().getPreferenceStore()
+					.getBoolean(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID));
+			GridData gd2 = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+			gd2.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
+			gd2.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
+			btnDoNotShow.setLayoutData(gd2);
+
+			link.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					WorkbenchPlugin.getDefault().getPreferenceStore()
+							.setValue(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID, btnDoNotShow.getSelection());
+					close();
+				}
+			});
 
 			return composite;
 		}
