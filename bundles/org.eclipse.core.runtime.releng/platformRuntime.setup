@@ -40,18 +40,6 @@
     <description>Platform Runtime</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.contenttype/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.expressions/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
-      xsi:type="setup:PreferenceTask"
-      key="/project/org.eclipse.core.expressions.tests/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_STRICTLY_COMPATIBLE_JRE_NOT_AVAILABLE"
-      value="warning"/>
-  <setupTask
       xsi:type="setup.targlets:TargletTask">
     <targlet
         name="Platform Runtime"
@@ -89,7 +77,7 @@
             project="org.eclipse.core.runtime"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//@setupTasks.6/@workingSets.1"/>
+            excludedWorkingSet="//@setupTasks.3/@workingSets.1"/>
       </predicate>
     </workingSet>
     <workingSet
