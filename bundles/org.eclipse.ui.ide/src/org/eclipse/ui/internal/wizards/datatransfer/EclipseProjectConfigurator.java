@@ -39,22 +39,10 @@ public class EclipseProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public Set<File> findConfigurableLocations(File root, IProgressMonitor monitor) {
-		HashSet<File> res = new HashSet<>();
-		collectProjectDirectories(res, root, monitor);
+		Set<File> res = new HashSet<>();
+		Set<String> visitedDirectories = new HashSet<>();
+		WizardProjectsImportPage.collectProjectFilesFromDirectory(res, root, visitedDirectories, true, monitor);
 		return res;
-	}
-
-	private void collectProjectDirectories(HashSet<File> res, File root, IProgressMonitor monitor) {
-		if (new File(root, IProjectDescription.DESCRIPTION_FILE_NAME).isFile()) {
-			res.add(root);
-		}
-		if (!monitor.isCanceled()) {
-			for (File child : root.listFiles()) {
-				if (child.isDirectory()) {
-					collectProjectDirectories(res, child, monitor);
-				}
-			}
-		}
 	}
 
 	@Override
