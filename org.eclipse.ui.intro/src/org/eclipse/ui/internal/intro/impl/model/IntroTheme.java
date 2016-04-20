@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 
 
 public class IntroTheme extends AbstractIntroIdElement {
+	private static final String ATT_NAME = "name"; //$NON-NLS-1$
 	private static final String ATT_PATH = "path"; //$NON-NLS-1$
 	private String name;
 	private String path;
@@ -29,7 +30,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 	
 	public IntroTheme(IConfigurationElement element) {
 		super(element);
-		name = element.getAttribute(name);
+		name = element.getAttribute(ATT_NAME);
 		path = element.getAttribute(ATT_PATH);
 		path = BundleUtil.getResolvedResourceLocation(path, getBundle());
 		scalable = "true".equals(element.getAttribute(FontSelection.ATT_SCALABLE)); //$NON-NLS-1$
@@ -76,5 +77,7 @@ public class IntroTheme extends AbstractIntroIdElement {
 			if (name!=null && value!=null)
 				properties.put(name, value);
 		}
+		// Put the theme id in the properties too
+		properties.put(ATT_ID, getId());
 	}
 }

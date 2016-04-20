@@ -29,6 +29,7 @@ import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.util.SequenceResolver;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
+import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector;
 import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
 import org.eclipse.ui.internal.intro.universal.util.PreferenceArbiter;
@@ -177,27 +178,56 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private String resolveVariable(Bundle bundle, String value) {
-		if (value != null) {
-			String path = null;
-			if (value.startsWith("intro:")) { //$NON-NLS-1$
-				bundle = UniversalIntroPlugin.getDefault().getBundle();
-				path = value.substring(6);
-			} else if (value.startsWith("product:")) { //$NON-NLS-1$
-				path = value.substring(8);
-			} else
-				return value;
-			try {
-				URL url = bundle.getEntry(path);
-				if (url != null) {
-					URL localURL = FileLocator.toFileURL(url);
-					return localURL.toString();
-				}
-			} catch (IOException e) {
-				// just use the value as-is
-				return value;
-			}
+		if (value == null) {
+			return null;
 		}
-		return null;
+		if (value.startsWith("intro:")) { //$NON-NLS-1$
+			bundle = UniversalIntroPlugin.getDefault().getBundle();
+			return resolveFile(bundle, value.substring(6));
+		} else if (value.startsWith("product:")) { //$NON-NLS-1$
+			return resolveFile(bundle, value.substring(8));
+		}
+		return value;
+	}
+
+	private String resolveFile(Bundle bundle, String path) {
+		String prefixedPath = getThemePrefixedPath(path);
+		try {
+			URL url = null;
+			if (prefixedPath != null) {
+				url = bundle.getEntry(prefixedPath);
+			}
+			if (url == null) {
+				url = bundle.getEntry(path);
+			}
+			if (url != null) {
+				URL localURL = FileLocator.toFileURL(url);
+				return localURL.toString();
+			}
+		} catch (IOException e) {
+		}
+		// just use the value as-is
+		return path;
+	}
+
+	/**
+	 * Prefix the file component of the given path with the theme's id. For
+	 * example, with theme <code>org.eclipse.ui.intro.universal.solstice</code>:
+	 * <ul>
+	 * <li>foo &rarr; org.eclipse.ui.intro.universal.solstice/foo
+	 * </ul>
+	 * 
+	 * @param path
+	 *            the path
+	 * @return same path with a prefixed theme directory component
+	 */
+	private String getThemePrefixedPath(String path) {
+		String prefix = themeProperties != null ? themeProperties.get(IntroTheme.ATT_ID) : null;
+		prefix = prefix == null ? "" : prefix.trim(); //$NON-NLS-1$
+		if (prefix.length() == 0) {
+			return null;
+		}
+		return prefix + Path.SEPARATOR + path;
 	}
 
 	private String getProductProperty(IProduct product, String variableName) {
