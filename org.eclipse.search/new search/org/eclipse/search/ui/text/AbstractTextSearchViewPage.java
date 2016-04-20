@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Robert Roth (robert.roth.off@gmail.com) - Bug 477471
  *******************************************************************************/
 package org.eclipse.search.ui.text;
 
@@ -523,10 +524,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (canRemoveMatchesWith(getViewer().getSelection()))
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
-
-		if (getLayout() == FLAG_LAYOUT_TREE) {
-			mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fExpandAllAction);
-		}
 	}
 
 	/**
