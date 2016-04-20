@@ -309,7 +309,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setText(DataTransferMessages.SmartImportWizardPage_selectFolderOrArchiveToImport);
+				dialog.setText(DataTransferMessages.SmartImportWizardPage_browseForFolder);
+				dialog.setMessage(DataTransferMessages.SmartImportWizardPage_selectFolderOrArchiveToImport);
 				if (rootDirectoryText.getText() != null) {
 					File current = new File(rootDirectoryText.getText());
 					if (current.isDirectory()) {

@@ -153,6 +153,7 @@ public class DataTransferMessages extends NLS {
 
 	// Smart import
 	public static String SmartImportWizardPage_selectFolderOrArchiveToImport;
+	public static String SmartImportWizardPage_browseForFolder;
 	public static String SmartImportProposals_alreadyImportedAsProject_title;
 	public static String SmartImportProposals_anotherProjectWithSameNameExists_description;
 
