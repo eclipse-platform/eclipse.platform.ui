@@ -6,7 +6,8 @@ Bundle-Version: 3.3.300.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.jface,
  org.eclipse.jface.databinding,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.databinding
 Export-Package: org.eclipse.jface.snippets.dialogs,
  org.eclipse.jface.snippets.layout,
  org.eclipse.jface.snippets.resources,

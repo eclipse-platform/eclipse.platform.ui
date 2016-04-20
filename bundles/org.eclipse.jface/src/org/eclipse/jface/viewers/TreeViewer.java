@@ -500,8 +500,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	private TreeSelection adjustSelectionForReplace(Item[] selectedItems,
 			TreeSelection selection, TreeItem item, Object element, Object parentElement) {
-		if (item.getData() != null || selectedItems.length == selection.size()
-				|| parentElement == null) {
+		if (item.getData() != null) {
 			// Don't do anything - we are not seeing an instance of bug 185673
 			return selection;
 		}
