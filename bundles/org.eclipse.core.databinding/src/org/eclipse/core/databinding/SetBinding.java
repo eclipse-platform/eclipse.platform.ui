@@ -75,16 +75,6 @@ public class SetBinding extends Binding {
 		super(target, model);
 		this.targetToModel = targetToModelStrategy;
 		this.modelToTarget = modelToTargetStrategy;
-		if ((targetToModel.getUpdatePolicy() & UpdateSetStrategy.POLICY_UPDATE) != 0) {
-			target.addSetChangeListener(targetChangeListener);
-		} else {
-			targetChangeListener = null;
-		}
-		if ((modelToTarget.getUpdatePolicy() & UpdateSetStrategy.POLICY_UPDATE) != 0) {
-			model.addSetChangeListener(modelChangeListener);
-		} else {
-			modelChangeListener = null;
-		}
 	}
 
 	@Override
@@ -106,10 +96,33 @@ public class SetBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			updateModelToTarget();
+			getModel().getRealm().exec(new Runnable() {
+				@Override
+				public void run() {
+					((IObservableSet) getModel()).addSetChangeListener(modelChangeListener);
+					updateModelToTarget();
+				}
+			});
+		} else {
+			modelChangeListener = null;
 		}
+
 		if (targetToModel.getUpdatePolicy() == UpdateSetStrategy.POLICY_UPDATE) {
-			validateTargetToModel();
+			getTarget().getRealm().exec(new Runnable() {
+				@Override
+				public void run() {
+					((IObservableSet) getTarget()).addSetChangeListener(targetChangeListener);
+					if (modelToTarget.getUpdatePolicy() == UpdateSetStrategy.POLICY_NEVER) {
+						// we have to sync from target to model, if the other
+						// way round (model to target) is forbidden (POLICY_NEVER)
+						updateTargetToModel();
+					} else {
+						validateTargetToModel();
+					}
+				}
+			});
+		} else {
+			targetChangeListener = null;
 		}
 	}
 

@@ -13,6 +13,9 @@
 
 package org.eclipse.core.tests.databinding;
 
+import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_NEVER;
+import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_UPDATE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +61,13 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		model = WritableValue.withValueType(String.class);
 		dbc = new DataBindingContext();
 		log = new ArrayList();
+	}
+
+	@Override
+	public void tearDown() throws Exception {
+		dbc.dispose();
+		model.dispose();
+		target.dispose();
 	}
 
 	/**
@@ -328,6 +338,14 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		model.setValue(new Object());
 		assertEquals(Arrays.asList(new String[] { "model-set", "model-get",
 				"model-convert", "model-after-convert" }), log);
+	}
+
+	/**
+	 * test for bug 491678
+	 */
+	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
+		bindLoggingValue(new UpdateValueStrategy(true, POLICY_UPDATE), new UpdateValueStrategy(true, POLICY_NEVER));
+		assertEquals(model.getValue(), target.getValue());
 	}
 
 	private void bindLoggingValue(UpdateValueStrategy targetToModel,

@@ -73,16 +73,6 @@ public class ListBinding extends Binding {
 		super(target, model);
 		this.targetToModel = targetToModelStrategy;
 		this.modelToTarget = modelToTargetStrategy;
-		if ((targetToModel.getUpdatePolicy() & UpdateListStrategy.POLICY_UPDATE) != 0) {
-			target.addListChangeListener(targetChangeListener);
-		} else {
-			targetChangeListener = null;
-		}
-		if ((modelToTarget.getUpdatePolicy() & UpdateListStrategy.POLICY_UPDATE) != 0) {
-			model.addListChangeListener(modelChangeListener);
-		} else {
-			modelChangeListener = null;
-		}
 	}
 
 	@Override
@@ -104,10 +94,34 @@ public class ListBinding extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			updateModelToTarget();
+			getModel().getRealm().exec(new Runnable() {
+				@Override
+				public void run() {
+					((IObservableList) getModel()).addListChangeListener(modelChangeListener);
+					updateModelToTarget();
+				}
+			});
+		} else {
+			modelChangeListener = null;
 		}
+
 		if (targetToModel.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			validateTargetToModel();
+			getTarget().getRealm().exec(new Runnable() {
+				@Override
+				public void run() {
+					((IObservableList) getTarget()).addListChangeListener(targetChangeListener);
+					if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_NEVER) {
+						// we have to sync from target to model, if the other
+						// way round (model to target) is forbidden
+						// (POLICY_NEVER)
+						updateTargetToModel();
+					} else {
+						validateTargetToModel();
+					}
+				}
+			});
+		} else {
+			targetChangeListener = null;
 		}
 	}
 
