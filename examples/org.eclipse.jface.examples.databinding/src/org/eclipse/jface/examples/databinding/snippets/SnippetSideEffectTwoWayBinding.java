@@ -11,10 +11,9 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.observable.SideEffect;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This snippet shows how to use the {@link SideEffect} class to bind a
+ * This snippet shows how to use the {@link ISideEffect} class to bind a
  * {@link Text} widget to a {@link Task} and the other way round.
  *
  * @since 3.2

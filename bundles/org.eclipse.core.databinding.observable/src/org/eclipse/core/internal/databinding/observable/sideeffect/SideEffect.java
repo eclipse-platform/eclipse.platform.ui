@@ -8,7 +8,7 @@
  * Contributors:
  *     Stefan Xenos (Google) - initial API and implementation
  ******************************************************************************/
-package org.eclipse.core.internal.databinding.observable;
+package org.eclipse.core.internal.databinding.observable.sideeffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.function.Supplier;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.runtime.Assert;
 
 /**

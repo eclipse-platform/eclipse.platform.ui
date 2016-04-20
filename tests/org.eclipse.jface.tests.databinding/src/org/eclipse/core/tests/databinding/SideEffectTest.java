@@ -14,14 +14,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import org.eclipse.core.databinding.observable.ISideEffect;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.observable.SideEffect;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
- * Test cases for the {@link SideEffect} class
+ * Test cases for the {@link ISideEffect}.
  *
  * @since 3.2
  */

@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.databinding.swt;
 
-import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.sideeffect.CompositeSideEffect;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;

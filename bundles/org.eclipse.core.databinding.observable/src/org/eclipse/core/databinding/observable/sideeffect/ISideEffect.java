@@ -9,14 +9,17 @@
  *     Stefan Xenos (Google) - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.databinding.observable;
+package org.eclipse.core.databinding.observable.sideeffect;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.observable.SideEffect;
+import org.eclipse.core.internal.databinding.observable.sideeffect.SideEffect;
 
 /**
  * An {@link ISideEffect} allows you to run code whenever one or more

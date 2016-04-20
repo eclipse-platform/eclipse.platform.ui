@@ -14,7 +14,6 @@ package org.eclipse.core.databinding.observable.sideeffect;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import org.eclipse.core.databinding.observable.ISideEffect;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.internal.databinding.observable.sideeffect.SideEffectFactory;
 
