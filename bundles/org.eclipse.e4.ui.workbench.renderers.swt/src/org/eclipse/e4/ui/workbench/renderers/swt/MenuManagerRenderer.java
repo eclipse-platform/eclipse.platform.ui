@@ -18,6 +18,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 391430, 472654, 460886
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 473779
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 506306
+ *     Axel Richard <axel.richard@oebo.fr> - Bug 354538
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -886,6 +887,9 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	public void clearModelToManager(MMenu model, MenuManager manager) {
 		for (MMenuElement element : model.getChildren()) {
+			if (element instanceof MMenu) {
+				clearModelToManager((MMenu) element, getManager((MMenu) element));
+			}
 			IContributionItem ici = getContribution(element);
 			clearModelToContribution(element, ici);
 		}
@@ -916,6 +920,12 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	public void clearModelToContribution(MMenuElement model, IContributionItem item) {
+		if (model instanceof MMenu) {
+			for (MMenuElement element : ((MMenu) model).getChildren()) {
+				IContributionItem ici = getContribution(element);
+				clearModelToContribution(element, ici);
+			}
+		}
 		modelToContribution.remove(model);
 		contributionToModel.remove(item);
 		if (isDebugEnabled()) {

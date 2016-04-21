@@ -266,23 +266,28 @@ public class CompatibilityView extends CompatibilityPart {
 				ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
 				ToolBarManagerRenderer tbmr = (ToolBarManagerRenderer) apr;
 				tbmr.clearModelToManager(toolbar, tbm);
-				// remove opaque mappings
-				for (Iterator<MToolBarElement> it = toolbar.getChildren().iterator(); it.hasNext();) {
-					MToolBarElement element = it.next();
-					if (OpaqueElementUtil.isOpaqueToolItem(element)) {
-						IContributionItem item = tbmr.getContribution(element);
-						if (item != null) {
-							tbmr.clearModelToContribution(element, item);
-						}
-						// clear the reference
-						OpaqueElementUtil.clearOpaqueItem(element);
-						// remove the opaque item
-						it.remove();
-					}
-				}
+				clearOpaqueToolBarItems(tbmr, toolbar);
 			}
 		}
 
 		super.disposeSite(site);
 	}
+
+	private void clearOpaqueToolBarItems(ToolBarManagerRenderer tbmr, MToolBar toolbar) {
+		// remove opaque mappings
+		for (Iterator<MToolBarElement> it = toolbar.getChildren().iterator(); it.hasNext();) {
+			MToolBarElement element = it.next();
+			IContributionItem contribution = tbmr.getContribution(element);
+			if (contribution != null) {
+				tbmr.clearModelToContribution(element, contribution);
+			}
+			if (OpaqueElementUtil.isOpaqueToolItem(element)) {
+				// clear the reference
+				OpaqueElementUtil.clearOpaqueItem(element);
+				// remove the opaque item
+				it.remove();
+			}
+		}
+	}
+
 }
