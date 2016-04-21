@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -209,6 +208,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 		setTitle(DataTransferMessages.SmartImportWizardPage_importProjectsInFolderTitle);
 		setDescription(DataTransferMessages.SmartImportWizardPage_importProjectsInFolderDescription);
+		initializeDialogUnits(parent);
 		Composite res = new Composite(parent, SWT.NONE);
 		res.setLayout(new GridLayout(4, false));
 
@@ -303,8 +303,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 				.setDescriptionText(DataTransferMessages.SmartImportWizardPage_incorrectRootDirectory);
 		this.rootDirectoryTextDecorator.hide();
 		Button directoryButton = new Button(res, SWT.PUSH);
-		GridDataFactory.defaultsFor(directoryButton).applyTo(directoryButton);
 		directoryButton.setText(DataTransferMessages.SmartImportWizardPage_browse);
+		setButtonLayoutData(directoryButton);
 		directoryButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -329,8 +329,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 		});
 		Button browseArchiveButton = new Button(res, SWT.PUSH);
-		GridDataFactory.defaultsFor(browseArchiveButton).applyTo(browseArchiveButton);
 		browseArchiveButton.setText(DataTransferMessages.SmartImportWizardPage_selectArchiveButton);
+		setButtonLayoutData(browseArchiveButton);
 		browseArchiveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -493,7 +493,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 		GridLayoutFactory.fillDefaults().applyTo(selectionButtonsGroup);
 		selectionButtonsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		Button selectAllButton = new Button(selectionButtonsGroup, SWT.PUSH);
-		GridDataFactory.defaultsFor(selectAllButton).applyTo(selectAllButton);
+		setButtonLayoutData(selectAllButton);
 		selectAllButton.setText(DataTransferMessages.DataTransfer_selectAll);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -503,7 +503,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 			}
 		});
 		Button deselectAllButton = new Button(selectionButtonsGroup, SWT.PUSH);
-		GridDataFactory.defaultsFor(deselectAllButton).applyTo(deselectAllButton);
+		setButtonLayoutData(deselectAllButton);
 		deselectAllButton.setText(DataTransferMessages.DataTransfer_deselectAll);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
