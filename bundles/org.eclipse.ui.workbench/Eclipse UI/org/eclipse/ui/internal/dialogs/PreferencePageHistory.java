@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
+ *     Robert Roth <robert.roth.off@gmail.com> - Bug 337788
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -237,6 +238,8 @@ class PreferencePageHistory {
 				boolean enabled = historyIndex > 0;
 				if (enabled) {
 					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() ));
+				} else {
+					setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip);
 				}
 				return enabled;
 			}
@@ -274,6 +277,8 @@ class PreferencePageHistory {
 				boolean enabled = historyIndex < history.size() - 1;
 				if (enabled) {
 					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() ));
+				} else {
+					setToolTipText(WorkbenchMessages.NavigationHistoryAction_forward_toolTip);
 				}
 				return enabled;
 			}
