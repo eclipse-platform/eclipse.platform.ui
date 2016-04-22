@@ -141,6 +141,9 @@ public class SubMonitorTest extends TestCase {
 		// Reporting 0.01% per iteration, we should be at 9.9 ticks after 100 iterations
 		double test5 = runInfiniteProgress(10000, 100);
 		assertEquals(9.9, test5, 1.0);
+
+		double test6 = runInfiniteProgress(2, 20);
+		assertEquals(1000.0, test6, 1.0);
 	}
 
 	/**
@@ -896,35 +899,6 @@ public class SubMonitorTest extends TestCase {
 		progress.done();
 		monitor.done();
 
-		monitor.assertOptimal();
-	}
-
-	/**
-	 * Tests reporting of progress by sub-monitors created via newChild()
-	 */
-	public void testBug252446() {
-		int children = 12;
-		int cyclesPerChild = 17;
-
-		TestProgressMonitor monitor = new TestProgressMonitor();
-		SubMonitor progress = SubMonitor.convert(monitor, children * cyclesPerChild);
-
-		// At this time monitor.getExpectedWork() == SubMonitor.MINIMUM_RESOLUTION == 1000
-		double expectedTicksPerIteration = (double) monitor.getExpectedWork() / children / cyclesPerChild;
-
-		for (int i = 0; i < children; i++) {
-			IProgressMonitor mon = progress.newChild(cyclesPerChild);
-			for (int j = 1; j <= cyclesPerChild; j++) {
-				mon.worked(1);
-				double expectedTopMonitorWork = expectedTicksPerIteration * (i * cyclesPerChild + j);
-				// Progress is passed to the parent monitor as integer leading to rounding
-				// errors. The parent's progress has to follow child's progress "close enough"
-				// and then it will catch up when next child is created. Hence, a relatively large delta
-				// value in this check:
-				assertEquals(expectedTopMonitorWork, monitor.getTotalWork(), 2.0d);
-			}
-		}
-		monitor.done();
 		monitor.assertOptimal();
 	}
 
