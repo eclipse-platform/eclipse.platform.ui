@@ -794,71 +794,9 @@
                value="false">
          </parameter>
       </key>
-      <key
-            commandId="org.eclipse.ui.navigate.nextTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+TAB">
-      </key>
-      <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+TAB">
-      </key>
-      <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+TAB">
-      </key>
-      <key
-            commandId="org.eclipse.ui.navigate.nextTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M4+TAB">
-      </key>
-      <key
-            commandId="org.eclipse.ui.navigate.nextTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M4+TAB">
-      </key>
-      <key
-            commandId="org.eclipse.ui.navigate.previousTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+TAB">
-      </key>
-      <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+TAB">
-      </key>
-      <key
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+TAB">
-      </key>
-      <key
-            commandId="org.eclipse.ui.navigate.previousTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="carbon"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M4+M2+TAB">
-      </key>
-      <key
-            commandId="org.eclipse.ui.navigate.previousTab"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            platform="cocoa"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M4+M2+TAB">
-      </key>
+
    </extension>
+   
    <extension
          point="org.eclipse.ui.commands">
       <category
