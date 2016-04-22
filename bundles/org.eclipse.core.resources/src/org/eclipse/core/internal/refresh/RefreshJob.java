@@ -157,7 +157,7 @@ public class RefreshJob extends WorkspaceJob {
 			IResource toRefresh;
 			while ((toRefresh = nextRequest()) != null) {
 				try {
-					subMonitor.setWorkRemaining(Math.max(fRequests.size(), 10));
+					subMonitor.setWorkRemaining(Math.max(fRequests.size(), 100));
 					refreshCount++;
 					long refreshTime = -System.currentTimeMillis();
 					toRefresh.refreshLocal(1000 + depth, subMonitor.split(1));
