@@ -12,7 +12,7 @@
  *     Brian de Alwis - Fix size computation to account for trim
  *     Markus Kuppe <bugs.eclipse.org@lemmster.de> - Bug 449485: [QuickAccess] "Widget is disposed" exception in errorlog during shutdown due to quickaccess.SearchField.storeDialog
  *     Elena Laskavaia <elaskavaia.cdt@gmail.com> - Bug 433746: [QuickAccess] SWTException on closing quick access shell
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926, 491278, 491291, 491312
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 488926, 491278, 491291, 491312, 491293
  ******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 import java.util.ArrayList;
@@ -223,6 +223,7 @@ public class SearchField {
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		shell.setText(QuickAccessMessages.QuickAccess_EnterSearch); // just for debugging, not shown anywhere
 		GridLayoutFactory.fillDefaults().applyTo(shell);
+		quickAccessContents.createHintText(shell, Window.getDefaultOrientation());
 		table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
 		txtQuickAccess.addMouseListener(new MouseAdapter() {
 			@Override
