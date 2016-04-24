@@ -12,10 +12,10 @@
 package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -76,8 +76,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 					1);
 			TarFile tarFile = null;
 			ZipFile zipFile = null;
-			InputStream content = null;
-			FileOutputStream fileStream = null;
 			ILeveledImportStructureProvider importStructureProvider = null;
 			try {
 				if (ArchiveFileManipulations.isTarFile(archive.getAbsolutePath())) {
@@ -104,15 +102,12 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 					if (importStructureProvider.isFolder(current)) {
 						toCreate.mkdirs();
 					} else {
-						toCreate.createNewFile();
-						fileStream = null;
-						content = null;
-						fileStream = new FileOutputStream(toCreate);
-						content = importStructureProvider.getContents(current);
-						byte[] buffer = new byte[1024];
-						int nbBytes = 0;
-						while ((nbBytes = content.read(buffer, 0, 1024))  > 0) {
-							fileStream.write(buffer, 0, nbBytes);
+						try (InputStream content = importStructureProvider.getContents(current)) {
+							// known IImportStructureProviders already log an
+							// exception before returning null
+							if (content != null) {
+								Files.copy(content, toCreate.toPath());
+							}
 						}
 					}
 					List<?> children = importStructureProvider.getChildren(current);
@@ -136,16 +131,6 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 				if (zipFile != null)
 					try {
 						zipFile.close();
-					} catch (IOException ex) {
-					}
-				if (fileStream != null)
-					try {
-						fileStream.close();
-					} catch (IOException ex) {
-					}
-				if (content != null)
-					try {
-						content.close();
 					} catch (IOException ex) {
 					}
 			}
