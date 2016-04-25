@@ -46,6 +46,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -519,7 +520,37 @@ public class SmartImportRootWizardPage extends WizardPage {
 		selectionSummary = new Label(selectionButtonsGroup, SWT.NONE);
 		selectionSummary.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 1, 1));
 		selectionSummary.setText(NLS.bind(DataTransferMessages.SmartImportProposals_selectionSummary, 0, 0));
+		Button hideProjectsAlreadyInWorkspace = new Button(selectionButtonsGroup, SWT.CHECK);
+		hideProjectsAlreadyInWorkspace.setText(DataTransferMessages.SmartImportProposals_hideExistingProjects);
+		hideProjectsAlreadyInWorkspace.addSelectionListener(new SelectionAdapter() {
+			final ViewerFilter existingProjectsFilter = new ViewerFilter() {
+				@Override
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
+					return !alreadyExistingProjects.contains(element);
+				}
+			};
 
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ViewerFilter[] currentFilters = tree.getFilters();
+				ViewerFilter[] newFilters = null;
+				if (((Button) e.widget).getSelection()) {
+					newFilters = new ViewerFilter[currentFilters.length + 1];
+					System.arraycopy(currentFilters, 0, newFilters, 0, currentFilters.length);
+					newFilters[newFilters.length - 1] = existingProjectsFilter;
+				} else {
+					List<ViewerFilter> filters = new ArrayList<>(
+							currentFilters.length > 0 ? currentFilters.length - 1 : 0);
+					for (ViewerFilter filter : currentFilters) {
+						if (filter != existingProjectsFilter) {
+							filters.add(filter);
+						}
+					}
+					newFilters = filters.toArray(new ViewerFilter[filters.size()]);
+				}
+				tree.setFilters(newFilters);
+			}
+		});
 		tree.setInput(Collections.emptyMap());
 	}
 
