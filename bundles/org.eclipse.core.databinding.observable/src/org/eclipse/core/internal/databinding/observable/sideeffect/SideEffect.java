@@ -339,6 +339,9 @@ public final class SideEffect implements ISideEffect {
 
 		@Override
 		public void run() {
+			if (isDisposed()) {
+				return;
+			}
 			asyncScheduled = false;
 			update();
 		}
