@@ -9,18 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
-import javax.xml.parsers.*;
 
-import org.eclipse.core.runtime.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * parse the default site.xml
@@ -307,12 +317,21 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		try {
 			String sharedURLString = attributes.getValue(CFG_SHARED_URL);
 			if (sharedURLString != null) {
-				URL sharedURL = Utils.makeAbsolute(installLocation, new URL(sharedURLString));				
-				ConfigurationParser parser = new ConfigurationParser();
-				Configuration sharedConfig = parser.parse(sharedURL, installLocation);
-				if (sharedConfig == null)
-					throw new Exception("Failed to parse shared configuration: " + sharedURL);
-				config.setLinkedConfig(sharedConfig);
+				URL sharedURL = Utils.makeAbsolute(installLocation, new URL(sharedURLString));
+				if (!sharedURL.equals(configURL)) {
+					/*
+					 * Bug 490591: Avoid StackOverflowError: The linked
+					 * installations URLs are relative and intended to be
+					 * dereferenced against the shared installation location.
+					 * But it's possible our installLocation is not the real
+					 * shared installation location.
+					 */
+					ConfigurationParser parser = new ConfigurationParser();
+					Configuration sharedConfig = parser.parse(sharedURL, installLocation);
+					if (sharedConfig == null)
+						throw new Exception("Failed to parse shared configuration: " + sharedURL);
+					config.setLinkedConfig(sharedConfig);
+				}
 			}
 		} catch (Exception e) {
 			// could not load from shared install
