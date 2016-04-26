@@ -196,10 +196,11 @@ import org.eclipse.swt.widgets.Scrollable;
 				int pageIncrement = this.fScrollBar.getPageIncrement();
 				if (pos > selection) {
 					this.fScrollBar.setSelection(selection + pageIncrement);
+					notifyScrollbarSelectionChanged(scrollable, SWT.PAGE_DOWN);
 				} else {
 					this.fScrollBar.setSelection(selection - pageIncrement);
+					notifyScrollbarSelectionChanged(scrollable, SWT.PAGE_UP);
 				}
-				notifyScrollbarSelectionChanged(scrollable, SWT.NONE);
 				return true;
 			}
 		}
