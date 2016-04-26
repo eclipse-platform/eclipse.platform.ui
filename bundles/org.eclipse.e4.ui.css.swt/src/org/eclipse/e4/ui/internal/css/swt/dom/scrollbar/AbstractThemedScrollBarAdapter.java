@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.css.swt.dom.scrollbar;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -154,6 +155,8 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 	private final ScrollOnMouseDownRunnable fScrollOnMouseDownTimer;
 
 	protected boolean installed = false;
+
+	private final static boolean isWindowsOS = Platform.OS_WIN32.equals(Platform.getOS());
 
 	public AbstractThemedScrollBarAdapter(Scrollable scrollable, AbstractScrollHandler horizontalScrollHandler,
 			AbstractScrollHandler verticalScrollHandler, IScrollBarSettings scrollBarSettings) {
@@ -313,7 +316,14 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 		}
 		Point controlPos = fScrollable.toControl(displayPos);
 
-		if (event.type == SWT.MouseDown) {
+		if (event.type == SWT.MenuDetect || (isWindowsOS && event.type == SWT.MouseDown && event.button != 1)) {
+			// Bug 491577: on windows, don't scroll if we're not left-clicking
+			// (and do nothing for the context menu on all platforms).
+			if (this.fHorizontalScrollHandler.mousePosOverScroll(fScrollable, controlPos)
+					|| this.fVerticalScrollHandler.mousePosOverScroll(fScrollable, controlPos)) {
+				this.stopEventPropagation(event);
+			}
+		} else if (event.type == SWT.MouseDown) {
 			fLastHorizontalAndTopPixel = computeHorizontalAndTopPixel();
 
 			if (event.widget == fScrollable) {
@@ -379,11 +389,6 @@ implements ControlListener, Listener, DisposeListener, KeyListener, MouseWheelLi
 			}
 			checkChangedHorizontalAndTopPixel();
 
-		} else if (event.type == SWT.MenuDetect) {
-			if (this.fHorizontalScrollHandler.mousePosOverScroll(fScrollable, controlPos)
-					|| this.fVerticalScrollHandler.mousePosOverScroll(fScrollable, controlPos)) {
-				this.stopEventPropagation(event);
-			}
 		}
 	}
 
