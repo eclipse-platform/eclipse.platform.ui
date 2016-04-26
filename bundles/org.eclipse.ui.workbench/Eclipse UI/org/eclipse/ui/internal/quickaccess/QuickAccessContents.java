@@ -10,7 +10,7 @@
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 491272, 491398
  *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434, 492452
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -420,7 +420,9 @@ public abstract class QuickAccessContents {
 			}
 			// from now on, add one element per provider
 			countPerProvider = 1;
-		} while ((showAllMatches || countTotal < maxCount) && !done);
+		}
+		// add matches beyond countPerProvider
+		while (showAllMatches && !done);
 		if (!perfectMatchAdded) {
 			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
 			if (entryEnabled(providers[0], entry)) {
