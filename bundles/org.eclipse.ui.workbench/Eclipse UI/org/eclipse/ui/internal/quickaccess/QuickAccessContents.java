@@ -10,7 +10,7 @@
  *     Tom Hochstein (Freescale) - Bug 393703 - NotHandledException selecting inactive command under 'Previous Choices' in Quick access
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654, 491272, 491398
  *     Leung Wang Hei <gemaspecial@yahoo.com.hk> - Bug 483343
- *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 491291, 491529, 491293, 492434
  *******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
@@ -609,6 +609,10 @@ public abstract class QuickAccessContents {
 
 	/** Show the hint text with the given color */
 	void showHintText(String text, Color color) {
+		if (hintText == null) {
+			// toolbar hidden
+			return;
+		}
 		hintText.setText(text);
 		if (color != null) {
 			hintText.setForeground(color);
