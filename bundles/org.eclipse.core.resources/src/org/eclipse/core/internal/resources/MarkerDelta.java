@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
@@ -112,10 +111,10 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 			return newChanges;
 		if (newChanges == null)
 			return oldChanges;
-		for (Iterator<IPath> it = newChanges.keySet().iterator(); it.hasNext();) {
-			IPath key = it.next();
+		for (Map.Entry<IPath, MarkerSet> newEntry : newChanges.entrySet()) {
+			IPath key = newEntry.getKey();
 			MarkerSet oldSet = oldChanges.get(key);
-			MarkerSet newSet = newChanges.get(key);
+			MarkerSet newSet = newEntry.getValue();
 			if (oldSet == null)
 				oldChanges.put(key, newSet);
 			else

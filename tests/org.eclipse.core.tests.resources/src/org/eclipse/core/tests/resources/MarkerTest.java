@@ -327,9 +327,9 @@ public class MarkerTest extends ResourceTest {
 	protected void assertEquals(String message, Map<String, ? extends Object> map, Object[] keys, Object[] values) {
 		assertEquals(message, keys.length, values.length);
 		assertEquals(message, keys.length, map.size());
-		for (Iterator<String> i = map.keySet().iterator(); i.hasNext();) {
-			Object key = i.next();
-			Object value = map.get(key);
+		for (Map.Entry<String, ? extends Object> entry : map.entrySet()) {
+			Object key = entry.getKey();
+			Object value = entry.getValue();
 			boolean found = false;
 			for (int j = 0; !found && j < keys.length; j++) {
 				if (keys[j].equals(key)) {

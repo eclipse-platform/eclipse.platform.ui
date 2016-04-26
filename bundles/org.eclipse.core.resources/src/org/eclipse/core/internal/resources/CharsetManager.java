@@ -177,9 +177,9 @@ public class CharsetManager implements IManager {
 				Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, currentProject.getFullPath(), message, e));
 				return;
 			}
-			for (Iterator<Boolean> it = affectedResourcesMap.keySet().iterator(); it.hasNext();) {
-				Boolean isDerived = it.next();
-				String[] affectedResources = affectedResourcesMap.get(isDerived);
+			for (Map.Entry<Boolean, String[]> entry : affectedResourcesMap.entrySet()) {
+				Boolean isDerived = entry.getKey();
+				String[] affectedResources = entry.getValue();
 				Preferences projectPrefs = isDerived.booleanValue() ? projectDerivedPrefs : projectRegularPrefs;
 				for (int i = 0; i < affectedResources.length; i++) {
 					IResourceDelta memberDelta = projectDelta.findMember(new Path(affectedResources[i]));
