@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
+import java.util.Objects;
+import java.util.function.Supplier;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
@@ -115,28 +117,29 @@ public class ShellElement extends CompositeElement {
 	}
 
 	@Override
-	public String getAttribute(String attr) {
+	protected Supplier<String> internalGetAttribute(String attr) {
 		if("title".equals(attr)) {
-			String title = getShell().getText();
-			return title != null ? title : "";
+			return () -> Objects.toString(getShell().getText(), "");
 		}
 		if ("parentage".equals(attr)) {
-			Shell shell = getShell();
-			Composite parent = shell.getParent();
-			if (parent == null) {
-				return "";
-			}
-			StringBuilder sb = new StringBuilder();
-			do {
-				String id = WidgetElement.getID(parent);
-				if (id != null && id.length() > 0) {
-					sb.append(id).append(' ');
+			return () -> {
+				Shell shell = getShell();
+				Composite parent = shell.getParent();
+				if (parent == null) {
+					return "";
 				}
-				parent = parent.getParent();
-			} while (parent != null);
-			return sb.toString().trim();
+				StringBuilder sb = new StringBuilder();
+				do {
+					String id = WidgetElement.getID(parent);
+					if (id != null && id.length() > 0) {
+						sb.append(id).append(' ');
+					}
+					parent = parent.getParent();
+				} while (parent != null);
+				return sb.toString().trim();
+			};
 		}
-		return super.getAttribute(attr);
+		return super.internalGetAttribute(attr);
 	}
 
 	@Override

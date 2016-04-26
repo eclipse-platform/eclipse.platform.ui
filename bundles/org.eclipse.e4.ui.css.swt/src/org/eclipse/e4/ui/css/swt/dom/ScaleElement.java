@@ -56,10 +56,6 @@ public class ScaleElement extends ControlElement {
 		}
 	}
 
-	@Override
-	public String getAttribute(String attr) {
-		return super.getAttribute(attr);
-	}
 
 	protected Scale getScale() {
 		return (Scale) getNativeWidget();
