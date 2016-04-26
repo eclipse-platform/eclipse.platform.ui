@@ -35,7 +35,7 @@ public class HistoryStoreTest extends ResourceTest {
 		List<Integer> expected = new ArrayList<>();
 
 		void addExpected(int statusCode) {
-			expected.add(new Integer(statusCode));
+			expected.add(Integer.valueOf(statusCode));
 		}
 
 		String dump() {
@@ -51,7 +51,7 @@ public class HistoryStoreTest extends ResourceTest {
 
 		@Override
 		public void logging(IStatus status, String plugin) {
-			actual.add(new Integer(status.getCode()));
+			actual.add(Integer.valueOf(status.getCode()));
 		}
 
 		void reset() {

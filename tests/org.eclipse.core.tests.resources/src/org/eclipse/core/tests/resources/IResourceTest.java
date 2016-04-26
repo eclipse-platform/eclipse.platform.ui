@@ -306,13 +306,13 @@ public class IResourceTest extends ResourceTest {
 	/**
 	 * Returns interesting resource states. */
 	protected Integer[] interestingDepths() {
-		return new Integer[] {new Integer(IResource.DEPTH_ZERO), new Integer(IResource.DEPTH_ONE), new Integer(IResource.DEPTH_INFINITE)};
+		return new Integer[] {Integer.valueOf(IResource.DEPTH_ZERO), Integer.valueOf(IResource.DEPTH_ONE), Integer.valueOf(IResource.DEPTH_INFINITE)};
 	}
 
 	/**
 	 * Returns interesting resource states. */
 	protected Integer[] interestingStates() {
-		return new Integer[] {new Integer(S_WORKSPACE_ONLY), new Integer(S_FILESYSTEM_ONLY), new Integer(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
+		return new Integer[] {Integer.valueOf(S_WORKSPACE_ONLY), Integer.valueOf(S_FILESYSTEM_ONLY), Integer.valueOf(S_UNCHANGED), new Integer(S_CHANGED), new Integer(S_DOES_NOT_EXIST),
 				//		new Integer(S_FOLDER_TO_FILE),
 				//		new Integer(S_FILE_TO_FOLDER),
 		};

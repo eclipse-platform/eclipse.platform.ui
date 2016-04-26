@@ -39,7 +39,7 @@ public class MarkerAttributeChangeListener extends Assert implements IResourceCh
 		attributeMap.clear();
 
 		for (int i = 0; i < markers.length; i++) {
-			attributeMap.put(new Long(markers[i].getId()), markers[i].getAttributes());
+			attributeMap.put(Long.valueOf(markers[i].getId()), markers[i].getAttributes());
 		}
 	}
 

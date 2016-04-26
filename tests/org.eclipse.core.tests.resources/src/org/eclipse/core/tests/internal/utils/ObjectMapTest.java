@@ -59,7 +59,7 @@ public class ObjectMapTest extends ResourceTest {
 
 		// add each object to the map
 		for (int i = 0; i < values.length; i++) {
-			Integer key = new Integer(i);
+			Integer key = Integer.valueOf(i);
 			map.put(key, values[i]);
 			assertTrue("2.0." + i, map.containsKey(key));
 			assertTrue("2.1." + i, map.containsValue(values[i]));
@@ -69,7 +69,7 @@ public class ObjectMapTest extends ResourceTest {
 		// make sure they are all still there
 		assertEquals("3.0", max, map.size());
 		for (int i = 0; i < values.length; i++) {
-			Integer key = new Integer(i);
+			Integer key = Integer.valueOf(i);
 			assertTrue("3.1." + i, map.containsKey(key));
 			assertNotNull("3.2." + i, map.get(key));
 		}
@@ -87,13 +87,13 @@ public class ObjectMapTest extends ResourceTest {
 
 		// remove each element
 		for (int i = MAXIMUM - 1; i >= 0; i--) {
-			Object key = new Integer(i);
+			Object key = Integer.valueOf(i);
 			map.remove(key);
 			assertTrue("2.0." + i, !map.containsKey(key));
 			assertEquals("2.1," + i, i, map.size());
 			// check that the others still exist
 			for (int j = 0; j < i; j++)
-				assertTrue("2.2." + j, map.containsKey(new Integer(j)));
+				assertTrue("2.2." + j, map.containsKey(Integer.valueOf(j)));
 		}
 
 		// all gone?
@@ -104,12 +104,12 @@ public class ObjectMapTest extends ResourceTest {
 		ObjectMap<Integer, Object> map = populateMap(MAXIMUM);
 
 		for (int i = 0; i < MAXIMUM; i++) {
-			assertTrue("2.0." + i, map.containsKey(new Integer(i)));
+			assertTrue("2.0." + i, map.containsKey(Integer.valueOf(i)));
 			assertTrue("2.1." + i, map.containsValue(values[i]));
 		}
 
-		assertFalse("3.0", map.containsKey(new Integer(MAXIMUM + 1)));
-		assertFalse("3.1", map.containsKey(new Integer(-1)));
+		assertFalse("3.0", map.containsKey(Integer.valueOf(MAXIMUM + 1)));
+		assertFalse("3.1", map.containsKey(Integer.valueOf(-1)));
 		assertFalse("3.2", map.containsValue(null));
 		assertFalse("3.3", map.containsValue(getRandomString()));
 	}
@@ -152,7 +152,7 @@ public class ObjectMapTest extends ResourceTest {
 		values = new Object[max];
 		for (int i = 0; i < max; i++) {
 			values[i] = new Long(System.currentTimeMillis());
-			map.put(new Integer(i), values[i]);
+			map.put(Integer.valueOf(i), values[i]);
 		}
 		assertEquals("#populateMap", max, map.size());
 		return map;

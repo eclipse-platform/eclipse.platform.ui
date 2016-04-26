@@ -1859,7 +1859,7 @@ public class MarkerTest extends ResourceTest {
 				String[] keys = new String[] {IMarker.LOCATION, IMarker.SEVERITY, IMarker.DONE};
 				Object[] values = new Object[3];
 				values[0] = getRandomString();
-				values[1] = new Integer(5);
+				values[1] = Integer.valueOf(5);
 				values[2] = Boolean.FALSE;
 				marker.setAttributes(keys, values);
 				Object[] found = marker.getAttributes(keys);
@@ -1868,7 +1868,7 @@ public class MarkerTest extends ResourceTest {
 				values[1] = null;
 				found = marker.getAttributes(keys);
 				assertEquals("3.1." + resource.getFullPath(), values, found);
-				values[1] = new Integer(5);
+				values[1] = Integer.valueOf(5);
 				marker.setAttribute(IMarker.SEVERITY, values[1]);
 				Map<String, ? extends Object> all = marker.getAttributes();
 				assertEquals("3.2." + resource.getFullPath(), all, keys, values);
@@ -1940,7 +1940,7 @@ public class MarkerTest extends ResourceTest {
 				// expected
 			}
 			try {
-				marker.setAttributes(new String[] {IMarker.LINE_NUMBER}, new Object[] {new Integer(4)});
+				marker.setAttributes(new String[] {IMarker.LINE_NUMBER}, new Object[] {Integer.valueOf(4)});
 				fail("5.2");
 			} catch (CoreException e) {
 				// expected
@@ -2004,7 +2004,7 @@ public class MarkerTest extends ResourceTest {
 				String[] keys = new String[] {IMarker.LOCATION, IMarker.SEVERITY, IMarker.DONE};
 				Object[] values = new Object[3];
 				values[0] = getRandomString();
-				values[1] = new Integer(5);
+				values[1] = Integer.valueOf(5);
 				values[2] = Boolean.FALSE;
 				marker.setAttributes(keys, values);
 				Object[] found = marker.getAttributes(keys);
@@ -2013,7 +2013,7 @@ public class MarkerTest extends ResourceTest {
 				values[1] = null;
 				found = marker.getAttributes(keys);
 				assertEquals("3.1." + resource.getFullPath(), values, found);
-				values[1] = new Integer(5);
+				values[1] = Integer.valueOf(5);
 				marker.setAttribute(IMarker.SEVERITY, values[1]);
 				Map<String, ? extends Object> all = marker.getAttributes();
 				assertEquals("3.2." + resource.getFullPath(), all, keys, values);
