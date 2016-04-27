@@ -208,7 +208,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fCheckParent.setEnabled(value);
 		fLaunchLastIfNotLaunchable.setSelection(!parent);
 		fLaunchLastIfNotLaunchable.setEnabled(value);
-		value = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION);
+		value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TERMINATE_AND_RELAUNCH_LAUNCH_ACTION);
 		fTerminatAndRelaunch.setSelection(value);
 		super.performDefaults();
 	}
