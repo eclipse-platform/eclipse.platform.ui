@@ -228,10 +228,13 @@ import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementMapTest
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementWrapperTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerInputObservableValueTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+@RunWith(AllTests.class)
 public class BindingTestSuiteJunit3 extends TestSuite {
 
 	public static Test suite() {
