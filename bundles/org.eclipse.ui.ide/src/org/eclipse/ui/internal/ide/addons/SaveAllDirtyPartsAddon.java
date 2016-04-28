@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Lars Vogel <Lars.Vogel@vogella.com> - initial API and implementation
- *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
+ *     Axel Richard <axel.richard@obeo.fr> - Bug 486644, Bug 492438
  *     Mikael Barbero <mikael@eclipse.org> - Bug 486644
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.addons;
@@ -29,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
@@ -81,13 +82,23 @@ public class SaveAllDirtyPartsAddon {
 	private final class IdleListener implements Listener {
 		@Override
 		public void handleEvent(org.eclipse.swt.widgets.Event event) {
-			// the user has pressed a key or has clicked somewhere
-			// (see #addIdleListenerToWorkbenchDisplay for exact list of
-			// listened events), re-schedule the job if it the previous
-			// delay has not expired yet.
-			if (autoSaveJob.getState() == Job.SLEEPING) {
+			// a menu has been hidden, re-schedule the job.
+			if (event.type == SWT.Hide && event.widget instanceof Menu) {
 				autoSaveJob.cancel();
 				autoSaveJob.schedule(autoSaveInterval);
+			} else if (autoSaveJob.getState() == Job.SLEEPING) {
+				// a menu has been shown, cancel the job. The job will be
+				// re-schedule when the menu will be hidden.
+				if (event.type == SWT.Show && event.widget instanceof Menu) {
+					autoSaveJob.cancel();
+				} else {
+					// the user has pressed a key or has clicked somewhere
+					// (see #addIdleListenerToWorkbenchDisplay for exact list of
+					// listened events), re-schedule the job if it the previous
+					// delay has not expired yet.
+					autoSaveJob.cancel();
+					autoSaveJob.schedule(autoSaveInterval);
+				}
 			}
 		}
 	}
@@ -178,6 +189,8 @@ public class SaveAllDirtyPartsAddon {
 		if (display != null && !display.isDisposed()) {
 			display.addFilter(SWT.KeyUp, idleListener);
 			display.addFilter(SWT.MouseUp, idleListener);
+			display.addFilter(SWT.Show, idleListener);
+			display.addFilter(SWT.Hide, idleListener);
 		}
 	}
 
@@ -186,6 +199,8 @@ public class SaveAllDirtyPartsAddon {
 		if (display != null && !display.isDisposed()) {
 			display.removeFilter(SWT.MouseUp, idleListener);
 			display.removeFilter(SWT.KeyUp, idleListener);
+			display.removeFilter(SWT.Show, idleListener);
+			display.removeFilter(SWT.Hide, idleListener);
 		}
 	}
 
