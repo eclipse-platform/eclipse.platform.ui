@@ -188,7 +188,10 @@ public class HandledContributionItem extends AbstractContributionItem {
 	@Override
 	protected void postMenuFill() {
 		if (updateService != null) {
-			unreferenceRunnable = updateService.registerElementForUpdate(getModel().getWbCommand(), getModel());
+			ParameterizedCommand wbCommand = getModel().getWbCommand();
+			if (wbCommand != null) {
+				unreferenceRunnable = updateService.registerElementForUpdate(wbCommand, getModel());
+			}
 		}
 	}
 
@@ -197,7 +200,10 @@ public class HandledContributionItem extends AbstractContributionItem {
 		hookCheckListener();
 
 		if (updateService != null) {
-			unreferenceRunnable = updateService.registerElementForUpdate(getModel().getWbCommand(), getModel());
+			ParameterizedCommand wbCommand = getModel().getWbCommand();
+			if (wbCommand != null) {
+				unreferenceRunnable = updateService.registerElementForUpdate(wbCommand, getModel());
+			}
 		}
 	}
 
