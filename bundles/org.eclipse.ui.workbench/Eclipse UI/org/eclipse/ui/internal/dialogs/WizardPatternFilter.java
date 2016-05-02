@@ -48,10 +48,6 @@ public class WizardPatternFilter extends PatternFilter {
 			if (wordMatches(text)) {
 				return true;
 			}
-			String wizDesc = desc.getDescription();
-			if (wordMatches(wizDesc)) {
-				return true;
-			}
 
 			String[] keywordLabels = desc.getKeywordLabels();
 			for (int i = 0; i < keywordLabels.length; i++) {
