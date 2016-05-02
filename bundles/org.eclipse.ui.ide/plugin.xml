@@ -577,6 +577,9 @@
       <keyword
             id="org.eclipse.ui.ide.unassociated"
             label="%PreferenceKeywords.unassociated"/>
+      <keyword
+            id="org.eclipse.ui.ide.save"
+            label="%PreferenceKeywords.Save"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -616,6 +619,7 @@
             id="org.eclipse.ui.preferencePages.AutoSave">
          <keywordReference id="org.eclipse.ui.ide.editors"/>
          <keywordReference id="org.eclipse.ui.ide.dirty"/>
+         <keywordReference id="org.eclipse.ui.ide.save"/>
       </page>
       <page
             name="%PreferencePages.Perspectives"
