@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -40,7 +41,7 @@ public class SplitFeedbackOverlay {
 		curSide = side;
 		ratio = pct;
 
-		feedbackShell = new Shell(dragShell, SWT.NO_TRIM);
+		feedbackShell = new Shell(dragShell, SWT.NO_TRIM | SWT.ON_TOP);
 		feedbackShell.setBounds(dragShell.getBounds());
 
 		MWindow winModel = (MWindow) dragShell.getData(AbstractPartRenderer.OWNING_ME);
@@ -104,6 +105,19 @@ public class SplitFeedbackOverlay {
 		for (Rectangle r : rects) {
 			rgn.add(r);
 			rgn.subtract(r.x + 2, r.y + 2, r.width - 4, r.height - 4);
+		}
+
+		// Workaround: Some window managers draw a drop shadow even if the shell
+		// is set to NO_TRIM. By making the shell contain a component in the
+		// bottom-right of its parent shell, SWT won't resize it and any extra
+		// shadows will end up being drawn on top of the shadows for the parent
+		// shell rather than in the middle of the workbench window.
+		Composite parent = feedbackShell.getParent();
+		if (parent instanceof Shell) {
+			Shell parentShell = (Shell) parent;
+
+			Rectangle bounds = parentShell.getBounds();
+			rgn.add(bounds.width - 1, bounds.height - 1, 1, 1);
 		}
 
 		if (feedbackShell.getRegion() != null && !feedbackShell.getRegion().isDisposed())
