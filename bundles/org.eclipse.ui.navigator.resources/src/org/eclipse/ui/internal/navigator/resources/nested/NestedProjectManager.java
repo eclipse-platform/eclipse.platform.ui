@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -24,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -46,41 +46,35 @@ public class NestedProjectManager {
 	 * ones) are the immediately following items in the map.</li>
 	 * </ul>
 	 */
-	private SortedMap<IPath, IProject> locationsToProjects = Collections
-			.synchronizedSortedMap(new TreeMap<IPath, IProject>(new PathComparator()));
-
-	private int knownProjectsCount;
+	private SortedMap<IPath, IProject> locationsToProjects = new TreeMap<>(new PathComparator());
 
 	private NestedProjectManager() {
 		refreshProjectsList();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
 			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getType() == IResourceChangeEvent.POST_CHANGE
-						&& event.getDelta().getResource().getType() == IResource.PROJECT) {
+				IResourceDelta delta = event.getDelta();
+				IResource resource = null;
+				if (delta != null) {
+					resource = delta.getResource();
+				}
+				if (resource != null
+						&& (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)) {
 					refreshProjectsList();
 				}
 			}
-		});
-	}
-
-	private void refreshProjectsListIfNeeded() {
-		if (knownProjectsCount != ResourcesPlugin.getWorkspace().getRoot().getProjects().length) {
-			// TODO: find other cheap checks to try in condition
-			// Need to find a cheap way to react to project refactoring (moved
-			// or renamed...)
-			refreshProjectsList();
-		}
+		}, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	private void refreshProjectsList() {
-		locationsToProjects.clear();
 		IProject[] knownProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		knownProjectsCount = knownProjects.length;
-		for (IProject project : knownProjects) {
-			IPath location = project.getLocation();
-			if (location != null) {
-				locationsToProjects.put(location, project);
+		synchronized (locationsToProjects) {
+			locationsToProjects.clear();
+			for (IProject project : knownProjects) {
+				IPath location = project.getLocation();
+				if (location != null) {
+					locationsToProjects.put(location, project);
+				}
 			}
 		}
 	}
@@ -97,12 +91,14 @@ public class NestedProjectManager {
 		if (folder == null) {
 			return null;
 		}
-		refreshProjectsListIfNeeded();
 		IPath location = folder.getLocation();
 		if (location == null) {
 			return null;
 		}
-		IProject res = locationsToProjects.get(location);
+		IProject res;
+		synchronized (locationsToProjects) {
+			res = locationsToProjects.get(location);
+		}
 		if (res != null && (!res.exists() || !location.equals(res.getLocation()))) {
 			// project was deleted and state not refreshed
 			refreshProjectsList();
@@ -130,11 +126,13 @@ public class NestedProjectManager {
 			return false;
 		}
 		IPath queriedLocation = location.removeLastSegments(1);
-		while (queriedLocation.segmentCount() > 0) {
-			if (locationsToProjects.containsKey(queriedLocation)) {
-				return true;
+		synchronized (locationsToProjects) {
+			while (queriedLocation.segmentCount() > 0) {
+				if (locationsToProjects.containsKey(queriedLocation)) {
+					return true;
+				}
+				queriedLocation = queriedLocation.removeLastSegments(1);
 			}
-			queriedLocation = queriedLocation.removeLastSegments(1);
 		}
 		return false;
 	}
@@ -146,12 +144,14 @@ public class NestedProjectManager {
 		}
 		IProject mostDirectParentProject = null;
 		IPath queriedLocation = location.removeLastSegments(1);
-		while (mostDirectParentProject == null && queriedLocation.segmentCount() > 0) {
-			mostDirectParentProject = locationsToProjects.get(queriedLocation);
-			if (mostDirectParentProject != null && mostDirectParentProject.getLocation() == null) {
-				mostDirectParentProject = null;
+		synchronized (locationsToProjects) {
+			while (mostDirectParentProject == null && queriedLocation.segmentCount() > 0) {
+				mostDirectParentProject = locationsToProjects.get(queriedLocation);
+				if (mostDirectParentProject != null && mostDirectParentProject.getLocation() == null) {
+					mostDirectParentProject = null;
+				}
+				queriedLocation = queriedLocation.removeLastSegments(1);
 			}
-			queriedLocation = queriedLocation.removeLastSegments(1);
 		}
 		if (mostDirectParentProject != null) {
 			IPath parentContainerAbsolutePath = location.removeLastSegments(1);
@@ -185,16 +185,17 @@ public class NestedProjectManager {
 		if (containerLocation == null || projectLocation == null) {
 			return res.toArray(new IProject[res.size()]);
 		}
-		for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(projectLocation)
-				.entrySet()) {
-			if (entry.getValue().equals(container.getProject())) {
-				// ignore current project
-			} else if (containerLocation.isPrefixOf(entry.getKey())) {
-				if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
-					res.add(entry.getValue());
+		synchronized (locationsToProjects) {
+			for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(containerLocation).entrySet()) {
+				if (entry.getValue().equals(container.getProject())) {
+					// ignore current project
+				} else if (containerLocation.isPrefixOf(entry.getKey())) {
+					if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
+						res.add(entry.getValue());
+					}
+				} else { // moved to another branch, not worth continuing
+					break;
 				}
-			} else { // moved to another branch, not worth continuing
-				break;
 			}
 		}
 		return res.toArray(new IProject[res.size()]);
@@ -214,16 +215,17 @@ public class NestedProjectManager {
 		if (containerLocation == null || projectLocation == null) {
 			return false;
 		}
-		for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(projectLocation)
-				.entrySet()) {
-			if (entry.getValue().equals(container.getProject())) {
-				// ignore current project
-			} else if (containerLocation.isPrefixOf(entry.getKey())) {
-				if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
-					return true;
+		synchronized (locationsToProjects) {
+			for (Entry<IPath, IProject> entry : locationsToProjects.tailMap(containerLocation).entrySet()) {
+				if (entry.getValue().equals(container.getProject())) {
+					// ignore current project
+				} else if (containerLocation.isPrefixOf(entry.getKey())) {
+					if (entry.getKey().segmentCount() == containerLocation.segmentCount() + 1) {
+						return true;
+					}
+				} else { // moved to another branch, not worth continuing
+					break;
 				}
-			} else { // moved to another branch, not worth continuing
-				break;
 			}
 		}
 		return false;
