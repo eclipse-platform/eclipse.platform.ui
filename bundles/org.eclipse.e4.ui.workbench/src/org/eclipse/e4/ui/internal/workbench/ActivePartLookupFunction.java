@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 
 /**
  *
@@ -38,6 +39,16 @@ public class ActivePartLookupFunction extends ContextFunction {
 		if (current == null) {
 			return null;
 		}
-		return current.getActiveLeaf().get(MPart.class);
+		MPart part = current.getActiveLeaf().get(MPart.class);
+		if (part == null)
+			return null;
+		if (part.getCurSharedRef() != null
+				&& part.getCurSharedRef().getParent().getTags().contains(IPresentationEngine.MINIMIZED)) {
+			return null;
+		}
+		if (part.getParent() != null && part.getParent().getTags().contains(IPresentationEngine.MINIMIZED))
+			return null;
+		return part;
+
 	}
 }
