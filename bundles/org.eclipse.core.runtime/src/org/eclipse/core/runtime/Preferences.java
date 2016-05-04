@@ -1006,7 +1006,7 @@ public class Preferences {
 			// mark as dirty since value did really change
 			dirty = true;
 			// report property change if getValue now returns different value
-			firePropertyChangeEvent(name, new Long(oldValue), new Long(value));
+			firePropertyChangeEvent(name, Long.valueOf(oldValue), Long.valueOf(value));
 		}
 	}
 

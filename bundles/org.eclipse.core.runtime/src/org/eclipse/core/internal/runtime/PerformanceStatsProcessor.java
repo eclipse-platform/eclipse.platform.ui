@@ -76,7 +76,7 @@ public class PerformanceStatsProcessor extends Job {
 	 */
 	public static void failed(PerformanceStats stats, String pluginId, long elapsed) {
 		synchronized (instance) {
-			instance.failures.put(stats, new Long(elapsed));
+			instance.failures.put(stats, Long.valueOf(elapsed));
 		}
 		instance.schedule(SCHEDULE_DELAY);
 		instance.logFailure(stats, pluginId, elapsed);

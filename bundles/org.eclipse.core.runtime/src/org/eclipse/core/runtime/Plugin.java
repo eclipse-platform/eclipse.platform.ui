@@ -624,7 +624,7 @@ public abstract class Plugin implements BundleActivator {
 		if (myBundle == null)
 			return ""; //$NON-NLS-1$
 		String name = myBundle.getSymbolicName();
-		return name == null ? Long.toString(myBundle.getBundleId()) : name;
+		return name == null ? String.valueOf(myBundle.getBundleId()) : name;
 	}
 
 	/**

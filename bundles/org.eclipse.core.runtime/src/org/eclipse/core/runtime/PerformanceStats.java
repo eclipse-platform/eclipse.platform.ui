@@ -456,13 +456,13 @@ public class PerformanceStats {
 			String option = InternalPlatform.getDefault().getOption(eventName);
 			if (option != null) {
 				try {
-					value = new Long(option);
+					value = Long.valueOf(option);
 				} catch (NumberFormatException e) {
 					//invalid option, just ignore
 				}
 			}
 			if (value == null)
-				value = new Long(Long.MAX_VALUE);
+				value = Long.valueOf(Long.MAX_VALUE);
 			thresholdMap.put(eventName, value);
 		}
 		return value.longValue();

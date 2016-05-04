@@ -92,7 +92,7 @@ public class InjectorImpl implements IInjector {
 	final private static Character DEFAULT_CHAR = new Character((char) 0);
 	final private static Float DEFAULT_FLOAT = new Float(0.0f);
 	final private static Double DEFAULT_DOUBLE = new Double(0.0d);
-	final private static Long DEFAULT_LONG = new Long(0L);
+	final private static Long DEFAULT_LONG = Long.valueOf(0L);
 	final private static Short DEFAULT_SHORT = new Short((short) 0);
 	final private static Byte DEFAULT_BYTE = new Byte((byte) 0);
 

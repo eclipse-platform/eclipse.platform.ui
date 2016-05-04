@@ -170,7 +170,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		else if (obj instanceof Float)
 			return new Float(defaults.getFloat(key, FLOAT_DEFAULT_DEFAULT));
 		else if (obj instanceof Long)
-			return new Long(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
+			return Long.valueOf(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		else if (obj instanceof byte[])
 			return defaults.getByteArray(key, BYTE_ARRAY_DEFAULT_DEFAULT);
 		else if (obj instanceof Boolean)
@@ -600,8 +600,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		final long longValue = getLong(name);
 		if (value == longValue)
 			return;
-		Long oldValue = new Long(longValue);
-		Long newValue = new Long(value);
+		Long oldValue = Long.valueOf(longValue);
+		Long newValue = Long.valueOf(value);
 		try {
 			notify = false;
 			if (getDefaultLong(name) == value)
