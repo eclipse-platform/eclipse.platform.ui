@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 487417
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 492963
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts;
 
@@ -682,11 +683,11 @@ public class EclipseContext implements IEclipseContext {
 	// This method is for debug only, do not use externally
 	public Map<String, Object> localData() {
 		Map<String, Object> result = new HashMap<>(localValues.size());
-		for (String string : localValues.keySet()) {
-			Object value = localValues.get(string);
-			if (value instanceof IContextFunction)
+		for (Map.Entry<String, Object> entry : localValues.entrySet()) {
+			if (entry.getValue() instanceof IContextFunction) {
 				continue;
-			result.put(string, value);
+			}
+			result.put(entry.getKey(), entry.getValue());
 		}
 		return result;
 	}
@@ -694,10 +695,10 @@ public class EclipseContext implements IEclipseContext {
 	// This method is for debug only, do not use externally
 	public Map<String, Object> localContextFunction() {
 		Map<String, Object> result = new HashMap<>(localValues.size());
-		for (String string : localValues.keySet()) {
-			Object value = localValues.get(string);
-			if (value instanceof IContextFunction)
-				result.put(string, value);
+		for (Map.Entry<String, Object> entry : localValues.entrySet()) {
+			if (entry.getValue() instanceof IContextFunction) {
+				result.put(entry.getKey(), entry.getValue());
+			}
 		}
 		return result;
 	}
@@ -705,12 +706,11 @@ public class EclipseContext implements IEclipseContext {
 	// This method is for debug only, do not use externally
 	public Map<String, Object> cachedCachedContextFunctions() {
 		Map<String, Object> result = new HashMap<>(localValueComputations.size());
-		for (String string : localValueComputations.keySet()) {
-			ValueComputation vc = localValueComputations.get(string);
-			if (vc != null) {
-				Object r = vc.get();
+		for (Map.Entry<String, ValueComputation> entry : localValueComputations.entrySet()) {
+			if (entry.getValue() != null) {
+				Object r = entry.getValue();
 				if (r != IInjector.NOT_A_VALUE) {
-					result.put(string, vc.get());
+					result.put(entry.getKey(), entry.getValue());
 				}
 			}
 		}
