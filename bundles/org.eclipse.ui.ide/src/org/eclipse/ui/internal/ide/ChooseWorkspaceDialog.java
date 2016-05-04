@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bugs 411578, 486842, 487673
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 492918
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -306,9 +307,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		expandableComposite.addExpansionListener(new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
-				getShell().layout();
-				initializeBounds();
 				launchData.setShowRecentWorkspaces(((ExpandableComposite) e.getSource()).isExpanded());
+				Point size = getInitialSize();
+				Shell shell = getShell();
+				shell.setBounds(getConstrainedShellBounds(
+						new Rectangle(shell.getLocation().x, shell.getLocation().y, size.x, size.y)));
 			}
 		});
 
