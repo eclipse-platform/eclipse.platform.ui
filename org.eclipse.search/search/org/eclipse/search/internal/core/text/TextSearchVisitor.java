@@ -369,7 +369,7 @@ public class TextSearchVisitor {
 		// methods to the TextSearchJob class.
 		IProgressMonitor monitor= job.getMonitor();
 		ReusableMatchAccess matchAccess= job.getReusableMatchAccess();
-		Matcher matcher= fSearchPattern.pattern().length() == 0 ? null : fSearchPattern.matcher(new String());
+		Matcher matcher= fSearchPattern.pattern().length() == 0 ? null : fSearchPattern.matcher(""); //$NON-NLS-1$
 		FileCharSequenceProvider fileCharSequenceProvider= new FileCharSequenceProvider();
 
 		try {
@@ -484,7 +484,7 @@ public class TextSearchVisitor {
 				}
 			}
 		} finally {
-			matchAccess.initialize(null, 0, 0, new String()); // clear references
+			matchAccess.initialize(null, 0, 0, ""); // clear references //$NON-NLS-1$
 		}
 	}
 

@@ -384,7 +384,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		GC gc= new GC(widget);
 		gc.setFont(widget.getFont());
 		int maxWidth= 0;
-		String content= new String();
+		String content= ""; //$NON-NLS-1$
 
 		try {
 			for (int i= 0; i <= last; i++) {

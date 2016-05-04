@@ -112,7 +112,7 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 		assertTrue(fileStore.fetchInfo().exists());
 		OutputStream out= fileStore.openOutputStream(EFS.NONE, null);
 		try {
-			out.write(new String("Changed content of file in linked folder").getBytes());
+			out.write("Changed content of file in linked folder".getBytes());
 			out.flush();
 		} catch (IOException x) {
 			fail();

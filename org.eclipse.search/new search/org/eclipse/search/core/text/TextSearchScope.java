@@ -46,7 +46,7 @@ public abstract class TextSearchScope {
 	 * @return a scope the search scope
 	 */
 	public static TextSearchScope newSearchScope(IResource[] rootResources, Pattern fileNamePattern, boolean visitDerivedResources) {
-		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope(new String(), rootResources, visitDerivedResources);
+		FileNamePatternSearchScope scope= FileNamePatternSearchScope.newSearchScope("", rootResources, visitDerivedResources); //$NON-NLS-1$
 		scope.setFileNamePattern(fileNamePattern);
 		return scope;
 	}

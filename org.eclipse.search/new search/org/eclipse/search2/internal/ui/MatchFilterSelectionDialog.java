@@ -234,7 +234,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		if (selectedElement != null)
 			fDescription.setText(((MatchFilter) selectedElement).getDescription());
 		else
-			fDescription.setText(new String());
+			fDescription.setText(""); //$NON-NLS-1$
 	}
 
 	private void performFilterListCheckStateChanged() {
