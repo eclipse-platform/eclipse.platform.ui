@@ -316,7 +316,7 @@ public abstract class QuickAccessContents {
 
 		int maxCount = computeNumberOfItems();
 		int[] indexPerProvider = new int[providers.length];
-		int countPerProvider = INITIAL_COUNT_PER_PROVIDER;
+		int countPerProvider = Math.min(maxCount / 4, INITIAL_COUNT_PER_PROVIDER);
 		int prevPick = 0;
 		int countTotal = 0;
 		boolean perfectMatchAdded = true;
@@ -353,7 +353,6 @@ public abstract class QuickAccessContents {
 				}
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted();
-					List<QuickAccessEntry> poorFilterMatches = new ArrayList<>();
 
 					// count number or previous picks
 					if ((provider instanceof PreviousPicksProvider)) {
@@ -374,14 +373,8 @@ public abstract class QuickAccessContents {
 							}
 						} else {
 							QuickAccessEntry possibleMatch = element.match(filter, provider);
-							// We only have limited space so only display
-							// excellent filter matches (Bug 398455)
 							if (possibleMatch != null) {
-								if (possibleMatch.getMatchQuality() <= QuickAccessEntry.MATCH_EXCELLENT) {
-									entry = possibleMatch;
-								} else {
-									poorFilterMatches.add(possibleMatch);
-								}
+								entry = possibleMatch;
 							}
 
 						}
@@ -399,30 +392,18 @@ public abstract class QuickAccessContents {
 					}
 
 					indexPerProvider[i] = j;
-					// If there were low quality matches and there is still
-					// room, add them (Bug 398455)
-					for (Iterator<QuickAccessEntry> iterator = poorFilterMatches.iterator(); iterator
-							.hasNext()
-							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount));) {
-						QuickAccessEntry quickAccessEntry = iterator.next();
-						entries[i].add(quickAccessEntry);
-						count++;
-						countTotal++;
-						if (i == 0 && quickAccessEntry.element == perfectMatch) {
-							perfectMatchAdded = true;
-							maxCount = MAX_COUNT_TOTAL;
-						}
-					}
+
 					if (j < sortedElements.length) {
 						done = false;
 					}
 				}
 			}
+
 			// from now on, add one element per provider
 			countPerProvider = 1;
-		}
-		// add matches beyond countPerProvider
-		while (showAllMatches && !done);
+
+		} while ((showAllMatches || countTotal < maxCount) && !done);
+
 		if (!perfectMatchAdded) {
 			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
 			if (entryEnabled(providers[0], entry)) {
@@ -433,6 +414,7 @@ public abstract class QuickAccessContents {
 				entries[0].add(entry);
 			}
 		}
+
 		// number of items matching the filtered search
 		numberOfFilteredResults = countTotal - prevPick;
 		return entries;
