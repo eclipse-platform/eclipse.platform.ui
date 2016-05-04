@@ -171,16 +171,17 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 
 	private String readXMLDecl(Reader input) throws IOException {
 		BufferedReader reader = new BufferedReader(input);
-		String xmlDecl = new String();
 		String line = null;
 
-		while (xmlDecl.length() < 100 && ((line = reader.readLine()) != null)) {
-			xmlDecl = xmlDecl + line;
+		StringBuilder stringBuilder = new StringBuilder(100);
+		while (stringBuilder.length() < 100 && ((line = reader.readLine()) != null)) {
+			stringBuilder.append(line);
 			if (line.indexOf(XML_DECL_END) != -1) {
-				return xmlDecl.substring(0, xmlDecl.indexOf(XML_DECL_END) + XML_DECL_END.length());
+				String resultString = stringBuilder.toString();
+				return resultString.substring(0, resultString.indexOf(XML_DECL_END) + XML_DECL_END.length());
 			}
 		}
-		return xmlDecl;
+		return stringBuilder.toString();
 	}
 
 	private String getCharset(String firstLine) {
