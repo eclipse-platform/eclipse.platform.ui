@@ -36,11 +36,11 @@ public class GenericsListTest {
 		}
 
 		public String combineIt() {
-			String result = "";
+			StringBuilder stringBuilder = new StringBuilder();
 			for (String string : field) {
-				result += string;
+				stringBuilder.append(string);
 			}
-			return result;
+			return stringBuilder.toString();
 		}
 	}
 
