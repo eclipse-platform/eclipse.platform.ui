@@ -16,10 +16,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.util.ProductPreferences;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.ui.internal.intro.impl.FontSelection;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -39,6 +41,7 @@ import org.eclipse.ui.internal.intro.impl.model.IntroText;
 import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
+import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
@@ -48,6 +51,7 @@ public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
 
 	private IIntroContentProviderSite providerSite;
+	private boolean backgroundSizeWorks;
 
 	/**
 	 * Generates the HTML code that will be presented in the browser widget for the provided intro
@@ -64,10 +68,41 @@ public class IntroHTMLGenerator {
 		this.introPage = page;
 		this.providerSite = providerSite;
 
+		initializeBackgroundSizeWorks();
+		
 		// generate and add the appropriate encoding to the top of the document
 		// generateEncoding();
 		// create the main HTML element, and all of its contents.
 		return generateHTMLElement();
+	}
+	
+	private void initializeBackgroundSizeWorks() {
+		// Internet Explorer <= 9 doesn't properly handle background-size
+		backgroundSizeWorks = true;
+		try {
+			if (getBrowser() != null && "ie".equals(getBrowser().getBrowserType())) { //$NON-NLS-1$
+				Class<?> ieClass = Class.forName("org.eclipse.swt.browser.IE"); //$NON-NLS-1$
+				Field field = ieClass.getDeclaredField("IEVersion"); //$NON-NLS-1$
+				field.setAccessible(true);
+				int value = field.getInt(ieClass);
+				// We specifically care about background-size which works in 9+
+				backgroundSizeWorks = value <= 0 || value >= 9;
+			}
+		} catch(Exception e) {
+			// IE not found
+		}
+	}
+
+	/**
+	 * Return the SWT Browser instance being used to render the intro.
+	 * 
+	 * @return the browser or {@code null} if the browser could not be determined
+	 */
+	private Browser getBrowser() {
+		if (providerSite instanceof BrowserIntroPartImplementation) {
+			return ((BrowserIntroPartImplementation) providerSite).getBrowser();
+		}
+		return null;
 	}
 
 	/*
@@ -376,7 +411,7 @@ public class IntroHTMLGenerator {
 			imageUrl = BundleUtil.getResolvedResourceLocation(element.getBase(), imageUrl, element
 					.getBundle());
 			String style;
-			if (Platform.getWS().equals(Platform.WS_WIN32) && imageUrl.toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+			if (Platform.getWS().equals(Platform.WS_WIN32) && !backgroundSizeWorks && imageUrl.toLowerCase().endsWith(".png")) { //$NON-NLS-1$
 				// IE 5.5+ does not handle alphas in PNGs without
 				// this hack. Remove when IE7 becomes widespread
 				style = "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + imageUrl + "', sizingMethod='crop');"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -969,7 +1004,7 @@ public class IntroHTMLGenerator {
 		HTMLElement image = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true,
 				false);
 		boolean pngOnWin32 = imageSrc != null && Platform.getWS().equals(Platform.WS_WIN32)
-				&& imageSrc.toLowerCase().endsWith(".png"); //$NON-NLS-1$
+				&& !backgroundSizeWorks && imageSrc.toLowerCase().endsWith(".png"); //$NON-NLS-1$
 		if (imageSrc == null || pngOnWin32) {
 			// we must handle PNGs here - IE does not support alpha blanding well.
 			// We will set the alpha image loader and load the real image
