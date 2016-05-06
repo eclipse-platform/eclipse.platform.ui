@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1310,11 +1310,13 @@ public class LaunchConfigurationTabGroupViewer {
 				Set<String> reservednames = ((LaunchConfigurationsDialog) getLaunchConfigurationDialog()).getReservedNameSet();
 				if (mgr.isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
 					ILaunchConfiguration config = ((LaunchManager)mgr).findLaunchConfiguration(currentName);
-					//config cannot be null at this location since the manager knows the name conflicts
+					// config can be null if name matches to unsaved
+					// configuration created in Properties dialog
+					String configTypeName = config != null ? config.getType().getName() : fOriginal.getType().getName();
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
-														 NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, config.getType().getName()), 
+							NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_configuration_already_exists_with_this_name_12, configTypeName), 
 														 null));
 				}
 			}
