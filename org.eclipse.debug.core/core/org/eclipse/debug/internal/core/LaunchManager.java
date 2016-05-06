@@ -1746,6 +1746,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						if(resources[j].equals(resource)) {
 							configurations.add(config);
 							break;
+						} else if (resource.getType() == IResource.PROJECT && resources[j].getType() == IResource.FILE){
+							if (resources[j].getProject().equals(resource)) {
+								configurations.add(config);
+								break;
+							}
 						}
 					}
 				}
@@ -2210,11 +2215,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param project the project that has been closed
 	 */
 	protected void projectClosed(IProject project) {
+		// bug 12134
+		terminateMappedConfigurations(project);
 		for (ILaunchConfiguration config : getLaunchConfigurations(project)) {
 			launchConfigurationDeleted(config);
 		}
-		//bug 12134
-		terminateMappedConfigurations(project);
+
 	}
 
 	/**
