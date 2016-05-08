@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -800,7 +800,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		actionSetAvailabilityTable = actionSetsViewer;
 		actionSetsViewer.getTable().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));
-		actionSetsViewer.setLabelProvider(new GrayOutUnavailableLabelProvider(null));
 		actionSetsViewer.setContentProvider(new ArrayContentProvider());
 		actionSetsViewer.setComparator(new WorkbenchViewerComparator());
 		actionSetsViewer.setCheckStateProvider(new ICheckStateProvider() {
