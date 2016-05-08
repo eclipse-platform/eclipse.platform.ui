@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.navigator.resources.nested;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -24,8 +25,9 @@ public class NestedProjectsLabelProvider extends LabelProvider {
 			return null;
 		}
 		IProject project = (IProject)element;
-		if (project.exists() && !project.getLocation().lastSegment().equals(project.getName())) {
-			return labelProvider.getText(element) + " (in " + project.getLocation().lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		IPath location = project.getLocation();
+		if (location != null && !location.lastSegment().equals(project.getName())) {
+			return labelProvider.getText(element) + " (in " + location.lastSegment() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}
