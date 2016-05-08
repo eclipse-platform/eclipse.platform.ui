@@ -6,12 +6,10 @@
  *
  * Contributors:
  * 	Simon Scholz <simon.scholz@vogella.com> - initial API and implementation;
- * 	Patrik Suzzi <psuzzi@gmail.com> - Bug 491572, 491785
+ * 	Patrik Suzzi <psuzzi@gmail.com> - Bug 491572, 491785, 492749
  ******************************************************************************/
 
 package org.eclipse.ui.internal.handlers;
-
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -34,7 +32,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
@@ -56,10 +55,17 @@ public class FullScreenHandler extends AbstractHandler {
 
 	private boolean showInfoPopup;
 
+	private int timeLastEvent;
+	private FullScreenInfoPopup fullScreenInfoPopup;
+
 	@Override
 	public Object execute(ExecutionEvent event) {
-		Shell shell = HandlerUtil.getActiveShell(event);
+		// 493186 skips execution of duplicated event
+		if (checkDuplicatedEvent(event)) {
+			return null;
+		}
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
+		Shell shell = window.getShell();
 		IBindingService bindingService = window.getService(IBindingService.class);
 		ECommandService commandService = window.getService(ECommandService.class);
 		BindingTableManager bindingTableManager = window.getService(BindingTableManager.class);
@@ -81,12 +87,32 @@ public class FullScreenHandler extends AbstractHandler {
 				message = NLS.bind(WorkbenchMessages.ToggleFullScreenMode_ActivationPopup_Description, keybinding);
 			}
 			if (showInfoPopup) {
-				FullScreenInfoPopup fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE,
-						true, false, false, false, false, null, null, message);
+				fullScreenInfoPopup = new FullScreenInfoPopup(shell, PopupDialog.HOVER_SHELLSTYLE, true, false,
+						false, false, false, null, null, message);
 				fullScreenInfoPopup.open();
+			}
+		} else {
+			if (fullScreenInfoPopup != null) {
+				fullScreenInfoPopup.close();
 			}
 		}
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Check if an event is duplicate, by recording and comparing the time of
+	 * the trigger event. Returns true if an event is triggered twice with an
+	 * event with the same time
+	 */
+	boolean checkDuplicatedEvent(ExecutionEvent event) {
+		if (event != null && event.getTrigger() != null && event.getTrigger() instanceof Event) {
+			int time = ((Event) event.getTrigger()).time;
+			if (time == timeLastEvent) {
+				return true;
+			}
+			timeLastEvent = time;
+		}
+		return false;
 	}
 
 	private static class FullScreenInfoPopup extends PopupDialog {
@@ -120,12 +146,12 @@ public class FullScreenHandler extends AbstractHandler {
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite) super.createDialogArea(parent);
 
-			Link link = new Link(composite, SWT.NONE);
-			link.setText(message);
+			Label label = new Label(composite, SWT.NONE);
+			label.setText(message);
 			GridData gd = new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 			gd.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
 			gd.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
-			link.setLayoutData(gd);
+			label.setLayoutData(gd);
 
 			Button btnDoNotShow = new Button(composite, SWT.CHECK);
 			btnDoNotShow.setText(messageDoNotShowAgain);
@@ -136,11 +162,10 @@ public class FullScreenHandler extends AbstractHandler {
 			gd2.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
 			btnDoNotShow.setLayoutData(gd2);
 
-			link.addSelectionListener(widgetSelectedAdapter(e -> {
+			composite.addDisposeListener((e) -> {
 				WorkbenchPlugin.getDefault().getPreferenceStore()
 						.setValue(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID, btnDoNotShow.getSelection());
-				close();
-			}));
+			});
 
 			return composite;
 		}
