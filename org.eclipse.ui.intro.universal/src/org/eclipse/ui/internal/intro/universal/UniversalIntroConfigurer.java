@@ -181,33 +181,33 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		if (value == null) {
 			return null;
 		}
-		if (value.startsWith("intro:")) { //$NON-NLS-1$
-			bundle = UniversalIntroPlugin.getDefault().getBundle();
-			return resolveFile(bundle, value.substring(6));
-		} else if (value.startsWith("product:")) { //$NON-NLS-1$
-			return resolveFile(bundle, value.substring(8));
+		try {
+			if (value.startsWith("intro:")) { //$NON-NLS-1$
+				bundle = UniversalIntroPlugin.getDefault().getBundle();
+				return resolveFile(bundle, value.substring(6));
+			} else if (value.startsWith("product:")) { //$NON-NLS-1$
+				return resolveFile(bundle, value.substring(8));
+			}
+		} catch (IOException e) {
+			// just use the value as-is
 		}
 		return value;
 	}
 
-	private String resolveFile(Bundle bundle, String path) {
+	private String resolveFile(Bundle bundle, String path) throws IOException {
 		String prefixedPath = getThemePrefixedPath(path);
-		try {
-			URL url = null;
-			if (prefixedPath != null) {
-				url = bundle.getEntry(prefixedPath);
-			}
-			if (url == null) {
-				url = bundle.getEntry(path);
-			}
-			if (url != null) {
-				URL localURL = FileLocator.toFileURL(url);
-				return localURL.toString();
-			}
-		} catch (IOException e) {
+		URL url = null;
+		if (prefixedPath != null) {
+			url = bundle.getEntry(prefixedPath);
 		}
-		// just use the value as-is
-		return path;
+		if (url == null) {
+			url = bundle.getEntry(path);
+		}
+		if (url != null) {
+			URL localURL = FileLocator.toFileURL(url);
+			return localURL.toString();
+		}
+		return null;
 	}
 
 	/**
