@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2016 IBM Corporation and others.
+ *  Copyright (c) 2003, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,11 +7,9 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Mikaël Barbero - Bug 470175
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.lang.reflect.Method;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -54,13 +52,7 @@ public class Worker extends Thread {
 			while ((currentJob = pool.startJob(this)) != null) {
 				IStatus result = Status.OK_STATUS;
 				try {
-					JobCancelabilityMonitor.Options monitoringOptions = JobOSGiUtils.getDefault()
-							.getJobCancelabilityMonitorOptions();
-					if (shouldRunWithMonitoring(monitoringOptions)) {
-						result = runWithCancelabilityMonitoring(monitoringOptions);
-					} else {
-						result = currentJob.run(currentJob.getProgressMonitor());
-					}
+					result = currentJob.run(currentJob.getProgressMonitor());
 				} catch (OperationCanceledException e) {
 					result = Status.CANCEL_STATUS;
 				} catch (Exception e) {
@@ -72,12 +64,8 @@ public class Worker extends Thread {
 				} catch (Error e) {
 					result = handleException(currentJob, e);
 				} finally {
-					// clear interrupted state for this thread
+					//clear interrupted state for this thread
 					Thread.interrupted();
-					// check cancelability of the executed job.
-					if (currentJob.getProgressMonitor() instanceof JobCancelabilityMonitor) {
-						endCancelabilityMonitoring((JobCancelabilityMonitor) currentJob.getProgressMonitor());
-					}
 					//result must not be null
 					if (result == null)
 						result = handleException(currentJob, new NullPointerException());
@@ -93,44 +81,5 @@ public class Worker extends Thread {
 			currentJob = null;
 			pool.endWorker(this);
 		}
-	}
-
-	private boolean shouldRunWithMonitoring(JobCancelabilityMonitor.Options monitoringOptions) {
-		return monitoringOptions != null && monitoringOptions.enabled() && !isJobOverridingCancelingMethod();
-	}
-
-	private IStatus runWithCancelabilityMonitoring(JobCancelabilityMonitor.Options jobCancelabilityMonitorOptions) {
-		JobCancelabilityMonitor pm = new JobCancelabilityMonitor(currentJob, jobCancelabilityMonitorOptions);
-		currentJob.setProgressMonitor(pm);
-		IStatus jobResult = currentJob.run(pm.aboutToStart());
-		return jobResult;
-	}
-
-	private void endCancelabilityMonitoring(JobCancelabilityMonitor pm) {
-		pm.hasStopped();
-		IStatus cancelabilityStatus = pm.createCancelabilityStatus();
-		if (!cancelabilityStatus.isOK()) {
-			RuntimeLog.log(cancelabilityStatus);
-		}
-	}
-
-	/**
-	 * A job may be made responsive to cancelation by overriding
-	 * {@code Job.canceling()}. This method checks that {@link #currentJob} is
-	 * not overriding it.
-	 *
-	 * @return true if {@link #currentJob} overrides Job#canceling(), false
-	 *         otherwise.
-	 */
-	private boolean isJobOverridingCancelingMethod() {
-		Method cancelingMethod = null;
-		try {
-			cancelingMethod = currentJob.getClass().getDeclaredMethod("canceling"); //$NON-NLS-1$
-		} catch (NoSuchMethodException | SecurityException e) {
-			return false;
-		}
-		// Sufficient as InternalJob and Job classes are abstract,
-		// currentJob.getClass cannot be one or the other.
-		return cancelingMethod != null;
 	}
 }

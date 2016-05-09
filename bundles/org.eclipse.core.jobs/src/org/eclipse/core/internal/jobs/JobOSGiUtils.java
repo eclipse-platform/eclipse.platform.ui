@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Mikaël Barbero - Bug 470175
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
 import java.util.Hashtable;
-import org.eclipse.core.internal.jobs.JobCancelabilityMonitor.Options;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -33,7 +31,6 @@ import org.osgi.util.tracker.ServiceTracker;
 class JobOSGiUtils {
 	private ServiceRegistration<DebugOptionsListener> debugRegistration = null;
 	private ServiceTracker bundleTracker = null;
-	private ServiceTracker jobCancelabilityMonitorOptionsTracker = null;
 
 	private static final JobOSGiUtils singleton = new JobOSGiUtils();
 
@@ -68,9 +65,6 @@ class JobOSGiUtils {
 
 		bundleTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 		bundleTracker.open();
-
-		jobCancelabilityMonitorOptionsTracker = new ServiceTracker(context, JobCancelabilityMonitor.Options.class, null);
-		jobCancelabilityMonitorOptionsTracker.open();
 	}
 
 	void closeServices() {
@@ -81,10 +75,6 @@ class JobOSGiUtils {
 		if (bundleTracker != null) {
 			bundleTracker.close();
 			bundleTracker = null;
-		}
-		if (jobCancelabilityMonitorOptionsTracker != null) {
-			jobCancelabilityMonitorOptionsTracker.close();
-			jobCancelabilityMonitorOptionsTracker = null;
 		}
 	}
 
@@ -133,26 +123,5 @@ class JobOSGiUtils {
 		if (value == null)
 			return false;
 		return "true".equalsIgnoreCase(value); //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the options for the job cancelability monitor. Options have to
-	 * registered as an OSGi service.
-	 *
-	 * @return the options for the job cancelability monitor.
-	 */
-	JobCancelabilityMonitor.Options getJobCancelabilityMonitorOptions() {
-		final Options ret;
-		if (jobCancelabilityMonitorOptionsTracker == null) {
-			ret = null;
-		} else {
-			Object service = jobCancelabilityMonitorOptionsTracker.getService();
-			if (service == null) {
-				ret = JobCancelabilityMonitor.DEFAULT_OPTIONS;
-			} else {
-				ret = (Options) service;
-			}
-		}
-		return ret;
 	}
 }
