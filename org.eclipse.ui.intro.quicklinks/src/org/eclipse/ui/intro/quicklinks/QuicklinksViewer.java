@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -79,7 +80,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 
 	/** Represents the importance of an element */
 	enum Importance {
-		HIGH("high", 0), MEDIUM("medium", 1), LOW("low", 2);
+		HIGH("high", 0), MEDIUM("medium", 1), LOW("low", 2); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		String id;
 		int level;
@@ -214,7 +215,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			if (ELMT_COMMAND.equals(ce.getName())) {
 				key = ce.getAttribute(ATT_ID);
 				if (key == null) {
-					Log.warning("Skipping '" + ce.getName() + "': missing " + ATT_ID);
+					Log.warning(NLS.bind("Skipping '{0}': missing {1}", ce.getName(), ATT_ID)); //$NON-NLS-1$
 					return;
 				}
 				ql.commandSpec = key;
@@ -224,7 +225,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			} else if (ELMT_URL.equals(ce.getName())) {
 				key = ce.getAttribute(ATT_LOCATION);
 				if (key == null) {
-					Log.warning("Skipping '" + ELMT_URL + "': missing " + ATT_LOCATION);
+					Log.warning(NLS.bind("Skipping '{0}': missing {1}", ELMT_URL, ATT_LOCATION)); //$NON-NLS-1$
 					return;
 				}
 				ql.url = key;
@@ -253,8 +254,8 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		 */
 		private Stream<Quicklink> findMatchingQuicklinks(String commandSpecPattern) {
 			// transform simple wildcards into regexp
-			String regexp = commandSpecPattern.replace(".", "\\.").replace("(", "\\(").replace(")", "\\)")
-					.replace("*", ".*");
+			String regexp = commandSpecPattern.replace(".", "\\.").replace("(", "\\(").replace(")", "\\)") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					.replace("*", ".*"); //$NON-NLS-1$ //$NON-NLS-2$
 			final Pattern pattern = Pattern.compile(regexp);
 			return quicklinks.values().stream().filter(
 					ql -> ql.commandSpec != null && (commandSpecPattern.equals(ql.commandSpec)
@@ -342,26 +343,26 @@ public class QuicklinksViewer implements IIntroContentProvider {
 			try {
 				// ah how lovely to embed HTML in code
 				String urlEncodedCommand = asEmbeddedURL(ql);
-				out.append("<a class='content-link'");
+				out.append("<a class='content-link'"); //$NON-NLS-1$
 				if (ql.commandSpec != null) {
-					out.append(" id='").append(asCSSId(ql.commandSpec)).append("' ");
+					out.append(" id='").append(asCSSId(ql.commandSpec)).append("' "); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				out.append(" href='");
+				out.append(" href='"); //$NON-NLS-1$
 				out.append(urlEncodedCommand);
-				out.append("'>");
+				out.append("'>"); //$NON-NLS-1$
 				if (ql.iconUrl != null) {
-					out.append("<img class='background-image' src='").append(ql.iconUrl).append("'>");
+					out.append("<img class='background-image' src='").append(ql.iconUrl).append("'>"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				out.append("\n<div class='link-extra-div'></div>\n"); // UNKNOWN
-				out.append("<span class='link-label'>");
+				out.append("\n<div class='link-extra-div'></div>\n"); // UNKNOWN //$NON-NLS-1$
+				out.append("<span class='link-label'>"); //$NON-NLS-1$
 				out.append(ql.label);
-				out.append("</span>");
+				out.append("</span>"); //$NON-NLS-1$
 				if (ql.description != null) {
-					out.append("\n<p><span class='text'>");
+					out.append("\n<p><span class='text'>"); //$NON-NLS-1$
 					out.append(ql.description);
-					out.append("</span></p>");
+					out.append("</span></p>"); //$NON-NLS-1$
 				}
-				out.append("</a>");
+				out.append("</a>"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -372,11 +373,11 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		if (ql.url != null) {
 			return ql.url;
 		}
-		String encoded = URLEncoder.encode(ql.commandSpec, "UTF-8");
+		String encoded = URLEncoder.encode(ql.commandSpec, "UTF-8"); //$NON-NLS-1$
 		if (ql.resolution != null) {
-			encoded += "&standby=" + ql.resolution;
+			encoded += "&standby=" + ql.resolution; //$NON-NLS-1$
 		}
-		return "http://org.eclipse.ui.intro/execute?command=" + encoded;
+		return "http://org.eclipse.ui.intro/execute?command=" + encoded; //$NON-NLS-1$
 	}
 
 	/**
@@ -400,7 +401,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	 * @return stable URL
 	 */
 	private String asBrowserURL(String iconURL) {
-		if (iconURL.startsWith("file:") || iconURL.startsWith("http:")) {
+		if (iconURL.startsWith("file:") || iconURL.startsWith("http:")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return iconURL;
 		}
 		try {
@@ -443,10 +444,10 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		loader.save(output, SWT.IMAGE_PNG);
 		if (output.size() * 4 / 3 < MAX_URL_LENGTH) {
 			// You'd think there was a more efficient way to do this...
-			return "data:image/png;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
+			return "data:image/png;base64," + Base64.getEncoder().encodeToString(output.toByteArray()); //$NON-NLS-1$
 		}
 		try {
-			File tempFile = File.createTempFile("qlink", "png");
+			File tempFile = File.createTempFile("qlink", "png"); //$NON-NLS-1$ //$NON-NLS-2$
 			FileOutputStream fos = new FileOutputStream(tempFile);
 			fos.write(output.toByteArray());
 			fos.close();
@@ -549,11 +550,12 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	 * available
 	 */
 	private List<Quicklink> generateDefaultQuicklinks() {
-		return Arrays.asList(forCommand("org.eclipse.oomph.setup.ui.questionnaire", Importance.HIGH),
-				forCommand("org.eclipse.ui.cheatsheets.openCheatSheet"), forCommand("org.eclipse.ui.newWizard"),
-				forCommand("org.eclipse.ui.file.import"),
-				forCommand("org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"),
-				forCommand("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW));
+		return Arrays.asList(forCommand("org.eclipse.oomph.setup.ui.questionnaire", Importance.HIGH), //$NON-NLS-1$
+				forCommand("org.eclipse.ui.cheatsheets.openCheatSheet"), //$NON-NLS-1$
+				forCommand("org.eclipse.ui.newWizard"), //$NON-NLS-1$
+				forCommand("org.eclipse.ui.file.import"), //$NON-NLS-1$
+				forCommand("org.eclipse.epp.mpc.ui.command.showMarketplaceWizard"), //$NON-NLS-1$
+				forCommand("org.eclipse.ui.edit.text.openLocalFile", Importance.LOW)); //$NON-NLS-1$
 	}
 
 	public void dispose() {

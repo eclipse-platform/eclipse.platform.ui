@@ -15,9 +15,9 @@
          point="org.eclipse.ui.intro.quicklinks">
       <!-- Invoke a simple command -->
       <command
-            description="Open a single file"
+            description="%openlocalfile.description"
             id="org.eclipse.ui.edit.text.openLocalFile"
-            label="Open an existing file"
+            label="%openlocalfile.label"
             resolution="launchbar">
       </command>
       
@@ -26,17 +26,17 @@
       	want to override label and description as the command description is generic
        -->
       <command
-            description="Create a new Java Eclipse project"
+            description="%newjavaproject.description"
             id="org.eclipse.ui.newWizard(newWizardId=org.eclipse.jdt.ui.wizards.JavaProjectWizard)"
-            label="Create a new Java project">
+            label="%newjavaproject.label">
       </command>
       
       <!-- Open the Import Existing Project -->
       <command
-            description="Import an already existing project into Eclipse"
+            description="%importexistingproject.description"
             icon="platform:/plugin/org.eclipse.ui/icons/full/wizban/import_wiz.png"
             id="org.eclipse.ui.file.import(importWizardId=org.eclipse.ui.wizards.import.ExternalProject)"
-            label="Import an existing project"
+            label="%importexistingproject.label"
             resolution="standby">
       </command>
       
@@ -58,14 +58,14 @@
       </command>
       <url
             location="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.jdt.helloworld"
-            label="Let Eclipse guide how to create Hello World"
-            description="Use Eclipse's guided walkthrough to create Hello World"
+            label="%helloworld.label"
+            description="%helloworld.description"
             importance="high">
       </url>
       <url
             location="http://google.com"
-            label="Open Google"
-            description="Use Google to search the world"
+            label="%opengoogle.label"
+            description="%opengoogle.description"
             importance="medium">
       </url>
    </extension>
