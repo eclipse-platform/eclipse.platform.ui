@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -92,6 +93,8 @@ public class AutoSavePreferencePage extends PreferencePage implements IWorkbench
 		createAutoSaveGroup(composite);
 		createIntervalPart();
 		createMessagesPart();
+		
+		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 
