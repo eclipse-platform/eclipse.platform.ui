@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ericsson AB, Julian Enoch - Bug 465594
  *******************************************************************************/
 package org.eclipse.ant.tests.core.tests;
 
@@ -27,6 +28,7 @@ import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 public class FrameworkTests extends AbstractAntTest {
 
@@ -149,11 +151,11 @@ public class FrameworkTests extends AbstractAntTest {
 			// running on a JRE where tools.jar could not be found
 			return;
 		}
-		run("javac.xml", new String[] { "build", "refresh" }, false); //standard compiler //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		run("javac.xml", new String[] { "build", "refresh" }, false); // standard compiler //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertSuccessful();
 		IFile classFile = getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Class file was not generated", classFile.exists()); //$NON-NLS-1$
-		run("javac.xml", new String[] { "-Duse.eclipse.compiler=true", "clean", "build", "refresh" }, false); //JDTCompiler //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		run("javac.xml", new String[] { "-Duse.eclipse.compiler=true", "clean", "build", "refresh" }, false); // JDTCompiler //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		assertSuccessful();
 		classFile = getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Class file was not generated", classFile.exists()); //$NON-NLS-1$
@@ -254,5 +256,29 @@ public class FrameworkTests extends AbstractAntTest {
 		}
 		TargetInfo[] infos = runner.getAvailableTargets();
 		assertTrue("incorrect number of targets retrieved", infos != null && infos.length == 3); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests bug 389564 for a class path entry as a url representing a remote file system location
+	 * 
+	 * @throws MalformedURLException
+	 */
+	public void testAntClasspathEntryFromUrl() throws MalformedURLException {
+
+		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+
+		String path = "//hub/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar"; //$NON-NLS-1$
+		URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + path);
+		IAntClasspathEntry entry = new AntClasspathEntry(url);
+
+		IAntClasspathEntry[] entries = prefs.getAntHomeClasspathEntries();
+		IAntClasspathEntry[] newEntries = new IAntClasspathEntry[entries.length + 1];
+		System.arraycopy(entries, 0, newEntries, 0, entries.length);
+		newEntries[entries.length] = entry;
+		prefs.setAntHomeClasspathEntries(newEntries);
+
+		IAntClasspathEntry resultedEntries[] = prefs.getAntHomeClasspathEntries();
+		assertFalse("Incorrect classpath entry. This would have been the value before the fix", resultedEntries[entries.length].getLabel().equals(new Path("/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar").toOSString())); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect classpath entry", resultedEntries[entries.length].getLabel().equals(new Path("//hub/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar").toOSString())); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
