@@ -115,7 +115,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 		 * the viewer).
 		 * added controls how many lines are added - added lines are
 		 */
-		String text= ""; //$NON-NLS-1$
+		StringBuffer text = new StringBuffer();
 		int added= 0;
 		for (Iterator<? extends ILineDiffInfo> it= diffInfos.iterator(); it.hasNext();) {
 			ILineDiffInfo info= it.next();
@@ -125,26 +125,29 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			if (type == ILineDiffInfo.ADDED)
 				added++;
 			else if (type == ILineDiffInfo.CHANGED) {
-				text += "> " + (original.length > 0 ? original[i++] : ""); //$NON-NLS-1$ //$NON-NLS-2$
+				text.append("> ").append(original.length > 0 ? original[i++] : ""); //$NON-NLS-1$ //$NON-NLS-2$
 				maxLines--;
 			} else if (type == ILineDiffInfo.UNCHANGED) {
 				maxLines++;
 			}
 			if (maxLines == 0)
-				return trimTrailing(text);
+				return trimTrailing(text.toString());
 			for (; i < original.length; i++) {
-				text += "- " + original[i]; //$NON-NLS-1$
+				text.append("- ").append( original[i]); //$NON-NLS-1$
 				added--;
 				if (--maxLines == 0)
-					return trimTrailing(text);
+					return trimTrailing(text.toString());
 			}
 		}
-		text= text.trim();
-		if (text.length() == 0 && added-- > 0 && maxLines-- > 0)
-			text += "+ "; //$NON-NLS-1$
-		while (added-- > 0 && maxLines-- > 0)
-			text += "\n+ "; //$NON-NLS-1$
-		return text;
+		
+		text = new StringBuffer(text.toString().trim());
+		if (text.length() == 0 && added-- > 0 && maxLines-- > 0) {
+			text.append("+ ");//$NON-NLS-1$
+		}
+		while (added-- > 0 && maxLines-- > 0) {
+			text.append("\n+ "); //$NON-NLS-1$
+		}
+		return text.toString();
 	}
 
 	/**

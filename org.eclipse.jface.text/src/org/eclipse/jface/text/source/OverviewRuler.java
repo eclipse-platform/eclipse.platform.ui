@@ -1505,7 +1505,7 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 		if (fHeader.getToolTipText() != null)
 			return;
 
-		String overview= ""; //$NON-NLS-1$
+		StringBuffer overview = new StringBuffer(); 
 
 		for (int i= fAnnotationsSortedByLayer.size() -1; i >= 0; i--) {
 
@@ -1528,14 +1528,15 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			}
 
 			if (annotationTypeLabel != null) {
-				if (overview.length() > 0)
-					overview += "\n"; //$NON-NLS-1$
-				overview += JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", new Object[] {annotationTypeLabel, new Integer(count)}); //$NON-NLS-1$
+				if (overview.length() > 0) {
+					overview.append("\n"); //$NON-NLS-1$
+				}
+				overview.append(JFaceTextMessages.getFormattedString("OverviewRulerHeader.toolTipTextEntry", new Object[] {annotationTypeLabel, Integer.valueOf(count)})); //$NON-NLS-1$
 			}
 		}
 
 		if (overview.length() > 0)
-			fHeader.setToolTipText(overview);
+			fHeader.setToolTipText(overview.toString());
 	}
 
 	/**
