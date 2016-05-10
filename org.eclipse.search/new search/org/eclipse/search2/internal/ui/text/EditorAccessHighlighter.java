@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
@@ -71,10 +72,8 @@ public class EditorAccessHighlighter extends Highlighter {
 				}
 			}
 		}
-		for (Iterator<IAnnotationModel> maps= mapsByAnnotationModel.keySet().iterator(); maps.hasNext();) {
-			IAnnotationModel model= maps.next();
-			Map<Annotation, Position> positionMap= mapsByAnnotationModel.get(model);
-			addAnnotations(model, positionMap);
+		for (Entry<IAnnotationModel, HashMap<Annotation, Position>> entry : mapsByAnnotationModel.entrySet()) {
+			addAnnotations(entry.getKey(), entry.getValue());
 		}
 
 	}

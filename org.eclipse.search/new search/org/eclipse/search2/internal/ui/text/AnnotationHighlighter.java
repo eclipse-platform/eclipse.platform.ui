@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
@@ -117,10 +118,9 @@ public class AnnotationHighlighter extends Highlighter {
 			IAnnotationModelExtension ame= (IAnnotationModelExtension) fModel;
 			ame.replaceAnnotations(new Annotation[0], annotationToPositionMap);
 		} else {
-			for (Iterator<Annotation> elements= annotationToPositionMap.keySet().iterator(); elements.hasNext();) {
-				Annotation element= elements.next();
-				Position p= annotationToPositionMap.get(element);
-				fModel.addAnnotation(element, p);
+			Set<Entry<Annotation, Position>> entrySet = annotationToPositionMap.entrySet();
+			for (Entry<Annotation, Position> entry : entrySet) {
+				fModel.addAnnotation(entry.getKey(), entry.getValue());
 			}
 		}
 	}

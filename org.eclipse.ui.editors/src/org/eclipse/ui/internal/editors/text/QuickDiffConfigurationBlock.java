@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -411,10 +412,9 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void initializeFields() {
-		Iterator<Button> e= fCheckBoxes.keySet().iterator();
-		while (e.hasNext()) {
-			Button b= e.next();
-			String key= fCheckBoxes.get(b);
+		for (Entry<Button, String> entry : fCheckBoxes.entrySet()) {
+			Button b = entry.getKey();
+			String key= entry.getValue();
 			b.setSelection(fStore.getBoolean(key));
 		}
 

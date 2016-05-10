@@ -13,9 +13,9 @@ package org.eclipse.text.edits;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -420,9 +420,9 @@ public final class MoveSourceEdit extends TextEdit {
 	}
 
 	private static void restorePositions(Map<TextEdit, TextEdit> editMap) {
-		for (Iterator<TextEdit> iter= editMap.keySet().iterator(); iter.hasNext();) {
-			TextEdit marker= iter.next();
-			TextEdit edit= editMap.get(marker);
+		for (Entry<TextEdit, TextEdit> entry: editMap.entrySet()) {
+			TextEdit marker = entry.getKey();
+			TextEdit edit= entry.getValue();
 			if (marker.isDeleted()) {
 				edit.markAsDeleted();
 			} else {

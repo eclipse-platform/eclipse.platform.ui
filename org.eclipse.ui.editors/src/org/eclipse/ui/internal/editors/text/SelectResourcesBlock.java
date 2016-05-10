@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -864,14 +865,15 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		Set<Object> selectedNodes= new HashSet<>();
 		checkedStateStore= new HashMap<>();
 
-		//Update the store before the hierarchy to prevent updating parents
+		// Update the store before the hierarchy to prevent updating parents
 		// before all of the children are done
-		Iterator<IContainer> keyIterator= items.keySet().iterator();
-		while (keyIterator.hasNext()) {
-			Object key= keyIterator.next();
+		
+		for (Entry<IContainer, List<Object>> entry : items.entrySet()) {
+			Object key = entry.getKey();
 			primeHierarchyForSelection(key, selectedNodes);
-			checkedStateStore.put(key, items.get(key));
+			checkedStateStore.put(key, entry.getValue());
 		}
+			
 
 		// Update the checked tree items. Since each tree item has a selected
 		// item, all the tree items will be gray checked.

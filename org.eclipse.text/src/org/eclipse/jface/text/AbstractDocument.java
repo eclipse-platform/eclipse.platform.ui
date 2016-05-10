@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Assert;
@@ -655,10 +656,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		if (fDocumentPartitioners != null) {
 			fDocumentPartitioningChangedEvent= new DocumentPartitioningChangedEvent(this);
-			Iterator<String> e= fDocumentPartitioners.keySet().iterator();
-			while (e.hasNext()) {
-				String partitioning= e.next();
-				IDocumentPartitioner partitioner= fDocumentPartitioners.get(partitioning);
+			for (Entry<String, IDocumentPartitioner> entry : fDocumentPartitioners.entrySet()) {
+
+				String partitioning= entry.getKey();
+				IDocumentPartitioner partitioner= entry.getValue();
 
 				if (partitioner instanceof IDocumentPartitionerExtension3) {
 					IDocumentPartitionerExtension3 extension= (IDocumentPartitionerExtension3) partitioner;

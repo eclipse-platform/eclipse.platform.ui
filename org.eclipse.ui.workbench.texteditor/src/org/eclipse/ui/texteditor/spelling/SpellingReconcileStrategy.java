@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -100,11 +101,11 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 				if (fAnnotationModel instanceof IAnnotationModelExtension)
 					((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(annotationsToRemove, fAddAnnotations);
 				else {
-					for (int i= 0; i < annotationsToRemove.length; i++)
-						fAnnotationModel.removeAnnotation(annotationsToRemove[i]);
-					for (iter= fAddAnnotations.keySet().iterator(); iter.hasNext();) {
-						Annotation annotation= iter.next();
-						fAnnotationModel.addAnnotation(annotation, fAddAnnotations.get(annotation));
+					for (Annotation element : annotationsToRemove) {
+						fAnnotationModel.removeAnnotation(element);
+					}
+					for (Entry<Annotation, Position> entry : fAddAnnotations.entrySet()) {
+						fAnnotationModel.addAnnotation(entry.getKey(), entry.getValue());
 					}
 				}
 			}
