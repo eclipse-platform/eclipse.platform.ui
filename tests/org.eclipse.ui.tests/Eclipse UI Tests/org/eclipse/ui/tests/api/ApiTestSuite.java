@@ -68,7 +68,7 @@ import org.junit.runners.Suite;
      //IWorkbenchPartTestableTests.class,
      ArbitraryPropertyTest.class,
      LifecycleViewTest.class,
-     Bug407422Test.class
+		Bug407422Test.class, MultipleWindowsTest.class
 })
 public class ApiTestSuite {
 
