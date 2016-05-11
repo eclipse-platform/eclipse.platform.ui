@@ -258,4 +258,23 @@
 			id="org.eclipse.debug.core.propertyTesters.launchable">		
 	  </propertyTester>  
 	</extension>
+ <extension
+       point="org.eclipse.debug.core.launchDelegates">
+    <launchDelegate
+          delegate="org.eclipse.debug.internal.core.groups.GroupLaunchConfigurationDelegate"
+          delegateDescription="%GroupLaunch.description"
+          id="org.eclipse.debug.core.groups.GroupLaunchConfigurationDelegate"
+          modes="run,debug,profile"
+          name="%GroupLaunch.name"
+          type="org.eclipse.debug.core.groups.GroupLaunchConfigurationType">
+    </launchDelegate>
+ </extension>
+ <extension
+       point="org.eclipse.debug.core.launchConfigurationTypes">
+    <launchConfigurationType
+          id="org.eclipse.debug.core.groups.GroupLaunchConfigurationType"
+          name="%GroupLaunch.name"
+          public="true">
+    </launchConfigurationType>
+ </extension>
 </plugin>

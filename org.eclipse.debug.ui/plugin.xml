@@ -1660,7 +1660,31 @@
             code="227"
             id="org.eclipse.debug.ui.statusHandler.duplicateLaunchDelegatesDetected"
             plugin="org.eclipse.debug.core">
-      </statusHandler> 
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.groups.UnsupportedModeHandler"
+            code="230"
+            id="org.eclipse.debug.ui.groups.UnsupportedModeHandler"
+            plugin="org.eclipse.debug.core">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.groups.GroupElementLaunchedHandler"
+            code="231"
+            id="org.eclipse.debug.ui.groups.GroupElementLaunchedHandler"
+            plugin="org.eclipse.debug.core">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.groups.GroupCycleHandler"
+            code="232"
+            id="org.eclipse.debug.ui.groups.GroupCycleHandler"
+            plugin="org.eclipse.debug.core">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.groups.GroupLaunchHandler"
+            code="233"
+            id="org.eclipse.debug.ui.groups.GroupLaunchHandler"
+            plugin="org.eclipse.debug.core">
+      </statusHandler>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchGroups">
@@ -3220,4 +3244,20 @@ M4 = Platform-specific fourth key
          </themeid>
       </stylesheet>
   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.debug.core.groups.GroupLaunchConfigurationType"
+            icon="icons/full/obj16/lgroup_obj.png"
+            id="org.eclipse.debug.ui.groups.GroupLaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.debug.internal.ui.groups.GroupLaunchConfigurationTabGroup"
+            id="org.eclipse.debug.ui.groups.GroupLaunchConfigurationTabGroup"
+            type="org.eclipse.debug.core.groups.GroupLaunchConfigurationType">
+      </launchConfigurationTabGroup>
+   </extension>
 </plugin>

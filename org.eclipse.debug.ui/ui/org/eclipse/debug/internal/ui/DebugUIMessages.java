@@ -237,6 +237,37 @@ public class DebugUIMessages extends NLS {
 	public static String GoToAddressComposite_7;
 
 	//
+	// Launch Groups
+	//
+	public static String GroupLaunch_Cannot_launch;
+	public static String GroupLaunch_Cycle;
+	public static String GroupLaunch_Error;
+	public static String GroupLaunchConfigurationSelectionDialog_10;
+	public static String GroupLaunchConfigurationSelectionDialog_11;
+	public static String GroupLaunchConfigurationSelectionDialog_12;
+	public static String GroupLaunchConfigurationSelectionDialog_13;
+	public static String GroupLaunchConfigurationSelectionDialog_14;
+	public static String GroupLaunchConfigurationSelectionDialog_15;
+	public static String GroupLaunchConfigurationSelectionDialog_4;
+	public static String GroupLaunchConfigurationSelectionDialog_5;
+	public static String GroupLaunchConfigurationSelectionDialog_7;
+	public static String GroupLaunchConfigurationSelectionDialog_8;
+	public static String GroupLaunchConfigurationSelectionDialog_9;
+	public static String GroupLaunchConfigurationTabGroup_1;
+	public static String GroupLaunchConfigurationTabGroup_10;
+	public static String GroupLaunchConfigurationTabGroup_12;
+	public static String GroupLaunchConfigurationTabGroup_13;
+	public static String GroupLaunchConfigurationTabGroup_14;
+	public static String GroupLaunchConfigurationTabGroup_15;
+	public static String GroupLaunchConfigurationTabGroup_16;
+	public static String GroupLaunchConfigurationTabGroup_2;
+	public static String GroupLaunchConfigurationTabGroup_3;
+	public static String GroupLaunchConfigurationTabGroup_4;
+	public static String GroupLaunchConfigurationTabGroup_5;
+	public static String GroupLaunchConfigurationTabGroup_6;
+	public static String GroupLaunchConfigurationTabGroup_7;
+
+	//
 	// Blocks
 	//
 	public static String WorkingDirectoryBlock_4;
