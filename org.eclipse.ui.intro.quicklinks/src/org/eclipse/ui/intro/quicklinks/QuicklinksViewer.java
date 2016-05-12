@@ -513,8 +513,9 @@ public class QuicklinksViewer implements IIntroContentProvider {
 		}
 		try {
 			ParameterizedCommand pc = manager.deserialize(ql.commandSpec);
-			if (!pc.getCommand().isDefined()) {
-				// not an error: just not found
+			if (!pc.getCommand().isDefined() || !pc.getCommand().isHandled()
+					|| !pc.getCommand().isEnabled()) {
+				// not an error: just not found or not enabled
 				return false;
 			}
 			if (ql.label == null) {
