@@ -13,12 +13,10 @@ package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
-import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
+import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.swt.WidgetSideEffects;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -123,13 +121,19 @@ public class SnippetSideEffectTwoWayBinding {
 
 		private void bindData() {
 
-			ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(summaryText);
-
 			// create the observables, which should be bound by the SideEffect
-			IObservableValue<String> textModifyObservable = WidgetProperties.text(SWT.Modify).observe(summaryText);
+			ISWTObservableValue textModifyObservable = WidgetProperties.text(SWT.Modify).observe(summaryText);
 
-			sideEffectFactory.create(task::getSummary, summaryText::setText);
-			sideEffectFactory.create(textModifyObservable::getValue, task::setSummary);
+			ISideEffect modelToTarget = ISideEffect.create(task::getSummary, summaryText::setText);
+			ISideEffect targetToModel = ISideEffect.create(() -> (String) textModifyObservable.getValue(),
+					task::setSummary);
+
+			// dispose the ISideEffect objects, when the widget of the
+			// ISWTObservableValue is disposed
+			textModifyObservable.getWidget().addDisposeListener(e -> {
+				modelToTarget.dispose();
+				targetToModel.dispose();
+			});
 		}
 	}
 
