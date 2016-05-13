@@ -110,7 +110,7 @@ public class FullScreenHandler extends AbstractHandler {
 			int textExtendX = gc.textExtent(message).x;
 			gc.dispose();
 
-			return new Point(bounds.width / 2 - textExtendX / 2, bounds.height / 5);
+			return new Point(bounds.x + bounds.width / 2 - textExtendX / 2, bounds.y + bounds.height / 5);
 		}
 
 		@Override
