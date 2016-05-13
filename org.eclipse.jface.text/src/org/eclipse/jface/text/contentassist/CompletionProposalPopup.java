@@ -10,6 +10,7 @@
  *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
  *     Marcel Bruch, bruch@cs.tu-darmstadt.de - [content assist] Allow to re-sort proposals - https://bugs.eclipse.org/bugs/show_bug.cgi?id=350991
  *     Terry Parker, tparker@google.com - Protect against poorly behaved completion proposers - http://bugs.eclipse.org/429925
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 493649
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -102,14 +103,6 @@ import org.eclipse.jface.text.TextUtilities;
  * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
  */
 class CompletionProposalPopup implements IContentAssistListener {
-	/**
-	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL.
-	 * XXX: This is a workaround for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321
-	 * 		More details see also: https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c36
-	 * @since 3.1
-	 */
-	private static final boolean USE_VIRTUAL= !"motif".equals(SWT.getPlatform()); //$NON-NLS-1$
-
 
 	/**
 	 * Completion proposal selection handler.
@@ -590,19 +583,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalShell.setFont(JFaceResources.getDefaultFont());
-		if (USE_VIRTUAL) {
-			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
-			Listener listener= new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					handleSetData(event);
-				}
-			};
-			fProposalTable.addListener(SWT.SetData, listener);
-		} else {
-			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
-		}
+		Listener listener= new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				handleSetData(event);
+			}
+		};
+		fProposalTable.addListener(SWT.SetData, listener);
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
@@ -1172,34 +1161,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			fFilteredProposals= proposals;
 			final int newLen= proposals.length;
-			if (USE_VIRTUAL) {
-				fProposalTable.clearAll();
-				fProposalTable.setItemCount(newLen);
-			} else {
-				fProposalTable.setRedraw(false);
-				fProposalTable.setItemCount(newLen);
-				TableItem[] items= fProposalTable.getItems();
-				for (int i= 0; i < items.length; i++) {
-					TableItem item= items[i];
-					ICompletionProposal proposal= proposals[i];
-					Image image= null;
-					String displayString= null;
-					try {
-						displayString= proposal.getDisplayString();
-						image= proposal.getImage();
-					} catch (RuntimeException e) {
-						// On failures to retrieve the proposal's text, insert a dummy entry and log the error.
-						String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
-						ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
-						log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, JFaceTextMessages.getString("CompletionProposalPopup.unexpected_error"), e)); //$NON-NLS-1$
-						displayString= JFaceTextMessages.getString("CompletionProposalPopup.error_retrieving_proposal"); //$NON-NLS-1$
-					}
-					item.setText(displayString);
-					item.setImage(image);
-					item.setData(proposal);
-				}
-				fProposalTable.setRedraw(true);
-			}
+
+			fProposalTable.clearAll();
+			fProposalTable.setItemCount(newLen);
 
 			Point currentLocation= fProposalShell.getLocation();
 			Point newLocation= getLocation();
