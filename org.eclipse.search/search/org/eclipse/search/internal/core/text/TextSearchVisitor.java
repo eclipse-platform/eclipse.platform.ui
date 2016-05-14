@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Terry Parker <tparker@google.com> (Google Inc.) - Bug 441016 - Speed up text search by parallelizing it using JobGroups
+ *     Sergey Prigogin (Google) - Bug 489551 - File Search silently drops results on StackOverflowError
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -144,7 +146,6 @@ public class TextSearchVisitor {
 		private final int fEnd;
 		private final Map<IFile, IDocument> fDocumentsInEditors;
 		private ReusableMatchAccess fReusableMatchAccess;
-		private IProgressMonitor fMonitor;
 
 		/**
 		 * Searches for matches in a set of files.
@@ -165,24 +166,88 @@ public class TextSearchVisitor {
 
 		@Override
 		protected IStatus run(IProgressMonitor inner) {
-			fMonitor= inner;
 			MultiStatus multiStatus=
 					new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
-			for (int i = fBegin; i < fEnd; i++) {
-				IStatus status= processFile(fFiles[i], this);
+			SubMonitor subMonitor = SubMonitor.convert(inner, fEnd - fBegin);
+			for (int i = fBegin; i < fEnd && !fFatalError; i++) {
+				IStatus status= processFile(fFiles[i], subMonitor.split(1));
 				// Only accumulate interesting status
 				if (!status.isOK())
 					multiStatus.add(status);
 				// Group cancellation is propagated to this job's monitor.
 				// Stop processing and return the status for the completed jobs.
-				if (inner.isCanceled())
-					break;
 			}
 			return multiStatus;
 		}
 
-		public IProgressMonitor getMonitor() {
-			return fMonitor;
+		public IStatus processFile(IFile file, IProgressMonitor monitor) {
+			// A natural cleanup after the change to use JobGroups is accepted would be to move these
+			// methods to the TextSearchJob class.
+			ReusableMatchAccess matchAccess= getReusableMatchAccess();
+			Matcher matcher= fSearchPattern.pattern().length() == 0 ? null : fSearchPattern.matcher(""); //$NON-NLS-1$
+			FileCharSequenceProvider fileCharSequenceProvider= new FileCharSequenceProvider();
+
+			try {
+				if (!fCollector.acceptFile(file) || matcher == null) {
+					return Status.OK_STATUS;
+				}
+
+				IDocument document= getOpenDocument(file, getDocumentsInEditors());
+
+				if (document != null) {
+					DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
+					// assume all documents are non-binary
+					locateMatches(file, documentCharSequence, matcher, matchAccess, monitor);
+				} else {
+					CharSequence seq= null;
+					try {
+						seq= fileCharSequenceProvider.newCharSequence(file);
+						if (hasBinaryContent(seq, file) && !fCollector.reportBinaryFile(file)) {
+							return Status.OK_STATUS;
+						}
+						locateMatches(file, seq, matcher, matchAccess, monitor);
+					} catch (FileCharSequenceProvider.FileCharSequenceException e) {
+						e.throwWrappedException();
+					} finally {
+						if (seq != null) {
+							try {
+								fileCharSequenceProvider.releaseCharSequence(seq);
+							} catch (IOException e) {
+								SearchPlugin.log(e);
+							}
+						}
+					}
+				}
+			} catch (UnsupportedCharsetException e) {
+				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+				String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args);
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			} catch (IllegalCharsetNameException e) {
+				String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
+				String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args);
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			} catch (IOException e) {
+				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
+				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			} catch (CoreException e) {
+				if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
+					return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+				}
+				String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
+				String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			} catch (StackOverflowError e) {
+				fFatalError = true;
+				String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
+				return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
+			} finally {
+				synchronized (fLock) {
+					fCurrentFile= file;
+					fNumberOfScannedFiles++;
+				}
+			}
+			return Status.OK_STATUS;
 		}
 
 		public Map<IFile, IDocument> getDocumentsInEditors() {
@@ -202,12 +267,13 @@ public class TextSearchVisitor {
 
 	private IProgressMonitor fProgressMonitor;
 
-	private int fNumberOfScannedFiles;
 	private int fNumberOfFilesToScan;
-	private IFile fCurrentFile;
+	private int fNumberOfScannedFiles;  // Protected by fLock
+	private IFile fCurrentFile;  // Protected by fLock
 	private Object fLock= new Object();
 
 	private final MultiStatus fStatus;
+	private volatile boolean fFatalError; // If true, terminates the search.
 
 	private boolean fIsLightweightAutoRefresh;
 
@@ -362,79 +428,6 @@ public class TextSearchVisitor {
 				}
 			}
 		}
-	}
-
-	public IStatus processFile(IFile file, TextSearchJob job) {
-		// A natural cleanup after the change to use JobGroups is accepted would be to move these
-		// methods to the TextSearchJob class.
-		IProgressMonitor monitor= job.getMonitor();
-		ReusableMatchAccess matchAccess= job.getReusableMatchAccess();
-		Matcher matcher= fSearchPattern.pattern().length() == 0 ? null : fSearchPattern.matcher(""); //$NON-NLS-1$
-		FileCharSequenceProvider fileCharSequenceProvider= new FileCharSequenceProvider();
-
-		try {
-			if (!fCollector.acceptFile(file) || matcher == null) {
-				return Status.OK_STATUS;
-			}
-
-			IDocument document= getOpenDocument(file, job.getDocumentsInEditors());
-
-			if (document != null) {
-				DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
-				// assume all documents are non-binary
-				locateMatches(file, documentCharSequence, matcher, matchAccess, monitor);
-			} else {
-				CharSequence seq= null;
-				try {
-					seq= fileCharSequenceProvider.newCharSequence(file);
-					if (hasBinaryContent(seq, file) && !fCollector.reportBinaryFile(file)) {
-						return Status.OK_STATUS;
-					}
-					locateMatches(file, seq, matcher, matchAccess, monitor);
-				} catch (FileCharSequenceProvider.FileCharSequenceException e) {
-					e.throwWrappedException();
-				} finally {
-					if (seq != null) {
-						try {
-							fileCharSequenceProvider.releaseCharSequence(seq);
-						} catch (IOException e) {
-							SearchPlugin.log(e);
-						}
-					}
-				}
-			}
-		} catch (UnsupportedCharsetException e) {
-			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_unsupportedcharset, args);
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
-		} catch (IllegalCharsetNameException e) {
-			String[] args= { getCharSetName(file), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_illegalcharset, args);
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
-		} catch (IOException e) {
-			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString()};
-			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
-		} catch (CoreException e) {
-			if (fIsLightweightAutoRefresh && IResourceStatus.RESOURCE_NOT_FOUND == e.getStatus().getCode()) {
-				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
-			}
-			String[] args= { getExceptionMessage(e), file.getFullPath().makeRelative().toString() };
-			String message= Messages.format(SearchMessages.TextSearchVisitor_error, args);
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
-		} catch (StackOverflowError e) {
-			// Trigger cancellation of remaining jobs in the group.
-			// An alternative is to move this method into TextSearchJob and call getJobGroup().cancel() directly.
-			fProgressMonitor.setCanceled(true);
-			String message= SearchMessages.TextSearchVisitor_patterntoocomplex0;
-			return new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, message, e);
-		} finally {
-			synchronized (fLock) {
-				fCurrentFile= file;
-				fNumberOfScannedFiles++;
-			}
-		}
-		return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
 
 	private boolean hasBinaryContent(CharSequence seq, IFile file) throws CoreException {
