@@ -74,7 +74,7 @@ import org.eclipse.search.ui.NewSearchUI;
 public class TextSearchVisitor {
 
 	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.search/perf")); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final int NUMBER_OF_LOGICAL_THREADS= Runtime.getRuntime().availableProcessors();
+	private static final int NUMBER_OF_LOGICAL_THREADS= Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
 	private static final int FILES_PER_JOB= 50;
 
 	public static class ReusableMatchAccess extends TextSearchMatchAccess {
