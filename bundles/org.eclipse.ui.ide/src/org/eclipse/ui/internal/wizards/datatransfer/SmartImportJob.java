@@ -169,7 +169,7 @@ public class SmartImportJob extends Job {
 			if (directoriesToImport != null) {
 				this.deepChildrenDetection = false;
 				SubMonitor loopMonitor = SubMonitor.convert(monitor,
-						DataTransferMessages.SmartImportJob_crawling,
+						DataTransferMessages.SmartImportJob_configuringSelectedDirectories,
 						directoriesToImport.size() * (configureProjects ? 3 : 2) + 1);
 				Comparator<File> rootToLeafComparator = new Comparator<File>() {
 					@Override
