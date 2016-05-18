@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -172,6 +172,10 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		if (disableTestsBug347491) {
 			return;
 		}
+		if (disableTestsBug493357) {
+			System.out.println(getName() + " disabled due to Bug 493357");
+			return;
+		}
 		if (setDataCalls == 0) {
 			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
 			return;
@@ -182,6 +186,10 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     @Override
 	public void testInsertSiblings() {
 		if (disableTestsBug347491) {
+			return;
+		}
+		if (disableTestsBug493357) {
+			System.out.println(getName() + " disabled due to Bug 493357");
 			return;
 		}
 		if (setDataCalls == 0) {
@@ -208,6 +216,10 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 		if (disableTestsBug347491) {
 			return;
 		}
+		if (disableTestsBug493357) {
+			System.out.println(getName() + " disabled due to Bug 493357");
+			return;
+		}
 		if (setDataCalls == 0) {
 			System.err.println("SWT.SetData is not received. Cancelled test " + getName());
 			return;
@@ -218,6 +230,10 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
 	@Override
 	public void testWorldChanged() {
 		if (disableTestsBug347491) {
+			return;
+		}
+		if (disableTestsBug493357) {
+			System.out.println(getName() + " disabled due to Bug 493357");
 			return;
 		}
 		if (setDataCalls == 0) {
