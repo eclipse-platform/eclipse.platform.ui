@@ -16,7 +16,7 @@ org.eclipse.jface/debug/logURLImageDescriptorMissing2x=false
 org.eclipse.jface/debug/loadURLImageDescriptorDirectly=false
 
 # Switch URLImageDescriptor to load images using the "@2x" convention for high-dpi
-org.eclipse.jface/debug/loadURLImageDescriptor2x=false
+org.eclipse.jface/debug/loadURLImageDescriptor2x=true
 
 # Always load the .png image of the "@2x" version, even if the original image was a .gif.
 org.eclipse.jface/debug/loadURLImageDescriptor2xPngForGif=false

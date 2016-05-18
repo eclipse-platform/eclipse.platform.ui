@@ -81,7 +81,7 @@ public class InternalPolicy {
 	 *
 	 * @since 3.11
 	 */
-	public static boolean DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x = false;
+	public static boolean DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_2x = true;
 
 	/**
 	 * (NON-API) Always load the .png image of the "@2x" version, even if the
