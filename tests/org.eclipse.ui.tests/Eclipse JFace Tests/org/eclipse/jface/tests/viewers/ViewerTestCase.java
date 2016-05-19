@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -46,7 +45,6 @@ public abstract class ViewerTestCase extends TestCase {
 	public ViewerTestCase(String name) {
 		super(name);
 		disableTestsBug347491 = Util.isCocoa();
-		disableTestsBug493357 = OS.GTK3;
 	}
 
 	protected void assertSelectionEquals(String message, TestElement expected) {
@@ -111,6 +109,7 @@ public abstract class ViewerTestCase extends TestCase {
 
 	@Override
 	public void setUp() {
+		disableTestsBug493357 = System.getProperty("org.eclipse.swt.internal.gtk.version", "").startsWith("3."); // $NON-NLS-1//$NON-NLS-2//$NON-NLS-3
 		oldLogger = Policy.getLog();
 		oldRunner = SafeRunnable.getRunner();
 		Policy.setLog(new ILogger(){
