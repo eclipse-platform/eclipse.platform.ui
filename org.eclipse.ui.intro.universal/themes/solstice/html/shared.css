@@ -47,6 +47,8 @@ H4 .div-label {
 	color:white; 
 	font-weight: normal; 
 	letter-spacing:-0.03em;
+	/* Bug 492993: use !important to prevent header text overflowing on zoom */ 
+	font-size: 31px !important;
 }
 
 /* For separators */

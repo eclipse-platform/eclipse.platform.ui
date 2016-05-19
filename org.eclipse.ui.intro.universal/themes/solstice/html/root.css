@@ -56,7 +56,8 @@ html, body {
 	color:white; 
 	font-family: Verdana, Arial, Helvetica;
 	font-weight: normal;
-	font-size: 22px;
+	/* Bug 492993: use !important to prevent header text overflowing on zoom */ 
+	font-size: 22px !important;
 	letter-spacing:-0.03em;
 }
 
