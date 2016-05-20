@@ -284,7 +284,6 @@ public class AutoSavePreferencePage extends PreferencePage implements IWorkbench
 
 	private void updateEnablement() {
 		boolean autoSave = autoSaveButton.getSelection();
-		getPreferenceStore().setValue(IPreferenceConstants.SAVE_AUTOMATICALLY, autoSave);
 		final Display display = autoSaveButton.getDisplay();
 		noteMessage.setEnabled(autoSave);
 		noteLabel.setEnabled(autoSave);

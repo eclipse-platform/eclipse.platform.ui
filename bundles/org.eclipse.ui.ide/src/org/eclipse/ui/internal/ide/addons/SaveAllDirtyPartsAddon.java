@@ -158,6 +158,7 @@ public class SaveAllDirtyPartsAddon {
 		isAutoSaveActive = autoSave;
 		if (isAutoSaveActive) {
 			eventBroker.subscribe(UIEvents.Dirtyable.TOPIC_DIRTY, dirtyHandler);
+			autoSaveJob.schedule();
 		} else {
 			eventBroker.unsubscribe(dirtyHandler);
 		}
