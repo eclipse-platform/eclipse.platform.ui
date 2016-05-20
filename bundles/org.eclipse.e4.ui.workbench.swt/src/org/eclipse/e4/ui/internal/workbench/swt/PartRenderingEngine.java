@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 457939
  *     Alexander Baranov <achilles-86@mail.ru> - Bug 458460
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 483842
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487621
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
@@ -329,7 +330,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (removed.getWidget() instanceof Control) {
 					Control ctrl = (Control) removed.getWidget();
 					ctrl.setLayoutData(null);
-					ctrl.requestLayout();
+					// bug 487621
+					ctrl.getParent().layout(new Control[] { ctrl }, SWT.CHANGED | SWT.DEFER);
 				}
 
 				// Ensure that the element about to be removed is not the
