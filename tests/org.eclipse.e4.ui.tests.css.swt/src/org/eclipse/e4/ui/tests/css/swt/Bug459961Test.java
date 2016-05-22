@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Stefan Winkler and others.
+ * Copyright (c) 2016 Stefan Winkler and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,11 @@ public class Bug459961Test extends CSSSWTTestCase {
 
 	@Test
 	public void testTransparentColorConstantReference() {
+		if (System.getProperty("org.eclipse.swt.internal.gtk.version", "").startsWith("3.")) { // $NON-NLS-1//NON-NLS-2//NON-NLS-3
+			System.out.println("testTransparentColorConstantReference disabled due to Bug 493640");
+			return;
+		}
+
 		String cssString = "Label { background-color: COLOR-TRANSPARENT; }";
 
 		Label label = createTestLabel(cssString);
