@@ -2491,6 +2491,7 @@
          <command
                commandId="org.eclipse.e4.ui.importer.openDirectory"
                id="org.eclipse.e4.ui.importer.openDirectory.menu"
+               mnemonic="%importProjectsFromFolder_mnemonic"
                style="push">
          </command>
       </menuContribution>
@@ -2500,6 +2501,7 @@
          <command
                commandId="org.eclipse.e4.ui.importer.configureProject"
                id="org.eclipse.e4.ui.importer.configureProject.popupMenu"
+               mnemonic="%configureProject_mnemonic"
                style="push">
                <visibleWhen>
 				<with variable="selection">
@@ -2537,11 +2539,11 @@
          point="org.eclipse.ui.commands">
       <command
             id="org.eclipse.e4.ui.importer.openDirectory"
-            name="%importProjectsFromFolder_menu">
+            name="%importProjectsFromFolder_command">
       </command>
       <command
             id="org.eclipse.e4.ui.importer.configureProject"
-            name="%configureProject_contextMenu">
+            name="%configureProject_command">
       </command>
    </extension>
    <extension
