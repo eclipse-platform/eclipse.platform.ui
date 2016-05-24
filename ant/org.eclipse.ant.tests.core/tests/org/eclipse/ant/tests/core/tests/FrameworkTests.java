@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -278,7 +278,9 @@ public class FrameworkTests extends AbstractAntTest {
 		prefs.setAntHomeClasspathEntries(newEntries);
 
 		IAntClasspathEntry resultedEntries[] = prefs.getAntHomeClasspathEntries();
+		int index = resultedEntries[entries.length].getLabel().indexOf("hub"); //$NON-NLS-1$
+		assertNotSame("Missing machine details", index, -1); //$NON-NLS-1$
 		assertFalse("Incorrect classpath entry. This would have been the value before the fix", resultedEntries[entries.length].getLabel().equals(new Path("/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar").toOSString())); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Incorrect classpath entry", resultedEntries[entries.length].getLabel().equals(new Path("//hub/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar").toOSString())); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Incorrect classpath entry", resultedEntries[entries.length].getLabel().substring(index).equals(new Path("hub/home/tom/.eclipse/3.8/configuration/org.eclipse.osgi/bundles/21/2/.cp/lib/remote.jar").toOSString())); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
