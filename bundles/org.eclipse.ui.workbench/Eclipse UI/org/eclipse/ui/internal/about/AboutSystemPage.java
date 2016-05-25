@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -49,6 +51,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 	private static final int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
 
 	private Text text;
+	private String info = ""; //$NON-NLS-1$
 
 	@Override
 	public void createControl(Composite parent) {
@@ -56,9 +59,16 @@ public final class AboutSystemPage extends ProductInfoPage {
 
 		Composite outer = createOuterComposite(parent);
 
+		final Text filterText = new Text(outer, SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
+		filterText.setLayoutData(GridDataFactory.fillDefaults().create());
+		filterText.setFont(JFaceResources.getDialogFont());
+		filterText.setMessage(WorkbenchMessages.AboutPluginsDialog_filterTextMessage);
+		filterText.setFocus();
+
 		text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
 		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+
 		gridData.grabExcessVerticalSpace = true;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.heightHint = convertVerticalDLUsToPixels(300);
@@ -66,6 +76,31 @@ public final class AboutSystemPage extends ProductInfoPage {
 		text.setLayoutData(gridData);
 		text.setFont(JFaceResources.getTextFont());
 		fetchConfigurationInfo(text);
+		filterText.addModifyListener(e -> {
+			String filter = filterText.getText();
+			if (filter.isEmpty()) {
+				text.setText(info);
+			} else {
+				StringMatcher matcher = new StringMatcher('*' + filter + '*', true, false);
+
+				StringBuilder filteredInfo = new StringBuilder();
+				boolean previousLineEmpty = false;
+				String delim = System.lineSeparator();
+				String[] infoLines = info.split(delim);
+				for (String line : infoLines) {
+					boolean lineEmpty = line.isEmpty();
+					if (lineEmpty && previousLineEmpty) {
+						continue;
+					}
+					if (lineEmpty || line.startsWith("***") || matcher.match(line)) { //$NON-NLS-1$
+						previousLineEmpty = lineEmpty;
+						filteredInfo.append(line).append(delim);
+					}
+				}
+				text.setText(filteredInfo.toString());
+			}
+		});
+
 		setControl(outer);
 	}
 
@@ -139,7 +174,7 @@ public final class AboutSystemPage extends ProductInfoPage {
 	private void fetchConfigurationInfo(final Text text) {
 		text.setText(WorkbenchMessages.AboutSystemPage_RetrievingSystemInfo);
 		Job job = Job.create(WorkbenchMessages.AboutSystemPage_FetchJobTitle, (IJobFunction) monitor -> {
-			final String info = ConfigurationInfo.getSystemSummary();
+			info = ConfigurationInfo.getSystemSummary();
 			if (!text.isDisposed()) {
 				text.getDisplay().asyncExec(() -> {
 					if (!text.isDisposed()) {
