@@ -1115,7 +1115,6 @@
             id="org.eclipse.ui.window.newEditor" />
       <command
             categoryId="org.eclipse.ui.category.window"
-            defaultHandler="org.eclipse.ui.internal.SplitHandler"
             description="%command.splitEditor.description"
             id="org.eclipse.ui.window.splitEditor"
             name="%command.splitEditor.name">
@@ -2259,6 +2258,18 @@
       <handler
             class="org.eclipse.ui.internal.WorkbookEditorsHandler"
             commandId="org.eclipse.ui.window.openEditorDropDown">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.SplitHandler"
+            commandId="org.eclipse.ui.window.splitEditor">
          <enabledWhen>
             <with
                   variable="activeEditor">

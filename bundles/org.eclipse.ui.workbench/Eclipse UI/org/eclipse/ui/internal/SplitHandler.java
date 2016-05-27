@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 494680
  ******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -33,12 +34,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 public class SplitHandler extends AbstractHandler {
 	private EModelService modelService;
 	private IWorkbenchWindow window;
-
-	/**
-	 * The constructor.
-	 */
-	public SplitHandler() {
-	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
