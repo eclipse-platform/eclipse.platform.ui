@@ -411,7 +411,7 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 		setGridData(panel, SWT.FILL, true, SWT.FILL, true);
 
-		ScrolledComposite scrolled= new ScrolledComposite(panel, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scrolled= new ScrolledComposite(panel, SWT.V_SCROLL);
 		setGridData(scrolled, SWT.FILL, true, SWT.FILL, true);
 
 		Composite mainArea = new Composite(scrolled, SWT.NONE);
@@ -430,7 +430,7 @@ class FindReplaceDialog extends Dialog {
 		scrolled.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				scrolled.setMinSize(mainArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				scrolled.setMinHeight(mainArea.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			}
 		});
 
