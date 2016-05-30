@@ -27,7 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		GotoLineTest.class,
 		SegmentedModeTest.class,
 		MarkerAnnotationOrderTest.class,
-		ZoomTest.class
+		ZoomTest.class,
+		FileDocumentProviderTest.class
 })
 public class EditorsTestSuite {
 	// see @SuiteClasses

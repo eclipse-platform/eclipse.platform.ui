@@ -74,6 +74,7 @@ import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 
@@ -945,7 +946,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 
 	/**
-	 * Refreshes the given file resource.
+	 * Refreshes the given file resource. This method will run the operation in the providers
+	 * runnable context using the monitor supplied by {@link #getProgressMonitor()}.
 	 *
 	 * @param file the file
 	 * @throws CoreException if the refresh fails
@@ -956,18 +958,31 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 
 	/**
-	 * Refreshes the given file resource.
+	 * Refreshes the given file resource. This method will run the operation in the providers
+	 * runnable context using given monitor.
 	 *
 	 * @param file the file to be refreshed
 	 * @param monitor the progress monitor
-	 * @throws  org.eclipse.core.runtime.CoreException if the refresh fails
+	 * @throws org.eclipse.core.runtime.CoreException if the refresh fails
 	 * @since 3.0
 	 */
 	protected void refreshFile(IFile file, IProgressMonitor monitor) throws CoreException {
-		try {
-			file.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		} catch (OperationCanceledException x) {
+		class RefreshFileOperation extends DocumentProviderOperation implements ISchedulingRuleProvider {
+			@Override
+			protected void execute(IProgressMonitor m) throws CoreException {
+				try {
+					file.refreshLocal(IResource.DEPTH_INFINITE, m);
+				} catch (OperationCanceledException x) {
+					// ignore
+				}
+			}
+
+			@Override
+			public ISchedulingRule getSchedulingRule() {
+				return getRefreshRule(file);
+			}
 		}
+		executeOperation(new RefreshFileOperation(), monitor);
 	}
 
 	@Override
@@ -1094,6 +1109,26 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected ISchedulingRule getResetRule(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFileEditorInput input= (IFileEditorInput) element;
+			return fResourceRuleFactory.refreshRule(input.getFile());
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the scheduling rule required for executing <code>refresh</code> on the given element.
+	 * This implementation uses default refresh rule provided by
+	 * {@link IResourceRuleFactory#refreshRule(IResource)}.
+	 *
+	 * @param element the element
+	 * @return the scheduling rule for <code>refresh</code>
+	 * @since 3.11
+	 */
+	protected ISchedulingRule getRefreshRule(Object element) {
+		if (element instanceof IResource) {
+			return fResourceRuleFactory.refreshRule((IResource) element);
+		}
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return fResourceRuleFactory.refreshRule(input.getFile());
