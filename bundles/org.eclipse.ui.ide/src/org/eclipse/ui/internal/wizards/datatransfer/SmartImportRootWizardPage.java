@@ -102,7 +102,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 	private Set<File> alreadyExistingProjects;
 	private Set<File> notAlreadyExistingProjects;
 	private Label selectionSummary;
-	protected Map<File, List<ProjectConfigurator>> potentialProjects;
+	protected Map<File, List<ProjectConfigurator>> potentialProjects = Collections.emptyMap();
 
 	private class FolderForProjectsLabelProvider extends CellLabelProvider implements IColorProvider {
 		public String getText(Object o) {
