@@ -751,7 +751,8 @@ public final class InternalPlatform {
 			Properties prop = new Properties();
 			prop.setProperty(PROP_UUID, uuid);
 			prop.setProperty("version", "1"); //$NON-NLS-1$//$NON-NLS-2$
-			prop.store(os, ""); //$NON-NLS-1$
+			prop.store(os,
+					"To opt-out from using a UUID for all your eclipse instances, please change this value to 0. If you only want to opt-out for one instance, then add eclipse.uuid=0 in the config.ini. If you delete this file, a new UUID will be created"); //$NON-NLS-1$
 		} catch (IOException e) {
 			return;
 		}
