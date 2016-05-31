@@ -564,19 +564,22 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		preferenceChange(null);
 	}
 
-	protected void updateTab(CTabItem cti, MPart part, String attName,
-			Object newValue) {
-		if (UIEvents.UILabel.LABEL.equals(attName)
-				|| UIEvents.UILabel.LOCALIZED_LABEL.equals(attName)) {
+	protected void updateTab(CTabItem cti, MPart part, String attName, Object newValue) {
+		switch (attName) {
+		case UIEvents.UILabel.LABEL:
+		case UIEvents.UILabel.LOCALIZED_LABEL:
 			String newName = (String) newValue;
 			cti.setText(getLabel(part, newName));
-		} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
+			break;
+		case UIEvents.UILabel.ICONURI:
 			cti.setImage(getImage(part));
-		} else if (UIEvents.UILabel.TOOLTIP.equals(attName)
-				|| UIEvents.UILabel.LOCALIZED_TOOLTIP.equals(attName)) {
+			break;
+		case UIEvents.UILabel.TOOLTIP:
+		case UIEvents.UILabel.LOCALIZED_TOOLTIP:
 			String newTTip = (String) newValue;
 			cti.setToolTipText(getToolTip(newTTip));
-		} else if (UIEvents.Dirtyable.DIRTY.equals(attName)) {
+			break;
+		case UIEvents.Dirtyable.DIRTY:
 			Boolean dirtyState = (Boolean) newValue;
 			String text = cti.getText();
 			boolean hasAsterisk = text.length() > 0 && text.charAt(0) == '*';
@@ -587,9 +590,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			} else if (hasAsterisk) {
 				cti.setText(text.substring(1));
 			}
-		} else if (UIEvents.Part.CLOSEABLE.equals(attName)) {
+			break;
+		case UIEvents.Part.CLOSEABLE:
 			Boolean closeableState = (Boolean) newValue;
 			cti.setShowClose(closeableState.booleanValue());
+			break;
+		default:
+			break;
 		}
 	}
 
