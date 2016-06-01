@@ -9,18 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help;
+
 /**
  * Former interface to the help system UI.
  *
- * @deprecated This interface became obsolete in 3.0, along with the extension
- *             point that it was associated with. The functionality provided by
- *             this interface is available elsewhere. Use
+ * @deprecated marked for deletion, see Bug 442959. This interface became
+ *             obsolete in 3.0, along with the extension point that it was
+ *             associated with. The functionality provided by this interface is
+ *             available elsewhere. Use
  *             {@link org.eclipse.help.HelpSystem#getTocs HelpSystem.getTocs()}
- *             and
- *             {@link org.eclipse.help.HelpSystem#getContext HelpSystem.getContext(String)}
- *             to obtain help resources. Use various display methods of
- *             {@link org.eclipse.ui.help.WorkbenchHelp WorkbenchHelp}to
- *             display help resources.
+ *             and {@link org.eclipse.help.HelpSystem#getContext
+ *             HelpSystem.getContext(String)} to obtain help resources. Use
+ *             various display methods of
+ *             {@link org.eclipse.ui.help.WorkbenchHelp WorkbenchHelp}to display
+ *             help resources.
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
 public interface IHelp {
