@@ -24,8 +24,7 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 /**
  * Provides methods for accessing the help UI.
  * <p>
- * The help UI is optional, to allow applications to be configured
- * without one.
+ * The help UI is optional, to allow applications to be configured without one.
  * </p>
  * <p>
  * The various <code>setHelp</code> methods allow context help to be hooked in
@@ -41,17 +40,19 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
  * <code>IContext</code>.
  * </p>
  * <p>
- * This class provides static methods only; it is not intended to be instantiated
- * or subclassed.
+ * This class provides static methods only; it is not intended to be
+ * instantiated or subclassed.
  * </p>
  *
- * @deprecated clients should use <code>IWorkbenchHelpSystem</code> instead
+ * @deprecated marked for deletion, see Bug 442959, clients should use
+ *             <code>IWorkbenchHelpSystem</code> instead
  *
  * @see org.eclipse.help.HelpSystem
  * @see org.eclipse.ui.help.IWorkbenchHelpSystem
  * @see org.eclipse.ui.IWorkbench#getHelpSystem()
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
 public class WorkbenchHelp {
