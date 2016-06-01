@@ -303,15 +303,13 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 				archive.getName() + "_expanded"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param easymportJob2
-	 * @param projectRootPage2
-	 * @return
-	 */
-	private static boolean matchesPage(SmartImportJob easymportJob2, SmartImportRootWizardPage projectRootPage2) {
-		return easymportJob2.getRoot().getAbsoluteFile().equals(projectRootPage2.getSelectedRoot().getAbsoluteFile())
-				&& easymportJob2.isDetectNestedProjects() == projectRootPage2.isDetectNestedProject()
-				&& easymportJob2.isConfigureProjects() == projectRootPage2.isConfigureProjects();
+	private static boolean matchesPage(SmartImportJob job, SmartImportRootWizardPage page) {
+		File jobRoot = job.getRoot().getAbsoluteFile();
+		File pageRoot = page.getSelectedRoot().getAbsoluteFile();
+		boolean sameSource = jobRoot.equals(pageRoot)
+				|| (isValidArchive(pageRoot) && getExpandDirectory(pageRoot).getAbsoluteFile().equals(jobRoot));
+		return sameSource && job.isDetectNestedProjects() == page.isDetectNestedProject()
+				&& job.isConfigureProjects() == page.isConfigureProjects();
 	}
 
 	@Override
