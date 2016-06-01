@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,13 +45,11 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MPerspectiveStack)
-				|| !(parent instanceof Composite))
+		if (!(element instanceof MPerspectiveStack) || !(parent instanceof Composite))
 			return null;
 
 		Composite perspStack = new Composite((Composite) parent, SWT.NONE);
-		IStylingEngine stylingEngine = (IStylingEngine) getContext(element)
-				.get(IStylingEngine.SERVICE_NAME);
+		IStylingEngine stylingEngine = (IStylingEngine) getContext(element).get(IStylingEngine.SERVICE_NAME);
 		stylingEngine.setClassname(perspStack, "perspectiveLayout"); //$NON-NLS-1$
 		perspStack.setLayout(new StackLayout());
 
@@ -63,8 +61,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		super.postProcess(element);
 
 		MPerspectiveStack ps = (MPerspectiveStack) element;
-		if (ps.getSelectedElement() != null
-				&& ps.getSelectedElement().getWidget() != null) {
+		if (ps.getSelectedElement() != null && ps.getSelectedElement().getWidget() != null) {
 			Control ctrl = (Control) ps.getSelectedElement().getWidget();
 			Composite psComp = (Composite) ps.getWidget();
 			StackLayout sl = (StackLayout) psComp.getLayout();
@@ -99,8 +96,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 		// Force a context switch
 		if (tabElement instanceof MPerspective) {
-			MPerspective selected = (MPerspective) tabElement.getParent()
-					.getSelectedElement();
+			MPerspective selected = (MPerspective) tabElement.getParent().getSelectedElement();
 			if (selected != null) {
 				IEclipseContext context = selected.getContext();
 				context.get(EPartService.class).switchPerspective(selected);
