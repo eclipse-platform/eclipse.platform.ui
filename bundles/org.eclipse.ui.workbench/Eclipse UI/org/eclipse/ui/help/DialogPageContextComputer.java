@@ -11,7 +11,6 @@
 package org.eclipse.ui.help;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.help.IContext;
 import org.eclipse.jface.dialogs.IDialogPage;
@@ -23,8 +22,12 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * @deprecated nested contexts are no longer supported by the help support system
- * @noextend This class is not intended to be subclassed by clients.
+ *
+ * @deprecated marked for deletion, see Bug 442961, nested contexts are no
+ *             longer supported by the help support system
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This interface is not intended to be referenced by clients.
  */
 @Deprecated
 public class DialogPageContextComputer implements IContextComputer {
