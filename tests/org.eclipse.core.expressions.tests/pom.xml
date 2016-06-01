@@ -31,23 +31,6 @@
   	<plugins>
   		<plugin>
   			<groupId>org.eclipse.tycho</groupId>
-  			<artifactId>target-platform-configuration</artifactId>
-  			<version>${tycho.version}</version>
-  			<configuration>
-  				<!-- Wouldn't it make sense to have those in MANIFEST -->
-  				<dependency-resolution>
-  					<extraRequirements>
-  						<requirement>
-  							<id>org.eclipse.update.configurator</id>
-  							<type>p2-installable-unit</type>
-  							<versionRange>0.0.0</versionRange>
-  						</requirement>
-  					</extraRequirements>
-  				</dependency-resolution>
-  			</configuration>
-  		</plugin>
-  		<plugin>
-  			<groupId>org.eclipse.tycho</groupId>
   			<artifactId>tycho-surefire-plugin</artifactId>
   			<version>${tycho.version}</version>
   			<configuration>
