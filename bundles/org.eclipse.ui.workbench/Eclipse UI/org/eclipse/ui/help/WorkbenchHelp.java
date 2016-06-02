@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
  * @see org.eclipse.ui.IWorkbench#getHelpSystem()
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
- * @noreference This class is not intended to be referenced by clients.
  */
 @Deprecated
 public class WorkbenchHelp {
