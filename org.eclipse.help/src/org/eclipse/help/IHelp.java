@@ -21,12 +21,8 @@ package org.eclipse.help;
  *             and {@link org.eclipse.help.HelpSystem#getContext
  *             HelpSystem.getContext(String)} to obtain help resources. Use
  *             various display methods of
- *             {@link org.eclipse.ui.help.WorkbenchHelp WorkbenchHelp}to display
- *             help resources.
- *
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noextend This class is not intended to be subclassed by clients.
- * @noreference This class is not intended to be referenced by clients.
+ *             {@link org.eclipse.ui.help.IWorkbenchHelpSystem} to display help
+ *             resources.
  */
 @Deprecated
 public interface IHelp {
