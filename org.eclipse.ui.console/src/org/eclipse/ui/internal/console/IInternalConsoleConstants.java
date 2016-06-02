@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public interface IInternalConsoleConstants {
 	public static final String IMG_DLCL_LOCK = "IMG_DLCL_LOCK"; //$NON-NLS-1$
 	public static final String IMG_DLCL_WRAP = "IMG_DLCL_WRAP"; //$NON-NLS-1$
 	public static final String IMG_DLCL_CLOSE = "IMG_DLCL_CLOSE"; //$NON-NLS-1$
+	public static final String IMG_DLCL_NEW_CON = "IMG_DLCL_NEW_CON"; //$NON-NLS-1$
 
 	// enabled local tool images
 	public static final String IMG_ELCL_PIN = "IMG_ELCL_PIN"; //$NON-NLS-1$
