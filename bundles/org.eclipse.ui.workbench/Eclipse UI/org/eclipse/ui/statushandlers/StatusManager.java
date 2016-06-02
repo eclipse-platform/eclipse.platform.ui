@@ -26,6 +26,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.statushandlers.StatusHandlerDescriptor;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -107,9 +108,9 @@ public class StatusManager {
 	 */
 	public static final int BLOCK = 0x04;
 
-	private static StatusManager MANAGER;
+	private static volatile StatusManager MANAGER;
 
-	private AbstractStatusHandler statusHandler;
+	private volatile AbstractStatusHandler statusHandler;
 
 	private List loggedStatuses = new ArrayList();
 
@@ -121,8 +122,13 @@ public class StatusManager {
 	 * @return the manager instance
 	 */
 	public static StatusManager getManager() {
-		if (MANAGER == null) {
-			MANAGER = new StatusManager();
+		if (MANAGER != null) {
+			return MANAGER;
+		}
+		synchronized (StatusManager.class) {
+			if (MANAGER == null) {
+				MANAGER = new StatusManager();
+			}
 		}
 		return MANAGER;
 	}
@@ -132,17 +138,26 @@ public class StatusManager {
 	}
 
 	private AbstractStatusHandler getStatusHandler(){
-		if(statusHandler == null && StatusHandlerRegistry.getDefault()
-					.getDefaultHandlerDescriptor() != null){
-			try {
-				statusHandler = StatusHandlerRegistry.getDefault()
-						.getDefaultHandlerDescriptor().getStatusHandler();
-			} catch (CoreException ex) {
-				logError("Errors during the default handler creating", ex); //$NON-NLS-1$
-			}
+		if (statusHandler != null) {
+			return statusHandler;
 		}
-		if(statusHandler == null){
-			statusHandler = new WorkbenchErrorHandlerProxy();
+
+		StatusHandlerDescriptor defaultHandlerDescriptor = StatusHandlerRegistry.getDefault()
+				.getDefaultHandlerDescriptor();
+
+		synchronized (this) {
+			if (statusHandler == null) {
+				if (defaultHandlerDescriptor != null) {
+					try {
+						statusHandler = defaultHandlerDescriptor.getStatusHandler();
+					} catch (CoreException ex) {
+						logError("Errors during the default handler creating", ex); //$NON-NLS-1$
+					}
+				}
+				if (statusHandler == null) {
+					statusHandler = new WorkbenchErrorHandlerProxy();
+				}
+			}
 		}
 		return statusHandler;
 	}
