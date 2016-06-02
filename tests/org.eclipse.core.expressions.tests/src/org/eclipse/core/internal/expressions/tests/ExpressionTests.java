@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.osgi.framework.FrameworkUtil;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -900,7 +902,7 @@ public class ExpressionTests extends TestCase {
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		DocumentBuilder builder= DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		URL url= ExpressionTestPlugin.getDefault().getBundle().getEntry("plugin.xml");
+		URL url = FrameworkUtil.getBundle(ExpressionTests.class).getEntry("plugin.xml");
 		Document document= builder.parse(url.openStream());
 		NodeList testParticipants= document.getElementsByTagName("testParticipant");
 		for (int i= 0; i < testParticipants.getLength(); i++) {
