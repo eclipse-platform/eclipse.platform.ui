@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -81,6 +82,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * @param editor the editor to add
      */
 	public void addEditor(EditorDescriptor editor) {
+		Assert.isNotNull(editor);
         editors.add(editor);
         deletedEditors.remove(editor);
     }
@@ -221,6 +223,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * @param editor the editor to remove
      */
 	public void removeEditor(IEditorDescriptor editor) {
+		Assert.isNotNull(editor);
         editors.remove(editor);
         deletedEditors.add(editor);
         declaredDefaultEditors.remove(editor);
@@ -233,6 +236,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * @param editor the editor to be set as default
      */
 	public void setDefaultEditor(IEditorDescriptor editor) {
+		Assert.isNotNull(editor);
         editors.remove(editor);
         editors.add(0, editor);
         declaredDefaultEditors.remove(editor);

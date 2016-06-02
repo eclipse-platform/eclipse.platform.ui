@@ -789,22 +789,20 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 				}
 			}
             else { // guess at pre 3.1 format defaults
-            		if (!editors.isEmpty()) {
+				if (!editors.isEmpty()) {
 					IEditorDescriptor editor = editors.get(0);
-            			if (editor != null) {
-                			defaultEditors.add(editor);
-                		}
-            		}
-            		defaultEditors.addAll(Arrays.asList(mapping.getDeclaredDefaultEditors()));
+					defaultEditors.add(editor);
+				}
+				defaultEditors.addAll(Arrays.asList(mapping.getDeclaredDefaultEditors()));
             }
 
             // Add any new editors that have already been read from the registry
             // which were not deleted.
             IEditorDescriptor[] editorsArray = mapping.getEditors();
             for (int j = 0; j < editorsArray.length; j++) {
-                if (!contains(editors, editorsArray[j])
-                        && !deletedEditors.contains(editorsArray[j])) {
-                    editors.add(editorsArray[j]);
+				IEditorDescriptor descriptor = editorsArray[j];
+				if (descriptor != null && !contains(editors, descriptor) && !deletedEditors.contains(descriptor)) {
+					editors.add(descriptor);
                 }
             }
             // Map the editor(s) to the file type
