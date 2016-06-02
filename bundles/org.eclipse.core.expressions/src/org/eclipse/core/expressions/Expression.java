@@ -232,9 +232,6 @@ public abstract class Expression {
 		return super.hashCode();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
 		if (fHashCode != HASH_CODE_NOT_COMPUTED)

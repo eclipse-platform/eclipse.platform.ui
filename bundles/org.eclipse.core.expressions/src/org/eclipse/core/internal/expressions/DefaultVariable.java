@@ -45,73 +45,46 @@ public final class DefaultVariable implements IEvaluationContext {
 		fDefaultVariable= defaultVariable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IEvaluationContext getParent() {
 		return fParent;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IEvaluationContext getRoot() {
 		return fParent.getRoot();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setAllowPluginActivation(boolean value) {
 		fParent.setAllowPluginActivation(value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean getAllowPluginActivation() {
 		return fParent.getAllowPluginActivation();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addVariable(String name, Object value) {
 		fManagedPool.addVariable(name, value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object removeVariable(String name) {
 		return fManagedPool.removeVariable(name);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object getVariable(String name) {
 		return fManagedPool.getVariable(name);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		return fManagedPool.resolveVariable(name, args);

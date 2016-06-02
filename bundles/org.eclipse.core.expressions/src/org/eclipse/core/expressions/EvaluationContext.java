@@ -67,17 +67,11 @@ public class EvaluationContext implements IEvaluationContext {
 		fVariableResolvers= resolvers;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IEvaluationContext getParent() {
 		return fParent;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public IEvaluationContext getRoot() {
 		if (fParent == null)
@@ -85,25 +79,16 @@ public class EvaluationContext implements IEvaluationContext {
 		return fParent.getRoot();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object getDefaultVariable() {
 		return fDefaultVariable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setAllowPluginActivation(boolean value) {
 		fAllowPluginActivation= value ? Boolean.TRUE : Boolean.FALSE;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean getAllowPluginActivation() {
 		if (fAllowPluginActivation == null) {
@@ -114,9 +99,6 @@ public class EvaluationContext implements IEvaluationContext {
 		return fAllowPluginActivation.booleanValue();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addVariable(String name, Object value) {
 		Assert.isNotNull(name);
@@ -126,9 +108,6 @@ public class EvaluationContext implements IEvaluationContext {
 		fVariables.put(name, value);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object removeVariable(String name) {
 		Assert.isNotNull(name);
@@ -137,9 +116,6 @@ public class EvaluationContext implements IEvaluationContext {
 		return fVariables.remove(name);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object getVariable(String name) {
 		Assert.isNotNull(name);
@@ -154,9 +130,6 @@ public class EvaluationContext implements IEvaluationContext {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
 		if (fVariableResolvers != null && fVariableResolvers.length > 0) {
