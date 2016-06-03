@@ -46,7 +46,7 @@ public class CSSFontFaceRuleImpl extends CSSRuleImpl implements CSSFontFaceRule 
 
 	// Additional methods
 
-	public void setStyle(CSSStyleDeclarationImpl decl) {
+	public void setStyle(CSSStyleDeclaration decl) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}

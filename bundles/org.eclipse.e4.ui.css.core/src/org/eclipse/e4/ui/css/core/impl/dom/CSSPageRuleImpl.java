@@ -53,7 +53,7 @@ public class CSSPageRuleImpl extends CSSRuleImpl implements CSSPageRule {
 
 	// Additional methods
 
-	public void setStyle(CSSStyleDeclarationImpl decl) {
+	public void setStyle(CSSStyleDeclaration decl) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}

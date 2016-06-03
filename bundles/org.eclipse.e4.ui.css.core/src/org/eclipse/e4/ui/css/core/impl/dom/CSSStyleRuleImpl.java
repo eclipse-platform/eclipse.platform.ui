@@ -25,7 +25,7 @@ import org.w3c.dom.css.CSSStyleSheet;
 public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, ExtendedCSSRule {
 
 	private SelectorList selectors;
-	private CSSStyleDeclarationImpl styleDeclaration;
+	private CSSStyleDeclaration styleDeclaration;
 
 	public CSSStyleRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			SelectorList selectors) {
@@ -93,7 +93,7 @@ public class CSSStyleRuleImpl extends CSSRuleImpl implements CSSStyleRule, Exten
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 	}
 
-	public void setStyle(CSSStyleDeclarationImpl styleDeclaration) {
+	public void setStyle(CSSStyleDeclaration styleDeclaration) {
 		this.styleDeclaration = styleDeclaration;
 	}
 }

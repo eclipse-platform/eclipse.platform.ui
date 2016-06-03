@@ -61,7 +61,7 @@ public class CSSMediaRuleImpl extends CSSRuleImpl implements CSSMediaRule {
 
 	// Additional methods
 
-	public void setRuleList(CSSRuleListImpl rules) {
+	public void setRuleList(CSSRuleList rules) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
 
