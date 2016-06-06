@@ -84,9 +84,7 @@ public final class InternalPlatform {
 	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
 	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
 	public static final String PROP_ACTIVATE_PLUGINS = "eclipse.activateRuntimePlugins"; //$NON-NLS-1$
-	public static final String PROP_UUID = "eclipse.uuid"; //$NON-NLS-1$
 
-	private static final String UUID_PATH = "/.eclipse/eclipse.uuid"; //$NON-NLS-1$
 	private static final InternalPlatform singleton = new InternalPlatform();
 
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_COCOA, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
@@ -719,55 +717,6 @@ public final class InternalPlatform {
 			new org.eclipse.core.runtime.preferences.DefaultScope();
 			// activate Jobs plugin by creating a class from it:
 			org.eclipse.core.runtime.jobs.Job.getJobManager();
-		}
-		loadMachineUUID();
-	}
-
-	private void loadMachineUUID() {
-		EnvironmentInfo environment = environmentTracker.getService();
-		if (environment != null) {
-			if (environment.getProperty(PROP_UUID) != null)
-				return;
-		}
-		String uuid = loadExistingUUID();
-		if (uuid == null) {
-			uuid = UUID.randomUUID().toString();
-			saveUUID(uuid);
-		}
-		if (environment != null) {
-			environment.setProperty(PROP_UUID, uuid);
-		} else {
-			System.setProperty(PROP_UUID, uuid);
-		}
-	}
-
-	private void saveUUID(String uuid) {
-		File eclipseUUIDFile = new File(System.getProperty("user.home") + UUID_PATH); //$NON-NLS-1$
-		if (!eclipseUUIDFile.getParentFile().exists()) {
-			if (!eclipseUUIDFile.getParentFile().mkdirs())
-				return;
-		}
-		try (OutputStream os = new BufferedOutputStream(new FileOutputStream(eclipseUUIDFile))){
-			Properties prop = new Properties();
-			prop.setProperty(PROP_UUID, uuid);
-			prop.setProperty("version", "1"); //$NON-NLS-1$//$NON-NLS-2$
-			prop.store(os,
-					"To opt-out from using a UUID for all your eclipse instances, please change this value to 0. If you only want to opt-out for one instance, then add eclipse.uuid=0 in the config.ini. If you delete this file, a new UUID will be created"); //$NON-NLS-1$
-		} catch (IOException e) {
-			return;
-		}
-	}
-
-	private String loadExistingUUID() {
-		File eclipseUUIDFile = new File(System.getProperty("user.home") + UUID_PATH); //$NON-NLS-1$
-		if (!eclipseUUIDFile.exists())
-			return null;
-		try(InputStream in = new BufferedInputStream(new FileInputStream(eclipseUUIDFile))) {
-			Properties prop = new Properties();
-			prop.load(in);
-			return (String) prop.get(PROP_UUID);
-		} catch (IOException e) {
-			return null;
 		}
 	}
 
