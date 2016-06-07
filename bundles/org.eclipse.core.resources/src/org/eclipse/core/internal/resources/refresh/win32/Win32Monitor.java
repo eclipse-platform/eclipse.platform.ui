@@ -10,6 +10,7 @@
  *     James Blackburn (Broadcom Corp.) - ongoing development
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 473427
  *     Mickael Istria (Red Hat Inc.) - Bug 488937
+ *     Mikael Barbero (Eclipse Foundation) - 286681 handle WAIT_ABANDONED_0 return value
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
@@ -128,6 +129,11 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 					}
 				}
 			}
+		}
+
+		@Override
+		public String toString() {
+			return file.toString();
 		}
 	}
 
@@ -283,6 +289,11 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		public void postRefreshRequest() {
 			postRefreshRequest(resource);
 		}
+
+		@Override
+		public String toString() {
+			return resource.toString();
+		}
 	}
 
 	protected class ResourceHandle extends Handle {
@@ -310,6 +321,11 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			if (!isOpen()) {
 				openHandleOn(resource);
 			}
+		}
+
+		@Override
+		public String toString() {
+			return resource.toString();
 		}
 	}
 
@@ -591,6 +607,15 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 				addException(NLS.bind(Messages.WM_nativeErr, Integer.toString(error)));
 				refreshResult.monitorFailed(this, null);
 			}
+			return;
+		}
+		if (index >= Win32Natives.WAIT_ABANDONED_0) {
+			// abandoned mutex object that satisfied the wait
+			// WaitForMultipleObjects returns WAIT_ABANDONED_0 + index
+			index -= Win32Natives.WAIT_ABANDONED_0;
+			Handle handle = fHandleValueToHandle.get(handleValues[index]);
+			addException(NLS.bind(Messages.WM_mutexAbandoned, handle));
+			refreshResult.monitorFailed(this, null);
 			return;
 		}
 		// a change occurred

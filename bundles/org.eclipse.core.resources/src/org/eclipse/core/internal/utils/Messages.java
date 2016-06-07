@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  * Martin Oberhuber (Wind River) - [306575] Save snapshot location with project
+ * Mikael Barbero (Eclipse Foundation) - [286681] handle WAIT_ABANDONED_0 return value
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -320,6 +321,7 @@ public class Messages extends NLS {
 	public static String WM_errors;
 	public static String WM_jobName;
 	public static String WM_nativeErr;
+	public static String WM_mutexAbandoned;
 
 	static {
 		// initialize resource bundles

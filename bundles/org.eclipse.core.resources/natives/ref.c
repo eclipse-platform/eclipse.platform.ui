@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mikael Barbero (Eclipse Foundation) - 286681 handle WAIT_ABANDONED_0 return value
  *******************************************************************************/
 #include <windows.h>
 #include "ref.h"
@@ -244,6 +245,16 @@ JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Wi
 JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Win32Natives_WAIT_1OBJECT_10
 (JNIEnv *env, jclass this) {
 	return WAIT_OBJECT_0;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_resources_refresh_win32_Win32Natives
+ * Method:    WAIT_ABANDONED_0
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_resources_refresh_win32_Win32Natives_WAIT_ABANDONED_0
+(JNIEnv *env, jclass this) {
+	return WAIT_ABANDONED_0;
 }
 
 /*

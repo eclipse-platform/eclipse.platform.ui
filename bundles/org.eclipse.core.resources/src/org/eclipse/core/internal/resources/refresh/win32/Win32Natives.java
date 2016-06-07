@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Mikael Barbero (Eclipse Foundation) - 286681 handle WAIT_ABANDONED_0 return value
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
@@ -60,6 +61,12 @@ public class Win32Natives {
 	 */
 	public static final int WAIT_OBJECT_0;
 	/**
+	 * A constant which indicates that some objects which
+	 * were waiting to be signaled are an abandoned mutex
+	 * objects.
+	 */
+	public static final int WAIT_ABANDONED_0;
+	/**
 	 * A constant returned by WaitForMultipleObjects which indicates
 	 * that the wait failed.
 	 */
@@ -112,6 +119,7 @@ public class Win32Natives {
 
 		WAIT_TIMEOUT= WAIT_TIMEOUT();
 		WAIT_OBJECT_0= WAIT_OBJECT_0();
+		WAIT_ABANDONED_0= WAIT_ABANDONED_0();
 		WAIT_FAILED= WAIT_FAILED();
 
 		FILE_NOTIFY_CHANGE_FILE_NAME= FILE_NOTIFY_CHANGE_FILE_NAME();
@@ -313,6 +321,12 @@ public class Win32Natives {
 	 * @return int
 	 */
 	private static native int WAIT_OBJECT_0();
+
+	/**
+	 * Returns the constant WAIT_ABANDONED_0.
+	 * @return int
+	 */
+	private static native int WAIT_ABANDONED_0();
 
 	/**
 	 * Returns the constant WAIT_FAILED.
