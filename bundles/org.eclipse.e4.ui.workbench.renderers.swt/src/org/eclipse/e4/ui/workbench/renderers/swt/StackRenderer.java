@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285, 472654
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 429728, 430166, 441150, 442285, 472654, 495718
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442285, 487348
  *******************************************************************************/
@@ -562,6 +562,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			String newName = (String) newValue;
 			cti.setText(getLabel(part, newName));
 			break;
+		case UIEvents.Dirtyable.DIRTY:
+			cti.setText(getLabel(part, part.getLocalizedLabel()));
 		case UIEvents.UILabel.ICONURI:
 			cti.setImage(getImage(part));
 			break;
@@ -569,18 +571,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		case UIEvents.UILabel.LOCALIZED_TOOLTIP:
 			String newTTip = (String) newValue;
 			cti.setToolTipText(getToolTip(newTTip));
-			break;
-		case UIEvents.Dirtyable.DIRTY:
-			Boolean dirtyState = (Boolean) newValue;
-			String text = cti.getText();
-			boolean hasAsterisk = text.length() > 0 && text.charAt(0) == '*';
-			if (dirtyState.booleanValue()) {
-				if (!hasAsterisk) {
-					cti.setText('*' + text);
-				}
-			} else if (hasAsterisk) {
-				cti.setText(text.substring(1));
-			}
 			break;
 		case UIEvents.Part.CLOSEABLE:
 			Boolean closeableState = (Boolean) newValue;
