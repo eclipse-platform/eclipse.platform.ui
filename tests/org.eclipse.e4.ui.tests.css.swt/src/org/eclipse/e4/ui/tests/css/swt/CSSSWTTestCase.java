@@ -14,6 +14,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
@@ -28,11 +30,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
 public class CSSSWTTestCase {
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
+
+	@Rule
+	public TestName testName = new TestName();
 
 	protected Display display;
 	protected CSSEngine engine;
@@ -77,6 +84,12 @@ public class CSSSWTTestCase {
 
 	@Before
 	public void setUp() {
+		System.out.println("[" + DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()) + "] "
+				+ getClass().getName() + "#" + testName.getMethodName());
+		System.out.format("  memory (free/max/total): %s/%s/%s MB\n",
+				Runtime.getRuntime().freeMemory() / 1000000,
+				Runtime.getRuntime().maxMemory() / 1000000,
+				Runtime.getRuntime().totalMemory() / 1000000);
 		display = Display.getDefault();
 	}
 
