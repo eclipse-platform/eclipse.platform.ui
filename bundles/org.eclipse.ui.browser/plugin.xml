@@ -51,11 +51,15 @@
 
    <extension point="org.eclipse.ui.editors">
       <editor
-         class="org.eclipse.ui.internal.browser.WebBrowserEditor"
-         contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
-         icon="$nl$/icons/obj16/internal_browser.gif"
-         id="org.eclipse.ui.browser.editor"
-         name="%viewWebBrowserTitle"/>
+            class="org.eclipse.ui.internal.browser.WebBrowserEditor"
+            contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
+            icon="$nl$/icons/obj16/internal_browser.gif"
+            id="org.eclipse.ui.browser.editor"
+            name="%viewWebBrowserTitle">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.ui.content-type.images">
+         </contentTypeBinding>
+      </editor>
       <editor
          extensions="htm,html,shtml"
          icon="$nl$/icons/obj16/internal_browser.gif"
@@ -230,5 +234,14 @@
             class="org.eclipse.ui.internal.browser.WebBrowserEditorInput"
             id="org.eclipse.ui.browser.elementFactory">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            file-extensions="png,jpg,jpeg,gif,bmp,ico"
+            id="org.eclipse.ui.content-type.images"
+            name="%contentType_images"
+            priority="normal">
+      </content-type>
    </extension>
 </plugin>
