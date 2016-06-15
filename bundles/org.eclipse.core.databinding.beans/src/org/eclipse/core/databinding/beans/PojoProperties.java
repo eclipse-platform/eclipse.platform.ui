@@ -171,7 +171,7 @@ public class PojoProperties {
 	 * @return a value property array for the given property names of the given
 	 *         bean class.
 	 */
-	public static IBeanValueProperty[] values(String[] propertyNames) {
+	public static IBeanValueProperty[] values(String... propertyNames) {
 		return values(null, propertyNames);
 	}
 
