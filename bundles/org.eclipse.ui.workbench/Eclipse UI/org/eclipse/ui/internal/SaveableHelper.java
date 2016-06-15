@@ -516,4 +516,11 @@ public class SaveableHelper {
 		return getSaveable2(o) != null;
 	}
 
+	public static boolean isDirtyStateSupported(IWorkbenchPart part) {
+		if (part instanceof ISecondarySaveableSource) {
+			return ((ISecondarySaveableSource) part).isDirtyStateSupported();
+		}
+		return isSaveable(part);
+	}
+
 }

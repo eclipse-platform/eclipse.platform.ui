@@ -18,6 +18,7 @@ package org.eclipse.ui.views.properties;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -50,6 +51,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.internal.DefaultSaveable;
+import org.eclipse.ui.internal.ISecondarySaveableSource;
 import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.IContributedContentsView;
@@ -97,7 +99,8 @@ import org.eclipse.ui.part.ShowInContext;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class PropertySheet extends PageBookView implements ISelectionListener, IShowInTarget, IShowInSource, IRegistryEventListener {
+public class PropertySheet extends PageBookView
+		implements ISelectionListener, IShowInTarget, IShowInSource, IRegistryEventListener, ISecondarySaveableSource {
     /**
      * No longer used but preserved to avoid api change
      */
@@ -145,7 +148,8 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 
 		@Override
 		public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
-			if (currentPart == null || event.getEventType() != SaveablesLifecycleEvent.DIRTY_CHANGED) {
+			if (currentPart == null || event.getEventType() != SaveablesLifecycleEvent.DIRTY_CHANGED
+					|| !isDirtyStateSupported()) {
 				return;
 			}
 			// to avoid endless loop we must ignore our own instance which
@@ -473,7 +477,59 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		firePropertyChange(IWorkbenchPartConstants.PROP_DIRTY);
 	}
 
-    /**
+	/**
+	 * Defines the dirty state indication behavior of the {@link PropertySheet}
+	 * instance for the current tracked part if it is a {@link ISaveablePart}
+	 * instance or provides an adapter to {@link ISaveablePart}.
+	 * <p>
+	 * Default return value is {@code false} - the Properties view will not show
+	 * the '*' sign if the tracked part is dirty.
+	 * <p>
+	 * This behavior can be changed by either contributing custom
+	 * {@link IPropertySheetPage} to the tracked part, or providing
+	 * {@link ISecondarySaveableSource} adapter by the tracked part or by
+	 * contributing {@link ISecondarySaveableSource} adapter to the
+	 * {@link PropertySheet} class.
+	 * <p>
+	 * Strategy for the search is going from the smallest scope to the global
+	 * scope, searching for the first {@link ISecondarySaveableSource} adapter.
+	 * <p>
+	 * The current page is asked for the {@link ISecondarySaveableSource}
+	 * adapter first, if the adapter is not defined, the current tracked part is
+	 * asked for it, and finally the platform adapter manager is consulted. The
+	 * first adapter found in the steps above defines the return value of this
+	 * method.
+	 * <p>
+	 * If the contributed page wants change the behavior The page must implement
+	 * {@link IAdaptable} and return adapter to
+	 * {@link ISecondarySaveableSource}.
+	 *
+	 * @return returns {@code false} by default.
+	 * @since 3.9
+	 */
+	@Override
+	public boolean isDirtyStateSupported() {
+		if (currentPart == null) {
+			return false;
+		}
+		// first: ask page if we should show dirty state
+		ISecondarySaveableSource source = getAdapter(ISecondarySaveableSource.class);
+		if (source != null && source != this) {
+			return source.isDirtyStateSupported();
+		}
+		// second: ask the tracked part if the part provides the adapter;
+		// platform adapter manager is asked in the last step
+		source = Adapters.adapt(currentPart, ISecondarySaveableSource.class);
+		if (source != null && source != this) {
+			return source.isDirtyStateSupported();
+		}
+
+		// TODO delegate to default implementation if bug 490988 is fixed
+		// return ISecondarySaveableSource.super.isDirtyStateIndicationSupported();
+		return false;
+	}
+
+	/**
 	 * The <code>PropertySheet</code> implementation of this
 	 * <code>PageBookView</code> method handles the <code>ISaveablePart</code>
 	 * adapter case by calling <code>getSaveablePart()</code>.
