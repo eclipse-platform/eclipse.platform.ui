@@ -53,7 +53,7 @@ public class ComplexDisposalTest {
 	}
 
 	@Test
-	public void testU() throws Exception {
+	public void testU() {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		parentContext.set(MyTest.class.getName(), new TestFunction());
@@ -69,7 +69,7 @@ public class ComplexDisposalTest {
 	}
 
 	@Test
-	public void testV() throws Exception {
+	public void testV() {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		IEclipseContext context = parentContext.createChild();
@@ -84,7 +84,7 @@ public class ComplexDisposalTest {
 	}
 
 	@Test
-	public void testW() throws Exception {
+	public void testW() {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("aString", "");
 		IEclipseContext context = parentContext.createChild();

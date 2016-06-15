@@ -42,7 +42,7 @@ public class ContextFunctionDynamicsTest {
 	 * Changing context function should update injected values
 	 */
 	@Test
-	public void testChangeICF() throws Exception {
+	public void testChangeICF() {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
 
@@ -72,7 +72,7 @@ public class ContextFunctionDynamicsTest {
 	 * Overriding context function with a regular value on a child node
 	 */
 	@Test
-	public void testOverrideICF() throws Exception {
+	public void testOverrideICF() {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
 		IEclipseContext context3 = context2.createChild("context3");
@@ -99,7 +99,7 @@ public class ContextFunctionDynamicsTest {
 	 * Tests updates in a chain of 4 contexts
 	 */
 	@Test
-	public void testLongChain() throws Exception {
+	public void testLongChain() {
 		IEclipseContext context1 = EclipseContextFactory.create("context1");
 		IEclipseContext context2 = context1.createChild("context2");
 		IEclipseContext context3 = context2.createChild("context3");
