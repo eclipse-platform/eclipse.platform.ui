@@ -238,7 +238,7 @@
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-            file-extensions="png,jpg,jpeg,git,bmp,ico"
+            file-extensions="png,jpg,jpeg,gif,bmp,ico"
             id="org.eclipse.ui.content-type.images"
             name="%contentType_images"
             priority="normal">
