@@ -965,9 +965,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	protected boolean refreshResource(IResource target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 		String title = NLS.bind(Messages.localstore_refreshing, target.getFullPath());
 		SubMonitor subMonitor = SubMonitor.convert(monitor, title, 100);
-		IFileStore fileStore = ((Resource) target).getStore();
-		// Try to get all info in one shot, if the file system supports it.
-		IFileTree fileTree = fileStore.getFileSystem().fetchFileTree(fileStore, subMonitor.newChild(2));
+		IFileTree fileTree = null;
+		// If there can be more than one resource to refresh, try to get the whole tree in one shot, if the file system supports it.
+		if (depth != IResource.DEPTH_ZERO) {
+			IFileStore fileStore = ((Resource) target).getStore();
+			fileTree = fileStore.getFileSystem().fetchFileTree(fileStore, subMonitor.newChild(2));
+		}
 		UnifiedTree tree = fileTree == null ? new UnifiedTree(target) : new UnifiedTree(target, fileTree);
 		SubMonitor refreshMonitor = subMonitor.newChild(98);
 		RefreshLocalVisitor visitor = updateAliases ? new RefreshLocalAliasVisitor(refreshMonitor) : new RefreshLocalVisitor(refreshMonitor);

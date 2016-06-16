@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -18,6 +20,7 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.filesystem.bug440110.Bug440110FileSystem;
 
 //
 public class FileSystemResourceManagerTest extends LocalStoreTest implements ICoreConstants {
@@ -36,6 +39,33 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 
 	public static Test suite() {
 		return new TestSuite(FileSystemResourceManagerTest.class);
+	}
+
+	public void testBug440110() throws URISyntaxException, CoreException {
+		String projectName = getUniqueString();
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(projectName);
+		IProjectDescription projectDescription = workspace.newProjectDescription(projectName);
+		projectDescription.setLocationURI(new URI(Bug440110FileSystem.SCHEME + "://" + projectName));
+		project.create(projectDescription, null);
+		project.open(null);
+		assertEquals("0.1", Bug440110FileSystem.SCHEME, project.getLocationURI().getScheme());
+
+		IFolder folder = project.getFolder("folder");
+		folder.create(true, true, null);
+		assertEquals("0.2", Bug440110FileSystem.SCHEME, folder.getLocationURI().getScheme());
+
+		Bug440110FileSystem.clearFetchedFileTree();
+		folder.refreshLocal(IResource.DEPTH_ZERO, null);
+		assertFalse("1.0", Bug440110FileSystem.hasFetchedFileTree());
+
+		Bug440110FileSystem.clearFetchedFileTree();
+		folder.refreshLocal(IResource.DEPTH_ONE, null);
+		assertTrue("2.0", Bug440110FileSystem.hasFetchedFileTree());
+
+		Bug440110FileSystem.clearFetchedFileTree();
+		folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+		assertTrue("3.0", Bug440110FileSystem.hasFetchedFileTree());
 	}
 
 	/**

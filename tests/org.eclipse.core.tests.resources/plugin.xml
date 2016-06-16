@@ -564,6 +564,12 @@
 </extension>
 <extension
       point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="bug440110">
+      <run class="org.eclipse.core.tests.internal.filesystem.bug440110.Bug440110FileSystem"/>
+   </filesystem>
+</extension>
+<extension
+      point="org.eclipse.core.filesystem.filesystems">
    <filesystem scheme="remote">
       <run class="org.eclipse.core.tests.internal.filesystem.remote.RemoteFileSystem"/>
    </filesystem>
