@@ -38,7 +38,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.TestConstructorInjection;
 import org.eclipse.e4.core.internal.tests.di.AtInjectTest;
-import org.eclipse.e4.core.internal.tests.di.AutoConstructTest;
+import org.eclipse.e4.core.internal.tests.di.AutoConstructWithCreatableTest;
 import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectArraysTest;
 import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
@@ -76,7 +76,7 @@ import junit.framework.Test;
 		InvokeTestMissingAnnotation.class,
 		InjectionResultLeakTest.class,
 		AtInjectTest.class,
-		AutoConstructTest.class,
+		AutoConstructWithCreatableTest.class,
 
 		// Contexts
 		EclipseContextTest.class,

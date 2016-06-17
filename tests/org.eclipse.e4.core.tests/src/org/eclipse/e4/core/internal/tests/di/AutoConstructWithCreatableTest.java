@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2012, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274, 496305
  ******************************************************************************/
 package org.eclipse.e4.core.internal.tests.di;
 
@@ -21,9 +21,12 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Creatable;
+import org.junit.Before;
 import org.junit.Test;
 
-public class AutoConstructTest {
+public class AutoConstructWithCreatableTest {
+
+	private IEclipseContext context;
 
 	@Creatable
 	static class Dependent1 {
@@ -54,14 +57,17 @@ public class AutoConstructTest {
 		}
 	}
 
+	@Before
+	public void createContext() {
+		context = EclipseContextFactory.create();
+	}
+
 	/**
-	 * Checks that only classes with @Creatable are auto-constructed
+	 * Checks that classes with @Creatable are auto-constructed
 	 */
 	@Test
-	public void testCreatable() {
-		IEclipseContext context = EclipseContextFactory.create();
-		Consumer1 consumer1 = ContextInjectionFactory.make(Consumer1.class,
-				context);
+	public void testCreatableIsCreated() {
+		Consumer1 consumer1 = ContextInjectionFactory.make(Consumer1.class, context);
 		assertNotNull(consumer1);
 
 		boolean exception = false;
@@ -73,8 +79,25 @@ public class AutoConstructTest {
 		assertTrue(exception);
 
 		context.set(Dependent2.class, new Dependent2());
-		Consumer2 consumer2 = ContextInjectionFactory.make(Consumer2.class,
-				context);
+		Consumer2 consumer2 = ContextInjectionFactory.make(Consumer2.class, context);
 		assertNotNull(consumer2);
 	}
+
+	/**
+	 * Checks that only classes with @Creatable are auto-constructed
+	 */
+	@Test(expected = InjectionException.class)
+	public void testNonCreatableInstanceAreNotCreated() {
+		ContextInjectionFactory.make(Consumer2.class, context);
+		// should not be reached as exception is thrown
+		assertTrue(false);
+	}
+
+	@Test // ensure "normal" dependency injection
+	public void testNonCreatableInstancesAreUsedFromContext() {
+		context.set(Dependent2.class, new Dependent2());
+		Consumer2 consumer2 = ContextInjectionFactory.make(Consumer2.class, context);
+		assertNotNull(consumer2);
+	}
+
 }
