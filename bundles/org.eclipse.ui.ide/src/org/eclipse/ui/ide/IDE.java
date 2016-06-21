@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 411578
- *     Andrey Loskutov <loskutov@gmx.de> - Bug 485201
+ *     Andrey Loskutov <loskutov@gmx.de> - Bug 485201, 496475
  *     Mickael Istria (Red Hat Inc.) - Bug 90292 (default editor) and family
  *******************************************************************************/
 package org.eclipse.ui.ide;
@@ -153,7 +153,7 @@ public final class IDE {
 	 */
 	private static MarkerHelpRegistry markerHelpRegistry = null;
 
-	private static IEditorAssociationOverride[] editorAssociationOverrides;
+	private static volatile IEditorAssociationOverride[] editorAssociationOverrides;
 
 
 	/**
@@ -1884,20 +1884,20 @@ public final class IDE {
 		return page.openEditors(editorInputs, editorDescriptions, IWorkbenchPage.MATCH_INPUT);
 	}
 
-	private static synchronized IEditorAssociationOverride[] getEditorAssociationOverrides() {
+	private static IEditorAssociationOverride[] getEditorAssociationOverrides() {
 		if (editorAssociationOverrides == null) {
 			EditorAssociationOverrideDescriptor[] descriptors = EditorAssociationOverrideDescriptor.getContributedEditorAssociationOverrides();
-			ArrayList overrides = new ArrayList(descriptors.length);
-			for (int i = 0; i < descriptors.length; i++) {
+			List<IEditorAssociationOverride> overrides = new ArrayList<>(descriptors.length);
+			for (EditorAssociationOverrideDescriptor descriptor : descriptors) {
 				try {
-					IEditorAssociationOverride override = descriptors[i].createOverride();
+					IEditorAssociationOverride override = descriptor.createOverride();
 					overrides.add(override);
 				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					IDEWorkbenchPlugin
+							.log("Error while creating IEditorAssociationOverride from: " + descriptor.getId(), e); //$NON-NLS-1$
 				}
 			}
-			editorAssociationOverrides = (IEditorAssociationOverride[])overrides.toArray(new IEditorAssociationOverride[overrides.size()]);
+			editorAssociationOverrides = overrides.toArray(new IEditorAssociationOverride[overrides.size()]);
 		}
 		return editorAssociationOverrides;
 	}
