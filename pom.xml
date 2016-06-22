@@ -68,6 +68,7 @@
     <!-- Generic editor -->
     <module>org.eclipse.ui.genericeditor</module>
     <module>org.eclipse.ui.genericeditor.tests</module>
+    <module>org.eclipse.ui.genericeditor.examples</module>
   </modules>
 
 </project>
