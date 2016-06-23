@@ -1718,6 +1718,22 @@
                   style="push"
                   tooltip="%menu.toggleCoolbar.tooltip">
             </command>
+            <command
+                  commandId="org.eclipse.ui.window.fullscreenmode"
+                  style="push">
+            </command>
+            <separator
+                  name="org.eclipse.ui.window.appearance.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.window.maximizePart"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.minimizePart"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
 
@@ -2511,27 +2527,6 @@
 					</iterate>
 				</with>
 	       	  </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:org.eclipse.ui.appearance?after=org.eclipse.ui.ToggleCoolbarAction">
-         <command
-               commandId="org.eclipse.ui.window.fullscreenmode"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <!--
-                 bug 492811: remove test in 4.7 once
-                 org.eclipse.ui.cocoa.fullscreenWindow is removed
-                -->
-               <not>
-                  <systemTest
-                        property="osgi.ws"
-                        value="cocoa">
-                  </systemTest>
-               </not>
-            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
