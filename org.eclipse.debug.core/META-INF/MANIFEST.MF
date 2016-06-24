@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.core; singleton:=true
-Bundle-Version: 3.10.200.qualifier
+Bundle-Version: 3.11.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.debug.core.DebugPlugin
 Bundle-Vendor: %providerName
@@ -24,4 +24,4 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.9.0,4.0.0)";visibi
  org.eclipse.core.expressions;bundle-version="[3.4.0,4.0.0)"
 Bundle-ActivationPolicy: lazy
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
