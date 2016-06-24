@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
-	
+
 	/**
 	 * Adds the given breakpoints to the collection of registered breakpoints
 	 * in the workspace and notifies all registered listeners. Has no effect
@@ -66,19 +66,19 @@ public interface IBreakpointManager {
 	 * </ul>
 	 * @since 2.1
 	 */
-	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException;	
-	
+	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException;
+
 	/**
 	 * Returns the breakpoint associated with the given marker or
 	 * <code>null</code> if no such breakpoint exists
-	 * 
+	 *
 	 * @param marker the marker
 	 * @return the breakpoint associated with the marker
 	 * 	or <code>null</code> if none exists
 	 * @since 2.0
 	 */
-	public IBreakpoint getBreakpoint(IMarker marker);	
-	
+	public IBreakpoint getBreakpoint(IMarker marker);
+
 	/**
 	 * Returns a collection of all registered breakpoints.
 	 * Returns an empty array if no breakpoints are registered.
@@ -87,15 +87,15 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public IBreakpoint[] getBreakpoints();
-	
+
 	/**
 	 * Returns whether there are any registered breakpoints.
-	 * 
+	 *
 	 * @return whether there are any registered breakpoints
 	 * @since 2.0
 	 */
 	public boolean hasBreakpoints();
-	
+
 	/**
 	 * Returns a collection of all breakpoints registered for the
 	 * given debug model. Answers an empty array if no breakpoints are registered
@@ -106,7 +106,7 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public IBreakpoint[] getBreakpoints(String modelIdentifier);
-		
+
 	/**
 	 * Returns whether the given breakpoint is currently
 	 * registered with this breakpoint manager.
@@ -116,22 +116,22 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public boolean isRegistered(IBreakpoint breakpoint);
-	
+
 	/**
 	 * Notifies all registered listeners that the given
 	 * breakpoint has changed. Has no effect if the given
 	 * breakpoint is not currently registered.
-	 * 
+	 *
 	 * This method is intended to be used when a breakpoint
 	 * attribute is changed that does not alter the breakpoint's
 	 * underlying marker, that is, when notification will not occur
 	 * via the marker delta mechanism.
-	 * 
+	 *
 	 * @param breakpoint the breakpoint that has changed.
 	 * @since 2.0
 	 */
 	public void fireBreakpointChanged(IBreakpoint breakpoint);
-	
+
 	/**
 	 * Removes the given breakpoint from the breakpoint manager, deletes
 	 * the marker associated with the breakpoint if the <code>delete</code> flag
@@ -147,7 +147,7 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
-	
+
 	/**
 	 * Removes the given breakpoints from the breakpoint manager, deletes
 	 * the markers associated with the breakpoints if the <code>delete</code> flag
@@ -162,7 +162,7 @@ public interface IBreakpointManager {
 	 * 	underlying marker.
 	 * @since 2.1
 	 */
-	public void removeBreakpoints(IBreakpoint[] breakpoints, boolean delete) throws CoreException;	
+	public void removeBreakpoints(IBreakpoint[] breakpoints, boolean delete) throws CoreException;
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
@@ -176,10 +176,10 @@ public interface IBreakpointManager {
 	 * Removes the given listener from the collection of registered breakpoint listeners.
 	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to remove	
+	 * @param listener the listener to remove
 	 */
 	public void removeBreakpointListener(IBreakpointListener listener);
-	
+
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
 	 * Has no effect if an identical listener is already registered.
@@ -193,45 +193,45 @@ public interface IBreakpointManager {
 	 * Removes the given listener from the collection of registered breakpoint listeners.
 	 * Has no effect if an identical listener is not already registered.
 	 *
-	 * @param listener the listener to remove	
+	 * @param listener the listener to remove
 	 * @since 2.1
 	 */
 	public void removeBreakpointListener(IBreakpointsListener listener);
-	
+
 	/**
 	 * Adds the given listener to the collection of registered breakpoint manager
 	 * listeners. Has no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param listener the listener to add
 	 * @since 3.0
 	 */
 	public void addBreakpointManagerListener(IBreakpointManagerListener listener);
-	
+
 	/**
 	 * Removes the given listener from the collection of registered breakpoint manager
 	 * listeners. Has no effect if an identical listener is not already registered.
-	 * 
+	 *
 	 * @param listener the listener to remove
 	 * @since 3.0
 	 */
 	public void removeBreakpointManagerListener(IBreakpointManagerListener listener);
-	
+
 	/**
 	 * Returns whether or not this breakpoint manager is enabled.
 	 * When a breakpoint manager is enabled, all breakpoints
 	 * should be honored. When it is disabled, breakpoints should
 	 * not be honored, regardless of each breakpoint's enabled state.
-	 * 
+	 *
 	 * @return whether or not this breakpoint manager is enabled
 	 * @since 3.0
 	 */
 	public boolean isEnabled();
-	
+
 	/**
 	 * Sets the enabled state of this breakpoint manager. When
 	 * enabled, breakpoints should be honoured. When disabled, all
 	 * breakpoints should be ignored.
-	 * 
+	 *
 	 * @param enabled whether this breakpoint manager should be
 	 *  enabled
 	 * @since 3.0
@@ -242,25 +242,114 @@ public interface IBreakpointManager {
      * Returns the name (user readable String) of the given
      * breakpoint's type or <code>null</code> if none has been
      * specified.
-     * 
+     *
      * @param breakpoint the breakpoint
      * @return the name of the given breakpoint's type or <code>null</code>
      * @since 3.1
      */
     public String getTypeName(IBreakpoint breakpoint);
-    
+
     /**
-     * Returns an array of {@link IBreakpointImportParticipant}s for the given 
+     * Returns an array of {@link IBreakpointImportParticipant}s for the given
      * breakpoint marker id, never <code>null</code>.
-     * 
+     *
      * @param markertype the {@link String} identifier of the marker type
-     * @return an array of {@link IBreakpointImportParticipant}s for the given marker type, 
+     * @return an array of {@link IBreakpointImportParticipant}s for the given marker type,
      * never <code>null</code>
      * @throws CoreException if an exception occurs
      * @since 3.5
      */
-    public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException; 
-	
+    public IBreakpointImportParticipant[] getImportParticipants(String markertype) throws CoreException;
+
+	/**
+	 * Returns the triggering breakpoint associated with the workspace or
+	 * <code>null</code> if no such breakpoint exists
+	 *
+	 * @return the triggering breakpoint associated with the workspace or
+	 *         <code>null</code> if none exists
+	 * @since 3.11
+	 */
+	default public IBreakpoint[] getTriggerBreakpoints() {
+		return null;
+	}
+
+	/**
+	 * Adds the given breakpoint as the triggering breakpoint in the workspace
+	 * and notifies all registered listeners.
+	 *
+	 * @param breakpoint the breakpoint to be added as the trigger point
+	 *
+	 * @exception CoreException if adding fails. Reasons include:
+	 *                <ul>
+	 *                <li>CONFIGURATION_INVALID - the required
+	 *                <code>MODEL_IDENTIFIER</code> attribute is not set on the
+	 *                breakpoint marker.</li>
+	 *                <li>A <code>CoreException</code> occurred while verifying
+	 *                the <code>MODEL_IDENTIFIER</code> attribute.</li>
+	 *                </ul>
+	 * @since 3.11
+	 */
+	default public void addTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+	}
+
+	/**
+	 * Removes the given breakpoint as the triggering breakpoint in the
+	 * workspace and notifies all registered listeners.
+	 *
+	 * @param breakpoint the breakpoint to be removed as the trigger point
+	 *
+	 * @exception CoreException if adding fails. Reasons include:
+	 *                <ul>
+	 *                <li>CONFIGURATION_INVALID - the required
+	 *                <code>MODEL_IDENTIFIER</code> attribute is not set on the
+	 *                breakpoint marker.</li>
+	 *                <li>A <code>CoreException</code> occurred while verifying
+	 *                the <code>MODEL_IDENTIFIER</code> attribute.</li>
+	 *                </ul>
+	 * @since 3.11
+	 */
+	default public void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+	}
+
+	/**
+	 * Removes all the trigger points from the breakpoint manager.
+	 *
+	 * @exception CoreException if an exception occurs while deleting an
+	 *                underlying marker.
+	 * @since 3.11
+	 */
+	default public void removeAllTriggerpoints() throws CoreException {
+	}
+
+	/**
+	 * Returns whether a breakpoint can suspend based on other trigger points
+	 *
+	 * @return return <code>true</code> if a breakpoint can suspend
+	 * @since 3.11
+	 */
+	default public boolean canSupendOnBreakpoint() {
+		return true;
+	}
+
+	/**
+	 * Revisit all the trigger points to activate/deactivate trigger points.
+	 *
+	 * @param triggerointList list of trigger points to be deactivated or
+	 *            <code>null<code> to deactivate all trigger points
+	 * @since 3.11
+	 */
+	default public void deActivateTriggerpoints(IBreakpoint[] triggerointList) {
+	}
+
+	/**
+	 * Refreshes the trigger point display on breakpoints.
+	 *
+	 * @since 3.11
+	 */
+	default public void refreshTriggerpointDisplay() {
+
+	}
+
 }
 
 

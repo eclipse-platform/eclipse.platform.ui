@@ -157,6 +157,14 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String PREF_PROMPT_REMOVE_ALL_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".remove_all_breakpoints_prompt"; //$NON-NLS-1$
+
+	/**
+	 * Stores the boolean preference of whether to prompt when removing all
+	 * breakpoints.
+	 * 
+	 * @since 3.11
+	 */
+	public static final String PREF_PROMPT_REMOVE_ALL_TRIGGER_BREAKPOINTS = IDebugUIConstants.PLUGIN_ID + ".remove_all_trigger_breakpoints_prompt"; //$NON-NLS-1$
 		
 	/**
 	 * stores the boolean preference of whether or not to prompt when removing all of the breakpoints 

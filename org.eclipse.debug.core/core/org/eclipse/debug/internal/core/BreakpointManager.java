@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,6 +152,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private ListenerList<IBreakpointManagerListener> fBreakpointManagerListeners= new ListenerList<>();
 
 	/**
+	 * Breakpoint which acts a the triggering point in a workspace.
+	 */
+	private Set<IBreakpoint> fTriggerPointBreakpointList = new LinkedHashSet<>();
+
+
+	/**
 	 * Listens to POST_CHANGE notifications of breakpoint markers to detect when
 	 * a breakpoint is added & changed before the POST_BUILD add notification is
 	 * sent.
@@ -275,6 +282,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 				if (breakpoint.isRegistered()) {
 					added.add(breakpoint);
+
+				}
+				if (breakpoint.isTriggerPoint()) {
+					addTriggerBreakpoint(breakpoint);
 				}
 			} catch (DebugException e) {
 				DebugPlugin.log(e);
@@ -1233,6 +1244,47 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 	}
 
+	/**
+	 * Notifies breakpoint manager listeners in a safe runnable to handle
+	 * exceptions.
+	 */
+	class BreakpointManagerTriggerPointNotifier implements ISafeRunnable {
+
+		private IBreakpointManagerListener fListener;
+		private IBreakpoint fManagerTriggerpoint;
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		@Override
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "An exception occurred during breakpoint change notification.", exception); //$NON-NLS-1$
+			DebugPlugin.log(status);
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		@Override
+		public void run() throws Exception {
+			fListener.breakpointManagerTriggerPointChanged(fManagerTriggerpoint);
+		}
+
+		/**
+		 * Notifies the listeners of the enabled state change
+		 *
+		 * @param triggerBreakpoint new breakpoint as trigger point
+		 */
+		public void notify(IBreakpoint triggerBreakpoint) {
+			fManagerTriggerpoint = triggerBreakpoint;
+			for (IBreakpointManagerListener iBreakpointManagerListener : fBreakpointManagerListeners) {
+				fListener = iBreakpointManagerListener;
+				SafeRunner.run(this);
+			}
+			fListener = null;
+		}
+	}
+
 	class BreakpointManagerJob extends Job {
 
 		private final IWorkspaceRunnable fRunnable;
@@ -1321,6 +1373,101 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					list.add(new BreakpointImportParticipantDelegate(elements[i]));
 				}
 			}
+		}
+	}
+
+	@Override
+	public IBreakpoint[] getTriggerBreakpoints() {
+		return fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+	}
+
+	@Override
+	public void addTriggerBreakpoint(IBreakpoint triggerBreakpoint) throws CoreException {
+		if (triggerBreakpoint == null) {
+			return;
+		}
+		fTriggerPointBreakpointList.add(triggerBreakpoint);
+		new BreakpointManagerTriggerPointNotifier().notify(triggerBreakpoint);
+	}
+
+	@Override
+	public void removeTriggerBreakpoint(IBreakpoint breakpoint) throws CoreException {
+		if (breakpoint != null) {
+			fTriggerPointBreakpointList.remove(breakpoint);
+		}
+	}
+
+	@Override
+	public void removeAllTriggerpoints() throws CoreException {
+		IBreakpoint[] triggerPointBreakpointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+		for (IBreakpoint iBreakpoint : triggerPointBreakpointList) {
+			iBreakpoint.setTriggerPoint(false);
+			iBreakpoint.setTriggerPointActive(false);
+		}
+		refreshTriggerpointDisplay();
+	}
+
+	@Override
+	public boolean canSupendOnBreakpoint() {
+		if (fTriggerPointBreakpointList.isEmpty()) {
+			return true;
+		}
+		int i = 0;
+		for (IBreakpoint iBreakpoint : fTriggerPointBreakpointList) {
+			try {
+				if (iBreakpoint.isTriggerPointActive()) {
+					return false;
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#revisitTriggerpoints()
+	 * This version of implementation deactivate all the active trigger points
+	 */
+	@Override
+	public void deActivateTriggerpoints(IBreakpoint[] triggerointList) {
+		if (triggerointList == null) {
+			triggerointList = fTriggerPointBreakpointList.toArray(new IBreakpoint[0]);
+		}
+		for (IBreakpoint iBreakpoint : triggerointList) {
+			try {
+				if (iBreakpoint.isTriggerPointActive()) {
+					iBreakpoint.setTriggerPointActive(false);
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		refreshTriggerpointDisplay();
+	}
+
+	@Override
+	public void refreshTriggerpointDisplay() {
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IBreakpoint[] breakpoints = getBreakpoints();
+				for (int i = 0; i < breakpoints.length; i++) {
+					IBreakpoint breakpoint = breakpoints[i];
+					// Touch the marker (but don't actually change anything) so
+					// that the icon in
+					// the editor ruler will be updated (editors listen to
+					// marker changes).
+					breakpoint.getMarker().setAttribute(IBreakpoint.ENABLED, breakpoint.isEnabled());
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
+		} catch (CoreException e) {
+			DebugPlugin.log(e);
 		}
 	}
 }

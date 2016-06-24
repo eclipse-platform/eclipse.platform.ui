@@ -105,6 +105,9 @@ public class ActionMessages extends NLS {
 	public static String RemoveBreakpointAction_6;
 	public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
 	public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
+
+	public static String RemoveAllTriggerpointsAction_0;
+	public static String RemoveAllTriggerpointsAction_1;
 	
 	public static String DeleteBreakpointOperationName;
 	public static String DeleteBreakpointsOperationName;

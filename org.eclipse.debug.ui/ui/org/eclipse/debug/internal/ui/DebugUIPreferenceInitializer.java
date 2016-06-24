@@ -51,6 +51,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.PROMPT);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS, true);
+		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_TRIGGER_BREAKPOINTS, true);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, true);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_EXPRESSIONS, true);
 		
@@ -171,12 +172,14 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 	 * @since 3.4
 	 */
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		if (registry == null)
+		if (registry == null) {
 			return defaultRGB;
+		}
 			
 		RGB rgb= registry.getRGB(key);
-		if (rgb != null)
+		if (rgb != null) {
 			return rgb;
+		}
 		
 		return defaultRGB;
 	}
@@ -196,13 +199,15 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 			PreferenceConverter.setDefault(store, key, newValue);
 		} else {
 			RGB oldValue= null;
-			if (store.isDefault(key))
+			if (store.isDefault(key)) {
 				oldValue= PreferenceConverter.getDefaultColor(store, key);
+			}
 		
 			PreferenceConverter.setDefault(store, key, newValue);
 		
-			if (oldValue != null && !oldValue.equals(newValue))
+			if (oldValue != null && !oldValue.equals(newValue)) {
 				store.firePropertyChangeEvent(key, oldValue, newValue);
+			}
 			}
 		}
 

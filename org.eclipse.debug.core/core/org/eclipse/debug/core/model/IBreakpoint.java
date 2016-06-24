@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,18 +30,18 @@ import org.eclipse.debug.core.DebugPlugin;
  * <p>
  * For example, following is a definition of corresponding breakpoint
  * and breakpoint marker definitions. Note that the <code>markerType</code>
- * attribute defined by the breakpoint extension corresponds to the 
+ * attribute defined by the breakpoint extension corresponds to the
  * type of the marker definition.
  * <pre>
  * &lt;extension point="org.eclipse.debug.core.breakpoints"&gt;
- *   &lt;breakpoint 
+ *   &lt;breakpoint
  *      id="com.example.Breakpoint"
  *      class="com.example.Breakpoint"
  *      markerType="com.example.BreakpointMarker"&gt;
  *   &lt;/breakpoint&gt;
  * &lt;/extension&gt;
  * &lt;extension point="org.eclipse.core.resources.markers"&gt;
- *   &lt;marker 
+ *   &lt;marker
  *      id="com.example.BreakpointMarker"
  *      super type="org.eclipse.debug.core.breakpointMarker"
  *      attribute name ="exampleAttribute"&gt;
@@ -51,7 +51,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * <p>
  * The breakpoint manager instantiates persisted breakpoints by
  * traversing all markers that are a subtype of
- * <code>"org.eclipse.debug.core.breakpointMarker"</code>, and 
+ * <code>"org.eclipse.debug.core.breakpointMarker"</code>, and
  * instantiating the class defined by the <code>class</code> attribute
  * on the associated breakpoint extension. The method <code>setMarker</code>
  * is then called to associate a marker with the breakpoint.
@@ -63,24 +63,24 @@ import org.eclipse.debug.core.DebugPlugin;
  * a <code>PERSISTED</code> attribute for selective persistence of breakpoints
  * of the same type.
  * </p>
- * 
+ *
  * @since 2.0
  */
 
 public interface IBreakpoint extends IAdaptable {
-	
+
 	/**
-	 * Root breakpoint marker type	
+	 * Root breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.breakpointMarker"</code>).
 	 */
 	public static final String BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".breakpointMarker"; //$NON-NLS-1$
-	
+
 	/**
 	 * Line breakpoint marker type
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
 	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.getUniqueIdentifier() + ".lineBreakpointMarker"; //$NON-NLS-1$
-			
+
 	/**
 	 * Enabled breakpoint marker attribute (value <code>"org.eclipse.debug.core.enabled"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to the
@@ -89,14 +89,14 @@ public interface IBreakpoint extends IAdaptable {
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
 	public static final String ENABLED= "org.eclipse.debug.core.enabled"; //$NON-NLS-1$
-	
+
 	/**
 	 * Debug model identifier breakpoint marker attribute (value <code>"org.eclipse.debug.core.id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
 	 * identifier of the debug model a breakpoint is associated with.
 	 */
 	public static final String ID= "org.eclipse.debug.core.id"; //$NON-NLS-1$
-	
+
 	/**
 	 * Registered breakpoint marker attribute (value <code>"org.eclipse.debug.core.registered"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
@@ -104,8 +104,8 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String REGISTERED= "org.eclipse.debug.core.registered"; //$NON-NLS-1$	
-	
+	public static final String REGISTERED= "org.eclipse.debug.core.registered"; //$NON-NLS-1$
+
 	/**
 	 * Persisted breakpoint marker attribute (value <code>"org.eclipse.debug.core.persisted"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to
@@ -115,7 +115,7 @@ public interface IBreakpoint extends IAdaptable {
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
 	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$
-	
+
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes
 	 * this breakpoint from the breakpoint manager.
@@ -124,11 +124,11 @@ public interface IBreakpoint extends IAdaptable {
 	 *  underlying marker
 	 */
 	public void delete() throws CoreException;
-	
+
 	/**
 	 * Returns the marker associated with this breakpoint, or
 	 * <code>null</code> if no marker is associated with this breakpoint.
-	 * 
+	 *
 	 * @return associated marker, or <code>null</code> if there is
 	 * 	no associated marker.
 	 */
@@ -136,7 +136,7 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Sets the marker associated with this breakpoint. This method is
 	 * called once at breakpoint creation.
-	 * 
+	 *
 	 * @param marker the marker to associate with this breakpoint
 	 * @exception CoreException if an error occurs accessing the marker
 	 */
@@ -144,14 +144,14 @@ public interface IBreakpoint extends IAdaptable {
 	/**
 	 * Returns the identifier of the debug model this breakpoint is
 	 * associated with.
-	 * 
+	 *
 	 * @return the identifier of the debug model this breakpoint is
 	 * 	associated with
 	 */
 	public String getModelIdentifier();
 	/**
 	 * Returns whether this breakpoint is enabled
-	 * 
+	 *
 	 * @return whether this breakpoint is enabled
 	 * @exception CoreException if unable to access the associated
 	 *  attribute from this breakpoint's underlying marker
@@ -161,62 +161,116 @@ public interface IBreakpoint extends IAdaptable {
 	 * Sets the enabled state of this breakpoint. This has no effect
 	 * if the current enabled state is the same as specified by the
 	 * enabled parameter.
-	 * 
+	 *
 	 * @param enabled  whether this breakpoint should be enabled
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */
 	public void setEnabled(boolean enabled) throws CoreException;
-	
+
 	/**
 	 * Returns whether this breakpoint is currently registered with
 	 * the breakpoint manager.
-	 * 
+	 *
 	 * @return whether this breakpoint is currently registered with
 	 *  the breakpoint manager
-	 * @exception CoreException if unable to access the associated 
+	 * @exception CoreException if unable to access the associated
 	 *  attribute on this breakpoint's underlying marker
 	 */
 	public boolean isRegistered() throws CoreException;
-	
+
 	/**
 	 * Sets whether this breakpoint is currently registered with the
-	 * breakpoint manager. 
-	 * 
+	 * breakpoint manager.
+	 *
 	 * @param registered whether this breakpoint is registered with the
 	 *   breakpoint manager
 	 * @exception CoreException if unable to set the associated attribute
 	 *  on this breakpoint's underlying marker.
 	 */
 	public void setRegistered(boolean registered) throws CoreException;
-	
+
 	/**
 	 * Returns whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Since marker definitions only allow all/none of a specific type
 	 * of marker to be persisted (rather than selected markers of a
 	 * specific type), breakpoints define this functionality.
-	 * 
+	 *
 	 * @return whether this breakpoint is to be persisted
 	 * @exception CoreException if unable to access the associated attribute
 	 *  on this breakpoint's underlying marker
 	 */
 	public boolean isPersisted() throws CoreException;
-	
+
 	/**
 	 * Sets whether this breakpoint is to be persisted across
 	 * workspace invocations, or when a project is closed and re-opened.
 	 * Has no effect if this breakpoint's marker definition is defined as not
 	 * persisted. Sets the underlying <code>TRANSIENT</code> attribute on this
 	 * breakpoint's marker to <code>true</code>.
-	 * 
+	 *
 	 * @param registered whether this breakpoint is to be persisted across
 	 * workspace invocations
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */
 	public void setPersisted(boolean registered) throws CoreException;
-    
+
+	/**
+	 * Returns whether this breakpoint is defined as the trigger point in the
+	 * workspace
+	 *
+	 * @return whether this breakpoint is a trigger point
+	 * @exception CoreException if unable to access the associated attribute on
+	 *                this breakpoint's underlying marker
+	 * @since 3.11
+	 */
+	default public boolean isTriggerPoint() throws CoreException {
+		return false;
+	}
+
+	/**
+	 * Sets whether this breakpoint is to be treated as a trigger point for the
+	 * workspace. If it is a trigger point <code>TRIGGERPOINT</code> attribute
+	 * on this breakpoint's marker is set to <code>true</code>.
+	 *
+	 * @param trigger whether this breakpoint is to be treated as trigger point
+	 *            for the workspace
+	 * @exception CoreException if unable to set the associated attribute on
+	 *                this breakpoint's underlying marker.
+	 * @since 3.11
+	 */
+	default public void setTriggerPoint(boolean trigger) throws CoreException {
+	}
+
+	/**
+	 * Sets if the breakpoint is a trigger point and is active. If trigger point
+	 * is active <code>TRIGGERPOINTACTIVE</code> attribute on this breakpoint's
+	 * marker is set to <code>true</code>.
+	 *
+	 * @param trigger whether this breakpoint is to be treated as trigger point
+	 *            for the workspace
+	 * @exception CoreException if unable to set the associated attribute on
+	 *                this breakpoint's underlying marker.
+	 * @since 3.11
+	 */
+	default public void setTriggerPointActive(boolean active) throws CoreException {
+	}
+
+	/**
+	 * Returns whether this breakpoint is a trigger point and is active.
+	 *
+	 * @return whether this breakpoint is a trigger point and it is active
+	 * @exception CoreException if unable to access the associated attribute on
+	 *                this breakpoint's underlying marker
+	 * @since 3.11
+	 */
+	default public boolean isTriggerPointActive() throws CoreException {
+		return false;
+	}
+
+
 }
 
 

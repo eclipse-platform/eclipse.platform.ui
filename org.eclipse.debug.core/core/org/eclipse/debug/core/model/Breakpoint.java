@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,29 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  */
 
 public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
+
+	/**
+	 * Persisted breakpoint marker attribute (value
+	 * <code>"org.eclipse.debug.core.triggerpoint"</code>). The attribute is a
+	 * <code>boolean</code> corresponding to whether a breakpoint is a trigger
+	 * breakpoint for the workspace.
+	 *
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
+	 * @since 3.11
+	 *
+	 */
+	private static final String TRIGGEREPOINT = "org.eclipse.debug.core.triggerpoint"; //$NON-NLS-1$
+
+	/**
+	 * Persisted breakpoint marker attribute (value
+	 * <code>"org.eclipse.debug.core.triggerpointactive"</code>). The attribute
+	 * is a <code>boolean</code> corresponding to whether the trigger breakpoint
+	 * is active or not.
+	 *
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
+	 * @since 3.11
+	 */
+	private static final String TRIGGEREPOINTACTIVE = "org.eclipse.debug.core.triggerpointactive"; //$NON-NLS-1$
 
 	/**
 	 * Creates a breakpoint.
@@ -164,10 +187,56 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	}
 
 	/**
-	 * Convenience method to set the given boolean attribute of
-	 * this breakpoint's underlying marker in a workspace
-	 * runnable. Setting marker attributes in a workspace runnable
-	 * prevents deadlock.
+	 * @see IBreakpoint#isPersisted()
+	 * @since 3.11
+	 */
+	@Override
+	public boolean isTriggerPoint() throws CoreException {
+		return getMarker().getAttribute(TRIGGEREPOINT, false);
+	}
+
+	/**
+	 * @see IBreakpoint#setTriggerPoint(boolean)
+	 * @since 3.11
+	 */
+	@Override
+	public void setTriggerPoint(boolean triggerPoint) throws CoreException {
+		if (isTriggerPoint() != triggerPoint) {
+			setAttribute(TRIGGEREPOINT, triggerPoint);
+			IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+			if (triggerPoint) {
+				manager.addTriggerBreakpoint(this);
+			} else {
+				manager.removeTriggerBreakpoint(this);
+			}
+		}
+
+	}
+
+	/**
+	 * @see IBreakpoint#isTriggerPointActive()
+	 * @since 3.11
+	 */
+	@Override
+	public boolean isTriggerPointActive() throws CoreException {
+		return getMarker().getAttribute(TRIGGEREPOINTACTIVE, false);
+	}
+
+	/**
+	 * @see IBreakpoint#setTriggerPointActive(boolean)
+	 * @since 3.11
+	 */
+	@Override
+	public void setTriggerPointActive(boolean triggerPointActive) throws CoreException {
+		if (isTriggerPointActive() != triggerPointActive) {
+			setAttribute(TRIGGEREPOINTACTIVE, triggerPointActive);
+		}
+	}
+
+	/**
+	 * Convenience method to set the given boolean attribute of this
+	 * breakpoint's underlying marker in a workspace runnable. Setting marker
+	 * attributes in a workspace runnable prevents deadlock.
 	 *
 	 * @param attributeName attribute name
 	 * @param value attribute value
@@ -359,5 +428,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
     		throw new DebugException(e.getStatus());
     	}
     }
+
+	/**
+	 * @since 3.11
+	 */
+	protected static String getTriggerActivePropertyString() {
+		return TRIGGEREPOINTACTIVE;
+	}
 
 }
