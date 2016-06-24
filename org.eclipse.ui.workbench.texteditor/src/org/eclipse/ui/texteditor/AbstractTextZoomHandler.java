@@ -101,7 +101,7 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 		} else if ((part instanceof MultiPageEditorPart) && ((MultiPageEditorPart)part).getSelectedPage() instanceof AbstractTextEditor) {
 			return (AbstractTextEditor)((MultiPageEditorPart)part).getSelectedPage();
 		}
-		return null;
+		return part != null ? part.getAdapter(AbstractTextEditor.class) : null;
 	}
 
 	@Override
