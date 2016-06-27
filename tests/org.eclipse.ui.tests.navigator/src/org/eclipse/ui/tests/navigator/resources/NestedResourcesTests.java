@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.navigator.resources;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -28,42 +31,44 @@ import org.junit.Test;
  */
 public class NestedResourcesTests {
 
-	private IProject projectA;
-	private IProject projectAAA;
-	private IProject projectAB;
-	private IProject projectABA;
-	private IProject projectABB;
+	private Set<IProject> testProjects = new HashSet<>();
 
 	@Test
 	public void testProjectHierarchy() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		projectA = root.getProject("a");
+		IProject projectA = root.getProject("a");
 		projectA.create(monitor);
 		projectA.open(monitor);
 		IFolder folderAA = projectA.getFolder("aa");
 		folderAA.create(true, true, monitor);
 		IProjectDescription projectAAADesc = root.getWorkspace().newProjectDescription("aaa");
 		projectAAADesc.setLocation(folderAA.getLocation().append(projectAAADesc.getName()));
-		projectAAA = root.getProject(projectAAADesc.getName());
+		IProject projectAAA = root.getProject(projectAAADesc.getName());
 		projectAAA.create(projectAAADesc, monitor);
 		projectAAA.open(monitor);
 		IProjectDescription projectABDesc = projectA.getWorkspace().newProjectDescription("ab");
 		projectABDesc.setLocation(projectA.getLocation().append(projectABDesc.getName()));
-		projectAB = projectA.getWorkspace().getRoot().getProject(projectABDesc.getName());
+		IProject projectAB = projectA.getWorkspace().getRoot().getProject(projectABDesc.getName());
 		projectAB.create(projectABDesc, monitor);
 		projectAB.open(monitor);
 		IProjectDescription projectABADesc = projectAB.getWorkspace().newProjectDescription("aba");
 		projectABADesc.setLocation(projectAB.getLocation().append(projectABADesc.getName()));
-		projectABA = root.getProject(projectABADesc.getName());
+		IProject projectABA = root.getProject(projectABADesc.getName());
 		projectABA.create(projectABADesc, monitor);
 		projectABA.open(monitor);
 		IProjectDescription projectABBDesc = projectAB.getWorkspace().newProjectDescription("abb");
 		projectABBDesc.setLocation(projectAB.getLocation().append(projectABBDesc.getName()));
-		projectABB = root.getProject(projectABBDesc.getName());
+		IProject projectABB = root.getProject(projectABBDesc.getName());
 		projectABB.create(projectABBDesc, monitor);
 		projectABB.open(monitor);
 		projectAB.getFolder("abc").create(true, true, monitor);
+
+		testProjects.add(projectA);
+		testProjects.add(projectAAA);
+		testProjects.add(projectAB);
+		testProjects.add(projectABA);
+		testProjects.add(projectABB);
 
 		IProject[] childrenOfProjectA = NestedProjectManager.getInstance().getDirectChildrenProjects(projectA);
 		Assert.assertEquals(1, childrenOfProjectA.length);
@@ -80,14 +85,40 @@ public class NestedResourcesTests {
 		Assert.assertEquals(2, childrenOfProjectAB.length);
 	}
 
+	@Test
+	public void testDashInProject() throws Exception {
+		IProgressMonitor monitor = new NullProgressMonitor();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		//
+		IProject projectA = root.getProject("a");
+		projectA.create(monitor);
+		projectA.open(monitor);
+		//
+		IProjectDescription projectAChildDesc = root.getWorkspace().newProjectDescription("child");
+		projectAChildDesc.setLocation(projectA.getLocation().append(projectAChildDesc.getName()));
+		IProject projectAChild = root.getProject(projectAChildDesc.getName());
+		projectAChild.create(projectAChildDesc, monitor);
+		projectAChild.open(monitor);
+		//
+		IProject projectA_A = root.getProject("a-a");
+		projectA_A.create(monitor);
+		projectA_A.open(monitor);
+		// Built projects in a/, a/child/ and a-a/
+		testProjects.add(projectA);
+		testProjects.add(projectAChild);
+		testProjects.add(projectA_A);
+
+		Assert.assertTrue(NestedProjectManager.getInstance().hasDirectChildrenProjects(projectA));
+		Assert.assertEquals(projectAChild, NestedProjectManager.getInstance().getDirectChildrenProjects(projectA)[0]);
+	}
+
 	@After
 	public void deleteProjects() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();
-		projectA.delete(false, true, monitor);
-		projectAB.delete(false, true, monitor);
-		projectAAA.delete(false, true, monitor);
-		projectABA.delete(false, true, monitor);
-		projectABB.delete(false, true, monitor);
+		for (IProject testProject : testProjects) {
+			testProject.delete(true, true, monitor);
+		}
+		testProjects.clear();
 	}
 
 }
