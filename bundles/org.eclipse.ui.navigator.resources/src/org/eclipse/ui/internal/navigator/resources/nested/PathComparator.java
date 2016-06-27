@@ -23,20 +23,22 @@ public class PathComparator implements Comparator<IPath> {
 
 	@Override
 	public int compare(IPath arg0, IPath arg1) {
-		if (arg0.equals(arg1)) {
+		if (arg0 == arg1) {
 			return 0;
 		}
 		int res = 0;
 		// First, Device
-		if (arg0.getDevice() != null && arg1.getDevice() == null) {
+		String device0 = arg0.getDevice();
+		String device1 = arg1.getDevice();
+		if (device0 != null && device1 == null) {
 			return +1;
 		}
-		if (arg0.getDevice() == null && arg1.getDevice() != null) {
+		if (device0 == null && device1 != null) {
 			return -1;
 		}
-		if (arg0.getDevice() != null && arg1.getDevice() != null) {
-			res = arg0.getDevice().compareTo(arg1.getDevice());
-			if (res != 0) {
+		if (device0 != null && device1 != null) {
+			res = device0.compareTo(device1);
+			if (res != 0 && !device0.equalsIgnoreCase(device1)) {
 				return res;
 			}
 		}
