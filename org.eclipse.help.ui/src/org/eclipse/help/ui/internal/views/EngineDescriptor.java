@@ -74,6 +74,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		return config;
 	}
 
+	@Override
 	public String getLabel() {
 		if (label != null)
 			return label;
@@ -85,12 +86,14 @@ public class EngineDescriptor implements IEngineDescriptor {
 		return clabel;
 	}
 
+	@Override
 	public String getId() {
 		if (id != null)
 			return id;
 		return config.getAttribute(IHelpUIConstants.ATT_ID);
 	}
 
+	@Override
 	public String getEngineTypeId() {
 		if (etdesc != null)
 			return etdesc.getId();
@@ -110,6 +113,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		return etdesc.getIconImage();
 	}
 
+	@Override
 	public String getDescription() {
 		if (desc != null)
 			return desc;
@@ -142,6 +146,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		return page;
 	}
 
+	@Override
 	public Dictionary<String, Object> getParameters() {
 		if (parameters != null)
 			return parameters;
@@ -175,6 +180,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		this.id = id;
 	}
 
+	@Override
 	public void setLabel(String label) {
 		if (isUserDefined()) {
 			this.label = label;
@@ -183,6 +189,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		}
 	}
 
+	@Override
 	public void setDescription(String desc) {
 		if (isUserDefined()) {
 			this.desc = desc;
@@ -191,6 +198,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		}
 	}
 
+	@Override
 	public boolean isUserDefined() {
 		return userDefined;
 	}

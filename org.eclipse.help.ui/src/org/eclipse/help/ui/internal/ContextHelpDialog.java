@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -42,9 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -81,6 +77,7 @@ public class ContextHelpDialog {
 			this.topic = topic;
 		}
 
+		@Override
 		public void linkActivated(Control c) {
 			launchLinks(topic);
 		}
@@ -127,29 +124,26 @@ public class ContextHelpDialog {
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpUIConstants.F1_SHELL);
 
-		shell.addListener(SWT.Deactivate, new Listener() {
-			public void handleEvent(Event e) {
-				if (HelpUIPlugin.DEBUG_INFOPOP) {
-					System.out
-							.println("ContextHelpDialog shell deactivate listener: SWT.Deactivate called. "); //$NON-NLS-1$
-				}
-				close();
+		shell.addListener(SWT.Deactivate, e -> {
+			if (HelpUIPlugin.DEBUG_INFOPOP) {
+				System.out.println("ContextHelpDialog shell deactivate listener: SWT.Deactivate called. "); //$NON-NLS-1$
 			}
+			close();
 		});
 
-		shell.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (HelpUIPlugin.DEBUG_INFOPOP) {
-						System.out
-								.println("ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. "); //$NON-NLS-1$
-					}
-					e.doit = true;
+		shell.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				if (HelpUIPlugin.DEBUG_INFOPOP) {
+					System.out.println(
+							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. "); //$NON-NLS-1$
 				}
+				e.doit = true;
 			}
 		});
 
 		shell.addControlListener(new ControlAdapter() {
+
+			@Override
 			public void controlMoved(ControlEvent e) {
 				if (HelpUIPlugin.DEBUG_INFOPOP) {
 					System.out
@@ -234,15 +228,13 @@ public class ContextHelpDialog {
 			styledText = Messages.ContextHelpPart_noDescription;
 		}
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
-		text.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (HelpUIPlugin.DEBUG_INFOPOP) {
-						System.out
-								.println("ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE."); //$NON-NLS-1$
-					}
-					e.doit = true;
+		text.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+				if (HelpUIPlugin.DEBUG_INFOPOP) {
+					System.out.println(
+							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE."); //$NON-NLS-1$
 				}
+				e.doit = true;
 			}
 		});
 
@@ -371,6 +363,8 @@ public class ContextHelpDialog {
 		link.setForeground(linkColour);
 		link.setFont(parent.getFont());
 		linkManager.registerHyperlink(link, new HyperlinkAdapter() {
+
+			@Override
 			public void linkActivated(Control label) {
 				openDynamicHelp();
 			}
@@ -396,11 +390,9 @@ public class ContextHelpDialog {
 	}
 	
 	private void openDynamicHelp() {
-		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-			public void run() {
-				close();				
-				DefaultHelpUI.getInstance().displayContext(context, 0, 0, true);
-			}
+		BusyIndicator.showWhile(shell.getDisplay(), () -> {
+			close();
+			DefaultHelpUI.getInstance().displayContext(context, 0, 0, true);
 		});
 	}
 
@@ -432,22 +424,28 @@ public class ContextHelpDialog {
 	private void initAccessible(final Control control) {
 		Accessible accessible = control.getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
+
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = infopopText;
 			}
 
+			@Override
 			public void getHelp(AccessibleEvent e) {
 				e.result = control.getToolTipText();
 			}
 		});
 
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
+
+			@Override
 			public void getChildAtPoint(AccessibleControlEvent e) {
 				Point pt = control.toControl(new Point(e.x, e.y));
 				e.childID = (control.getBounds().contains(pt)) ? ACC.CHILDID_MULTIPLE
 						: ACC.CHILDID_NONE;
 			}
 
+			@Override
 			public void getLocation(AccessibleControlEvent e) {
 				Rectangle location = control.getBounds();
 				Point pt = control.toDisplay(new Point(location.x, location.y));
@@ -457,14 +455,17 @@ public class ContextHelpDialog {
 				e.height = location.height;
 			}
 
+			@Override
 			public void getChildCount(AccessibleControlEvent e) {
 				e.detail = 1;
 			}
 
+			@Override
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_LABEL;
 			}
 
+			@Override
 			public void getState(AccessibleControlEvent e) {
 				e.detail = ACC.STATE_READONLY;
 			}
@@ -480,10 +481,12 @@ public class ContextHelpDialog {
 			super(parent, style);
 		}
 
+		@Override
 		public boolean setFocus() {
 			return false;
 		}
 
+		@Override
 		public boolean isFocusControl() {
 			return false;
 		}

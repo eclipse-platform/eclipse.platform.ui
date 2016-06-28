@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,22 +13,42 @@ package org.eclipse.help.ui.internal.views;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.help.*;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexSee;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.base.scope.WorkingSetScope;
 import org.eclipse.help.internal.search.federated.LocalHelpScope;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.search.ISearchScope;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
@@ -40,6 +60,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	
 	public class ScopeObserver implements Observer {
 
+		@Override
 		public void update(Observable o, Object arg) {
 			if (o instanceof ScopeSetManager) {
 				refilter();
@@ -55,6 +76,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		
 		AbstractHelpScope scope;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IToc) {
 				return ScopeUtils.showInTree((IToc)element, scope);
@@ -116,20 +138,13 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		configureTreeViewer();
 		treeViewer.setInput(this);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		treeViewer.addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				doOpenSelection((IStructuredSelection) event.getSelection());
-			}
-		});
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged((IStructuredSelection) event
-						.getSelection());
-			}
-		});
+		treeViewer.addOpenListener(event -> doOpenSelection((IStructuredSelection) event.getSelection()));
+		treeViewer.addSelectionChangedListener(
+				event -> handleSelectionChanged((IStructuredSelection) event.getSelection()));
 		treeViewer.getTree().addMouseListener(new MouseAdapter() {
 			long lastTime;
 
+			@Override
 			public void mouseUp(MouseEvent e) {
 				long eventTime = e.time & 0xFFFFFFFFL;
 				if (eventTime - lastTime <= e.display.getDoubleClickTime())
@@ -148,35 +163,32 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			}
 		});
 
-		treeViewer.getTree().addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				validateLastItem();
-				if (lastItem == null)
-					return;
-				Rectangle bounds = lastItem.getBounds();
-				boolean selected = false;
-				TreeItem[] items = lastItem.getParent().getSelection();
-				for (int i = 0; i < items.length; i++) {
-					if (items[i].equals(lastItem)) {
-						selected = true;
-						break;
-					}
+		treeViewer.getTree().addPaintListener(e -> {
+			validateLastItem();
+			if (lastItem == null)
+				return;
+			Rectangle bounds = lastItem.getBounds();
+			boolean selected = false;
+			TreeItem[] items = lastItem.getParent().getSelection();
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].equals(lastItem)) {
+					selected = true;
+					break;
 				}
-				if (selected)
-					e.gc.setForeground(e.display.getSystemColor(
-							SWT.COLOR_LIST_SELECTION_TEXT));
-				else
-					e.gc.setForeground(toolkit.getHyperlinkGroup()
-							.getActiveForeground());
-				FontMetrics fm = e.gc.getFontMetrics();
-				int height = fm.getHeight();
-				int lineY = bounds.y + height;
-				e.gc.drawLine(bounds.x, lineY, bounds.x + bounds.width - 1,
-						lineY);
 			}
+			if (selected)
+				e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+			else
+				e.gc.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
+			FontMetrics fm = e.gc.getFontMetrics();
+			int height = fm.getHeight();
+			int lineY = bounds.y + height;
+			e.gc.drawLine(bounds.x, lineY, bounds.x + bounds.width - 1, lineY);
 		});
 
 		treeViewer.getTree().addMouseTrackListener(new MouseTrackAdapter() {
+
+			@Override
 			public void mouseExit(MouseEvent e) {
 				validateLastItem();
 				if (lastItem != null) {
@@ -187,52 +199,48 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			}
 		});
 
-		treeViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
-			public void mouseMove(MouseEvent e) {
-				Point p = new Point(e.x, e.y);
-				TreeItem item = treeViewer.getTree().getItem(p);
-				validateLastItem();
-				if (item != null) {
-					if (lastItem != null) {
-						if (!lastItem.equals(item)) {
-							lastItem.setForeground(null);
-							repaintItem(lastItem);
-							updateStatus(null);
-							lastItem = null;
-						} else
-							return;
-					}
-					Object obj = item.getData();
-					treeViewer.getTree().setCursor(handCursor);
-					IStructuredSelection ssel = (IStructuredSelection) treeViewer
-							.getSelection();
-					if (ssel.getFirstElement() == obj)
-						item.setForeground(e.display
-								.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-					else
-						item.setForeground(toolkit.getHyperlinkGroup()
-								.getActiveForeground());
-					lastItem = item;
-					repaintItem(lastItem);
-					if (obj instanceof IHelpResource)
-						updateStatus((IHelpResource) obj);
-					else
+		treeViewer.getTree().addMouseMoveListener(e -> {
+			Point p = new Point(e.x, e.y);
+			TreeItem item = treeViewer.getTree().getItem(p);
+			validateLastItem();
+			if (item != null) {
+				if (lastItem != null) {
+					if (!lastItem.equals(item)) {
+						lastItem.setForeground(null);
+						repaintItem(lastItem);
 						updateStatus(null);
-					return;
-				} else if (lastItem != null) {
-					lastItem.setForeground(null);
-					repaintItem(lastItem);
-					lastItem = null;
-					updateStatus(null);
+						lastItem = null;
+					} else
+						return;
 				}
-				treeViewer.getTree().setCursor(null);
+				Object obj = item.getData();
+				treeViewer.getTree().setCursor(handCursor);
+				IStructuredSelection ssel = (IStructuredSelection) treeViewer.getSelection();
+				if (ssel.getFirstElement() == obj)
+					item.setForeground(e.display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+				else
+					item.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
+				lastItem = item;
+				repaintItem(lastItem);
+				if (obj instanceof IHelpResource)
+					updateStatus((IHelpResource) obj);
+				else
+					updateStatus(null);
+				return;
+			} else if (lastItem != null) {
+				lastItem.setForeground(null);
+				repaintItem(lastItem);
+				lastItem = null;
+				updateStatus(null);
 			}
+			treeViewer.getTree().setCursor(null);
 		});
 		contributeToToolBar(tbm);	
 		scopeObserver = new ScopeObserver();
 		ScopeState.getInstance().getScopeSetManager().addObserver(scopeObserver);
 	}
 
+	@Override
 	public void dispose() {
 		handCursor.dispose();
 		if (scopeObserver != null) {
@@ -249,12 +257,10 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	protected void contributeToToolBar(IToolBarManager tbm) {
 		Action collapseAllAction = new Action() {
+
+			@Override
 			public void run() {
-				BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-					public void run() {
-						doCollapseAll();
-					}
-				});
+				BusyIndicator.showWhile(getControl().getDisplay(), () -> doCollapseAll());
 			}
 		};
 		collapseAllAction.setImageDescriptor(HelpUIResources
@@ -271,35 +277,24 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		treeViewer.update(expanded, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return treeViewer.getControl();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 	    refilter();
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		getControl().setVisible(visible);
 		if (visible)
@@ -363,18 +358,10 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	protected abstract void doOpen(Object obj);
 
 	protected void postUpdate(final Object obj) {
-		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				treeViewer.update(obj, null);
-			}
-		});
+		treeViewer.getControl().getDisplay().asyncExec(() -> treeViewer.update(obj, null));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return parent.fillSelectionProviderMenu(treeViewer, manager,
 				canAddBookmarks());
@@ -382,26 +369,25 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	protected abstract boolean canAddBookmarks();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocus()
-	 */
+	@Override
 	public boolean hasFocusControl(Control focusControl) {
 		return treeViewer.getControl().equals(focusControl);
 	}
 
+	@Override
 	public void setFocus() {
 		if (treeViewer != null)
 			treeViewer.getTree().setFocus();
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
 	}
 
+	@Override
 	public void stop() {
 	}
 
@@ -410,6 +396,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 			lastItem = null;
 	}
 	
+	@Override
 	public void refilter() {
 		ScopeSetManager manager = ScopeState.getInstance().getScopeSetManager();
 		ScopeSet set = manager.getActiveSet();

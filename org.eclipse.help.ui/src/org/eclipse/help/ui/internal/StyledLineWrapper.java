@@ -66,6 +66,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#addTextChangeListener(TextChangeListener)
 	 */
+	@Override
 	public void addTextChangeListener(TextChangeListener l) {
 		// do nothing
 	}
@@ -73,6 +74,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getCharCount()
 	 */
+	@Override
 	public int getCharCount() {
 		if (charCount != -1)
 			return charCount;
@@ -85,6 +87,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getLine(int)
 	 */
+	@Override
 	public String getLine(int i) {
 		if ((i >= lines.size()) || (i < 0))
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -94,6 +97,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getLineAtOffset(int)
 	 */
+	@Override
 	public int getLineAtOffset(int offset) {
 		if (offset >= getCharCount())
 			return getLineCount() - 1;
@@ -108,6 +112,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getLineCount()
 	 */
+	@Override
 	public int getLineCount() {
 		if (lines.size() == 0)
 			return 1;
@@ -117,6 +122,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getLineDelimiter()
 	 */
+	@Override
 	public String getLineDelimiter() {
 		return null;
 	}
@@ -124,6 +130,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getOffsetAtLine(int)
 	 */
+	@Override
 	public int getOffsetAtLine(int line) {
 		if (lines.size() == 0)
 			return 0;
@@ -136,6 +143,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#getTextRange(int, int)
 	 */
+	@Override
 	public String getTextRange(int start, int end) {
 		int l1 = getLineAtOffset(start);
 		int l2 = getLineAtOffset(end);
@@ -153,6 +161,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#removeTextChangeListener(TextChangeListener)
 	 */
+	@Override
 	public void removeTextChangeListener(TextChangeListener arg0) {
 		// do nothing
 	}
@@ -160,6 +169,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#replaceTextRange(int, int, String)
 	 */
+	@Override
 	public void replaceTextRange(int arg0, int arg1, String arg2) {
 		// do nothing
 	}
@@ -167,6 +177,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	/**
 	 * @see StyledTextContent#setText(String)
 	 */
+	@Override
 	public void setText(String text) {
 		if (text == null)
 			text = " "; //$NON-NLS-1$

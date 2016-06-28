@@ -23,9 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class WebSearchScopeFactory implements ISearchScopeFactory {
 	public final static String P_URL = "url"; //$NON-NLS-1$
     
-    /* (non-Javadoc)
-     * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
-     */
+	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
         String urlTemplate = getProperty(store, engineId, parameters);

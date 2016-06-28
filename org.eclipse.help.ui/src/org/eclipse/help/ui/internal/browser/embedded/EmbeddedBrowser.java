@@ -30,23 +30,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.CloseWindowListener;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
-import org.eclipse.swt.browser.LocationListener;
-import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
-import org.eclipse.swt.browser.StatusTextEvent;
-import org.eclipse.swt.browser.StatusTextListener;
-import org.eclipse.swt.browser.TitleEvent;
-import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.browser.VisibilityWindowListener;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -89,6 +80,8 @@ public class EmbeddedBrowser {
 		shell = new Shell(style);
 		initializeShell(shell);
 		shell.addControlListener(new ControlListener() {
+
+			@Override
 			public void controlMoved(ControlEvent e) {
 				if (!shell.getMaximized()) {
 					Point location = shell.getLocation();
@@ -96,6 +89,8 @@ public class EmbeddedBrowser {
 					y = location.y;
 				}
 			}
+
+			@Override
 			public void controlResized(ControlEvent e) {
 				if (!shell.getMaximized()) {
 					Point size = shell.getSize();
@@ -104,19 +99,17 @@ public class EmbeddedBrowser {
 				}
 			}
 		});
-		shell.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				// save position
-				IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpUIPlugin.PLUGIN_ID);
-				prefs.putInt(BROWSER_X, x);
-				prefs.putInt(BROWSER_Y, y);
-				prefs.putInt(BROWSER_WIDTH, w);
-				prefs.putInt(BROWSER_HEIGTH, h);
-				prefs.putBoolean(BROWSER_MAXIMIZED, (shell.getMaximized()));
-				notifyCloseListners();
-				if (HelpApplication.isShutdownOnClose()) {
-					HelpApplication.stopHelp();
-				}
+		shell.addDisposeListener(e -> {
+			// save position
+			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpUIPlugin.PLUGIN_ID);
+			prefs.putInt(BROWSER_X, x);
+			prefs.putInt(BROWSER_Y, y);
+			prefs.putInt(BROWSER_WIDTH, w);
+			prefs.putInt(BROWSER_HEIGTH, h);
+			prefs.putBoolean(BROWSER_MAXIMIZED, (shell.getMaximized()));
+			notifyCloseListners();
+			if (HelpApplication.isShutdownOnClose()) {
+				HelpApplication.stopHelp();
 			}
 		});
 							
@@ -143,6 +136,8 @@ public class EmbeddedBrowser {
 		if (Platform.getPreferencesService().getBoolean(HelpUIPlugin.PLUGIN_ID, BROWSER_MAXIMIZED, false, null))
 			shell.setMaximized(true);
 		shell.addControlListener(new ControlListener() {
+
+			@Override
 			public void controlMoved(ControlEvent e) {
 				if (!shell.getMaximized()) {
 					Point location = shell.getLocation();
@@ -150,6 +145,8 @@ public class EmbeddedBrowser {
 					y = location.y;
 				}
 			}
+
+			@Override
 			public void controlResized(ControlEvent e) {
 				if (!shell.getMaximized()) {
 					Point size = shell.getSize();
@@ -163,7 +160,9 @@ public class EmbeddedBrowser {
 		shell.open();
 		//browser.setUrl("about:blank");
 
-		browser.addLocationListener(new LocationListener() {
+		browser.addLocationListener(new LocationAdapter() {
+
+			@Override
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
 				modalRequestTime = 0;
@@ -179,8 +178,6 @@ public class EmbeddedBrowser {
 					} catch (Exception exc) {
 					}
 				}
-			}
-			public void changed(LocationEvent e) {
 			}
 		});
 	}
@@ -209,7 +206,9 @@ public class EmbeddedBrowser {
 		initialize(browser);
 		event.browser = browser;
 
-		browser.addLocationListener(new LocationListener() {
+		browser.addLocationListener(new LocationAdapter() {
+
+			@Override
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
 				modalRequestTime = 0;
@@ -217,8 +216,6 @@ public class EmbeddedBrowser {
 						&& e.location.startsWith("javascript://needModal")) { //$NON-NLS-1$
 					modalRequestTime = System.currentTimeMillis();
 				}
-			}
-			public void changed(LocationEvent e) {
 			}
 		});
 	}
@@ -233,39 +230,35 @@ public class EmbeddedBrowser {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		s.setLayout(layout);
-		s.addDisposeListener(new DisposeListener() {
-			
-			public void widgetDisposed(DisposeEvent e) {
-				if (shellImages != null) {
-					for (int i = 0; i < shellImages.length; i++) {
-						shellImages[i].dispose();
-					}
+		s.addDisposeListener(e -> {
+			if (shellImages != null) {
+				for (int i = 0; i < shellImages.length; i++) {
+					shellImages[i].dispose();
 				}
-				
 			}
 		});
 		
 	}
 	private void initialize(Browser browser) {
-		browser.addOpenWindowListener(new OpenWindowListener() {
-			public void open(WindowEvent event) {
-				if (System.currentTimeMillis() - modalRequestTime <= 1000) {
-					new EmbeddedBrowser(event, shell);
-				}
-				else if (event.required) {
-					new EmbeddedBrowser(event, null);
-				}
-				else {
-					displayURLExternal(event);
-				}
+		browser.addOpenWindowListener(event -> {
+			if (System.currentTimeMillis() - modalRequestTime <= 1000) {
+				new EmbeddedBrowser(event, shell);
+			} else if (event.required) {
+				new EmbeddedBrowser(event, null);
+			} else {
+				displayURLExternal(event);
 			}
 		});
 		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
+
+			@Override
 			public void hide(WindowEvent event) {
 				Browser browser = (Browser) event.widget;
 				Shell shell = browser.getShell();
 				shell.setVisible(false);
 			}
+
+			@Override
 			public void show(WindowEvent event) {
 				Browser browser = (Browser) event.widget;
 				Shell shell = browser.getShell();
@@ -278,28 +271,21 @@ public class EmbeddedBrowser {
 				shell.open();
 			}
 		});
-		browser.addCloseWindowListener(new CloseWindowListener() {
-			public void close(WindowEvent event) {
-				Browser browser = (Browser) event.widget;
-				Shell shell = browser.getShell();
-				shell.close();
+		browser.addCloseWindowListener(event -> {
+			Browser browser1 = (Browser) event.widget;
+			Shell shell = browser1.getShell();
+			shell.close();
+		});
+		browser.addTitleListener(event -> {
+			if (event.title != null && event.title.length() > 0) {
+				Browser browser1 = (Browser) event.widget;
+				Shell shell = browser1.getShell();
+				shell.setText(event.title);
 			}
 		});
-		browser.addTitleListener(new TitleListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.browser.TitleListener#changed(org.eclipse.swt.browser.TitleEvent)
-			 */
-			public void changed(TitleEvent event) {
-				if (event.title != null && event.title.length() > 0) {
-					Browser browser = (Browser) event.widget;
-					Shell shell = browser.getShell();
-					shell.setText(event.title);
-				}
-			}
-		});
-		browser.addLocationListener(new LocationListener() {
+		browser.addLocationListener(new LocationAdapter() {
+
+			@Override
 			public void changing(LocationEvent e) {
 				if (!e.doit && e.location != null
 						&& e.location.startsWith("https://")) { //$NON-NLS-1$
@@ -310,23 +296,20 @@ public class EmbeddedBrowser {
 					}
 				}
 			}
-
-			public void changed(LocationEvent e) {
-			}
 		});
 	}
 	
 	private void initializeStatusBar(Browser browser) {
-		browser.addStatusTextListener(new StatusTextListener() {
-			public void changed(StatusTextEvent event) {
-				event.text = event.text.replaceAll("&","&&"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (!event.text.equals(statusText)) {
-					statusText = event.text;
-					statusBarText.setText(statusText);
-				}
+		browser.addStatusTextListener(event -> {
+			event.text = event.text.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!event.text.equals(statusText)) {
+				statusText = event.text;
+				statusBarText.setText(statusText);
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
+
+			@Override
 			public void changed(ProgressEvent event) {
 				if (event.total > 0) {
 					statusBarProgress.setMaximum(event.total);
@@ -335,6 +318,8 @@ public class EmbeddedBrowser {
 					statusBarProgress.setVisible(true);
 				}
 			}
+
+			@Override
 			public void completed(ProgressEvent event) {
 				statusBarSeparator.setVisible(false);
 				statusBarProgress.setVisible(false);
@@ -382,6 +367,8 @@ public class EmbeddedBrowser {
 		final Shell externalShell = new Shell(shell, SWT.NONE);
 		Browser externalBrowser = new Browser(externalShell, SWT.NONE);
 		externalBrowser.addLocationListener(new LocationAdapter() {
+
+			@Override
 			public void changing(final LocationEvent e) {
 				e.doit = false;
 				try {
@@ -391,11 +378,7 @@ public class EmbeddedBrowser {
 					String msg = "Error opening external Web browser"; //$NON-NLS-1$
 					HelpUIPlugin.logError(msg, t);
 				}
-				externalShell.getDisplay().asyncExec(new Runnable() {
-				    public void run() {
-				        externalShell.dispose();
-				    }
-				});				
+				externalShell.getDisplay().asyncExec(() -> externalShell.dispose());
 			}
 		});
 		e.browser = externalBrowser;

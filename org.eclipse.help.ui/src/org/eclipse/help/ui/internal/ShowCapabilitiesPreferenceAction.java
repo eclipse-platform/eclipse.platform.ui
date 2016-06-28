@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,42 +22,41 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class ShowCapabilitiesPreferenceAction implements ILiveHelpAction {
 	private boolean narrow;
 
+	@Override
 	public void setInitializationString(String data) {
 		if (data!=null && data.equals("narrow")) //$NON-NLS-1$
 			narrow=true;
 	}
 
+	@Override
 	public void run() {
 		final Display display = PlatformUI.getWorkbench().getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				Shell windowShell=null;
-				if (!narrow) {
-					Shell[] shells = display.getShells();
-					for (int i=0; i<shells.length; i++) {
-						Object data = shells[i].getData();
-						if (data!=null && data instanceof IWorkbenchWindow) {
-							windowShell=shells[i];
-							break;
-						}
+		display.syncExec(() -> {
+			Shell windowShell = null;
+			if (!narrow) {
+				Shell[] shells = display.getShells();
+				for (int i = 0; i < shells.length; i++) {
+					Object data = shells[i].getData();
+					if (data != null && data instanceof IWorkbenchWindow) {
+						windowShell = shells[i];
+						break;
 					}
 				}
-				if (windowShell!=null) {
-					windowShell.forceActive();
-					if (Platform.getWS().equals(Platform.WS_WIN32)) {
-						// feature in Windows. Without this code,
-						// the window will only flash in the launch bar.
-						windowShell.setVisible(false);
-						windowShell.setMinimized(true);
-						windowShell.setVisible(true);
-						windowShell.setMinimized(false);
-					}
-				}
-				PreferenceDialog dialog = PreferencesUtil
-						.createPreferenceDialogOn(windowShell, getCapabilityPageId(),
-								null, null);
-				dialog.open();
 			}
+			if (windowShell != null) {
+				windowShell.forceActive();
+				if (Platform.getWS().equals(Platform.WS_WIN32)) {
+					// feature in Windows. Without this code,
+					// the window will only flash in the launch bar.
+					windowShell.setVisible(false);
+					windowShell.setMinimized(true);
+					windowShell.setVisible(true);
+					windowShell.setMinimized(false);
+				}
+			}
+			PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(windowShell,
+					getCapabilityPageId(), null, null);
+			dialog.open();
 		});
 	}
 

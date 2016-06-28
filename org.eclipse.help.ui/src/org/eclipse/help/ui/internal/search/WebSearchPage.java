@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import org.eclipse.help.ui.RootScopePage;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -34,6 +32,7 @@ public class WebSearchPage extends RootScopePage {
 	public WebSearchPage() {
 	}
 
+	@Override
 	protected int createScopeContents(Composite parent) {
 		//Font font = parent.getFont();
 		initializeDialogUnits(parent);
@@ -48,11 +47,7 @@ public class WebSearchPage extends RootScopePage {
 		gd.heightHint = 64;
 		gd.widthHint = 200;
 		urlText.setLayoutData(gd);
-		urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				validate();
-			}
-		});
+		urlText.addModifyListener(e -> validate());
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
 		new Label(parent, SWT.NULL);
 		label = new Label(parent, SWT.WRAP);
@@ -65,9 +60,7 @@ public class WebSearchPage extends RootScopePage {
 		return 2;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.ui.RootScopePage#initializeDefaults(org.eclipse.jface.preference.IPreferenceStore)
-	 */
+	@Override
 	protected void initializeDefaults(IPreferenceStore store) {
 		super.initializeDefaults(store);
 		String template = (String) getEngineDescriptor().getParameters().get(
@@ -78,9 +71,7 @@ public class WebSearchPage extends RootScopePage {
 							template);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		getPreferenceStore().setToDefault(
 				getStoreKey(WebSearchScopeFactory.P_URL));
@@ -100,11 +91,7 @@ public class WebSearchPage extends RootScopePage {
 		setValid(text.length() > 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		String urlTemplate = urlText.getText();
 		getPreferenceStore().setValue(getStoreKey(WebSearchScopeFactory.P_URL),

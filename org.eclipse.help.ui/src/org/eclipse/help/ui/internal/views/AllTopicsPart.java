@@ -41,6 +41,8 @@ public class AllTopicsPart extends HyperlinkTreePart {
 	//private Action showAllAction;
 
 	class TopicsProvider implements ITreeContentProvider {
+
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == AllTopicsPart.this)
 				return HelpSystem.getTocs();
@@ -51,11 +53,7 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			return new Object[0];
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IToc) {
 				return AllTopicsPart.this;
@@ -66,49 +64,35 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
 	class TopicsLabelProvider extends LabelProvider {
+
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof IHelpResource)
 				return ((IHelpResource) obj).getLabel();
 			return super.getText(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			boolean expanded = treeViewer.getExpandedState(obj);
 			boolean expandable = treeViewer.isExpandable(obj);
@@ -148,6 +132,8 @@ public class AllTopicsPart extends HyperlinkTreePart {
 	}
 
 	class EmptyContainerFilter extends ViewerFilter {
+
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			if (element instanceof IToc) {
@@ -188,21 +174,26 @@ public class AllTopicsPart extends HyperlinkTreePart {
 		super(parent, toolkit, tbm);
 	}
 
+	@Override
 	protected void configureTreeViewer() {
 		initializeImages();
 		treeViewer.setContentProvider(new TopicsProvider());
 		treeViewer.setLabelProvider(new TopicsLabelProvider());
 		treeViewer.addTreeListener(new ITreeViewerListener() {
+
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 				postUpdate(event.getElement());
 			}
 
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				postUpdate(event.getElement());
 			}
 		});
 	}
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		super.init(parent, id, memento);
 		if (parent.isFilteredByRoles())
@@ -221,11 +212,13 @@ public class AllTopicsPart extends HyperlinkTreePart {
 		containerWithTopicImage = desc.createImage();
 	}
 
+	@Override
 	public void dispose() {
 		containerWithTopicImage.dispose();
 		super.dispose();
 	}
 
+	@Override
 	protected void doOpen(Object obj) {
 		if (!(obj instanceof IHelpResource))
 			return;
@@ -241,6 +234,7 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			parent.showURL(res.getHref());
 	}
 
+	@Override
 	protected String getHref(IHelpResource res) {
 		return (res instanceof ITopic) ? res.getHref() : null;
 	}
@@ -263,10 +257,12 @@ public class AllTopicsPart extends HyperlinkTreePart {
 		treeViewer.getControl().setFocus();
 	}
 
+	@Override
 	protected boolean canAddBookmarks() {
 		return true;
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		if (parent.isFilteredByRoles())
 			treeViewer.addFilter(parent.getRoleFilter());
@@ -274,6 +270,7 @@ public class AllTopicsPart extends HyperlinkTreePart {
 			treeViewer.removeFilter(parent.getRoleFilter());
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 }

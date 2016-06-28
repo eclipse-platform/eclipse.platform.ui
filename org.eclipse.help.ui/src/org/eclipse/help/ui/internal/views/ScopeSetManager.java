@@ -108,12 +108,8 @@ public class ScopeSetManager extends Observable {
 		File dir = location.toFile();
 		defSet = null;
 		if (dir.exists() && dir.isDirectory()) {
-			File[] files = dir.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith(ScopeSet.EXT)
-							|| name.endsWith(HistoryScopeSet.EXT); 
-				}
-			});
+			File[] files = dir.listFiles((FilenameFilter) (dir1, name) -> name.endsWith(ScopeSet.EXT)
+					|| name.endsWith(HistoryScopeSet.EXT));
 			for (int i = 0; i < files.length; i++) {
 				File file = files[i];
 				String name = file.getName();

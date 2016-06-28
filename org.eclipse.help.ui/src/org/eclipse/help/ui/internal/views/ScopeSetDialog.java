@@ -22,22 +22,18 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -56,6 +52,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	
 	public class NonDefaultFilter extends ViewerFilter {
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof ScopeSet && ((ScopeSet)element).isDefault()) {
 				return false;
@@ -65,15 +62,12 @@ public class ScopeSetDialog extends TrayDialog  {
 
 	}
 
-	public class ShowAllListener implements SelectionListener {
+	public class ShowAllListener extends SelectionAdapter {
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			enableTable();
 		}
-
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
 	}
 
 	private ScopeSetManager manager;
@@ -114,9 +108,13 @@ public class ScopeSetDialog extends TrayDialog  {
 		public AddOperation(ScopeSet set) {
 			super(set);
 		}
+
+		@Override
 		public void commit() {
 			manager.add(set);
 		}
+
+		@Override
 		public void cancel() {
 			set.dispose();
 		}
@@ -128,9 +126,13 @@ public class ScopeSetDialog extends TrayDialog  {
 			super(set);
 			this.newName = newName;
 		}
+
+		@Override
 		public void commit() {
 			this.set.setName(newName);
 		}
+
+		@Override
 		public void cancel() {
 		}
 	}
@@ -151,32 +153,36 @@ public class ScopeSetDialog extends TrayDialog  {
 		public RemoveOperation(ScopeSet set) {
 			super(set);
 		}
+
+		@Override
 		public void commit() {
 			manager.remove(set);
 		}
+
+		@Override
 		public void cancel() {
 		}
 	}
 	
 	private class ScopeContentProvider implements IStructuredContentProvider {
+
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return sets.toArray();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
+		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 	
 	private class ScopeLabelProvider extends LabelProvider {
+
+		@Override
 		public String getText(Object obj) {
 			String name = findNewName((ScopeSet)obj);
 			if (name!=null)
@@ -191,6 +197,8 @@ public class ScopeSetDialog extends TrayDialog  {
 			}
 			return null;
 		}
+
+		@Override
 		public Image getImage(Object obj) {
 			return HelpUIResources.getImage(IHelpUIConstants.IMAGE_SCOPE_SET);
 		}
@@ -222,7 +230,8 @@ public class ScopeSetDialog extends TrayDialog  {
 		return list;
 	}
 	
-    protected Control createDialogArea(Composite container) {
+	@Override
+	protected Control createDialogArea(Composite container) {
     	Composite innerContainer = (Composite)super.createDialogArea(container);
     	createRadioButtons(innerContainer);
     	createTable(innerContainer);
@@ -230,11 +239,7 @@ public class ScopeSetDialog extends TrayDialog  {
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(innerContainer,
 		     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
     	createEditingButtons(innerContainer);
-    	viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
+		viewer.addSelectionChangedListener(event -> updateButtons());
     	ViewerFilter[] filters = { new NonDefaultFilter() };
 		viewer.setFilters(filters );
     	return innerContainer;
@@ -257,11 +262,7 @@ public class ScopeSetDialog extends TrayDialog  {
         viewer.setContentProvider(contentProvider);
         viewer.setLabelProvider(labelProvider);
         viewer.setInput(input);
-        viewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-            }
-        });
+		viewer.addDoubleClickListener(event -> okPressed());
         if (initialSelection != null) {
 			viewer.setSelection(new StructuredSelection(initialSelection));
 		} 
@@ -310,6 +311,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		return null;
 	}
 	
+	@Override
 	protected void okPressed() {
     	if (operations!=null) {
     		for (int i=0; i<operations.size(); i++) {
@@ -342,6 +344,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		}
 	}
 	
+	@Override
 	protected void cancelPressed() {
     	if (operations!=null) {
     		for (int i=0; i<operations.size(); i++) {
@@ -353,6 +356,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		super.cancelPressed();
 	}
 	
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case NEW_ID:

@@ -114,6 +114,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		Composite container = toolkit.createComposite(section);
 		section.setClient(container);
 		section.addExpansionListener(new ExpansionAdapter() {
+
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				if (e.getState()) {
 					updateText(savedDescription);
@@ -141,6 +143,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		text.setImage(searchKey, HelpUIResources.getImage(searchKey));
 
 		text.addHyperlinkListener(new IHyperlinkListener() {
+
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String href = (String) e.getHref();
 				if (href.startsWith(MORE_HREF)) {
@@ -150,17 +154,21 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				ContextHelpPart.this.parent.handleLinkEntered(e);
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				ContextHelpPart.this.parent.handleLinkExited(e);
 			}
 		});
 		text.setText(defaultText, false, false);
 		text.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-		    public void getName(AccessibleEvent e) {
+
+			@Override
+			public void getName(AccessibleEvent e) {
 		        if (e.childID == ACC.CHILDID_SELF) {
 		            String currentName = e.result;
 		            e.result = Messages.ReusableHelpPart_contextHelpPage_name 
@@ -194,6 +202,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return new Font(display, tfontData);
 	}
 	
+	@Override
 	public void dispose() {
 		if (codeFont!=null)
 			codeFont.dispose();
@@ -201,35 +210,24 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return getSection();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 		parent.hookFormText(text);
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		getSection().setVisible(visible);
 	}
@@ -702,6 +700,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return decodedString;
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof ContextHelpProviderInput) {
 			ContextHelpProviderInput chinput = (ContextHelpProviderInput) input;
@@ -712,44 +711,42 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		return false;
 	}
 
+	@Override
 	public void setFocus() {
 		if (text != null)
 			text.setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return parent.fillFormContextMenu(text, manager);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return text.equals(control);
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
 	}
 
+	@Override
 	public void stop() {
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 	}
 
+	@Override
 	public void refilter() {
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 	

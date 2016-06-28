@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,12 @@ public class LocalScopeDialog extends TrayDialog {
 		this.scopeSet = set;
 	}
 	
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		EngineDescriptor localSearchDesc = null;
 		for (int i = 0; localSearchDesc == null && i < descManager.getDescriptors().length; i++) {
@@ -61,6 +63,7 @@ public class LocalScopeDialog extends TrayDialog {
 		return helpPageControl;
 	}
 	
+	@Override
 	protected void okPressed() {
 		localHelpPage.performOk();
 		super.okPressed();

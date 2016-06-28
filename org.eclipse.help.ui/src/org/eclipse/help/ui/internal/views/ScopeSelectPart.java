@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 	
 	public class ScopeObserver implements Observer {
 
+		@Override
 		public void update(Observable o, Object arg) {
 			String name = ScopeState.getInstance().getScopeSetManager().getActiveSet().getName();
 			setScopeLink(name);
@@ -58,6 +59,8 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 		scopeSetLink = toolkit.createFormText(container, false); 
 		setScopeLink(name);
 		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
+
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 			    doChangeScopeSet();
 			}
@@ -114,50 +117,62 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 		scopeSetLink.setText(buff.toString(), true, false);
 	}
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.id = id;
 		ScopeState.getInstance().setEngineManager(parent.getEngineManager());
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
 	}
 
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return false;
 	}
 
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		return null;
 	}
 
+	@Override
 	public void stop() {
 		
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		
 	}
 
+	@Override
 	public void refilter() {
 			
 	}
 	
+	@Override
 	public void dispose() {
 		if (scopeObserver != null) {
 		    ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);

@@ -124,6 +124,7 @@ public class IC {
 		this.enabled = enabled;
 	}
 
+	@Override
 	public String toString()
 	{
 		return name+" ("+getHref()+")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -134,6 +135,7 @@ public class IC {
 	 * during this operation.
 	 * 
 	 */
+	@Override
 	public boolean equals(Object o)
 	{
 		if (!(o instanceof IC))

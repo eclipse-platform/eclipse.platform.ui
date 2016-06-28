@@ -40,16 +40,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
@@ -70,6 +66,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	
 	public class SearchScopeObserver implements Observer {
 
+		@Override
 		public void update(Observable arg0, Object arg1) {
 			ScopeSet set = scopeSetManager.getActiveSet();
 			scopeSetLink.setText(set.getName());
@@ -144,12 +141,15 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 		private boolean searchInProgress = false;
 
+		@Override
 		public void aboutToRun(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void awake(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
 				Job[] searchJobs = Job.getJobManager().find(FederatedSearchJob.FAMILY);
@@ -166,9 +166,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			}
 		}
 
+		@Override
 		public void running(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void scheduled(IJobChangeEvent event) {
 			if (!searchInProgress && event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
 				searchInProgress = true;
@@ -176,9 +178,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			}
 		}
 
+		@Override
 		public void sleeping(IJobChangeEvent event) {
 		}
 
+		@Override
 		public void run() {
 			searchWordCombo.getControl().setEnabled(!searchInProgress);
 			if (!searchInProgress)
@@ -217,18 +221,16 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		goButton = toolkit.createButton(container, Messages.SearchPart_go, SWT.PUSH);
 		goButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleButtonPressed();
 			}
 		});
 		goButton.setEnabled(false);
-		searchWordCombo.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent e) {
-				goButton.setEnabled(searchWordCombo.getText().length() > 0);
-			}
-		});
+		searchWordCombo.addModifyListener(e -> goButton.setEnabled(searchWordCombo.getText().length() > 0));
 		searchWordCombo.addKeyListener(new KeyAdapter() {
+
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == '\r') {
 					if (goButton.isEnabled())  {
@@ -237,24 +239,20 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				}
 			}
 		});
-		searchWordCombo.getControl().addListener(SWT.FocusIn, new Listener() {
-			public void handleEvent(Event event) {
-				shellDefaultButton = null;
-				Shell shell = searchWordCombo.getControl().getShell();
-				Button button = shell.getDefaultButton();
-				if (button != null) {
-					shellDefaultButton = button;
-					shell.setDefaultButton(goButton);
-				}
+		searchWordCombo.getControl().addListener(SWT.FocusIn, event -> {
+			shellDefaultButton = null;
+			Shell shell = searchWordCombo.getControl().getShell();
+			Button button = shell.getDefaultButton();
+			if (button != null) {
+				shellDefaultButton = button;
+				shell.setDefaultButton(goButton);
 			}
 		});
-		searchWordCombo.getControl().addListener(SWT.FocusOut, new Listener() {
-			public void handleEvent(Event event) {
-				if (shellDefaultButton != null) {
-					Shell shell = searchWordCombo.getControl().getShell();
-					shell.setDefaultButton(shellDefaultButton);
-					shellDefaultButton = null;
-				}
+		searchWordCombo.getControl().addListener(SWT.FocusOut, event -> {
+			if (shellDefaultButton != null) {
+				Shell shell = searchWordCombo.getControl().getShell();
+				shell.setDefaultButton(shellDefaultButton);
+				shellDefaultButton = null;
 			}
 		});
 		
@@ -306,6 +304,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				.getImage(IHelpUIConstants.IMAGE_HELP));
 		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				SearchPart.this.parent.showURL(HREF_SEARCH_HELP, true);
 			}
@@ -341,6 +340,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		advancedLink = toolkit.createHyperlink(parent, Messages.FederatedSearchPart_advanced, SWT.NULL);
 		advancedLink.addHyperlinkListener(new HyperlinkAdapter() {
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
 			}
@@ -354,6 +354,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		scopeSetLink = toolkit.createHyperlink(section, null, SWT.WRAP);
 		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				doChangeScopeSet();
 			}
@@ -420,6 +421,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		}
 		engineObserver = new Observer() {
 
+			@Override
 			public void update(Observable o, Object arg) {
 				EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent) arg;
 				int kind = event.getKind();
@@ -449,6 +451,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		master.setData(edesc);
 		master.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				scopeSetManager.getActiveSet().setEngineEnabled(edesc, master.getSelection());
 			}
@@ -583,15 +586,19 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed.getId(), ed.getLabel(), scope, ed
 						.getEngine(), new ISearchEngineResultCollector() {
 
+							@Override
 					public void accept(ISearchEngineResult searchResult) {
 						results.add(ed, searchResult);
 					}
 
+							@Override
 					public void accept(ISearchEngineResult[] searchResults) {
 						results.add(ed, searchResults);
 						if (ed.getEngine() instanceof LocalHelp)
 						{
 							container.getDisplay().asyncExec(new Thread(){
+
+										@Override
 								public void run(){
 									if (alternateQuerySection!=null)
 									{
@@ -607,6 +614,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 													Hyperlink link = toolkit.createHyperlink(
 															alternateQueryComposite, alts.get(b), SWT.NONE);
 											link.addHyperlinkListener(new HyperlinkAdapter(){
+
+														@Override
 												public void linkActivated(HyperlinkEvent e) {
 
 													searchWordCombo.setText(((Hyperlink)e.getSource()).getText());
@@ -620,6 +629,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 						}						
 					}
 
+							@Override
 					public void error(IStatus status) {
 						results.error(ed, status);
 					}
@@ -668,6 +678,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		}
 	}
 
+	@Override
 	public void dispose() {
 		ScopeSet activeSet = scopeSetManager.getActiveSet();
 		if (activeSet != null)
@@ -686,20 +697,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
@@ -725,6 +728,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		}
 	}
 
+	@Override
 	public void refresh() {
 		super.refresh();
 		if (searchPending) {
@@ -734,48 +738,40 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		getControl().setVisible(visible);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return parent.fillFormContextMenu(searchWordText, manager);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return control == searchWordText || control == searchWordCombo.getControl()
 				|| scopeSection.getClient() == control;
 	}
 
+	@Override
 	public void setFocus() {
 		searchWordCombo.getControl().setFocus();
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
 	}
 
+	@Override
 	public void stop() {
 		SearchResultsPart results = (SearchResultsPart) parent.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		if (results != null) {
@@ -784,12 +780,15 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		Job.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 	}
 
+	@Override
 	public void refilter() {
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		ScopeSet sset = scopeSetManager.getActiveSet();
 		if (sset != null)

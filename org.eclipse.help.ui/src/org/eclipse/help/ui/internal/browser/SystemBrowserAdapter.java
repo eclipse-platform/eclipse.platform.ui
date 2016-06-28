@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
 
-import org.eclipse.help.browser.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.program.*;
+import org.eclipse.swt.program.Program;
 
 /**
  * Implmentation of IBrowser interface, using org.eclipse.swt.Program
@@ -28,15 +29,11 @@ public class SystemBrowserAdapter implements IBrowser {
 	public SystemBrowserAdapter() {
 	}
 
-	/*
-	 * @see IBrowser#close()
-	 */
+	@Override
 	public void close() {
 	}
 
-	/*
-	 * @see IBrowser#displayURL(String)
-	 */
+	@Override
 	public void displayURL(String url) {
 		//		if (Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS())) {
 		if (!Program.launch(url)) {
@@ -59,36 +56,26 @@ public class SystemBrowserAdapter implements IBrowser {
 		//		}
 	}
 
-	/*
-	 * @see IBrowser#isCloseSupported()
-	 */
+	@Override
 	public boolean isCloseSupported() {
 		return false;
 	}
 
-	/*
-	 * @see IBrowser#isSetLocationSupported()
-	 */
+	@Override
 	public boolean isSetLocationSupported() {
 		return false;
 	}
 
-	/*
-	 * @see IBrowser#isSetSizeSupported()
-	 */
+	@Override
 	public boolean isSetSizeSupported() {
 		return false;
 	}
 
-	/*
-	 * @see IBrowser#setLocation(int, int)
-	 */
+	@Override
 	public void setLocation(int x, int y) {
 	}
 
-	/*
-	 * @see IBrowser#setSize(int, int)
-	 */
+	@Override
 	public void setSize(int width, int height) {
 	}
 }

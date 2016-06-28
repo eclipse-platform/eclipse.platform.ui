@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.search;
 
-import org.eclipse.help.internal.workingset.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.AdaptableTopic;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 public class HelpWorkingSetElementLabelProvider extends LabelProvider {
 
@@ -26,6 +27,7 @@ public class HelpWorkingSetElementLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		return null;
 	}
@@ -33,6 +35,7 @@ public class HelpWorkingSetElementLabelProvider extends LabelProvider {
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof AdaptableToc)
 			return ((AdaptableToc) element).getLabel();

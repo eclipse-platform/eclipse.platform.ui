@@ -12,13 +12,20 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class RenameDialog extends SelectionStatusDialog {
@@ -76,6 +83,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		this.newName = oldName;
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -90,11 +98,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		label.setText(Messages.RenameDialog_label); 
 		
 		text = new Text(container, SWT.SINGLE|SWT.BORDER);
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				textChanged(text.getText(), true);
-			}
-		});
+		text.addModifyListener(e -> textChanged(text.getText(), true));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 200;
 		text.setLayoutData(gd);
@@ -102,6 +106,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		return container;
 	}
 	
+	@Override
 	public int open() {
 		text.setText(oldName);
 		text.selectAll();
@@ -159,21 +164,18 @@ public class RenameDialog extends SelectionStatusDialog {
 		return newName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
+	@Override
 	protected void okPressed() {
 		newName = text.getText();
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
+	@Override
 	protected void computeResult() {
 	}
     
-    public void setTitle(String title) {
+	@Override
+	public void setTitle(String title) {
         getShell().setText(title);
     }
 }

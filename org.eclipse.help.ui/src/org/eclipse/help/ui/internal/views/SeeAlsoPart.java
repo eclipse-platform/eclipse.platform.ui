@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,12 +93,11 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 
 	private void addLinks(final Composite container, FormToolkit toolkit) {
 		IHyperlinkListener listener = new HyperlinkAdapter() {
+
+			@Override
 			public void linkActivated(final HyperlinkEvent e) {
-				container.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						SeeAlsoPart.this.helpPart.showPage((String) e.getHref(), true);
-					}
-				});
+				container.getDisplay()
+						.asyncExec(() -> SeeAlsoPart.this.helpPart.showPage((String) e.getHref(), true));
 			}
 		};
 		if ((helpPart.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
@@ -143,20 +142,12 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		link.setLayoutData(data);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.helpPart = parent;
 		this.id = id;
@@ -173,24 +164,19 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		separator.setLayoutData(seperatorData);
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
 		if (visible)
 			markStale();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (bgImage != null && !bgImage.isDisposed()) {
@@ -198,46 +184,47 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return control != null && control.getParent() == linkContainer;
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return helpPart.getCopyAction();
 		return null;
 	}
+
+	@Override
 	public void stop() {
 	}
+
+	@Override
 	public void refresh() {
 		if (linkContainer!=null && helpPart.getCurrentPageId()!=null)
 			updateLinks(helpPart.getCurrentPageId());
 		super.refresh();
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 	}
 
+	@Override
 	public void refilter() {
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}	
 	
+	@Override
 	public void setFocus() {
 		if (linkContainer!=null)
 			linkContainer.setFocus();

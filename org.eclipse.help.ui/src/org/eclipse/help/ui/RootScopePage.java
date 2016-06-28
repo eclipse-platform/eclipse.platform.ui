@@ -64,11 +64,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	public RootScopePage() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ISearchScopePage#init(IEngineDescriptor, String)
-	 */
+	@Override
 	public void init(IEngineDescriptor ed, String scopeSetName) {
 		this.ed = ed;
 		this.scopeSetName = scopeSetName;
@@ -83,6 +79,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 *            the page parent
 	 * @return the page client control
 	 */
+	@Override
 	protected final Control createContents(Composite parent) {
 		initializeDefaults(getPreferenceStore());
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
@@ -108,6 +105,7 @@ public abstract class RootScopePage extends PreferencePage implements
 			masterButton.setSelection(masterValue);
 			masterButton.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					masterValueChanged(masterButton.getSelection());
 				}
@@ -228,6 +226,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 *         <code>false</code> otherwise.
 	 */
 
+	@Override
 	public boolean performOk() {
 		getPreferenceStore().setValue(ScopeSet.getMasterKey(ed.getId()),
 				isEngineEnabled());
@@ -242,6 +241,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	 * Sets the value of the master switch to the initial value from the
 	 * extension. Subclasses may override but must call 'super'.
 	 */
+	@Override
 	protected void performDefaults() {
 		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(ed.getId()));
 		updateControls(false);

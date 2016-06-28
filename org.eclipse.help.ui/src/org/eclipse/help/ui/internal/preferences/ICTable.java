@@ -139,15 +139,18 @@ public class ICTable {
 	{
 		private List<IC> content = new ArrayList<>();
 		
+		@Override
 		public void dispose() {
 			content = null;
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			content = (List<IC>)newInput;
 		}
 
+		@Override
 		public IC[] getElements(Object inputElement) {
 			return (IC[])content.toArray(new Object[content.size()]);
 		}
@@ -156,10 +159,12 @@ public class ICTable {
 	
 	public class ICLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 			case 0:

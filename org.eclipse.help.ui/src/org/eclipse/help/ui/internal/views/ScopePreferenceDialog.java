@@ -17,9 +17,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -59,6 +57,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		this.descManager = descManager;
 	}
 
+	@Override
 	protected Control createTreeAreaContents(Composite parent) {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -84,18 +83,18 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		return container;
 	}
 	
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent) {
 		TreeViewer viewer = super.createTreeViewer(parent);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection)event.getSelection();
-				Object obj = ssel.getFirstElement();
-				treeSelectionChanged(obj);
-			}
+		viewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+			Object obj = ssel.getFirstElement();
+			treeSelectionChanged(obj);
 		});
 		return viewer;
 	}
 	
+	@Override
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 		case NEW_ID:
@@ -154,6 +153,8 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			pendingOperations = new ArrayList<>();
 		pendingOperations.add(new PendingOperation(action, desc));
 	}
+
+	@Override
 	protected void okPressed() {
 		super.okPressed();
 		if (pendingOperations!=null) {

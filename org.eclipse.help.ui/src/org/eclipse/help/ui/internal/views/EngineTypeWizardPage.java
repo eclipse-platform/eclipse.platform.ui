@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,20 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.ui.internal.Messages;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 public class EngineTypeWizardPage extends WizardPage {
@@ -27,29 +34,40 @@ public class EngineTypeWizardPage extends WizardPage {
 	
 	class EngineContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return engineTypes;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 	
 	class EngineLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+		@Override
 		public String getText(Object obj) {
 			EngineTypeDescriptor desc = (EngineTypeDescriptor)obj;
 			return desc.getLabel();
 		}
+
+		@Override
 		public Image getImage(Object obj) {
 			EngineTypeDescriptor desc = (EngineTypeDescriptor)obj;
 			return desc.getIconImage();
 		}
+
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return getImage(element);
 		}
+
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			return getText(element);
 		}
@@ -62,6 +80,7 @@ public class EngineTypeWizardPage extends WizardPage {
 		this.engineTypes = engineTypes;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
@@ -75,11 +94,10 @@ public class EngineTypeWizardPage extends WizardPage {
 		tableViewer = new TableViewer(container);
 		tableViewer.setContentProvider(new EngineContentProvider());
 		tableViewer.setLabelProvider(new EngineLabelProvider());
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				setPageComplete(!event.getSelection().isEmpty());
-				selection = (EngineTypeDescriptor)((IStructuredSelection)event.getSelection()).getFirstElement();
-			}
+		tableViewer.addSelectionChangedListener(event -> {
+			setPageComplete(!event.getSelection().isEmpty());
+			selection = (EngineTypeDescriptor) ((IStructuredSelection) event.getSelection())
+					.getFirstElement();
 		});
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableViewer.setInput(engineTypes);

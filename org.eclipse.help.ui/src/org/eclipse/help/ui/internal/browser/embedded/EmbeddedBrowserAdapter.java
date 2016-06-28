@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 			setName("Help Browser UI"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void run() {
 			d = new Display();
 			while (runEventLoop) {
@@ -80,6 +81,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		return Display.getDefault();
 	}
 
+	@Override
 	public void browserClosed() {
 		browser=null;
 		if(secondThread!=null){
@@ -87,9 +89,8 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 			secondThread = null;
 		}
 	}
-	/*
-	 * @see IBrowser#displayURL(String)
-	 */
+
+	@Override
 	public synchronized void displayURL(final String url) {
 		if (!HelpApplication.isShutdownOnClose()) {
 			close();
@@ -97,11 +98,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiDisplayURL(url);
 		} else {
-			getBrowserDisplay().asyncExec(new Runnable() {
-				public void run() {
-					uiDisplayURL(url);
-				}
-			});
+			getBrowserDisplay().asyncExec(() -> uiDisplayURL(url));
 		}
 	}
 	/**
@@ -113,18 +110,12 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		getBrowser().displayUrl(url);
 	}
 
-	/*
-	 * @see IBrowser#close()
-	 */
+	@Override
 	public synchronized void close() {
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiClose();
 		} else {
-			getBrowserDisplay().syncExec(new Runnable() {
-				public void run() {
-					uiClose();
-				}
-			});
+			getBrowserDisplay().syncExec(() -> uiClose());
 		}
 	}
 	/*
@@ -149,36 +140,28 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		}
 		return browser;
 	}
-	/*
-	 * @see IBrowser#isCloseSupported()
-	 */
+
+	@Override
 	public boolean isCloseSupported() {
 		return true;
 	}
-	/*
-	 * @see IBrowser#isSetLocationSupported()
-	 */
+
+	@Override
 	public boolean isSetLocationSupported() {
 		return true;
 	}
-	/*
-	 * @see IBrowser#isSetSizeSupported()
-	 */
+
+	@Override
 	public boolean isSetSizeSupported() {
 		return true;
 	}
-	/*
-	 * @see IBrowser#setLocation(int, int)
-	 */
+
+	@Override
 	public synchronized void setLocation(final int x, final int y) {
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetLocation(x, y);
 		} else {
-			getBrowserDisplay().asyncExec(new Runnable() {
-				public void run() {
-					uiSetLocation(x, y);
-				}
-			});
+			getBrowserDisplay().asyncExec(() -> uiSetLocation(x, y));
 		}
 	}
 	/*
@@ -187,18 +170,13 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	private void uiSetLocation(int x, int y) {
 		getBrowser().setLocation(x, y);
 	}
-	/*
-	 * @see IBrowser#setSize(int, int)
-	 */
+
+	@Override
 	public synchronized void setSize(final int width, final int height) {
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetSize(width, height);
 		} else {
-			getBrowserDisplay().asyncExec(new Runnable() {
-				public void run() {
-					uiSetSize(width, height);
-				}
-			});
+			getBrowserDisplay().asyncExec(() -> uiSetSize(width, height));
 		}
 	}
 	/*

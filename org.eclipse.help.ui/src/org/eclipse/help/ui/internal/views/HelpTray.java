@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,17 +70,17 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	private void createActions() {
 		createImages();
 		closeAction = new ContributionItem() {
+
+			@Override
 			public void fill(ToolBar parent, int index) {
 				final ToolItem item = new ToolItem(parent, SWT.PUSH);
 				item.setImage(normal);
 				item.setHotImage(hover);
 				item.setToolTipText(Messages.ReusableHelpPart_closeAction_tooltip);
-				item.addListener(SWT.Selection, new Listener() {
-					public void handleEvent(Event event) {
-						// close the tray
-						TrayDialog dialog = (TrayDialog)shell.getData();
-						dialog.closeTray();						
-					}
+				item.addListener(SWT.Selection, event -> {
+					// close the tray
+					TrayDialog dialog = (TrayDialog) shell.getData();
+					dialog.closeTray();
 				});
 			}
 		};
@@ -91,6 +91,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * 
 	 * @param parent the parent composite that will contain the tray
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		// if the dialog is too short, make it taller
 		ensureMinimumHeight(parent.getShell());
@@ -103,11 +104,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
 		container.setLayout(layout);
-		container.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				dispose();
-			}
-		});
+		container.addListener(SWT.Dispose, event -> dispose());
 		
 		ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
 		tbm.createControl(container);
@@ -131,11 +128,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		
 		shell = parent.getShell();
 		hookPageChangeListener(shell);
-		helpPart.getControl().addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				unhookPageChangeListener(shell);
-			}
-		});
+		helpPart.getControl().addListener(SWT.Dispose, event -> unhookPageChangeListener(shell));
 		
 		return container;
 	}
@@ -199,6 +192,8 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 		 * that will return the dialog height back to original.
 		 */
 		shell.addListener(SWT.Resize, new Listener() {
+
+			@Override
 			public void handleEvent(Event event) {
 				shell.removeListener(SWT.Resize, this);
 				Point p = shell.getSize();
@@ -274,6 +269,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 	 * 
 	 * @param event the page change event
 	 */
+	@Override
 	public void pageChanged(PageChangedEvent event) {
 		Object page = event.getSelectedPage();
 		Control c = null;

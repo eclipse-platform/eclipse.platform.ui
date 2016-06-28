@@ -86,6 +86,7 @@ public class ICButtons implements SelectionListener{
 		return button;
 	}
 
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (e.getSource() instanceof Button)
 		{
@@ -107,6 +108,8 @@ public class ICButtons implements SelectionListener{
 		else if (e.getSource() instanceof Table)
 			updateButtonStates();
 	}
+
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		if (e.getSource() instanceof Table)
 			editIC();

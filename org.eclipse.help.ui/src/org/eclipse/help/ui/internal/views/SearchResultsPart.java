@@ -97,6 +97,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		innerForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		final ScrollBar scrollBar = innerForm.getVerticalBar();
 		scrollBar.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSeparatorVisibility();
 			}
@@ -129,6 +131,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		boolean showCategories = Platform.getPreferencesService().getBoolean
 			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);			
 		showCategoriesAction = new Action() {
+
+			@Override
 			public void run() {
 				updateResultSections();
 			    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
@@ -147,6 +151,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		tbm.insertBefore("back", showCategoriesAction); //$NON-NLS-1$
 
 		showDescriptionAction = new Action() {
+
+			@Override
 			public void run() {
 				updateResultSections();
 				IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
@@ -166,20 +172,19 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		tbm.insertAfter("description", new Separator()); //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 		innerToolkit.dispose();
 		super.dispose();
 	}
 
 	private void updateResultSections() {
-		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
-			public void run() {
-				for (int i = 0; i < results.size(); i++) {
-					EngineResultSection section = results.get(i);
-					section.updateResults(false);
-				}
-				reflow();
+		BusyIndicator.showWhile(container.getDisplay(), () -> {
+			for (int i = 0; i < results.size(); i++) {
+				EngineResultSection section = results.get(i);
+				section.updateResults(false);
 			}
+			reflow();
 		});
 	}
 
@@ -191,34 +196,23 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		return showDescriptionAction.isChecked();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
 	}
@@ -303,11 +297,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		Control focusControl = container.getDisplay().getFocusControl();
 		if (focusControl != null && focusControl instanceof FormText) {
@@ -316,11 +306,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		for (int i = 0; i < results.size(); i++) {
 			EngineResultSection er = results.get(i);
@@ -357,11 +343,9 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		final EngineResultSection er = new EngineResultSection(this, ed);
 		Display display = parent.getForm().getToolkit().getColors()
 				.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				Control c = er.createControl(innerForm.getBody(), innerToolkit);
-				c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-			}
+		display.syncExec(() -> {
+			Control c = er.createControl(innerForm.getBody(), innerToolkit);
+			c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		});
 		results.add(er);
 		return er;
@@ -379,6 +363,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		parent.reflow();
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		return false;
 	}
@@ -387,6 +372,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		innerForm.setOrigin(0, 0);
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
@@ -396,17 +382,22 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	FormToolkit getToolkit() {
 		return innerToolkit;
 	}
+
+	@Override
 	public void stop() {
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		updateResultSections();
 	}
 
+	@Override
 	public void refilter() {
 		updateResultSections();
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 }

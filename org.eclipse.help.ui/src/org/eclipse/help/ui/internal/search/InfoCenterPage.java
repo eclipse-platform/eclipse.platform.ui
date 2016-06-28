@@ -23,15 +23,12 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -118,11 +115,7 @@ public class InfoCenterPage extends RootScopePage {
 		//firstCheck = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.RootScopePage#createScopeContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected int createScopeContents(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
@@ -140,6 +133,8 @@ public class InfoCenterPage extends RootScopePage {
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
 		searchAll.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (searchAll.getSelection())
 					tree.getTree().setEnabled(false);
@@ -152,6 +147,8 @@ public class InfoCenterPage extends RootScopePage {
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
 		searchSelected.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (searchSelected.getSelection()) {
 					tree.getTree().setEnabled(true);
@@ -188,26 +185,20 @@ public class InfoCenterPage extends RootScopePage {
 
 		initializeControls();
 
-		tree.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event);
-			}
-		});
+		tree.addCheckStateListener(event -> handleCheckStateChange(event));
 
 		tree.addTreeListener(new ITreeViewerListener() {
+
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
 				if (tree.getGrayed(element) == false)
 					BusyIndicator.showWhile(getShell().getDisplay(),
-							new Runnable() {
-								public void run() {
-									setSubtreeChecked(element, tree
-											.getChecked(element), false);
-								}
-							});
+							() -> setSubtreeChecked(element, tree.getChecked(element), false));
 			}
 		});
 		
@@ -327,11 +318,7 @@ public class InfoCenterPage extends RootScopePage {
 		//busyLoadTocs(url);
 		workingSet = new RemoteWorkingSet();
 		workingSet.load(store);
-		urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				tocStale=true;
-			}
-		});
+		urlText.addModifyListener(e -> tocStale = true);
 		tree.setInput(remoteTocs);
 		boolean selected = false;
 		// store.getBoolean(getKey(InfoCenterSearchScopeFactory.P_SEARCH_SELECTED));
@@ -340,16 +327,14 @@ public class InfoCenterPage extends RootScopePage {
 		tree.getTree().setEnabled(selected);
 		searchAll.setEnabled(false);
 		searchSelected.setEnabled(false);
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Object[] elements = workingSet.getElements();
-				tree.setCheckedElements(elements);
-				for (int i = 0; i < elements.length; i++) {
-					Object element = elements[i];
-					if (isExpandable(element))
-						setSubtreeChecked(element, true, true);
-					updateParentState(element, true);
-				}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object[] elements = workingSet.getElements();
+			tree.setCheckedElements(elements);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				if (isExpandable(element))
+					setSubtreeChecked(element, true, true);
+				updateParentState(element, true);
 			}
 		});
 	}
@@ -359,16 +344,14 @@ public class InfoCenterPage extends RootScopePage {
 		//busyLoadTocs(url);
 		tocStale=false;
 		tree.setInput(remoteTocs);
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Object[] elements = workingSet.getElements();
-				tree.setCheckedElements(elements);
-				for (int i = 0; i < elements.length; i++) {
-					Object element = elements[i];
-					if (isExpandable(element))
-						setSubtreeChecked(element, true, true);
-					updateParentState(element, true);
-				}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object[] elements = workingSet.getElements();
+			tree.setCheckedElements(elements);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				if (isExpandable(element))
+					setSubtreeChecked(element, true, true);
+				updateParentState(element, true);
 			}
 		});
 	}
@@ -442,18 +425,16 @@ public class InfoCenterPage extends RootScopePage {
 	}
 
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Object element = event.getElement();
-				boolean state = event.getChecked();
-				tree.setGrayed(element, false);
-				if (isExpandable(element))
-					setSubtreeChecked(element, state, state);
-				// only check subtree if state is set to true
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object element = event.getElement();
+			boolean state = event.getChecked();
+			tree.setGrayed(element, false);
+			if (isExpandable(element))
+				setSubtreeChecked(element, state, state);
+			// only check subtree if state is set to true
 
-				updateParentState(element, state);
-				// validateInput();
-			}
+			updateParentState(element, state);
+			// validateInput();
 		});
 	}
 
@@ -463,11 +444,7 @@ public class InfoCenterPage extends RootScopePage {
 		workingSet.setElements(elements.toArray(new AdaptableHelpResource[elements.size()]));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		if (getEngineDescriptor().isUserDefined())

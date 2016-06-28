@@ -22,7 +22,6 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
@@ -52,22 +51,15 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 		IExecutableExtension {
 	private String url;
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 	}
 
-	/**
-	 * @see IExecutableExtension#setInitializationData(IConfigurationElement,
-	 *      String, Object)
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
@@ -78,9 +70,7 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 			url = config.getAttribute("url"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
+	@Override
 	public void run(IAction action) {
 		if (url == null || "".equals(url)) { //$NON-NLS-1$
 			return;
@@ -95,9 +85,7 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 		}
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

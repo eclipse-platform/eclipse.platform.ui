@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,10 +39,12 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 	 */
 	private String serializedCommand;
 
+	@Override
 	public void setInitializationString(String data) {
 		serializedCommand = data;
 	}
 
+	@Override
 	public void run() {
 
 		if (serializedCommand == null) {
@@ -61,20 +63,14 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 			// this will happen when there is no workbench
 		}
 		if (workbench == null) {
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					MessageDialog.openError(null, Messages.Help_Error,
-							Messages.NoWorkbenchForExecuteCommand_msg);
-				}
-			});
+			Display.getDefault().syncExec(() -> MessageDialog.openError(null, Messages.Help_Error,
+					Messages.NoWorkbenchForExecuteCommand_msg));
 			return;
 		}
 
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				forceDialogsOnTop();
-				executeSerializedCommand();
-			}
+		Display.getDefault().syncExec(() -> {
+			forceDialogsOnTop();
+			executeSerializedCommand();
 		});
 
 	}

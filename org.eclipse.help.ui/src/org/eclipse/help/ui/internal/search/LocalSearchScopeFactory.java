@@ -26,9 +26,7 @@ public class LocalSearchScopeFactory implements ISearchScopeFactory {
     public final static String P_WORKING_SET = "workingSet"; //$NON-NLS-1$
     public final static String P_CAPABILITY_FILTERING = "capabilityFiltering";  //$NON-NLS-1$
     
-    /* (non-Javadoc)
-     * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
-     */
+	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
         String name = store.getString(engineId+"."+P_WORKING_SET); //$NON-NLS-1$

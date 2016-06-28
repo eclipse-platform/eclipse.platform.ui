@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,21 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.browser.IBrowserFactory;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.osgi.service.environment.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.browser.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.ui.internal.HelpUIEventLoop;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 public class EmbeddedBrowserFactory implements IBrowserFactory {
 	private boolean tested = false;
@@ -34,18 +40,12 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 		super();
 	}
 
-	/*
-	 * @see IBrowserFactory#isAvailable()
-	 */
+	@Override
 	public boolean isAvailable() {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 			try {
 				if (HelpUIEventLoop.isRunning()) {
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							test();
-						}
-					});
+					Display.getDefault().syncExec(() -> test());
 				}
 			} catch (Exception e) {
 				// just in case
@@ -92,9 +92,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 		return available;
 	}
 
-	/*
-	 * @see IBrowserFactory#createBrowser()
-	 */
+	@Override
 	public IBrowser createBrowser() {
 		return new EmbeddedBrowserAdapter(browserType);
 	}

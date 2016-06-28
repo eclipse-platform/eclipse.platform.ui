@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	class RelatedLayout extends Layout implements ILayoutExtension {
 
+		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
 			Point topSize = contextHelpPart.getControl().computeSize(wHint,
@@ -64,6 +65,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			return size;
 		}
 
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle carea = composite.getClientArea();
 			Point topSize = contextHelpPart.getControl().computeSize(
@@ -79,6 +81,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			}
 		}
 
+		@Override
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int top = computeMinimumWidth(contextHelpPart, parent, changed);
 			int bot = dynamicHelpPart == null ? 0 : computeMinimumWidth(dynamicHelpPart, parent, changed);
@@ -90,6 +93,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 			return le.computeMinimumWidth(parent, changed);
 		}
 
+		@Override
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
@@ -98,6 +102,8 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	public RelatedTopicsPart(Composite parent, FormToolkit toolkit) {
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		mform = new ManagedForm(toolkit, form) {
+
+			@Override
 			public void reflow(boolean changed) {
 				super.reflow(changed);
 				RelatedTopicsPart.this.parent.reflow();
@@ -110,6 +116,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 	    }
 	}
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
@@ -122,6 +129,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		mform.initialize();
 	}
 	
+	@Override
 	public void dispose() {
 		mform.dispose();
 	}
@@ -135,23 +143,28 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		contextHelpPart.setDefaultText(defaultText);
 	}
 
+	@Override
 	public Control getControl() {
 		return mform.getForm();
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		mform.getForm().setVisible(visible);
 	}
 
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return contextHelpPart.hasFocusControl(control)
 				|| (dynamicHelpPart != null && dynamicHelpPart.hasFocusControl(control));
 	}
 
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		Control focusControl = mform.getForm().getDisplay().getFocusControl();
 		if (contextHelpPart.hasFocusControl(focusControl) || dynamicHelpPart == null)
@@ -159,10 +172,12 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		return dynamicHelpPart.fillContextMenu(manager);
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		return contextHelpPart.getGlobalAction(id);
 	}
 
+	@Override
 	public void stop() {
 		contextHelpPart.stop();
 		if (dynamicHelpPart != null) {
@@ -170,6 +185,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		contextHelpPart.toggleRoleFilter();
 		if (dynamicHelpPart != null) {
@@ -177,12 +193,15 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
+	@Override
 	public void refilter() {
 		contextHelpPart.refilter();
 		if (dynamicHelpPart != null) {
 			dynamicHelpPart.refilter();
 		}
 	}
+
+	@Override
 	public boolean setFormInput(Object input) {
 		return mform.setInput(input);
 	}
@@ -192,9 +211,11 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public void setFocus() {
 		if (contextHelpPart!=null)
 			contextHelpPart.setFocus();

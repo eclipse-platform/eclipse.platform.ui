@@ -134,9 +134,13 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 						.equalsIgnoreCase(showDisabledActivities);
 		filteringEnabled = filteringEnabled && isWorkbenchFiltering();
 	}
+
+	@Override
 	public boolean isFilteringEnabled() {
 		return filteringEnabled;
 	}
+
+	@Override
 	public void setFilteringEnabled(boolean enabled) {
 		if (userCanToggleFiltering) {
 			filteringEnabled = enabled;
@@ -154,14 +158,12 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			}
 		}
 	}
+
+	@Override
 	public boolean isUserCanToggleFiltering() {
 		return userCanToggleFiltering;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isEnabled()
-	 */
+	@Override
 	public boolean isEnabled(String href) {
 		if (!isFilteringEnabled()) {
 			return true;
@@ -169,9 +171,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		return isRoleEnabled(href);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isRoleEnabled(java.lang.String)
-	 */
+	@Override
 	public boolean isRoleEnabled(String href) {
 		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
@@ -191,6 +191,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @param locale
 	 *            locale for which TOCs are checked
 	 */
+	@Override
 	public boolean isEnabledTopic(String href, String locale) {
 		if (href == null) {
 			return false;
@@ -246,11 +247,8 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		}
 		return false;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
-	 */
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void enableActivities(String href) {
 		if (href.startsWith("/")) { //$NON-NLS-1$
@@ -279,12 +277,18 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		return !PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager().getDefinedActivityIds().isEmpty();
 	}
+
+	@Override
 	public String getShowAllMessage() {
 		return activityDescriptor.getShowAllMessage();
 	}
+
+	@Override
 	public String getDocumentMessage(boolean embedded) {
 		return activityDescriptor.getDocumentMessage(embedded);
 	}
+
+	@Override
 	public boolean getDocumentMessageUsesLiveHelp(boolean embedded) {
 		return activityDescriptor.needsLiveHelp(embedded);
 	}

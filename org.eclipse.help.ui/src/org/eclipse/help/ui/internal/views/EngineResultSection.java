@@ -43,10 +43,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -124,14 +124,12 @@ public class EngineResultSection {
 		searchResults.setColor("summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW)); //$NON-NLS-1$
 		section.setClient(container);
 		updateSectionTitle(0);
-		section.addExpansionListener(new IExpansionListener() {
+		section.addExpansionListener(new ExpansionAdapter() {
 
+			@Override
 			public void expansionStateChanging(ExpansionEvent e) {
 				if (needsUpdating)
 					asyncUpdateResults(true, false);
-			}
-
-			public void expansionStateChanged(ExpansionEvent e) {
 			}
 		});
 		return section;
@@ -157,6 +155,7 @@ public class EngineResultSection {
 		searchResults.setImage(KEY_PREFIX_GRAYED + desc.getId(), getGrayedImage(desc.getIconImage()));
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				String shref = (String) href;
@@ -170,10 +169,12 @@ public class EngineResultSection {
 					part.doOpenLink(e.getHref());
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				part.parent.handleLinkEntered(e);
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				part.parent.handleLinkExited(e);
 			}
@@ -258,22 +259,14 @@ public class EngineResultSection {
 	}
 
 	private void asyncUpdateResults(boolean now, final boolean scrollToBeginning) {
-		Runnable runnable = new Runnable() {
-
-			public void run() {
-				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
-
-					public void run() {
-						updateResults(true);
-						if (scrollToBeginning) {
-							searchResults.setFocus();
-							FormToolkit.setControlVisible(section, true);
-							part.updateSeparatorVisibility();
-						}
-					}
-				});
+		Runnable runnable = () -> BusyIndicator.showWhile(section.getDisplay(), () -> {
+			updateResults(true);
+			if (scrollToBeginning) {
+				searchResults.setFocus();
+				FormToolkit.setControlVisible(section, true);
+				part.updateSeparatorVisibility();
 			}
-		};
+		});
 		if (section.isDisposed())
 			return;
 		if (now)
@@ -519,6 +512,7 @@ public class EngineResultSection {
 						ISharedImages.IMG_TOOL_BACK));
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
 
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						resultOffset -= HITS_PER_PAGE;
 						asyncUpdateResults(false, true);
@@ -533,6 +527,7 @@ public class EngineResultSection {
 				nextLink.setLayoutData(gd);
 				nextLink.addHyperlinkListener(new HyperlinkAdapter() {
 
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						resultOffset += HITS_PER_PAGE;
 						asyncUpdateResults(false, true);
@@ -584,12 +579,8 @@ public class EngineResultSection {
 
 	private void doBookmark(final String label, String href) {
 		final String fhref = href.substring(4);
-		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
-
-			public void run() {
-				BaseHelpSystem.getBookmarkManager().addBookmark(fhref, label);
-			}
-		});
+		BusyIndicator.showWhile(container.getDisplay(),
+				() -> BaseHelpSystem.getBookmarkManager().addBookmark(fhref, label));
 	}
 
 	public void dispose() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Intel Corporation and others.
+ * Copyright (c) 2006, 2016 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -75,17 +73,20 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 		indexButton = toolkit.createButton(container, Messages.IndexButton, SWT.PUSH);
 		indexButton.setEnabled(false);
 
-		indexText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				indexButton.setEnabled(indexText.getText().length() > 0);//!!!
-				doNavigate(indexText.getText());
-			}});
+		indexText.addModifyListener(e -> {
+			indexButton.setEnabled(indexText.getText().length() > 0);// !!!
+			doNavigate(indexText.getText());
+		});
 		indexText.addKeyListener(new KeyListener() {
+
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.character == '\r' && indexButton.isEnabled()) {
 						doOpen();
 				}
 			}
+
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP) {
 					e.doit = false;
@@ -96,6 +97,8 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 				}
 			}});
 		indexButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doOpen();
 			}});
@@ -226,47 +229,59 @@ public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHel
 		}
 	}
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		getControl().setVisible(visible);
 	}
 
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return false;
 	}
 
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		return null;
 	}
 
+	@Override
 	public void stop() {
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 	}
 
+	@Override
 	public void refilter() {
 	}
 
+	@Override
 	public void setFocus() {
 		indexText.setFocus();
 	}

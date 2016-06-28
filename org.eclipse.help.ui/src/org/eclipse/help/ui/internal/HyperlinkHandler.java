@@ -116,13 +116,19 @@ public class HyperlinkHandler
 	public boolean isHyperlinkCursorUsed() {
 		return hyperlinkCursorUsed;
 	}
+
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
+
+	@Override
 	public void mouseDown(MouseEvent e) {
 		if (e.button == 1)
 			return;
 		lastLink = (Control) e.widget;
 	}
+
+	@Override
 	public void mouseEnter(MouseEvent e) {
 		Control control = (Control) e.widget;
 
@@ -138,6 +144,8 @@ public class HyperlinkHandler
 		if (action != null)
 			action.linkEntered(control);
 	}
+
+	@Override
 	public void mouseExit(MouseEvent e) {
 		Control control = (Control) e.widget;
 
@@ -153,8 +161,12 @@ public class HyperlinkHandler
 		if (action != null)
 			action.linkExited(control);
 	}
+
+	@Override
 	public void mouseHover(MouseEvent e) {
 	}
+
+	@Override
 	public void mouseUp(MouseEvent e) {
 		if (e.button != 1)
 			return;
@@ -168,6 +180,8 @@ public class HyperlinkHandler
 				c.setCursor(isHyperlinkCursorUsed() ? hyperlinkCursor : null);
 		}
 	}
+
+	@Override
 	public void paintControl(PaintEvent e) {
 		Control control = (Control) e.widget;
 		if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS)
@@ -283,6 +297,7 @@ public class HyperlinkHandler
 	 * @param event
 	 *            the event which occurred
 	 */
+	@Override
 	public void handleEvent(Event event) {
 		IHyperlinkListener listener = getLinkListener((Control) event.widget);
 		listener.linkActivated((Control) event.widget);

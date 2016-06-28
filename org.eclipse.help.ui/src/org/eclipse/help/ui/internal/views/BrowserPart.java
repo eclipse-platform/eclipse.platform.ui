@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
-import org.eclipse.swt.browser.OpenWindowListener;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
-import org.eclipse.swt.browser.StatusTextEvent;
-import org.eclipse.swt.browser.StatusTextListener;
-import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -99,6 +95,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			final IToolBarManager tbm, IMenuManager menuManager) {
 		browser = new Browser(parent, SWT.NULL);
 		browser.addLocationListener(new LocationListener() {
+
+			@Override
 			public void changing(LocationEvent event) {
 				if (redirectLink(event.location))
 					event.doit = false;
@@ -112,6 +110,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				}
 			}
 
+			@Override
 			public void changed(LocationEvent event) {
 				String url = event.location;
 				boolean isResult = url.indexOf("resultof")!=-1; //$NON-NLS-1$
@@ -122,6 +121,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			}
 		});
 		browser.addProgressListener(new ProgressListener() {
+
+			@Override
 			public void changed(ProgressEvent e) {
 				if (e.current == e.total)
 					return;
@@ -144,6 +145,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				lastProgress = e.current;
 			}
 
+			@Override
 			public void completed(ProgressEvent e) {
 				IStatusLineManager slm = BrowserPart.this.parent
 						.getStatusLineManager();
@@ -161,32 +163,25 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				BrowserPart.this.title = value != null ? value : "N/A"; //$NON-NLS-1$
 			}
 		});
-		browser.addStatusTextListener(new StatusTextListener() {
-			public void changed(StatusTextEvent event) {
-				if (processQuery(event.text))
-					return;
-				IStatusLineManager statusLine = BrowserPart.this.parent
-						.getStatusLineManager();
-				if (statusLine != null)
-					statusLine.setMessage(event.text);
-				if (event.text.indexOf("://") != -1) //$NON-NLS-1$
-					statusURL = event.text;
-			}
+		browser.addStatusTextListener(event -> {
+			if (processQuery(event.text))
+				return;
+			IStatusLineManager statusLine = BrowserPart.this.parent.getStatusLineManager();
+			if (statusLine != null)
+				statusLine.setMessage(event.text);
+			if (event.text.indexOf("://") != -1) //$NON-NLS-1$
+				statusURL = event.text;
 		});
-		browser.addOpenWindowListener(new OpenWindowListener() {
-			public void open(WindowEvent event) {
-				if (statusURL != null) {
-					try {
-						String relativeURL = BaseHelpSystem.unresolve(new URL(
-								statusURL));
-						if (BrowserPart.this.parent.isHelpResource(relativeURL)) {
-							BrowserPart.this.parent
-									.showExternalURL(relativeURL);
-							event.required = true;
-						}
-					} catch (MalformedURLException e) {
-						HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
+		browser.addOpenWindowListener(event -> {
+			if (statusURL != null) {
+				try {
+					String relativeURL = BaseHelpSystem.unresolve(new URL(statusURL));
+					if (BrowserPart.this.parent.isHelpResource(relativeURL)) {
+						BrowserPart.this.parent.showExternalURL(relativeURL);
+						event.required = true;
 					}
+				} catch (MalformedURLException e) {
+					HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
 				}
 			}
 		});
@@ -209,15 +204,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private void contributeToToolBar(IToolBarManager tbm) {
 		boolean highlight = Platform.getPreferencesService().getBoolean(HelpBasePlugin.PLUGIN_ID, HIGHLIGHT_ON, true, null);
 		showExternalAction = new Action() {
+
+			@Override
 			public void run() {
-				BusyIndicator.showWhile(browser.getDisplay(), new Runnable() {
-					public void run() {
-						try {
-							parent.showExternalURL(BaseHelpSystem
-									.unresolve(new URL(url)));
-						} catch (MalformedURLException e) {
-							HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
-						}
+				BusyIndicator.showWhile(browser.getDisplay(), () -> {
+					try {
+						parent.showExternalURL(BaseHelpSystem.unresolve(new URL(url)));
+					} catch (MalformedURLException e) {
+						HelpUIPlugin.logError("Malformed URL: " + statusURL, e); //$NON-NLS-1$
 					}
 				});
 			}
@@ -227,6 +221,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
 		syncTocAction = new Action() {
+
+			@Override
 			public void run() {
 				doSyncToc();
 			}
@@ -236,6 +232,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SYNC_TOC));
 		syncTocAction.setEnabled(false);
 		bookmarkAction = new Action() {
+
+			@Override
 			public void run() {
 				String href = LinkUtil.stripParams(BaseHelpSystem.unresolve(url));
 				BaseHelpSystem.getBookmarkManager().addBookmark(href, title);
@@ -246,6 +244,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		
 		highlightAction = new Action() {
+
+			@Override
 			public void run() {
 				IScopeContext instanceScope = InstanceScope.INSTANCE; 
 				IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
@@ -259,6 +259,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				.getImageDescriptor(IHelpUIConstants.IMAGE_HIGHLIGHT));
 		
 		printAction = new Action(ActionFactory.PRINT.getId()) {
+
+			@Override
 			public void run() {
 				doPrint();
 			}
@@ -289,6 +291,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private void addMenuActions(IMenuManager menuManager) {
 		magnifyAction = new Action() {
 
+			@Override
 			public void run() {
 				doMagnify(SCALE_INCREMENT);
 			}
@@ -302,6 +305,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 		reduceAction = new Action() {
 
+			@Override
 			public void run() {
 				doMagnify(-SCALE_INCREMENT);
 			}
@@ -317,11 +321,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		menuManager.add(magnifyAction);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
@@ -332,35 +332,24 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return browser;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (browser != null) {
 			browser.setVisible(visible);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IFormPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		if (browser != null)
 			browser.setFocus();
@@ -378,6 +367,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		}
 	}
 
+	@Override
 	public void stop() {
 		if (browser != null && !browser.isDisposed()) {
 			browser.stop();
@@ -450,25 +440,17 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		BaseHelpSystem.runLiveHelp(pluginId, className, arg);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
-
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return browser.equals(control);
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.PRINT.getId()))
 			return printAction;
@@ -499,13 +481,16 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		enableButtons();
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 	}
 
+	@Override
 	public void refilter() {
 		showURL(this.url);
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		if (url != null) {
 			String href = BaseHelpSystem.unresolve(url);

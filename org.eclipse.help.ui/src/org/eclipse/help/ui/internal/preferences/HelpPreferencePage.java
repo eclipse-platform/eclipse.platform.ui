@@ -65,6 +65,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * @param parent
 	 *            the parent for the preference page
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IHelpUIConstants.PREF_PAGE_HELP);
@@ -215,6 +216,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	/**
 	 * @see IWorkbenchPreferencePage
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -227,6 +229,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	 * call <code>super.performDefaults</code>.
 	 * </p>
 	 */
+	@Override
 	protected void performDefaults() {
 		IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {
@@ -256,6 +259,7 @@ public class HelpPreferencePage extends PreferencePage implements
 	/**
 	 * @see IPreferencePage
 	 */
+	@Override
 	public boolean performOk() {
 		IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		if (useExternalCombo != null) {

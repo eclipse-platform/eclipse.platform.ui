@@ -28,9 +28,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
 	public static final String P_TOCS = "tocs"; //$NON-NLS-1$
 	public static final String TOC_SEPARATOR = ";"; //$NON-NLS-1$
     
-    /* (non-Javadoc)
-     * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
-     */
+	@Override
 	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary<String, Object> parameters) {
         String url = getProperty(P_URL, store, engineId, parameters);

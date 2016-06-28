@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,8 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		statusLink.setText(linkText);
 		statusLink.setImage(warningImage);
 		statusLink.addHyperlinkListener(new HyperlinkAdapter() {
+
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				helpPart.showURL(target); 
 				if ( isRemote ) {
@@ -112,52 +114,64 @@ public class MissingContentPart extends AbstractFormPart implements IHelpPart  {
 		
 	}	
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.id = id;
 		this.helpPart = parent;
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (container != null) {
 		    container.setVisible(visible);
 		}
 	}
 
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return false;
 	}
 
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return false;
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		return null;
 	}
 
+	@Override
 	public void stop() {
 		
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		
 	}
 
+	@Override
 	public void refilter() {
 			
 	}
 	
+	@Override
 	public void dispose() {
 		disposeLink();
 	}

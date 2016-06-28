@@ -42,6 +42,8 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 	private RoleFilter roleFilter;
 
 	class IndexProvider implements ITreeContentProvider {
+
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == IndexPart.this) {
 				return HelpSystem.getIndex().getEntries();
@@ -52,23 +54,31 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {}
+
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 
 	class IndexLabelProvider extends LabelProvider {
+
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof IIndexEntry)
 				return ((IIndexEntry) obj).getKeyword();
@@ -81,6 +91,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			return super.getText(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			return super.getImage(obj);
 		}
@@ -97,6 +108,8 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 	}
 
 	class RoleFilter extends ViewerFilter {
+
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			if (element instanceof IIndexEntry) {
@@ -146,17 +159,20 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		roleFilter = new RoleFilter();
 	}
 
+	@Override
 	protected void configureTreeViewer() {
 		treeViewer.setContentProvider(new IndexProvider());
 		treeViewer.setLabelProvider(new IndexLabelProvider());
 	}
 
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		super.init(parent, id, memento);
 		if (parent.isFilteredByRoles())
 			treeViewer.addFilter(roleFilter);
 	}
 
+	@Override
 	protected void doOpen(Object obj) {
 		if (obj instanceof IHelpResource) {
 			parent.showURL(((IHelpResource) obj).getHref());
@@ -179,13 +195,16 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		}
 	}
 
+	@Override
 	protected boolean canAddBookmarks() {
 		return true;
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		if (parent.isFilteredByRoles())
 			treeViewer.addFilter(roleFilter);

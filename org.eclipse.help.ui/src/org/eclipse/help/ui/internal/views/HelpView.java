@@ -61,11 +61,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public HelpView() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
@@ -88,6 +84,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			handlePartActivation(aref);
 	}
 
+	@Override
 	public void dispose() {
 		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		IPartService service = window.getPartService();
@@ -107,6 +104,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		super.dispose();
 	}
 
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		if (memento!=null)
 			this.firstPageId = memento.getString("pageId"); //$NON-NLS-1$
@@ -121,7 +119,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 		service.addPartListener(this);
 	}
 	
-    public void saveState(IMemento memento) {
+	@Override
+	public void saveState(IMemento memento) {
     	if (reusableHelpPart!=null && memento!=null) {
     		String pageId = reusableHelpPart.getCurrentPageId();
     		if (pageId!=null)
@@ -227,11 +226,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partActivated(final IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
@@ -245,11 +240,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
@@ -258,29 +249,17 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		handlePartDeactivation(partRef);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 		handlePartDeactivation(partRef);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = false;
@@ -288,19 +267,11 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
@@ -309,11 +280,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
@@ -337,19 +304,11 @@ public class HelpView extends ViewPart implements IPartListener2,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (!visible)
 			return;
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				updateActivePart();
-			}
-		});
+		getSite().getShell().getDisplay().asyncExec(() -> updateActivePart());
 	}
 
 	/*
@@ -396,6 +355,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		return ReusableHelpPart.getDefaultStyle();
 	}
 
+	@Override
 	public void setFocus() {
 		if (reusableHelpPart != null)
 			reusableHelpPart.setFocus();
@@ -421,6 +381,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			reusableHelpPart.showDynamicHelp(part, c);
 	}
 
+	@Override
 	public void pageChanged(PageChangedEvent event) {
 		if (!visible)
 			return;

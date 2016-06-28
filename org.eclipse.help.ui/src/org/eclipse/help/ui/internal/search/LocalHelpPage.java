@@ -27,7 +27,6 @@ import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.Criterion
 import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.CriterionValue;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
@@ -66,6 +65,7 @@ public class LocalHelpPage extends RootScopePage {
 
 	private WorkingSet workingSet;
 
+	@Override
 	public void init(IEngineDescriptor ed, String scopeSetName) {
 		super.init(ed, scopeSetName);
 		if (scopeSetName != null)
@@ -80,11 +80,7 @@ public class LocalHelpPage extends RootScopePage {
 		//firstCheck = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.RootScopePage#createScopeContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected int createScopeContents(Composite parent) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
@@ -95,6 +91,8 @@ public class LocalHelpPage extends RootScopePage {
 		gd.horizontalSpan = 2;
 		searchAll.setLayoutData(gd);
 		searchAll.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(false);
 				if (criteriaTree != null) {
@@ -109,6 +107,8 @@ public class LocalHelpPage extends RootScopePage {
 		gd.horizontalSpan = 2;
 		searchSelected.setLayoutData(gd);
 		searchSelected.addSelectionListener(new SelectionAdapter() {
+
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(true);
 				if (criteriaTree != null) {
@@ -174,26 +174,22 @@ public class LocalHelpPage extends RootScopePage {
 
 		contentTree.setInput(BaseHelpSystem.getWorkingSetManager().getRoot());
 
-		contentTree.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event, contentTree, contentTreeContentProvider);
-			}
-		});
+		contentTree.addCheckStateListener(
+				event -> handleCheckStateChange(event, contentTree, contentTreeContentProvider));
 
 		contentTree.addTreeListener(new ITreeViewerListener() {
+
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
 				if (contentTree.getGrayed(element) == false)
 					BusyIndicator.showWhile(getShell().getDisplay(),
-							new Runnable() {
-								public void run() {
-									setSubtreeChecked(element, contentTree
-											.getChecked(element), false, contentTree, contentTreeContentProvider);
-								}
-							});
+							() -> setSubtreeChecked(element, contentTree.getChecked(element), false,
+									contentTree, contentTreeContentProvider));
 			}
 		});
 		contentTree.getTree().setEnabled(workingSet != null);
@@ -227,26 +223,22 @@ public class LocalHelpPage extends RootScopePage {
 
 		criteriaTree.setInput(BaseHelpSystem.getWorkingSetManager().getCriterionIds());
 
-		criteriaTree.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				handleCheckStateChange(event, criteriaTree, criteriaTreeContentProvider);
-			}
-		});
+		criteriaTree.addCheckStateListener(
+				event -> handleCheckStateChange(event, criteriaTree, criteriaTreeContentProvider));
 
 		criteriaTree.addTreeListener(new ITreeViewerListener() {
+
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
 				if (criteriaTree.getGrayed(element) == false)
 					BusyIndicator.showWhile(getShell().getDisplay(),
-							new Runnable() {
-								public void run() {
-									setSubtreeChecked(element, criteriaTree
-											.getChecked(element), false, criteriaTree, criteriaTreeContentProvider);
-								}
-							});
+							() -> setSubtreeChecked(element, criteriaTree.getChecked(element), false,
+									criteriaTree, criteriaTreeContentProvider));
 			}
 		});
 		criteriaTree.getTree().setEnabled(workingSet != null);
@@ -257,12 +249,10 @@ public class LocalHelpPage extends RootScopePage {
 		if (workingSet == null)
 			return;
 
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				initializeContentTree();
-				if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
-				    initializeCriteriaTree();
-				}
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			initializeContentTree();
+			if (HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
+				initializeCriteriaTree();
 			}
 		});
 	}
@@ -351,18 +341,16 @@ public class LocalHelpPage extends RootScopePage {
 
 	void handleCheckStateChange(final CheckStateChangedEvent event,  
             final CheckboxTreeViewer tree, final ITreeContentProvider contentProvider) {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Object element = event.getElement();
-				boolean state = event.getChecked();
-				tree.setGrayed(element, false);
-				if (isExpandable(element, contentProvider))
-					setSubtreeChecked(element, state, state, tree, contentProvider);
-				// only check subtree if state is set to true
+		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+			Object element = event.getElement();
+			boolean state = event.getChecked();
+			tree.setGrayed(element, false);
+			if (isExpandable(element, contentProvider))
+				setSubtreeChecked(element, state, state, tree, contentProvider);
+			// only check subtree if state is set to true
 
-				updateParentState(element, state, tree, contentProvider);
-				// validateInput();
-			}
+			updateParentState(element, state, tree, contentProvider);
+			// validateInput();
 		});
 	}
 
@@ -390,11 +378,7 @@ public class LocalHelpPage extends RootScopePage {
 		return workingSet;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 		if (searchSelected.getSelection())
 			BaseHelpSystem.getWorkingSetManager()
@@ -443,6 +427,7 @@ public class LocalHelpPage extends RootScopePage {
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		searchAll.setSelection(true);
 		searchSelected.setSelection(false);
@@ -453,6 +438,7 @@ public class LocalHelpPage extends RootScopePage {
 		super.performDefaults();
 	}
 	
+	@Override
 	protected Label createDescriptionLabel(Composite parent) {
 		if ( getContainer() == null ) {
 			return null;

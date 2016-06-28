@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -42,9 +42,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.SectionPart;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -71,26 +71,13 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private JobListener jobListener;
 	public static final int SHORT_COUNT = 8;
 
-	class JobListener implements IJobChangeListener {
-		public void aboutToRun(IJobChangeEvent event) {
-		}
+	class JobListener extends JobChangeAdapter {
 
-		public void awake(IJobChangeEvent event) {
-		}
-
+		@Override
 		public void done(IJobChangeEvent event) {
 			if (event.getJob() == runningJob) {
 				runningJob = null;
 			}
-		}
-
-		public void running(IJobChangeEvent event) {
-		}
-
-		public void scheduled(IJobChangeEvent event) {
-		}
-
-		public void sleeping(IJobChangeEvent event) {
 		}
 	}
 
@@ -106,9 +93,9 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		Section section = getSection();
 		section.setText(Messages.SearchPart_title); 
 		section.marginWidth = 5;
-		section.addExpansionListener(new IExpansionListener() {
-			public void expansionStateChanging(ExpansionEvent e) {
-			}
+		section.addExpansionListener(new ExpansionAdapter() {
+
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				if (e.getState()) {
 					refilter();
@@ -143,6 +130,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
 		searchResults.addHyperlinkListener(new IHyperlinkListener() {
+
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals(CANCEL_HREF)) { 
@@ -156,9 +145,13 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				} else
 					doOpenLink(e.getHref());
 			}
+
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				DynamicHelpPart.this.parent.handleLinkEntered(e);
 			}
+
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				DynamicHelpPart.this.parent.handleLinkExited(e);
 			}
@@ -168,17 +161,20 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		Job.getJobManager().addJobChangeListener(jobListener);
 	}
 
+	@Override
 	public void dispose() {
 		Job.getJobManager().removeJobChangeListener(jobListener);
 		stop();
 		super.dispose();
 	}
 	
+	@Override
 	public void setFocus() {
 		if (searchResults!=null)
 			searchResults.setFocus();
 	}
 	
+	@Override
 	public void stop () {
 		if (runningJob!=null) {
 			runningJob.cancel();
@@ -186,35 +182,24 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		}		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return getSection();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#init(org.eclipse.help.ui.internal.views.NewReusableHelpPart)
-	 */
+	@Override
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
 		parent.hookFormText(searchResults);
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
-	 */
+	@Override
 	public void setVisible(boolean visible) {
 		getSection().setVisible(visible);
 	}
@@ -240,6 +225,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private void startInPlaceSearch(final String phrase,
 			final IContext excludeContext) {
 		Job job = new Job(Messages.SearchPart_dynamicJob) { 
+
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					try {
@@ -266,6 +253,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchQuery.setSearchWord(phrase);
 		SearchResults localResults = new SearchResults(null,
 				DynamicHelpPart.SHORT_COUNT * 2, Platform.getNL()) {
+
+			@Override
 			public void addHits(List<SearchHit> hits, String highlightTerms) {
 				// don't highlight any terms for dynamic help part
 				super.addHits(hits, ""); //$NON-NLS-1$
@@ -305,11 +294,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			final SearchHit[] hits) {
 		if (getSection().isDisposed())
 			return;
-		getSection().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				doUpdateResults(phrase, excludeContext, buffer, hits);
-			}
-		});
+		getSection().getDisplay().asyncExec(() -> doUpdateResults(phrase, excludeContext, buffer, hits));
 	}	
 
 	private void doUpdateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
@@ -399,39 +384,35 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			parent.showURL(url);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
+	@Override
 	public boolean fillContextMenu(IMenuManager manager) {
 		return parent.fillFormContextMenu(searchResults, manager);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
-	 */
+	@Override
 	public boolean hasFocusControl(Control control) {
 		return searchResults.equals(control);
 	}
 
+	@Override
 	public IAction getGlobalAction(String id) {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
 	}
 
+	@Override
 	public void toggleRoleFilter() {
 		refilter();
 	}
 
+	@Override
 	public void refilter() {
 		if (phrase!=null && phrase.length() > 0)
 			startInPlaceSearch(phrase, context);		
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 	}
 }

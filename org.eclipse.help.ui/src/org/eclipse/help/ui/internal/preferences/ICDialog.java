@@ -63,6 +63,7 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 		this.testConnect  = testConnect;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				"org.eclipse.help.ui.prefPageHelpContent"); //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 
 		testButton = this.createButton(
@@ -133,6 +135,7 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 	}
 	
 	
+	@Override
 	public void initializeBounds() {
 		Point size = getInitialSize();
 		Point location = getInitialLocation(size);
@@ -140,6 +143,7 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 				size.x + 180, size.y);
 	}
 	
+	@Override
 	public void okPressed() {
 		try {
 			String href = formalizeHref(hrefText.getText());
@@ -241,13 +245,18 @@ public class ICDialog extends StatusDialog implements Listener, SelectionListene
 		return ic;
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 		  updateValidity();
 	}
+
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (e.getSource() instanceof Button)
 			testConnection();
 	}
+
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {}
 
 }

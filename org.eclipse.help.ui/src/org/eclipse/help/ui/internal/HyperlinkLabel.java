@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,34 @@
 
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * 
@@ -43,13 +65,11 @@ public class HyperlinkLabel extends Canvas {
 
 		this.label = new Label(this, style);
 
-		addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				paint(e);
-			}
-		});
+		addPaintListener(e -> paint(e));
 
 		addKeyListener(new KeyAdapter() {
+
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == '\r') {
 					// Activation
@@ -58,28 +78,28 @@ public class HyperlinkLabel extends Canvas {
 			}
 		});
 
-		addListener(SWT.Traverse, new Listener() {
-			public void handleEvent(Event e) {
-				switch (e.detail) {
-					// let arrows move focus
-					case SWT.TRAVERSE_ARROW_NEXT :
-						e.detail = SWT.TRAVERSE_TAB_NEXT;
-						break;
-					case SWT.TRAVERSE_ARROW_PREVIOUS :
-						e.detail = SWT.TRAVERSE_TAB_PREVIOUS;
-						break;
+		addListener(SWT.Traverse, e -> {
+			switch (e.detail) {
+			// let arrows move focus
+			case SWT.TRAVERSE_ARROW_NEXT:
+				e.detail = SWT.TRAVERSE_TAB_NEXT;
+				break;
+			case SWT.TRAVERSE_ARROW_PREVIOUS:
+				e.detail = SWT.TRAVERSE_TAB_PREVIOUS;
+				break;
 
-					case SWT.TRAVERSE_PAGE_NEXT :
-					case SWT.TRAVERSE_PAGE_PREVIOUS :
-					case SWT.TRAVERSE_RETURN :
-						e.doit = false;
-						return;
-				}
-				e.doit = true;
+			case SWT.TRAVERSE_PAGE_NEXT:
+			case SWT.TRAVERSE_PAGE_PREVIOUS:
+			case SWT.TRAVERSE_RETURN:
+				e.doit = false;
+				return;
 			}
+			e.doit = true;
 		});
 
 		addFocusListener(new FocusListener() {
+
+			@Override
 			public void focusGained(FocusEvent e) {
 				if (!hasFocus) {
 					hasFocus = true;
@@ -87,6 +107,8 @@ public class HyperlinkLabel extends Canvas {
 					redraw();
 				}
 			}
+
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (hasFocus) {
 					hasFocus = false;
@@ -150,6 +172,7 @@ public class HyperlinkLabel extends Canvas {
 		removeListener(SWT.DefaultSelection, listener);
 	}
 
+	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		int innerWidth = wHint;
 		if (innerWidth != SWT.DEFAULT)
@@ -161,36 +184,43 @@ public class HyperlinkLabel extends Canvas {
 		return new Point(textWidth, textHeight);
 	}
 
+	@Override
 	public void addMouseListener(MouseListener l) {
 		//super.addMouseListener(l);
 		label.addMouseListener(l);
 	}
 
+	@Override
 	public void addMouseTrackListener(MouseTrackListener l) {
 		//super.addMouseTrackListener(l);
 		label.addMouseTrackListener(l);
 	}
 
+	@Override
 	public void addPaintListener(PaintListener l) {
 		super.addPaintListener(l);
 		label.addPaintListener(l);
 	}
 
+	@Override
 	public void addListener(int e, Listener l) {
 		super.addListener(e, l);
 		//label.addListener(e, l);
 	}
 
+	@Override
 	public void setBackground(Color c) {
 		super.setBackground(c);
 		label.setBackground(c);
 	}
 
+	@Override
 	public void setForeground(Color c) {
 		super.setForeground(c);
 		label.setForeground(c);
 	}
 
+	@Override
 	public void setCursor(Cursor c) {
 		super.setCursor(c);
 		label.setCursor(c);
@@ -199,20 +229,26 @@ public class HyperlinkLabel extends Canvas {
 	private void initAccessibleLink() {
 		Accessible accessible = this.getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
+
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result = label.getText();
 			}
 
+			@Override
 			public void getHelp(AccessibleEvent e) {
 				e.result = label.getToolTipText();
 			}
 		});
 
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
+
+			@Override
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_LINK;
 			}
 
+			@Override
 			public void getState(AccessibleControlEvent e) {
 				if (hasFocus)
 					e.detail = ACC.STATE_FOCUSABLE | ACC.STATE_LINKED
@@ -226,6 +262,8 @@ public class HyperlinkLabel extends Canvas {
 	private void initAccessibleLabel() {
 		Accessible accessible = label.getAccessible();
 		accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
+
+			@Override
 			public void getState(AccessibleControlEvent e) {
 				if (hasFocus)
 					e.detail = ACC.STATE_READONLY | ACC.STATE_FOCUSABLE

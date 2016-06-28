@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Layout;
 
 public class TabFolderLayout extends Layout {
 
+	@Override
 	protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache) {
 		if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 			return new Point(wHint, hHint);
@@ -43,6 +44,7 @@ public class TabFolderLayout extends Layout {
 		
 	}
 	
+	@Override
 	protected void layout (Composite composite, boolean flushCache) {
 		Rectangle rect= composite.getClientArea();
 	

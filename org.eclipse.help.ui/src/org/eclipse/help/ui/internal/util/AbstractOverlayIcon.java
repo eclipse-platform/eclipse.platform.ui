@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.util;
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * An OverlayIcon consists of a main icon and several adornments.
@@ -65,6 +67,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 
 	protected abstract ImageData getBaseImageData();
 
+	@Override
 	protected void drawCompositeImage(int width, int height) {
 		ImageData base = getBaseImageData();
 		drawImage(base, 0, 0);
@@ -109,6 +112,7 @@ public abstract class AbstractOverlayIcon extends CompositeImageDescriptor {
 		}
 	}
 
+	@Override
 	protected Point getSize() {
 		return fSize;
 	}

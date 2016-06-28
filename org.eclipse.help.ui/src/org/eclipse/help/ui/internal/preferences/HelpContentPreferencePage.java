@@ -29,7 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
@@ -56,11 +55,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	public HelpContentPreferencePage() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -69,11 +64,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		return table;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
@@ -96,11 +87,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		return parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
+	@Override
 	protected void performDefaults() {
 		super.performDefaults();
 
@@ -121,11 +108,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		changeListener.handleEvent(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
+	@Override
 	public boolean performOk() {
 
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
@@ -145,11 +128,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		return super.performOk();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.DialogPage#setButtonLayoutData(org.eclipse.swt.widgets.Button)
-	 */
+	@Override
 	protected GridData setButtonLayoutData(Button button) {
 		return super.setButtonLayoutData(button);
 	}
@@ -220,16 +199,13 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	 * Listens for any change in the UI and checks for valid input and correct
 	 * enablement.
 	 */
-	private Listener changeListener = new Listener() {
-		public void handleEvent(Event event) {
-			
-			boolean isRemoteHelpEnabled = !(searchLocalHelpOnly.getSelection());
-			
-			// Disable/Enable table
-			table.getTable().setEnabled(isRemoteHelpEnabled);
-			buttons.setEnabled(isRemoteHelpEnabled);
-		}
+	private Listener changeListener = event -> {
+
+		boolean isRemoteHelpEnabled = !(searchLocalHelpOnly.getSelection());
 		
+		// Disable/Enable table
+		table.getTable().setEnabled(isRemoteHelpEnabled);
+		buttons.setEnabled(isRemoteHelpEnabled);
 	};
 	
 }

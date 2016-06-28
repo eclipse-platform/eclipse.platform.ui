@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
 
 public class ScopePreferenceManager extends PreferenceManager implements IHelpUIConstants {
 	private ScopeSet set;	
@@ -25,7 +29,9 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 			super(id, label, null, null);
 			this.config = config;
 		}
-	    public void createPage() {
+
+		@Override
+		public void createPage() {
 	    	try {
 	    		Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_CLASS);
 	    		IPreferencePage page = (IPreferencePage)obj;
@@ -47,7 +53,9 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 		public EngineDescriptor getDescriptor() {
 			return desc;
 		}
-	    public void createPage() {
+
+		@Override
+		public void createPage() {
 	    	IPreferencePage page = desc.createRootPage(set.getName());
 	    	setPage(page);
 	    	page.setTitle(desc.getLabel());

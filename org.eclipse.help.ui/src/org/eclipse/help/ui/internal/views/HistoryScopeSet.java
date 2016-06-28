@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class HistoryScopeSet extends ScopeSet {
 		setExpression(set.getExpression());
 	}
 	
+	@Override
 	public void copyFrom(ScopeSet set) {
 		String expression = getExpression();
 		super.copyFrom(set);
@@ -42,14 +43,17 @@ public class HistoryScopeSet extends ScopeSet {
 		return store.getString(KEY_EXPRESSION);
 	}
 	
+	@Override
 	public boolean isImplicit() {
 		return true;
 	}	
 	
+	@Override
 	protected String getExtension() {
 		return EXT;
 	}	
 
+	@Override
 	protected String encodeFileName(String name) {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < name.length(); i++) {

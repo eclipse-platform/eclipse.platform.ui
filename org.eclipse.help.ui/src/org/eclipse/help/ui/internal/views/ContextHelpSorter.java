@@ -27,6 +27,7 @@ public class ContextHelpSorter extends ViewerComparator {
 		this.context = context;
 	}
 	
+	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 			IHelpResource r1 = (IHelpResource) elements[i];
@@ -38,9 +39,7 @@ public class ContextHelpSorter extends ViewerComparator {
 		super.sort(viewer, elements);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
+	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		if (!(e2 instanceof IHelpResource)) {
 			return -1;

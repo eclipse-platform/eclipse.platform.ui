@@ -1,16 +1,19 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation Sebastian Davids <sdavids@gmx.de> -
- * bug 93374
+ * Contributors: 
+ * 		IBM Corporation - initial API and implementation 
+ * 		Sebastian Davids <sdavids@gmx.de> - bug 93374
  **************************************************************************************************/
 package org.eclipse.help.ui.internal;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.browser.IBrowser;
@@ -23,19 +26,14 @@ import org.eclipse.help.ui.internal.views.ContextHelpPart;
 import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.help.ui.internal.views.HelpView;
 import org.eclipse.help.ui.internal.views.ReusableHelpPart;
+import org.eclipse.jface.dialogs.DialogTray;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.osgi.service.environment.Constants;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.jface.dialogs.DialogTray;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.TrayDialog;
-
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -75,13 +73,16 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return support.getExternalBrowser();
 		}
 
+		@Override
 		public void close() {
 		}
 
+		@Override
 		public boolean isCloseSupported() {
 			return false;
 		}
 
+		@Override
 		public void displayURL(String url) throws Exception {
 			try {
 				IWebBrowser browser = getExternalBrowser();
@@ -93,17 +94,21 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 
+		@Override
 		public boolean isSetLocationSupported() {
 			return false;
 		}
 
+		@Override
 		public boolean isSetSizeSupported() {
 			return false;
 		}
 
+		@Override
 		public void setLocation(int x, int y) {
 		}
 
+		@Override
 		public void setSize(int width, int height) {
 		}
 	}
@@ -126,6 +131,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/**
 	 * Displays help.
 	 */
+	@Override
 	public void displayHelp() {
 		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser(null));
 	}
@@ -133,6 +139,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/**
 	 * Displays search.
 	 */
+	@Override
 	public void displaySearch() {
 		search(null);
 	}
@@ -140,6 +147,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/**
 	 * Displays dynamic help.
 	 */
+	@Override
 	public void displayDynamicHelp() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
@@ -174,7 +182,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	/**
 	 * Starts the search.
 	 */
-
+	@Override
 	public void search(final String expression) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
@@ -270,6 +278,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * <em>toc="/myplugin/mytoc.xml"&amp;topic="/myplugin/references/myclass.html"</em> is valid.
 	 * </ul>
 	 */
+	@Override
 	public void displayHelpResource(String href) {
 		BaseHelpSystem.getHelpDisplay().displayHelpResource(href, useExternalBrowser(href));
 	}
@@ -284,6 +293,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * @param y
 	 *            int positioning information
 	 */
+	@Override
 	public void displayContext(IContext context, int x, int y) {
 		displayContext(context, x, y, false);
 	}
@@ -352,11 +362,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		displayContextAsInfopop(context, x, y, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.help.AbstractHelpUI#resolve(java.lang.String, boolean)
-	 */
+	@Override
 	public URL resolve(String href, boolean documentOnly) {
 		return BaseHelpSystem.resolve(href, documentOnly);
 	}
@@ -441,6 +447,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * Returns <code>true</code> if the context-sensitive help window is currently being
 	 * displayed, <code>false</code> if not.
 	 */
+	@Override
 	public boolean isContextHelpDisplayed() {
 		if (f1Dialog == null) {
 			return false;

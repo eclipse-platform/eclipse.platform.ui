@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,16 +25,12 @@ public class FilterResolverExtension implements Extension {
 	private static final String NAME_ACTIVITY = "activity"; //$NON-NLS-1$
 	private static final String NAME_CATEGORY = "category"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.FilterResolver.Extension#isHandled(java.lang.String)
-	 */
+	@Override
 	public boolean isHandled(String name) {
 		return (name.equals(NAME_ACTIVITY) || name.equals(NAME_CATEGORY));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.FilterResolver.Extension#isFiltered(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public boolean isFiltered(String name, String value) {
 		if (name.equals(NAME_ACTIVITY)) {
 			return filterByActivity(value);

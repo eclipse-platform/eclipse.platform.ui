@@ -76,9 +76,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -190,12 +188,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			super(name);
 		}
 
+		@Override
 		public void run() {
-			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-				public void run() {
-					busyRun();
-				}
-			});
+			BusyIndicator.showWhile(getControl().getDisplay(), () -> busyRun());
 		}
 
 		protected abstract void busyRun();
@@ -235,12 +230,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				setTarget(null);
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 			FormText text = (FormText) e.widget;
 			text.addSelectionListener(this);
 			setTarget(text);
 		}
 
+		@Override
 		public void focusLost(FocusEvent e) {
 			FormText text = (FormText) e.widget;
 			text.removeSelectionListener(this);
@@ -256,11 +253,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			setEnabled(target != null && target.canCopy());
 		}
 
+		@Override
 		public void run() {
 			if (target != null)
 				target.copy();
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			FormText text = (FormText) e.widget;
 			if (text == target) {
@@ -268,6 +267,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
@@ -338,6 +338,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			this.iconId = iconId;
 		}
 
+		@Override
 		public void dispose() {
 			if (bars != null) {
 				bars.dispose();
@@ -357,42 +358,52 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			partRecs = null;
 		}
 
+		@Override
 		public void setVerticalSpacing(int value) {
 			this.vspacing = value;
 		}
 
+		@Override
 		public int getVerticalSpacing() {
 			return vspacing;
 		}
 
+		@Override
 		public void setHorizontalMargin(int value) {
 			this.horizontalMargin = value;
 		}
 
+		@Override
 		public int getHorizontalMargin() {
 			return horizontalMargin;
 		}
 
+		@Override
 		public IToolBarManager getToolBarManager() {
 			return subToolBarManager;
 		}
 
+		@Override
 		public String getId() {
 			return id;
 		}
 
+		@Override
 		public String getText() {
 			return text;
 		}
 
+		@Override
 		public String getIconId() {
 			return iconId;
 		}
 
+		@Override
 		public void addPart(String id, boolean flexible) {
 			addPart(id, flexible, false);
 		}
 
+		@Override
 		public void addPart(String id, boolean flexible, boolean grabVertical) {
 			partRecs.add(new PartRec(id, flexible, grabVertical));
 			if (flexible)
@@ -414,10 +425,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					parts[p].part.refresh();
 		}
 
+		@Override
 		public int getNumberOfFlexibleParts() {
 			return nflexible;
 		}
 
+		@Override
 		public boolean canOpen() {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -439,6 +452,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			return true;
 		}
 
+		@Override
 		public void stop() {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -447,6 +461,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 		
+		@Override
 		public void saveState(IMemento memento) {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -455,6 +470,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 
+		@Override
 		public void toggleRoleFilter() {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -463,6 +479,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 
+		@Override
 		public void refilter() {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -471,6 +488,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 
+		@Override
 		public void setVisible(boolean visible) {
 			if (bars != null)
 				bars.clearGlobalActionHandlers();
@@ -536,6 +554,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 
+		@Override
 		public IHelpPart findPart(String id) {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = partRecs.get(i);
@@ -545,6 +564,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			return null;
 		}
 
+		@Override
 		public void setFocus() {
 			// Focus on the first part that is not the see also links or missing content link
 			for (int focusPart = 0; focusPart < partRecs.size(); focusPart++) {
@@ -560,14 +580,18 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	class HelpPartLayout extends Layout implements ILayoutExtension {
+
+		@Override
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
 
+		@Override
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, 0, SWT.DEFAULT, changed).x;
 		}
 
+		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
 			if (currentPage == null)
@@ -593,6 +617,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			return result;
 		}
 
+		@Override
 		protected void layout(Composite composite, boolean flushCache) {
 			if (currentPage == null)
 				return;
@@ -657,6 +682,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	class RoleFilter extends ViewerFilter {
+
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			IHelpResource res = (IHelpResource) element;
@@ -668,6 +695,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 	
 	class UAFilter extends ViewerFilter {
+
+		@Override
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			return !UAContentFilter.isFiltered(element, HelpEvaluationContext.getContext());
@@ -820,6 +849,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	private void makeActions() {
 		backAction = new Action("back") { //$NON-NLS-1$
+
+			@Override
 			public void run() {
 				doBack();
 			}
@@ -836,6 +867,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		backAction.setId("back"); //$NON-NLS-1$
 
 		nextAction = new Action("next") { //$NON-NLS-1$
+
+			@Override
 			public void run() {
 				doNext();
 			}
@@ -854,6 +887,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		toolBarManager.add(nextAction);
 
 		openInfoCenterAction = new BusyRunAction("openInfoCenter") { //$NON-NLS-1$
+
+			@Override
 			protected void busyRun() {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp();
 			}
@@ -861,12 +896,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		openInfoCenterAction
 				.setText(Messages.ReusableHelpPart_openInfoCenterAction_label); 
 		openAction = new OpenHrefAction("open") { //$NON-NLS-1$
+
+			@Override
 			protected void busyRun() {
 				doOpen(getTarget(), getShowDocumentsInPlace());
 			}
 		};
 		openAction.setText(Messages.ReusableHelpPart_openAction_label); 
 		openInHelpAction = new OpenHrefAction("") {//$NON-NLS-1$
+
+			@Override
 			protected void busyRun() {
 				doOpenInHelp(getTarget());
 			}
@@ -876,6 +915,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		copyAction = new CopyAction();
 		copyAction.setText(Messages.ReusableHelpPart_copyAction_label); 
 		bookmarkAction = new OpenHrefAction("bookmark") { //$NON-NLS-1$
+
+			@Override
 			protected void busyRun() {
 				doBookmark(getTarget());
 			}
@@ -890,13 +931,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		uaFilter = new UAFilter();
 		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
 			showAllAction = new Action() {
+
+				@Override
 				public void run() {
 					BusyIndicator.showWhile(getControl().getDisplay(),
-							new Runnable() {
-								public void run() {
-									toggleShowAll(showAllAction.isChecked());
-								}
-							});
+							() -> toggleShowAll(showAllAction.isChecked()));
 				}
 			};
 			showAllAction.setImageDescriptor(HelpUIResources
@@ -918,6 +957,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		return uaFilter;
 	}
 
+	@Override
 	public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 		// pages is null when the activity manager listener is added, and is set to null
 		// prior to the activity manager listener being removed, so very short timeframes in
@@ -970,20 +1010,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		mform.getForm().setDelayedReflow(false);
 		toolkit.decorateFormHeading(mform.getForm().getForm());
 		MenuManager manager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
-			}
-		};
+		IMenuListener listener = manager1 -> contextMenuAboutToShow(manager1);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(form.getForm());
 		form.getForm().setMenu(contextMenu);
-		form.addListener(SWT.Activate, new Listener() {
-			public void handleEvent(Event event) {
-				lastActiveInstance = ReusableHelpPart.this;
-			}
-		});
+		form.addListener(SWT.Activate, event -> lastActiveInstance = ReusableHelpPart.this);
 		//contributeToDropDownMenu(mform.getForm().getForm().getMenuManager());
 	}
 
@@ -1231,11 +1263,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void showURL(final String url) {
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				showURL(url, getShowDocumentsInPlace());
-			}
-		});
+		BusyIndicator.showWhile(getControl().getDisplay(), () -> showURL(url, getShowDocumentsInPlace()));
 	}
 
 	public void showURL(String url, boolean replace) {
@@ -1361,13 +1389,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		if (page == null)
 			return;
 		Action action = new Action(pageId, IAction.AS_CHECK_BOX) {
+
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(mform.getForm().getDisplay(),
-						new Runnable() {
-							public void run() {
-								showPage(pageId);
-							}
-						});
+						() -> showPage(pageId));
 			}
 		};
 		action.setText(page.getText());
@@ -1489,10 +1515,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					final String href = topics[0].getHref();
 					final String label = entry.getKeyword();
 					return new IHelpResource() {
+
+						@Override
 						public String getHref() {
 							return href;
 						}
 
+						@Override
 						public String getLabel() {
 							return label;
 						}
@@ -1510,10 +1539,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			final String label = text.getSelectedLinkText();
 			if (href != null) {
 				return new IHelpResource() {
+
+					@Override
 					public String getHref() {
 						return href;
 					}
 
+					@Override
 					public String getLabel() {
 						return label;
 					}
