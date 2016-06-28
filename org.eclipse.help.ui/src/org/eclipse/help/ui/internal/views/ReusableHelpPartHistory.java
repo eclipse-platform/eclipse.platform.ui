@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,12 @@ import java.util.LinkedList;
 
 public class ReusableHelpPartHistory {
 	private static final int CAPACITY = 50;
-	private LinkedList queue;
+	private LinkedList<HistoryEntry> queue;
 	private int cursor = -1;
 	private boolean blocked;
 
 	public ReusableHelpPartHistory() {
-		queue = new LinkedList();
+		queue = new LinkedList<>();
 	}
 
 	public void addEntry(HistoryEntry entry) {

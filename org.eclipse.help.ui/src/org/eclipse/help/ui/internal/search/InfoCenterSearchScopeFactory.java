@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
         	String tvalue = getProperty(P_TOCS, store, engineId, parameters);
         	if (tvalue!=null && tvalue.length()>0) {
         		StringTokenizer stok = new StringTokenizer(tvalue, TOC_SEPARATOR);
-        		ArrayList list = new ArrayList();
+        		ArrayList<String> list = new ArrayList<>();
         		while (stok.hasMoreTokens()) {
         			String toc = stok.nextToken();
         			list.add(toc);

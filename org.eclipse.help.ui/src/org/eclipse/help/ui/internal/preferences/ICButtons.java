@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,7 @@ public class ICButtons implements SelectionListener{
 	{
 		int index = page.getTable().getTable().getSelectionIndices()[0];
 		
-		List ics = page.getTable().getICs();
+		List<IC> ics = page.getTable().getICs();
 		IC x = (IC) ics.get(index);
 		IC y = (IC) ics.get(index+offset);
 

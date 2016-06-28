@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,13 +34,13 @@ public class HyperlinkHandler
 	private Color foreground;
 	private Color activeBackground;
 	private Color activeForeground;
-	private Hashtable hyperlinkListeners;
+	private Hashtable<Control, IHyperlinkListener> hyperlinkListeners;
 	private Control lastLink;
 	/**
 	 * HyperlinkHandler constructor comment.
 	 */
 	public HyperlinkHandler() {
-		hyperlinkListeners = new Hashtable();
+		hyperlinkListeners = new Hashtable<>();
 		hyperlinkCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
 	}

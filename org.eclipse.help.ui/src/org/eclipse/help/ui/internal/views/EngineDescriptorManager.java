@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 public class EngineDescriptorManager extends Observable implements IHelpUIConstants {
-	private ArrayList descriptors;
+	private ArrayList<EngineDescriptor> descriptors;
 
 	private EngineTypeDescriptor[] engineTypes;
 
@@ -46,7 +46,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	}
 
 	public EngineDescriptorManager() {
-		descriptors = new ArrayList();
+		descriptors = new ArrayList<>();
 		load();
 	}
 	
@@ -160,8 +160,8 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	}
 
 	private Hashtable loadEngineTypes(IConfigurationElement[] elements) {
-		Hashtable result = new Hashtable();
-		ArrayList list = new ArrayList();
+		Hashtable<String, EngineTypeDescriptor> result = new Hashtable<>();
+		ArrayList<EngineTypeDescriptor> list = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("engineType")) { //$NON-NLS-1$
@@ -241,7 +241,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	}
 
 	public String computeNewId(String typeId) {
-		ArrayList used = new ArrayList();
+		ArrayList<Integer> used = new ArrayList<>();
 		for (int i=0; i<descriptors.size(); i++) {
 			EngineDescriptor ed = (EngineDescriptor)descriptors.get(i);
 			if (!ed.isUserDefined()) continue;

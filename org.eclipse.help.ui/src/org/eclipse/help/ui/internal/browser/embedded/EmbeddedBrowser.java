@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class EmbeddedBrowser {
 	private String statusText;
 	private int x, y, w, h;
 	private long modalRequestTime = 0;
-	private Vector closeListeners = new Vector(1);
+	private Vector<IBrowserCloseListener> closeListeners = new Vector<>(1);
 	/**
 	 * Constructor for main help window instance
 	 */
@@ -416,7 +416,7 @@ public class EmbeddedBrowser {
 	private static Image[] createImages() {
 		String[] productImageURLs = getProductImageURLs();
 		if (productImageURLs != null) {
-			ArrayList shellImgs = new ArrayList();
+			ArrayList<Image> shellImgs = new ArrayList<>();
 			for (int i = 0; i < productImageURLs.length; i++) {
 				if ("".equals(productImageURLs[i])) { //$NON-NLS-1$
 					continue;

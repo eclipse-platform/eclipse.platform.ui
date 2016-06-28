@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class InfoCenterPage extends RootScopePage {
 		public void load(IPreferenceStore store) {
 			String elements = store.getString(getKey(InfoCenterSearchScopeFactory.P_TOCS));
 			StringTokenizer stok = new StringTokenizer(elements, InfoCenterSearchScopeFactory.TOC_SEPARATOR);
-			ArrayList list = new ArrayList();
+			ArrayList<AdaptableHelpResource> list = new ArrayList<>();
 			while (stok.hasMoreTokens()) {
 				final String url = stok.nextToken();
 				AdaptableHelpResource res = find(url);
@@ -430,6 +430,7 @@ public class InfoCenterPage extends RootScopePage {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void findCheckedElements(java.util.List checkedResources,
 			Object parent) {
 		Object[] children = treeContentProvider.getChildren(parent);
@@ -458,7 +459,7 @@ public class InfoCenterPage extends RootScopePage {
 	}
 
 	public void updateWorkingSet() {
-		ArrayList elements = new ArrayList(10);
+		ArrayList<AdaptableHelpResource> elements = new ArrayList<>(10);
 		findCheckedElements(elements, tree.getInput());
 		workingSet.setElements((AdaptableHelpResource[]) elements
 				.toArray(new AdaptableHelpResource[elements.size()]));

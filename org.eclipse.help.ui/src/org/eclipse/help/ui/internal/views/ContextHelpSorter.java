@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 public class ContextHelpSorter extends ViewerComparator {
 	private IContext2 context;
-	private LinkedList list;
+	private LinkedList<String> list;
 	
 	public ContextHelpSorter(IContext2 context) {
 		super(ReusableHelpPart.SHARED_COLLATOR);
-		list = new LinkedList();
+		list = new LinkedList<>();
 		this.context = context;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -428,8 +428,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private class SearchTerms {
 		
-		private List terms = new ArrayList();
-		private Set termSet = new HashSet();
+		private List<String> terms = new ArrayList<>();
+		private Set<String> termSet = new HashSet<>();
 		public void add(String term) {
 			if (term == null ) return;
 			String lowerCaseTerm = term.toLowerCase();

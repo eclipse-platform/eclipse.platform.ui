@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class EngineResultSection {
 
 	private IStatus errorStatus;
 
-	private ArrayList hits;
+	private ArrayList<ISearchEngineResult> hits;
 
 	private Section section;
 
@@ -95,7 +95,7 @@ public class EngineResultSection {
 	public EngineResultSection(SearchResultsPart part, EngineDescriptor desc) {
 		this.part = part;
 		this.desc = desc;
-		hits = new ArrayList();
+		hits = new ArrayList<>();
 		sorter = new FederatedSearchSorter();
 	}
 
@@ -283,10 +283,10 @@ public class EngineResultSection {
 	}
 
 	private ISearchEngineResult[] getResults() {
-		ArrayList list = hits;
+		ArrayList<ISearchEngineResult> list = hits;
 		if (desc.getEngineTypeId().equals(IHelpUIConstants.INTERNAL_HELP_ID)) {
 			if (part.parent.isFilteredByRoles()) {
-				list = new ArrayList();
+				list = new ArrayList<>();
 				for (int i = 0; i < hits.size(); i++) {
 					ISearchEngineResult hit = (ISearchEngineResult) hits.get(i);
 					if (HelpBasePlugin.getActivitySupport().isEnabled(hit.getHref()))

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 
 	private EngineTypeDescriptor etdesc;
 
-	private Hashtable parameters;
+	private Hashtable<String, Object> parameters;
 
 	//private boolean removable;
 
@@ -143,7 +143,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 	public Dictionary getParameters() {
 		if (parameters != null)
 			return parameters;
-		parameters = new Hashtable();
+		parameters = new Hashtable<>();
 		parameters.put(P_MASTER, isEnabled() ? Boolean.TRUE : Boolean.FALSE);
 		if (config != null) {
 			IConfigurationElement[] params = config.getChildren("param"); //$NON-NLS-1$

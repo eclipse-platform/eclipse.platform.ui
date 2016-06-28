@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,7 +143,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	private String defaultContextHelpText;
 
-	private ArrayList pages;
+	private ArrayList<IHelpPartPage> pages;
 
 	private Action backAction;
 
@@ -307,14 +307,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		
 		private IMenuManager subMenuManager;
 
-		protected ArrayList partRecs;
+		protected ArrayList<PartRec> partRecs;
 
 		private int nflexible;
 
 		public HelpPartPage(String id, String text) {
 			this.id = id;
 			this.text = text;
-			partRecs = new ArrayList();
+			partRecs = new ArrayList<>();
 			if (ReusableHelpPart.this.actionBars != null) {
 				// Help View
 				bars = new SubActionBars(ReusableHelpPart.this.actionBars);
@@ -474,7 +474,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		public void setVisible(boolean visible) {
 			if (bars != null)
 				bars.clearGlobalActionHandlers();
-			ArrayList tabList = new ArrayList();
+			ArrayList<Control> tabList = new ArrayList<>();
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
@@ -742,7 +742,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 	
 	private void definePages() {
-		pages = new ArrayList();
+		pages = new ArrayList<>();
 		// federated search page
 		HelpPartPage page = new HelpPartPage(HV_FSEARCH_PAGE,
 				Messages.ReusableHelpPart_searchPage_name,
@@ -1254,7 +1254,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			EngineDescriptor desc = getEngineManager().findEngine(engineId);
 			if (desc==null)
 				return;
-			HashMap args = new HashMap();
+			HashMap<String, Object> args = new HashMap<>();
 			HelpURLConnection.parseQuery(url.substring(qloc+1), args);
 			((ISearchEngine2)desc.getEngine()).open((String)args.get("id")); //$NON-NLS-1$
 			return;

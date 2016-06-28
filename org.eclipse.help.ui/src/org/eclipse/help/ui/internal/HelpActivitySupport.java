@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -254,6 +254,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * 
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	public void enableActivities(String href) {
 		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
@@ -261,13 +262,13 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 
 		IIdentifier identifier = activitySupport.getActivityManager()
 				.getIdentifier(href);
-		Set activitityIds = identifier.getActivityIds();
+		Set<String> activitityIds = identifier.getActivityIds();
 		if (activitityIds.isEmpty()) { // if there are no activities that match
 			// this identifier, do nothing.
 			return;
 		}
 
-		Set enabledIds = new HashSet(activitySupport.getActivityManager()
+		Set<String> enabledIds = new HashSet(activitySupport.getActivityManager()
 				.getEnabledActivityIds());
 		enabledIds.addAll(activitityIds);
 		activitySupport.setEnabledActivityIds(enabledIds);

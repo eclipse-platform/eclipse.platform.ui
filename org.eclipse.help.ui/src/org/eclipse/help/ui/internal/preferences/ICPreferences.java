@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class ICPreferences {
 	public final static String DELIMITER = ","; //$NON-NLS-1$
 
 	
-	public static void setICs(List ics)
+	public static void setICs(List<IC> ics)
 	{
 		String name = "", host = "", path = "", protocol="", port = "", enabled = ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 		
@@ -63,7 +63,7 @@ public class ICPreferences {
 		HelpPlugin.getTocManager().clearCache();
 	}
 	
-	public static List getICs()
+	public static List<IC> getICs()
 	{
 		return prefsToICs(
 				ICPreferences.get("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME).split(DELIMITER), //$NON-NLS-1$
@@ -74,9 +74,9 @@ public class ICPreferences {
 				ICPreferences.get("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled).split(DELIMITER)); //$NON-NLS-1$
 	}
 	
-	public static List prefsToICs(String names[],String protocols[],String hosts[],String ports[],String paths[],String states[])
+	public static List<IC> prefsToICs(String names[],String protocols[],String hosts[],String ports[],String paths[],String states[])
 	{
-		List ics = new ArrayList();
+		List<IC> ics = new ArrayList<>();
 		
 		for (int i=0;i<names.length;i++)
 		{
@@ -102,7 +102,7 @@ public class ICPreferences {
 	
 
 	
-	public static List getDefaultICs()
+	public static List<IC> getDefaultICs()
 	{		
 		return prefsToICs(
 				getDefault("org.eclipse.help.base",IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME).split(DELIMITER), //$NON-NLS-1$

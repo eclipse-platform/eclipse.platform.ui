@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,7 +266,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		searchQuery.setSearchWord(phrase);
 		SearchResults localResults = new SearchResults(null,
 				DynamicHelpPart.SHORT_COUNT * 2, Platform.getNL()) {
-			public void addHits(List hits, String highlightTerms) {
+			public void addHits(List<SearchHit> hits, String highlightTerms) {
 				// don't highlight any terms for dynamic help part
 				super.addHits(hits, ""); //$NON-NLS-1$
 			}

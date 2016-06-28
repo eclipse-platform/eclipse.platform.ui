@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,10 @@ public class StyledLineWrapper implements StyledTextContent {
 	private Drawable drawable;
 
 	/** Lines after splitting */
-	private ArrayList lines = new ArrayList();
+	private ArrayList<String> lines = new ArrayList<>();
 
 	/** Style ranges, per line */
-	private ArrayList lineStyleRanges = new ArrayList();
+	private ArrayList<StyleRange> lineStyleRanges = new ArrayList<>();
 
 	/** Character count */
 	private int charCount = -1;
@@ -189,7 +189,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	 */
 	private void processLineBreaks(String text) {
 		// Create the original lines with style stripped
-		lines = new ArrayList();
+		lines = new ArrayList<>();
 		char[] textChars = getUnstyledText(text).toCharArray();
 		int start = 0;
 		for (int i = start; i < textChars.length; i++) {
@@ -268,7 +268,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	 */
 	private void processStyles(String text) {
 		// create a new array of styles
-		lineStyleRanges = new ArrayList();
+		lineStyleRanges = new ArrayList<>();
 		// first, remove the line breaks
 		text = text.replaceAll("\n|\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		int offset = 0;

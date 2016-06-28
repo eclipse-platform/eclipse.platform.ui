@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,18 +137,19 @@ public class ICTable {
 	 */
 	class ICContentProvider implements IStructuredContentProvider
 	{
-		private List content = new ArrayList();
+		private List<IC> content = new ArrayList<>();
 		
 		public void dispose() {
 			content = null;
 		}
 
+		@SuppressWarnings("unchecked")
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			content = (List)newInput;
+			content = (List<IC>)newInput;
 		}
 
-		public Object[] getElements(Object inputElement) {
-			return (Object[])content.toArray(new Object[content.size()]);
+		public IC[] getElements(Object inputElement) {
+			return (IC[])content.toArray(new Object[content.size()]);
 		}
 		
 	}
@@ -211,10 +212,10 @@ public class ICTable {
 	/**
 	 * Return the RemoteICList
 	 */
-	public List getICs() {
+	public List<IC> getICs() {
 		ICContentProvider p = (ICContentProvider)viewer.getContentProvider();
-		Object objs[] = p.getElements(null);
-		List content = new ArrayList();
+		IC objs[] = p.getElements(null);
+		List<IC> content = new ArrayList<>();
 		for (int o=0;o<objs.length;o++)
 			content.add(objs[o]);
 		return content;
@@ -247,7 +248,7 @@ public class ICTable {
 	
 	public void addIC(IC ic)
 	{
-		List content = getICs();
+		List<IC> content = getICs();
 		content.add(ic);
 		getTableViewer().getContentProvider().inputChanged(
 				getTableViewer(), null, content);
@@ -257,7 +258,7 @@ public class ICTable {
 	
 	public void editIC(IC ic)
 	{	
-		List content = getICs();
+		List<IC> content = getICs();
 		content.set(getTable().getSelectionIndex(), ic);
 		getTableViewer().replace(ic,getTable().getSelectionIndex());
 		getTableViewer().getContentProvider().inputChanged(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	private Action showDescriptionAction;
 
-	private ArrayList results;
+	private ArrayList<EngineResultSection> results;
 
 	//private String phrase;
 
@@ -105,7 +105,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		tlayout.topMargin = 0;
 		tlayout.bottomMargin = 0;
 		innerForm.getBody().setLayout(tlayout);
-		results = new ArrayList();
+		results = new ArrayList<>();
 		contributeToToolBar(tbm);
 	}
 	

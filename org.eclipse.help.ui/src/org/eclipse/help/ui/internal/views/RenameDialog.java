@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class RenameDialog extends SelectionStatusDialog {
-	private ArrayList oldNames;
+	private ArrayList<String> oldNames;
 	private String oldName;
 	private String newName;
 	private Text text;
@@ -60,7 +60,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	}
 	
 	public void initialize(){
-		oldNames = new ArrayList();
+		oldNames = new ArrayList<>();
 		setStatusLineAboveButtons(true);
 		this.setHelpAvailable(false);
 	}

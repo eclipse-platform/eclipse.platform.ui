@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -304,6 +304,7 @@ public class LocalHelpPage extends RootScopePage {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void findCheckedElements(java.util.List checkedResources, Object parent,  
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
@@ -318,7 +319,7 @@ public class LocalHelpPage extends RootScopePage {
 	private CriterionResource[] findCheckedCriteria(Object parent,  
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
-		List resources = new ArrayList();
+		List<CriterionResource> resources = new ArrayList<>();
 		for (int i = 0; i < children.length; i++) {
 			// First level children are names
 			CriterionName name = (CriterionName) children[i];
@@ -355,7 +356,7 @@ public class LocalHelpPage extends RootScopePage {
 	}
 
 	public WorkingSet getWorkingSet() {
-		ArrayList elements = new ArrayList(10);
+		ArrayList<AdaptableHelpResource> elements = new ArrayList<>(10);
 		CriterionResource[] criteria;
 		if (!HelpPlugin.getCriteriaManager().isCriteriaEnabled()) {
 			criteria = new CriterionResource[0];

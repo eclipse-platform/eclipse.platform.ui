@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,8 +85,8 @@ public class ScopeSetDialog extends TrayDialog  {
 	private Button editButton;
 	private Button renameButton;
 	private Button removeButton;
-	private ArrayList sets;
-	private ArrayList operations;
+	private ArrayList<ScopeSet> sets;
+	private ArrayList<PendingOperation> operations;
 	private IStructuredContentProvider contentProvider;
 	
 	private Button showAllRadio;
@@ -214,8 +214,8 @@ public class ScopeSetDialog extends TrayDialog  {
 		initialSelection = scopeSet;
 	}
 	
-	private ArrayList extractSets(ScopeSet[] array) {
-		ArrayList list = new ArrayList();
+	private ArrayList<ScopeSet> extractSets(ScopeSet[] array) {
+		ArrayList<ScopeSet> list = new ArrayList<>();
 		for (int i=0; i<array.length; i++) {
 			list.add(array[i]);
 		}
@@ -333,7 +333,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		result = new Object[] { scope };
 	}
 
-	private void setResult(List newResult) {
+	private void setResult(List<?> newResult) {
 		if (newResult == null) {
 			result = null;
 		} else {
@@ -386,7 +386,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 	
 	private String getDefaultName() {
-		Set namesInUse = new HashSet();
+		Set<String> namesInUse = new HashSet<>();
 		for (int i=0; i<sets.size(); i++) {
 		    ScopeSet set = (ScopeSet)sets.get(i);
 		    namesInUse.add(set.getName().toLowerCase());
@@ -475,7 +475,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	
 	private void scheduleOperation(PendingOperation op) {
 		if (operations==null)
-			operations = new ArrayList();
+			operations = new ArrayList<>();
 		operations.add(op);
 	}
 	

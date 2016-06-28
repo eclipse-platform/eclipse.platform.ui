@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class ScopeSetManager extends Observable {
 
 	private static final String ACTIVE_SET = "activeScopeSet"; //$NON-NLS-1$
 
-	private ArrayList sets;
+	private ArrayList<ScopeSet> sets;
 
 	private ScopeSet defSet;
 
@@ -89,7 +89,7 @@ public class ScopeSetManager extends Observable {
 	}
 
 	public ScopeSet[] getScopeSets(boolean implicit) {
-		ArrayList result = new ArrayList();
+		ArrayList<ScopeSet> result = new ArrayList<>();
 		for (int i = 0; i < sets.size(); i++) {
 			ScopeSet set = (ScopeSet) sets.get(i);
 			if (set.isImplicit() == implicit)
@@ -101,7 +101,7 @@ public class ScopeSetManager extends Observable {
 	}
 
 	private void loadScopeSets() {
-		sets = new ArrayList();
+		sets = new ArrayList<>();
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append("scope_sets"); //$NON-NLS-1$
 		File dir = location.toFile();

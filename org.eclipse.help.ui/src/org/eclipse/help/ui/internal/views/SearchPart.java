@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -523,8 +523,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	private void updateSearchCombo(HistoryScopeSet current) {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
 		ScopeSet[] sets = scopeSetManager.getScopeSets(true);
-		ArrayList items = new ArrayList();
-		ArrayList toDelete = new ArrayList();
+		ArrayList<String> items = new ArrayList<>();
+		ArrayList<HistoryScopeSet> toDelete = new ArrayList<HistoryScopeSet>();
 		// if (current!=null)
 		// items.add(current.getExpression());
 		for (int i = sets.length - 1; i >= 0; i--) {
@@ -570,10 +570,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			if (switchedSet)
 				setActiveScopeSet(set);
 		}
-		ArrayList entries = new ArrayList();
+		ArrayList<FederatedSearchEntry> entries = new ArrayList<>();
 		final SearchResultsPart results = (SearchResultsPart) parent
 				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
-		ArrayList eds = new ArrayList();
+		ArrayList<EngineDescriptor> eds = new ArrayList<>();
 		EngineDescriptor[] engineDescriptors = parent.getEngineManager().getDescriptors();
 		for (int i = 0; i < engineDescriptors.length; i++) {
 			final EngineDescriptor ed = engineDescriptors[i];
