@@ -525,7 +525,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=95479
 		ScopeSet[] sets = scopeSetManager.getScopeSets(true);
 		ArrayList<String> items = new ArrayList<>();
-		ArrayList<HistoryScopeSet> toDelete = new ArrayList<HistoryScopeSet>();
+		ArrayList<HistoryScopeSet> toDelete = new ArrayList<>();
 		// if (current!=null)
 		// items.add(current.getExpression());
 		for (int i = sets.length - 1; i >= 0; i--) {
