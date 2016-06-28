@@ -200,9 +200,9 @@ public class HyperlinkHandler
 	}
 
 	private void removeDisposedLinks() {
-		for (Enumeration keys = hyperlinkListeners.keys(); keys
+		for (Enumeration<Control> keys = hyperlinkListeners.keys(); keys
 				.hasMoreElements();) {
-			Control control = (Control) keys.nextElement();
+			Control control = keys.nextElement();
 			if (control.isDisposed()) {
 				hyperlinkListeners.remove(control);
 			}

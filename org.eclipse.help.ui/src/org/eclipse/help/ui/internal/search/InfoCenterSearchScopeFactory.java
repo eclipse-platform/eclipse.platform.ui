@@ -31,7 +31,8 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
      */
-    public ISearchScope createSearchScope(IPreferenceStore store, String engineId, Dictionary parameters) {
+	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
+			Dictionary<String, Object> parameters) {
         String url = getProperty(P_URL, store, engineId, parameters);
         String ssvalue = getProperty(P_SEARCH_SELECTED, store, engineId, parameters);
         boolean searchSelected = ssvalue!=null && ssvalue.equalsIgnoreCase("true"); //$NON-NLS-1$
@@ -52,11 +53,12 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
         return new InfoCenter.Scope(url, searchSelected, tocs);
     }
     
-    private String getProperty(String key, IPreferenceStore store, String engineId, Dictionary parameters) {
+	private String getProperty(String key, IPreferenceStore store, String engineId,
+			Dictionary<String, Object> parameters) {
     	// try the store first
     	String value = store.getString(engineId+"."+key); //$NON-NLS-1$
     	if (value!=null && value.length()>0) return value;
     	// try the parameters
-    	return (String)parameters.get(key);
+		return (String) parameters.get(key);
     }
 }

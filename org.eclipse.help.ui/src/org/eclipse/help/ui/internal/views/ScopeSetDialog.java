@@ -488,7 +488,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		renameButton.setEnabled(editableSet);
 	}
 	
-	private PendingOperation findOperation(ScopeSet set, Class type) {
+	private PendingOperation findOperation(ScopeSet set, Class<?> type) {
 		if (operations!=null) {
 			for (int i=0; i<operations.size(); i++) {
 				PendingOperation op = operations.get(i);

@@ -139,7 +139,7 @@ public class ICButtons implements SelectionListener{
 	public void removeIC()
 	{
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
-		List ics = selection.toList();
+		List<IC> ics = selection.toList();
 		String remove = ""; //$NON-NLS-1$
 		
 		for (int i=0;i<ics.size();i++)
@@ -156,7 +156,7 @@ public class ICButtons implements SelectionListener{
 		if (shouldRemove)
 		{
 			for (int i=0;i<ics.size();i++)
-				page.getTable().removeIC((IC)ics.get(i));
+				page.getTable().removeIC(ics.get(i));
 			updateButtonStates();
 		}
 	}
@@ -188,13 +188,13 @@ public class ICButtons implements SelectionListener{
 	{
 		int indexes[] = page.getTable().getTable().getSelectionIndices();
 		IStructuredSelection selection = (IStructuredSelection)page.getTable().getSelection();
-		List ics = selection.toList();
+		List<IC> ics = selection.toList();
 		
 		boolean enable = enableIC.getText().equals(Messages.HelpContentBlock_4);
 		
 		for (int i=0;i<ics.size();i++)
 		{
-			((IC)ics.get(i)).setEnabled(enable);
+			ics.get(i).setEnabled(enable);
 			page.getTable().getTableViewer().replace(ics.get(i), indexes[i]);
 		}
 		page.getTable().refresh();

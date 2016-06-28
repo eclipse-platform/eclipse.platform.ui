@@ -14,23 +14,20 @@ package org.eclipse.help.ui.internal;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpActivitySupport;
-import org.eclipse.help.internal.toc.Toc;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpActivitySupport;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Wrapper for eclipse ui activity support
@@ -268,7 +265,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 			return;
 		}
 
-		Set<String> enabledIds = new HashSet(activitySupport.getActivityManager()
+		Set<String> enabledIds = new HashSet<>(activitySupport.getActivityManager()
 				.getEnabledActivityIds());
 		enabledIds.addAll(activitityIds);
 		activitySupport.setEnabledActivityIds(enabledIds);

@@ -14,8 +14,10 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.help.search.*;
-import org.eclipse.help.ui.*;
+import org.eclipse.help.search.ISearchEngine;
+import org.eclipse.help.search.ISearchScope;
+import org.eclipse.help.ui.IEngineDescriptor;
+import org.eclipse.help.ui.RootScopePage;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -140,7 +142,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		return page;
 	}
 
-	public Dictionary getParameters() {
+	public Dictionary<String, Object> getParameters() {
 		if (parameters != null)
 			return parameters;
 		parameters = new Hashtable<>();

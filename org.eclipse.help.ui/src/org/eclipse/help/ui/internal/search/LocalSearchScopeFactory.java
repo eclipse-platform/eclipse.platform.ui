@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,8 @@ public class LocalSearchScopeFactory implements ISearchScopeFactory {
     /* (non-Javadoc)
      * @see org.eclipse.help.ui.ISearchScopeFactory#createSearchScope(org.eclipse.jface.preference.IPreferenceStore)
      */
-    public ISearchScope createSearchScope(IPreferenceStore store, String engineId, Dictionary parameters) {
+	public ISearchScope createSearchScope(IPreferenceStore store, String engineId,
+			Dictionary<String, Object> parameters) {
         String name = store.getString(engineId+"."+P_WORKING_SET); //$NON-NLS-1$
         WorkingSet workingSet = null;
         if (name != null)

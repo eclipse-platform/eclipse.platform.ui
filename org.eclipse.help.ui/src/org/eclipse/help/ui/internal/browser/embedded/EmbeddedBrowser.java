@@ -492,8 +492,8 @@ public class EmbeddedBrowser {
 		shell.setSize(w, h);
 	}
 	private void notifyCloseListners() {
-		for (Iterator it = closeListeners.iterator(); it.hasNext();) {
-			IBrowserCloseListener listener = (IBrowserCloseListener) it.next();
+		for (Iterator<IBrowserCloseListener> it = closeListeners.iterator(); it.hasNext();) {
+			IBrowserCloseListener listener = it.next();
 			listener.browserClosed();
 		}
 	}

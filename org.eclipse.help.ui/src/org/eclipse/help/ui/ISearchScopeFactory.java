@@ -47,5 +47,5 @@ public interface ISearchScopeFactory {
 	 * @return a new search scope object
 	 */
 	ISearchScope createSearchScope(IPreferenceStore store, String engineId,
-			Dictionary parameters);
+			Dictionary<String, Object> parameters);
 }

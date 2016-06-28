@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,10 +202,10 @@ public class HelpPreferencePage extends PreferencePage implements
 	}
 	
 	private IPreferenceNode getPreferenceNode(String pageId) {
-		Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
+		Iterator<IPreferenceNode> iterator = PlatformUI.getWorkbench().getPreferenceManager()
 				.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (iterator.hasNext()) {
-			IPreferenceNode next = (IPreferenceNode) iterator.next();
+			IPreferenceNode next = iterator.next();
 			if (next.getId().equals(pageId))
 				return next;
 		}

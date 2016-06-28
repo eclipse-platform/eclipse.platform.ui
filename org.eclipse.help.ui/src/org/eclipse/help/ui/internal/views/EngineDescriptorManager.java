@@ -158,15 +158,14 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	private void loadFromExtensionRegistry() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(ENGINE_EXP_ID);
-		Hashtable engineTypes = loadEngineTypes(elements);
+		Hashtable<String, EngineTypeDescriptor> engineTypes = loadEngineTypes(elements);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals(TAG_ENGINE)) { 
 				EngineDescriptor desc = new EngineDescriptor(element);
 				String engineId = desc.getEngineTypeId();
 				if (engineId != null) {
-					EngineTypeDescriptor etdesc = (EngineTypeDescriptor) engineTypes
-							.get(engineId);
+					EngineTypeDescriptor etdesc = engineTypes.get(engineId);
 					if (etdesc != null) {
 						desc.setEngineType(etdesc);
 						descriptors.add(desc);
@@ -176,7 +175,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		}
 	}
 
-	private Hashtable loadEngineTypes(IConfigurationElement[] elements) {
+	private Hashtable<String, EngineTypeDescriptor> loadEngineTypes(IConfigurationElement[] elements) {
 		Hashtable<String, EngineTypeDescriptor> result = new Hashtable<>();
 		ArrayList<EngineTypeDescriptor> list = new ArrayList<>();
 		for (int i = 0; i < elements.length; i++) {
@@ -280,9 +279,9 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		return typeId;
 	}
 	
-	private boolean isUsed(int value, ArrayList used) {
+	private boolean isUsed(int value, ArrayList<Integer> used) {
 		for (int i=0; i<used.size(); i++) {
-			Integer iv = (Integer)used.get(i);
+			Integer iv = used.get(i);
 			if (iv.intValue()==value)
 				return true;
 		}

@@ -492,13 +492,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			if (actionBars != null) {
 				actionBars.clearGlobalActionHandlers();
 				if (visible) {
-					Map handlers = bars.getGlobalActionHandlers();
+					Map<String, IAction> handlers = bars.getGlobalActionHandlers();
 					if (handlers != null) {
-						Set keys = handlers.keySet();
-						for (Iterator iter = keys.iterator(); iter.hasNext();) {
-							String key = (String) iter.next();
-							actionBars.setGlobalActionHandler(key,
-									(IAction) handlers.get(key));
+						Set<String> keys = handlers.keySet();
+						for (Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+							String key = iter.next();
+							actionBars.setGlobalActionHandler(key, handlers.get(key));
 						}
 					}
 				}

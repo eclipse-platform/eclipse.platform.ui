@@ -77,8 +77,8 @@ public class StyledLineWrapper implements StyledTextContent {
 		if (charCount != -1)
 			return charCount;
 		charCount = 0;
-		for (Iterator i = lines.iterator(); i.hasNext();)
-			charCount += ((String) i.next()).length();
+		for (Iterator<String> i = lines.iterator(); i.hasNext();)
+			charCount += i.next().length();
 		return charCount;
 	}
 

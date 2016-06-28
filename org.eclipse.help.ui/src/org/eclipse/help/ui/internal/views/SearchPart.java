@@ -83,6 +83,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 	private ReusableHelpPart parent;
 
+	@SuppressWarnings("rawtypes")
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(20);
 
 	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/help_search.htm"; //$NON-NLS-1$
@@ -597,13 +598,14 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 										alternateQuerySection.dispose();
 										alternateQuerySection = null;
 									}
-									List alts = ((LocalHelp)ed.getEngine()).getAlternates();
+											List<String> alts = ((LocalHelp) ed.getEngine()).getAlternates();
 									if (!alts.isEmpty())
 									{
 										createAlternateQueriesSection(toolkit);
 										for (int b=0;b<alts.size();b++)
 										{
-											Hyperlink link = toolkit.createHyperlink(alternateQueryComposite, (String)alts.get(b), SWT.NONE);
+													Hyperlink link = toolkit.createHyperlink(
+															alternateQueryComposite, alts.get(b), SWT.NONE);
 											link.addHyperlinkListener(new HyperlinkAdapter(){
 												public void linkActivated(HyperlinkEvent e) {
 

@@ -429,7 +429,7 @@ public class InfoCenterPage extends RootScopePage {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void findCheckedElements(java.util.List checkedResources,
 			Object parent) {
 		Object[] children = treeContentProvider.getChildren(parent);

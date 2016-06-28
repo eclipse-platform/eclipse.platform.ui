@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,19 @@ package org.eclipse.help.ui.browser;
 
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.browser.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.ErrorUtil;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action that launches a URL in a browser.
@@ -63,10 +68,11 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 	 * @see IExecutableExtension#setInitializationData(IConfigurationElement,
 	 *      String, Object)
 	 */
+	@SuppressWarnings("unchecked")
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 		if (data != null && data instanceof Hashtable) {
-			url = (String) ((Hashtable) data).get("url"); //$NON-NLS-1$
+			url = ((Hashtable<String, String>) data).get("url"); //$NON-NLS-1$
 		}
 		if (url == null || url.length() == 0)
 			url = config.getAttribute("url"); //$NON-NLS-1$

@@ -181,7 +181,7 @@ public class ICTable {
 	/**
 	 * @param rics the ordered remote InfoCenters
 	 */
-	public void update(List ics) {
+	public void update(List<IC> ics) {
 		viewer.getContentProvider().inputChanged(viewer, null, ics);
 		refresh();
 	}
@@ -198,7 +198,7 @@ public class ICTable {
 	 * 
 	 * @return List containing column names
 	 */
-	public List getColumnNames() {
+	public List<String> getColumnNames() {
 		return Arrays.asList(columnNames);
 	}
 
@@ -221,14 +221,14 @@ public class ICTable {
 		return content;
 	}
 
-	public void setICs(List ics)
+	public void setICs(List<IC> ics)
 	{
-		List oldICs = getICs();
+		List<IC> oldICs = getICs();
 		for (int o=0;o<oldICs.size();o++)
-			removeIC((IC)oldICs.get(o));
+			removeIC(oldICs.get(o));
 			
 		for (int i=0;i<ics.size();i++)
-			addIC((IC)ics.get(i));
+			addIC(ics.get(i));
 	}
 	
 	public TableViewer getTableViewer()
@@ -268,7 +268,7 @@ public class ICTable {
 	
 	public void removeIC(IC ic)
 	{
-		List content = getICs();
+		List<IC> content = getICs();
 		content.remove(ic);
 		getTableViewer().getContentProvider().inputChanged(getTableViewer(), null, content);
 		getTableViewer().remove(ic);
@@ -277,9 +277,9 @@ public class ICTable {
 	
 	private void loadPreferences()
 	{
-		List ics = ICPreferences.getICs();
+		List<IC> ics = ICPreferences.getICs();
 		for (int i=0;i<ics.size();i++)
-			addIC((IC)ics.get(i));
+			addIC(ics.get(i));
 	}
 
 }

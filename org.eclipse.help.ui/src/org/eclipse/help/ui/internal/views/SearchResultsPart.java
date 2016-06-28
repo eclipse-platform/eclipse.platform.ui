@@ -237,7 +237,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		results.clear();
 	}
 
-	void startNewSearch(String phrase, ArrayList eds) {
+	void startNewSearch(String phrase, ArrayList<EngineDescriptor> eds) {
 		//this.phrase = phrase;
 		//separator.setVisible(true);
 		// locate local help engine and add it first
@@ -246,7 +246,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			add(localHelp);
 		// add engines other than local help
 		for (int i = 0; i < eds.size(); i++) {
-			EngineDescriptor ed = (EngineDescriptor) eds.get(i);
+			EngineDescriptor ed = eds.get(i);
 			if (ed==localHelp)
 				continue;
 			add(ed);
@@ -254,9 +254,9 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		reflow();
 	}
 	
-	private EngineDescriptor findLocalHelp(ArrayList eds) {
+	private EngineDescriptor findLocalHelp(ArrayList<EngineDescriptor> eds) {
 		for (int i=0; i<eds.size(); i++) {
-			EngineDescriptor ed = (EngineDescriptor)eds.get(i);
+			EngineDescriptor ed = eds.get(i);
 			if (ed.getEngineTypeId().equals(IHelpUIConstants.INTERNAL_HELP_ID))
 				return ed;
 		}

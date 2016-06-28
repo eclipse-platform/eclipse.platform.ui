@@ -104,7 +104,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 	protected void performDefaults() {
 		super.performDefaults();
 
-		List ics = ICPreferences.getDefaultICs();
+		List<IC> ics = ICPreferences.getDefaultICs();
 		table.setICs(ics);
 		
 		// Restore Defaults functionality here		

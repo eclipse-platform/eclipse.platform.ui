@@ -315,7 +315,7 @@ public class LocalHelpPage extends RootScopePage {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void findCheckedElements(java.util.List checkedResources, Object parent,  
             CheckboxTreeViewer tree, ITreeContentProvider contentProvider) {
 		Object[] children = contentProvider.getChildren(parent);
@@ -433,9 +433,9 @@ public class LocalHelpPage extends RootScopePage {
 		for (int i = 0; i < criteria.length; i++) {
 			CriterionResource element = criteria[i];
 			CriterionName name = new CriterionName(element.getCriterionName(), null);
-			List values = element.getCriterionValues();
-			for (Iterator iter = values.iterator(); iter.hasNext();) {
-				String valueString = (String) iter.next();
+			List<String> values = element.getCriterionValues();
+			for (Iterator<String> iter = values.iterator(); iter.hasNext();) {
+				String valueString = iter.next();
 				CriterionValue value = new CriterionValue(valueString, name);
 			    criteriaTree.setChecked(value, true);
 				updateParentState(value, true, criteriaTree, criteriaTreeContentProvider);
