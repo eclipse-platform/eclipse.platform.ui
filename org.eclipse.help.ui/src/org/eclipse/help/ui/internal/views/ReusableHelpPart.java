@@ -400,7 +400,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 
 		public PartRec[] getParts() {
-			return (PartRec[]) partRecs.toArray(new PartRec[partRecs.size()]);
+			return partRecs.toArray(new PartRec[partRecs.size()]);
 		}
 		
 		public void refreshPage()
@@ -420,7 +420,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public boolean canOpen() {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 
 				if (rec.id.equals(IHelpUIConstants.HV_BROWSER)) {
 					// Try to create a browser and watch
@@ -441,7 +441,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public void stop() {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (rec.part!=null)
 					rec.part.stop();
 			}
@@ -449,7 +449,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		
 		public void saveState(IMemento memento) {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (rec.part!=null)
 					rec.part.saveState(memento);
 			}
@@ -457,7 +457,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public void toggleRoleFilter() {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (rec.part != null)
 					rec.part.toggleRoleFilter();
 			}
@@ -465,7 +465,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public void refilter() {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (rec.part != null)
 					rec.part.refilter();
 			}
@@ -476,7 +476,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				bars.clearGlobalActionHandlers();
 			ArrayList<Control> tabList = new ArrayList<>();
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (visible) {
 					createRecPart(rec);
 					hookGlobalAction(ActionFactory.PRINT.getId(), rec.part);
@@ -487,8 +487,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				rec.part.setVisible(visible);
 			}
 			Composite parent = mform.getForm().getBody();
-			parent.setTabList((Control[]) tabList.toArray(new Control[tabList
-					.size()]));
+			parent.setTabList(tabList.toArray(new Control[tabList.size()]));
 
 			if (actionBars != null) {
 				actionBars.clearGlobalActionHandlers();
@@ -540,7 +539,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public IHelpPart findPart(String id) {
 			for (int i = 0; i < partRecs.size(); i++) {
-				PartRec rec = (PartRec) partRecs.get(i);
+				PartRec rec = partRecs.get(i);
 				if (rec.id.equals(id))
 					return rec.part;
 			}
@@ -550,7 +549,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		public void setFocus() {
 			// Focus on the first part that is not the see also links or missing content link
 			for (int focusPart = 0; focusPart < partRecs.size(); focusPart++) {
-				PartRec rec = (PartRec) partRecs.get(focusPart);
+				PartRec rec = partRecs.get(focusPart);
 				String partId = rec.part.getId();
 				if ( partId != IHelpUIConstants.HV_SEE_ALSO && partId != IHelpUIConstants.HV_MISSING_CONTENT) { 
 				    rec.part.setFocus();

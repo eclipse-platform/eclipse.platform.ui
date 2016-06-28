@@ -536,11 +536,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			items.add(sset.getExpression());
 		}
 		for (int i = 0; i < toDelete.size(); i++) {
-			HistoryScopeSet sset = (HistoryScopeSet) toDelete.get(i);
+			HistoryScopeSet sset = toDelete.get(i);
 			scopeSetManager.remove(sset);
 		}
 		if (items.size() > 0)
-			searchWordCombo.setItems((String[]) items.toArray(new String[items.size()]));
+			searchWordCombo.setItems(items.toArray(new String[items.size()]));
 	}
 
 	private void handleButtonPressed() {
@@ -628,8 +628,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		}
 		if (entries.size() == 0)
 			return;
-		FederatedSearchEntry[] array = (FederatedSearchEntry[]) entries
-				.toArray(new FederatedSearchEntry[entries.size()]);
+		FederatedSearchEntry[] array = entries.toArray(new FederatedSearchEntry[entries.size()]);
 		if (scopeSection.isExpanded()) {
 			scopeSection.setExpanded(false);
 			parent.reflow();

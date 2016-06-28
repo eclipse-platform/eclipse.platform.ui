@@ -313,7 +313,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	protected void okPressed() {
     	if (operations!=null) {
     		for (int i=0; i<operations.size(); i++) {
-    			PendingOperation operation = (PendingOperation)operations.get(i);
+				PendingOperation operation = operations.get(i);
     			operation.commit();
     		}
     		operations = null;
@@ -345,7 +345,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	protected void cancelPressed() {
     	if (operations!=null) {
     		for (int i=0; i<operations.size(); i++) {
-    			PendingOperation operation = (PendingOperation)operations.get(i);
+				PendingOperation operation = operations.get(i);
     			operation.cancel();
     		}
     		operations = null;
@@ -388,7 +388,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private String getDefaultName() {
 		Set<String> namesInUse = new HashSet<>();
 		for (int i=0; i<sets.size(); i++) {
-		    ScopeSet set = (ScopeSet)sets.get(i);
+			ScopeSet set = sets.get(i);
 		    namesInUse.add(set.getName().toLowerCase());
 	    }
 		for (int i = 1; i < 1000; i++) {
@@ -444,7 +444,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private String getNewName(String oldName, boolean isRename) {
 		RenameDialog dialog = new RenameDialog(getShell(), oldName);
 		for (int i=0; i<sets.size(); i++) {
-			ScopeSet set = (ScopeSet)sets.get(i);
+			ScopeSet set = sets.get(i);
 			dialog.addOldName(set.getName());
 		}
 		dialog.create();
@@ -491,7 +491,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	private PendingOperation findOperation(ScopeSet set, Class type) {
 		if (operations!=null) {
 			for (int i=0; i<operations.size(); i++) {
-				PendingOperation op = (PendingOperation)operations.get(i);
+				PendingOperation op = operations.get(i);
 				if (op.getClass().equals(type)) {
 					if (op.set.equals(set))
 						return op;

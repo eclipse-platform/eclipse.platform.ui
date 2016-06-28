@@ -175,8 +175,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
 			public void run() {
 				for (int i = 0; i < results.size(); i++) {
-					EngineResultSection section = (EngineResultSection) results
-							.get(i);
+					EngineResultSection section = results.get(i);
 					section.updateResults(false);
 				}
 				reflow();
@@ -232,7 +231,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	void clearResultSections() {
 		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection section = (EngineResultSection) results.get(i);
+			EngineResultSection section = results.get(i);
 			section.dispose();
 		}
 		results.clear();
@@ -266,14 +265,14 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	
 	void completed() {
 		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection section = (EngineResultSection) results.get(i);
+			EngineResultSection section = results.get(i);
 			section.completed();
 		}
 	}
 	
 	void canceling() {
 		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection section = (EngineResultSection) results.get(i);
+			EngineResultSection section = results.get(i);
 			section.canceling();
 		}
 	}
@@ -324,7 +323,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public boolean hasFocusControl(Control control) {
 		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection er = (EngineResultSection) results.get(i);
+			EngineResultSection er = results.get(i);
 			if (er.hasControl(control))
 				return true;
 		}
@@ -351,7 +350,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private synchronized EngineResultSection findEngineResult(
 			EngineDescriptor ed) {
 		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection er = (EngineResultSection) results.get(i);
+			EngineResultSection er = results.get(i);
 			if (er.matches(ed))
 				return er;
 		}

@@ -16,20 +16,31 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.criteria.CriterionResource;
-import org.eclipse.help.internal.workingset.*;
-import org.eclipse.help.ui.*;
+import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.WorkingSet;
+import org.eclipse.help.ui.IEngineDescriptor;
+import org.eclipse.help.ui.RootScopePage;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.CriterionName;
 import org.eclipse.help.ui.internal.search.HelpCriteriaContentProvider.CriterionValue;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * Local Help participant in the federated search.
@@ -335,7 +346,7 @@ public class LocalHelpPage extends RootScopePage {
 				resources.add(resource);
 			}
 		}
-		return (CriterionResource[])resources.toArray(new CriterionResource[resources.size()]);
+		return resources.toArray(new CriterionResource[resources.size()]);
 	}
 
 	void handleCheckStateChange(final CheckStateChangedEvent event,  
@@ -370,12 +381,10 @@ public class LocalHelpPage extends RootScopePage {
 		if (workingSet == null) {
 			workingSet = new WorkingSet(
 					getScopeSetName(),
-					(AdaptableHelpResource[]) elements
-							.toArray(new AdaptableHelpResource[elements.size()]), criteria);
+					elements.toArray(new AdaptableHelpResource[elements.size()]), criteria);
 		} else {
 			workingSet.setName(getScopeSetName());
-			workingSet.setElements((AdaptableHelpResource[]) elements
-					.toArray(new AdaptableHelpResource[elements.size()]));
+			workingSet.setElements(elements.toArray(new AdaptableHelpResource[elements.size()]));
 			workingSet.setCriteria(criteria);
 		}
 		return workingSet;

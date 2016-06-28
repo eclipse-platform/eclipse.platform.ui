@@ -444,7 +444,7 @@ public class EmbeddedBrowser {
 					shellImgs.add(image);
 				}
 			}
-			return (Image[]) shellImgs.toArray(new Image[shellImgs.size()]);
+			return shellImgs.toArray(new Image[shellImgs.size()]);
 		}
 		return new Image[0];
 	}

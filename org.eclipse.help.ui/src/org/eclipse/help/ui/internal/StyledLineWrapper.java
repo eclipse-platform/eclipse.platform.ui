@@ -88,7 +88,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	public String getLine(int i) {
 		if ((i >= lines.size()) || (i < 0))
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		return (String) lines.get(i);
+		return lines.get(i);
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class StyledLineWrapper implements StyledTextContent {
 		// Break long lines
 		GC gc = new GC(drawable);
 		for (int i = 0; i < lines.size(); i++) {
-			String line = (String) lines.get(i);
+			String line = lines.get(i);
 			while (line.length() > 0) {
 				int linebreak = getLineBreak(line, gc);
 				if (linebreak == 0 || linebreak == line.length())

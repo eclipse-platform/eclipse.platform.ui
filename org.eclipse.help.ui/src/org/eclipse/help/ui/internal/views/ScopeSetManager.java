@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -79,7 +80,7 @@ public class ScopeSetManager extends Observable {
 	public void save() {
 		ensureLocation();
 		for (int i = 0; i < sets.size(); i++) {
-			ScopeSet set = (ScopeSet) sets.get(i);
+			ScopeSet set = sets.get(i);
 			set.save();
 		}
 		IDialogSettings settings = HelpUIPlugin.getDefault()
@@ -91,13 +92,13 @@ public class ScopeSetManager extends Observable {
 	public ScopeSet[] getScopeSets(boolean implicit) {
 		ArrayList<ScopeSet> result = new ArrayList<>();
 		for (int i = 0; i < sets.size(); i++) {
-			ScopeSet set = (ScopeSet) sets.get(i);
+			ScopeSet set = sets.get(i);
 			if (set.isImplicit() == implicit)
 				result.add(set);
 			if (!implicit && set.isImplicit() && activeSet==set)
 				result.add(set);
 		}
-		return (ScopeSet[]) result.toArray(new ScopeSet[result.size()]);
+		return result.toArray(new ScopeSet[result.size()]);
 	}
 
 	private void loadScopeSets() {
@@ -133,7 +134,7 @@ public class ScopeSetManager extends Observable {
 			}
 		}
 		if (sets.size() == 1) {
-			activeSet = (ScopeSet) sets.get(0);
+			activeSet = sets.get(0);
 		}
 		if (defSet == null) {
 			defSet = new ScopeSet();
@@ -156,7 +157,7 @@ public class ScopeSetManager extends Observable {
 			String name = settings.get(ACTIVE_SET);
 			activeSet = findSet(name);
 			if (activeSet == null) {
-				return (ScopeSet) sets.get(0);
+				return sets.get(0);
 			}
 			if (!activeSet.isImplicit())
 				lastExplicitSet = activeSet;
@@ -170,7 +171,7 @@ public class ScopeSetManager extends Observable {
 
 	public HistoryScopeSet findSearchSet(String expression) {
 		for (int i = 0; i < sets.size(); i++) {
-			ScopeSet set = (ScopeSet) sets.get(i);
+			ScopeSet set = sets.get(i);
 			if (!set.isImplicit() || !(set instanceof HistoryScopeSet))
 				continue;
 			HistoryScopeSet sset = (HistoryScopeSet) set;
@@ -183,7 +184,7 @@ public class ScopeSetManager extends Observable {
 	public ScopeSet findSet(String name, boolean implicit) {
 		ScopeSet defaultSet = null;
 		for (int i = 0; i < sets.size(); i++) {
-			ScopeSet set = (ScopeSet) sets.get(i);
+			ScopeSet set = sets.get(i);
 			if (name != null && set.isImplicit() == implicit) {
 				if (set.getName().equals(name))
 					return set;

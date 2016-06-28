@@ -177,7 +177,7 @@ public abstract class RootScopePage extends PreferencePage implements
 				disabledStates.put(child, Boolean.valueOf(child.isEnabled()));
 				child.setEnabled(false);
 			} else {
-				Boolean savedState = (Boolean) disabledStates.get(child);
+				Boolean savedState = disabledStates.get(child);
 				if (!first)
 					child.setEnabled(savedState != null ? savedState
 							.booleanValue() : true);

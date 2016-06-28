@@ -58,13 +58,13 @@ public class ReusableHelpPartHistory {
 
 	public HistoryEntry next() {
 		if (hasNext()) {
-			return (HistoryEntry)queue.get(++cursor);
+			return queue.get(++cursor);
 		}
 		return null;
 	}
 	public HistoryEntry prev() {
 		if (hasPrev()) {
-			return (HistoryEntry)queue.get(--cursor);
+			return queue.get(--cursor);
 		}
 		return null;
 	}

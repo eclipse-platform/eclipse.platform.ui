@@ -12,10 +12,22 @@ package org.eclipse.help.ui.internal;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 public class HyperlinkHandler
 		implements
@@ -184,7 +196,7 @@ public class HyperlinkHandler
 	public IHyperlinkListener getLinkListener(Control c) {
 		if (c instanceof Label)
 			c = c.getParent();
-		return (IHyperlinkListener) hyperlinkListeners.get(c);
+		return hyperlinkListeners.get(c);
 	}
 
 	private void removeDisposedLinks() {

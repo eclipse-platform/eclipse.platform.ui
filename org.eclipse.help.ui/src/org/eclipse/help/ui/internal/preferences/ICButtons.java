@@ -195,7 +195,7 @@ public class ICButtons implements SelectionListener{
 		for (int i=0;i<ics.size();i++)
 		{
 			((IC)ics.get(i)).setEnabled(enable);
-			page.getTable().getTableViewer().replace((IC)ics.get(i),indexes[i]);
+			page.getTable().getTableViewer().replace(ics.get(i), indexes[i]);
 		}
 		page.getTable().refresh();
 		
@@ -207,8 +207,8 @@ public class ICButtons implements SelectionListener{
 		int index = page.getTable().getTable().getSelectionIndices()[0];
 		
 		List<IC> ics = page.getTable().getICs();
-		IC x = (IC) ics.get(index);
-		IC y = (IC) ics.get(index+offset);
+		IC x = ics.get(index);
+		IC y = ics.get(index + offset);
 
 		ics.set(index+offset,x);
 		ics.set(index,y);

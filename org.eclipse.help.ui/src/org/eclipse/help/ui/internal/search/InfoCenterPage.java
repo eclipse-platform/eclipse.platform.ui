@@ -80,8 +80,7 @@ public class InfoCenterPage extends RootScopePage {
 				if (res != null)
 					list.add(res);
 			}
-			setElements((AdaptableHelpResource[]) list
-					.toArray(new AdaptableHelpResource[list.size()]));
+			setElements(list.toArray(new AdaptableHelpResource[list.size()]));
 		}
 
 		private AdaptableHelpResource find(String url) {
@@ -461,8 +460,7 @@ public class InfoCenterPage extends RootScopePage {
 	public void updateWorkingSet() {
 		ArrayList<AdaptableHelpResource> elements = new ArrayList<>(10);
 		findCheckedElements(elements, tree.getInput());
-		workingSet.setElements((AdaptableHelpResource[]) elements
-				.toArray(new AdaptableHelpResource[elements.size()]));
+		workingSet.setElements(elements.toArray(new AdaptableHelpResource[elements.size()]));
 	}
 
 	/*

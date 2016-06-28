@@ -34,12 +34,12 @@ public class ICPreferences {
 		
 		for (int i=0;i<ics.size();i++)
 		{
-			name+= ((IC)ics.get(i)).getName()+DELIMITER;
-			protocol+= ((IC)ics.get(i)).getProtocol()+DELIMITER;
-			host+= ((IC)ics.get(i)).getHost()+DELIMITER;
-			port+= ((IC)ics.get(i)).getPort()+DELIMITER;
-			path+= ((IC)ics.get(i)).getPath()+DELIMITER;
-			enabled+= ((IC)ics.get(i)).isEnabled()+DELIMITER;
+			name += ics.get(i).getName() + DELIMITER;
+			protocol += ics.get(i).getProtocol() + DELIMITER;
+			host += ics.get(i).getHost() + DELIMITER;
+			port += ics.get(i).getPort() + DELIMITER;
+			path += ics.get(i).getPath() + DELIMITER;
+			enabled += ics.get(i).isEnabled() + DELIMITER;
 		}
 		
 		// Remove trailing commas

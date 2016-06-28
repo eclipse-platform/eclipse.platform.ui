@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,33 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import org.eclipse.help.*;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -123,8 +141,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		Display display = part.getSite().getShell().getDisplay();
 		Control c = display.getFocusControl();
 		if (c != null && c.isVisible() && !c.isDisposed()) {
-			IContextProvider provider = (IContextProvider) part
-					.getAdapter(IContextProvider.class);
+			IContextProvider provider = part.getAdapter(IContextProvider.class);
 			if (provider != null) {
 				reusableHelpPart.update(provider, null, part, c, false);
 				if ((provider.getContextChangeMask() & IContextProvider.SELECTION) != 0) {
@@ -194,8 +211,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		Control c = monitoredPart.getSite().getShell().getDisplay()
 				.getFocusControl();
 		if (c != null && c.isDisposed() == false && visible) {
-			IContextProvider provider = (IContextProvider) monitoredPart
-			.getAdapter(IContextProvider.class);
+			IContextProvider provider = monitoredPart.getAdapter(IContextProvider.class);
 			if (provider != null)
 				reusableHelpPart.update(provider, null, monitoredPart, c, false);
 			else
@@ -361,8 +377,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 				// check if there is a dynamic version
 				IContextProvider provider = null;
 				if (part!=null)
-						provider = (IContextProvider) part
-						.getAdapter(IContextProvider.class);
+					provider = part.getAdapter(IContextProvider.class);
 
 				reusableHelpPart.update(provider, context, part, control, true);
 			}

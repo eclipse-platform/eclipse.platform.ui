@@ -288,14 +288,13 @@ public class EngineResultSection {
 			if (part.parent.isFilteredByRoles()) {
 				list = new ArrayList<>();
 				for (int i = 0; i < hits.size(); i++) {
-					ISearchEngineResult hit = (ISearchEngineResult) hits.get(i);
+					ISearchEngineResult hit = hits.get(i);
 					if (HelpBasePlugin.getActivitySupport().isEnabled(hit.getHref()))
 						list.add(hit);
 				}
 			}
 		}
-		ISearchEngineResult[] results = (ISearchEngineResult[]) list.toArray(new ISearchEngineResult[list
-				.size()]);
+		ISearchEngineResult[] results = list.toArray(new ISearchEngineResult[list.size()]);
 		if (part.getShowCategories())
 			sorter.sort(null, results);
 		return results;

@@ -14,14 +14,23 @@ import java.util.ArrayList;
 
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 public class ScopePreferenceDialog extends PreferenceDialog {
 	private EngineDescriptorManager descManager;
@@ -150,7 +159,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		if (pendingOperations!=null) {
 			// process pending operations
 			for (int i=0; i<pendingOperations.size(); i++) {
-				PendingOperation op = (PendingOperation)pendingOperations.get(i);
+				PendingOperation op = pendingOperations.get(i);
 				if (op.action==NEW_ID)
 					descManager.add(op.desc);
 				else

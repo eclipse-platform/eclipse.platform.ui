@@ -10,17 +10,35 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Observable;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.ui.internal.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class EngineDescriptorManager extends Observable implements IHelpUIConstants {
 	private ArrayList<EngineDescriptor> descriptors;
@@ -68,13 +86,12 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	}
 	
 	public EngineDescriptor[] getDescriptors() {
-		return (EngineDescriptor[]) descriptors
-				.toArray(new EngineDescriptor[descriptors.size()]);
+		return descriptors.toArray(new EngineDescriptor[descriptors.size()]);
 	}
 	
 	public EngineDescriptor findEngine(String engineId) {
 		for (int i=0; i<descriptors.size(); i++) {
-			EngineDescriptor desc = (EngineDescriptor)descriptors.get(i);
+			EngineDescriptor desc = descriptors.get(i);
 			if (desc.getId().equals(engineId))
 				return desc;
 		}
@@ -97,7 +114,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 			writer.println("<engines>"); //$NON-NLS-1$
 			for (int i = 0; i < descriptors.size(); i++) {
-				EngineDescriptor desc = (EngineDescriptor) descriptors.get(i);
+				EngineDescriptor desc = descriptors.get(i);
 				if (desc.isUserDefined()) {
 					save(writer, desc);
 				}
@@ -173,8 +190,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 				}
 			}
 		}
-		engineTypes = (EngineTypeDescriptor[]) list
-				.toArray(new EngineTypeDescriptor[list.size()]);
+		engineTypes = list.toArray(new EngineTypeDescriptor[list.size()]);
 		return result;
 	}
 
@@ -243,7 +259,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	public String computeNewId(String typeId) {
 		ArrayList<Integer> used = new ArrayList<>();
 		for (int i=0; i<descriptors.size(); i++) {
-			EngineDescriptor ed = (EngineDescriptor)descriptors.get(i);
+			EngineDescriptor ed = descriptors.get(i);
 			if (!ed.isUserDefined()) continue;
 			String edTypeId = ed.getEngineTypeId();
 			if (typeId.equals(edTypeId)) {

@@ -15,7 +15,7 @@ import java.util.Dictionary;
 import java.util.StringTokenizer;
 
 import org.eclipse.help.internal.search.InfoCenter;
-import org.eclipse.help.search.*;
+import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -46,7 +46,7 @@ public class InfoCenterSearchScopeFactory implements ISearchScopeFactory {
         			list.add(toc);
         		}
         		if (list.size()>0)
-        			tocs = (String[])list.toArray(new String[list.size()]);
+					tocs = list.toArray(new String[list.size()]);
         	}
         }
         return new InfoCenter.Scope(url, searchSelected, tocs);
