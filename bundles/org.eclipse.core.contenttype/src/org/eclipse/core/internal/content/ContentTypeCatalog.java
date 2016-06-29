@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.util.Iterator;
-
-import java.util.Set;
-import org.eclipse.core.runtime.content.IContentType;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -479,7 +475,8 @@ public final class ContentTypeCatalog {
 			allByFileName = new HashSet<>(getDirectlyAssociated(fileName, IContentTypeSettings.FILE_NAME_SPEC | IContentType.IGNORE_USER_DEFINED));
 			allByFileName.addAll(matcher.getDirectlyAssociated(this, fileName, IContentTypeSettings.FILE_NAME_SPEC));
 		}
-		Set<ContentType> selectedByName = selectMatchingByName(context, allByFileName, Collections.EMPTY_SET, fileName, IContentType.FILE_NAME_SPEC);
+		Set<ContentType> selectedByName = selectMatchingByName(context, allByFileName, Collections.emptySet(), fileName,
+				IContentType.FILE_NAME_SPEC);
 		result[0] = selectedByName.toArray(new IContentType[selectedByName.size()]);
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
