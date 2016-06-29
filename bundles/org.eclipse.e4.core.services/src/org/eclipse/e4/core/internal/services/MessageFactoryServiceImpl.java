@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014, 2015 BestSolution.at and others.
+ * Copyright (c) 2011, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,8 +33,12 @@ import org.eclipse.e4.core.services.nls.Message.ReferenceType;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.log.LogService;
 
+@Component
 public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 	private LogService logService;
@@ -266,14 +270,15 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 		}
 	}
 
-	public void unsetLogService(LogService logService) {
+	@org.osgi.service.component.annotations.Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+	void setLogService(LogService logService) {
+		this.logService = logService;
+	}
+
+	void unsetLogService(LogService logService) {
 		if (this.logService == logService) {
 			this.logService = null;
 		}
-	}
-
-	public void setLogService(LogService logService) {
-		this.logService = logService;
 	}
 
 }

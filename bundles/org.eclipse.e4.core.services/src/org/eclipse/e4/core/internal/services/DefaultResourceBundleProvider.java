@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2014 Dirk Fauth and others.
+ * Copyright (c) 2014, 2016 Dirk Fauth and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Dirk Fauth <dirk.fauth@gmail.com> - initial API and implementation
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.core.internal.services;
 
@@ -14,11 +14,14 @@ import java.util.ResourceBundle;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Default implementation of {@link ResourceBundleProvider} that simply delegates to the
  * {@link BundleLocalization} for retrieving the {@link ResourceBundle}.
  */
+@Component
 public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 
 	private BundleLocalization localization;
@@ -39,7 +42,8 @@ public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 	 *            The {@link BundleLocalization} that should be set to this
 	 *            {@link ResourceBundleProvider}
 	 */
-	public void setBundleLocalization(BundleLocalization localization) {
+	@Reference
+	void setBundleLocalization(BundleLocalization localization) {
 		this.localization = localization;
 	}
 
@@ -52,7 +56,7 @@ public class DefaultResourceBundleProvider implements ResourceBundleProvider {
 	 *            If the given {@link BundleLocalization} is not the same that is already set,
 	 *            nothing will happen.
 	 */
-	public void unsetBundleLocalization(BundleLocalization localization) {
+	void unsetBundleLocalization(BundleLocalization localization) {
 		if (this.localization == localization) {
 			this.localization = null;
 		}

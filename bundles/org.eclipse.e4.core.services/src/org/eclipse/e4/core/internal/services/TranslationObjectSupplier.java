@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 BestSolution.at and others.
+ * Copyright (c) 2011, 2016 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     Dirk Fauth <dirk.fauth@gmail.com> - modifications to support locale changes at runtime
+ *     Dirk Fauth <dirk.fauth@googlemail.com> - modifications to support locale changes at runtime
  ******************************************************************************/
 package org.eclipse.e4.core.internal.services;
 
@@ -32,7 +32,9 @@ import org.eclipse.e4.core.services.nls.Message;
 import org.eclipse.e4.core.services.translation.ResourceBundleProvider;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.osgi.service.localization.BundleLocalization;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = ExtendedObjectSupplier.class, property = "dependency.injection.annotation:String=org.eclipse.e4.core.services.nls.Translation")
 public class TranslationObjectSupplier extends ExtendedObjectSupplier {
 
 	/**
