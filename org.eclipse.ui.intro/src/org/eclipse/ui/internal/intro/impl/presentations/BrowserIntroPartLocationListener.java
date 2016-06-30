@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
         this.implementation = implementation;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.swt.browser.LocationListener#changed(org.eclipse.swt.browser.LocationEvent)
-     */
-    public void changed(LocationEvent event) {
+    @Override
+	public void changed(LocationEvent event) {
         String url = event.location;
         if (url == null)
             return;
@@ -115,7 +111,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
      * valid IntroURL, cancel the event and execute the intro action that is
      * embedded in the URL
      */
-    public void changing(LocationEvent event) {
+    @Override
+	public void changing(LocationEvent event) {
         String url = event.location;
         if (url == null)
             return;

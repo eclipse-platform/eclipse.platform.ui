@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,8 @@ public class IntroGroup extends AbstractIntroContainer {
         super(element, bundle, base);
     }
     
-    protected void loadFromParent() {
+    @Override
+	protected void loadFromParent() {
     }
     
     private void resolve() {
@@ -66,12 +67,8 @@ public class IntroGroup extends AbstractIntroContainer {
         return label;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
-     */
-    public int getType() {
+    @Override
+	public int getType() {
         return AbstractIntroElement.GROUP;
     }
     
@@ -85,7 +82,8 @@ public class IntroGroup extends AbstractIntroContainer {
     	return value!=null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
     
-    protected void loadChildren() {
+    @Override
+	protected void loadChildren() {
     	String value = getAttribute(element, ATT_COMPUTED);
     	if (value!=null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
     		loadDynamicNodes();

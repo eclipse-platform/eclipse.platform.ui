@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,6 @@ import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
@@ -92,6 +90,7 @@ public class BrowserIntroPartImplementation extends
             setEnabled(scalePercent > -40);
         }
 
+		@Override
 		public void run() {
         	int scalePercent = FontSelection.getScalePercentage();
         	FontSelection.setScalePercentage(scalePercent - 20);
@@ -111,6 +110,7 @@ public class BrowserIntroPartImplementation extends
             setEnabled(scalePercent < 100);
         }
 
+		@Override
 		public void run() {
         	int scalePercent = FontSelection.getScalePercentage();
         	FontSelection.setScalePercentage(scalePercent + SCALE_INCREMENT);
@@ -136,7 +136,8 @@ public class BrowserIntroPartImplementation extends
                 .createImageDescriptor("topic.gif")); //$NON-NLS-1$
         }
 
-        public void run() {
+        @Override
+		public void run() {
         	// Save the html to a file and open it in an external browser
         	File tempFile;
 			try {
@@ -185,7 +186,8 @@ public class BrowserIntroPartImplementation extends
 
 	private boolean resizeActionsAdded = false;
 
-    protected void updateNavigationActionsState() {
+    @Override
+	protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
             forwardAction.setEnabled(history.canNavigateForward());
             backAction.setEnabled(history.canNavigateBackward());
@@ -201,7 +203,8 @@ public class BrowserIntroPartImplementation extends
     /**
      * create the browser and set it's contents
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         long start = 0;
         if (Log.logPerformance)
             start = System.currentTimeMillis();
@@ -218,11 +221,13 @@ public class BrowserIntroPartImplementation extends
         // listener to filter out redundant navigations due to frames.
         browser.addProgressListener(new ProgressListener() {
 
-            public void changed(ProgressEvent event) {
+            @Override
+			public void changed(ProgressEvent event) {
                 // no-op
             }
 
-            public void completed(ProgressEvent event) {
+            @Override
+			public void completed(ProgressEvent event) {
                 urlListener.flagEndOfNavigation();
                 urlListener.flagEndOfFrameNavigation();
                 urlListener.flagRemovedTempUrl();
@@ -232,15 +237,12 @@ public class BrowserIntroPartImplementation extends
         });
 
         // Enable IE pop-up menu only in debug mode.
-        browser.addListener(SWT.MenuDetect, new Listener() {
-
-            public void handleEvent(Event event) {
-                if (IntroPlugin.getDefault().isDebugging())
-                    event.doit = true;
-                else
-                    event.doit = false;
-            }
-        });
+        browser.addListener(SWT.MenuDetect, event -> {
+		    if (IntroPlugin.getDefault().isDebugging())
+		        event.doit = true;
+		    else
+		        event.doit = false;
+		});
 
         // if we are logging performance, log actual UI creation time for
         // browser.
@@ -354,7 +356,8 @@ public class BrowserIntroPartImplementation extends
             if (Log.logPerformance)
                 start = System.currentTimeMillis();
             browser.addLocationListener(new LocationAdapter() {
-            	public void changed(LocationEvent event) {
+            	@Override
+				public void changed(LocationEvent event) {
             		if (event.top) {
             			isFinishedLoading = true;
             		}
@@ -514,7 +517,8 @@ public class BrowserIntroPartImplementation extends
         return htmlGenerator;
     }
 
-    protected void addToolBarActions() {
+    @Override
+	protected void addToolBarActions() {
         // Handle menus:
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
@@ -587,7 +591,8 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)
      */
-    public void propertyChanged(Object source, int propId) {
+    @Override
+	public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModel().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
@@ -598,11 +603,13 @@ public class BrowserIntroPartImplementation extends
         }
     }
 
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         browser.setFocus();
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         browser.dispose();
     }
 
@@ -617,7 +624,8 @@ public class BrowserIntroPartImplementation extends
      * 
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
-    public void reflow(IIntroContentProvider provider, boolean incremental) {
+    @Override
+	public void reflow(IIntroContentProvider provider, boolean incremental) {
         updateContent();
     }
 
@@ -627,7 +635,8 @@ public class BrowserIntroPartImplementation extends
      * last visited page is the dynamic browser is an http: page, and not an
      * intro page.
      */
-    protected void saveCurrentPage(IMemento memento) {
+    @Override
+	protected void saveCurrentPage(IMemento memento) {
         if (memento == null)
             return;
         // Handle the case where we are on a static page.
@@ -649,12 +658,8 @@ public class BrowserIntroPartImplementation extends
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
-     */
-    public boolean navigateBackward() {
+    @Override
+	public boolean navigateBackward() {
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
@@ -685,12 +690,8 @@ public class BrowserIntroPartImplementation extends
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
-     */
-    public boolean navigateForward() {
+    @Override
+	public boolean navigateForward() {
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
@@ -716,12 +717,8 @@ public class BrowserIntroPartImplementation extends
         return success;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateHome()
-     */
-    public boolean navigateHome() {
+    @Override
+	public boolean navigateHome() {
         // Home is URL of root page in static case, and root page in
         // dynamic.
         AbstractIntroPage rootPage = getModel().getHomePage();
@@ -747,14 +744,8 @@ public class BrowserIntroPartImplementation extends
         return success;
     }
 
-
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-     */
-    protected void handleRegistryChanged(IRegistryChangeEvent event) {
+    @Override
+	protected void handleRegistryChanged(IRegistryChangeEvent event) {
         if (getModel().isDynamic()) {
             // null generator first.
             htmlGenerator = null;
@@ -767,7 +758,8 @@ public class BrowserIntroPartImplementation extends
     }
 
 
-    protected void doStandbyStateChanged(boolean standby,
+    @Override
+	protected void doStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
         // if we have a standby part, regardless if standby state, disable
         // actions. Same behavior for static html.

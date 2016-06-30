@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,8 @@ public class PageWidgetFactory {
 
     protected HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
-        public void linkActivated(HyperlinkEvent e) {
+        @Override
+		public void linkActivated(HyperlinkEvent e) {
             String url = (String) e.getHref();
             IntroURLParser parser = new IntroURLParser(url);
             if (parser.hasIntroUrl()) {
@@ -70,10 +71,12 @@ public class PageWidgetFactory {
                 Messages.HyperlinkAdapter_urlIs + " " + url); //$NON-NLS-1$
         }
 
-        public void linkEntered(HyperlinkEvent e) {
+        @Override
+		public void linkEntered(HyperlinkEvent e) {
         }
 
-        public void linkExited(HyperlinkEvent e) {
+        @Override
+		public void linkExited(HyperlinkEvent e) {
         }
     };
 

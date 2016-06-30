@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,13 +79,8 @@ public class StandbyPart implements IIntroConstants {
         private int HMARGIN = 5;
         private int SEPARATOR_HEIGHT = 1;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
-         *      int, int, boolean)
-         */
-        protected Point computeSize(Composite composite, int wHint, int hHint,
+        @Override
+		protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
             Point lsize = returnLink.computeSize(SWT.DEFAULT, SWT.DEFAULT,
                 flushCache);
@@ -96,13 +91,8 @@ public class StandbyPart implements IIntroConstants {
             return new Point(width, height);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-         *      boolean)
-         */
-        protected void layout(Composite composite, boolean flushCache) {
+        @Override
+		protected void layout(Composite composite, boolean flushCache) {
             Rectangle carea = composite.getClientArea();
             int lwidth = carea.width - HMARGIN * 2;
             Point lsize = returnLink.computeSize(lwidth, SWT.DEFAULT,
@@ -157,7 +147,8 @@ public class StandbyPart implements IIntroConstants {
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));
         returnLink.addHyperlinkListener(new HyperlinkAdapter() {
 
-            public void linkActivated(HyperlinkEvent e) {
+            @Override
+			public void linkActivated(HyperlinkEvent e) {
                 doReturn();
             }
         });

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,11 +46,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		String summary;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.search.LuceneSearchParticipant#getContributingPlugins()
-	 */
+	@Override
 	public Set<String> getContributingPlugins() {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				"org.eclipse.ui.intro.config"); //$NON-NLS-1$
@@ -72,11 +68,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		return set;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.search.LuceneSearchParticipant#getAllDocuments(java.lang.String)
-	 */
+	@Override
 	public Set<String> getAllDocuments(String locale) {
 		HashSet<String> set = new HashSet<>();
 		IProduct product = Platform.getProduct();
@@ -141,14 +133,7 @@ public class IntroSearchParticipant extends SearchParticipant {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.search.LuceneSearchParticipant#addDocument(java.lang.String,
-	 *      java.lang.String, java.net.URL, java.lang.String, java.lang.String,
-	 *      org.apache.lucene.document.Document)
-	 */
-
+	@Override
 	public IStatus addDocument(IHelpSearchIndex index, String pluginId, String name, URL url, String id,
 			ISearchDocument doc) {
 		if (model == null)
@@ -232,20 +217,12 @@ public class IntroSearchParticipant extends SearchParticipant {
 		buf.append(text);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.search.LuceneSearchParticipant#clear()
-	 */
+	@Override
 	public void clear() {
 		model = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.search.LuceneSearchParticipant#open(java.lang.String)
-	 */
+	@Override
 	public boolean open(String id) {
 		IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
 		IIntroPart intro = introManager

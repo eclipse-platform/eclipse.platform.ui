@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,14 @@ public class TextIntroPartImplementation extends
         AbstractIntroPartImplementation {
 
 
-    public void doStandbyStateChanged(boolean standby,
+    @Override
+	public void doStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
         // no-op
     }
 
-    public void createPartControl(Composite container) {
+    @Override
+	public void createPartControl(Composite container) {
         Text text = new Text(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
         IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
         IntroModelSerializer serializer = new IntroModelSerializer(model);
@@ -41,48 +43,33 @@ public class TextIntroPartImplementation extends
         addToolBarActions();
     }
 
-    protected void updateNavigationActionsState() {
+    @Override
+	protected void updateNavigationActionsState() {
         // no-op
     }
 
-
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         // no-op
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
-     */
-    public boolean navigateBackward() {
+    @Override
+	public boolean navigateBackward() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
-     */
-    public boolean navigateForward() {
+    @Override
+	public boolean navigateForward() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-     */
-    protected void handleRegistryChanged(IRegistryChangeEvent event) {
+    @Override
+	protected void handleRegistryChanged(IRegistryChangeEvent event) {
         // no-op
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateHome()
-     */
-    public boolean navigateHome() {
+    @Override
+	public boolean navigateHome() {
         return false;
     }
 

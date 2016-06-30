@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,8 @@ public class PageFormWithNavigation extends PageForm {
      * 
      * @param pageBook
      */
-    public void createPartControl(ScrolledPageBook mainPageBook,
+    @Override
+	public void createPartControl(ScrolledPageBook mainPageBook,
             SharedStyleManager sharedStyleManager) {
 
         super.createPartControl(mainPageBook, sharedStyleManager);
@@ -80,7 +81,8 @@ public class PageFormWithNavigation extends PageForm {
     /**
      * Override parent id.
      */
-    protected String getId() {
+    @Override
+	protected String getId() {
         return PAGE_FORM_WITH_NAVIGATION_ID;
     }
 

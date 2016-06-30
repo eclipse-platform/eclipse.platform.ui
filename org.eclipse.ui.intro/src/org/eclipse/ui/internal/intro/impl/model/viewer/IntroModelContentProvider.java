@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
 
 public class IntroModelContentProvider implements ITreeContentProvider {
 
-    public Object[] getChildren(Object element) {
+    @Override
+	public Object[] getChildren(Object element) {
 
         AbstractIntroElement introElement = null;
         if (element instanceof AbstractIntroElement)
@@ -33,7 +34,8 @@ public class IntroModelContentProvider implements ITreeContentProvider {
         return new Object[0];
     }
 
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         AbstractIntroElement introElement = null;
         if (element instanceof AbstractIntroElement) {
             // synch the resource first.
@@ -44,7 +46,8 @@ public class IntroModelContentProvider implements ITreeContentProvider {
     }
 
 
-    public boolean hasChildren(Object element) {
+    @Override
+	public boolean hasChildren(Object element) {
         AbstractIntroElement introElement = null;
         if (element instanceof AbstractIntroElement)
             // synch the resource first.
@@ -57,22 +60,19 @@ public class IntroModelContentProvider implements ITreeContentProvider {
     }
 
 
-    public Object[] getElements(Object element) {
+    @Override
+	public Object[] getElements(Object element) {
         return getChildren(element);
     }
 
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         // nothing to dispose
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.IIntroContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-     *      java.lang.Object, java.lang.Object)
-     */
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         // do nothing
 
     }

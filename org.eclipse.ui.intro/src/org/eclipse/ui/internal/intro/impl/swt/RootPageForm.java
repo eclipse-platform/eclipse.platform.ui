@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,8 @@ public class RootPageForm implements IIntroConstants {
 
         // Do not allow composite to take wHint as-is - layout manager
         // can reject the hint and compute larger width.
-        public Point computeSize(int wHint, int hHint, boolean changed) {
+        @Override
+		public Point computeSize(int wHint, int hHint, boolean changed) {
             return ((RootPageLayout) getLayout()).computeSize(this, wHint,
                 hHint, changed);
         }
@@ -81,7 +82,8 @@ public class RootPageForm implements IIntroConstants {
         /*
          * Custom layout for Root Page Composite.
          */
-        protected Point computeSize(Composite composite, int wHint, int hHint,
+        @Override
+		protected Point computeSize(Composite composite, int wHint, int hHint,
                 boolean flushCache) {
             int innerWHint = wHint;
             if (wHint != SWT.DEFAULT)
@@ -95,13 +97,8 @@ public class RootPageForm implements IIntroConstants {
             return size;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
-         *      boolean)
-         */
-        protected void layout(Composite composite, boolean flushCache) {
+        @Override
+		protected void layout(Composite composite, boolean flushCache) {
             Control[] children = composite.getChildren();
             Rectangle carea = composite.getClientArea();
             Control content = children[0];
@@ -119,7 +116,8 @@ public class RootPageForm implements IIntroConstants {
 
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
-        public void linkActivated(HyperlinkEvent e) {
+        @Override
+		public void linkActivated(HyperlinkEvent e) {
             ImageHyperlink imageLink = (ImageHyperlink) e.getSource();
             IntroLink introLink = (IntroLink) imageLink.getData(INTRO_LINK);
             IntroURLParser parser = new IntroURLParser(introLink.getUrl());
@@ -135,13 +133,15 @@ public class RootPageForm implements IIntroConstants {
                 Messages.HyperlinkAdapter_urlIs + introLink.getUrl());
         }
 
-        public void linkEntered(HyperlinkEvent e) {
+        @Override
+		public void linkEntered(HyperlinkEvent e) {
             ImageHyperlink imageLink = (ImageHyperlink) e.getSource();
             IntroLink introLink = (IntroLink) imageLink.getData(INTRO_LINK);
             updateDescription(introLink.getText());
         }
 
-        public void linkExited(HyperlinkEvent e) {
+        @Override
+		public void linkExited(HyperlinkEvent e) {
             // empty text on exit.
             updateDescription(""); //$NON-NLS-1$
         }

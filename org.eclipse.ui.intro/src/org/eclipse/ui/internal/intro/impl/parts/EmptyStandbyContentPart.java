@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,8 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
     private Composite contentComposite;
     private Text contentText;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#createPartControl(org.eclipse.swt.widgets.Composite,
-     *      org.eclipse.ui.forms.widgets.FormToolkit)
-     */
-    public void createPartControl(Composite parent, FormToolkit toolkit) {
+    @Override
+	public void createPartControl(Composite parent, FormToolkit toolkit) {
         contentComposite = toolkit.createComposite(parent);
         contentComposite.setLayout(new GridLayout());
         // Util.highlight(contentComposite, SWT.COLOR_YELLOW);
@@ -55,12 +50,8 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         contentText.setLayoutData(textGd);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#getControl()
-     */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return contentComposite;
     }
 
@@ -72,47 +63,31 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
         }
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
-     */
-    public void init(IIntroPart introPart, IMemento memento) {
+    @Override
+	public void init(IIntroPart introPart, IMemento memento) {
         // no-op
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#setInput(java.lang.Object)
-     */
-    public void setInput(Object input) {
+    @Override
+	public void setInput(Object input) {
         if (input != null)
             setMessage((String) input);
         else
             setMessage(""); //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#setFocus()
-     */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         // no-op
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IStandbyContentPart#dispose()
-     */
-    public void dispose() {
+    @Override
+	public void dispose() {
         // no-op
     }
 
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         // no-op
     }
 

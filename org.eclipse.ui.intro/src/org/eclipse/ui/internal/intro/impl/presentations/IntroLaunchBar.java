@@ -34,7 +34,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -128,6 +127,7 @@ public class IntroLaunchBar {
 
 	class BarLayout extends Layout {
 
+		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
 			int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
@@ -154,6 +154,7 @@ public class IntroLaunchBar {
 			return new Point(width, height);
 		}
 
+		@Override
 		protected void layout(Composite composite, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
 			int marginWidth = vertical | isPlain() ? 1 : simple ? 4 : 7;
@@ -307,19 +308,9 @@ public class IntroLaunchBar {
 			toolBar.setBackground(bg);
 			// coolBar.setBackground(bg);
 		}
-		container.addPaintListener(new PaintListener() {
-
-			public void paintControl(PaintEvent e) {
-				onPaint(e);
-			}
-		});
+		container.addPaintListener(e -> onPaint(e));
 		MenuManager manager = new MenuManager();
-		IMenuListener listener = new IMenuListener() {
-
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
-			}
-		};
+		IMenuListener listener = manager1 -> contextMenuAboutToShow(manager1);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(toolBarManager.getControl());
@@ -505,6 +496,7 @@ public class IntroLaunchBar {
 
 		closeAction = new Action("close") { //$NON-NLS-1$
 
+			@Override
 			public void run() {
 				closeLaunchBar(false);
 			}
@@ -518,6 +510,7 @@ public class IntroLaunchBar {
 
 		action = new Action("restore") { //$NON-NLS-1$
 
+			@Override
 			public void run() {
 				openPage(lastPageId);
 			}
@@ -539,6 +532,7 @@ public class IntroLaunchBar {
 	private void addShortcut(final IntroLaunchBarShortcut shortcut, IToolBarManager toolBarManager) {
 		Action action = new Action(shortcut.getToolTip()) {
 
+			@Override
 			public void run() {
 				executeShortcut(shortcut.getURL());
 			}

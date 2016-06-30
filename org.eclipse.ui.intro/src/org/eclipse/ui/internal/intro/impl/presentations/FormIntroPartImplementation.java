@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,8 +78,8 @@ public class FormIntroPartImplementation extends
         ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "welcome_item.gif"); //$NON-NLS-1$
     }
 
-
-    protected void updateNavigationActionsState() {
+    @Override
+	protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
             forwardAction.setEnabled(history.canNavigateForward());
             backAction.setEnabled(history.canNavigateBackward());
@@ -94,7 +94,8 @@ public class FormIntroPartImplementation extends
         sharedStyleManager = new SharedStyleManager(getModel());
     }
 
-    public void createPartControl(Composite container) {
+    @Override
+	public void createPartControl(Composite container) {
         if (getModel().isDynamic())
             dynamicCreatePartControl(container);
         else {
@@ -219,7 +220,8 @@ public class FormIntroPartImplementation extends
         return pageBook;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (toolkit != null)
             toolkit.dispose();
     }
@@ -232,7 +234,8 @@ public class FormIntroPartImplementation extends
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)
      */
-    public void propertyChanged(Object source, int propId) {
+    @Override
+	public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModel().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
@@ -243,7 +246,8 @@ public class FormIntroPartImplementation extends
         }
     }
 
-    protected void addToolBarActions() {
+    @Override
+	protected void addToolBarActions() {
         // Handle menus:
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
@@ -263,9 +267,8 @@ public class FormIntroPartImplementation extends
         updateNavigationActionsState();
     }
 
-
-
-    protected void doStandbyStateChanged(boolean standby,
+    @Override
+	protected void doStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
         if (getModel().isDynamic())
             dynamicStandbyStateChanged(standby, isStandbyPartNeeded);
@@ -379,7 +382,8 @@ public class FormIntroPartImplementation extends
      * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
      *      boolean)
      */
-    public void reflow(IIntroContentProvider provider, boolean incremental) {
+    @Override
+	public void reflow(IIntroContentProvider provider, boolean incremental) {
         AbstractIntroPage page = ContentProviderManager.getInst()
             .getContentProviderParentPage(provider);
         if (incremental) {
@@ -396,20 +400,16 @@ public class FormIntroPartImplementation extends
         }
     }
     
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         if (model.isDynamic()) {
             if (mainPageBook.getCurrentPage() != null)
                 mainPageBook.getCurrentPage().setFocus();
         }
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateBackward()
-     */
-    public boolean navigateBackward() {
+    @Override
+	public boolean navigateBackward() {
         boolean success = false;
         if (getModel().isDynamic()) {
             // dynamic case. Uses navigation history.
@@ -434,13 +434,8 @@ public class FormIntroPartImplementation extends
         return success;
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#navigateForward()
-     */
-    public boolean navigateForward() {
+    @Override
+	public boolean navigateForward() {
         boolean success = false;
 
         if (getModel().isDynamic()) {
@@ -465,7 +460,8 @@ public class FormIntroPartImplementation extends
         return success;
     }
 
-    public boolean navigateHome() {
+    @Override
+	public boolean navigateHome() {
         AbstractIntroPage homePage = getModel().getHomePage();
         if (getModel().isDynamic()) {
             CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
@@ -481,13 +477,8 @@ public class FormIntroPartImplementation extends
         return false;
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-     */
-    protected void handleRegistryChanged(IRegistryChangeEvent event) {
+    @Override
+	protected void handleRegistryChanged(IRegistryChangeEvent event) {
         if (getModel().isDynamic()) {
             IntroPlugin.closeIntro();
             IntroPlugin.showIntro(false);
@@ -528,7 +519,8 @@ public class FormIntroPartImplementation extends
         link.setLayoutData(gd);
         link.addHyperlinkListener(new HyperlinkAdapter() {
 
-            public void linkActivated(HyperlinkEvent e) {
+            @Override
+			public void linkActivated(HyperlinkEvent e) {
                 Hyperlink link = (Hyperlink) e.getSource();
                 Util.openBrowser((String) link.getHref());
                 return;

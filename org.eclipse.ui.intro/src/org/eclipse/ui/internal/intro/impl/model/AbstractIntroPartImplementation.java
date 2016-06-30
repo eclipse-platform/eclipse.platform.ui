@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,8 @@ public abstract class AbstractIntroPartImplementation {
                 .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
         }
 
-        public void run() {
+        @Override
+		public void run() {
             navigateBackward();
         }
     };
@@ -78,7 +79,8 @@ public abstract class AbstractIntroPartImplementation {
                 .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
         }
 
-        public void run() {
+        @Override
+		public void run() {
             navigateForward();
         }
     };
@@ -93,7 +95,8 @@ public abstract class AbstractIntroPartImplementation {
                 .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
         }
 
-        public void run() {
+        @Override
+		public void run() {
             navigateHome();
         }
     };
@@ -106,7 +109,8 @@ public abstract class AbstractIntroPartImplementation {
                 .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
         }
 
-        public void run() {
+        @Override
+		public void run() {
             ElementTreeSelectionDialog treeViewer = new ElementTreeSelectionDialog(
                 getIntroPart().getIntroSite().getShell(),
                 new IntroModelLabelProvider(), new IntroModelContentProvider());

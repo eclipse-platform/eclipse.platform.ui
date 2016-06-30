@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,8 @@ public class IntroModelLabelProvider extends LabelProvider {
         super();
     }
 
-    public Image getImage(Object element) {
+    @Override
+	public Image getImage(Object element) {
         Image image = null;
         AbstractIntroElement introElement = null;
         if (element instanceof AbstractIntroElement)
@@ -68,7 +69,8 @@ public class IntroModelLabelProvider extends LabelProvider {
         return image;
     }
 
-    public String getText(Object element) {
+    @Override
+	public String getText(Object element) {
 
         String label = null;
         AbstractIntroElement introElement = null;

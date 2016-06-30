@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,6 +123,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	 * Initialize the content provider
 	 * @param site an object which allows rcontainer reflows to be requested
 	 */ 
+	@Override
 	public void init(IIntroContentProviderSite site) {
 		this.site = site;
 		refresh();
@@ -133,6 +134,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	 * @param id
 	 * @param out a writer where the html will be written
 	 */
+	@Override
 	public void createContent(String id, PrintWriter out) {	
 		if (disposed)
 			return;
@@ -192,6 +194,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	/**
 	 * Create widgets to display the newsreader when using the SWT presentation
 	 */
+	@Override
 	public void createContent(String id, Composite parent, FormToolkit toolkit) {
 		if (disposed)
 			return;
@@ -202,6 +205,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			// a one-time pass
 			formText = toolkit.createFormText(parent, true);
 			formText.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					doNavigate((String) e.getHref());
 				}
@@ -266,6 +270,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		} 
 	}
 
+	@Override
 	public void dispose() {
 		if (bulletImage != null) {
 			bulletImage.dispose();
@@ -321,18 +326,16 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 
 	private void doNavigate(final String url) {
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(),
-				new Runnable() {
-					public void run() {
-						IIntroURL introUrl = IntroURLFactory
-								.createIntroURL(url);
-						if (introUrl != null) {
-							// execute the action embedded in the IntroURL
-							introUrl.execute();
-							return;
-						}
-						// delegate to the browser support
-						openBrowser(url);
+				() -> {
+					IIntroURL introUrl = IntroURLFactory
+							.createIntroURL(url);
+					if (introUrl != null) {
+						// execute the action embedded in the IntroURL
+						introUrl.execute();
+						return;
 					}
+					// delegate to the browser support
+					openBrowser(url);
 				});
 	}
 
@@ -362,24 +365,23 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	}
 
 	class NewsFeed implements Runnable {
+		@Override
 		public void run() {
 			// important: don't do the work if the
 			// part gets disposed in the process
 			if (disposed)
 				return;
 
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					if (parent != null) {
-						// we must recreate the content
-						// for SWT because we will use
-						// a gentle incremental reflow.
-						// HTML reflow will simply reload the page.
-						createContent(id, parent, toolkit);
+			PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+				if (parent != null) {
+					// we must recreate the content
+					// for SWT because we will use
+					// a gentle incremental reflow.
+					// HTML reflow will simply reload the page.
+					createContent(id, parent, toolkit);
 //						reflow(formText);
-					}
-					site.reflow(EclipseRSSViewer.this, true);
 				}
+				site.reflow(EclipseRSSViewer.this, true);
 			});
 		}
 	}
@@ -400,6 +402,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 		private StringBuffer buf;
 		private NewsItem item;
 
+		@Override
 		public void startElement(String uri, String localName, String qName,
 				Attributes attributes) throws SAXException {
 			stack.push(qName);
@@ -422,6 +425,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			}
 		}
 
+		@Override
 		public void endElement(String uri, String localName, String qName)
 				throws SAXException {
 			stack.pop();
@@ -447,6 +451,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			}
 		}
 
+		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
 			// were we expecting chars?
@@ -481,6 +486,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	
 	private class ContentThread extends Thread{
 
+		@Override
 		public void run()
 		{
 			threadRunning = true;
@@ -533,6 +539,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 	
 	private class TimeoutThread extends Thread
 	{
+		@Override
 		public void run()
 		{
 			try{

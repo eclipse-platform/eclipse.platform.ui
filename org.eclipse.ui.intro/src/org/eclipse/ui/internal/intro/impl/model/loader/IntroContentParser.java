@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -86,11 +85,7 @@ public class IntroContentParser {
             docFactory.setNamespaceAware(true);
             docFactory.setExpandEntityReferences(false);
             DocumentBuilder parser = docFactory.newDocumentBuilder();
-			parser.setEntityResolver(new EntityResolver() {
-				public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-					return new InputSource(new StringReader("")); //$NON-NLS-1$
-				}
-			});
+			parser.setEntityResolver((publicId, systemId) -> new InputSource(new StringReader(""))); //$NON-NLS-1$
             document = parser.parse(fileURI);
             return document;
 

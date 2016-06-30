@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,16 +135,12 @@ public class IntroURL implements IIntroURL {
      * Executes whatever valid Intro action is embedded in this Intro URL.
      * 
      */
-    public boolean execute() {
+    @Override
+	public boolean execute() {
         final boolean[] result = new boolean[1];
         Display display = Display.getCurrent();
         
-        BusyIndicator.showWhile(display, new Runnable() {
-
-            public void run() {
-                result[0] = doExecute();
-            }
-        });
+        BusyIndicator.showWhile(display, () -> result[0] = doExecute());
         return result[0];
     }
 
@@ -301,7 +297,8 @@ public class IntroURL implements IIntroURL {
                         .getWorkbench().getActiveWorkbenchWindow());
                 Action proxy = new Action(this.action) {
 
-                    public void run() {
+                    @Override
+					public void run() {
                         delegate.run(this);
                     }
                 };
@@ -571,7 +568,8 @@ public class IntroURL implements IIntroURL {
     /**
      * @return Returns the action imbedded in this URL.
      */
-    public String getAction() {
+    @Override
+	public String getAction() {
         return action;
     }
 
@@ -583,7 +581,8 @@ public class IntroURL implements IIntroURL {
      * @param parameterId
      * @return
      */
-    public String getParameter(String parameterId) {
+    @Override
+	public String getParameter(String parameterId) {
         // make sure to decode only on return, since we may need to recreate the
         // url when handling custom urls.
         String value = parameters.getProperty(parameterId);

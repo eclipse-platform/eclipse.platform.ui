@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,10 +95,12 @@ public final class CustomizableIntroPart extends IntroPart implements
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
 
+		@Override
 		public Class<?>[] getAdapterList() {
             return new Class[] { StandbyPart.class, IntroPartPresentation.class };
         }
 
+		@Override
 		public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
             if (!(adaptableObject instanceof CustomizableIntroPart))
                 return null;
@@ -135,13 +137,8 @@ public final class CustomizableIntroPart extends IntroPart implements
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
-     *      org.eclipse.ui.IMemento)
-     */
-    public void init(IIntroSite site, IMemento memento)
+    @Override
+	public void init(IIntroSite site, IMemento memento)
             throws PartInitException {
         super.init(site, memento);
         IntroPlugin.getDefault().closeLaunchBar();
@@ -192,7 +189,8 @@ public final class CustomizableIntroPart extends IntroPart implements
      * 
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent) {
+    @Override
+	public void createPartControl(Composite parent) {
         container = new Composite(parent, SWT.NULL);
         StackLayout layout = new StackLayout();
         layout.marginHeight = 0;
@@ -247,7 +245,8 @@ public final class CustomizableIntroPart extends IntroPart implements
      * 
      * @see org.eclipse.ui.IIntroPart#standbyStateChanged(boolean)
      */
-    public void standbyStateChanged(boolean standby) {
+    @Override
+	public void standbyStateChanged(boolean standby) {
 
         // do this only if there is a valid config.
         if (model == null || !model.hasValidConfig())
@@ -312,12 +311,8 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation.setFocus();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-     */
-    public void setFocus() {
+    @Override
+	public void setFocus() {
         handleSetFocus(IntroPlugin.isIntroStandby());
     }
 
@@ -345,12 +340,8 @@ public final class CustomizableIntroPart extends IntroPart implements
         return presentation;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPart#dispose()
-     */
-    public void dispose() {
+    @Override
+	public void dispose() {
         super.dispose();
         // call dispose on both parts.
         if (presentation != null)
@@ -386,7 +377,8 @@ public final class CustomizableIntroPart extends IntroPart implements
         return container;
     }
 
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
         // give presentation and standby part there own children to create a
         // name space for each. But save either the presentation or the standby
         // part as needing to be restored. This way if we close with a standby
@@ -413,12 +405,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             standbyPart.saveState(standbyPartMemento);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
-     */
-
     private IMemento getMemento(IMemento memento, String key) {
         if (memento == null)
             return null;
@@ -430,30 +416,28 @@ public final class CustomizableIntroPart extends IntroPart implements
      * 
      * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
      */
-    public void registryChanged(final IRegistryChangeEvent event) {
+    @Override
+	public void registryChanged(final IRegistryChangeEvent event) {
         // Clear cached models first, then update UI by delegating to
         // implementation. wrap in synchExec because notification is
         // asynchronous. The design here is that the notification is centralized
         // here, then this event propagates and each receiving class reacts
         // accordingly.
-        Display.getDefault().syncExec(new Runnable() {
+        Display.getDefault().syncExec(() -> {
+		    String currentPageId = model.getCurrentPageId();
+		    // clear model, including content providers.
+		    ExtensionPointManager.getInst().clear();
+		    ContentProviderManager.getInst().clear();
+		    // refresh to new model.
+		    model = ExtensionPointManager.getInst().getCurrentModel();
+		    // reuse existing presentation, since we just nulled it.
+		    model.setPresentation(getPresentation());
+		    // keep same page on refresh. No need for notification here.
+		    model.setCurrentPageId(currentPageId, false);
+		    if (getPresentation() != null)
+		        getPresentation().registryChanged(event);
 
-            public void run() {
-                String currentPageId = model.getCurrentPageId();
-                // clear model, including content providers.
-                ExtensionPointManager.getInst().clear();
-                ContentProviderManager.getInst().clear();
-                // refresh to new model.
-                model = ExtensionPointManager.getInst().getCurrentModel();
-                // reuse existing presentation, since we just nulled it.
-                model.setPresentation(getPresentation());
-                // keep same page on refresh. No need for notification here.
-                model.setCurrentPageId(currentPageId, false);
-                if (getPresentation() != null)
-                    getPresentation().registryChanged(event);
-
-            }
-        });
+		});
 
     }
 

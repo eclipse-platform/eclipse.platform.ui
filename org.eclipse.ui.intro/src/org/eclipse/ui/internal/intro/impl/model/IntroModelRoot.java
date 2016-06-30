@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,7 +174,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * xml content file.
      * 
      */
-    protected void loadChildren() {
+    @Override
+	protected void loadChildren() {
 		children = new Vector<>();
         if (Log.logInfo)
             Log.info("Creating Intro plugin model...."); //$NON-NLS-1$
@@ -243,7 +244,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Resolve contributions into this container's children.
      */
-    protected void resolveChildren() {
+    @Override
+	protected void resolveChildren() {
         // now handle config extension.
         resolveConfigExtensions();
         resolved = true;
@@ -819,11 +821,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
             final IPropertyListener l = (IPropertyListener) array[i];
             SafeRunner.run(new SafeRunnable() {
 
-                public void run() {
+                @Override
+				public void run() {
                     l.propertyChanged(this, propertyId);
                 }
 
-                public void handleException(Throwable e) {
+                @Override
+				public void handleException(Throwable e) {
                     super.handleException(e);
                     // If an unexpected exception happens, remove it
                     // to make sure the workbench keeps running.
@@ -855,12 +859,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.intro.impl.model.IntroElement#getType()
-     */
-    public int getType() {
+    @Override
+	public int getType() {
         return AbstractIntroElement.MODEL_ROOT;
     }
 

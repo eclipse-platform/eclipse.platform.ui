@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 	}
 	
 
+	@Override
 	public void createContent(String id, PrintWriter out) {
 
 		boolean alwaysShowIntro = getAlwaysShowIntroPref();
@@ -88,6 +89,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 	}
 
 
+	@Override
 	public void createContent(String id, Composite parent, FormToolkit toolkit) {
 		if (disposed)
 			return;
@@ -100,6 +102,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 		checkBox.setText(getText());
 		checkBox.setSelection(alwaysShowIntro);
 		checkBox.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				reverseShowIntroState();
 			}
@@ -110,10 +113,12 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
         		IWorkbenchPreferenceConstants.SHOW_INTRO, alwaysShowIntro);
 	}
 
+	@Override
 	public void dispose() {
 		disposed = true;
 	}
 
+	@Override
 	public void init(IIntroContentProviderSite site) {
 	}
 
@@ -121,6 +126,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 	 * Method called when box is clicked in html (swt is handled with a
 	 * SelectionAdapter - both methods call reverseShowIntroState())
 	 */
+	@Override
 	public void run(IIntroSite site, Properties params) {
 		reverseShowIntroState();
 	}
