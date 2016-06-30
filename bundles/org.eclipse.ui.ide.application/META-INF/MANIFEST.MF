@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide.application;singleton:=true
-Bundle-Version: 1.1.100.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Bundle-ClassPath: .
@@ -24,5 +24,5 @@ Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
  org.eclipse.ui.internal.ide.application.addons;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
