@@ -103,10 +103,10 @@ public class InjectorImpl implements IInjector {
 	private Map<Class<? extends Annotation>, Map<AnnotatedElement, Boolean>> annotationsPresent = new HashMap<>();
 
 	// Performance improvement:
-	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<>();
-	private Map<Class<?>, Field[]> fieldsCache = new WeakHashMap<>();
-	private Map<Class<?>, Constructor<?>[]> constructorsCache = new WeakHashMap<>();
-	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<>();
+	private Map<Class<?>, Method[]> methodsCache = Collections.synchronizedMap(new WeakHashMap<>());
+	private Map<Class<?>, Field[]> fieldsCache = Collections.synchronizedMap(new WeakHashMap<>());
+	private Map<Class<?>, Constructor<?>[]> constructorsCache = Collections.synchronizedMap(new WeakHashMap<>());
+	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = Collections.synchronizedMap(new WeakHashMap<>());
 
 	private Set<Class<?>> classesBeingCreated = new HashSet<>(5);
 
@@ -705,7 +705,7 @@ public class InjectorImpl implements IInjector {
 			if (isOverridden == null) {
 				isOverridden = isOverridden(method, classHierarchy);
 				if (methodMap == null) {
-					methodMap = new WeakHashMap<>();
+					methodMap = Collections.synchronizedMap(new WeakHashMap<>());
 					isOverriddenCache.put(originalClass, methodMap);
 				}
 				methodMap.put(method, isOverridden);
@@ -992,7 +992,7 @@ public class InjectorImpl implements IInjector {
 			Class<? extends Annotation> annotation) {
 		Map<AnnotatedElement, Boolean> cache = annotationsPresent.get(annotation);
 		if (cache == null) {
-			cache = new WeakHashMap<>();
+			cache = Collections.synchronizedMap(new WeakHashMap<>());
 			annotationsPresent.put(annotation, cache);
 		}
 

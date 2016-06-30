@@ -14,6 +14,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.di.IInjector;
@@ -26,7 +27,7 @@ public class MethodRequestor extends Requestor<Method> {
 	/**
 	 * The parameters annotation cache.  Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
 	 */
-	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<>();
+	private static Map<Method, Annotation[][]> annotationCache = Collections.synchronizedMap(new WeakHashMap<>());
 
 	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);
