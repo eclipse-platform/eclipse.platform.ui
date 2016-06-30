@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse UI IDE Application Tests
+Bundle-SymbolicName: org.eclipse.ui.ide.application.tests; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Eclipse-BundleShape: dir
+Bundle-Vendor: Eclipse.org
+Fragment-Host: org.eclipse.ui.ide.application
+Require-Bundle: org.junit
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
