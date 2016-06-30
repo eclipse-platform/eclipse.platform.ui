@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -37,12 +35,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 	 * help preference changes.
 	 */
 	public RemoteTocProvider() {
-		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				contentChanged();
-			}
-		});
+		RemoteHelp.addPreferenceChangeListener(event -> contentChanged());
 	}
 
 	/*

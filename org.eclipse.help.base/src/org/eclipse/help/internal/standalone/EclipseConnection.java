@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Properties;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.eclipse.help.internal.base.util.ProxyUtil;
@@ -57,16 +56,13 @@ public class EclipseConnection {
 				// The following allows the connection to
 				// continue even if the default rules for
 				// URL hostname verification fail.
-				secureConnection.setHostnameVerifier(new HostnameVerifier() {
-					@Override
-					public boolean verify(String urlHostName, javax.net.ssl.SSLSession session) {
-						if (Options.isDebug()) {
-							System.out.println("Warning: URL Host: " //$NON-NLS-1$
-									+ urlHostName + " vs. " //$NON-NLS-1$
-									+ session.getPeerHost());
-						}
-			            return true;
+				secureConnection.setHostnameVerifier((urlHostName, session) -> {
+					if (Options.isDebug()) {
+						System.out.println("Warning: URL Host: " //$NON-NLS-1$
+								+ urlHostName + " vs. " //$NON-NLS-1$
+								+ session.getPeerHost());
 					}
+					return true;
 				});
 			}
 			if (Options.isDebug()) {

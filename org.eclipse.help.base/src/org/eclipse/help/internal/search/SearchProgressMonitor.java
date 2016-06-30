@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,26 +166,20 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		progressMonitors.put(locale, pm);
 
 		// spawn a thread that will cause indexing if needed
-		Thread indexer = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					BaseHelpSystem.getSearchManager().search(
-							new DummySearchQuery(locale), dummy_collector, pm);
-				} catch (OperationCanceledException oce) {
-					// operation cancelled
-					// throw out the progress monitor
-					progressMonitors.remove(locale);
-				} catch (Exception e) {
-					progressMonitors.remove(locale);
-					if (HelpBasePlugin.getDefault() != null) {
-						HelpBasePlugin
-								.logError(
-										"Problem occurred during indexing of documentation.", //$NON-NLS-1$
-										e);
-					} else {
-						// Plugin has been shut down
-					}
+		Thread indexer = new Thread(() -> {
+			try {
+				BaseHelpSystem.getSearchManager().search(new DummySearchQuery(locale), dummy_collector, pm);
+			} catch (OperationCanceledException oce) {
+				// operation cancelled
+				// throw out the progress monitor
+				progressMonitors.remove(locale);
+			} catch (Exception e) {
+				progressMonitors.remove(locale);
+				if (HelpBasePlugin.getDefault() != null) {
+					HelpBasePlugin.logError("Problem occurred during indexing of documentation.", //$NON-NLS-1$
+							e);
+				} else {
+					// Plugin has been shut down
 				}
 			}
 		});

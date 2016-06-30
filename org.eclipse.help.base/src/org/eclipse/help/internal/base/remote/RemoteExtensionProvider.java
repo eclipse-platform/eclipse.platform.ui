@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractContentExtensionProvider;
 import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.UAElement;
@@ -33,12 +31,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 	private DocumentReader reader;
 
 	public RemoteExtensionProvider() {
-		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				contentChanged();
-			}
-		});
+		RemoteHelp.addPreferenceChangeListener(event -> contentChanged());
 	}
 
 	@Override
