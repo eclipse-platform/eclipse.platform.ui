@@ -30,8 +30,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpContentProducer;
@@ -91,28 +89,18 @@ public class ResourceLocator {
 		}
 	}
 	static {
-		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-
-			/*
-			 * (non-Javadoc)
-			 *
-			 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
-			 */
-			@Override
-			public void registryChanged(IRegistryChangeEvent event) {
-				IExtensionDelta[] deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID,
-						CONTENTPRODUCER_XP_NAME);
-				for (int i = 0; i < deltas.length; i++) {
-					IExtension extension = deltas[i].getExtension();
-					String affectedPlugin = extension.getContributor().getName();
-					// reset producer for the affected plugin,
-					// it will be recreated on demand
-					synchronized (contentProducers) {
-						Object obj = contentProducers.get(affectedPlugin);
-						if (obj instanceof ProducerDescriptor) {
-							ProducerDescriptor desc = (ProducerDescriptor) obj;
-							desc.reset();
-						}
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> {
+			IExtensionDelta[] deltas = event.getExtensionDeltas(HelpPlugin.PLUGIN_ID, CONTENTPRODUCER_XP_NAME);
+			for (int i = 0; i < deltas.length; i++) {
+				IExtension extension = deltas[i].getExtension();
+				String affectedPlugin = extension.getContributor().getName();
+				// reset producer for the affected plugin,
+				// it will be recreated on demand
+				synchronized (contentProducers) {
+					Object obj = contentProducers.get(affectedPlugin);
+					if (obj instanceof ProducerDescriptor) {
+						ProducerDescriptor desc = (ProducerDescriptor) obj;
+						desc.reset();
 					}
 				}
 			}
