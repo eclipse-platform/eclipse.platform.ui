@@ -17,7 +17,6 @@ package org.eclipse.help.internal.webapp.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -705,28 +704,25 @@ public class SearchData extends ActivitiesData {
 			catOrder.put(order.get(i), Integer.valueOf(i));
 		}
 
-		Arrays.sort(toSort, new Comparator<ISearchEngineResult>() {
-			@Override
-			public int compare(ISearchEngineResult c1, ISearchEngineResult c2) {
-				if (c1 == null && c2 == null) return 0;
-				if (c1 == null) return 1;
-				if (c2 == null) return -1;
+		Arrays.sort(toSort, (c1, c2) -> {
+			if (c1 == null && c2 == null) return 0;
+			if (c1 == null) return 1;
+			if (c2 == null) return -1;
 
-				// ordering after TOC ordering
-				if (catOrder.containsKey(c1.getHref()) && catOrder.containsKey(c2.getHref()))
-					return catOrder.get(c1.getHref()).intValue() - catOrder.get(c2.getHref()).intValue();
+			// ordering after TOC ordering
+			if (catOrder.containsKey(c1.getHref()) && catOrder.containsKey(c2.getHref()))
+				return catOrder.get(c1.getHref()).intValue() - catOrder.get(c2.getHref()).intValue();
 
-				// alphabetical ordering by category label
-				String l1 = c1.getLabel();
-				String l2 = c2.getLabel();
-				if (l1 == null && l2 == null) return 0;
-				if (l1 == null) return 1;
-				if (l2 == null) return -1;
-				if (l1.length() == 0 && l2.length() == 0) return 0;
-				if (l1.length() == 0) return 1;
-				if (l2.length() == 0) return -1;
-				return l1.compareToIgnoreCase(l2);
-			}
+			// alphabetical ordering by category label
+			String l1 = c1.getLabel();
+			String l2 = c2.getLabel();
+			if (l1 == null && l2 == null) return 0;
+			if (l1 == null) return 1;
+			if (l2 == null) return -1;
+			if (l1.length() == 0 && l2.length() == 0) return 0;
+			if (l1.length() == 0) return 1;
+			if (l2.length() == 0) return -1;
+			return l1.compareToIgnoreCase(l2);
 		});
 	}
 
