@@ -19,11 +19,11 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.views</artifactId>
-  <version>3.8.100-SNAPSHOT</version>
+  <version>3.9.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  
+
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
-  </properties> 
-  
+  </properties>
+
 </project>
