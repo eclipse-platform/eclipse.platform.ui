@@ -62,7 +62,7 @@ public interface IPreferenceConstants {
 
     //Boolean: true = replace dirty editor if no other editors to reuse
     // (prompt for save);
-    //			false = open a new editor if no other editors to resuse
+	// false = open a new editor if no other editors to reuse
     public static final String REUSE_DIRTY_EDITORS = "REUSE_DIRTY_EDITORS"; //$NON-NLS-1$
 
     //On/Off option for the two preceding options.
