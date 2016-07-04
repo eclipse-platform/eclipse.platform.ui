@@ -16,13 +16,18 @@ import java.io.CharConversionException;
 import java.io.IOException;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -145,7 +150,13 @@ public class TextSearchVisitor {
 		private final int fBegin;
 		private final int fEnd;
 		private final Map<IFile, IDocument> fDocumentsInEditors;
-		private ReusableMatchAccess fReusableMatchAccess;
+		private FileCharSequenceProvider fileCharSequenceProvider;
+		
+		private IPath previousLocationFromFile;
+		// occurences need to be passed to FileSearchResultCollector with growing offset
+		private List<TextSearchMatchAccess> occurencesForPreviousLocation;
+		private CharSequence charsequenceForPreviousLocation;
+		
 
 		/**
 		 * Searches for matches in a set of files.
@@ -169,6 +180,7 @@ public class TextSearchVisitor {
 			MultiStatus multiStatus=
 					new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
 			SubMonitor subMonitor = SubMonitor.convert(inner, fEnd - fBegin);
+			this.fileCharSequenceProvider = new FileCharSequenceProvider();
 			for (int i = fBegin; i < fEnd && !fFatalError; i++) {
 				IStatus status= processFile(fFiles[i], subMonitor.split(1));
 				// Only accumulate interesting status
@@ -177,15 +189,20 @@ public class TextSearchVisitor {
 				// Group cancellation is propagated to this job's monitor.
 				// Stop processing and return the status for the completed jobs.
 			}
+			if (charsequenceForPreviousLocation != null) {
+				try {
+					fileCharSequenceProvider.releaseCharSequence(charsequenceForPreviousLocation);
+				} catch (IOException e) {
+					SearchPlugin.log(e);
+				}
+			}
 			return multiStatus;
 		}
 
 		public IStatus processFile(IFile file, IProgressMonitor monitor) {
 			// A natural cleanup after the change to use JobGroups is accepted would be to move these
 			// methods to the TextSearchJob class.
-			ReusableMatchAccess matchAccess= getReusableMatchAccess();
 			Matcher matcher= fSearchPattern.pattern().length() == 0 ? null : fSearchPattern.matcher(""); //$NON-NLS-1$
-			FileCharSequenceProvider fileCharSequenceProvider= new FileCharSequenceProvider();
 
 			try {
 				if (!fCollector.acceptFile(file) || matcher == null) {
@@ -193,29 +210,40 @@ public class TextSearchVisitor {
 				}
 
 				IDocument document= getOpenDocument(file, getDocumentsInEditors());
-
 				if (document != null) {
 					DocumentCharSequence documentCharSequence= new DocumentCharSequence(document);
 					// assume all documents are non-binary
-					locateMatches(file, documentCharSequence, matcher, matchAccess, monitor);
+					locateMatches(file, documentCharSequence, matcher, monitor);
+				} else if (previousLocationFromFile != null && previousLocationFromFile.equals(file.getLocation()) && !occurencesForPreviousLocation.isEmpty()) {
+					// reuse previous result
+					ReusableMatchAccess matchAccess = new ReusableMatchAccess();
+					int i = 0;
+					for (TextSearchMatchAccess occurence : occurencesForPreviousLocation) {
+						matchAccess.initialize(file, occurence.getMatchOffset(), occurence.getMatchLength(), charsequenceForPreviousLocation);
+						boolean goOn = fCollector.acceptPatternMatch(matchAccess);
+						if (!goOn) {
+							break;
+						}
+					}
 				} else {
-					CharSequence seq= null;
+					if (charsequenceForPreviousLocation != null) {
+						try {
+							fileCharSequenceProvider.releaseCharSequence(charsequenceForPreviousLocation);
+							charsequenceForPreviousLocation = null;
+						} catch (IOException e) {
+							SearchPlugin.log(e);
+						}
+					}
 					try {
-						seq= fileCharSequenceProvider.newCharSequence(file);
-						if (hasBinaryContent(seq, file) && !fCollector.reportBinaryFile(file)) {
+						charsequenceForPreviousLocation= fileCharSequenceProvider.newCharSequence(file);
+						if (hasBinaryContent(charsequenceForPreviousLocation, file) && !fCollector.reportBinaryFile(file)) {
+							occurencesForPreviousLocation = Collections.emptyList();
 							return Status.OK_STATUS;
 						}
-						locateMatches(file, seq, matcher, matchAccess, monitor);
+						occurencesForPreviousLocation = locateMatches(file, charsequenceForPreviousLocation, matcher, monitor);
+						previousLocationFromFile = file.getLocation();
 					} catch (FileCharSequenceProvider.FileCharSequenceException e) {
 						e.throwWrappedException();
-					} finally {
-						if (seq != null) {
-							try {
-								fileCharSequenceProvider.releaseCharSequence(seq);
-							} catch (IOException e) {
-								SearchPlugin.log(e);
-							}
-						}
 					}
 				}
 			} catch (UnsupportedCharsetException e) {
@@ -254,11 +282,6 @@ public class TextSearchVisitor {
 			return fDocumentsInEditors;
 		}
 
-		public ReusableMatchAccess getReusableMatchAccess() {
-			if (fReusableMatchAccess == null)
-				fReusableMatchAccess = new ReusableMatchAccess();
-			return fReusableMatchAccess;
-		}
 	}
 
 
@@ -349,9 +372,31 @@ public class TextSearchVisitor {
 				fCollector.beginReporting();
 				Map<IFile, IDocument> documentsInEditors= PlatformUI.isWorkbenchRunning() ? evalNonFileBufferDocuments() : Collections.emptyMap();
 				int filesPerJob = (files.length + jobCount - 1) / jobCount;
-				for (int first= 0; first < files.length; first += filesPerJob) {
-					int end= Math.min(files.length, first + filesPerJob);
-					Job job= new TextSearchJob(files, first, end, documentsInEditors);
+				IFile[] filesByLocation = new IFile[files.length];
+				System.arraycopy(files, 0, filesByLocation, 0, files.length);
+				// Sorting files to search by location allows to more easily reuse
+				// search results from one file to the other when they have same location
+				Arrays.sort(filesByLocation, new Comparator<IFile>() {
+					@Override
+					public int compare(IFile o1, IFile o2) {
+						if (o1 == o2) {
+							return 0;
+						}
+						if (o1.getLocation() == o2.getLocation()) {
+							return 0;
+						}
+						if (o1.getLocation() == null) {
+							return +1;
+						}
+						if (o2.getLocation() == null) {
+							return -1;
+						}
+						return o1.getLocation().toString().compareTo(o2.getLocation().toString());
+					}
+				});
+				for (int first= 0; first < filesByLocation.length; first += filesPerJob) {
+					int end= Math.min(filesByLocation.length, first + filesPerJob);
+					Job job= new TextSearchJob(filesByLocation, first, end, documentsInEditors);
 					job.setJobGroup(jobGroup);
 					job.schedule();
 				}
@@ -457,28 +502,34 @@ public class TextSearchVisitor {
 		return false;
 	}
 
-	private void locateMatches(IFile file, CharSequence searchInput, Matcher matcher, ReusableMatchAccess matchAccess, IProgressMonitor monitor) throws CoreException {
-		try {
-			matcher.reset(searchInput);
-			int k= 0;
-			while (matcher.find()) {
-				int start= matcher.start();
-				int end= matcher.end();
-				if (end != start) { // don't report 0-length matches
-					matchAccess.initialize(file, start, end - start, searchInput);
-					boolean res= fCollector.acceptPatternMatch(matchAccess);
-					if (!res) {
-						return; // no further reporting requested
-					}
-				}
-				// Periodically check for cancellation and quit working on the current file if the job has been cancelled.
-				if (++k % 20 == 0 && monitor.isCanceled()) {
-					break;
+	private List<TextSearchMatchAccess> locateMatches(IFile file, CharSequence searchInput, Matcher matcher, IProgressMonitor monitor) throws CoreException {
+		List<TextSearchMatchAccess> occurences = null;
+		matcher.reset(searchInput);
+		int k= 0;
+		while (matcher.find()) {
+			if (occurences == null) {
+				occurences = new ArrayList<>();
+			}
+			int start= matcher.start();
+			int end= matcher.end();
+			if (end != start) { // don't report 0-length matches
+				ReusableMatchAccess access = new ReusableMatchAccess();
+				access.initialize(file, start, end - start, searchInput);
+				occurences.add(access);
+				boolean res= fCollector.acceptPatternMatch(access);
+				if (!res) {
+					return occurences; // no further reporting requested
 				}
 			}
-		} finally {
-			matchAccess.initialize(null, 0, 0, ""); // clear references //$NON-NLS-1$
+			// Periodically check for cancellation and quit working on the current file if the job has been cancelled.
+			if (++k % 20 == 0 && monitor.isCanceled()) {
+				break;
+			}
 		}
+		if (occurences == null) {
+			occurences = Collections.emptyList();
+		}
+		return occurences;
 	}
 
 
