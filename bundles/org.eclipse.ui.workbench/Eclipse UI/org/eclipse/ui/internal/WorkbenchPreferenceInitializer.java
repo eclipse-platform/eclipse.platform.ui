@@ -13,6 +13,7 @@
  *     		Implemented workbench auto-save to correctly restore state in case of crash.
  *     Denis Zygann <d.zygann@web.de> - Bug 330453
  *     Axel Richard <axel.richard@obeo.fr> - Bug 486644
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 146205
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -38,8 +39,7 @@ import org.osgi.service.prefs.BackingStoreException;
  *
  * @since 3.0
  */
-public class WorkbenchPreferenceInitializer extends
-		AbstractPreferenceInitializer {
+public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitializer {
 
 
 
@@ -49,9 +49,8 @@ public class WorkbenchPreferenceInitializer extends
 		IEclipsePreferences node = context.getNode(WorkbenchPlugin
 				.getDefault().getBundle().getSymbolicName());
 
-		node
-				.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
-						true);
+		node.putBoolean(IPreferenceConstants.RUN_IN_BACKGROUND, true);
+		node.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 
 		node.putBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		node.putBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME,
