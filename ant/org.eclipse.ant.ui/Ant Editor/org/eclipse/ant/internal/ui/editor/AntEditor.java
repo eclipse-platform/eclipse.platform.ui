@@ -1098,34 +1098,33 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (provider == null) {// disposed
 			return;
 		}
-		if (getAntModel() == null) {
+		AntModel antModel = getAntModel();
+		if (antModel == null) {
 			return;
 		}
 		IDocument doc = provider.getDocument(getEditorInput());
 		if (doc == null) {
 			return; // disposed
 		}
-		Object lock = getLockObject(doc);
-		// ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
-		// when the editor/doc provider are disposed
-		if (lock == null) {
-			updateModelForInitialReconcile();
-		} else {
-			synchronized (lock) {
-				updateModelForInitialReconcile();
-			}
-		}
+		updateModelForInitialReconcile(doc, antModel);
 	}
 
-	private void updateModelForInitialReconcile() {
-		AntModel model = getAntModel();
-		if (model == null) {
-			return;
-		}
-
-		fInitialReconcile = false;
+	private void updateModelForInitialReconcile(IDocument doc, AntModel model) {
+		// must be outside of the lock, to avoid deadlocks, see bug 497276
 		updateEditorImage(model);
-		model.updateForInitialReconcile();
+
+		// ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
+		// when the editor/doc provider are disposed
+		Object lock = getLockObject(doc);
+		if (lock != null) {
+			synchronized (lock) {
+				fInitialReconcile = false;
+				model.updateForInitialReconcile();
+			}
+		} else {
+			fInitialReconcile = false;
+			model.updateForInitialReconcile();
+		}
 	}
 
 	private Object getLockObject(IDocument doc) {
