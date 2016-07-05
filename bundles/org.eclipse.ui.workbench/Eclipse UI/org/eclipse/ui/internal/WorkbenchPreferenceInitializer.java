@@ -57,7 +57,6 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 				false);
 		node.putBoolean(IPreferenceConstants.STICKY_CYCLE, false);
 		node.putBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
-		node.putBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS, false);
 		node.putInt(IPreferenceConstants.REUSE_EDITORS, 8);
 		node.putBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK, false);
 		node.putBoolean(IPreferenceConstants.SELECT_ON_HOVER, false);

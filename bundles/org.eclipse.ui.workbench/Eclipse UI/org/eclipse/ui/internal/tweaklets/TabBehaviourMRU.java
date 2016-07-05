@@ -16,15 +16,9 @@ package org.eclipse.ui.internal.tweaklets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -103,35 +97,8 @@ public class TabBehaviourMRU extends TabBehaviour {
 			return null;
 		}
 
-		/* fix for 11122 */
-		boolean reuseDirty = WorkbenchPlugin.getDefault().getPreferenceStore()
-				.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS);
-		if (!reuseDirty) {
-			return null;
-		}
+		return null;
 
-		MessageDialog dialog = new MessageDialog(
-				page.getWorkbenchWindow().getShell(),
-				WorkbenchMessages.EditorManager_reuseEditorDialogTitle,
-				null, // accept the default window icon
-				NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, dirtyEditor.getName()),
-				MessageDialog.QUESTION, 0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
-				WorkbenchMessages.EditorManager_openNewEditorLabel) {
-			@Override
-			protected int getShellStyle() {
-				return super.getShellStyle() | SWT.SHEET;
-			}
-		};
-		int result = dialog.open();
-		if (result == 0) { // YES
-			IEditorPart editor = dirtyEditor.getEditor(true);
-			if (!page.saveEditor(editor, false)) {
-				return null;
-			}
-		} else if ((result == 2) || (result == -1)) {
-			return null;
-		}
-		return dirtyEditor;
 	}
 
 	@Override
