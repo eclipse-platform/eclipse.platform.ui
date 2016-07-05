@@ -10,6 +10,7 @@
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 276324
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 454143
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 481416
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -459,6 +460,10 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			if (selectedItem instanceof IPerspectiveDescriptor){
 	            IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
 	            page.setPerspective(persp);
+				IWorkbenchPart activePart = page.getActivePart();
+				if (activePart != null) {
+					activePart.setFocus();
+				}
 			}
 		}
 	}
