@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1184,12 +1184,12 @@ public class ContentProposalAdapter {
 	/*
 	 * The list of IContentProposalListener listeners.
 	 */
-	private ListenerList proposalListeners = new ListenerList();
+	private ListenerList<IContentProposalListener> proposalListeners = new ListenerList<>();
 
 	/*
 	 * The list of IContentProposalListener2 listeners.
 	 */
-	private ListenerList proposalListeners2 = new ListenerList();
+	private ListenerList<IContentProposalListener2> proposalListeners2 = new ListenerList<>();
 
 	/*
 	 * Flag that indicates whether the adapter is enabled. In some cases,
@@ -2048,10 +2048,8 @@ public class ContentProposalAdapter {
 		if (DEBUG) {
 			System.out.println("Notify listeners - proposal accepted."); //$NON-NLS-1$
 		}
-		final Object[] listenerArray = proposalListeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IContentProposalListener) listenerArray[i])
-					.proposalAccepted(proposal);
+		for (IContentProposalListener l : proposalListeners) {
+			l.proposalAccepted(proposal);
 		}
 	}
 
@@ -2062,10 +2060,8 @@ public class ContentProposalAdapter {
 		if (DEBUG) {
 			System.out.println("Notify listeners - popup opened."); //$NON-NLS-1$
 		}
-		final Object[] listenerArray = proposalListeners2.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IContentProposalListener2) listenerArray[i])
-					.proposalPopupOpened(this);
+		for (IContentProposalListener2 l : proposalListeners2) {
+			l.proposalPopupOpened(this);
 		}
 	}
 
@@ -2076,10 +2072,8 @@ public class ContentProposalAdapter {
 		if (DEBUG) {
 			System.out.println("Notify listeners - popup closed."); //$NON-NLS-1$
 		}
-		final Object[] listenerArray = proposalListeners2.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IContentProposalListener2) listenerArray[i])
-					.proposalPopupClosed(this);
+		for (IContentProposalListener2 l : proposalListeners2) {
+			l.proposalPopupClosed(this);
 		}
 	}
 

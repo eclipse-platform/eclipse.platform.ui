@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,12 +137,12 @@ public class ControlDecoration {
 	/**
 	 * Registered selection listeners.
 	 */
-	private ListenerList selectionListeners = new ListenerList();
+	private ListenerList<SelectionListener> selectionListeners = new ListenerList<>();
 
 	/**
 	 * Registered menu detect listeners.
 	 */
-	private ListenerList menuDetectListeners = new ListenerList();
+	private ListenerList<MenuDetectListener> menuDetectListeners = new ListenerList<>();
 
 	/**
 	 * The focus listener
@@ -783,23 +783,18 @@ public class ControlDecoration {
 				clientEvent.height = getImage().getBounds().height;
 				clientEvent.width = getImage().getBounds().width;
 			}
-			Object[] listeners;
 			switch (event.type) {
 			case SWT.MouseDoubleClick:
 				if (event.button == 1) {
-					listeners = selectionListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						((SelectionListener) listeners[i])
-								.widgetDefaultSelected(clientEvent);
+					for (SelectionListener l : selectionListeners) {
+						l.widgetDefaultSelected(clientEvent);
 					}
 				}
 				break;
 			case SWT.MouseDown:
 				if (event.button == 1) {
-					listeners = selectionListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++) {
-						((SelectionListener) listeners[i])
-								.widgetSelected(clientEvent);
+					for (SelectionListener l : selectionListeners) {
+						l.widgetSelected(clientEvent);
 					}
 				}
 				break;
@@ -811,9 +806,8 @@ public class ControlDecoration {
 		if (getDecorationRectangle(null).contains(event.x, event.y)) {
 			MenuDetectEvent clientEvent = new MenuDetectEvent(event);
 			clientEvent.data = this;
-			Object[] listeners = menuDetectListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				((MenuDetectListener) listeners[i]).menuDetected(clientEvent);
+			for (MenuDetectListener l : menuDetectListeners) {
+				l.menuDetected(clientEvent);
 
 			}
 		}

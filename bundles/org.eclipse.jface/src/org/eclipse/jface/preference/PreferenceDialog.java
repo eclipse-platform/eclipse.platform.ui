@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,7 +200,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	private TreeViewer treeViewer;
 
-    private ListenerList pageChangedListeners = new ListenerList();
+	private ListenerList<IPageChangedListener> pageChangedListeners = new ListenerList<>();
 
     /**
      *  Composite with a FormLayout to contain the title area
@@ -1471,9 +1471,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
      * @since 3.1
      */
     protected void firePageChanged(final PageChangedEvent event) {
-        Object[] listeners = pageChangedListeners.getListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+		for (IPageChangedListener l : pageChangedListeners) {
             SafeRunnable.run(new SafeRunnable() {
                 @Override
 				public void run() {

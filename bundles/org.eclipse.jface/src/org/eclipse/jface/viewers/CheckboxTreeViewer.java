@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
     /**
      * List of check state listeners (element type: <code>ICheckStateListener</code>).
      */
-    private ListenerList checkStateListeners = new ListenerList();
+	private ListenerList<ICheckStateListener> checkStateListeners = new ListenerList<>();
 
     /**
      * Provides the desired state of the check boxes.
@@ -158,9 +158,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * @see ICheckStateListener#checkStateChanged
      */
     protected void fireCheckStateChanged(final CheckStateChangedEvent event) {
-        Object[] array = checkStateListeners.getListeners();
-        for (int i = 0; i < array.length; i++) {
-            final ICheckStateListener l = (ICheckStateListener) array[i];
+		for (ICheckStateListener l : checkStateListeners) {
             SafeRunnable.run(new SafeRunnable() {
                 @Override
 				public void run() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
     private ILabelDecorator decorator;
 
     // Need to keep our own list of listeners
-    private ListenerList listeners = new ListenerList();
+	private ListenerList<ILabelProviderListener> listeners = new ListenerList<>();
 
 	private IDecorationContext decorationContext = DecorationContext.DEFAULT_CONTEXT;
 
@@ -194,18 +194,15 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
     public void setLabelDecorator(ILabelDecorator decorator) {
         ILabelDecorator oldDecorator = this.decorator;
         if (oldDecorator != decorator) {
-            Object[] listenerList = this.listeners.getListeners();
             if (oldDecorator != null) {
-                for (int i = 0; i < listenerList.length; ++i) {
-                    oldDecorator
-                            .removeListener((ILabelProviderListener) listenerList[i]);
+				for (ILabelProviderListener l : listeners) {
+					oldDecorator.removeListener(l);
                 }
             }
             this.decorator = decorator;
             if (decorator != null) {
-                for (int i = 0; i < listenerList.length; ++i) {
-                    decorator
-                            .addListener((ILabelProviderListener) listenerList[i]);
+				for (ILabelProviderListener l : listeners) {
+					decorator.addListener(l);
                 }
             }
             fireLabelProviderChanged(new LabelProviderChangedEvent(this));

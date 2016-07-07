@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #fireDoubleClick
 	 */
-	private ListenerList doubleClickListeners = new ListenerList();
+	private ListenerList<IDoubleClickListener> doubleClickListeners = new ListenerList<>();
 
 	/**
 	 * List of open listeners (element type:
@@ -122,7 +122,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #fireOpen
 	 */
-	private ListenerList openListeners = new ListenerList();
+	private ListenerList<IOpenListener> openListeners = new ListenerList<>();
 
 	/**
 	 * List of post selection listeners (element type:
@@ -130,7 +130,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @see #firePostSelectionChanged
 	 */
-	private ListenerList postSelectionChangedListeners = new ListenerList();
+	private ListenerList<ISelectionChangedListener> postSelectionChangedListeners = new ListenerList<>();
 
 	/**
 	 * The colorAndFontCollector is an object used by viewers that
@@ -824,9 +824,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see IDoubleClickListener#doubleClick
 	 */
 	protected void fireDoubleClick(final DoubleClickEvent event) {
-		Object[] listeners = doubleClickListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final IDoubleClickListener l = (IDoubleClickListener) listeners[i];
+		for (IDoubleClickListener l : doubleClickListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
 				public void run() {
@@ -846,9 +844,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see IOpenListener#open(OpenEvent)
 	 */
 	protected void fireOpen(final OpenEvent event) {
-		Object[] listeners = openListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final IOpenListener l = (IOpenListener) listeners[i];
+		for (IOpenListener l : openListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
 				public void run() {
@@ -869,9 +865,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see #addPostSelectionChangedListener(ISelectionChangedListener)
 	 */
 	protected void firePostSelectionChanged(final SelectionChangedEvent event) {
-		Object[] listeners = postSelectionChangedListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+		for (ISelectionChangedListener l : postSelectionChangedListeners) {
 			SafeRunnable.run(new SafeRunnable() {
 				@Override
 				public void run() {

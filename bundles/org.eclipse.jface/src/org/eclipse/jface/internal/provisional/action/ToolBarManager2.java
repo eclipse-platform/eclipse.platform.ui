@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 * A collection of objects listening to changes to this manager. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private transient ListenerList listenerList = null;
+	private transient ListenerList<IPropertyChangeListener> listenerList = null;
 
 	/**
 	 * Creates a new tool bar manager with the default SWT button style. Use the
@@ -93,7 +93,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (listenerList == null) {
-			listenerList = new ListenerList(ListenerList.IDENTITY);
+			listenerList = new ListenerList<>(ListenerList.IDENTITY);
 		}
 
 		listenerList.add(listener);
@@ -117,7 +117,7 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 	 *
 	 */
 	protected final Object[] getListeners() {
-		final ListenerList list = listenerList;
+		final ListenerList<IPropertyChangeListener> list = listenerList;
 		if (list == null) {
 			return new Object[0];
 		}

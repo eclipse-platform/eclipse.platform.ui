@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.ListenerList;
 public abstract class AbstractConcurrentModel implements
         IConcurrentModel {
 
-    private ListenerList listeners = new ListenerList();
+	private ListenerList<IConcurrentModelListener> listeners = new ListenerList<>();
 
     @Override
 	public void addListener(IConcurrentModelListener listener) {
@@ -35,11 +35,7 @@ public abstract class AbstractConcurrentModel implements
      * @param added objects added to the set
      */
     protected final void fireAdd(Object[] added) {
-        Object[] listenerArray = listeners.getListeners();
-
-        for (int i = 0; i < listenerArray.length; i++) {
-            IConcurrentModelListener next = (IConcurrentModelListener) listenerArray[i];
-
+		for (IConcurrentModelListener next : listeners) {
             next.add(added);
         }
     }
@@ -50,11 +46,7 @@ public abstract class AbstractConcurrentModel implements
      * @param removed objects removed from the set
      */
     protected final void fireRemove(Object[] removed) {
-        Object[] listenerArray = listeners.getListeners();
-
-        for (int i = 0; i < listenerArray.length; i++) {
-            IConcurrentModelListener next = (IConcurrentModelListener) listenerArray[i];
-
+		for (IConcurrentModelListener next : listeners) {
             next.remove(removed);
         }
     }
@@ -65,11 +57,7 @@ public abstract class AbstractConcurrentModel implements
      * @param updated objects that have changed
      */
     protected final void fireUpdate(Object[] updated) {
-        Object[] listenerArray = listeners.getListeners();
-
-        for (int i = 0; i < listenerArray.length; i++) {
-            IConcurrentModelListener next = (IConcurrentModelListener) listenerArray[i];
-
+		for (IConcurrentModelListener next : listeners) {
             next.update(updated);
         }
     }

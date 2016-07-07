@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class SubMenuManager extends SubContributionManager implements
     /**
      * List of registered menu listeners (element type: <code>IMenuListener</code>).
      */
-    private ListenerList menuListeners = new ListenerList();
+	private ListenerList<IMenuListener> menuListeners = new ListenerList<>();
 
     /**
      * The menu listener added to the parent.  Lazily initialized
@@ -67,9 +67,8 @@ public class SubMenuManager extends SubContributionManager implements
         menuListeners.add(listener);
         if (menuListener == null) {
             menuListener = manager -> {
-				Object[] listeners = menuListeners.getListeners();
-				for (Object localListener : listeners) {
-					((IMenuListener) localListener).menuAboutToShow(SubMenuManager.this);
+				for (IMenuListener localListener : menuListeners) {
+					localListener.menuAboutToShow(SubMenuManager.this);
 			    }
 			};
         }
