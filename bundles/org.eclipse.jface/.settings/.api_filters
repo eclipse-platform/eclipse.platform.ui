@@ -1,0 +1,102 @@
+
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/viewers/TableTreeViewer.java" type="org.eclipse.jface.viewers.TableTreeViewer">
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="cancelEditing()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="editElement(Object, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getCellEditors()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getCellModifier()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getColumnProperties()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getControl()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getElementAt(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getLabelProvider()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="getTableTree()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="isCellEditorActive()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="setCellEditors(CellEditor[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="setCellModifier(ICellModifier)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="setColumnProperties(String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="TableTreeViewer(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="TableTreeViewer(Composite, int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 436505 - Delete TableTreeViewer and related classes / methods" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TableTreeViewer"/>
+                <message_argument value="TableTreeViewer(TableTree)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

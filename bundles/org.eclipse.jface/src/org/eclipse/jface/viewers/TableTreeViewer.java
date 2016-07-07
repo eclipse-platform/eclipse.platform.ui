@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,13 +49,15 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * <p>
  * Label providers for table tree viewers must implement either the
- * <code>ITableLabelProvider</code> or the <code>ILabelProvider</code>
- * interface (see <code>TableTreeViewer.setLabelProvider</code> for more
- * details).
+ * <code>ITableLabelProvider</code> or the <code>ILabelProvider</code> interface
+ * (see <code>TableTreeViewer.setLabelProvider</code> for more details).
  * </p>
  *
  * @deprecated As of 3.1 use {@link TreeViewer} instead
- * @noextend This class is not intended to be subclassed by clients.
+ * @noreference This API will be deleted in a future release. See bug 436505 for
+ *              details.
+ * @noextend This API will be deleted in a future release. See bug 436505 for
+ *           details.
  */
 @Deprecated
 public class TableTreeViewer extends AbstractTreeViewer {
