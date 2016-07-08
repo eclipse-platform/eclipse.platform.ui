@@ -78,7 +78,7 @@ public class MarkerAnnotationOrderTest {
 				registry.removeExtension(extensions[i], masterToken);
 		}
 	}
-	
+
 	@Test
 	public void testDirectDependency() {
 		final ArrayList<IStatus> list= new ArrayList<>(2);
@@ -114,7 +114,7 @@ public class MarkerAnnotationOrderTest {
 				((Status)list.get(1)).getMessage());
 
 	}
-	
+
 	public class TestMarkerAnnotationModel extends AbstractMarkerAnnotationModel {
 		@Override
 		protected IMarker[] retrieveMarkers() throws CoreException {

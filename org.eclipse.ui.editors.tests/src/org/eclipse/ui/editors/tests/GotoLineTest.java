@@ -69,17 +69,17 @@ public class GotoLineTest {
 		ResourceHelper.deleteProject("GoToLineTestProject");
 		fFile= null;
 	}
-	
+
 	@Test
 	public void testGoToFirstLine() {
 		goToLine(0, 0);
 	}
-	
+
 	@Test
 	public void testGoToLastLine() {
 		goToLine(2, 2);
 	}
-	
+
 	@Test
 	public void testGoToInvalidLine() {
 		goToLine(1, 1);

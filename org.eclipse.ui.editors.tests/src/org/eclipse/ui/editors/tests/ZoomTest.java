@@ -82,7 +82,7 @@ public class ZoomTest {
 		// make sure we start from a clean state
 		initialFontSize = text.getFont().getFontData()[0].getHeight();
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		editor.close(false);

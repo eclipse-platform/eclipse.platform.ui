@@ -61,7 +61,7 @@ public class SegmentedModeTest {
 
 	/*
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=70934
-	 */	
+	 */
 	@Test
 	public void testSegmentation() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
@@ -99,7 +99,7 @@ public class SegmentedModeTest {
 
 	/*
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=465684
-	 */	
+	 */
 	@Test
 	public void testShowNothing() {
 		IWorkbench workbench= PlatformUI.getWorkbench();

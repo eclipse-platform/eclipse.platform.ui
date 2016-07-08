@@ -90,7 +90,7 @@ public class EncodingChangeTests {
 		fFile= null;
 		ResourceHelper.deleteProject("EncodingChangeTestProject");
 	}
-	
+
 	@Test
 	public void testChangeEncodingViaFile() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
@@ -118,7 +118,7 @@ public class EncodingChangeTests {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testChangeEncodingViaEncodingSupport() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
@@ -149,7 +149,7 @@ public class EncodingChangeTests {
 			fail();
 		}
 	}
-	
+
 	@Test
 	public void testAInvalidEncoding() {
 		IWorkbench workbench= PlatformUI.getWorkbench();
