@@ -110,7 +110,7 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param referenceFontName the font name on which change is initially requested
 	 * @param fontRegistry the font registry
 	 * @return the names of the fonts that should be modified together with the referenceFontName.

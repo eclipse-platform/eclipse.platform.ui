@@ -31,7 +31,7 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  * character positions. For example, if an entity represents a line in a document, the start index
  * would be a line number and the count would be in lines.
  * </p>
- * 
+ *
  * @see RangeDifferencer
  * @since 3.0 (originally in org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer)
  */
@@ -42,7 +42,7 @@ public class QuickDiffRangeDifference extends org.eclipse.compare.rangedifferenc
 	/**
 	 * Creates a new <code>RangeDifference</code> with the given change kind and left and right
 	 * ranges.
-	 * 
+	 *
 	 * @param kind the kind of change
 	 * @param rightStart start index of entity on right side
 	 * @param rightLength number of entities on right side
@@ -55,7 +55,7 @@ public class QuickDiffRangeDifference extends org.eclipse.compare.rangedifferenc
 
 	/**
 	 * Creates a new <code>RangeDifference</code> with the given change kind.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public QuickDiffRangeDifference() {
@@ -64,7 +64,7 @@ public class QuickDiffRangeDifference extends org.eclipse.compare.rangedifferenc
 
 	/**
 	 * Shifts the offset into the left document of the receiver.
-	 * 
+	 *
 	 * @param shift the number of elements to shift
 	 */
 	public void shiftLeft(int shift) {

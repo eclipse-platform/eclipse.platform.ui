@@ -80,7 +80,7 @@ public class CaseAction extends TextEditorAction {
 		try {
 			if (JFaceTextUtil.isEmpty(viewer, selection))
 				return;
-			
+
 			IRegion[] ranges= JFaceTextUtil.getCoveredRanges(viewer, selection);
 			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
 				((ITextViewerExtension) viewer).getRewriteTarget().beginCompoundChange();

@@ -103,7 +103,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 		/**
 		 * Returns the find/replace dialog.
-		 * 
+		 *
 		 * @return the find/replace dialog
 		 */
 		public FindReplaceDialog getDialog() {
@@ -198,7 +198,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		/**
 		 * Checks if the dialogs shell is the same as the given <code>shell</code> and if not clears
 		 * the stub and closes the dialog.
-		 * 
+		 *
 		 * @param shell the shell check
 		 * @since 3.3
 		 */

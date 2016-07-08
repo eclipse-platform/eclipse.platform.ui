@@ -64,35 +64,35 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		/**
 		 * Iterator of Strings with suggestions computed when the completion action is invoked
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private final Iterator<String> suggestions;
 
 		/**
 		 * List of Strings with the suggestions that are already consumed from the iterator
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private final List<String> consumedSuggestions;
 
 		/**
 		 * Do we have only 1 (empty) completion available?
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private final boolean hasOnly1EmptySuggestion;
 
 		/**
 		 * Set with the String completions found so that we can make them unique
-		 * 
+		 *
 		 * @since 3.6
 		 */
 		private final HashSet<String> alreadyFound;
 
 		/**
 		 * Create a new completion state object
-		 * 
+		 *
 		 * @param suggestions the iterator of Strings with possible completions
 		 * @param startOffset the position in the parent document at which the completions will be
 		 *            inserted.
@@ -129,7 +129,7 @@ final class HippieCompleteAction extends TextEditorAction {
 		/**
 		 * Advances the completion state to represent the next completion (starts cycling when it
 		 * gets to the end).
-		 * 
+		 *
 		 * @return The next suggestion to be shown to the user.
 		 * @since 3.6
 		 */
@@ -169,7 +169,7 @@ final class HippieCompleteAction extends TextEditorAction {
 
 		/**
 		 * Adds a new suggestion to the found and consumed suggestions
-		 * 
+		 *
 		 * @param suggestion the suggestion to be added
 		 * @since 3.6
 		 */

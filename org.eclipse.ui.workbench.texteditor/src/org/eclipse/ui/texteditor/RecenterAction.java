@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Daesung Ha <nberserk@gmail.com> - supports top and bottom scrolling - https://bugs.eclipse.org/bugs/show_bug.cgi?id=412267 
+ *     Daesung Ha <nberserk@gmail.com> - supports top and bottom scrolling - https://bugs.eclipse.org/bugs/show_bug.cgi?id=412267
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -68,7 +68,7 @@ public class RecenterAction extends TextEditorAction {
 		int rowsPerScreen= height / lineHeight;
 
 		int caretOffset= st.getCaretOffset();
-		int caretLine= st.getLineAtOffset(caretOffset);		
+		int caretLine= st.getLineAtOffset(caretOffset);
 		if (caretOffset==fPrevOffset) { // if successive call in same position
 			fDestPos++;
 			fDestPos%= RECENTER_POS_SIZE;
@@ -76,7 +76,7 @@ public class RecenterAction extends TextEditorAction {
 			fDestPos= RECENTER_MIDDLE;
 		}
 		fPrevOffset= caretOffset;
-		
+
 		int line= 0;
 		switch (fDestPos) {
 			case RECENTER_MIDDLE:
@@ -90,7 +90,7 @@ public class RecenterAction extends TextEditorAction {
 				break;
 			default:
 				break;
-		}		
+		}
 		st.setTopIndex(line);
 	}
 }

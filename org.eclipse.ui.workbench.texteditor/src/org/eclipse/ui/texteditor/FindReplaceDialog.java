@@ -849,7 +849,7 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Returns the position of the specified search string, or <code>-1</code> if the string can not
 	 * be found when searching using the given options.
-	 * 
+	 *
 	 * @param findString the string to search for
 	 * @param startPosition the position at which to start the search
 	 * @param forwardSearch the direction of the search
@@ -939,7 +939,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Returns whether the specified search string can be found using the given options.
-	 * 
+	 *
 	 * @param findString the string to search for
 	 * @param forwardSearch the direction of the search
 	 * @param caseSensitive should the search be case sensitive
@@ -949,7 +949,7 @@ class FindReplaceDialog extends Dialog {
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
 	 * @return <code>true</code> if the search string can be found using the given options
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch, boolean beep) {
@@ -1278,7 +1278,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Stores the button and its mnemonic in {@link #fMnemonicButtonMap}.
-	 * 
+	 *
 	 * @param button button whose mnemonic has to be stored
 	 * @since 3.7
 	 */
@@ -1460,7 +1460,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Locates the user's findString in the text of the target.
-	 * 
+	 *
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
 	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
 	 * @param forwardSearch the search direction

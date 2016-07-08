@@ -83,7 +83,7 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Creates a new {@link AbstractHyperlinkDetector}.
-	 * 
+	 *
 	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet
 	 * @throws CoreException if a failure occurred during creation
 	 * @deprecated As of 3.9, replaced by {@link #createHyperlinkDetectorImplementation()}
@@ -95,7 +95,7 @@ public final class HyperlinkDetectorDescriptor {
 
 	/**
 	 * Creates a new {@link IHyperlinkDetector}.
-	 * 
+	 *
 	 * @return the hyperlink detector or <code>null</code> if the plug-in isn't loaded yet
 	 * @throws CoreException if a failure occurred during creation
 	 * @since 3.9

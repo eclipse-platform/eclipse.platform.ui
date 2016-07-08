@@ -209,7 +209,7 @@ public class InfoForm {
 		label.setForeground(fForegroundColor);
 		return label;
 	}
-	
+
 	private StyledText createText(Composite parent, String text) {
 		StyledText widget = new StyledText(parent, SWT.READ_ONLY | SWT.MULTI);
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);

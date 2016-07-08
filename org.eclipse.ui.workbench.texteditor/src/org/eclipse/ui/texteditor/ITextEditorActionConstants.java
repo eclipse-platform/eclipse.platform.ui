@@ -605,7 +605,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of the content assist action.
 	 * Value: <code>"ContentAssistProposal"</code>
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	String CONTENT_ASSIST= "ContentAssistProposal"; //$NON-NLS-1$
@@ -613,7 +613,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of the content assist context information action.
 	 * Value: <code>"ContentAssistContextInformation"</code>
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	String CONTENT_ASSIST_CONTEXT_INFORMATION= "ContentAssistContextInformation"; //$NON-NLS-1$
@@ -699,7 +699,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of the action to open the hyperlink at the caret location or to display a chooser
 	 * if more than one hyperlink is available.
-	 * Value: <code>"OpenHyperlink"</code> 
+	 * Value: <code>"OpenHyperlink"</code>
 	 * @since 3.7
 	 */
 	public static String OPEN_HYPERLINK= "OpenHyperlink"; //$NON-NLS-1$

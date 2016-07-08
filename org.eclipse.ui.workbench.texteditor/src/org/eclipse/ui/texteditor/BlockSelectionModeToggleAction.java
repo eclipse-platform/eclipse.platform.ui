@@ -17,14 +17,14 @@ import org.eclipse.jface.action.IAction;
 
 /**
  * This action toggles the block (aka column) selection mode.
- * 
+ *
  * @since 3.5
  */
 final class BlockSelectionModeToggleAction extends TextEditorAction {
 
 	/**
 	 * Construct the action and initialize its state.
-	 * 
+	 *
 	 * @param resourceBundle  the resource bundle to construct label and tooltip from
 	 * @param prefix  the prefix to use for constructing resource bundle keys
 	 * @param editor  the editor this action is associated with

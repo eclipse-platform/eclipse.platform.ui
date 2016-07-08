@@ -21,14 +21,14 @@ package org.eclipse.ui.texteditor;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.5
  */
 public interface ITextEditorExtension5 {
 	/**
 	 * Returns <code>true</code> if the receiver is in block (aka column) selection mode,
 	 * <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return the receiver's block selection state
 	 */
 	boolean isBlockSelectionModeEnabled();

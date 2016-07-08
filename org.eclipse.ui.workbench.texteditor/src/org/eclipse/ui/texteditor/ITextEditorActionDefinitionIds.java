@@ -23,7 +23,7 @@ import org.eclipse.jface.text.information.IInformationProvider;
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -576,7 +576,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	/**
 	 * Command ID of the command to toggle block selection mode. Value:
 	 * <code>"org.eclipse.ui.edit.text.toggleBlockSelectionMode"</code>).
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE= "org.eclipse.ui.edit.text.toggleBlockSelectionMode"; //$NON-NLS-1$
@@ -592,7 +592,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	/**
 	 * Command ID of the command to display a sticky ruler hover for the current caret location.
 	 * Value <code>"org.eclipse.ui.edit.text.showChangeRulerInformation"</code>.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String SHOW_CHANGE_RULER_INFORMATION_ID= "org.eclipse.ui.edit.text.showChangeRulerInformation"; //$NON-NLS-1$
@@ -600,7 +600,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	/**
 	 * Command ID of the command to display a sticky ruler annotation hover for the current caret
 	 * location. Value <code>"org.eclipse.ui.edit.text.showRulerAnnotationInformation"</code>.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final String SHOW_RULER_ANNOTATION_INFORMATION_ID= "org.eclipse.ui.edit.text.showRulerAnnotationInformation"; //$NON-NLS-1$

@@ -647,7 +647,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the template store used in this page.
-	 * 
+	 *
 	 * @return the template store
 	 * @since 3.6 public, before it was protected
 	 */
@@ -1215,7 +1215,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 	/**
 	 * Returns the currently selected templates
-	 * 
+	 *
 	 * @return selected templates
 	 * @since 3.6 public, before it was private
 	 */

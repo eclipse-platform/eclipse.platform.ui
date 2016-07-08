@@ -65,7 +65,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 */
 	public void updatePartControl(IEditorInput input) {
 		boolean restoreFocus= false;
-		
+
 		if (fStatusControl != null) {
 			if (!fStatusControl.isDisposed()) {
 				restoreFocus= containsFocus(fStatusControl);
@@ -109,7 +109,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		}
 		return focusControl == fParent;
 	}
-	
+
 	@Override
 	public void setFocus() {
 		if (fStatusControl != null && !fStatusControl.isDisposed()) {

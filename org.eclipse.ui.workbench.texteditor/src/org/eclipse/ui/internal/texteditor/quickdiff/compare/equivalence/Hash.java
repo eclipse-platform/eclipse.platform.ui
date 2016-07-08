@@ -36,7 +36,7 @@ public abstract class Hash implements Cloneable {
 	 */
 	@Override
 	public abstract boolean equals(Object obj);
-	
+
 	/**
 	 * @see java.lang.Object#hashCode()
 	 * @since 3.5

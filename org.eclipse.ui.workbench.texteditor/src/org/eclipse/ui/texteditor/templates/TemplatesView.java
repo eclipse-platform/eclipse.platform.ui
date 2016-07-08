@@ -160,7 +160,7 @@ public final class TemplatesView extends PageBookView {
 
 	/**
 	 * Returns the template store of the current page.
-	 * 
+	 *
 	 * @return the template store, or <code>null</code> if the current page does not provide that
 	 *         information
 	 * @since 3.6
@@ -174,7 +174,7 @@ public final class TemplatesView extends PageBookView {
 
 	/**
 	 * Returns the currently selected templates.
-	 * 
+	 *
 	 * @return array of selected templates, or <code>null</code> if the current page does not
 	 *         provide that information
 	 * @since 3.6

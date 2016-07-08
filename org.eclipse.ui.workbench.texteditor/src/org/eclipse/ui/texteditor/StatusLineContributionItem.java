@@ -256,7 +256,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 					fLabel.setToolTipText(escapedErrorText);
 				else
 					fLabel.setToolTipText(null);
-				
+
 			} else {
 				String escapedText= escape(fText);
 				fLabel.setForeground(fLabel.getParent().getForeground());

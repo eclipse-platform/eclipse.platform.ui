@@ -462,12 +462,12 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the preference keys for the matching character painter.
-	 * 
+	 *
 	 * <p>
 	 * Use {@link #setMatchingCharacterPainterPreferenceKeys(String, String, String, String)} if
 	 * highlighting of character at caret location or enclosing peer characters is required.
 	 * </p>
-	 * 
+	 *
 	 * @param enableKey the preference key for the matching character painter
 	 * @param colorKey the preference key for the color used by the matching character painter
 	 */
@@ -477,14 +477,14 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Sets the preference keys for the matching character painter.
-	 * 
+	 *
 	 * @param enableKey the preference key for the matching character painter
 	 * @param colorKey the preference key for the color used by the matching character painter
 	 * @param highlightCharacterAtCaretLocationKey the preference key for highlighting character at
 	 *            caret location
 	 * @param enclosingPeerCharactersKey the preference key for highlighting enclosing peer
 	 *            characters
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	public void setMatchingCharacterPainterPreferenceKeys(String enableKey, String colorKey, String highlightCharacterAtCaretLocationKey, String enclosingPeerCharactersKey) {
@@ -729,7 +729,7 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Tells whether character at caret location is shown.
-	 * 
+	 *
 	 * @return <code>true</code> if character at caret location is shown
 	 */
 	private boolean isCharacterAtCaretLocationShown() {
@@ -740,7 +740,7 @@ public class SourceViewerDecorationSupport {
 
 	/**
 	 * Tells whether enclosing peer characters are shown.
-	 * 
+	 *
 	 * @return <code>true</code> if the enclosing peer characters are shown
 	 */
 	private boolean areEnclosingPeerCharactersShown() {

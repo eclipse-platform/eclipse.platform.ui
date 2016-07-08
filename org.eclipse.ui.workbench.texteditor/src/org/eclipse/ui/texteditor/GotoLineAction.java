@@ -51,7 +51,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class GotoLineAction extends TextEditorAction {
@@ -83,7 +83,7 @@ public class GotoLineAction extends TextEditorAction {
 
 	/**
 	 * Standard input dialog with custom dialog bounds strategy and settings.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	static class GotoLineDialog extends InputDialog {
@@ -124,7 +124,7 @@ public class GotoLineAction extends TextEditorAction {
 	/**
 	 * Creates a new action for the given text editor. The action configures its visual
 	 * representation from the given resource bundle.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys (described in
 	 *            <code>ResourceAction</code> constructor), or <code>null</code> if none
@@ -140,7 +140,7 @@ public class GotoLineAction extends TextEditorAction {
 	/**
 	 * Creates a new action for the given text editor. The action configures its visual
 	 * representation with default values.
-	 * 
+	 *
 	 * @param editor the text editor
 	 * @see TextEditorAction#TextEditorAction(ResourceBundle, String, ITextEditor)
 	 * @since 3.5
@@ -153,7 +153,7 @@ public class GotoLineAction extends TextEditorAction {
 
 	/**
 	 * Jumps to the given line.
-	 * 
+	 *
 	 * @param line the line to jump to
 	 */
 	private void gotoLine(int line) {

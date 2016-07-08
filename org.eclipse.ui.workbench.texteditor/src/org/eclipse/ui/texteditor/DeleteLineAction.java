@@ -61,7 +61,7 @@ public class DeleteLineAction extends TextEditorAction {
 
 	/**
 	 * Creates a line deletion action.
-	 * 
+	 *
 	 * @param bundle the resource bundle for UI strings
 	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
@@ -92,7 +92,7 @@ public class DeleteLineAction extends TextEditorAction {
 
 	/**
 	 * Creates a line deletion action.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
 	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
@@ -106,7 +106,7 @@ public class DeleteLineAction extends TextEditorAction {
 
 	/**
 	 * Returns the default resource bundle prefix for the given arguments.
-	 * 
+	 *
 	 * @param type the line deletion type, must be one of <code>WHOLE_LINE</code>,
 	 *            <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @param copyToClipboard if <code>true</code>, the contents of the deleted line are copied to

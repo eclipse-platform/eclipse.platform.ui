@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
  * <p>
  * This interface must not be implemented by clients.
  * </p>
- * 
+ *
  * @since 2.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -30,7 +30,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file print action.
 	 * Value: <code>"org.eclipse.ui.file.print"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_PRINT}
 	 */
 	@Deprecated
@@ -39,7 +39,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file save action.
 	 * Value: <code>"org.eclipse.ui.file.save"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, no longer used
 	 */
 	@Deprecated
@@ -48,7 +48,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file revert action.
 	 * Value: <code>"org.eclipse.ui.edit.revertToSaved"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.4, replaced by {@link #REVERT}
 	 */
 	@Deprecated
@@ -57,7 +57,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file revert action.
 	 * Value: <code>"org.eclipse.ui.file.revert"</code>
-	 * 
+	 *
 	 * @since 3.4
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_REVERT}
 	 */
@@ -67,7 +67,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file properties action.
 	 * Value: <code>"org.eclipse.ui.file.properties"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_PROPERTIES}
 	 * @since 3.1
 	 */
@@ -80,9 +80,9 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit cut action.
 	 * Value: <code>"org.eclipse.ui.edit.cut"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CUT}
-	 * 
+	 *
 	 */
 	@Deprecated
 	public static final String CUT= IWorkbenchCommandConstants.EDIT_CUT;
@@ -90,7 +90,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit copy action.
 	 * Value: <code>"org.eclipse.ui.edit.copy"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_COPY}
 	 */
 	@Deprecated
@@ -99,7 +99,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit past action.
 	 * Value: <code>"org.eclipse.ui.edit.paste"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_PASTE}
 	 */
 	@Deprecated
@@ -108,7 +108,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit undo action.
 	 * Value: <code>"org.eclipse.ui.edit.undo"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_UNDO}
 	 */
 	@Deprecated
@@ -117,7 +117,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit redo action.
 	 * Value: <code>"org.eclipse.ui.edit.redo"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_REDO}
 	 */
 	@Deprecated
@@ -126,7 +126,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit delete action.
 	 * Value: <code>"org.eclipse.ui.edit.delete"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_DELETE}
 	 */
 	@Deprecated
@@ -135,7 +135,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit select all action.
 	 * Value: <code>"org.eclipse.ui.edit.selectAll"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_SELECT_ALL}
 	 */
 	@Deprecated
@@ -144,7 +144,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit find/replace action.
 	 * Value: <code>"org.eclipse.ui.edit.findReplace"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_FIND_AND_REPLACE}
 	 */
 	@Deprecated
@@ -153,7 +153,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit add bookmark action.
 	 * Value: <code>"org.eclipse.ui.edit.addBookmark"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_BOOKMARK}
 	 */
 	@Deprecated
@@ -162,7 +162,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the edit add task action.
 	 * Value: <code>"org.eclipse.ui.edit.addTask"</code>
-	 * 
+	 *
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_TASK}
 	 */
 	@Deprecated
@@ -171,7 +171,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * The command identifier for the "move" action that typically appears in the file menu.
 	 * Value: <code>"org.eclipse.ui.edit.move"</code>
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_MOVE}
 	 */
@@ -181,7 +181,7 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * The command identifier for the "rename" action that typically appears in the file menu.
 	 * Value: <code>"org.eclipse.ui.edit.rename"</code>
-	 * 
+	 *
 	 * @since 3.0
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#FILE_RENAME}
 	 */

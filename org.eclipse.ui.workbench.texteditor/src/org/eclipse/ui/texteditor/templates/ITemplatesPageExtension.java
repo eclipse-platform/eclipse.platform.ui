@@ -30,7 +30,7 @@ public interface ITemplatesPageExtension {
 
 	/**
 	 * Returns template store associated with this page.
-	 * 
+	 *
 	 * @return template store
 	 */
 	TemplateStore getTemplateStore();

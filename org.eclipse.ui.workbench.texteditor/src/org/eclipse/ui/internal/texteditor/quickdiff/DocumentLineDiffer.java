@@ -86,7 +86,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 	/**
 	 * Custom range difference factory.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private static class RangeDifferenceFactory extends AbstractRangeDifferenceFactory {
@@ -1129,7 +1129,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * Converts a {@code RangeDifference[]} into an {@code ArrayList<QuickDiffRangeDifference>}.
 	 * This is unsafe in general, but OK if used carefully.
 	 * Workaround for <a href="https://bugs.eclipse.org/483319">bug 483319</a>.
-	 * 
+	 *
 	 * @param ranges the ranges, <em>must</em> be of type {@link QuickDiffRangeDifference}
 	 * @return the ranges as a modifiable list
 	 */
@@ -1489,7 +1489,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 		};
 	}
-	
+
 	@Override
 	public Position getPosition(Annotation annotation) {
 		if (fRightDocument != null && annotation instanceof DiffRegion) {

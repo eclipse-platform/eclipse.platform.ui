@@ -690,7 +690,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		 * <p>
 		 * The default implementation rejects invalid XML characters.
 		 * </p>
-		 * 
+		 *
 		 * @param pattern the pattern to verify
 		 * @return <code>true</code> if the pattern is valid
 		 * @since 3.7 protected, before it was private
@@ -893,7 +893,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		gc.setFont(JFaceResources.getDialogFont());
 
 		TemplateViewerComparator viewerComparator= new TemplateViewerComparator();
-		
+
 		TableColumn column1= new TableColumn(table, SWT.NONE);
 		column1.setText(TemplatesMessages.TemplatePreferencePage_column_name);
 		int minWidth= computeMinimumColumnWidth(gc, TemplatesMessages.TemplatePreferencePage_column_name);
@@ -926,11 +926,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
 		fTableViewer.setContentProvider(new TemplateContentProvider());
 		fTableViewer.setComparator(viewerComparator);
-		
+
 		// Specify default sorting
 		table.setSortColumn(column1);
 		table.setSortDirection(viewerComparator.getDirection());
-		
+
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent e) {
@@ -952,7 +952,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				d.setEnabled(event.getChecked());
 			}
 		});
-		
+
 		BidiUtils.applyTextDirection(fTableViewer.getControl(), BidiUtils.BTD_DEFAULT);
 
 		Composite buttons= new Composite(innerParent, SWT.NONE);
@@ -1542,7 +1542,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	protected TableViewer getTableViewer() {
 		return fTableViewer;
 	}
-	
+
 	private final class TemplateViewerComparator extends ViewerComparator {
 
 		private int fSortColumn;
@@ -1556,7 +1556,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		/**
 		 * Returns the {@linkplain SWT} style constant for the sort direction.
-		 * 
+		 *
 		 * @return {@link SWT#DOWN} for asc sorting, {@link SWT#UP} otherwise
 		 */
 		public int getDirection() {
@@ -1566,7 +1566,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		/**
 		 * Sets the sort column. If the newly set sort column equals the previous set sort column,
 		 * the sort direction changes.
-		 * 
+		 *
 		 * @param column New sort column
 		 */
 		public void setColumn(int column) {
@@ -1593,7 +1593,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			return super.compare(viewer, e1, e2);
 		}
 	}
-	
+
 	private final class TemplateColumnSelectionAdapter extends SelectionAdapter {
 
 		private final TableColumn fTableColumn;

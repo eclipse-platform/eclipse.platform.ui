@@ -34,7 +34,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 /**
  * Information presenter used to present focused ("sticky") information shells.
- * 
+ *
  * @since 3.5
  */
 public class FocusedInformationPresenter extends InformationPresenter {
@@ -76,7 +76,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 			return fControlCreator;
 		}
 	}
-	
+
 	/**
 	 * The default information control creator.
 	 */
@@ -86,14 +86,14 @@ public class FocusedInformationPresenter extends InformationPresenter {
 			return new DefaultInformationControl(shell, true);
 		}
 	}
-	
-	
+
+
 	private final ISourceViewer fSourceViewer;
 	private final SourceViewerConfiguration fSourceViewerConfiguration;
 
 	/**
 	 * Creates a focused information presenter and installs it on the source viewer.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer
 	 * @param sourceViewerConfiguration the configuration
 	 */
@@ -101,7 +101,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 		super(new DefaultInformationControlCreator());
 		fSourceViewer= sourceViewer;
 		fSourceViewerConfiguration= sourceViewerConfiguration;
-		
+
 		// sizes: see org.eclipse.jface.text.TextViewer.TEXT_HOVER_*_CHARS
 		setSizeConstraints(100, 12, true, true);
 		install(sourceViewer);
@@ -116,7 +116,7 @@ public class FocusedInformationPresenter extends InformationPresenter {
 	 * @return <code>true</code> if successful, <code>false</code> otherwise
 	 */
 	public boolean openFocusedAnnotationHover(IAnnotationHover annotationHover, int line) {
-		
+
 		try {
 			// compute the hover information
 			Object hoverInfo;

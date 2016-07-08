@@ -171,7 +171,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	/**
 	 * Constant for representing the OK status. This is considered a value object.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated As of 3.6, replaced by {@link Status#OK_STATUS}
 	 */

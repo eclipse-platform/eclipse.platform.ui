@@ -223,14 +223,14 @@ public final class HippieCompletionEngine {
 		}
 		return uniqueSuggestions;
 	}
-	
-	
+
+
 
 	/**
 	 * Calculates the documents to be searched. Note that the first returned document is always from
 	 * the current editor and if we have no current editor, an empty list is returned even if there
 	 * are other documents available.
-	 * 
+	 *
 	 * @param currentTextEditor this is the currently opened text editor.
 	 * @return A List of IDocument with the opened documents so that the first document in that list
 	 *         is always the current document.
@@ -271,7 +271,7 @@ public final class HippieCompletionEngine {
 				computedDocuments.add(doc);
 			}
 		}
-		
+
 		//The first is always the one related to the passed currentTextEditor.
 		computedDocuments.add(0, currentDocument);
 		return computedDocuments;
@@ -281,7 +281,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Provides an iterator that will get the completions that start with the passed prefix after
 	 * the passed position (forward until the end of the document).
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param prefix the prefix to search for
 	 * @param firstPosition the initial position in the document that the search will start from. In
@@ -292,7 +292,7 @@ public final class HippieCompletionEngine {
 	 *            and <code>false</code> is good for searching in other documents.
 	 * @return Iterator (for Strings) that will get the completions forward from the passed
 	 *         position.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public Iterator<String> getForwardIterator(IDocument document, CharSequence prefix, int firstPosition, boolean currentWordLast) {
@@ -302,14 +302,14 @@ public final class HippieCompletionEngine {
 	/**
 	 * Provides an iterator that will get the completions that start with the passed prefix before
 	 * the passed position (backwards until the start of the document).
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param prefix the prefix to search for
 	 * @param firstPosition the initial position in the document that the search will start from. In
 	 *            order to search from the end of the document use
 	 *            <code>firstPosition=document.getLength()</code>.
 	 * @return Iterator that will get the completions backward from the passed position.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public Iterator<String> getBackwardIterator(IDocument document, CharSequence prefix, int firstPosition) {
@@ -320,7 +320,7 @@ public final class HippieCompletionEngine {
 	 * Provides an iterator that will get the completions for all the documents received, starting
 	 * at the "document" passed (first going backward and then forward from the position passed) and
 	 * later going forward through each of the "otherDocuments".
-	 * 
+	 *
 	 * @param document the document to be scanned
 	 * @param otherDocuments the additional documents to be scanned
 	 * @param prefix the prefix to search for
@@ -328,7 +328,7 @@ public final class HippieCompletionEngine {
 	 * @return Iterator that will first get the completions backward from the document passed, then
 	 *         forward in that same document and when that is finished it will get it forward for
 	 *         the other documents (in the same sequence the documents are available).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public Iterator<String> getMultipleDocumentsIterator(IDocument document, List<IDocument> otherDocuments, CharSequence prefix, int firstPosition) {
@@ -339,7 +339,7 @@ public final class HippieCompletionEngine {
 
 	/**
 	 * Class that keeps the state while iterating the suggestions
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private final class MultipleDocumentsIterator implements Iterator<String> {
@@ -399,12 +399,12 @@ public final class HippieCompletionEngine {
 		/**
 		 * This method calculates the next token to be returned (so, after creating the class or
 		 * after calling next(), this function must be called).
-		 * 
+		 *
 		 * It'll check which document should be used and will get the completions on that document
 		 * until some completion is found.
-		 * 
+		 *
 		 * An empty completion is always added at the end.
-		 * 
+		 *
 		 * After the empty completion, the next is set to null.
 		 */
 		private void calculateNext() {
@@ -468,7 +468,7 @@ public final class HippieCompletionEngine {
 
 		/**
 		 * We always calculate the next to see if it's available.
-		 * 
+		 *
 		 * @return <code>true</code> if the next token to be returned is not null (we always
 		 *         pre-calculate things)
 		 */
@@ -493,7 +493,7 @@ public final class HippieCompletionEngine {
 
 		/**
 		 * Not supported!
-		 * 
+		 *
 		 * @throws UnsupportedOperationException always.
 		 */
 		@Override
@@ -507,7 +507,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Base class for Iterator that gets the word completions in a document, and returns them one by
 	 * one (lazily gotten).
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private abstract class HippieCompletionIterator implements Iterator<String> {
@@ -545,7 +545,7 @@ public final class HippieCompletionEngine {
 
 		/**
 		 * Constructor
-		 * 
+		 *
 		 * @param document the document to be scanned
 		 * @param prefix the prefix to search for
 		 * @param firstPosition the initial position in the document that the search will start
@@ -601,7 +601,7 @@ public final class HippieCompletionEngine {
 		/**
 		 * Subclasses must override to calculates whether we have a next element to be returned and
 		 * which element it is (set fHasNext and fNext).
-		 * 
+		 *
 		 * @throws BadLocationException if we're at an invalid position in the document.
 		 */
 		protected abstract void calculateNext() throws BadLocationException;
@@ -612,7 +612,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Iterator that gets the word completions in a document, and returns them one by one (lazily
 	 * gotten) from the current position.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private class HippieCompletionForwardIterator extends HippieCompletionIterator {
@@ -699,7 +699,7 @@ public final class HippieCompletionEngine {
 
 		/**
 		 * Checks the given region for a word to be returned in this iterator.
-		 * 
+		 *
 		 * @param reg the region to check
 		 * @return the word region.
 		 * @throws BadLocationException if we're at an invalid position in the document.
@@ -730,7 +730,7 @@ public final class HippieCompletionEngine {
 	/**
 	 * Iterator that gets the word completions in a document, and returns them one by one (lazily
 	 * gotten) backward from the current position.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private class HippieCompletionBackwardIterator extends HippieCompletionIterator {
@@ -805,9 +805,9 @@ public final class HippieCompletionEngine {
 
 	/**
 	 * Logs the exception.
-	 * 
+	 *
 	 * @param e the exception
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private void log(BadLocationException e) {

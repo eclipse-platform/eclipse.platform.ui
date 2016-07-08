@@ -30,7 +30,7 @@ public final class IntHash extends Hash {
 
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return fHash;

@@ -38,7 +38,7 @@ public class SWTUtil {
 	 * @since 3.5
 	 */
 	public static final int COMBO_VISIBLE_ITEM_COUNT= 30;
-	
+
 	/**
 	 * Returns a width hint for the given button.
 	 *

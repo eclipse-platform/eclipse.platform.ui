@@ -48,7 +48,7 @@ import org.eclipse.ui.IEditorPart;
  * selection mode.</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.eclipse.ui.texteditor.IDocumentProvider
  * @see org.eclipse.jface.text.source.IAnnotationModel
  * @see org.eclipse.ui.texteditor.ITextEditorExtension
@@ -157,7 +157,7 @@ public interface ITextEditor extends IEditorPart {
 
 	/**
 	 * Sets the highlighted range of this text editor to the specified region.
-	 * 
+	 *
 	 * @param offset the offset of the highlighted range
 	 * @param length the length of the highlighted range
 	 * @param moveCursor <code>true</code> if the cursor should be moved to the start of the

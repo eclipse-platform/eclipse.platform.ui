@@ -134,7 +134,7 @@ public interface IDocumentProvider {
 	/**
 	 * Returns the time stamp of the last synchronization of the given element and its provided
 	 * document.
-	 * 
+	 *
 	 * @param element the element
 	 * @return the synchronization stamp of the given element
 	 */
